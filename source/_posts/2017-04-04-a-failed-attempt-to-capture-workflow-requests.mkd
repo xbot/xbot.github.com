@@ -1,0 +1,18 @@
+---
+title: 一次對Workflow不完全成功的抓包過程
+date: 2017-04-04 20:19:52
+categories: 計算機
+tags:
+- 網絡
+- 筆記
+---
+
+一個workflow對https鏈接的請求總是失敗，而同樣的接口在postman里是成功的。所以想對比一下兩個請求的差異。
+
+嘗試了兩種抓包方式，都不成功。一種是用中間人攻擊的原理，用的是mitmproxy，類似的還有charles、fiddler等。另一種是從網卡直接抓取，用的是wireshark。
+
+第一種情況，雖然在iOS里安裝並信任了mitmproxy的偽證書、safari里也是可以正常訪問https鏈接的，但在workflow里仍然不認。
+
+第二種情況，wireshark支持兩種解密TLS包的方式：一是使用https服務的私鑰，二是用瀏覽器輸出的「SSLKEYLOGFILE」。這裡需要用第二種。但是這種方式只對本機發送的請求有效，而且在實際操作中還發現有時候本機也解密不了。
+
+最後只能採用臨時方案，把https鏈接改成http，然後用mitmproxy抓取，雖然請求是失敗的，但是可以拿到請求本身的數據。

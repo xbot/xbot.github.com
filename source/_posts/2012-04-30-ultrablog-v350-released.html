@@ -1,0 +1,37 @@
+---
+layout: post
+title: ! 'UltraBlog.vim v3.5.0: 內建瀏覽器'
+tags:
+- Plugin
+- Python
+- UltraBlog.vim
+- Vim
+- 博客
+- 編程
+status: publish
+type: post
+published: true
+comments: true
+meta:
+  aktt_notify_twitter: 'no'
+  posturl_add_url: 'yes'
+  views: '35'
+---
+<p>此前預覽文章是通過調用系統默認的網絡瀏覽器實現的，缺點是這些功能完備的瀏覽器啟動速度不甚理想，尤其是火狐，誰用誰知道。</p>
+<p>前兩天看了TuxRadar的一個Podcast，幾分鐘內就可以用pywebkitgtk拼裝出一個五臟俱全的網絡瀏覽器，pywebkitgtk這個東西實在是非常的好用。不過我實測後發現這東西加載頁面的速度比較慢，而且貌似是單線程的，因為圖片都是放在最後才加載，不知道是這個綁定本身的問題，還是有API可以實現的。於是突然想到拿這個東西實現一個簡單的瀏覽器，很適合在UB裡預覽文章。</p>
+<p>增加了一個選項<strong>“ub_use_ubviewer”</strong>，默認值是1，即默認使用這個內建的瀏覽器預覽文章。當這個選項的值被設為0時，仍然使用系統的默認瀏覽器，並且在Vim啟動時不會加載內建的瀏覽器。這樣做一是為了多一種選擇，再一個也可以避開煩人的GTK警告：</p>
+<blockquote>
+<p>** (gvim:13629): WARNING **: Trying to register gtype 'GMountMountFlags' as enum when in fact it is of type 'GFlags'</p>
+<p>** (gvim:13629): WARNING **: Trying to register gtype 'GDriveStartFlags' as enum when in fact it is of type 'GFlags'</p>
+<p>** (gvim:13629): WARNING **: Trying to register gtype 'GSocketMsgFlags' as enum when in fact it is of type 'GFlags'</p>
+</blockquote>
+<p>這些警告是GTK或其它一些程序庫的Bug造成的，雖然只在虛擬終端中啟動Vim時會顯示並且不影響使用，但總會有警告恐懼症患者會覺得這種東西很鬧心。如果這樣，就把這個選項的值設成0，用回巨型瀏覽器好了。</p>
+<p>本次更新的全部內容如下：</p>
+<ul>
+<li>Feature: Add a tiny web browser to do previewing, which starts much faster than full-functional browsers like firefox and chromium. The later ones are still supported. The matter that whether or not to use the new previewer is controlled by a new option <strong>ub_use_ubviewer</strong>.</li>
+<li>Bugfix: Issue 7: Keywords highlighting is disabled in item lists, even if searches are made manually.</li>
+</ul>
+<p>關於UB的詳細信息在<a href="http://0x3f.org/?p=1894">這裡</a>。</p>
+<p>這是那個Podcast：</p>
+<p><embed src='http://player.youku.com/player.php/sid/XMzg5MTc1OTI4/v.swf' quality='high' width='480' height='400' align='middle' allowScriptAccess='sameDomain' type='application/x-shockwave-flash'></embed></p>
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>

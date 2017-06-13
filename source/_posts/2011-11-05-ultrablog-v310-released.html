@@ -1,0 +1,54 @@
+---
+layout: post
+title: UltraBlog.vim v3.1釋出：代碼重構與MacVim支持
+tags:
+- Plugin
+- Python
+- UltraBlog.vim
+- Vim
+- 博客
+- 編程
+status: publish
+type: post
+published: true
+comments: true
+meta:
+  aktt_notify_twitter: 'no'
+  views: '437'
+---
+<p>距離上一個版本的釋出已經有三個月了，这次新版並沒有增加多少功能性的內容，主要是代碼的重構和對在MacVim下穩定性的改進。</p>
+
+<p>對依賴關係檢查的不細緻導致了一些麻煩，拋出的錯誤信息有時與實際原因相距甚遠。由於開始時是以實現功能為主，所以都是直接用函數實現的，之後修修補補，代碼冗余而且維護麻煩。於是著手重構主要功能的源碼，面向對象，把所有檢查邏輯放到父類中去實現，子類只關注自身邏輯，最後新版減少了二百多行的代碼量。</p>
+
+<p>在重構的過程中偶然發現，在MacVim中，程序拋出任何異常，即便是有捕獲邏輯，也會導致編輯器崩潰。在<a href="http://stackoverflow.com/questions/5574702/how-to-print-to-stderr-in-python">这裡</a>簡略地提到：</p>
+
+<blockquote>
+  <p>the failure was actual a crash, through some strange combination of threading, matplotlib pyplot backend, and ssh X11 forwarding, sys.stderr had somehow been assigned to something which python complained wasn't a file-like object</p>
+</blockquote>
+
+<p>於是將所有標準輸出與標準錯誤輸出語句換成另一種形式：</p>
+
+{% codeblock lang:python %}
+# 原形式
+sys.stdout.write('xxx')
+sys.stderr.write('xxx')
+
+# 新形式
+print >> sys.stdout, 'xxx'
+print >> sys.stderr, 'xxx'
+{% endcodeblock %}
+
+<p>以上是新版主要變更的內容，此外，也順便解決了開發過程中發現的個別Bug和做了其它一些改動：</p>
+
+<ul>
+<li>Change:  The key "xmlrpc" of the settings list is dropped, a new one with the name "url" is added, you should set its value to the blog url.</li>
+<li>Change:  Source code refactorings.</li>
+<li>Change:  Solve the crash problem existing in MacVim only.</li>
+<li>Change:  <strong>:UBConv</strong> can be used in any buffer.</li>
+<li>Change:  <strong>:UBThis</strong> now has a third parameter, which enables convertions between syntaxes.</li>
+<li>Bugfix:  The second parameter of <strong>:UBThis</strong> cannot take effect.</li>
+</ul>
+
+<p>这也是將源碼從Google Code遷移到GitHub後發佈的第一個新版本，更詳細的信息請移步<a href="http://0x3f.org/?p=1894">插件主頁</a>或GitHub上的<a href="https://github.com/xbot/UltraBlog.vim">代碼倉庫</a>。</p>
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>

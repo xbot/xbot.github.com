@@ -1,0 +1,134 @@
+---
+layout: post
+title: Linux下雙屏顯示的設置
+tags:
+- Linux
+- 計算機
+- 配置
+status: publish
+type: post
+published: true
+comments: true
+meta:
+  aktt_notify_twitter: 'no'
+  views: '886'
+---
+<p>RandR是對X11的一個擴展協議，允許在不重啟X的情況下修改輸出的一些參數並使之生效，xrandr是該協議的命令行界面，它的功能之一就是用來設置雙屏顯示。</p>
+
+<p>缺省情況下，外接顯示器後啟用的是屏幕複製模式，即兩個屏幕顯示完全相同的內容。使用命令<code>xrandr -q</code>查看當前的輸出狀態：</p>
+
+<blockquote>
+  <p>Screen 0: minimum 320 x 200, current 1920 x 1080, maximum 8192 x 8192
+  LVDS1 connected 1280x800+0+0 (normal left inverted right x axis y axis) 261mm x 163mm
+    1280x800       60.0<em>+   60.0     50.0 <br />
+    1024x768       75.1     70.1     60.0 <br />
+    800x600        72.2     75.0     60.3     56.2 <br />
+    768x576        75.0     72.0     60.0 <br />
+    640x480        72.8     75.0     60.0     59.9 <br />
+  VGA1 connected 1920x1080+0+0 (normal left inverted right x axis y axis) 509mm x 286mm
+    1920x1080      60.0</em>+
+    1680x1050      60.0 <br />
+    1280x1024      75.0     60.0 <br />
+    1440x900       59.9 <br />
+    1280x960       60.0 <br />
+    1024x768       75.1     70.1     60.0 <br />
+    832x624        74.6 <br />
+    800x600        72.2     75.0     60.3     56.2 <br />
+    640x480        72.8     75.0     66.7     60.0 <br />
+    720x400        70.1 <br />
+  HDMI1 disconnected (normal left inverted right x axis y axis)
+  DP1 disconnected (normal left inverted right x axis y axis)
+  HDMI2 disconnected (normal left inverted right x axis y axis)
+  DP2 disconnected (normal left inverted right x axis y axis)
+  DP3 disconnected (normal left inverted right x axis y axis)</p>
+</blockquote>
+
+<p>可見，筆記本電腦的屏幕輸出（<em>LVDS1</em>）的顯示分辨率是1280x800，外接顯示器的輸出（<em>VGA1</em>）的分辨率是1920x1080。兩個輸出在整個虛擬屏幕（<em>名稱：Screen 0；當前大小：1920x1080；最大：8192x8192</em>）上的坐標都是+0+0。所以在外接顯示器中可以看到屏幕左上角有一個1280x800分辨率的小屏幕。</p>
+
+<p>屏幕複製模式最常用於外接投影儀，現在我需要兩個屏幕分別顯示在各自的顯示器中，並在兩個屏幕中顯示不同的內容（<em>也就是Windows下設置雙屏顯示時選擇的擴展模式</em>）。</p>
+
+<p>由於我將筆記本電腦放在外接顯示器的左邊，所以為了操作的自然，使用命令<code>xrandr --output VGA1 --right-of LVDS1</code>將外接顯示器的輸出在虛擬屏幕上的位置設置在筆記本電腦的輸出的右邊，示意圖如下：</p>
+
+<p><a href="https://picasaweb.google.com/lh/photo/twh2zzOQbv1YrOA_WPPxMg?feat=embedwebsite"><img src="https://lh5.googleusercontent.com/-otYnRD5mkv4/Tjqox_Fjl4I/AAAAAAAABzI/FxTmXNf-lk0/s640/xrandr%2525E8%2525A8%2525AD%2525E7%2525BD%2525AE%2525E9%25259B%252599%2525E5%2525B1%25258F%2525E9%2525A1%2525AF%2525E7%2525A4%2525BA.png" height="215" width="640" /></a></p>
+
+<p>這樣，兩個顯示器中就可以顯示不同的內容了。由於屬於同一個虛擬屏幕，當然也可以將一個窗口跨過邊界從一個顯示器拖到另一個顯示器中。再使用命令<code>xrandr -q</code>查看現在的輸出狀態：</p>
+
+<blockquote>
+  <p>Screen 0: minimum 320 x 200, current 3200 x 1080, maximum 8192 x 8192
+  LVDS1 connected 1280x800+0+0 (normal left inverted right x axis y axis) 261mm x 163mm
+    1280x800       60.0<em>+   60.0     50.0 <br />
+    1024x768       75.1     70.1     60.0 <br />
+    800x600        72.2     75.0     60.3     56.2 <br />
+    768x576        75.0     72.0     60.0 <br />
+    640x480        72.8     75.0     60.0     59.9 <br />
+  VGA1 connected 1920x1080+1280+0 (normal left inverted right x axis y axis) 509mm x 286mm
+    1920x1080      60.0</em>+
+    1680x1050      60.0 <br />
+    1280x1024      75.0     60.0 <br />
+    1440x900       59.9 <br />
+    1280x960       60.0 <br />
+    1024x768       75.1     70.1     60.0 <br />
+    832x624        74.6 <br />
+    800x600        72.2     75.0     60.3     56.2 <br />
+    640x480        72.8     75.0     66.7     60.0 <br />
+    720x400        70.1 <br />
+  HDMI1 disconnected (normal left inverted right x axis y axis)
+  DP1 disconnected (normal left inverted right x axis y axis)
+  HDMI2 disconnected (normal left inverted right x axis y axis)
+  DP2 disconnected (normal left inverted right x axis y axis)
+  DP3 disconnected (normal left inverted right x axis y axis)</p>
+</blockquote>
+
+<p>使用xrandr做的設置只對當前的X會話有效，重啟後恢復原樣。使設置持久化的方法為修改xorg.conf或設置自動執行命令。據說有一些圖形界面封裝的xrandr的前端，完善的桌面環境如GNOME和KDE應該也是可以在圖形界面中設置的，不過我所使用的XFCE目前似乎只能啟用/禁用複製模式，而不支持在圖形界面中設置擴展模式。</p>
+
+<p>下面的腳本用來簡化雙屏顯示的設置：</p>
+
+{% codeblock lang:bash %}
+#!/bin/bash
+
+# Restart trayer and cairo-dock which I use on my desktop
+restart_widget()
+{
+    killall trayer
+    killall cairo-dock
+
+    # Another script which starts trayer and set some options
+    mytrayer
+    cairo-dock &
+}
+
+set_dualhead()
+{
+    xrandr --output LVDS1 --auto
+    xrandr --output VGA1 --auto
+    xrandr --output VGA1 --right-of LVDS1
+    restart_widget
+}
+
+set_lvds()
+{
+    xrandr --output VGA1 --off
+    xrandr --output LVDS1 --auto
+    restart_widget
+}
+
+set_vga()
+{
+    xrandr --output LVDS1 --off
+    xrandr --output VGA1 --auto
+    restart_widget
+}
+
+if [ $# -eq 0 ]; then
+    set_dualhead
+    exit
+fi
+
+case "$1x" in
+    "lvdsx") set_lvds;;
+    "vgax") set_vga;;
+    *) echo 'Unknown parameter !';;
+esac
+{% endcodeblock %}
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>

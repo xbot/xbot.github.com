@@ -1,0 +1,103 @@
+---
+layout: post
+title: 調整Arch的磁盤分區
+tags:
+- Archlinux
+- Linux
+- Windows
+- 計算機
+status: publish
+type: post
+published: true
+comments: true
+meta:
+  _edit_last: '1'
+  views: '876'
+  _wp_old_slug: ''
+---
+<p><h2>簡述</h2></p>
+
+<p>目標：移除Windows 7，整塊硬盤完全分配給Archlinux。</p>
+
+<p>原分區結構：</p>
+
+<p>
+<table class="art_tbl">
+<tr><th class="art_tbl_th">分區</th><th class="art_tbl_th">類型</th><th class="art_tbl_th">掛載</th><th class="art_tbl_th">文件系統</th><th class="art_tbl_th">容量</th></tr>
+<tr><td class="art_tbl_td">/dev/sda1</td><td class="art_tbl_td">主分區，啟動分區</td><td class="art_tbl_td">Windows 7的安裝分區</td><td class="art_tbl_td">ntfs</td><td class="art_tbl_td">30G</td></tr>
+<tr><td class="art_tbl_td">/dev/sda2</td><td class="art_tbl_td">擴展分區</td><td class="art_tbl_td">-</td><td class="art_tbl_td">-</td><td class="art_tbl_td">-</td></tr>
+<tr><td class="art_tbl_td">/dev/sda5</td><td class="art_tbl_td">邏輯分區</td><td class="art_tbl_td">Windows的D盤</td><td class="art_tbl_td">ntfs</td><td class="art_tbl_td">40G</td></tr>
+<tr><td class="art_tbl_td">/dev/sda3</td><td class="art_tbl_td">主分區</td><td class="art_tbl_td">/</td><td class="art_tbl_td">ext3</td><td class="art_tbl_td">78G</td></tr>
+<tr><td class="art_tbl_td">/dev/sda4</td><td class="art_tbl_td">交換分區</td><td class="art_tbl_td">swap</td><td class="art_tbl_td">-</td><td class="art_tbl_td">2G</td></tr>
+</table>
+</p>
+
+<p>調整後分區結構：</p>
+
+<p>
+<table class="art_tbl">
+<tr><th class="art_tbl_th">分區</th><th class="art_tbl_th">類型</th><th class="art_tbl_th">掛載</th><th class="art_tbl_th">文件系統</th><th class="art_tbl_th">容量</th></tr>
+<tr><td class="art_tbl_td">/dev/sda1</td><td class="art_tbl_td">主分區，啟動分區</td><td class="art_tbl_td">/</td><td class="art_tbl_td">ext3</td><td class="art_tbl_td">30G</td></tr>
+<tr><td class="art_tbl_td">/dev/sda2</td><td class="art_tbl_td">主分區</td><td class="art_tbl_td">/home</td><td class="art_tbl_td">ext3</td><td class="art_tbl_td">120G</td></tr>
+<tr><td class="art_tbl_td">/dev/sda3</td><td class="art_tbl_td">交換分區</td><td class="art_tbl_td">swap</td><td class="art_tbl_td">-</td><td class="art_tbl_td">2G</td></tr>
+</table>
+</p>
+
+<p><h2>步驟</h2></p>
+
+<ol>
+  <li>Archlinux中重裝GRUB，覆蓋Windows 7的BCD：<br>{% codeblock lang:bash %}
+sudo grub-install /dev/sda
+{% endcodeblock %}</li>
+  <li>在GRUB啟動菜單中加入將要復制到sda1分區中的Archlinux的啟動項：<br>{% codeblock lang:bash %}
+sudo vi /boot/grub/menu.lst
+{% endcodeblock %}<br><blockquote>
+# (2) Arch Linux
+title  Arch Linux
+root   (hd0,0)
+kernel /boot/vmlinuz26 root=/dev/sda1 resume=/dev/sda4 ro acpi_osi="Linux"
+initrd /boot/kernel26.img
+</blockquote></li>
+  <li><a href="http://0x3f.org/?p=1699">安裝U盤啟動的Puppy Linux</a></li>
+  <li>Puppy中格式化sda1分區：<br>{% codeblock lang:bash %}
+mkfs.ext3 /dev/sda1
+{% endcodeblock %}</li>
+  <li>復制sda3上的Archlinux所有的文件到sda1：<br>{% codeblock lang:bash %}
+# 先點擊桌面上sda1和sda3的盤符，使之被掛載到/mnt下
+
+cd /mnt/sda3
+cp -a * /mnt/sda1
+{% endcodeblock %}</li>
+  <li>修改sda1上的fstab：{% codeblock lang:bash %}
+vi /mnt/sda1/etc/fstab
+{% endcodeblock %}<br><blockquote>
+# 修改必要的挂載點，如將根目錄的挂載點由sda3改為sda1：
+/dev/sda1           /         ext3      defaults,noatime       0       1
+</blockquote></li>
+  <li>重啟系統，并引導到新分區上的系統中</li>
+  <li>重新安裝GRUB，使之引導sda1分區中的系統：<br>{% codeblock lang:bash %}
+sudo grub-install /dev/sda
+{% endcodeblock %}</li>
+  <li>重啟并進入Puppy，使用gparted刪除除sda1以外的所有分區，然後在空閑的空間上創建ext3格式的主分區sda2和交換分區sda3</li>
+  <li>移動sda1上home目錄下的所有東西到sda2：<br>{% codeblock lang:bash %}
+cp -a /mnt/sda1/home/* /mnt/sda2
+rm -rf /mnt/sda1/home/*
+{% endcodeblock %}</li>
+  <li>修改sda1上的fstab和menu.lst：<br>{% codeblock lang:bash %}
+vi /mnt/sda1/etc/fstab
+{% endcodeblock %}<blockquote>
+# 將fstab中磁盤分區的挂載點配置為如下內容
+/dev/sda1        /          ext3      defaults,noatime         0        1
+/dev/sda2        /home      ext3      defaults,noatime         1        2
+/dev/sda3        swap       swap      defaults                 0        0
+</blockquote>{% codeblock lang:bash %}
+vi /mnt/boot/grub/menu.lst
+{% endcodeblock %}<blockquote>
+# 將原來啟動項中的sda3修改為sda1，由于配置過休眠，也將resume參數中的sda4改為sda3，即交換分區
+</blockquote>
+  <li>重啟系統</li>
+</ol>
+
+<p><h2>後記</h2></p>
+
+<p>從<a href="http://0x3f.org/?tag=arch">Arch</a><a href="http://0x3f.org/?p=819">誕生</a>時只裝XP，到<a href="http://0x3f.org/?p=836">裝上Archlinux</a>後雙系統并存，再到<a href="http://0x3f.org/?p=1180">嘗試Win7</a>，兩年的時間裏，一直有很多原因讓Windows像只寄生蟲一樣頑強地活著。最近硬盤空間越來越緊張，早前裝的Win7也很長時間不用了，于是時隔三年之後，我又成了個純粹的Archer。</p>

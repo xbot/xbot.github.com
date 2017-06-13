@@ -1,0 +1,43 @@
+---
+layout: post
+title: 使用热键切换Vim的QuickFix窗口打开状态
+tags:
+- Vim
+- 热键
+- 計算機
+status: publish
+type: post
+published: true
+comments: true
+meta:
+  _edit_last: '1'
+  views: '1212'
+  _wp_old_slug: ''
+---
+QuickFix窗口只有打開和關閉的命令，而使用一個熱鍵來切換打開狀態可以減少熱鍵資源的浪費，使用也更方便。
+
+從<a href="http://vim.wikia.com/wiki/Toggle_to_open_or_close_the_quickfix_window">這裏</a>找到使用自定義函數完成此功能的方法：使用一個全局變量記錄QuickFix窗口的打開狀態，從而判斷是應該關閉還是打開。但其提供的函數存在狀態同步的問題，假如在QuickFix窗口中使用“:q”退出窗口，此方法將不能正常工作。評論中給出了很好的解決方法，但其提供的代碼有些小問題，修改之後如下：
+
+{% codeblock lang:vim %}
+nmap <leader>co :QFix<CR>
+nmap <leader>ct :call QFixToggle(1)<CR>
+command! -bang -nargs=? QFix call QFixToggle(<bang>0)
+
+function! QFixToggle(forced)
+    if exists("g:qfix_win") && a:forced != 0
+        cclose
+    else
+        if exists("g:my_quickfix_win_height")
+            execute "copen ".g:my_quickfix_win_height
+        else
+            copen
+        endif
+    endif
+endfunction
+
+augroup QFixToggle
+    autocmd!
+    autocmd BufWinEnter quickfix let g:qfix_win = bufnr("$")
+    autocmd BufWinLeave * if exists("g:qfix_win") && expand("<abuf>") == g:qfix_win | unlet! g:qfix_win | endif
+augroup END
+{% endcodeblock %}

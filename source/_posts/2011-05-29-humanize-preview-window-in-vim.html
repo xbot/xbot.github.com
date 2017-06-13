@@ -1,0 +1,76 @@
+---
+layout: post
+title: 人性化Vim的預覽窗口
+tags:
+- Vim
+- 編程
+- 配置
+status: publish
+type: post
+published: true
+comments: true
+meta:
+  aktt_notify_twitter: 'no'
+  views: '1072'
+---
+<p>Vim的預覽窗口由<code>:ptag</code>等命令觸發，可用于預覽函數定義。但在缺省情況下，預覽窗口的高度是固定的，對于注釋信息較多的函數，往往不能完全顯示注釋，而對于注釋較少的函數，又會有多餘的行浪費屏幕空間。</p>
+
+<p>下面的函數用于解決這個問題：</p>
+
+{% codeblock lang:vim %}
+" 調用:ptag命令預覽光標所在<word>的定義
+" 對類C語言風格的函數/方法定義和注釋有效，對其餘情況仍沿用:ptag的原有效果
+function! PTagIt()
+    exec "ptag ".expand("<cword>")
+    let cwin = winnr()
+    silent! wincmd P
+    let lnr = line('.')
+    if lnr < 3
+        return
+    endif
+
+    if foldlevel('.')>0
+        normal zo
+    endif
+
+    let chead = 0
+    let linestr = getline(lnr-1)
+    if linestr =~ '^\s*\*/'
+        let ptr = lnr-2
+        while ptr>0
+            let linestr = getline(ptr)
+            if linestr =~ '^\s*/\*'
+                let chead = ptr
+                break
+            endif
+            let ptr = ptr-1
+        endwhile
+    endif
+
+    if chead>0
+        exec 'resize '.(lnr-chead+1)
+        exec 'normal '.chead."z\<CR>"
+        exec 'normal '.lnr.'G'
+    endif
+
+    exec cwin.'wincmd w'  
+endfunction
+nmap <leader>pp :call PTagIt()<CR>
+nmap <leader>pc :pclose<CR>
+{% endcodeblock %}
+
+<p>例如對于如下的函數定義：</p>
+
+{% codeblock lang:php %}
+/*
+ * 我是一個測試函數
+ * @param int 我是整型形參
+ * @param string 我是字符串形參
+ * @param array 我是返回值
+ */
+function foo($bar1, $bar2) {...}
+{% endcodeblock %}
+
+<p>實際效果為打開的預覽窗口將完全顯示并只顯示以上內容。</p>
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>

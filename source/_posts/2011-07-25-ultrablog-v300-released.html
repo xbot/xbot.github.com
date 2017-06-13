@@ -1,0 +1,133 @@
+---
+layout: post
+title: UltraBlog.vim v3.0釋出：全文檢索與事件驅動
+tags:
+- Plugin
+- Python
+- UltraBlog.vim
+- Vim
+- 博客
+- 編程
+status: publish
+type: post
+published: true
+comments: true
+meta:
+  aktt_notify_twitter: 'no'
+  views: '651'
+---
+<p>用了一周的業餘時間，昨天我釋出了<a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>的3.0版。新版本主要加入了全文檢索的功能，並引入事件驅動的模式。</p>
+
+<p>全文檢索是我蓄謀已久的功能，一個不能搜索的博客客戶端的管理功能是大打折扣的。得益於SQLite數據庫和SQLAlchemy框架，全文檢索的實現是很簡單的，新增加的<code>:UBFind</code>命令將在所有文章和頁面的標題與內容中查詢，並將搜索結果顯示在一個可分頁的列表中。這個命令支持任意多個關鍵詞，各關鍵詞之間遵循與的關係。此外，檢索結果中，所有的關鍵詞將被自動標記為高亮。</p>
+
+<p>事件驅動模式的引入是我悍然將版本號跳躍到3.x的主要原因。</p>
+
+<p>在前幾個版本中，我實現了對多窗口的支持，它使得用戶可以在新窗口中打開列表中的文章。但UltraBlog.vim最初開發的時候並沒有考慮到多窗口的問題，所有命令都只針對當前窗口進行操作。這就有了緩衝區內容同步的問題，假如在一個新的緩衝區中打開了和另一個緩衝區相同的文章，則一個緩衝區內容的改變不會同步到另外一個中，這多少是有些隱患的。</p>
+
+<p>最直接的做法是在所有可能改變緩衝區內容的功能中加入對其它緩衝區的處理，但這樣做有不少問題：</p>
+
+<ul>
+<li>代碼耦合度太高，違反K.I.S.S原則，不利於今後的開發和維護</li>
+<li>函數體過長，我討厭難看的代碼</li>
+<li>代碼冗餘，重複勞動</li>
+</ul>
+
+<p>事件驅動模式可以很好的解決以上問題，一個函數只干一件事，做完後一個事件拋出去，至於連帶著要做什麼，誰監聽這個事件誰去處理，代碼的耦合度很低，復用度很高，易於維護和閱讀。</p>
+
+<p>UltraBlog.vim引入事件驅動模式處理緩衝區同步的問題。不同的操作拋出不同的事件，所有的事件繼承自父類<strong>UBEvent</strong>：</p>
+
+{% codeblock lang:python %}
+class UBEvent:
+    def __init__(self, srcObj):
+        self.srcObj = srcObj
+
+class UBDebugEvent(UBEvent): pass
+class UBTmplDelEvent(UBEvent): pass
+class UBTmplSaveEvent(UBEvent): pass
+class UBLocalPostDelEvent(UBEvent): pass
+class UBRemotePostDelEvent(UBEvent): pass
+class UBPostSendEvent(UBEvent): pass
+class UBPostSaveEvent(UBEvent): pass
+{% endcodeblock %}
+
+<p>一個可能改變緩衝區內容的操作執行完後，創建一個特定的事件並將其加入到事件隊列中。事件隊列類中存放兩個列表，一是事件隊列，二是事件監聽器列表；提供三個方法，分別用來註冊事件監聽器、對事件執行入隊列操作和處理隊列中所有事件：</p>
+
+{% codeblock lang:python %}
+class UBEventQueue:
+    queue = []
+    listeners = []
+
+    @classmethod
+    def fireEvent(cls, evt):
+        cls.queue.append(evt)
+
+    @classmethod
+    def processEvents(cls):
+        for evt in cls.queue:
+            for listener in cls.listeners:
+                if listener.isTarget(evt):
+                    cls.queue.remove(evt)
+                    listener.processEvent(evt)
+
+    @classmethod
+    def registerListener(cls, lsnr):
+        cls.listeners.append(lsnr)
+{% endcodeblock %}
+
+<p>事件隊列對事件的處理是通過事件監聽器進行的，每個事件監聽器要實現兩個功能：識別監聽對象和處理監聽對象。所有具體事件的監聽類都是<strong>UBListener</strong>的子類：</p>
+
+{% codeblock lang:python %}
+class UBListener():
+    ''' Parent class of all listeners
+    '''
+    eventType = None
+
+    @classmethod
+    def isTarget(cls, evt):
+        return isinstance(evt, cls.eventType)
+
+    @staticmethod
+    def processEvent(evt): pass
+
+class UBPostSaveListener(UBListener):
+    ''' Listener for saving posts/pages
+    1. Refresh the current view if it is an edit/list view of this post
+    2. Mark all edit/list views of posts/pages outdated
+    '''
+    eventType = UBPostSaveEvent
+
+    @staticmethod
+    def processEvent(evt):
+        for nr in ub_get_buffers(['post_edit','page_edit']):
+            if evt.srcObj==ub_get_meta('id', nr):
+                if nr==ub_get_bufnr('%'):
+                    ub_refresh_current_view()
+                else:
+                    ub_set_view_outdated(nr)
+
+        for nr in ub_get_buffers(['post_list','page_list','search_result_list']):
+            if nr == ub_get_bufnr('%'):
+                ub_refresh_current_view()
+            else:
+                ub_set_view_outdated(nr)
+{% endcodeblock %}
+
+<p>事件監聽器遍歷所有滿足處理條件的緩衝區，對當前緩衝區，立即刷新，其餘的標記為已過期。同時利用Vim自身的事件驅動特性，在進入已過期的緩衝區時，再更新之，也就是傳說中的懶加載模式：</p>
+
+{% codeblock lang:vim %}
+au BufEnter * py __ub_on_buffer_enter()
+{% endcodeblock %}
+
+{% codeblock lang:python %}
+@__ub_exception_handler
+def __ub_on_buffer_enter():
+    ''' Triggered by BufEnter event, check if the buffer is outdated
+    '''
+    if ub_is_view_outdated('%'):
+        ub_refresh_current_view()
+        ub_set_view_outdated('%', False)
+{% endcodeblock %}
+
+<p>此外，隨著代碼量的增加，原來把全部代碼都放在一個文件中的做法不再適用，尤其是以<a href="http://en.wikipedia.org/wiki/Here_document">Here Document</a>形式存放在vim腳本文件中的Python代碼不能被ctags識別，所以按類別分別存放到<strong>$VIMRUNTIME/plugin/ultrablog/</strong>下的幾個Python源文件中。</p>
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>

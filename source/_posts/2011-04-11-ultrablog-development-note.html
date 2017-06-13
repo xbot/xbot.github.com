@@ -1,0 +1,47 @@
+---
+layout: post
+title: UltraBlog.vim開發手記
+tags:
+- Markdown
+- Plugin
+- Python
+- SQLAlchemy
+- SQLite
+- UltraBlog.vim
+- Vim
+- 博客
+- 編程
+- 隨筆
+status: publish
+type: post
+published: true
+comments: true
+meta:
+  views: '1692'
+  _wp_old_slug: ! '%e9%97%9c%e4%ba%8eultrablog-vim%e7%9a%84%e9%96%8b%e7%99%bc%ef%bc%88%e6%a8%99%e9%a1%8c%e5%be%85%e5%ae%9a%ef%bc%89'
+---
+<p>對于<a href="http://blog.sina.com.cn/s/blog_694377f90100rmko.html">博客已死</a>的說法，我一點都不感到奇怪。早在幾年前博客還比較火的時候我就表達過對博客泡沫的<a href="http://0x3f.org/?p=209">看法</a>。</p>
+
+<p>經歷了短暫的<a href="http://0x3f.org/?p=354">tumblog</a>的風頭，微博成為現在最火的媒介。說博客已死，無非就是說微博將成為個人信息傳播的主流。好吧，現在我知道那時候我所說的不懂什麽是博客的人都去幹什麽了。</p>
+
+<p>但是博客還是會繼續發展，微博的興起只會減少濫竽充數。因為微博突出的是時效性，最缺乏的是系統性和可重復更新的能力。微博的短處，正是博客的長處。這讓我對博客有了一個新的、遲到了很久的認識──一個好的博客，它的文章不應該是寫掉就忘的，而應該是不斷地更新著的。</p>
+
+<p><a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>就是出于這個需要而寫的。</p>
+
+<p>我對博客客戶端的使用大概可以追溯到四五年前，那時候博客正火，在比較了幾個<a href="http://en.wikipedia.org/wiki/Blog_service_provider">BSP</a>後選擇了<a href="http://www.blogcn.com/">中國博客網</a>，就是因為他們提供桌面客戶端。後來獨博之後也試用過幾個通用的客戶端，但都沒堅持多久，最根本的原因是它們幾乎無一例外地都是<a href="http://zh.wikipedia.org/wiki/%E6%89%80%E8%A6%8B%E5%8D%B3%E6%89%80%E5%BE%97">WYSIWYG</a>。而WYSIWYG的編輯器生成的HTML源碼幾乎都使用inline的樣式，這就導致文章的排版布局很難控制，我對WYSIWYG其實是很抵觸的，至今都不怎麽用Office這類東西。</p>
+
+<p>後來我意識到，我所需要的是樣式與內容分離，于是準備自己寫一個<a href="http://0x3f.org/?p=331">客戶端</a>，後來由于工作的原因不了了之。與此同時，我自定義了一套文章格式并用Java寫了一個轉換文章到HTML的<a href="http://0x3f.org/?p=342">工具</a>，直到後來發現<a href="http://0x3f.org/?p=383">Markdown</a>，我才知道我其實是需要一個輕量标記語言。</p>
+
+<p>使用Markdown之後，寫博客開始變得輕松愉快。我一度用過一段時間<a href="http://www.scintilla.org/SciTE.html">SciTE</a>，還用<a href="http://zh.wikipedia.org/wiki/Lua">Lua</a>寫了個<a href="http://0x3f.org/?p=499">輔助腳本</a>。但是我需要一個完整的客戶端來管理文章，而這是一個編輯器所不能勝任的，所以就著手實現一個支持Markdown的<a href="http://0x3f.org/?p=812">客戶端</a>。這一次走得比較遠，<a href="http://0x3f.org/?p=812">ForeverFantasy</a>最終達到了可用的程度，我一度用它寫過一段時間的博客。但是作為一個Vim重症患者，wxPython的編輯器部件是遠遠達不到我需要的水平的。雖然後來還<a href="http://0x3f.org/?p=1409">實現</a>了調用外部程序處理文章內容（<em>當然也可以調用Vim</em>），但總歸覺得不舒服，至今已經一年沒更新了。</p>
+
+<p>直到前段時間試用了一下<a href="http://0x3f.org/?p=1861">VimRepress</a>，在修改這個插件的時候突然受到啟發，我這幾年的需求原來是可以這麽簡單地解決的。</p>
+
+<p>其實在幾年前<a href="http://www.vim.org/scripts/script.php?script_id=1953">vimpress</a>剛剛發布的時候我就了解過這個東西，包括此後接連發布的幾個Vim寫博客的插件，它們和我原來寫的SciTE的那個輔助腳本沒有本質的區別，都是博客編輯器。與完整的客戶端相比，編輯器缺少對本地文章源碼的管理，而且它們不記錄文章源碼和發布的文章的關聯關系，簡單地說是無狀態的。這不符合博客文章持續更新的觀點。</p>
+
+<p>UltraBlog.vim使用<a href="http://www.sqlalchemy.org/">SQLAlchemy</a>做數據庫抽象層，將所有文章的源碼及其狀態保存在本地的一個SQLite數據庫中，并且以此為基礎，通過<a href="http://en.wikipedia.org/wiki/XML-RPC">XMLRPC</a>接口實現對博客文章、頁面的<a href="http://en.wikipedia.org/wiki/Create,_read,_update_and_delete">CRUD</a>操作。同時利用Vim分模式的特點實現了可分頁的文章列表和文章編輯視圖。</p>
+
+<p>UltraBlog.vim目前支持Markdown和HTML兩種格式的文章，它最大的特點是在Markdown格式的源碼和發布到博客中的文章之間建立聯系，你可以隨時修改本地數據庫中的Markdown源碼并更新博客中對應的文章。</p>
+
+<p>新的功能還會不斷地加入。</p>
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>

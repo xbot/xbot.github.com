@@ -1,0 +1,122 @@
+---
+title: 利用命名空間Mock PHP的內建函數
+date: 2017-04-30 09:06:17
+categories: 計算機
+tags:
+- php
+- 編程
+- 測試
+---
+
+## 簡述
+
+Mock PHP的內建函數一般有兩種方法：命名空間法和依賴注入法。
+
+命名空間法是利用PHP優先使用同命名空間內函數的特性，在測試對象的命名空間內重載內建函數來實現。前提是內建函數在被調用時沒有使用命名空間，例如：`\debug_backtrace()`是不能使用本方法的。
+
+上篇文章[《接口編程中記錄日誌的最佳實踐》](/post/the-best-practice-of-logging-in-api-programming/)中實現的日誌類中，核心部分調用了`debug_backtrace()`函數獲取方法調用堆棧。下面討論下如何利用命名空間法實現對此函數的mock。
+
+## 實現
+
+先看代碼：
+
+```php
+<?php
+namespace Ox3f\LaravelUtils\Log;
+
+use PHPUnit\Framework\TestCase;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Log as LaravelLog;
+use Ox3f\LaravelUtils\Log\Log;
+
+$calledInController = false;
+
+function debug_backtrace() {
+    global $calledInController;
+    if ($calledInController) {
+        return json_decode('[{"file":"\/Users\/xbot\/Sites\/sample-project\/vendor\/xbot\/laravel-utils\/src\/Log\/Log.php","line":85,"function":"parseCallStack","class":"Ox3f\\\LaravelUtils\\\Log\\\Log","object":{},"type":"->"},{"file":"\/Users\/xbot\/Sites\/sample-project\/app\/Api\/V1\/Controllers\/WorkController.php","line":29,"function":"saveInput","class":"Ox3f\\\LaravelUtils\\\Log\\\Log","type":"::"},{"function":"save","class":"App\\\Api\\\V1\\\Controllers\\\WorkController","object":{},"type":"->"},{"file":"\/Users\/xbot\/Sites\/sample-project\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Controller.php","line":55,"function":"call_user_func_array"},{"file":"\/Users\/xbot\/Sites\/sample-project\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/ControllerDispatcher.php","line":44,"function":"callAction","class":"Illuminate\\\Routing\\\Controller","object":{},"type":"->"}]', true);
+    } else {
+        return json_decode('[{"file":"\/Users\/xbot\/Sites\/sample-project\/vendor\/xbot\/laravel-utils\/src\/Log\/Log.php","line":85,"function":"parseCallStack","class":"Ox3f\\\LaravelUtils\\\Log\\\Log","object":{},"type":"->"},{"file":"\/Users\/xbot\/Sites\/sample-project\/app\/Notation.php","line":21,"function":"saveInput","class":"Ox3f\\\LaravelUtils\\\Log\\\Log","type":"::"},{"file":"\/Users\/xbot\/Sites\/sample-project\/app\/Api\/V1\/Controllers\/NotationController.php","line":32,"function":"incrNo","class":"App\\\Notation","type":"::"},{"function":"save","class":"App\\\Api\\\V1\\\Controllers\\\NotationController","object":{},"type":"->"},{"file":"\/Users\/xbot\/Sites\/sample-project\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Controller.php","line":55,"function":"call_user_func_array"}]', true);
+    }
+}
+
+class LogTest extends TestCase
+{
+    public function setUp()
+    {
+        Auth::shouldReceive('user')
+            ->once()
+            ->andReturn((object)['name' => 'jim',]);
+    }
+
+    /**
+     * @covers Ox3f\LaravelUtils\Log\Log::saveInput
+     * @covers Ox3f\LaravelUtils\Log\Log::saveOutput
+     * @covers Ox3f\LaravelUtils\Log\Log::parseCallStack
+     * @covers Ox3f\LaravelUtils\Log\Log::getInstance
+     * @covers Ox3f\LaravelUtils\Log\Log::__construct
+     * @covers Ox3f\LaravelUtils\Log\Log::__callStatic
+     */
+    public function testAll()
+    {
+        global $calledInController;
+
+        // test being called in a plain method
+        $calledInController = false;
+
+        LaravelLog::shouldReceive('debug')
+            ->once()
+            ->with('jim | App\Notation::incrNo | Input:1');
+
+        Log::saveInput(1);
+
+        LaravelLog::shouldReceive('debug')
+            ->once()
+            ->with('jim | App\Notation::incrNo | Output:2');
+
+        Log::saveOutput(2);
+
+        // test being called in a controller action
+        $calledInController = true;
+
+        Request::shouldReceive('path')
+            ->once()
+            ->andReturn('api/user');
+        Request::shouldReceive('except')
+            ->once()
+            ->with('_url')
+            ->andReturn(['id' => 18,]);
+        LaravelLog::shouldReceive('debug')
+            ->once()
+            ->with('jim | api/user | Input:{"id":18}');
+
+        Log::saveInput();
+
+        Request::shouldReceive('path')
+            ->once()
+            ->andReturn('api/user');
+        LaravelLog::shouldReceive('debug')
+            ->once()
+            ->with('jim | api/user | Output:2');
+
+        Log::saveOutput(2);
+
+        Request::shouldReceive('path')
+            ->once()
+            ->andReturn('api/user');
+        LaravelLog::shouldReceive('error')
+            ->once()
+            ->with('jim | api/user | this is an error');
+            
+        Log::error('this is an error');
+        
+        $this->assertEquals(0, 0);
+    }
+}
+```
+
+最重要的是第一行，這裡把測試類的命名空間設置得和測試對象一致，這樣在下面重載的`debug_backtrace()`函數就會在測試對象中被優先使用。
+
+在重載的函數中，通過全局變量`$calledInController`選擇輸出事先捕獲的真實數據，從而mock出符合我們需要的函數。
+

@@ -1,0 +1,71 @@
+---
+layout: post
+title: ! 'darkstat: 網絡流量監測工具'
+tags:
+- Linux
+- Unix
+- Windows
+- 安全
+- 計算機
+- 计算机网络
+- 配置
+status: publish
+type: post
+published: true
+comments: true
+meta:
+  _edit_last: '1'
+  views: '1098'
+  _wp_old_slug: ''
+---
+<a href="http://dmr.ath.cx/net/darkstat/">darkstat</a>是一個跨平台的網絡流量監測工具，可顯示最大一個月內操作系統的各項網絡流量指標。
+
+具有以下特性：
+
+<ol>
+	<li>以守護進程方式運行，提供Web用戶界面，零配置，易于使用</li>
+	<li>可顯示較為詳細的網絡流量指標</li>
+	<li>性能表現好，占用資源少</li>
+	<li>跨平台，支持多個UNIX、類UNIX操作系統，并有非官方的Windows移植版</li>
+</ol>
+
+具有以下不足：
+
+<ol>
+	<li>功能較為簡單，以易用性換靈活性</li>
+	<li>日志記錄功能比較單薄，需要編寫輔助腳本并設置定時任務</li>
+</ol>
+
+darkstat啟動時需要手工指定監視的網絡接口，因此需要用根權限啟動：
+
+{% codeblock lang:bash %}
+sudo darkstat -i eth0
+{% endcodeblock %}
+
+darkstat默認使用<strong>667</strong>端口提供Web訪問，可以用<strong>-p</strong>參數指定端口：
+
+{% codeblock lang:bash %}
+sudo darkstat -i eth0 -p 8080
+{% endcodeblock %}
+
+darkstat的Web用戶界面分為Graph、Hosts和Host三部分。Graph是缺省主頁，用于顯示最近一分鐘、一小時、一天和一個月的流量統計直方圖，將光標置于任何一個直方條上可查看對應時刻的流量指標：
+
+<a href="http://picasaweb.google.com/lh/photo/NAB3_2TtnezdM45HoNd5pQ?feat=embedwebsite"><img src="http://lh4.ggpht.com/_ceUJ_lBTHzc/TRcCUWqnF0I/AAAAAAAABhs/wLRQb3rvHW8/s400/darkstat-graphs.png" height="400" width="395" /></a>
+
+Hosts界面按主機顯示各自的流量統計指標的值：
+
+<a href="http://picasaweb.google.com/lh/photo/kG1J2j2eecaLUnhDL-fArA?feat=embedwebsite"><img src="http://lh4.ggpht.com/_ceUJ_lBTHzc/TRcCUXxnsMI/AAAAAAAABhw/ri5OsbqPdmc/s400/darkstat-hosts.png" height="322" width="400" /></a>
+
+單擊Hosts界面上的IP進入對應主機的Host界面，此界面按TCP/UDP類型顯示對應的主機的各端口的網絡流量指標的值：
+
+<a href="http://picasaweb.google.com/lh/photo/XBNQWty4lp63OWwyAFm_BA?feat=embedwebsite"><img src="http://lh3.ggpht.com/_ceUJ_lBTHzc/TRcCUn6lg_I/AAAAAAAABh0/6Aj0hArzIYk/s800/darkstat-host.png" height="800" width="190" /></a>
+
+可通過如下命令查看占用指定端口的進程：
+
+<blockquote>
+[lenin@archer ~]$ lsof -i tcp:58062 -n
+COMMAND   PID  USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+mlnet   18660 lenin   74u  IPv4 251788      0t0  TCP 192.168.1.3:58062->122.116.212.89:http (ESTABLISHED)
+</blockquote>
+
+darkstat區別于其它流量監測工具的最大的優點就是簡單易用，非常適合對流量監測應用不復雜的場景。前段時間公司的一台RHEL服務器因為流量過大多次被網管拔線，後來用darkstat監測到大部分流量被幾個UDP端口占去，進而發現原來是服務器被入侵并被安裝了一個掃描器<a href="http://code.google.com/p/sipvicious/">SIPVicious</a>。

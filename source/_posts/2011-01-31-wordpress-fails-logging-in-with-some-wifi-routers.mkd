@@ -1,0 +1,33 @@
+---
+layout: post
+title: 部分無線路由導致Wordpress無法登錄
+tags:
+- WordPress
+- 計算機
+- 路由器
+status: publish
+type: post
+published: true
+comments: true
+meta:
+  _edit_last: '1'
+  views: '635'
+  _wp_old_slug: ''
+---
+問題表現為在登錄頁面輸入用戶名和密碼并點擊登錄按鈕後，Wordpress跳轉到登錄頁面。
+
+解決方法是修改<strong><em>wp-includes/plugable.php</em></strong>中的<strong><em>wp_set_auth_cookie()</em></strong>函數，將下面這行：
+
+{% codeblock lang:php %}
+setcookie($auth_cookie_name, $auth_cookie, $expire, ADMIN_COOKIE_PATH, COOKIE_DOMAIN, $secure, true);
+{% endcodeblock %}
+
+改成：
+
+{% codeblock lang:php %}
+setcookie($auth_cookie_name, $auth_cookie, $expire, SITECOOKIEPATH, COOKIE_DOMAIN, $secure, true);
+{% endcodeblock %}
+
+這一行在這個函數中有兩處，是根據php的版本決定執行哪一塊，所以應該根據自己的情況修改，或者幹脆兩處都修改。
+
+在我的tp-link tl-wr841n中發現這個問題，而中興無線貓中沒有這個問題。

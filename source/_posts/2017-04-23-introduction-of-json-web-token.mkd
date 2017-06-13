@@ -1,0 +1,71 @@
+---
+title: JSON Web Token簡介
+date: 2017-04-23 18:29:06
+categories: 計算機
+tags:
+- 筆記
+- 編程
+---
+
+## 什麼是JWT？
+
+JSON Web Token（簡稱JWT）是一種token格式，通常用來解決身份認證的問題，和會話（session）作用相同，常用在RESTful API或者OAuth認證上。
+
+和session相比，JWT有以下優勢：
+
+* 服務器端的開銷低
+* 服務器端擴展方便
+* 不用專門處理CSRF
+
+由於session的實現方式需要在服務器端存儲會話數據，所以當存在大量會話時，服務器端的存儲壓力會很大，並由此帶來擴展上的複雜度（共享session）。而JWT可以把這些數據存儲在token里，不需要服務器端存儲，優勢自然很明顯。
+
+對於CSRF，由於session一般使用cookie實現，所以需要專門處理這個安全隱患。JWT借助HTTP請求的header傳遞，所以偽造成本更高。
+
+### JWT和Bearer Token的關係
+JWT在使用的時候要在token前面加上字符串「bearer」再填到HTTP請求的header里，這個值就是「Bearer Token」。為什麼要這麼做？它和JWT是什麼關係？
+
+簡單地說，JWT是一種token格式，Bearer Token是一種鑒權方案。
+
+HTTP的header項「Authorization」是在HTTP 1.0引入的，它的值的格式是`類型+token`，支持多種鑒權方案，bearer只是其中的一種。bearer方案中使用的token是JWT格式，這就是它們之間的關係。
+
+## JWT的格式
+
+JWT是一個用英文點號連接起來的、分成三個部分的字符串：header、payload和signature。
+
+### header
+header是個base64字符串，解密後是個JSON對象，包含一些元數據。例如：
+```json
+{
+  'typ': 'JWT',
+  'alg': 'HS256'
+}
+```
+「typ」是格式，「alg」是加密方法。
+
+### payload
+payload也是個base64字符串，解密後也是個JSON對象，一般包含兩種數據：JWT標準數據和自定義數據。
+
+JWT標準數據常見的有：
+* iss：提供方。
+* sub：主題，一般是用戶ID。
+* exp：過期時間。
+* iat：創建時間。
+* jti：token的唯一標識。
+
+此外，和session一樣，可以把一些自定義的數據存儲在payload里。但由於token存儲在客戶端，所以不應該在這裡存儲敏感數據。
+
+### signature
+signature也是個base64字符串，解密後是個使用header里描述的加密方法針對header和payload加密的字符串。目的是防止這兩部分的數據被篡改。
+
+## JWT的使用原則
+
+* 不存放敏感信息
+* 保護好私鑰
+* 結合https使用
+
+都是出於安全角度考慮。token存儲在客戶端，而且base64可以被解密，所以不能存儲敏感數據。如果私鑰洩漏，意味著簽名可以被隨意偽造。使用https可以更好的保護數據，防止中間人攻擊。
+
+## JWT相關開發資源
+
+[jwt.io](https://jwt.io/)有各種語言的JWT開發資源。
+

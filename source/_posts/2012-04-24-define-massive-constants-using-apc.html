@@ -1,0 +1,61 @@
+---
+layout: post
+title: PHP大量常量應集中使用APC定義
+tags:
+- PHP
+- 性能
+- 編程
+status: publish
+type: post
+published: true
+comments: true
+meta:
+  posturl_add_url: 'yes'
+  aktt_notify_twitter: 'no'
+  views: '36'
+---
+<p>用xdebug跟蹤程序性能時，發現一個定義了約七百個常量的文件，include_once()時消耗約六十毫秒的時間。事實上define()的效率比較低，如果需要定義大量常量，使用APC擴展提供的apc_define_constants()效果會好得多。</p>
+
+<p>下面是對這個文件改造前後效率跟蹤結果的對比：</p>
+
+<table>
+    <tr>
+        <th></th>
+        <th>define()方案（ms）</th>
+        <th>apc_define_constants()方案（ms）</th>
+    </tr>
+    <tr>
+        <td>啟動Web服務和PHP，第一次運行</td>
+        <td>58</td>
+        <td>4</td>
+    </tr>
+    <tr>
+        <td>不重啟Web服務和PHP，第二次運行</td>
+        <td>65</td>
+        <td>1</td>
+    </tr>
+    <tr>
+        <td>不重啟Web服務和PHP，第三次運行</td>
+        <td>66</td>
+        <td>1</td>
+    </tr>
+</table>
+
+<p>由此可見，apc_define_constants()不但在初次調用時效能就超過define()，而且由於APC自身的緩存功能，在後續調用時效率會有進一步的提高，而define()基本沒有變化。</p>
+
+<p>以下是apc_define_constants()的代碼示例：</p>
+
+{% codeblock lang:php %}
+<?php
+if(!apc_load_constants('my_constants')) {
+    $constants = array(
+        'ONE'   => 1,
+        'TWO'   => 2,
+        'THREE' => 3,
+    );
+    apc_define_constants('my_constants', $constants);
+}
+?>
+{% endcodeblock %}
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>

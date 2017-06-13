@@ -1,0 +1,70 @@
+---
+title: 用Raspberry Pi實現音頻Airplay
+date: 2017-04-17 10:19:51
+categories: 計算機
+tags:
+- 樹莓派
+- 最佳實踐
+---
+
+{% img http://ww1.sinaimg.cn/large/006tKfTcly1fepi05fa8ej31kw1kwx6q.jpg 600 %}
+
+用樹莓派做音頻airplay效果不錯，老書架音箱又可以用起來了。
+
+實現方式是shairplay-sync，利用HDMI轉VGA線上的3.5mm音頻輸出孔，因為我的樹莓派2B的3.5mm音視頻輸出口沒有合適的轉接頭。
+
+我用的是Arch Linux ARM，需要手動開啓HDMI輸出。修改`/boot/config.txt`：
+
+```ini
+hdmi_force_hotplug=1
+hdmi_drive=2
+config_hdmi_boost=4
+dtparam=audio=on
+```
+
+重啓後，用alsamixer把樹莓派音量調整到最大值。
+
+AUR里沒有針對ARM的shairplay-sync，需要手動編譯：
+
+```bash
+git clone https://github.com/mikebrady/shairport-sync.git
+```
+
+```bash
+# 生成configure
+autoreconf -i -f
+```
+
+```bash
+# 針對systemd編譯
+
+./configure --sysconfdir=/etc --with-alsa --with-avahi --with-ssl=openssl --with-metadata --with-soxr --with-systemd
+
+
+# END
+```
+
+```bash
+# 如果shairport-sync用戶不存在，新增用戶和用戶組
+
+getent group shairport-sync &>/dev/null || sudo groupadd -r shairport-sync >/dev/null
+
+getent passwd shairport-sync &> /dev/null || sudo useradd -r -M -g shairport-sync -s /usr/bin/nologin -G audio shairport-sync >/dev/null
+
+
+# END
+```
+
+airplay默認的服務名和樹莓派的hostname一致，可以到`/etc/shairport-sync.conf`里修改：
+
+```conf
+general = {
+    name = "pi";
+}
+```
+
+## FAQ
+
+### ALSA lib confmisc.c:767:(parse_card) cannot find card '0'
+樹莓派沒聲音，嘗試用mpg123播放mp3時報這個錯。解決辦法是在`/boot/config.txt`里增加`dtparam=audio=on`。
+

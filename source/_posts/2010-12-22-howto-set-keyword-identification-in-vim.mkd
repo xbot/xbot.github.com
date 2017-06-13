@@ -1,0 +1,38 @@
+---
+layout: post
+title: Vim中設置關鍵詞識別規則的方法
+tags:
+- PHP
+- Vim
+- 計算機
+- 配置
+status: publish
+type: post
+published: true
+comments: true
+meta:
+  _edit_last: '1'
+  views: '667'
+  _wp_old_slug: ''
+---
+在Vim中，關鍵詞是一個至關重要的概念。合理地利用關鍵詞，可以快速地對光標下有特殊含義的字符串進行一系列的操作，例如通過快捷鍵復制關鍵詞、查詢函數定義或文檔、在項目中查詢所有引用當前函數的地方等等。這對工作效率的提升有極大的幫助。
+
+但我的Vim對PHP文件的關鍵詞識別有問題，在選擇函數名的時候總是將函數名後的小括弧一起選入。
+
+Vim使用選項iskeyword設定關鍵詞的匹配規則，使用如下命令查看當前文件類型的關鍵詞規則：
+
+{% codeblock lang:vim %}
+set iskeyword
+{% endcodeblock %}
+
+我這裏查看PHP文件的規則結果如下：
+
+<blockquote>
+iskeyword=@,48-57,_,192-255,$,(
+</blockquote>
+
+不明白為什麽缺省設置中會有左括弧，在vimrc中加入如下配置取消之：
+
+{% codeblock lang:vim %}
+au FileType php set iskeyword-=(
+{% endcodeblock %}

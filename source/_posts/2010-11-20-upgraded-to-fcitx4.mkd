@@ -1,0 +1,54 @@
+---
+layout: post
+title: 升級fcitx到4.0
+tags:
+- Archlinux
+- fcitx
+- 拼音
+- 計算機
+- 輸入法
+status: publish
+type: post
+published: true
+comments: true
+meta:
+  _edit_last: '1'
+  views: '681'
+  _wp_old_slug: ''
+---
+雖然是個大版本，但4.0在實際功能上并沒有太大的進步。新版本相對于3.x增加的主要特性是：
+
+<ol>
+  <li>支持皮膚</li>
+  <li>圖形界面的配置工具</li>
+  <li>增加系統托盤圖標</li>
+  <li>托盤圖標和輸入條提供右鍵菜單，如皮膚切換、選擇輸入法等</li>
+  <li>放棄GBK編碼，改用UTF-8編碼</li>
+  <li>拼音支持多詞庫</li>
+  <li>一系列細節功能及Bug修復</li>
+</ol>
+
+最主要的特性只有前兩個，可見fcitx 4.0只是這個項目涅槃後的一個新的起點，象征意義大于實際意義，尤其對于碼表輸入法用戶來說是這樣。三年前我就<a href="http://0x3f.org/?p=185">說過</a>，fcitx在用戶造詞上有個致命缺陷，就是對于多音字它總是使用字母表中聲母靠前的編碼，對于音碼或者音形碼輸入法來說，這樣造出來的詞的編碼經常會是錯的，更糟糕的是用戶還不容易自行修改詞組編碼。三年後的今天，新版本并沒有解決這個問題。
+
+此外，需要注意的是，新版本對界面和易用性的改進也帶來一些負面的影響，fcitx不再是當年以輕巧著稱的那只小企鵝了，在我這裏，它的內存占用達到了26M，所幸反應速度仍然很快。
+
+三年前，由于眾所周知的原因，fcitx的路線圖顯得非常混亂，幾個新版本都非常不穩定，所以我不再使用源中的版本，轉而編譯安裝了新版本中相對穩定的黑色星期五版，不知不覺中三年過去了，想到一直用著這個版本就這麽過來了，很感慨。要卸載編譯安裝的程序就得用源碼重新configure一下再make uninstall，所幸還能在<a href="http://www.fcitx.org/download/fcitx-3.5-BlackFri.tar.bz2">這裏</a>找到這個版本。
+
+Archlinux下安裝AUR中的fcitx-config時報如下錯誤：
+
+<blockquote>
+ERROR: certificate common name “*.github.com” doesn’t match requested host name “github.com”.
+</blockquote>
+
+需要修改/etc/makepkg.conf，使wget在下載源碼時不做安全驗証：
+
+<blockquote>
+# 增加--no-check-certificate參數
+DLAGENTS=('ftp::/usr/bin/wget -c --passive-ftp -t 3 --waitretry=3'
+          'http::/usr/bin/wget -c -t 3 --waitretry=3 --no-check-certificate'
+          'https::/usr/bin/wget -c -t 3 --waitretry=3 --no-check-certificate'
+          'rsync::/usr/bin/rsync -z'
+          'scp::/usr/bin/scp -C')
+</blockquote>
+
+新版本的穩定性不如黑色星期五版，如果把簡繁轉換熱鍵修改為ALT+J，使用時會導致fcitx崩潰。加之實際功能的改進不大，所以是否升級就無可無不可了。

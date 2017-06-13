@@ -1,0 +1,40 @@
+---
+title: 鼠須管實現簡繁轉換的方法
+date: 2017-03-11 23:42:11
+categories: 計算機
+tags:
+- mac
+- 輸入法
+---
+
+鼠須管默認輸出繁體，可以通過自帶的過濾器轉換成簡體。這樣做是科學的，因為繁體的異體字較多，從簡轉繁容易轉錯。
+
+對於只有簡體的碼表，可以轉換成繁體，再通過過濾器轉簡體，但是會導致在簡體狀態下無法自造詞。所以最好的辦法是給繁體單獨配一個碼表。
+
+步驟為：
+
+1. 複製簡體碼表的schema.yaml和dict.yaml文件
+1. 修改兩個yaml文件的名稱
+1. 文件內容中和文件名對應的內容也都改為和新文件名一致
+1. 修改schema.yaml中輸入法的名稱，使之和簡體碼表區分開
+1. 轉換dict.yaml中的內容到繁體
+1. 重新部署
+
+如果需要給繁體碼表增加臨時輸出簡體的功能，方法如下：
+
+```yaml
+# 在碼表的schema.yaml中
+
+# switches下增加
+  - name: simplification
+    states: [ 漢字, 漢字 ]
+
+# engine下增加
+  filters:
+    - simplifier
+    - uniquifier
+
+#key_binder下增加
+    - { when: always, accept: Control+Shift+4, toggle: simplification }
+    - { when: always, accept: Control+Shift+dollar, toggle: simplification }
+```

@@ -1,0 +1,68 @@
+---
+layout: post
+title: 從iG:Syntax Hiliter轉換到WP-Syntax
+tags:
+- WordPress
+- 日志
+- 牧碼志
+- 計算機
+status: publish
+type: post
+published: true
+comments: true
+meta:
+  _edit_last: '1'
+  views: '500'
+---
+<p>終于決定放棄使用了<a href="http://0x3f.org/?p=342">三年多</a>的iG:Syntax Hiliter，將代碼語法高亮插件換成<a href="http://wordpress.org/extend/plugins/wp-syntax/">WP-Syntax</a>。</p>
+
+<p>原因是Vim的Markdown語法高亮<a href="http://www.vim.org/scripts/script.php?script_id=2882">插件</a>有問題，會把iG的標簽<code>[LANG]</code>當作Markdown的超鏈接處理，結果導致插入代碼後，後面的內容被錯誤地著色，很難看。而Syntax使用<code>&lt;pre lang="LANG"&gt;</code>格式的標簽，不會有這個問題。</p>
+
+<p>其實很早就想過要換了，只是受累于使用iG進行高亮的文章太多，替換起來不方便。加上後來<a href="http://0x3f.org/?p=501">解決</a>了由于iG停止更新導致的不支持更多的語法的問題，所以就一致拖到現在。今天晚上花了一個小時就完成了替換，比想象中的要容易地多。</p>
+
+<p>根據我使用過的語法的情況，使用以下語句在數據庫中替換iG的標簽到Syntax的標簽：</p>
+
+{% codeblock lang:sql %}
+update wp_posts set post_content=replace(post_content,'[bash]','&lt;pre lang="bash" line="1"&gt;');
+update wp_posts set post_content=replace(post_content,'[/bash]','&lt;/pre&gt;');
+update wp_posts set post_content=replace(post_content,'[python]','&lt;pre lang="python" line="1"&gt;');
+update wp_posts set post_content=replace(post_content,'[/python]','&lt;/pre&gt;');
+update wp_posts set post_content=replace(post_content,'[vim]','&lt;pre lang="vim" line="1"&gt;');
+update wp_posts set post_content=replace(post_content,'[/vim]','&lt;/pre&gt;');
+update wp_posts set post_content=replace(post_content,'[java]','&lt;pre lang="java" line="1"&gt;');
+update wp_posts set post_content=replace(post_content,'[/java]','&lt;/pre&gt;');
+update wp_posts set post_content=replace(post_content,'[lua]','&lt;pre lang="lua" line="1"&gt;');
+update wp_posts set post_content=replace(post_content,'[/lua]','&lt;/pre&gt;');
+update wp_posts set post_content=replace(post_content,'[sql]','&lt;pre lang="sql" line="1"&gt;');
+update wp_posts set post_content=replace(post_content,'[/sql]','&lt;/pre&gt;');
+update wp_posts set post_content=replace(post_content,'[plsql]','&lt;pre lang="plsql" line="1"&gt;');
+update wp_posts set post_content=replace(post_content,'[/plsql]','&lt;/pre&gt;');
+update wp_posts set post_content=replace(post_content,'[php]','&lt;pre lang="php" line="1"&gt;');
+update wp_posts set post_content=replace(post_content,'[/php]','&lt;/pre&gt;');
+update wp_posts set post_content=replace(post_content,'[cpp]','&lt;pre lang="cpp" line="1"&gt;');
+update wp_posts set post_content=replace(post_content,'[/cpp]','&lt;/pre&gt;');
+update wp_posts set post_content=replace(post_content,'[inno]','&lt;pre lang="inno" line="1"&gt;');
+update wp_posts set post_content=replace(post_content,'[/inno]','&lt;/pre&gt;');
+update wp_posts set post_content=replace(post_content,'[xml]','&lt;pre lang="xml" line="1"&gt;');
+update wp_posts set post_content=replace(post_content,'[/xml]','&lt;/pre&gt;');
+update wp_posts set post_content=replace(post_content,'[html]','&lt;pre lang="html4strict" line="1"&gt;');
+update wp_posts set post_content=replace(post_content,'[/html]','&lt;/pre&gt;');
+update wp_posts set post_content=replace(post_content,'[ini]','&lt;pre lang="ini" line="1"&gt;');
+update wp_posts set post_content=replace(post_content,'[/ini]','&lt;/pre&gt;');
+update wp_posts set post_content=replace(post_content,'[pascal]','&lt;pre lang="pascal" line="1"&gt;');
+update wp_posts set post_content=replace(post_content,'[/pascal]','&lt;/pre&gt;');
+update wp_posts set post_content=replace(post_content,'[javascript]','&lt;pre lang="javascript" line="1"&gt;');
+update wp_posts set post_content=replace(post_content,'[/javascript]','&lt;/pre&gt;');
+update wp_posts set post_content=replace(post_content,'[reg]','&lt;pre lang="reg" line="1"&gt;');
+update wp_posts set post_content=replace(post_content,'[/reg]','&lt;/pre&gt;');
+update wp_posts set post_content=replace(post_content,'[css]','&lt;pre lang="css" line="1"&gt;');
+update wp_posts set post_content=replace(post_content,'[/css]','&lt;/pre&gt;');
+update wp_posts set post_content=replace(post_content,'&lt;coolcode LANG="php"&gt;','&lt;pre lang="php" line="1"&gt;');
+update wp_posts set post_content=replace(post_content,'&lt;/coolcode&gt;','&lt;/pre&gt;');
+{% endcodeblock %}
+
+<p>即便轉換到Syntax，也不能避免Vim中Markdown語法高亮的問題，只要文字中出現成對的方括號，仍然會出問題，正確的做法是對HTML標簽中的內容不進行Markdown語法的著色。</p>
+
+<p>在轉換和寫這篇文章的過程中，發現WP-Syntax還存在一些問題，例如啟用行號後部分表格不能充滿頁面寬度的問題，還有上面這些SQL語句，必須將其中的尖括號替換成HTML實體才能正常顯示。看來雖然歷經兩三年的發展，WP-Syntax還是不很成熟。</p>
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>

@@ -1,0 +1,72 @@
+---
+layout: post
+title: 搭建自己的Twitter API
+tags:
+- GFW
+- Google
+- PHP
+- Python
+- Twitter
+- 計算機
+status: publish
+type: post
+published: true
+comments: true
+meta:
+  _edit_last: '1'
+  _oembed_353f85737e519de7010ff9e16c8c112c: ! '{{unknown}}'
+  _oembed_edd50bd674dd4a0832ac257761bd3f22: ! '{{unknown}}'
+  views: '1292'
+  _wp_old_slug: ''
+---
+<h2> 創建Twitter應用程序 </h2>
+
+從2010年9月起，twitter只支持第三方應用程序使用oauth方式登錄。要使用第三方API程序，就必須先在twitter中創建應用程序。
+
+申請地址如下：
+
+https://twitter.com/apps/
+
+填寫信息時，<b>Application Type</b>應該選<b>Browser</b>，<b>Default Access type</b>應選<b>Read & Write</b>，<b>User Twitter for login</b>不選，其它隨便。
+
+創建成功後，該應用程序的<b>Consumer key</b>和<b>Consumer secret</b>在部署API時一般都要用到。
+
+<h2> 第三方API程序 </h2>
+
+<h3> gtap </h3>
+
+<a href="http://code.google.com/p/gtap/">gtap</a>使用python開發，可部署在appspot上。
+
+部署前，先修改<b>app.yaml</b>，填寫在appspot上創建的應用程序的ID，并使用符號#注釋掉<b>secure: always</b>，因為GFW屏蔽了appspot的https。
+
+然後修改<b>main.py</b>，填寫Consumer key和Consumer secret。
+
+最後安裝<a href="http://code.google.com/intl/zh-CN/appengine/downloads.html">App Engine SDK</a>，使用其中的<b>appcfg.py</b>上傳gtap文件夾：
+
+{% codeblock lang:bash %}
+appcfg.py update gtap
+{% endcodeblock %}
+
+在瀏覽器中（此時應使用可以翻牆的代理）訪問在appspot上創建的應用程序的URL地址（如：http://xxx.appspot.com ），在打開的頁面中點擊<b>Sign in with Twitter</b>，然後在跳轉到的頁面中點擊<b>Allow</b>按鈕。在跳轉到的頁面上修改API的密碼（據說有些客戶端要求API的密碼與Twitter的密碼一致）。
+
+在客戶端中使用API的地址如下：
+
+<blockquote>
+http://xxx.appspot.com/
+</blockquote>
+
+其中，<b>xxx</b>是appspot應用程序的ID，末尾的斜杠必不可少。
+
+<h3> twip </h3>
+
+<a href="http://code.google.com/p/twip/">twip</a>使用php開發，應部署在支持PHP的服務器上。
+
+首先將<b>config-example.php</b>改名為<b>config.php</b>，然後修改其中的OAUTH_KEY/OAUTH_SECRET/BASE_URL三項內容，前兩項分別是Consumer key和Consumer secret，base_url應該是twip部署到服務器上後的URL地址（如http://myblog.com/twip/ ，最後的斜杠必不可少）。
+
+然後在瀏覽器中訪問上面的base_url，選擇使用o模式，API地址會在最後的頁面中輸出。
+
+<h2> 補充說明 </h2>
+
+<ol>
+<li>當前版本的Google App Engine SDK要求使用python 2.5，但如果只是用來上傳應用程序到appspot，2.5以上版本的python也可以用，只是在上傳時會報某些模塊已不推薦使用。如果使用appcfg.py時報找不到2.5版本的python，可以強制使用已安裝的新版本的python執行之，即：python appcfg.py update gtap</li>
+</ol>

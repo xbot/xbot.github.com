@@ -1,0 +1,25 @@
+---
+title: Postman的Pre-request Script和Tests
+date: 2017-04-19 17:05:55
+categories: 計算機
+tags:
+- 測試
+- 編程
+---
+Pre-request Script和Tests都是Javascript代碼塊。前者在請求發起前執行，通常用來生成請求數據，例如對用戶註冊接口隨機生成用戶名。後者在請求結束後執行，通常用來測試和處理返回值。
+
+以下是隨機生成用戶名的Pre-request Script：
+```javascript
+postman.setEnvironmentVariable("random_username", "測試用戶" + Math.floor(Math.random()*1000000));
+```
+
+產生的值存儲在環境變量里，表單里直接引用環境變量即可。
+
+對於REST接口普遍使用的JWT，可以在登錄接口的Tests里直接把返回的token更新到環境變量里，這樣其它接口直接引用這個環境變量即可：
+```javascript
+var data = JSON.parse(responseBody);
+tests["token is returned"] = typeof(data.token) == "string" && data.token.length > 0
+
+postman.setEnvironmentVariable("token", data.token);
+```
+

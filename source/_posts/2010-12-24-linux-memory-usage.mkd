@@ -1,0 +1,32 @@
+---
+layout: post
+title: Linux的內存使用機制
+tags:
+- BASH
+- Linux
+- 計算機
+status: publish
+type: post
+published: true
+comments: true
+meta:
+  _edit_last: '1'
+  views: '764'
+  _wp_old_slug: ''
+---
+在top中，內存使用情況顯示為如下格式：
+
+<blockquote>
+Mem:   3056828k total,  2624472k used,   432356k free,   185196k buffers
+Swap:  2096476k total,        0k used,  2096476k free,  1613592k cached
+</blockquote>
+
+根據內存的使用情況，將內存空間劃分為四種類型：已使用（used），未使用（free），緩沖區（buffers）和已緩存（cached）。
+
+“已使用”是指目前正被使用的活躍的內存區域。“未使用”是指當前空閑的內存區域。“緩沖區”是用于存放即將寫入存儲介質的數據的區域。“已緩存”是指曾因需要而被讀入內存、但目前已不被使用的數據。Linux通常會在資源使用完畢後保留一部分數據在內存中而不全部釋放，這就是“已緩存”區域，這樣當這些數據再次被使用時，系統就可以直接從內存中讀取。而“緩沖區”用于將對存儲介質的寫操作集中進行。因此，“緩沖區”和“已緩存”特性對減少存儲介質IO和加速系統運行都具有非常重要的作用。
+
+所以，Linux運行一段時間後，通常看起來空閑內存都很小，其實是因為很大一部分被用作“已緩存”區域，這部分內存會在內存資源緊張時被自動釋放，也可以通過如下命令手工釋放：
+
+{% codeblock lang:bash %}
+echo 1 > /proc/sys/vm/drop_caches
+{% endcodeblock %}

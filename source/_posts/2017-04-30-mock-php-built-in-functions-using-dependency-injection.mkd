@@ -1,0 +1,192 @@
+---
+title: 利用依賴注入Mock PHP的內建函數
+date: 2017-04-30 09:57:50
+categories: 計算機
+tags:
+- php
+- 編程
+- 測試
+---
+
+## 簡述
+
+[上篇文章](/post/mock-php-built-in-functions-using-namespace/)討論了如何利用命名空間實現對PHP內建函數的mocking，本文介紹另一種實現方法——依賴注入。
+
+出於編寫可測試代碼的需要，依賴注入是經常使用的一種技術。通過把代碼中依賴的其它數據獲取服務提取出來、和原有邏輯解耦，提高代碼的可測試性。只需mock這些依賴並注入到測試對象中即可。
+
+## 實現
+
+### 對原有代碼的重構
+
+先把原有代碼用依賴注入的方式重構（*為突出重點，省略了和上篇文章中重復的部分*）：
+
+```php
+
+// ...
+
+use Ox3f\LaravelUtils\Services\Builtins;
+
+/**
+ * Class Log
+ * @author donie
+ */
+class Log
+{
+    // ...
+    
+    private $builtins;        // Builtin functions
+
+    private function __construct() {
+        $this->builtins = new Builtins();
+        
+        // ...
+    }
+
+    // ...
+
+    public static function inject($key, $service)
+    {
+        self::getInstance()->$key = $service;
+    }
+
+    /**
+     * Parse the call stack
+     *
+     * @return void
+     */
+    private function parseCallStack() {
+        $traceInfo = $this->builtins->debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT|DEBUG_BACKTRACE_IGNORE_ARGS, 5);
+        
+        // ...
+        
+    }
+    
+    // ...
+    
+}
+```
+
+`Builtins`類的實現：
+
+```php
+<?php
+namespace Ox3f\LaravelUtils\Services;
+
+/**
+ * Class Builtins
+ * @author donie
+ */
+class Builtins
+{
+    public function debug_backtrace()
+    {
+        return call_user_func_array('debug_backtrace', func_get_args());
+    }
+    
+}
+```
+
+把`debug_backtrace()`封裝進了`Builtins`類，並在測試對象中通過這個類調用內建函數。`inject()`用於注入依賴，這樣可以在測試類中把mock注入到測試對象中。
+
+### 測試類的實現
+
+代碼如下：
+
+```php
+<?php
+use PHPUnit\Framework\TestCase;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Log as LaravelLog;
+use Ox3f\LaravelUtils\Log\Log;
+use \Mockery as m;
+
+class LogTest extends TestCase
+{
+    public function setUp()
+    {
+        Auth::shouldReceive('user')
+            ->once()
+            ->andReturn((object)['name' => 'jim',]);
+    }
+
+    public function tearDown()
+    {
+        m::close();
+    }
+
+    /**
+     * @covers Ox3f\LaravelUtils\Log\Log::saveInput
+     * @covers Ox3f\LaravelUtils\Log\Log::saveOutput
+     * @covers Ox3f\LaravelUtils\Log\Log::parseCallStack
+     * @covers Ox3f\LaravelUtils\Log\Log::getInstance
+     * @covers Ox3f\LaravelUtils\Log\Log::__construct
+     * @covers Ox3f\LaravelUtils\Log\Log::__callStatic
+     */
+    public function testAll()
+    {
+        $mock = m::mock('Ox3f\LaravelUtils\Services\Builtins');
+        $mock->shouldReceive('debug_backtrace')
+            ->andReturnUsing(function() use ($mock) {
+                if ($mock->calledInController) {
+                    return json_decode('[{"file":"\/Users\/xbot\/Sites\/sample-project\/vendor\/xbot\/laravel-utils\/src\/Log\/Log.php","line":85,"function":"parseCallStack","class":"Ox3f\\\LaravelUtils\\\Log\\\Log","object":{},"type":"->"},{"file":"\/Users\/xbot\/Sites\/sample-project\/app\/Api\/V1\/Controllers\/WorkController.php","line":29,"function":"saveInput","class":"Ox3f\\\LaravelUtils\\\Log\\\Log","type":"::"},{"function":"save","class":"App\\\Api\\\V1\\\Controllers\\\WorkController","object":{},"type":"->"},{"file":"\/Users\/xbot\/Sites\/sample-project\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Controller.php","line":55,"function":"call_user_func_array"},{"file":"\/Users\/xbot\/Sites\/sample-project\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/ControllerDispatcher.php","line":44,"function":"callAction","class":"Illuminate\\\Routing\\\Controller","object":{},"type":"->"}]', true);
+                } else {
+                    return json_decode('[{"file":"\/Users\/xbot\/Sites\/sample-project\/vendor\/xbot\/laravel-utils\/src\/Log\/Log.php","line":85,"function":"parseCallStack","class":"Ox3f\\\LaravelUtils\\\Log\\\Log","object":{},"type":"->"},{"file":"\/Users\/xbot\/Sites\/sample-project\/app\/Notation.php","line":21,"function":"saveInput","class":"Ox3f\\\LaravelUtils\\\Log\\\Log","type":"::"},{"file":"\/Users\/xbot\/Sites\/sample-project\/app\/Api\/V1\/Controllers\/NotationController.php","line":32,"function":"incrNo","class":"App\\\Notation","type":"::"},{"function":"save","class":"App\\\Api\\\V1\\\Controllers\\\NotationController","object":{},"type":"->"},{"file":"\/Users\/xbot\/Sites\/sample-project\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Controller.php","line":55,"function":"call_user_func_array"}]', true);
+                }
+            });
+        Log::inject('builtins', $mock);
+
+        // test being called in a plain method
+        $mock->calledInController = false;
+        LaravelLog::shouldReceive('debug')
+            ->once()
+            ->with('jim | App\Notation::incrNo | Input:1');
+
+        Log::saveInput(1);
+
+        LaravelLog::shouldReceive('debug')
+            ->once()
+            ->with('jim | App\Notation::incrNo | Output:2');
+
+        Log::saveOutput(2);
+
+        // test being called in a controller action
+        $mock->calledInController = true;
+        Request::shouldReceive('path')
+            ->once()
+            ->andReturn('api/user');
+        Request::shouldReceive('except')
+            ->once()
+            ->with('_url')
+            ->andReturn(['id' => 18,]);
+        LaravelLog::shouldReceive('debug')
+            ->once()
+            ->with('jim | api/user | Input:{"id":18}');
+
+        Log::saveInput();
+
+        Request::shouldReceive('path')
+            ->once()
+            ->andReturn('api/user');
+        LaravelLog::shouldReceive('debug')
+            ->once()
+            ->with('jim | api/user | Output:2');
+
+        Log::saveOutput(2);
+
+        Request::shouldReceive('path')
+            ->once()
+            ->andReturn('api/user');
+        LaravelLog::shouldReceive('error')
+            ->once()
+            ->with('jim | api/user | this is an error');
+
+        Log::error('this is an error');
+        
+        $this->assertEquals(0, 0);
+    }
+}
+```
+
+`Builtins`是個普通類，很容易mock。
+

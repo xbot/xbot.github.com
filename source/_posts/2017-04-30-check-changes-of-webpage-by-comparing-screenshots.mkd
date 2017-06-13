@@ -1,0 +1,33 @@
+---
+title: 通過比較截圖檢查網頁變化
+date: 2017-04-30 17:21:52
+categories: 計算機
+tags:
+- 編程
+- 測試
+---
+
+有時候我們希望檢查代碼或數據的更新對網頁產生的影響，如果能把這個過程集成到git等版本控制系統中，在提交成果的同時自動批量執行，將會極大地提高生產力。
+
+首先網頁的截圖可以用PhantomJS、Headless Chrome實現：
+
+```javascript
+var page = require('webpage').create();
+page.open('http://github.com/', function() {
+  page.render('github.png');
+  phantom.exit();
+});
+```
+
+圖片的差異比較用GraphicsMagick實現：
+
+```bash
+gm compare old.png new.png -file diff.png -highlight-style assign
+```
+
+為方便查看，還可以把截圖做成gif動圖：
+
+```bash
+gm convert -delay 20 old.png diff.png new.png diff.gif
+```
+
