@@ -6,7 +6,7 @@ comments: true
 categories: 計算機
 tags:
 - vim
-- 插件
+- 最佳實踐
 ---
 
 簡述
