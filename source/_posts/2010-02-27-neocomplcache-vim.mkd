@@ -1,0 +1,57 @@
+---
+layout: post
+title: Vim的終極自動補全插件：NeoComplCache
+categories: 計算機
+tags:
+- Vim
+- 配置
+status: publish
+type: post
+published: true
+comments: true
+---
+
+{% img http://lh3.ggpht.com/_ceUJ_lBTHzc/SaV494hGreI/AAAAAAAAAzY/xExf7CzGyv0/s800/the-mug-of-vi.jpg %}
+
+<p>關于自動補全，最初用的是<a href="http://www.vim.org/scripts/script.php?script_id=1643">SuperTab</a>，那個時候Vim的自動補全插件寥寥無幾，也就SuperTab比較有名。不過實際使用過程中這個插件給我的體驗不是很好，原因是補全的準确度不高。</p>
+
+<p>後來出了一個新插件，<a href="http://www.vim.org/scripts/script.php?script_id=1879">AutoComplPop</a>，功能和使用都很簡單。但是很快我就又用回SuperTab，原因是AutoComplPop在輸入的同時實時地查詢匹配的關鍵詞，導緻輸入極不流暢，效率很低。</p>
+
+<p>一直就這麽湊合着用着SuperTab，随着這個插件版本的更新，舊功能不斷地完善，新功能也接二連三地引入，SuperTab在匹配關鍵詞的準确度上有了一些改善，但是新的問題又出現了。SuperTab後來加入一個新功能，對于程序源文件，可以在其引入的文件以及API文件中匹配關鍵詞。比如假設我當前正在編輯a.php，在a.php中有<strong>include 'b.php';</strong>這樣的語句，當我輸入<strong>array</strong>并按下Tab鍵時，SuperTab不但會在當前文件中查詢所有匹配項，還會到b.php中查詢，如果配置過vim、指定一個包含了php的API的文件，則SuperTab還會自動從這個文件中查詢匹配項。按理說這個功能的理念很好，但問題就在于SuperTab做的是實時查詢，如果源文件中包含的文件較多，各個文件又較大，問題就顯而易見了。我不得不在寫程序時小心地使用Tab鍵，否則有時就會出現按一下Tab鍵然後等着Vim在那狂搜的情況。</p>
+
+<p>前兩天發現了<a href="http://www.vim.org/scripts/script.php?script_id=2620">NeoComplCache</a>，光看名字就讓我有點兒興奮，一般使用緩存的速度都很快。這個插件會在Vim打開文件的時候對上下文作一個索引，并把索引結果保存到緩存中。同時，文件更改的内容會在保存的時候被索引。此外，NeoComplCache支持多種關鍵詞索引模式，例如它會判斷當前路徑下的文件或目錄的名字是否匹配補全條件，也可以從緩存的程序語言API中匹配補全條件。到此爲止，它就解決了SuperTab和AutoComplPop共同的效率問題，并具備它們各自的長處。看了一遍文檔，發現這個插件的功能比較細緻，大概有以下一些特點：</p>
+
+<p>1、使用緩存，自動補全時效率高；
+2、生成的關鍵詞列表準确；
+3、支持下劃線分割的關鍵詞，如apple_boy_cat，就可以隻輸入a_b_c，然後補全；
+4、支持駝峰格式匹配關鍵詞，如AppleBoyCat，就可以隻輸入ABC，然後補全；
+5、既可以像AutoComplPop那樣在Vim中輸入的同時自動彈出補全列表，又可以自定義快捷鍵手動觸發；
+6、支持從文件名和目錄名中匹配補全條件；
+7、對于程序源文件，支持從語言API中匹配補全條件；</p>
+
+<p>NeoComplCache的缺點是文檔不全，雖然從隻言片語中發現它還支持Snippet，但從文檔中沒有找到足夠的有用信息。加之一直用<a href="http://www.vim.org/scripts/script.php?script_id=2540">SnipMate</a>感覺不錯，所以目前還是用它來實現snippet功能。</p>
+
+<p>這就有個搭配問題：雖然NeoComplCache不存在補全時的效率問題，但我仍然打算隻在需要補全時才用快捷鍵觸發此功能，最主要的原因是我既希望用Tab鍵觸發SnipMate的代碼塊補全功能，又希望修SuperTab那樣用Tab選擇補全列表中的選項。也就是要達到隻用Tab鍵就可以完成打開自動補全列表、補全列表選項選擇和SnipMate代碼塊替換的效果。但是，如果将Tab映射到觸發自動補全，則補全列表選擇和SnipMate均無法使用Tab，反之亦然。</p>
+
+<p>所以我想如果能讓NeoComplCache、SuperTab、SnipMate和諧共存，那問題就解決了，幾經摸索，終于找到了辦法：</p>
+
+<p>1、設置NeoComplCache不自動彈出補全列表，即在vimrc中加入：</p>
+
+<blockquote>
+  <p>let g:NeoComplCache_DisableAutoComplete = 1</p>
+</blockquote>
+
+<p>2、由于NeoComplCache在手工模式下使用快捷鍵組合<code>&lt;C-X&gt;&lt;C-U&gt;</code>打開補全列表，故設置SuperTab的默認補全操作爲<code>&lt;C-X&gt;&lt;C-U&gt;</code>，即在vimrc中加入：</p>
+
+<blockquote>
+  <p>let g:SuperTabDefaultCompletionType = '<code>&lt;C-X&gt;&lt;C-U&gt;</code>'</p>
+</blockquote>
+
+<p>這樣，NeoComplCache隻負責補全關鍵詞緩存的生成，SuperTab控制Tab鍵的行爲并在需要觸發補全操作時打開補全列表、進而在列表中的選項間移動焦點，而當光标前的關鍵詞是snippet時，SnipMate會被優先調用并完成代碼塊的替換。</p>
+
+<p>就在寫這篇文章的時候，我突然覺得NeoComplCache自動彈出補全列表+SnipMate的方式也挺好，隻是這樣就不能用Tab鍵選擇列表中的選項了。</p>
+
+### 相關閱讀：
+
+* [用neocomplete換掉了YouCompleteMe](/post/replace-youcompleteme-with-neocomplete/)
+* [How to Make YouCompleteMe Compatible with UltiSnips](/post/make-youcompleteme-ultisnips-compatible/)

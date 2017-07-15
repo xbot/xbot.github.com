@@ -6,10 +6,6 @@ comments: true
 categories: 計算機
 tags:
 - Vim
-- YouCompleteMe
-- UltiSnips
-- NeoComplCache
-- SuperTab
 - 插件
 ---
 I replaced [NeoComplCache][] with [YouCompleteMe][] today. The main reason is for the auto-complete feature and the fast speed. Besides, it seems that YCM provides more features than NCC.
@@ -33,9 +29,16 @@ Then set the default action of SuperTab to triggering \<C-TAB\>:
 
 OK, job done.
 
+### 相關閱讀：
+
+* [用neocomplete換掉了YouCompleteMe](/post/replace-youcompleteme-with-neocomplete/)
+* [Vim的終極自動補全插件：NeoComplCache](/post/neocomplcache-vim/)
+
 [NeoComplCache]: https://github.com/Shougo/neocomplcache
 [YouCompleteMe]: https://github.com/Valloric/YouCompleteMe
 [jedi]: https://github.com/davidhalter/jedi
 [post1]: /post/neocomplcache-vim/
 [SuperTab]: https://github.com/ervandew/supertab
 [UltiSnips]: https://github.com/SirVer/ultisnips
+
+
