@@ -1,0 +1,33 @@
+---
+title: 利用goyo.vim專注寫作
+date: 2017-07-29 16:48:45
+categories: 計算機
+tags:
+- vim
+- 最佳實踐
+---
+
+goyo.vim是給vim提供專注寫作模式的插件，配合markdown效果不錯：
+
+![](https://ws4.sinaimg.cn/large/006tKfTcly1fi0vvphi70j31400p0dj4.jpg)
+
+最好在單獨的vim實例中使用，已發現和vim-workspace配合不好的情況。
+
+對markdown文件自動開啓goyo的配置如下：
+
+```vim
+function! s:auto_goyo()
+    if &ft == 'markdown'
+        Goyo 80
+    else
+        let bufnr = bufnr('%')
+        Goyo!
+        execute 'b '.bufnr
+    endif
+endfunction
+
+augroup goyo_markdown
+    autocmd!
+    autocmd BufNewFile,BufRead * call s:auto_goyo()
+augroup END
+```
