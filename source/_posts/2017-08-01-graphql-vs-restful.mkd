@@ -15,7 +15,95 @@ GraphQL實現的是一套邏輯積木，每個封裝好的業務邏輯都是原�
 
 當然，GraphQL也有一些短板。比如緩存，對於RESTfull接口，可以根據操作的冪等性實現負載均衡層面的緩存，而對於GraphQL，由於請求數據格式靈活且可能很大，請求會用POST方式發送，這樣就必須改變緩存的實現方式。再一點是嵌套的層級問題，GraphQL的靈活性允許查詢類型之間彼此嵌套，如果層級過多，可能導致嚴重的性能和可用性問題，因此需要注意限制嵌套的層級。還有就是GraphQL的實現複雜度比RESTful要高，需要權衡使用哪種實現方案。
 
-> /graphql?query=query+FetchPosts{posts{id,title}}
+GraphQL用schema管理接口，可以根據業務等因素劃分schema，例如需要權限驗證的和公開的。每個schema包含兩類接口：query和mutation，分別用來查詢和變更數據。
+
+下面在Laravel中簡單實現一個query接口。
+
+先安裝[folklore/graphql](https://github.com/Folkloreatelier/laravel-graphql)庫。
+
+實現文章類型：
+
+```php
+namespace App\GraphQL\Type;
+
+use GraphQL\Type\Definition\Type;
+use Folklore\GraphQL\Support\Type as GraphQLType;
+
+class PostType extends GraphQLType {
+
+    public function fields()
+	{
+		return [
+			'id' => [
+				'type' => Type::nonNull(Type::string()),
+				'description' => 'The id of the post'
+			],
+			'title' => [
+				'type' => Type::string(),
+				'description' => 'Post title'
+			]
+		];
+	}
+
+    protected function resolveTitleField($root, $args)
+	{
+		return $root->post_title;
+	}
+
+}
+```
+
+實現文章的查詢邏輯：
+
+```php
+namespace App\GraphQL\Query;
+
+use GraphQL;
+use GraphQL\Type\Definition\Type;
+use Folklore\GraphQL\Support\Query;
+use App\Models\Post;
+
+class PostQuery extends Query {
+
+    public function type()
+	{
+		return Type::listOf(GraphQL::type('Post'));
+    }
+
+    public function resolve($root, $args)
+	{
+		if(isset($args['id'])) {
+			return Post::where('id' , $args['id'])->get();
+		} else {
+			return Post::all();
+		}
+	}
+
+}
+```
+
+在`config/graphql.php`中註冊類型和邏輯：
+
+```php
+'schemas' => [
+   'default' => [
+       'query' => [
+           'posts' => 'App\GraphQL\Query\PostQuery'
+       ],
+       'mutation' => [
+
+       ]
+   ],
+],
+
+'types' => [
+   'Post' => 'App\GraphQL\Type\PostType',
+],
+```
+
+請求及結果如下：
+
+![](http://ou1l9js54.bkt.clouddn.com/2017-08-02-15016540828445.jpg)
 
 GraphQL並不是RESTful的替代方案，是否用前者替代後者，取決於是否願意為了靈活性而增加複雜度。兩者有各自的適用領域，GraphQL更適合用來實現開放接口。
 
