@@ -1,0 +1,37 @@
+---
+title: 使neocomplete和ultisnips共用tab鍵的方法
+date: 2017-08-11 14:43:14
+categories: 計算機
+tags:
+- vim
+- 最佳實踐
+---
+
+昨天用vim-clevertab換掉了supertab，但是實際使用中總是出莫名其妙的問題。看了一下插件源碼，使用全局變量判斷狀態，這是個很不靠譜的方案，所以還是卸掉了。
+
+下面的配置可以很好的解決問題：
+
+```vim
+let g:UltiSnipsExpandTrigger="<c-tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+let g:UltiSnipsSnippetsDir='~/.vim/UltiSnips'
+let g:ulti_expand_or_jump_res = 0
+function! CleverTab()"{{{
+    call UltiSnips#ExpandSnippetOrJump()
+    if g:ulti_expand_or_jump_res
+        return ""
+    else
+        if pumvisible()
+            return "\<c-n>"
+        else
+            return neocomplete#start_manual_complete()
+        endif
+    endif
+endfunction"}}}
+inoremap <silent> <tab> <c-r>=CleverTab()<cr>
+snoremap <silent> <tab> <esc>:call UltiSnips#ExpandSnippetOrJump()<cr>
+```
+
+ultisnips沒有禁用按鍵映射的開關，而默認的映射會干擾上述配置，所以這裡把默認的映射改成了`<c-tab>`。
+
