@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>UltraBlog.vim v3.4.0: 正則表達式、批量替換和調試模式 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  四月 29, 2012
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/python/'>Python</a> 
+    
+      <a href='/tags/編程/'>編程</a> 
+    
+      <a href='/tags/vim/'>Vim</a> 
+    
+      <a href='/tags/博客/'>博客</a> 
+    
+      <a href='/tags/plugin/'>Plugin</a> 
+    
+      <a href='/tags/ultrablog-vim/'>UltraBlog.vim</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">UltraBlog.vim v3.4.0: 正則表達式、批量替換和調試模式</h1>
+  <section class="post-content article-entry">
+    <p>這次的更新主要引入了支持正則表達式的全文檢索、批量替換和調試模式。</p>
+<h2>正則表達式</h2>
+<p>我一直覺得原來的全文檢索有一個遺憾，雖然可以通過多個關鍵詞實現較為精確的查詢，但還是不如正則表達式靈活和精確。</p>
+<p>這是個蓄謀已久的需求，但直到真正做起來，才發現很多有意思的東西。雖然SQLite3提供支持正則表達式查詢的<strong>“REGEX”</strong>關鍵詞，但並沒有實際實現這個功能，而是需要寫程序實現並在數據庫接口中註冊這個函數：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> sqlite3</div><div class="line"></div><div class="line">conn = sqlite3.connect(<span class="string">'/tmp/your-database-file.db'</span>)</div><div class="line"></div><div class="line"><span class="comment"># 使用正則表達式匹配給定內容的函數，返回布爾類型</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">regexp_search</span><span class="params">(expr, item)</span>:</span></div><div class="line">    <span class="string">"""Check if the item has a sub-string which matches the expr"""</span></div><div class="line">    reg = re.compile(expr)</div><div class="line">    <span class="keyword">return</span> reg.search(item) <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span></div><div class="line"></div><div class="line"><span class="comment"># 在數據庫中註冊這個函數</span></div><div class="line">conn.create_function(<span class="string">'REGEXP'</span>, <span class="number">2</span>, regexp_search)</div><div class="line"></div><div class="line">cur = conn.execute(<span class="string">'select id,title from post where content REGEXP ?'</span>, <span class="string">'\babc\b'</span>)</div><div class="line">row = cur.fetchone()</div><div class="line"><span class="keyword">print</span> row</div><div class="line"></div><div class="line">conn.close()</div></pre></td></tr></table></figure>
+
+<p>在SQLAlchemy中具體的實現方式是：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 註冊函數</span></div><div class="line">dbe = sqlalchemy.create_engine(<span class="string">"sqlite:///tmp/your-database-file.db"</span>)</div><div class="line">conn = dbe.connect()</div><div class="line">conn.connection.create_function(<span class="string">'REGEXP'</span>, <span class="number">2</span>, regexp_search)</div><div class="line"></div><div class="line"><span class="comment"># 在SQL Expression Language中創建查詢條件</span></div><div class="line">tbl = Post.__table__</div><div class="line">cond_1 = tbl.c.title.op(<span class="string">'regexp'</span>)(<span class="string">r'\babc\b'</span>)</div><div class="line">cond_2 = tbl.c.content.op(<span class="string">'regexp'</span>)(<span class="string">r'\babc\b'</span>)</div></pre></td></tr></table></figure>
+
+<p>和普通的全文檢索一樣，正則表達式的全文檢索也支持使用多個表達式作為查詢條件，多個條件之間是與的關係。現在可以這樣查詢所有包含“UltraBlog.vim”但不把推廣代碼算在內的文章了：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">:UBRegexSearch [^\[]UltraBlog\.<span class="keyword">vim</span>[^\]]</div></pre></td></tr></table></figure>
+
+<h2>批量替換</h2>
+<p>在我換過新域名後，我就覺得這個功能很有必要了：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">:UBReplace http<span class="variable">s:</span>//sinolog.it http<span class="variable">s:</span>//<span class="number">0</span>x3f.org</div></pre></td></tr></table></figure>
+
+<p>包含第一個參數內容並被替換的文章數目會顯示在Vim的命令輸出緩衝區中。</p>
+<p>有了前面實現全文檢索支持正則表達式的嘗試，再實現支持正則表達式的批量替換就容易多了：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 轉換字符串成raw格式的函數</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">raw</span><span class="params">(text)</span>:</span></div><div class="line">    <span class="string">"""Returns a raw string representation of text"""</span></div><div class="line">    escape_dict=&#123;<span class="string">'\a'</span>:<span class="string">r'\a'</span>, <span class="string">'\b'</span>:<span class="string">r'\b'</span>, <span class="string">'\c'</span>:<span class="string">r'\c'</span>, <span class="string">'\f'</span>:<span class="string">r'\f'</span>, <span class="string">'\n'</span>:<span class="string">r'\n'</span>,</div><div class="line">               <span class="string">'\r'</span>:<span class="string">r'\r'</span>, <span class="string">'\t'</span>:<span class="string">r'\t'</span>, <span class="string">'\v'</span>:<span class="string">r'\v'</span>, <span class="string">'\''</span>:<span class="string">r'\''</span>, <span class="string">'\"'</span>:<span class="string">r'\"'</span>,</div><div class="line">               <span class="string">'\0'</span>:<span class="string">r'\0'</span>, <span class="string">'\1'</span>:<span class="string">r'\1'</span>, <span class="string">'\2'</span>:<span class="string">r'\2'</span>, <span class="string">'\3'</span>:<span class="string">r'\3'</span>, <span class="string">'\4'</span>:<span class="string">r'\4'</span>,</div><div class="line">               <span class="string">'\5'</span>:<span class="string">r'\5'</span>, <span class="string">'\6'</span>:<span class="string">r'\6'</span>, <span class="string">'\7'</span>:<span class="string">r'\7'</span>, <span class="string">'\8'</span>:<span class="string">r'\8'</span>, <span class="string">'\9'</span>:<span class="string">r'\9'</span>&#125;</div><div class="line">    <span class="keyword">return</span> <span class="string">""</span>.join([escape_dict.get(char,char) <span class="keyword">for</span> char <span class="keyword">in</span> text])</div><div class="line"></div><div class="line"><span class="comment"># 使用正則表達式替換字符串的函數</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">regex_replace</span><span class="params">(string, expr, repl)</span>:</span></div><div class="line">    <span class="string">"""Do substitutions on the string for repls matching the expr"""</span></div><div class="line">    r = re.compile(raw(expr))</div><div class="line">    <span class="keyword">return</span> r.sub(repl, string)</div><div class="line"></div><div class="line"><span class="comment"># 在數據庫中註冊這個函數</span></div><div class="line">conn.connection.create_function(<span class="string">'regex_replace'</span>, <span class="number">3</span>, regex_replace)</div><div class="line"></div><div class="line"><span class="comment"># 在SQL語句中使用這個函數</span></div><div class="line">sql_replace = <span class="string">"update post set title=regex_replace(title,:needle,:replacement),content=regex_replace(content,:needle,:replacement)"</span></div><div class="line">conn.execute(sql_replace, &#123;<span class="string">'needle'</span>:<span class="string">r'\babc\b'</span>, <span class="string">'replacement'</span>:<span class="string">'xyz'</span>&#125;)</div></pre></td></tr></table></figure>
+
+<p>最終，這個命令是這樣的：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">:UBRegexReplace \babc\<span class="keyword">b</span> xyz</div></pre></td></tr></table></figure>
+
+<p>實現批量替換容易，但要解決由此引出的一個問題就費周折了，就是批量替換過文章內容後怎樣和博客同步的問題，現在我還沒有好的想法，留作以後實現。</p>
+<h2>調試模式</h2>
+<p>開啟調試模式可以將所有被執行的SQL語句顯示在Vim的命令輸出緩衝區中，在有異常拋出時，也可以顯示堆棧信息。由於開啟調試模式既不需要修改代碼，也不需要重啟Vim，這可以極大地方便開發時對UltraBlog.vim的調試，也能使用戶提交問題時能反饋更多更詳細的信息。</p>
+<p>以下三個命令用於控制調試模式的開啟狀態：</p>
+<ul>
+<li><code>:UBEnableDebug</code></li>
+<li><code>:UBDisableDebug</code></li>
+<li><code>:UBToggleDebug</code></li>
+</ul>
+<h2>其它內容</h2>
+<p>本次更新的內容如下：</p>
+<ul>
+<li>Feature: Add the command <strong>:UBRegexSearch</strong>, doing full-text searches with regular expressions !</li>
+<li>Feature: Add the command <strong>:UBReplace</strong>, doing full-text substitutions.</li>
+<li>Feature: Add the command <strong>:UBRegexReplace</strong>, doing full-text substitutions with regular expressions.</li>
+<li>Feature: Add commands <strong>:UBEnableDebug</strong>, <strong>:UBDisableDebug</strong>, <strong>:UBToggleDebug</strong> and an option <strong>ub_debug</strong>. In debug mode, SQL statements and stack traces of exceptions will be displayed.</li>
+<li>Change:  Undo keywords highlighting after executing <strong>:UBList</strong>.</li>
+<li>Bugfix:  Exceptions raised when opening the current item under cursor in item lists if the option <strong>ub_hotkey_save_current_item</strong> has not been set. Now this options comes with a default value.</li>
+</ul>
+<p>關於UB的詳細信息在<a href="http://0x3f.org/?p=1894">這裡</a>。</p>
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/ultrablog-v350-released/">
+        ← prev <!--UltraBlog.vim v3.5.0: 內建瀏覽器-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/define-massive-constants-using-apc/">
+        <!--PHP大量常量應集中使用APC定義--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

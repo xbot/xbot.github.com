@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>SQL Server的自定义函数：统计两日期之间工作日的数量 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  三月 13, 2010
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/算法/'>算法</a> 
+    
+      <a href='/tags/編程/'>編程</a> 
+    
+      <a href='/tags/sql/'>SQL</a> 
+    
+      <a href='/tags/数据库/'>数据库</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">SQL Server的自定义函数：统计两日期之间工作日的数量</h1>
+  <section class="post-content article-entry">
+    <p>前段时间工作中遇到的一个需求，要求计算两个日期之间工作日的数量，即排除期间所有的周六和周日之后的天数。</p>
+
+<p>在网上找到一个自定义函数，原函数有些小问题，例如如果传入的截止日期如果有时间且足够大，则计算结果可能出错，修正后代码如下：</p>
+
+<p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="comment">--函数：类似datediff，不统计期间所有的周六和周日</span></div><div class="line">if exists (<span class="keyword">select</span> * <span class="keyword">from</span> dbo.sysobjects <span class="keyword">where</span> <span class="keyword">id</span>=object_id(N<span class="string">'[dbo].[f_WorkDay]'</span>) <span class="keyword">and</span> xtype <span class="keyword">in</span> (N<span class="string">'FN'</span>,N<span class="string">'IF'</span>,N<span class="string">'TF'</span>)) </div><div class="line"><span class="keyword">drop</span> <span class="keyword">function</span> [dbo].[f_WorkDay] </div><div class="line"><span class="keyword">GO</span></div><div class="line"></div><div class="line"><span class="keyword">CREATE</span> <span class="keyword">FUNCTION</span> f_WorkDay(</div><div class="line">@dt_begin   datetime,</div><div class="line">@dt_end     datetime </div><div class="line">)<span class="keyword">RETURNS</span> <span class="built_in">int</span> </div><div class="line"><span class="keyword">AS</span> </div><div class="line"><span class="keyword">BEGIN</span> </div><div class="line">    <span class="keyword">DECLARE</span> @workday <span class="built_in">int</span>,@i <span class="built_in">int</span>,@bz <span class="built_in">bit</span>,@dt datetime </div><div class="line"></div><div class="line">    <span class="keyword">set</span> @dt_begin = <span class="keyword">convert</span>(datetime, <span class="keyword">convert</span>(<span class="keyword">nvarchar</span>(<span class="number">32</span>), @dt_begin, <span class="number">23</span>))</div><div class="line">    <span class="keyword">set</span> @dt_end = <span class="keyword">convert</span>(datetime, <span class="keyword">convert</span>(<span class="keyword">nvarchar</span>(<span class="number">32</span>), @dt_end, <span class="number">23</span>))    </div><div class="line"></div><div class="line">    <span class="keyword">IF</span> @dt_begin&gt;@dt_end </div><div class="line">        <span class="keyword">SELECT</span> @bz=<span class="number">1</span>,@dt=@dt_begin,@dt_begin=@dt_end,@dt_end=@dt </div><div class="line">    <span class="keyword">ELSE</span> </div><div class="line">        <span class="keyword">SET</span> @bz=<span class="number">0</span> </div><div class="line"></div><div class="line">    <span class="keyword">SELECT</span> @i=<span class="keyword">DATEDIFF</span>(<span class="keyword">Day</span>,@dt_begin,@dt_end),@workday=@i/<span class="number">7</span>*<span class="number">5</span>,@dt_begin=<span class="keyword">DATEADD</span>(<span class="keyword">Day</span>,@i/<span class="number">7</span>*<span class="number">7</span>,@dt_begin) </div><div class="line"></div><div class="line">    <span class="keyword">WHILE</span> @dt_begin&lt;@dt_end </div><div class="line">    <span class="keyword">BEGIN</span> </div><div class="line">        <span class="keyword">SELECT</span> @workday=<span class="keyword">CASE</span> <span class="keyword">WHEN</span> (@@DATEFIRST+<span class="keyword">DATEPART</span>(<span class="keyword">Weekday</span>,@dt_begin)<span class="number">-1</span>)%<span class="number">7</span> <span class="keyword">BETWEEN</span> <span class="number">1</span> <span class="keyword">AND</span> <span class="number">5</span> <span class="keyword">THEN</span> @workday+<span class="number">1</span> <span class="keyword">ELSE</span> @workday <span class="keyword">END</span>,@dt_begin=@dt_begin+<span class="number">1</span> </div><div class="line">    <span class="keyword">END</span> </div><div class="line"></div><div class="line">    <span class="keyword">RETURN</span>(<span class="keyword">CASE</span> <span class="keyword">WHEN</span> @bz=<span class="number">1</span> <span class="keyword">THEN</span> -@workday <span class="keyword">ELSE</span> @workday <span class="keyword">END</span>) </div><div class="line"><span class="keyword">END</span> </div><div class="line"><span class="keyword">GO</span></div></pre></td></tr></table></figure>
+</p>
+
+<p>此函数的原理是，使用datediff计算两日期之间的差值A，然后取A与7的商，即计算期间内有几个整周。然后使用这个商与5相乘，得到所有整周内的工作日天数B。接着，使用A除以7再乘以7得到C，这就约去了A中最后不到一个整周的天数。再在起始日期的基础上加上C，得到一个新的起始日期，然后从这个新的起始日期开始遍历至截止日期的每一天，每增加一天，判断若此日期是工作日，则在C的基础上累加一。判断一个日期（假设使用@dt_begin表示）是否是工作日的方法是：<strong>(@@datefirst+datepart(Weekday, @dt_begin)-1)%7</strong>的值在1和5之间。</p>
+
+<p>此外还有一个需求是计算两个日期之间排除最后一个周六周日后的天数，仿照上面的函数实现了一个新函数，现在想来，有点儿把问题复杂化了，完全可以直接从后往前推的。</p>
+
+<p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line"><span class="comment">--函数：类似datediff，不统计截止日期@dt_end前最近一次的周六和周日，若dt_end是周日，则不统计其前面的那个周六。</span></div><div class="line">if exists (<span class="keyword">select</span> * <span class="keyword">from</span> dbo.sysobjects <span class="keyword">where</span> <span class="keyword">id</span>=object_id(N<span class="string">'[dbo].[f_WorkDayOnce]'</span>) <span class="keyword">and</span> xtype <span class="keyword">in</span> (N<span class="string">'FN'</span>,N<span class="string">'IF'</span>,N<span class="string">'TF'</span>)) </div><div class="line"><span class="keyword">drop</span> <span class="keyword">function</span> [dbo].[f_WorkDayOnce]</div><div class="line"><span class="keyword">GO</span></div><div class="line"></div><div class="line"><span class="keyword">CREATE</span> <span class="keyword">FUNCTION</span> f_WorkDayOnce(</div><div class="line">@dt_begin   datetime,</div><div class="line">@dt_end     datetime </div><div class="line">)<span class="keyword">RETURNS</span> <span class="built_in">int</span> </div><div class="line"><span class="keyword">AS</span> </div><div class="line"><span class="keyword">BEGIN</span> </div><div class="line">    <span class="keyword">DECLARE</span> @day_count <span class="built_in">int</span>,@<span class="keyword">weekday</span> <span class="built_in">int</span>,@weekend_dropped <span class="built_in">int</span>,@i <span class="built_in">int</span>,@bz <span class="built_in">bit</span>,@dt datetime </div><div class="line"></div><div class="line">    <span class="keyword">set</span> @dt_begin = <span class="keyword">convert</span>(datetime, <span class="keyword">convert</span>(<span class="keyword">nvarchar</span>(<span class="number">32</span>), @dt_begin, <span class="number">23</span>))</div><div class="line">    <span class="keyword">set</span> @dt_end = <span class="keyword">convert</span>(datetime, <span class="keyword">convert</span>(<span class="keyword">nvarchar</span>(<span class="number">32</span>), @dt_end, <span class="number">23</span>))    </div><div class="line"></div><div class="line">    <span class="keyword">IF</span> @dt_begin&gt;@dt_end </div><div class="line">        <span class="keyword">SELECT</span> @bz=<span class="number">1</span>,@dt=@dt_begin,@dt_begin=@dt_end,@dt_end=@dt </div><div class="line">    <span class="keyword">ELSE</span> </div><div class="line">        <span class="keyword">SET</span> @bz=<span class="number">0</span> </div><div class="line"></div><div class="line">    <span class="keyword">SELECT</span> @i=<span class="keyword">DATEDIFF</span>(<span class="keyword">Day</span>,@dt_begin,@dt_end),@<span class="keyword">weekday</span>=(@@datefirst+<span class="keyword">datepart</span>(<span class="keyword">weekday</span>,@dt_end)<span class="number">-1</span>)%<span class="number">7</span>,@day_count=@i,@weekend_dropped=<span class="number">0</span></div><div class="line"></div><div class="line">    <span class="keyword">if</span> @i=<span class="number">0</span></div><div class="line">        <span class="keyword">set</span> @day_count=<span class="number">0</span></div><div class="line">    <span class="keyword">else</span></div><div class="line">    <span class="keyword">begin</span></div><div class="line">        <span class="keyword">if</span> @<span class="keyword">weekday</span>=<span class="number">0</span></div><div class="line">            <span class="keyword">set</span> @day_count=@i<span class="number">-1</span></div><div class="line">        <span class="keyword">else</span></div><div class="line">        <span class="keyword">begin</span></div><div class="line">            <span class="keyword">while</span> @dt_begin&lt;@dt_end <span class="keyword">and</span> @weekend_dropped&lt;<span class="number">2</span></div><div class="line">            <span class="keyword">begin</span></div><div class="line">                <span class="keyword">select</span> @weekend_dropped=@weekend_dropped+(<span class="keyword">case</span> <span class="keyword">when</span> (@@datefirst+<span class="keyword">datepart</span>(<span class="keyword">weekday</span>,@dt_begin)<span class="number">-1</span>)%<span class="number">7</span> <span class="keyword">between</span> <span class="number">1</span> <span class="keyword">and</span> <span class="number">5</span> <span class="keyword">then</span> <span class="number">0</span> <span class="keyword">else</span> <span class="number">1</span> <span class="keyword">end</span>),@dt_begin=@dt_begin+<span class="number">1</span></div><div class="line">            <span class="keyword">end</span></div><div class="line">            <span class="keyword">select</span> @day_count=@day_count-@weekend_dropped</div><div class="line">        <span class="keyword">end</span></div><div class="line">    <span class="keyword">end</span></div><div class="line"></div><div class="line">    <span class="keyword">RETURN</span>(<span class="keyword">CASE</span> <span class="keyword">WHEN</span> @bz=<span class="number">1</span> <span class="keyword">THEN</span> -@day_count <span class="keyword">ELSE</span> @day_count <span class="keyword">END</span>) </div><div class="line"><span class="keyword">END</span> </div><div class="line"><span class="keyword">GO</span></div></pre></td></tr></table></figure>
+</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/starting-tea-ceremony/">
+        ← prev <!--开始玩儿茶道-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/supernatural-phenomenon-of-controlling-external-processes-in-python/">
+        <!--Python控制外部进程的灵异事件--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

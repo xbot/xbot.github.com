@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>Git Reset、Revert和Checkout的區別 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  二月 9, 2017
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/筆記/'>筆記</a> 
+    
+      <a href='/tags/git/'>git</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">Git Reset、Revert和Checkout的區別</h1>
+  <section class="post-content article-entry">
+    <p>reset在提交層面，是將HEAD設定到指定的提交，通常用來捨棄最新的幾個提交。在文件層面，是將指定的提交中的該文件保存到暫存區，工作區中的文件不變。</p>
+<p>reset有三個常用的參數：--mixed、--soft和--hard。</p>
+<p>在提交層面，--mixed是默認值，影響暫存區，不影響工作區；--soft將HEAD版本保存到暫存區，並將HEAD設定到指定的提交，用來合併提交歷史；--hard既影響暫存區，也影響工作區。</p>
+<p>在文件層面，--soft和--hard均會報錯，不支持這兩個選項。</p>
+<p>在提交層面，執行過reset後如果需要撤銷，使用reflog命令查看之前HEAD的hash，通過reset --hard恢復到該版本。</p>
+<p>checkout在提交層面，用來切換分支或檢出到指定的提交。對於後者，如果增加了新的提交，在切換到其它分支後，再切換回來時，這些提交將會丟失，如果希望保存這些提交，在切換到其它分支前，創建一個新的分支。</p>
+<p>revert用來通過創建一個新的提交來回滾一個提交，因此，和reset不同，並不會改變提交的歷史。</p>
+<p>對於回滾一次提交的場景，revert比reset安全，所以revert適用於公共分支，reset適用於私有分支。</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/websocket-connection-header-value-must-contain-upgrade/">
+        ← prev <!--WebSocket: Connection Header Value Must Contain Upgrade-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/migrate-octopress-to-hexo/">
+        <!--從Octopress遷移到Hexo--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

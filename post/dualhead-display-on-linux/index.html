@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>Linux下雙屏顯示的設置 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  八月 4, 2011
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/linux/'>Linux</a> 
+    
+      <a href='/tags/配置/'>配置</a> 
+    
+      <a href='/tags/計算機/'>計算機</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">Linux下雙屏顯示的設置</h1>
+  <section class="post-content article-entry">
+    <p>RandR是對X11的一個擴展協議，允許在不重啟X的情況下修改輸出的一些參數並使之生效，xrandr是該協議的命令行界面，它的功能之一就是用來設置雙屏顯示。</p>
+
+<p>缺省情況下，外接顯示器後啟用的是屏幕複製模式，即兩個屏幕顯示完全相同的內容。使用命令<code>xrandr -q</code>查看當前的輸出狀態：</p>
+
+<blockquote>
+  <p>Screen 0: minimum 320 x 200, current 1920 x 1080, maximum 8192 x 8192
+  LVDS1 connected 1280x800+0+0 (normal left inverted right x axis y axis) 261mm x 163mm
+    1280x800       60.0<em>+   60.0     50.0 <br>
+    1024x768       75.1     70.1     60.0 <br>
+    800x600        72.2     75.0     60.3     56.2 <br>
+    768x576        75.0     72.0     60.0 <br>
+    640x480        72.8     75.0     60.0     59.9 <br>
+  VGA1 connected 1920x1080+0+0 (normal left inverted right x axis y axis) 509mm x 286mm
+    1920x1080      60.0</em>+
+    1680x1050      60.0 <br>
+    1280x1024      75.0     60.0 <br>
+    1440x900       59.9 <br>
+    1280x960       60.0 <br>
+    1024x768       75.1     70.1     60.0 <br>
+    832x624        74.6 <br>
+    800x600        72.2     75.0     60.3     56.2 <br>
+    640x480        72.8     75.0     66.7     60.0 <br>
+    720x400        70.1 <br>
+  HDMI1 disconnected (normal left inverted right x axis y axis)
+  DP1 disconnected (normal left inverted right x axis y axis)
+  HDMI2 disconnected (normal left inverted right x axis y axis)
+  DP2 disconnected (normal left inverted right x axis y axis)
+  DP3 disconnected (normal left inverted right x axis y axis)</p>
+</blockquote>
+
+<p>可見，筆記本電腦的屏幕輸出（<em>LVDS1</em>）的顯示分辨率是1280x800，外接顯示器的輸出（<em>VGA1</em>）的分辨率是1920x1080。兩個輸出在整個虛擬屏幕（<em>名稱：Screen 0；當前大小：1920x1080；最大：8192x8192</em>）上的坐標都是+0+0。所以在外接顯示器中可以看到屏幕左上角有一個1280x800分辨率的小屏幕。</p>
+
+<p>屏幕複製模式最常用於外接投影儀，現在我需要兩個屏幕分別顯示在各自的顯示器中，並在兩個屏幕中顯示不同的內容（<em>也就是Windows下設置雙屏顯示時選擇的擴展模式</em>）。</p>
+
+<p>由於我將筆記本電腦放在外接顯示器的左邊，所以為了操作的自然，使用命令<code>xrandr --output VGA1 --right-of LVDS1</code>將外接顯示器的輸出在虛擬屏幕上的位置設置在筆記本電腦的輸出的右邊，示意圖如下：</p>
+
+<p><a href="https://picasaweb.google.com/lh/photo/twh2zzOQbv1YrOA_WPPxMg?feat=embedwebsite" target="_blank" rel="external"><img src="https://lh5.googleusercontent.com/-otYnRD5mkv4/Tjqox_Fjl4I/AAAAAAAABzI/FxTmXNf-lk0/s640/xrandr%2525E8%2525A8%2525AD%2525E7%2525BD%2525AE%2525E9%25259B%252599%2525E5%2525B1%25258F%2525E9%2525A1%2525AF%2525E7%2525A4%2525BA.png" height="215" width="640"></a></p>
+
+<p>這樣，兩個顯示器中就可以顯示不同的內容了。由於屬於同一個虛擬屏幕，當然也可以將一個窗口跨過邊界從一個顯示器拖到另一個顯示器中。再使用命令<code>xrandr -q</code>查看現在的輸出狀態：</p>
+
+<blockquote>
+  <p>Screen 0: minimum 320 x 200, current 3200 x 1080, maximum 8192 x 8192
+  LVDS1 connected 1280x800+0+0 (normal left inverted right x axis y axis) 261mm x 163mm
+    1280x800       60.0<em>+   60.0     50.0 <br>
+    1024x768       75.1     70.1     60.0 <br>
+    800x600        72.2     75.0     60.3     56.2 <br>
+    768x576        75.0     72.0     60.0 <br>
+    640x480        72.8     75.0     60.0     59.9 <br>
+  VGA1 connected 1920x1080+1280+0 (normal left inverted right x axis y axis) 509mm x 286mm
+    1920x1080      60.0</em>+
+    1680x1050      60.0 <br>
+    1280x1024      75.0     60.0 <br>
+    1440x900       59.9 <br>
+    1280x960       60.0 <br>
+    1024x768       75.1     70.1     60.0 <br>
+    832x624        74.6 <br>
+    800x600        72.2     75.0     60.3     56.2 <br>
+    640x480        72.8     75.0     66.7     60.0 <br>
+    720x400        70.1 <br>
+  HDMI1 disconnected (normal left inverted right x axis y axis)
+  DP1 disconnected (normal left inverted right x axis y axis)
+  HDMI2 disconnected (normal left inverted right x axis y axis)
+  DP2 disconnected (normal left inverted right x axis y axis)
+  DP3 disconnected (normal left inverted right x axis y axis)</p>
+</blockquote>
+
+<p>使用xrandr做的設置只對當前的X會話有效，重啟後恢復原樣。使設置持久化的方法為修改xorg.conf或設置自動執行命令。據說有一些圖形界面封裝的xrandr的前端，完善的桌面環境如GNOME和KDE應該也是可以在圖形界面中設置的，不過我所使用的XFCE目前似乎只能啟用/禁用複製模式，而不支持在圖形界面中設置擴展模式。</p>
+
+<p>下面的腳本用來簡化雙屏顯示的設置：</p>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"></div><div class="line"><span class="comment"># Restart trayer and cairo-dock which I use on my desktop</span></div><div class="line"><span class="function"><span class="title">restart_widget</span></span>()</div><div class="line">&#123;</div><div class="line">    killall trayer</div><div class="line">    killall cairo-dock</div><div class="line"></div><div class="line">    <span class="comment"># Another script which starts trayer and set some options</span></div><div class="line">    mytrayer</div><div class="line">    cairo-dock &amp;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="title">set_dualhead</span></span>()</div><div class="line">&#123;</div><div class="line">    xrandr --output LVDS1 --auto</div><div class="line">    xrandr --output VGA1 --auto</div><div class="line">    xrandr --output VGA1 --right-of LVDS1</div><div class="line">    restart_widget</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="title">set_lvds</span></span>()</div><div class="line">&#123;</div><div class="line">    xrandr --output VGA1 --off</div><div class="line">    xrandr --output LVDS1 --auto</div><div class="line">    restart_widget</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="title">set_vga</span></span>()</div><div class="line">&#123;</div><div class="line">    xrandr --output LVDS1 --off</div><div class="line">    xrandr --output VGA1 --auto</div><div class="line">    restart_widget</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">if</span> [ <span class="variable">$#</span> -eq 0 ]; <span class="keyword">then</span></div><div class="line">    set_dualhead</div><div class="line">    <span class="built_in">exit</span></div><div class="line"><span class="keyword">fi</span></div><div class="line"></div><div class="line"><span class="keyword">case</span> <span class="string">"<span class="variable">$1x</span>"</span> <span class="keyword">in</span></div><div class="line">    <span class="string">"lvdsx"</span>) set_lvds;;</div><div class="line">    <span class="string">"vgax"</span>) set_vga;;</div><div class="line">    *) <span class="built_in">echo</span> <span class="string">'Unknown parameter !'</span>;;</div><div class="line"><span class="keyword">esac</span></div></pre></td></tr></table></figure>
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/enable-code-snippet-highlighting-for-ultrablog-vim-templates/">
+        ← prev <!--Enable Code Snippet Highlighting For UltraBlog.vim Templates-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/ultrablog-v300-released/">
+        <!--UltraBlog.vim v3.0釋出：全文檢索與事件驅動--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

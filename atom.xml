@@ -1,0 +1,643 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>晴耕雨讀</title>
+  <subtitle>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://0x3f.org/"/>
+  <updated>2017-08-14T13:55:50.000Z</updated>
+  <id>http://0x3f.org/</id>
+  
+  <author>
+    <name>丘山</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>用vim-test簡化單元測試的編寫</title>
+    <link href="http://0x3f.org/post/make-writing-unit-tests-easier-with-vim-test/"/>
+    <id>http://0x3f.org/post/make-writing-unit-tests-easier-with-vim-test/</id>
+    <published>2017-08-14T08:43:59.000Z</published>
+    <updated>2017-08-14T13:55:50.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>vim-test允許在Vim中直接執行一個或多個單元測試，並使用預設的或自定義的執行策略。</p>
+<p>例如，命令<code>:TestNearest</code>可以執行當前測試文件中離光標最近的一個測試方法。而<code>:TestFile</code>、<code>:TestSuite</code>和<code>:TestLast</code>分別執行整個測試文件、測試項目和最近一次執行過的測試。這在編寫測試代碼時能很大地提高效率。</p>
+<p>執行策略是執行測試的方式和環境。例如缺省狀態下，將使用<code>:!</code>執行測試命令，這會從Vim切換回終端。而在MacVim下，可以選擇在iTerm或者系統自帶的Terminal中執行。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;vim-test允許在Vim中直接執行一個或多個單元測試，並使用預設的或自定義的執行策略。&lt;/p&gt;
+&lt;p&gt;例如，命令&lt;code&gt;:TestNearest&lt;/code&gt;可以執行當前測試文件中離光標最近的一個測試方法。而&lt;code&gt;:TestFile&lt;/code&gt;、&lt;code&gt;
+    
+    </summary>
+    
+      <category term="計算機" scheme="http://0x3f.org/categories/%E8%A8%88%E7%AE%97%E6%A9%9F/"/>
+    
+    
+      <category term="編程" scheme="http://0x3f.org/tags/%E7%B7%A8%E7%A8%8B/"/>
+    
+      <category term="php" scheme="http://0x3f.org/tags/php/"/>
+    
+      <category term="vim" scheme="http://0x3f.org/tags/vim/"/>
+    
+      <category term="單元測試" scheme="http://0x3f.org/tags/%E5%96%AE%E5%85%83%E6%B8%AC%E8%A9%A6/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>把博客字體改成了方正北魏楷書</title>
+    <link href="http://0x3f.org/post/set-blog-webfont-to-fzbeiweikaishu/"/>
+    <id>http://0x3f.org/post/set-blog-webfont-to-fzbeiweikaishu/</id>
+    <published>2017-08-14T08:05:30.000Z</published>
+    <updated>2017-08-14T13:55:50.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>我曾說過<a href="/post/best-practices-of-calibre-on-formatting/">方正北魏楷書是最佳的閱讀字體</a>，不過後來感覺長時間閱讀的體驗還是普通的楷體更好。但這並不妨礙在Reeder、博客這種短時閱讀場合突出頁面的設計感。</p>
+<p>今天把博客（hexo）的webfont改成了方正北魏楷書，用font-spider壓縮後，從13M縮減到1.4M。方法是這樣的：</p>
+<p>首先把完整的字體複製到主題的字體目錄中（themes/crisp/source/fonts），文件名為<code>FZBeiWeiKaiShu-full.ttf</code>。</p>
+<p>在CSS中加入webfont配置：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">@<span class="keyword">font-face</span> &#123;</div><div class="line">  	<span class="attribute">font-family</span>: <span class="string">'FZBeiWeiKaiShu'</span>;</div><div class="line">    <span class="attribute">src</span>: <span class="built_in">url</span>(<span class="string">'../fonts/FZBeiWeiKaiShu.ttf'</span>) <span class="built_in">format</span>(<span class="string">'truetype'</span>),</div><div class="line">         <span class="built_in">url</span>(<span class="string">'../fonts/FZBeiWeiKaiShu-full.ttf'</span>) <span class="built_in">format</span>(<span class="string">'truetype'</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>FZBeiWeiKaiShu.ttf</code>是壓縮後的字體文件名，這樣訪問時瀏覽器會優先下載壓縮後的字體。</p>
+<p>然後把CSS中使用字體的地方都指定為<code>FZBeiWeiKaiShu</code>。</p>
+<p>在博客根目錄下創建腳本<code>update_fonts.sh</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#!/bin/sh</span></div><div class="line"></div><div class="line">hexo clean</div><div class="line">hexo g</div><div class="line"></div><div class="line">find public -name <span class="string">"*.html"</span> |xargs sed -i <span class="string">''</span> <span class="string">"s#/styles/crisp.css#<span class="variable">$HOME</span>/Projects/blog/public/styles/crisp.css#g"</span></div><div class="line">find public -name <span class="string">"*.html"</span>|xargs font-spider</div><div class="line"></div><div class="line">cp -f public/fonts/FZBeiWeiKaiShu.ttf themes/crisp/<span class="built_in">source</span>/fonts/FZBeiWeiKaiShu.ttf</div><div class="line"></div><div class="line">hexo clean</div><div class="line">hexo s -g</div></pre></td></tr></table></figure>
+<p>除非用到新的字符，否則不需要經常更新字體。</p>
+<p>font-spider會提示一共使用了多少種字符，我這麼多年也只用到三千多種，真是太沒文化了。🤥</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;我曾說過&lt;a href=&quot;/post/best-practices-of-calibre-on-formatting/&quot;&gt;方正北魏楷書是最佳的閱讀字體&lt;/a&gt;，不過後來感覺長時間閱讀的體驗還是普通的楷體更好。但這並不妨礙在Reeder、博客這種短時閱讀場合突出頁面的設計感。
+    
+    </summary>
+    
+      <category term="計算機" scheme="http://0x3f.org/categories/%E8%A8%88%E7%AE%97%E6%A9%9F/"/>
+    
+    
+      <category term="筆記" scheme="http://0x3f.org/tags/%E7%AD%86%E8%A8%98/"/>
+    
+      <category term="博客" scheme="http://0x3f.org/tags/%E5%8D%9A%E5%AE%A2/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Mock Laravel的DB Facade的方法</title>
+    <link href="http://0x3f.org/post/how-to-mock-the-db-facade-of-laravel/"/>
+    <id>http://0x3f.org/post/how-to-mock-the-db-facade-of-laravel/</id>
+    <published>2017-08-14T07:51:41.000Z</published>
+    <updated>2017-08-14T13:55:50.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>關於數據庫操作是否應該mock的問題，我認為查詢一般不應該mock，可以避免一些問題，但如果查詢的結果可能影響到斷言，就應該mock了。</p>
+<p>Laravel的DB facade完整的mock實例是這樣的：</p>
+<script src="//gist.github.com/d0ace9c1ebdb161adf229c9a9c62f2bf.js"></script>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;關於數據庫操作是否應該mock的問題，我認為查詢一般不應該mock，可以避免一些問題，但如果查詢的結果可能影響到斷言，就應該mock了。&lt;/p&gt;
+&lt;p&gt;Laravel的DB facade完整的mock實例是這樣的：&lt;/p&gt;
+&lt;script src=&quot;//gist.githu
+    
+    </summary>
+    
+      <category term="計算機" scheme="http://0x3f.org/categories/%E8%A8%88%E7%AE%97%E6%A9%9F/"/>
+    
+    
+      <category term="編程" scheme="http://0x3f.org/tags/%E7%B7%A8%E7%A8%8B/"/>
+    
+      <category term="php" scheme="http://0x3f.org/tags/php/"/>
+    
+      <category term="laravel" scheme="http://0x3f.org/tags/laravel/"/>
+    
+      <category term="單元測試" scheme="http://0x3f.org/tags/%E5%96%AE%E5%85%83%E6%B8%AC%E8%A9%A6/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>用vim-laravel簡化laravel下的開發</title>
+    <link href="http://0x3f.org/post/speed-up-artisan-with-vim-laravel/"/>
+    <id>http://0x3f.org/post/speed-up-artisan-with-vim-laravel/</id>
+    <published>2017-08-11T07:05:30.000Z</published>
+    <updated>2017-08-11T13:41:12.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>vim-laravel是個極簡而實用的插件，只提供一個<code>:Artisan</code>命令。但它並不僅僅是<code>artisan</code>的一個wrapper，還可以實現一些貼心的自動化，利如自動打開<code>artisan make:*</code>創建的文件。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;vim-laravel是個極簡而實用的插件，只提供一個&lt;code&gt;:Artisan&lt;/code&gt;命令。但它並不僅僅是&lt;code&gt;artisan&lt;/code&gt;的一個wrapper，還可以實現一些貼心的自動化，利如自動打開&lt;code&gt;artisan make:*&lt;/code&gt;創
+    
+    </summary>
+    
+      <category term="計算機" scheme="http://0x3f.org/categories/%E8%A8%88%E7%AE%97%E6%A9%9F/"/>
+    
+    
+      <category term="vim" scheme="http://0x3f.org/tags/vim/"/>
+    
+      <category term="最佳實踐" scheme="http://0x3f.org/tags/%E6%9C%80%E4%BD%B3%E5%AF%A6%E8%B8%90/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>用vim-php-namespace管理PHP的命名空間</title>
+    <link href="http://0x3f.org/post/manage-php-namespaces-with-vim-php-namespace/"/>
+    <id>http://0x3f.org/post/manage-php-namespaces-with-vim-php-namespace/</id>
+    <published>2017-08-11T06:56:12.000Z</published>
+    <updated>2017-08-11T13:41:12.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>vim-php-namespace是個簡單實用的插件，提供三種功能：</p>
+<ul>
+<li>自動用use語句導入光標下的類</li>
+<li>自動把光標下的類名擴展成完整命名空間的格式</li>
+<li>自動排序use語句</li>
+</ul>
+<p>此外，還提供一個選項控制是否在導入類後自動排序use語句。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;vim-php-namespace是個簡單實用的插件，提供三種功能：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;自動用use語句導入光標下的類&lt;/li&gt;
+&lt;li&gt;自動把光標下的類名擴展成完整命名空間的格式&lt;/li&gt;
+&lt;li&gt;自動排序use語句&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;此外，還提供一個選
+    
+    </summary>
+    
+      <category term="計算機" scheme="http://0x3f.org/categories/%E8%A8%88%E7%AE%97%E6%A9%9F/"/>
+    
+    
+      <category term="vim" scheme="http://0x3f.org/tags/vim/"/>
+    
+      <category term="最佳實踐" scheme="http://0x3f.org/tags/%E6%9C%80%E4%BD%B3%E5%AF%A6%E8%B8%90/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>使neocomplete和ultisnips共用tab鍵的方法</title>
+    <link href="http://0x3f.org/post/reconcile-neocomplete-with-ultisnips/"/>
+    <id>http://0x3f.org/post/reconcile-neocomplete-with-ultisnips/</id>
+    <published>2017-08-11T06:43:14.000Z</published>
+    <updated>2017-08-11T13:41:12.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>昨天用vim-clevertab換掉了supertab，但是實際使用中總是出莫名其妙的問題。看了一下插件源碼，使用全局變量判斷狀態，這是個很不靠譜的方案，所以還是卸掉了。</p>
+<p>下面的配置可以很好的解決問題：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> <span class="variable">g:UltiSnipsExpandTrigger</span>=<span class="string">"&lt;c-tab&gt;"</span></div><div class="line"><span class="keyword">let</span> <span class="variable">g:UltiSnipsJumpForwardTrigger</span>=<span class="string">"&lt;c-tab&gt;"</span></div><div class="line"><span class="keyword">let</span> <span class="variable">g:UltiSnipsJumpBackwardTrigger</span>=<span class="string">"&lt;s-tab&gt;"</span></div><div class="line"><span class="keyword">let</span> <span class="variable">g:UltiSnipsSnippetsDir</span>=<span class="string">'~/.vim/UltiSnips'</span></div><div class="line"><span class="keyword">let</span> <span class="variable">g:ulti_expand_or_jump_res</span> = <span class="number">0</span></div><div class="line"><span class="function"><span class="keyword">function</span>! <span class="title">CleverTab</span><span class="params">()</span>"&#123;&#123;&#123;</span></div><div class="line">    <span class="keyword">call</span> UltiSnips#ExpandSnippetOrJump()</div><div class="line">    <span class="keyword">if</span> <span class="variable">g:ulti_expand_or_jump_res</span></div><div class="line">        <span class="keyword">return</span> <span class="string">""</span></div><div class="line">    <span class="keyword">else</span></div><div class="line">        <span class="keyword">if</span> <span class="built_in">pumvisible</span>()</div><div class="line">            <span class="keyword">return</span> <span class="string">"\&lt;c-n&gt;"</span></div><div class="line">        <span class="keyword">else</span></div><div class="line">            <span class="keyword">return</span> neocomplete#start_manual_complete()</div><div class="line">        <span class="keyword">endif</span></div><div class="line">    <span class="keyword">endif</span></div><div class="line"><span class="keyword">endfunction</span><span class="comment">"&#125;&#125;&#125;</span></div><div class="line"><span class="keyword">inoremap</span> <span class="symbol">&lt;silent&gt;</span> <span class="symbol">&lt;tab&gt;</span> <span class="symbol">&lt;c-r&gt;</span>=CleverTab()<span class="symbol">&lt;cr&gt;</span></div><div class="line"><span class="keyword">snoremap</span> <span class="symbol">&lt;silent&gt;</span> <span class="symbol">&lt;tab&gt;</span> <span class="symbol">&lt;esc&gt;</span>:<span class="keyword">call</span> UltiSnips#ExpandSnippetOrJump()<span class="symbol">&lt;cr&gt;</span></div></pre></td></tr></table></figure>
+<p>ultisnips沒有禁用按鍵映射的開關，而默認的映射會干擾上述配置，所以這裡把默認的映射改成了<code>&lt;c-tab&gt;</code>。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;昨天用vim-clevertab換掉了supertab，但是實際使用中總是出莫名其妙的問題。看了一下插件源碼，使用全局變量判斷狀態，這是個很不靠譜的方案，所以還是卸掉了。&lt;/p&gt;
+&lt;p&gt;下面的配置可以很好的解決問題：&lt;/p&gt;
+&lt;figure class=&quot;highlight
+    
+    </summary>
+    
+      <category term="計算機" scheme="http://0x3f.org/categories/%E8%A8%88%E7%AE%97%E6%A9%9F/"/>
+    
+    
+      <category term="vim" scheme="http://0x3f.org/tags/vim/"/>
+    
+      <category term="最佳實踐" scheme="http://0x3f.org/tags/%E6%9C%80%E4%BD%B3%E5%AF%A6%E8%B8%90/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>GraphQL：RESTful之外的接口實現方案</title>
+    <link href="http://0x3f.org/post/graphql-vs-restful/"/>
+    <id>http://0x3f.org/post/graphql-vs-restful/</id>
+    <published>2017-08-01T09:36:27.000Z</published>
+    <updated>2017-08-02T13:19:59.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>和RESTfull一樣，GraphQL也是一種基於HTTP的接口實現方式。它區別於前者的主要有兩點：數據格式的自定義和請求的合併。</p>
+<p>本質上，GraphQL是為瞭解決RESTful中前後端在業務邏輯上的耦合關係。在RESTful中，接口是為前端具體的業務需求定制的，從實現什麼樣的功能，到返回哪些數據，都是既定的，所以很難被其它業務邏輯共用，即使可以共用，前端也必須發送多個請求到後端，因而造成資源浪費、效率下降。</p>
+<p>GraphQL實現的是一套邏輯積木，每個封裝好的業務邏輯都是原子的，前端可以自由選擇使用哪些，也可以定制返回數據的格式。並且這一切，都可以通過一次請求實現。</p>
+<p>當然，GraphQL也有一些短板。比如緩存，對於RESTfull接口，可以根據操作的冪等性實現負載均衡層面的緩存，而對於GraphQL，由於請求數據格式靈活且可能很大，請求會用POST方式發送，這樣就必須改變緩存的實現方式。再一點是嵌套的層級問題，GraphQL的靈活性允許查詢類型之間彼此嵌套，如果層級過多，可能導致嚴重的性能和可用性問題，因此需要注意限制嵌套的層級。還有就是GraphQL的實現複雜度比RESTful要高，需要權衡使用哪種實現方案。</p>
+<p>GraphQL用schema管理接口，可以根據業務等因素劃分schema，例如需要權限驗證的和公開的。每個schema包含兩類接口：query和mutation，分別用來查詢和變更數據。</p>
+<p>下面在Laravel中簡單實現一個query接口。</p>
+<p>先安裝<a href="https://github.com/Folkloreatelier/laravel-graphql" target="_blank" rel="external">folklore/graphql</a>庫。</p>
+<p>實現文章類型：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">namespace</span> <span class="title">App</span>\<span class="title">GraphQL</span>\<span class="title">Type</span>;</div><div class="line"></div><div class="line"><span class="keyword">use</span> <span class="title">GraphQL</span>\<span class="title">Type</span>\<span class="title">Definition</span>\<span class="title">Type</span>;</div><div class="line"><span class="keyword">use</span> <span class="title">Folklore</span>\<span class="title">GraphQL</span>\<span class="title">Support</span>\<span class="title">Type</span> <span class="title">as</span> <span class="title">GraphQLType</span>;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">PostType</span> <span class="keyword">extends</span> <span class="title">GraphQLType</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">fields</span><span class="params">()</span></span></div><div class="line">	&#123;</div><div class="line">		<span class="keyword">return</span> [</div><div class="line">			<span class="string">'id'</span> =&gt; [</div><div class="line">				<span class="string">'type'</span> =&gt; Type::nonNull(Type::string()),</div><div class="line">				<span class="string">'description'</span> =&gt; <span class="string">'The id of the post'</span></div><div class="line">			],</div><div class="line">			<span class="string">'title'</span> =&gt; [</div><div class="line">				<span class="string">'type'</span> =&gt; Type::string(),</div><div class="line">				<span class="string">'description'</span> =&gt; <span class="string">'Post title'</span></div><div class="line">			]</div><div class="line">		];</div><div class="line">	&#125;</div><div class="line"></div><div class="line">    <span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">resolveTitleField</span><span class="params">($root, $args)</span></span></div><div class="line">	&#123;</div><div class="line">		<span class="keyword">return</span> $root-&gt;post_title;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>實現文章的查詢邏輯：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">namespace</span> <span class="title">App</span>\<span class="title">GraphQL</span>\<span class="title">Query</span>;</div><div class="line"></div><div class="line"><span class="keyword">use</span> <span class="title">GraphQL</span>;</div><div class="line"><span class="keyword">use</span> <span class="title">GraphQL</span>\<span class="title">Type</span>\<span class="title">Definition</span>\<span class="title">Type</span>;</div><div class="line"><span class="keyword">use</span> <span class="title">Folklore</span>\<span class="title">GraphQL</span>\<span class="title">Support</span>\<span class="title">Query</span>;</div><div class="line"><span class="keyword">use</span> <span class="title">App</span>\<span class="title">Models</span>\<span class="title">Post</span>;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">PostQuery</span> <span class="keyword">extends</span> <span class="title">Query</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">type</span><span class="params">()</span></span></div><div class="line">	&#123;</div><div class="line">		<span class="keyword">return</span> Type::listOf(GraphQL::type(<span class="string">'Post'</span>));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">resolve</span><span class="params">($root, $args)</span></span></div><div class="line">	&#123;</div><div class="line">		<span class="keyword">if</span>(<span class="keyword">isset</span>($args[<span class="string">'id'</span>])) &#123;</div><div class="line">			<span class="keyword">return</span> Post::where(<span class="string">'id'</span> , $args[<span class="string">'id'</span>])-&gt;get();</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			<span class="keyword">return</span> Post::all();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在<code>config/graphql.php</code>中註冊類型和邏輯：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="string">'schemas'</span> =&gt; [</div><div class="line">   <span class="string">'default'</span> =&gt; [</div><div class="line">       <span class="string">'query'</span> =&gt; [</div><div class="line">           <span class="string">'posts'</span> =&gt; <span class="string">'App\GraphQL\Query\PostQuery'</span></div><div class="line">       ],</div><div class="line">       <span class="string">'mutation'</span> =&gt; [</div><div class="line"></div><div class="line">       ]</div><div class="line">   ],</div><div class="line">],</div><div class="line"></div><div class="line"><span class="string">'types'</span> =&gt; [</div><div class="line">   <span class="string">'Post'</span> =&gt; <span class="string">'App\GraphQL\Type\PostType'</span>,</div><div class="line">],</div></pre></td></tr></table></figure>
+<p>請求及結果如下：</p>
+<p><img src="http://ou1l9js54.bkt.clouddn.com/2017-08-02-15016540828445.jpg" alt=""></p>
+<p>GraphQL並不是RESTful的替代方案，是否用前者替代後者，取決於是否願意為了靈活性而增加複雜度。兩者有各自的適用領域，GraphQL更適合用來實現開放接口。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;和RESTfull一樣，GraphQL也是一種基於HTTP的接口實現方式。它區別於前者的主要有兩點：數據格式的自定義和請求的合併。&lt;/p&gt;
+&lt;p&gt;本質上，GraphQL是為瞭解決RESTful中前後端在業務邏輯上的耦合關係。在RESTful中，接口是為前端具體的業務需求定制
+    
+    </summary>
+    
+      <category term="計算機" scheme="http://0x3f.org/categories/%E8%A8%88%E7%AE%97%E6%A9%9F/"/>
+    
+    
+      <category term="編程" scheme="http://0x3f.org/tags/%E7%B7%A8%E7%A8%8B/"/>
+    
+      <category term="php" scheme="http://0x3f.org/tags/php/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>用vim-plug換掉了vim-addon-manager</title>
+    <link href="http://0x3f.org/post/replaced-vam-with-vim-plug/"/>
+    <id>http://0x3f.org/post/replaced-vam-with-vim-plug/</id>
+    <published>2017-07-31T14:44:16.000Z</published>
+    <updated>2017-07-31T15:36:10.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>四年零兩個月前，我在Vim的郵件組中<a href="https://groups.google.com/forum/#!topic/vim_use/P3xpaHr8-do" target="_blank" rel="external">徵詢pathogen和vundle的優劣</a>。一個人建議我試試VAM，語氣幽怨——他是它的作者。</p>
+<p>試過之後就從pathogen遷移到了VAM，因為它兼有前者和vundle的優點，在當時，這是最好的插件管理器。就這樣用了很久，期間還寫了點腳本<a href="/post/simplify-vim-addon-installation-issues/">簡化插件的管理</a>，VAM工作得很好。</p>
+<p>最近發現越來越多的插件的文檔里提到vim-plug，亮點是支持並行安裝和更新，這真是解決了VAM最大的痛點：我疊代了十年的vimrc里用了很多插件，串行的VAM每次更新都讓我很痛苦。</p>
+<p>另外，vim-plug較VAM的另一個優勢是簡單。這倒不是說後者很難用，只是作者過於追求靈活性，導致有些工作實現起來相對更複雜。例如，有的插件安裝之後需要做一些額外的操作，VAM需要自己實現回調函數，然後掛到post-install鈎子上。而對於vim-plug，只需要在註冊插件的地方增加一個選項。對於插件的懶加載，也是同樣。</p>
+<p>VAM也有自己的優勢。其中之一是可以自動處理依賴關係：當一個要被安裝的插件依賴別的插件時，相應的依賴也會被自動安裝。還有就是對多源的支持：既可以拉取github上的插件，也可以從vim.org或其它源安裝。而vim-plug就只支持github。</p>
+<p>所以，vim-plug並沒有全面超過VAM，只是沒有明顯的短板、功能又剛剛夠用。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;四年零兩個月前，我在Vim的郵件組中&lt;a href=&quot;https://groups.google.com/forum/#!topic/vim_use/P3xpaHr8-do&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;徵詢pathogen和vundle的
+    
+    </summary>
+    
+      <category term="計算機" scheme="http://0x3f.org/categories/%E8%A8%88%E7%AE%97%E6%A9%9F/"/>
+    
+    
+      <category term="vim" scheme="http://0x3f.org/tags/vim/"/>
+    
+      <category term="最佳實踐" scheme="http://0x3f.org/tags/%E6%9C%80%E4%BD%B3%E5%AF%A6%E8%B8%90/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>用choosewin.vim切換窗口</title>
+    <link href="http://0x3f.org/post/choosewin-vim/"/>
+    <id>http://0x3f.org/post/choosewin-vim/</id>
+    <published>2017-07-30T12:48:46.000Z</published>
+    <updated>2017-07-30T12:52:05.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>輸入<code>-</code>顯示每個窗口的hint，輸入hint跳轉，簡單而高效：</p>
+<p><img src="https://ws2.sinaimg.cn/large/006tKfTcly1fi277jmdyqj30or0gatby.jpg" alt=""></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;輸入&lt;code&gt;-&lt;/code&gt;顯示每個窗口的hint，輸入hint跳轉，簡單而高效：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://ws2.sinaimg.cn/large/006tKfTcly1fi277jmdyqj30or0gatby.jpg&quot; alt=&quot;&quot;&gt;&lt;/
+    
+    </summary>
+    
+      <category term="計算機" scheme="http://0x3f.org/categories/%E8%A8%88%E7%AE%97%E6%A9%9F/"/>
+    
+    
+      <category term="vim" scheme="http://0x3f.org/tags/vim/"/>
+    
+      <category term="最佳實踐" scheme="http://0x3f.org/tags/%E6%9C%80%E4%BD%B3%E5%AF%A6%E8%B8%90/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Python 2還是3是個糾結的問題</title>
+    <link href="http://0x3f.org/post/bothered-by-python-2-vs-3/"/>
+    <id>http://0x3f.org/post/bothered-by-python-2-vs-3/</id>
+    <published>2017-07-30T00:40:11.000Z</published>
+    <updated>2017-07-30T02:38:39.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>前些天用denite取代unite，用<code>--with-python3</code>重裝了vim，結果發現vdebug只支持python 2。</p>
+<p>vim同時只能在py2和py3中選一個，據說可以通過重新編譯python實現共存，但是我在編譯py3的時候失敗。</p>
+<p>neovim同時支持兩個版本，但是嘗試deoplete失敗，報「Invalid Channel」的錯誤，似乎是python-neovim的鍋。而且由於neovim內建lua、不支持<code>has(&#39;lua&#39;)</code>，所以不能fall back到neocomplete。</p>
+<p>萬般無奈，只好換回unite。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;前些天用denite取代unite，用&lt;code&gt;--with-python3&lt;/code&gt;重裝了vim，結果發現vdebug只支持python 2。&lt;/p&gt;
+&lt;p&gt;vim同時只能在py2和py3中選一個，據說可以通過重新編譯python實現共存，但是我在編譯py3的時候失
+    
+    </summary>
+    
+      <category term="計算機" scheme="http://0x3f.org/categories/%E8%A8%88%E7%AE%97%E6%A9%9F/"/>
+    
+    
+      <category term="隨筆" scheme="http://0x3f.org/tags/%E9%9A%A8%E7%AD%86/"/>
+    
+      <category term="python" scheme="http://0x3f.org/tags/python/"/>
+    
+      <category term="vim" scheme="http://0x3f.org/tags/vim/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>給Thinkpad X220裝了黑蘋果</title>
+    <link href="http://0x3f.org/post/installed-hackintosh-in-thinkpad-x220/"/>
+    <id>http://0x3f.org/post/installed-hackintosh-in-thinkpad-x220/</id>
+    <published>2017-07-29T09:44:16.000Z</published>
+    <updated>2017-07-29T10:00:11.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>閑魚上突然收到詢價消息，于是突發奇想，在閑置很久的X220上裝個黑蘋果玩玩。</p>
+<p>過程很簡單，參考這兩個鏈接：<a href="https://www.youtube.com/watch?v=e_VDC-wUXis" target="_blank" rel="external">link1</a>和<a href="http://x220.mcdonnelltech.com" target="_blank" rel="external">link2</a>。</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tKfTcly1fi0wjpg6gyj30sg0sgtex.jpg" alt=""></p>
+<p>内置的無線網卡不能驅動，用了個閑置的USB卡。藍牙能用耳機，但不能airdrop。關機會變重啓。此外沒别的問題了。</p>
+<p>現在計算機性能真是過剩的，n年前的機器，除了機械硬盤慢了點，其它毫無壓力。</p>
+<p>我在twitter上說：“似可再戰三年。”</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;閑魚上突然收到詢價消息，于是突發奇想，在閑置很久的X220上裝個黑蘋果玩玩。&lt;/p&gt;
+&lt;p&gt;過程很簡單，參考這兩個鏈接：&lt;a href=&quot;https://www.youtube.com/watch?v=e_VDC-wUXis&quot; target=&quot;_blank&quot; rel=&quot;ex
+    
+    </summary>
+    
+      <category term="計算機" scheme="http://0x3f.org/categories/%E8%A8%88%E7%AE%97%E6%A9%9F/"/>
+    
+    
+      <category term="mac" scheme="http://0x3f.org/tags/mac/"/>
+    
+      <category term="apple" scheme="http://0x3f.org/tags/apple/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>利用goyo.vim專注寫作</title>
+    <link href="http://0x3f.org/post/distraction-free-writing-in-vim/"/>
+    <id>http://0x3f.org/post/distraction-free-writing-in-vim/</id>
+    <published>2017-07-29T08:48:45.000Z</published>
+    <updated>2017-07-29T09:30:18.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>goyo.vim是給vim提供專注寫作模式的插件，配合markdown效果不錯：</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tKfTcly1fi0vvphi70j31400p0dj4.jpg" alt=""></p>
+<p>最好在單獨的vim實例中使用，已發現和vim-workspace配合不好的情況。</p>
+<p>對markdown文件自動開啓goyo的配置如下：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span>! <span class="title">s</span>:<span class="title">auto_goyo</span><span class="params">()</span></span></div><div class="line">    <span class="keyword">if</span> &amp;ft == <span class="string">'markdown'</span></div><div class="line">        Goyo <span class="number">80</span></div><div class="line">    <span class="keyword">else</span></div><div class="line">        <span class="keyword">let</span> <span class="built_in">bufnr</span> = <span class="built_in">bufnr</span>(<span class="string">'%'</span>)</div><div class="line">        Goyo!</div><div class="line">        <span class="keyword">execute</span> <span class="string">'b '</span>.<span class="built_in">bufnr</span></div><div class="line">    <span class="keyword">endif</span></div><div class="line"><span class="keyword">endfunction</span></div><div class="line"></div><div class="line"><span class="keyword">augroup</span> goyo_markdown</div><div class="line">    autocmd!</div><div class="line">    <span class="keyword">autocmd</span> BufNewFile,BufRead * <span class="keyword">call</span> <span class="variable">s:auto_goyo</span>()</div><div class="line"><span class="keyword">augroup</span> END</div></pre></td></tr></table></figure>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;goyo.vim是給vim提供專注寫作模式的插件，配合markdown效果不錯：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://ws4.sinaimg.cn/large/006tKfTcly1fi0vvphi70j31400p0dj4.jpg&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+
+    
+    </summary>
+    
+      <category term="計算機" scheme="http://0x3f.org/categories/%E8%A8%88%E7%AE%97%E6%A9%9F/"/>
+    
+    
+      <category term="vim" scheme="http://0x3f.org/tags/vim/"/>
+    
+      <category term="最佳實踐" scheme="http://0x3f.org/tags/%E6%9C%80%E4%BD%B3%E5%AF%A6%E8%B8%90/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>用vim-workspace換掉了session.vim</title>
+    <link href="http://0x3f.org/post/replace-session-vim-with-vim-workspace/"/>
+    <id>http://0x3f.org/post/replace-session-vim-with-vim-workspace/</id>
+    <published>2017-07-19T09:47:30.000Z</published>
+    <updated>2017-07-29T09:32:41.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>用session.vim一直有幾個痛點。一是保存會話後，退出時仍然會提示保存。二是會話會記錄vimrc，恢復會話後用的仍然是舊的配置。</p>
+<p>vim-workspace沒有這些問題，而且實現了更多功能。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;用session.vim一直有幾個痛點。一是保存會話後，退出時仍然會提示保存。二是會話會記錄vimrc，恢復會話後用的仍然是舊的配置。&lt;/p&gt;
+&lt;p&gt;vim-workspace沒有這些問題，而且實現了更多功能。&lt;/p&gt;
+
+    
+    </summary>
+    
+      <category term="計算機" scheme="http://0x3f.org/categories/%E8%A8%88%E7%AE%97%E6%A9%9F/"/>
+    
+    
+      <category term="vim" scheme="http://0x3f.org/tags/vim/"/>
+    
+      <category term="最佳實踐" scheme="http://0x3f.org/tags/%E6%9C%80%E4%BD%B3%E5%AF%A6%E8%B8%90/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>用neocomplete換掉了YouCompleteMe</title>
+    <link href="http://0x3f.org/post/replace-youcompleteme-with-neocomplete/"/>
+    <id>http://0x3f.org/post/replace-youcompleteme-with-neocomplete/</id>
+    <published>2017-07-15T02:29:48.000Z</published>
+    <updated>2017-07-15T03:26:38.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>在嘗試了多種方案後，我又一次換掉了自動補全插件。</p>
+<p>工具應該是能提高生產力的，而不是相反，很長一段時間以來，YouCompleteMe帶給我的卻是個疑惑，真不知道這個東東到底是提高了我的生產力，還是反之。自動補全在提高輸入速度和準確度上都有助益，但是有時候補全選項彈出的又很慢。</p>
+<p>測試了nvim-complete-manager+LanguageClient-neovim+LanguageServer-php-neovim、deoplete+phpcd、deoplete+padawan、neocomplete+phpcomplete-extended，效果都非常不理想。最後選擇了neocomplete+phpcomplete，速度可以接受，表現比YCM穩定，功能該有的都有。</p>
+<h3 id="相關閱讀："><a href="#相關閱讀：" class="headerlink" title="相關閱讀："></a>相關閱讀：</h3><ul>
+<li><a href="/post/make-youcompleteme-ultisnips-compatible/">How to Make YouCompleteMe Compatible with UltiSnips</a></li>
+<li><a href="/post/neocomplcache-vim/">Vim的終極自動補全插件：NeoComplCache</a></li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;在嘗試了多種方案後，我又一次換掉了自動補全插件。&lt;/p&gt;
+&lt;p&gt;工具應該是能提高生產力的，而不是相反，很長一段時間以來，YouCompleteMe帶給我的卻是個疑惑，真不知道這個東東到底是提高了我的生產力，還是反之。自動補全在提高輸入速度和準確度上都有助益，但是有時候補全選
+    
+    </summary>
+    
+      <category term="計算機" scheme="http://0x3f.org/categories/%E8%A8%88%E7%AE%97%E6%A9%9F/"/>
+    
+    
+      <category term="vim" scheme="http://0x3f.org/tags/vim/"/>
+    
+      <category term="最佳實踐" scheme="http://0x3f.org/tags/%E6%9C%80%E4%BD%B3%E5%AF%A6%E8%B8%90/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>LeaderF，也許是Vim最好的模糊查詢插件</title>
+    <link href="http://0x3f.org/post/leaderf-currently-the-best-fuzzy-finder-of-vim/"/>
+    <id>http://0x3f.org/post/leaderf-currently-the-best-fuzzy-finder-of-vim/</id>
+    <published>2017-07-13T08:45:15.000Z</published>
+    <updated>2017-07-15T02:29:22.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>之前<a href="/post/ctrlp-vs-unite-vs-command-t-vs-fuzzyfinder/">對比過幾個模糊查詢插件</a>（Fuzzy Finder），最後選定了ctrlp。</p>
+<p>用了下<a href="https://github.com/Yggdroot/LeaderF" target="_blank" rel="external">LeaderF</a>，在速度和匹配的準確度上都明顯超過了ctrlp，所以用它換掉了後者。</p>
+<p>只是在交互方式上，我更喜歡ctrlp，文件列表高度是動態變化的，最匹配的行和輸入焦點都在窗口的最下方。LeaderF是定高的，最匹配的行在最上方，個人認為不如前者自然。</p>
+<p>能解決痛點的才是好東西，什麼時候能換掉YouCompleteMe就好了。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;之前&lt;a href=&quot;/post/ctrlp-vs-unite-vs-command-t-vs-fuzzyfinder/&quot;&gt;對比過幾個模糊查詢插件&lt;/a&gt;（Fuzzy Finder），最後選定了ctrlp。&lt;/p&gt;
+&lt;p&gt;用了下&lt;a href=&quot;https://github
+    
+    </summary>
+    
+      <category term="計算機" scheme="http://0x3f.org/categories/%E8%A8%88%E7%AE%97%E6%A9%9F/"/>
+    
+    
+      <category term="vim" scheme="http://0x3f.org/tags/vim/"/>
+    
+      <category term="最佳實踐" scheme="http://0x3f.org/tags/%E6%9C%80%E4%BD%B3%E5%AF%A6%E8%B8%90/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>怎樣測試PHP的Private或Protected方法</title>
+    <link href="http://0x3f.org/post/how-to-test-private-or-protected-methods-in-php/"/>
+    <id>http://0x3f.org/post/how-to-test-private-or-protected-methods-in-php/</id>
+    <published>2017-07-03T05:17:30.000Z</published>
+    <updated>2017-07-15T02:29:22.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>利用閉包綁定：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">$ctrlr = <span class="keyword">new</span> UserController;</div><div class="line"></div><div class="line">$tester = <span class="function"><span class="keyword">function</span> <span class="params">()</span> <span class="title">use</span> <span class="params">($uid)</span> </span>&#123;</div><div class="line">    <span class="keyword">$this</span>-&gt;getUser($uid);</div><div class="line">&#125;;</div><div class="line">$runner = $tester-&gt;bindTo($ctrlr, $ctrlr);</div><div class="line">$runner();</div></pre></td></tr></table></figure>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;利用閉包綁定：&lt;/p&gt;
+&lt;figure class=&quot;highlight php&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class
+    
+    </summary>
+    
+      <category term="計算機" scheme="http://0x3f.org/categories/%E8%A8%88%E7%AE%97%E6%A9%9F/"/>
+    
+    
+      <category term="編程" scheme="http://0x3f.org/tags/%E7%B7%A8%E7%A8%8B/"/>
+    
+      <category term="PHP" scheme="http://0x3f.org/tags/php/"/>
+    
+      <category term="測試" scheme="http://0x3f.org/tags/%E6%B8%AC%E8%A9%A6/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>白鹿原、外鄉人和窗外</title>
+    <link href="http://0x3f.org/post/routine-talk-170629/"/>
+    <id>http://0x3f.org/post/routine-talk-170629/</id>
+    <published>2017-06-29T14:51:52.000Z</published>
+    <updated>2017-06-29T14:54:15.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><img src="https://ws2.sinaimg.cn/large/006tNc79ly1fh2gnr5gb2j30wv0igtee.jpg" alt=""></p>
+<p>今年端午恰好是開公眾號一週年，成績就不曬了，因為沒有成績，當初的目標好像一個都沒實現，想著端午寫幾句話，結果又拖了一個月……</p>
+<p>這一年跌宕起伏，卻是不足與人道，倒是最近看了兩部劇，感覺還不錯。</p>
+<p>《白鹿原》前段時間很火，我沒看過原著，好像我骨子裡不是個喜歡小說的，十幾年前聽說這本書的時候也沒什麼去讀的衝動。這次看拍得還不錯，就買了樂視的會員，每天追到凌晨一點。整體來說質量不錯，陣容不算豪華，主演的幾位演技都挺好，適合我這種沒看過原著又很龜毛的。看過的就不用追了，影視劇永遠趕不上原著。</p>
+<p>《外鄉人》的知名度就差遠了，我也是從豆瓣上翻高分劇翻出來的。幾年前的一部冷門劇，題材就很冷，講滬漂的。劇情貼近現實，演員的表演也很真實，分數就高在這兒了，能做到這兩點的太少了。</p>
+<p>題圖是我的窗外，前段時間天氣好的時候拍的，Snapseed真是個好東西，嗯。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;img src=&quot;https://ws2.sinaimg.cn/large/006tNc79ly1fh2gnr5gb2j30wv0igtee.jpg&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;今年端午恰好是開公眾號一週年，成績就不曬了，因為沒有成績，當初的目標好像一個都沒實現，想著
+    
+    </summary>
+    
+      <category term="青梅煮酒" scheme="http://0x3f.org/categories/%E9%9D%92%E6%A2%85%E7%85%AE%E9%85%92/"/>
+    
+    
+      <category term="隨筆" scheme="http://0x3f.org/tags/%E9%9A%A8%E7%AD%86/"/>
+    
+      <category term="照片" scheme="http://0x3f.org/tags/%E7%85%A7%E7%89%87/"/>
+    
+      <category term="電視劇" scheme="http://0x3f.org/tags/%E9%9B%BB%E8%A6%96%E5%8A%87/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>爲每個GTK3應用指定單獨的主題</title>
+    <link href="http://0x3f.org/post/specify-a-theme-for-each-gtk-3-app/"/>
+    <id>http://0x3f.org/post/specify-a-theme-for-each-gtk-3-app/</id>
+    <published>2017-06-27T07:37:43.000Z</published>
+    <updated>2017-06-29T14:50:30.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>指定GVim 8使用Numix主題并最小程度影響既有的腳本、快捷鍵。</p>
+<p>我這裏gvim安裝在<code>/usr/bin/gvim</code>，$PATH中<code>/usr/local/bin</code>在<code>/usr/bin</code>前面，所以在<code>/usr/local/bin</code>下創建gvim：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#!/bin/sh</span></div><div class="line"></div><div class="line">GTK_THEME=Numix /usr/bin/gvim <span class="string">"<span class="variable">$@</span>"</span></div></pre></td></tr></table></figure>
+<p>同理，對gvimdiff也做同樣處理。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;指定GVim 8使用Numix主題并最小程度影響既有的腳本、快捷鍵。&lt;/p&gt;
+&lt;p&gt;我這裏gvim安裝在&lt;code&gt;/usr/bin/gvim&lt;/code&gt;，$PATH中&lt;code&gt;/usr/local/bin&lt;/code&gt;在&lt;code&gt;/usr/bin&lt;/code&gt;前面，
+    
+    </summary>
+    
+      <category term="計算機" scheme="http://0x3f.org/categories/%E8%A8%88%E7%AE%97%E6%A9%9F/"/>
+    
+    
+      <category term="桌面環境" scheme="http://0x3f.org/tags/%E6%A1%8C%E9%9D%A2%E7%92%B0%E5%A2%83/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>調校mycli</title>
+    <link href="http://0x3f.org/post/fine-tune-mycli/"/>
+    <id>http://0x3f.org/post/fine-tune-mycli/</id>
+    <published>2017-06-26T10:05:31.000Z</published>
+    <updated>2017-06-29T14:50:30.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>做以下配置，使mycli按需使用pager，并在數據過多時不破壞表格格式：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># ~/.my.cnf</span></div><div class="line"><span class="section"></span></div><div class="line">[client]</div><div class="line"><span class="attr">pager</span> = less -FSXR</div></pre></td></tr></table></figure>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;做以下配置，使mycli按需使用pager，并在數據過多時不破壞表格格式：&lt;/p&gt;
+&lt;figure class=&quot;highlight ini&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div 
+    
+    </summary>
+    
+      <category term="計算機" scheme="http://0x3f.org/categories/%E8%A8%88%E7%AE%97%E6%A9%9F/"/>
+    
+    
+      <category term="數據庫" scheme="http://0x3f.org/tags/%E6%95%B8%E6%93%9A%E5%BA%AB/"/>
+    
+      <category term="工具" scheme="http://0x3f.org/tags/%E5%B7%A5%E5%85%B7/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>用MySQL的全文檢索實現相關性排序</title>
+    <link href="http://0x3f.org/post/fulltext-searching-in-mysql/"/>
+    <id>http://0x3f.org/post/fulltext-searching-in-mysql/</id>
+    <published>2017-06-19T15:10:41.000Z</published>
+    <updated>2017-06-19T15:38:39.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>實現根據文章的關鍵詞搜索出相關的文章，並按相關性排序。</p>
+<p>數據庫版本是5.6.x，還不能像5.7那樣支持中文的全文檢索，所以另外創建一列保存關鍵詞的編碼。方法為base64轉碼並去掉「%」符號：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 轉換關鍵詞到全文檢索的格式</div><div class="line"> *</div><div class="line"> * <span class="doctag">@param</span>   mixed $keywords 關鍵詞數組或英文逗號分隔的字符串</div><div class="line"> * <span class="doctag">@return</span>  string</div><div class="line"> */</div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">encode_keywords</span><span class="params">($keywords)</span></span></div><div class="line">&#123;</div><div class="line">    $encoder = <span class="function"><span class="keyword">function</span> <span class="params">($keyword)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> str_replace(<span class="string">'%'</span>, <span class="string">''</span>, urlencode(trim($keyword)));</div><div class="line">    &#125;;</div><div class="line">    <span class="keyword">if</span> (!is_array($keywords)) &#123;</div><div class="line">        $keywords = explode(<span class="string">','</span>, $keywords);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> implode(<span class="string">' '</span>, array_map($encoder, $keywords));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>對該列創建全文檢索的索引：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">CREATE</span> FULLTEXT <span class="keyword">INDEX</span> idx_post_keywords <span class="keyword">ON</span> posts (keywords_ft);</div></pre></td></tr></table></figure>
+<p>查詢語句：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">SELECT</span></div><div class="line">    <span class="keyword">id</span>,</div><div class="line">    title,</div><div class="line">    keywords,</div><div class="line">    (<span class="keyword">MATCH</span> (keywords_ft) AGAINST (<span class="string">'E697B6E5B09A E5A8B1E4B990E59C88'</span> <span class="keyword">IN</span> <span class="keyword">NATURAL</span> <span class="keyword">LANGUAGE</span> <span class="keyword">MODE</span>)) <span class="keyword">AS</span> <span class="string">`score`</span></div><div class="line"><span class="keyword">FROM</span></div><div class="line">    posts</div><div class="line"><span class="keyword">WHERE</span></div><div class="line">    <span class="keyword">MATCH</span> (keywords_ft) AGAINST (<span class="string">'E697B6E5B09A E5A8B1E4B990E59C88'</span> <span class="keyword">IN</span> <span class="keyword">NATURAL</span> <span class="keyword">LANGUAGE</span> <span class="keyword">MODE</span>)</div><div class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> score <span class="keyword">DESC</span></div><div class="line"><span class="keyword">LIMIT</span> <span class="number">10</span></div></pre></td></tr></table></figure>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;實現根據文章的關鍵詞搜索出相關的文章，並按相關性排序。&lt;/p&gt;
+&lt;p&gt;數據庫版本是5.6.x，還不能像5.7那樣支持中文的全文檢索，所以另外創建一列保存關鍵詞的編碼。方法為base64轉碼並去掉「%」符號：&lt;/p&gt;
+&lt;figure class=&quot;highlight php&quot;
+    
+    </summary>
+    
+      <category term="計算機" scheme="http://0x3f.org/categories/%E8%A8%88%E7%AE%97%E6%A9%9F/"/>
+    
+    
+      <category term="編程" scheme="http://0x3f.org/tags/%E7%B7%A8%E7%A8%8B/"/>
+    
+      <category term="數據庫" scheme="http://0x3f.org/tags/%E6%95%B8%E6%93%9A%E5%BA%AB/"/>
+    
+      <category term="mysql" scheme="http://0x3f.org/tags/mysql/"/>
+    
+      <category term="全文檢索" scheme="http://0x3f.org/tags/%E5%85%A8%E6%96%87%E6%AA%A2%E7%B4%A2/"/>
+    
+  </entry>
+  
+</feed>

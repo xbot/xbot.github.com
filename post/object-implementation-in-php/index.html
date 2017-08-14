@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>PHP對象的實現和操作 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  四月 29, 2015
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/php/'>PHP</a> 
+    
+      <a href='/tags/源碼/'>源碼</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">PHP對象的實現和操作</h1>
+  <section class="post-content article-entry">
+    <h2 id="Object的存儲結構"><a href="#Object的存儲結構" class="headerlink" title="Object的存儲結構"></a>Object的存儲結構</h2><p>對象實例用zval存儲。zval-&gt;type == IS_OBJECT，zval-&gt;value-&gt;obj存儲zend_object_value類型的結構體變量。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">zend_object_value</span> &#123;</span></div><div class="line">    zend_object_handle handle;</div><div class="line">    <span class="keyword">const</span> zend_object_handlers *handlers;</div><div class="line">&#125; zend_object_value;</div></pre></td></tr></table></figure>
+<p>zend_object_handle是一個unsigned int，是對象的ID。zend_object_handlers存儲對象所有的行為。</p>
+<h2 id="Object的實例化過程"><a href="#Object的實例化過程" class="headerlink" title="Object的實例化過程"></a>Object的實例化過程</h2><p>Object的初始化用以下幾個宏函數：</p>
+<ul>
+<li>object_init(zval *arg)</li>
+<li>object_init_ex(zval *arg, zend_class_entry *class_type)</li>
+<li>object_and_properties_init(zval *arg, zend_class_entry *class_type, HashTable *properties)</li>
+</ul>
+<p>底層都是調用_object_and_properties_init(zval *arg, zend_class_entry *class_type, HashTable *properties)實現。這個函數做以下幾件事：</p>
+<ul>
+<li>檢查類是否可實例化（例如接口、抽象類等不允許初始化）</li>
+<li>處理類常量</li>
+<li>檢查類是否存在自定義實例化邏輯<ul>
+<li>若存在，調用自定義實例化邏輯</li>
+<li>若不存在，調用缺省的函數zend_objects_new(zend_object **object, zend_class_entry *class_type)</li>
+</ul>
+</li>
+<li>把實例化的zend_object類型的數據存入zval中</li>
+</ul>
+<p>zend_objects_new()做這些事：</p>
+<ul>
+<li>分配一個zend_object類型的內存空間</li>
+<li>初始化zend_object類型數據</li>
+<li>把zend_object類型數據存入對象倉庫（Objects Store）<ul>
+<li>zend_objects_store_put(void *object, zend_objects_store_dtor_t dtor, zend_objects_free_object_storage_t free_storage, zend_objects_store_clone_t clone）</li>
+</ul>
+</li>
+</ul>
+<h2 id="zend-object的存儲結構"><a href="#zend-object的存儲結構" class="headerlink" title="zend_object的存儲結構"></a>zend_object的存儲結構</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">zend_object</span> &#123;</span></div><div class="line">    zend_class_entry *ce;</div><div class="line">    HashTable *properties;</div><div class="line">    zval **properties_table;</div><div class="line">    HashTable *guards; <span class="comment">/* protects from __get/__set ... recursion */</span></div><div class="line">&#125; zend_object;</div></pre></td></tr></table></figure>
+<p>ce是類的定義。properties_table存儲類裡預定義的屬性。properties存儲非預定義屬性。</p>
+<p>guards存儲屬性名到zend_guard結構的映射關係。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">zend_guard</span> &#123;</span></div><div class="line">    zend_bool in_get;</div><div class="line">    zend_bool in_set;</div><div class="line">    zend_bool in_unset;</div><div class="line">    zend_bool in_isset;</div><div class="line">    zend_bool dummy; <span class="comment">/* sizeof(zend_guard) must not be equal to sizeof(void*) */</span></div><div class="line">&#125; zend_guard;</div></pre></td></tr></table></figure>
+<p>此結構用於在操作屬性時，防止遞歸調用。例如給對象一個新屬性賦值時，__set()函數理論上會遞歸調用自己，所以此結構用於判斷該屬性是否已在__set()中。</p>
+<h2 id="屬性的存儲結構"><a href="#屬性的存儲結構" class="headerlink" title="屬性的存儲結構"></a>屬性的存儲結構</h2><p>在zend_object的存儲結構裡，哈希表properties存儲類的非預定義屬性的名称和值。</p>
+<p>對於預定義的屬性，由於PHP的哈希表的存儲開銷很大，所以把屬性信息（即下面的zend_property_info結構體）存儲在zend_class_entry裡，對象裡用C的數組存儲所有預定義屬性的zval的指針，並把偏移量記錄在屬性信息裡，這就是properties_table。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">zend_property_info</span> &#123;</span></div><div class="line">    zend_uint flags;</div><div class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *name;</div><div class="line">    <span class="keyword">int</span> name_length;</div><div class="line">    ulong h;                 <span class="comment">/* hash of name */</span></div><div class="line">    <span class="keyword">int</span> offset;              <span class="comment">/* storage offset */</span></div><div class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *doc_comment;</div><div class="line">    <span class="keyword">int</span> doc_comment_len;</div><div class="line">    zend_class_entry *ce;    <span class="comment">/* CE of declaring class */</span></div><div class="line">&#125; zend_property_info;</div></pre></td></tr></table></figure>
+<h3 id="屬性名的編碼"><a href="#屬性名的編碼" class="headerlink" title="屬性名的編碼"></a>屬性名的編碼</h3><p>在類的繼承關係中，同名不同類型（public，private等）的屬性各自單獨存儲，所以屬性名在底層是經過編碼的，規則如下：</p>
+<blockquote>
+<p>class Foo { private $prop;   } =&gt; “\0Foo\0prop”<br>class Bar { private $prop;   } =&gt; “\0Bar\0prop”<br>class Rab { protected $prop; } =&gt; “\0*\0prop”<br>class Oof { public $prop;    } =&gt; “prop”  </p>
+</blockquote>
+<p>大部分情況下，對屬性操作的API自動處理屬性名的編碼。只有當需要直接訪問property<em>info-&gt;name或zobj-&gt;properties時才需要自行處理，此時使用zend</em>(un)mangle_property_name()函數。</p>
+<h2 id="Objects-Store的存儲結構"><a href="#Objects-Store的存儲結構" class="headerlink" title="Objects Store的存儲結構"></a>Objects Store的存儲結構</h2><p>對象倉庫是一個可變數組，存儲多個zend_object_store_bucket結構。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">zend_objects_store</span> &#123;</span></div><div class="line">    zend_object_store_bucket *object_buckets;</div><div class="line">    zend_uint top;</div><div class="line">    zend_uint size;</div><div class="line">    <span class="keyword">int</span> free_list_head;</div><div class="line">&#125; zend_objects_store;</div></pre></td></tr></table></figure>
+<p>size是對象倉庫的容量。top是下一個可用的對象句柄，對象句柄從1開始，以保證所有句柄都為真。對象倉庫通過每個Bucket的free_list結構維護一個可用的Bucket鏈表，free_list_head記錄鏈表的頭部。</p>
+<h3 id="zend-object-store-bucket的存儲結構"><a href="#zend-object-store-bucket的存儲結構" class="headerlink" title="zend_object_store_bucket的存儲結構"></a>zend_object_store_bucket的存儲結構</h3><p>每個對象的信息存儲在一個bucket裡。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">zend_object_store_bucket</span> &#123;</span></div><div class="line">    zend_bool destructor_called;</div><div class="line">    zend_bool valid;</div><div class="line">    <span class="keyword">union</span> _store_bucket &#123;</div><div class="line">        <span class="class"><span class="keyword">struct</span> _<span class="title">store_object</span> &#123;</span></div><div class="line">            <span class="keyword">void</span> *object;</div><div class="line">            <span class="keyword">zend_objects_store_dtor_t</span> dtor;</div><div class="line">            <span class="keyword">zend_objects_free_object_storage_t</span> free_storage;</div><div class="line">            <span class="keyword">zend_objects_store_clone_t</span> clone;</div><div class="line">            <span class="keyword">const</span> zend_object_handlers *handlers;</div><div class="line">            zend_uint refcount;</div><div class="line">            gc_root_buffer *buffered;</div><div class="line">        &#125; obj;</div><div class="line">        <span class="class"><span class="keyword">struct</span> &#123;</span></div><div class="line">            <span class="keyword">int</span> next;</div><div class="line">        &#125; free_list;</div><div class="line">    &#125; bucket;</div><div class="line">&#125; zend_object_store_bucket;</div></pre></td></tr></table></figure>
+<p>桶被佔用的時候，valid為1，否則為0。</p>
+<p>對象被銷毀時，dtor被調用後，destructor_called被置為1，防止在被free時重複調用dtor，具體見<strong>Object的二階銷毀邏輯</strong>。</p>
+<p>_store_object裡存儲對象的主要信息。zend_objects_store_put()傳入的zend_object結構體存儲在object裡。dtor和free_storage見<strong>Object的二階銷毀邏輯</strong>。clone是對象的克隆函數。handlers存儲對象的一系列操作函數，缺省為std_object_handlers。refcount是對象的引用計數。buffered是垃圾回收需要用到的數據。</p>
+<p>free_list記錄對象倉庫中可用的Bucket鏈表中下一個可用的Bucket。</p>
+<h3 id="Object-Store的操作"><a href="#Object-Store的操作" class="headerlink" title="Object Store的操作"></a>Object Store的操作</h3><ul>
+<li>zend_objects_store_put()：註冊對象到倉庫</li>
+<li>zend_object_store_get_object_by_handle()：通過對象句柄取對象</li>
+<li>zend_object_store_get_object()：通過zval取對象，返回void*</li>
+<li>zend_objects_get_address()：和zend_object_store_get_object()一樣，但返回zend_object*</li>
+</ul>
+<h2 id="Object的二階銷毀邏輯"><a href="#Object的二階銷毀邏輯" class="headerlink" title="Object的二階銷毀邏輯"></a>Object的二階銷毀邏輯</h2><p>對象的銷毀分兩個步驟，一是對象的析構，一是內存的釋放。前者調用對象的dtor，後者調用free_storage。一般先析構，再釋放內存，但兩者可各自分開執行。</p>
+<p>dtor中可以執行用戶空間的PHP代碼，主要是PHP類的__destruct()。PHP腳本執行完成後銷毀對象並結束進程（executor shutdown），在這個過程進行到一半的時候執行用戶空間代碼可能會出問題，所以這麼區別主要是為了在進程結束過程中不會調用用戶空間代碼。</p>
+<p>此外，dtor並不是必須執行的，如果一個對象的dtor調用的用戶空間代碼裡執行了die()，後續對象的dtor不會被執行。所以大部分情況下，開發者可以自定義free_storage函數，而使用缺省的zend_objects_destroy_object作為dtor。</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/resource-implementation-in-php/">
+        ← prev <!--PHP资源的實現和操作-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/class-interface-implementation-in-php/">
+        <!--PHP類和接口的實現--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

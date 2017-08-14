@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>使neocomplete和ultisnips共用tab鍵的方法 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  八月 11, 2017
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/vim/'>vim</a> 
+    
+      <a href='/tags/最佳實踐/'>最佳實踐</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">使neocomplete和ultisnips共用tab鍵的方法</h1>
+  <section class="post-content article-entry">
+    <p>昨天用vim-clevertab換掉了supertab，但是實際使用中總是出莫名其妙的問題。看了一下插件源碼，使用全局變量判斷狀態，這是個很不靠譜的方案，所以還是卸掉了。</p>
+<p>下面的配置可以很好的解決問題：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> <span class="variable">g:UltiSnipsExpandTrigger</span>=<span class="string">"&lt;c-tab&gt;"</span></div><div class="line"><span class="keyword">let</span> <span class="variable">g:UltiSnipsJumpForwardTrigger</span>=<span class="string">"&lt;c-tab&gt;"</span></div><div class="line"><span class="keyword">let</span> <span class="variable">g:UltiSnipsJumpBackwardTrigger</span>=<span class="string">"&lt;s-tab&gt;"</span></div><div class="line"><span class="keyword">let</span> <span class="variable">g:UltiSnipsSnippetsDir</span>=<span class="string">'~/.vim/UltiSnips'</span></div><div class="line"><span class="keyword">let</span> <span class="variable">g:ulti_expand_or_jump_res</span> = <span class="number">0</span></div><div class="line"><span class="function"><span class="keyword">function</span>! <span class="title">CleverTab</span><span class="params">()</span>"&#123;&#123;&#123;</span></div><div class="line">    <span class="keyword">call</span> UltiSnips#ExpandSnippetOrJump()</div><div class="line">    <span class="keyword">if</span> <span class="variable">g:ulti_expand_or_jump_res</span></div><div class="line">        <span class="keyword">return</span> <span class="string">""</span></div><div class="line">    <span class="keyword">else</span></div><div class="line">        <span class="keyword">if</span> <span class="built_in">pumvisible</span>()</div><div class="line">            <span class="keyword">return</span> <span class="string">"\&lt;c-n&gt;"</span></div><div class="line">        <span class="keyword">else</span></div><div class="line">            <span class="keyword">return</span> neocomplete#start_manual_complete()</div><div class="line">        <span class="keyword">endif</span></div><div class="line">    <span class="keyword">endif</span></div><div class="line"><span class="keyword">endfunction</span><span class="comment">"&#125;&#125;&#125;</span></div><div class="line"><span class="keyword">inoremap</span> <span class="symbol">&lt;silent&gt;</span> <span class="symbol">&lt;tab&gt;</span> <span class="symbol">&lt;c-r&gt;</span>=CleverTab()<span class="symbol">&lt;cr&gt;</span></div><div class="line"><span class="keyword">snoremap</span> <span class="symbol">&lt;silent&gt;</span> <span class="symbol">&lt;tab&gt;</span> <span class="symbol">&lt;esc&gt;</span>:<span class="keyword">call</span> UltiSnips#ExpandSnippetOrJump()<span class="symbol">&lt;cr&gt;</span></div></pre></td></tr></table></figure>
+<p>ultisnips沒有禁用按鍵映射的開關，而默認的映射會干擾上述配置，所以這裡把默認的映射改成了<code>&lt;c-tab&gt;</code>。</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/manage-php-namespaces-with-vim-php-namespace/">
+        ← prev <!--用vim-php-namespace管理PHP的命名空間-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/graphql-vs-restful/">
+        <!--GraphQL：RESTful之外的接口實現方案--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

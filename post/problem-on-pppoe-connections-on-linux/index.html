@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>Linux下pppoe连接建立后仍不能上网的问题 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  七月 10, 2010
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/配置/'>配置</a> 
+    
+      <a href='/tags/archlinux/'>Archlinux</a> 
+    
+      <a href='/tags/計算機/'>計算機</a> 
+    
+      <a href='/tags/bash/'>BASH</a> 
+    
+      <a href='/tags/adsl/'>ADSL</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">Linux下pppoe连接建立后仍不能上网的问题</h1>
+  <section class="post-content article-entry">
+    <p><strong>问题描述</strong></p>
+<p>pppoe可以连接，ifconfig可以看到ppp0接口，一切正常，只是不能上网。</p>
+<p><strong>解决办法</strong></p>
+<p>使用如下命令查看路由表：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">route</div></pre></td></tr></table></figure>
+<p>正常情况下返回的结果中应该有如下内容：</p>
+<blockquote><br>default  *  0.0.0.0   U   0   0  0 ppp0<br></blockquote>
+
+<p>如果没有，可手工添加：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">route add default dev ppp0</div></pre></td></tr></table></figure>
+<p>如果可以上网，就成功了。</p>
+<p>使用如下脚本在pppoe连接成功时自动添加路由表项：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#!/bin/sh</span></div><div class="line"> </div><div class="line"><span class="keyword">if</span> ifconfig ppp0  &gt; /dev/null 2&gt;&amp;1 ; <span class="keyword">then</span></div><div class="line">    route del default</div><div class="line">    route add default dev ppp0</div><div class="line"><span class="keyword">fi</span></div></pre></td></tr></table></figure>
+<p>将上述内容保存成名为<strong>01-route.sh</strong>的文件，权限<strong>755</strong>，放到<strong>/etc/ppp/ip-up.d</strong>目录下。</p>
+<p>然后创建以下两个脚本：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"> </div><div class="line"><span class="keyword">if</span> ifconfig ppp0  &gt; /dev/null 2&gt;&amp;1 ; <span class="keyword">then</span></div><div class="line">    <span class="built_in">echo</span> <span class="string">'PPPOE has already been switched on !'</span></div><div class="line">    <span class="built_in">exit</span> 0</div><div class="line"><span class="keyword">fi</span></div><div class="line"> </div><div class="line">off</div><div class="line"> </div><div class="line">sudo pon</div><div class="line">sleep 5</div><div class="line">sudo /etc/ppp/ip-up</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"> </div><div class="line"><span class="keyword">if</span> ! ifconfig ppp0  &gt; /dev/null 2&gt;&amp;1 ; <span class="keyword">then</span></div><div class="line">    <span class="built_in">echo</span> <span class="string">'PPPOE has already been switched off !'</span></div><div class="line">    <span class="built_in">exit</span> 0</div><div class="line"><span class="keyword">fi</span></div><div class="line"> </div><div class="line">sudo poff</div><div class="line">sudo /etc/ppp/ip-down</div></pre></td></tr></table></figure>
+<p>分别命名为<strong>on</strong>和<strong>off</strong>并复制到环境变量PATH下，以后即可使用这两个脚本建立和注销pppoe连接。</p>
+<p><strong>原因分析</strong></p>
+<p>问题的原因是pppoe连接建立时，没有自动往路由表中添加相关路由项。</p>
+<p>一般情况下，如果使用的是<strong>ppp</strong>做pppoe连接，其配置文件中默认会开启<strong>defaultroute</strong>选项，该选项的作用就是在pppoe连接建立时自动添加路由表项，但在路由表中已经存在<strong>default</strong>项时，该操作将不会进行。</p>
+<p>一般有两种情况会使路由表中在pppoe连接建立前就存在default项。一种情况是网络接口配置中设置了route，如在archlinux下，就是rc.conf文件中的gateway项。如果使用的是静态地址，则需要做这种配置，但对于大多数使用DHCP动态分配IP地址的情况，这项配置则不需要。另一种情况就是ADSL Modem自带路由功能，在分配IP给计算机时也会自动添加一条路由表项。</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/howto-enable-routing-and-auto-dialing-for-unicom-adsl-modem-2/">
+        ← prev <!--网通ADSL猫开启路由和自动拨号功能的方法之二-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/howto-enable-routing-and-auto-dialing-for-unicom-adsl-modem-1/">
+        <!--网通ADSL猫开启路由和自动拨号功能的方法之一--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

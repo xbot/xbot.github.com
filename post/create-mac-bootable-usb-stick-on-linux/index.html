@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>Linux下做Mac OSX安裝U盤的步驟 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  三月 8, 2016
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/archlinux/'>archlinux</a> 
+    
+      <a href='/tags/mac/'>mac</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">Linux下做Mac OSX安裝U盤的步驟</h1>
+  <section class="post-content article-entry">
+    <p>假設U盤對應/dev/sdb1、OSX安裝包是osx.dmg。整個過程就是提取出一系列文件，然後複制到U盤裏。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 格式化U盤爲hfs+文件系統</span></div><div class="line">sudo mkfs.hfsplus -v EICaptianInstall /dev/sdb1</div><div class="line"> </div><div class="line"><span class="comment"># 提取和挂載第一個光盤鏡像</span></div><div class="line">dmg2img -p 5 osx.dmg osx.img</div><div class="line">mkdir raw &amp;&amp; sudo mount -o loop osx.img raw</div><div class="line"> </div><div class="line"><span class="comment"># 提取和挂載第二個光盤鏡像</span></div><div class="line">dmg2img -p 5 raw/Install\ OS\ X\ El\ Capitan.app/Contents/SharedSupport/InstallESD.dmg InstallESD.img</div><div class="line">mkdir esd &amp;&amp; sudo mount -o loop InstallESD.img esd</div><div class="line"> </div><div class="line"><span class="comment"># 提取和挂載第三個光盤鏡像</span></div><div class="line">dmg2img -p 4 esd/BaseSystem.dmg BaseSystem.img</div><div class="line">mkdir base &amp;&amp; sudo mount -o loop BaseSystem.img base</div><div class="line"> </div><div class="line"><span class="comment"># 挂載U盤</span></div><div class="line">mkdir usb &amp;&amp; sudo mount /dev/sdb1 usb</div><div class="line"> </div><div class="line"><span class="comment"># 複制一系列文件</span></div><div class="line">sudo cp -r base/* usb/</div><div class="line">sudo rm usb/System/Installation/Packages</div><div class="line">sudo cp -r esd/Packages usb/System/Installation/</div><div class="line">sudo cp esd/BaseSystem.* usb/</div></pre></td></tr></table></figure>
+<p>注意dmg2img的參數-p表示提取dmg的第幾個分區，似乎不同的OSX版本提取哪個分區也不一樣，判斷方法就是先執行<code>dmg2img osx.dmg</code>，看哪個分區提取得最慢就選哪個。</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/alfred-pushbullet/">
+        ← prev <!--Alfred-pushbullet: Push a text to your phone-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/fastfold-for-vim/">
+        <!--FastFold：Vim折疊功能的救贖--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

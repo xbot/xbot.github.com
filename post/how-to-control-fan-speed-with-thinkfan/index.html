@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>在Archlinux下使用thinkfan控制Thinkpad x220的風扇轉速 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  四月 14, 2012
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/archlinux/'>Archlinux</a> 
+    
+      <a href='/tags/計算機/'>計算機</a> 
+    
+      <a href='/tags/thinkpad/'>ThinkPad</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">在Archlinux下使用thinkfan控制Thinkpad x220的風扇轉速</h1>
+  <section class="post-content article-entry">
+    <p>Archlinux目前對Thinkpad風扇的自動控制效果並不好，氣溫上升後很容易出現一直在三千多轉一直跑的問題。thinkfan是目前用的比較多的自動控制風扇轉速的程序，但Google到的配置thinkfan的文章大多語焉不詳，可能是跟具體的發行版有關，因為貌似有些發行版中安裝了thinkfan後會自動生成缺省的配置文件，但在目前的AUR中的包被安裝後卻沒有生成任何配置文件。</p>
+
+<p>下面是我在Archlinux下配置的步驟，實際效果很好，現在只要不看視頻、不編譯程序、不啟動Chromium，一般是兩千九百轉的速度，安靜多了。</p>
+
+<h2>lm_sensors</h2>
+
+<p>安裝lm_sensors並執行命令初始化：</p>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 一路回車</span></div><div class="line">sudo sensors-detect</div></pre></td></tr></table></figure>
+
+<p>將sensors加入rc.conf中DAEMONS中，開機啟動。</p>
+
+<p>启动sensors服务：</p>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo rc.d start sensors</div></pre></td></tr></table></figure>
+
+<h2>thinkpad_acpi</h2>
+
+<p>修改文件“<strong>/etc/modprobe.d/thinkpad_acpi.conf</strong>”：</p>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">options thinkpad_acpi fan_control=1</div></pre></td></tr></table></figure>
+
+<p>我這裡雖沒有把thinkpad_acpi加到rc.conf的MODULES中，但lsmod也是可以看到它的，說明還是自動啟用了。要使上面這項配置生效，必須重啟電腦，我這裡重啟thinkpad_acpi模塊時報錯說該模塊正在被使用。</p>
+
+<h2>thinkfan</h2>
+
+<p>安裝thinkfan並修改文件“<strong>/etc/default/thinkfan</strong>”：</p>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">START=yes</div></pre></td></tr></table></figure>
+
+<p>修改文件“<strong>/etc/thinkfan.conf</strong>”：</p>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">sensor /sys/class/hwmon/hwmon0/temp1_input</div><div class="line"></div><div class="line">(0,  0, 55)</div><div class="line">(1, 48, 60)</div><div class="line">(2, 50, 61)</div><div class="line">(3, 52, 63)</div><div class="line">(4, 56, 65)</div><div class="line">(5, 59, 66)</div><div class="line">(7, 63, 32767)</div></pre></td></tr></table></figure>
+
+<p>將thinkfan加入rc.conf的DAEMONS中，開機自動啟動。</p>
+
+<p>啟動thinkfan：</p>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo thinkfan</div></pre></td></tr></table></figure>
+
+<h2>查看狀態</h2>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 看CPU温度和风扇转速</span></div><div class="line">sensors</div><div class="line"></div><div class="line"><span class="comment"># 看風扇詳細信息</span></div><div class="line">cat /proc/acpi/ibm/fan</div></pre></td></tr></table></figure>
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/ultrablog-v330-released/">
+        ← prev <!--UltraBlog.vim v3.3.0：I18N、超時時間和其它-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/turbocrm-cluster-express-v1-released/">
+        <!--TurboCRM Cluster Express v1.0 釋出--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

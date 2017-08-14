@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>批量下載視頻的BASH腳本 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  八月 28, 2010
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/編程/'>編程</a> 
+    
+      <a href='/tags/bash/'>BASH</a> 
+    
+      <a href='/tags/下載/'>下載</a> 
+    
+      <a href='/tags/腳本/'>腳本</a> 
+    
+      <a href='/tags/視頻/'>視頻</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">批量下載視頻的BASH腳本</h1>
+  <section class="post-content article-entry">
+    <p>兩周前為了批量下載某視頻網站中的電視劇，寫了個BASH腳本。將電視劇列表頁面的URL地址作為唯一參數傳給腳本，然後就會把所有視頻下載到當前目錄下，并自動重命名，同時生成一個M3U格式的播放列表。</p>
+<p>由于在線視頻不支持斷點續傳，所以對于單個視頻來說無法實現。但對于整個批量下載任務來說，實現了宏觀上的斷點續傳，已經下載的視頻不會被重復下載。由于有些視頻網站會在午夜更改視頻地址，所以這一點很有用。</p>
+<p>主流視頻網站應該是都支持的，我只測試了我下載電視劇的網站，<strong>不支持的都是非主流的！</strong></p>
+<p>唯一可能需要注意的依賴是PHP，必須安裝後才能使用。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"></div><div class="line"><span class="function"><span class="title">print_help_msg</span></span> () &#123;</div><div class="line">    <span class="built_in">echo</span> <span class="string">"You see, I'm nothing ."</span></div><div class="line">    <span class="built_in">exit</span> 0</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="title">check_param</span></span> () &#123;</div><div class="line">    <span class="keyword">if</span> [ <span class="variable">$#</span> -ne 1 ]; <span class="keyword">then</span></div><div class="line">        print_help_msg</div><div class="line">    <span class="keyword">fi</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="title">check_m3u</span></span> () &#123;</div><div class="line">    <span class="keyword">if</span> ! [ -a p.m3u ] || [ `wc -l p.m3u|awk <span class="string">'&#123; print $1 &#125;'</span>` -eq 0 ]; <span class="keyword">then</span></div><div class="line">        <span class="built_in">echo</span> <span class="string">'#EXTM3U'</span> &gt; p.m3u</div><div class="line">    <span class="keyword">fi</span></div><div class="line">&#125;</div><div class="line"></div><div class="line">check_param $*</div><div class="line">check_m3u</div><div class="line"></div><div class="line"><span class="built_in">export</span> LC_ALL=en_US.UTF-8</div><div class="line"></div><div class="line">ue=$(php -r <span class="string">"echo urlencode('<span class="variable">$1</span>');"</span>)</div><div class="line">parser=<span class="string">"http://www.flvcd.com/parse.php?flag=&amp;format=&amp;kw=<span class="variable">$ue</span>&amp;sbt=%BF%AA%CA%BCGO%21"</span></div><div class="line"><span class="keyword">if</span> ! wget <span class="variable">$parser</span> -U mozilla -O meta.html ; <span class="keyword">then</span></div><div class="line">    <span class="built_in">echo</span> <span class="string">"Unable to touch the parser, check network status for the cause ."</span></div><div class="line">    <span class="built_in">exit</span> 0</div><div class="line"><span class="keyword">fi</span></div><div class="line"></div><div class="line">grep <span class="string">"&lt;N&gt;"</span> meta.html &gt; title.lst</div><div class="line">grep <span class="string">"&lt;U&gt;"</span> meta.html &gt; url.lst</div><div class="line">iconv -f gbk -t utf-8 title.lst -o title.lst</div><div class="line">sed -i <span class="string">'s/&lt;N&gt;//g'</span> title.lst</div><div class="line">sed -i <span class="string">'s/ //g'</span> title.lst</div><div class="line">sed -i <span class="string">'s/&lt;U&gt;//g'</span> url.lst</div><div class="line"></div><div class="line">l1=`wc -l title.lst|awk <span class="string">'&#123; print $1 &#125;'</span>`</div><div class="line">l2=`wc -l url.lst|awk <span class="string">'&#123; print $1 &#125;'</span>`</div><div class="line"><span class="keyword">if</span> [ <span class="string">"<span class="variable">$l1</span>"</span> != <span class="string">"<span class="variable">$l2</span>"</span> ]; <span class="keyword">then</span></div><div class="line">    <span class="built_in">echo</span> <span class="string">"Title.lst has <span class="variable">$l1</span> lines, but url.lst got <span class="variable">$l2</span>."</span></div><div class="line">    <span class="built_in">exit</span> 0</div><div class="line"><span class="keyword">fi</span></div><div class="line"><span class="keyword">if</span> [ <span class="variable">$l1</span> -eq 0 ]; <span class="keyword">then</span></div><div class="line">    <span class="built_in">echo</span> <span class="string">"Nothing got from the parser, check meta.html for detail info."</span></div><div class="line">    <span class="built_in">exit</span> 0</div><div class="line"><span class="keyword">fi</span></div><div class="line"></div><div class="line">arrTitle=(`cat title.lst`)</div><div class="line">arrURL=(`cat url.lst`)</div><div class="line"></div><div class="line">idx=$((`wc -l p.m3u|awk <span class="string">'&#123; print $1 &#125;'</span>`-1))</div><div class="line"><span class="keyword">while</span> [ <span class="variable">$idx</span> -lt <span class="variable">$l1</span> ]; <span class="keyword">do</span></div><div class="line">    title=<span class="variable">$&#123;arrTitle[$idx]&#125;</span></div><div class="line">    url=<span class="variable">$&#123;arrURL[$idx]&#125;</span></div><div class="line">    idx=$((idx+1))</div><div class="line">    <span class="keyword">if</span> ! wget <span class="variable">$url</span> -U mozilla -O <span class="string">"<span class="variable">$&#123;title&#125;</span>.flv"</span> ; <span class="keyword">then</span></div><div class="line">        <span class="built_in">echo</span> <span class="string">"Failed fetching <span class="variable">$&#123;title&#125;</span>.flv, maybe its URL has been changed !"</span></div><div class="line">        <span class="built_in">exit</span> 0</div><div class="line">    <span class="keyword">fi</span></div><div class="line">    cmd=<span class="string">"sed -i '\$a\\<span class="variable">$&#123;title&#125;</span>.flv' p.m3u"</span></div><div class="line">    <span class="built_in">eval</span> <span class="variable">$cmd</span></div><div class="line"><span class="keyword">done</span></div><div class="line"></div><div class="line"><span class="built_in">echo</span> <span class="string">'done !'</span></div><div class="line"><span class="built_in">exit</span> 0</div></pre></td></tr></table></figure>
+<p>另外，使用VLC執行播放列表效果灰常不錯，視頻之間銜接平滑流暢。</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/after-reading-wordpress-plug-in-development/">
+        ← prev <!--讀完《WordPress Plug-in Development》-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/howto-auto-maximize-gvim-at-startup/">
+        <!--启动GVim时自动最大化窗口的方法--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

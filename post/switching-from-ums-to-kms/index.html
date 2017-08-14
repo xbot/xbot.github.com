@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>被迫弃UMS而用KMS | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  二月 13, 2010
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/配置/'>配置</a> 
+    
+      <a href='/tags/archlinux/'>Archlinux</a> 
+    
+      <a href='/tags/計算機/'>計算機</a> 
+    
+      <a href='/tags/thinkpad/'>ThinkPad</a> 
+    
+      <a href='/tags/内核/'>内核</a> 
+    
+      <a href='/tags/新闻/'>新闻</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">被迫弃UMS而用KMS</h1>
+  <section class="post-content article-entry">
+    <p>昨天更新了一下系统，今天开机就白屏了。于是先关掉Compiz，看了一下Archlinux的<a href="http://www.archlinux.org/news/484/" target="_blank" rel="external">新闻</a>，发现新的<strong>xf86-video-intel</strong>中已经移除了UMS，也就意味着只能使用KMS做3D加速了。</p>
+
+<p><a href="http://www.thinkwiki.org/wiki/Intel_Graphics_Media_Accelerator_950#User_mode_setting_.28UMS.29" target="_blank" rel="external">UMS</a>的全称是<strong>User Mode-Setting</strong>，是一种传统的图形界面初始化方案，即在X加载之后由它初始化图形界面。这种方案的弊端是虚拟终端不具备显示和处理图形的能力，同时虚拟终端和图形界面之间的切换显得缓慢并带有闪烁。</p>
+
+<p><a href="http://wiki.archlinux.org/index.php/KMS" target="_blank" rel="external">KMS</a>的全称是<strong>Kernel Mode-Setting</strong>，是新一代图形界面初始化方案，它将图形界面的初始化由X加载之后由X负责进行改为在内核初始化时由内核进行。KMS的好处不仅仅是解决了上面UMS的问题，同时也使得Linux具备了在启动时显示漂亮的开机图示的能力。另外，在3D加速性能和低功耗方面，KMS也较UMS更胜一筹。</p>
+
+<p>我的<a href="http://0x3f.org/?p=819">Thinkpad X200</a>使用的是Intel GMA 945的芯片组，而Archlinux的<a href="http://wiki.archlinux.org/index.php/Intel_(简体中文)#KMS_.28Kernel_Mode_Setting.29" target="_blank" rel="external">Wiki</a>上仍以915为例，所以尝试着做如下内容：</p>
+
+<p>一、去除/boot/grub/menu.lst中Kernel启动参数中的<a href="http://0x3f.org/?p=866">vga参数</a>；</p>
+
+<p>二、加入以下内容到/etc/modprobe.d/modprobe.conf：</p>
+
+<blockquote>
+  <p>options i945 modeset=1</p>
+</blockquote>
+
+<p>三、在/etc/rc.conf中的<strong>MODULES</strong>行加入<strong>intel_agp</strong>和<strong>i945</strong>；</p>
+
+<p>重启系统后，Compiz白屏问题解决，3D加速性能似乎有所上升。</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/chinese-problem-of-sqlalchemy-with-sqlserver/">
+        ← prev <!--SQLAlchemy操作SQL Server的中文问题-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/virtualbox-host-interface/">
+        <!--VirtualBox的Host Interface网络接入方式的配置--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

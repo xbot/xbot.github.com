@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>Phalcon項目中PHPUnit的初始化 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  十一月 29, 2014
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/編程/'>編程</a> 
+    
+      <a href='/tags/php/'>php</a> 
+    
+      <a href='/tags/phalcon/'>phalcon</a> 
+    
+      <a href='/tags/phpunit/'>phpunit</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">Phalcon項目中PHPUnit的初始化</h1>
+  <section class="post-content article-entry">
+    <p>參考<a href="http://docs.phalconphp.com/zh/latest/reference/unit-testing.html" target="_blank" rel="external">官方文檔</a>，稍作修改。</p>
+<p>在項目下創建目錄unittests，進入目錄執行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">composer require phpunit/phpunit</div></pre></td></tr></table></figure>
+<p>創建tests目錄并在其中創建文件Bootstrap.php：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line"><span class="keyword">use</span> <span class="title">Phalcon</span>\<span class="title">DI</span>,</div><div class="line">    <span class="title">Phalcon</span>\<span class="title">DI</span>\<span class="title">FactoryDefault</span>;</div><div class="line"></div><div class="line">ini_set(<span class="string">'display_errors'</span>,<span class="number">1</span>);</div><div class="line">error_reporting(E_ALL);</div><div class="line"></div><div class="line">define(<span class="string">'ROOT_PATH'</span>, <span class="keyword">__DIR__</span>);</div><div class="line">define(<span class="string">'PROJECT_DIR'</span>, <span class="string">'/home/taoqi/workspace'</span>);</div><div class="line"></div><div class="line">set_include_path(</div><div class="line">    ROOT_PATH . PATH_SEPARATOR . get_include_path()</div><div class="line">);</div><div class="line"></div><div class="line"><span class="comment">// required for phalcon/incubator</span></div><div class="line"><span class="keyword">include</span> <span class="keyword">__DIR__</span> . <span class="string">"/../vendor/autoload.php"</span>;</div><div class="line"></div><div class="line"><span class="comment">// 加載項目文件</span></div><div class="line">$config = <span class="keyword">require_once</span> PROJECT_DIR.<span class="string">'/web/config/config.php'</span>;</div><div class="line"><span class="keyword">require_once</span> PROJECT_DIR.<span class="string">'/web/config/loader.php'</span>;</div><div class="line">$loader-&gt;registerDirs(<span class="keyword">array</span>(</div><div class="line">    ROOT_PATH</div><div class="line">), <span class="keyword">true</span>);</div><div class="line"></div><div class="line"><span class="comment">// $di = new FactoryDefault();</span></div><div class="line">DI::reset();</div><div class="line"></div><div class="line"><span class="comment">// add any needed services to the DI here</span></div><div class="line"><span class="keyword">require_once</span> PROJECT_DIR.<span class="string">'/web/config/services.php'</span>;</div><div class="line"></div><div class="line">DI::setDefault($di);</div></pre></td></tr></table></figure>
+<p>安裝phalcon的phpunit輔助庫：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">composer require phalcon/incubator</div></pre></td></tr></table></figure>
+<p>創建phpunit.xml：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="php"><span class="meta">&lt;?</span>xml version=<span class="string">"1.0"</span> encoding=<span class="string">"UTF-8"</span><span class="meta">?&gt;</span></span></div><div class="line"><span class="tag">&lt;<span class="name">phpunit</span> <span class="attr">bootstrap</span>=<span class="string">"./Bootstrap.php"</span></span></div><div class="line">        <span class="attr">backupGlobals</span>=<span class="string">"false"</span></div><div class="line">        <span class="attr">backupStaticAttributes</span>=<span class="string">"false"</span></div><div class="line">        <span class="attr">verbose</span>=<span class="string">"true"</span></div><div class="line">        <span class="attr">colors</span>=<span class="string">"false"</span></div><div class="line">        <span class="attr">convertErrorsToExceptions</span>=<span class="string">"true"</span></div><div class="line">        <span class="attr">convertNoticesToExceptions</span>=<span class="string">"true"</span></div><div class="line">        <span class="attr">convertWarningsToExceptions</span>=<span class="string">"true"</span></div><div class="line">        <span class="attr">processIsolation</span>=<span class="string">"false"</span></div><div class="line">        <span class="attr">stopOnFailure</span>=<span class="string">"false"</span></div><div class="line">        <span class="attr">syntaxCheck</span>=<span class="string">"true"</span>&gt;</div><div class="line">    <span class="tag">&lt;<span class="name">testsuite</span> <span class="attr">name</span>=<span class="string">"Phalcon - Testsuite"</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">directory</span>&gt;</span>./<span class="tag">&lt;/<span class="name">directory</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">testsuite</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">phpunit</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>創建單元測試基類UnitTestCase.php：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line"><span class="keyword">use</span> <span class="title">Phalcon</span>\<span class="title">DI</span>,</div><div class="line">    \<span class="title">Phalcon</span>\<span class="title">Test</span>\<span class="title">UnitTestCase</span> <span class="title">as</span> <span class="title">PhalconTestCase</span>;</div><div class="line"></div><div class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">UnitTestCase</span> <span class="keyword">extends</span> <span class="title">PhalconTestCase</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * <span class="doctag">@var</span> \Voice\Cache</div><div class="line">     */</div><div class="line">    <span class="keyword">protected</span> $_cache;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * <span class="doctag">@var</span> \Phalcon\Config</div><div class="line">     */</div><div class="line">    <span class="keyword">protected</span> $_config;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * <span class="doctag">@var</span> bool</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> $_loaded = <span class="keyword">false</span>;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">setUp</span><span class="params">(Phalcon\DiInterface $di = NULL, Phalcon\Config $config = NULL)</span> </span>&#123;</div><div class="line"></div><div class="line">        <span class="comment">// Load any additional services that might be required during testing</span></div><div class="line">        $di = DI::getDefault();</div><div class="line"></div><div class="line">        <span class="comment">// get any DI components here. If you have a config, be sure to pass it to the parent</span></div><div class="line">        <span class="keyword">parent</span>::setUp($di);</div><div class="line"></div><div class="line">        <span class="keyword">$this</span>-&gt;_loaded = <span class="keyword">true</span>;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * Check if the test case is setup properly</div><div class="line">     * <span class="doctag">@throws</span> \PHPUnit_Framework_IncompleteTestError;</div><div class="line">     */</div><div class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span>(!<span class="keyword">$this</span>-&gt;_loaded) &#123;</div><div class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> \PHPUnit_Framework_IncompleteTestError(<span class="string">'Please run parent::setUp().'</span>);</div><div class="line"></div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>創建單元測試類testsTestUnitTest.php：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line"></div><div class="line"><span class="keyword">namespace</span> <span class="title">Test</span>;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Class UnitTest</div><div class="line"> */</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">UnitTests</span> <span class="keyword">extends</span> \<span class="title">UnitTestCase</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">testTestCase</span><span class="params">()</span> </span>&#123;</div><div class="line">        $post = \Post::find(<span class="number">33</span>);</div><div class="line">        <span class="keyword">$this</span>-&gt;assertObjectHasAttribute(<span class="string">'title'</span>, $post, <span class="string">'where is title ?'</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在tests目錄下建立phpunit的軟連接并執行測試：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ln -sf ../vendor/bin/phpunit run</div><div class="line">./run</div></pre></td></tr></table></figure>
+<p><strong>另</strong>：發現個詭異的問題，如果Model中不覆蓋getSource()方法，單元測試中會自動找用下劃線分隔的表名，即假如Model名爲FooBar，會去找foo_bar的表名，但正常執行程序時找的是foobar。在官方論壇問的<a href="http://forum.phalconphp.com/discussion/4078/whats-the-principle-when-phalcon-gets-the-table-name-of-a-model" target="_blank" rel="external">問題</a>還木有解決。phalcon坑挺多的。</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/after-reading-sketches-of-the-travel-to-hunan/">
+        ← prev <!--讀完《湘行散記》-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/leverage-code-time-machine/">
+        <!--用好代碼時光機--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

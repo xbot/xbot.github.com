@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>歐拉工程第七解 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  十月 31, 2008
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/python/'>Python</a> 
+    
+      <a href='/tags/数学/'>数学</a> 
+    
+      <a href='/tags/歐拉工程/'>歐拉工程</a> 
+    
+      <a href='/tags/算法/'>算法</a> 
+    
+      <a href='/tags/編程/'>編程</a> 
+    
+      <a href='/tags/lua/'>Lua</a> 
+    
+      <a href='/tags/php/'>PHP</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">歐拉工程第七解</h1>
+  <section class="post-content article-entry">
+    <p>第七解：</p>
+
+<blockquote><p>By listing the first six prime numbers: 2, 3, 5, 7, 11, and 13, we can see that the 6th prime is 13.</p>
+
+<p>What is the 10001st prime number?</p></blockquote>
+
+<p>穷举，并加以最大程度的优化：对大于2的素数，只判断奇数；判断一个奇数是否素数时，只拿已经找到的素数中小于第这个数平方根的数来相除，如果均不能整除，就是素数。Python的实现：</p>
+
+<p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">IsPrimeNum</span><span class="params">(num,feed)</span>:</span></div><div class="line">    <span class="keyword">from</span> math <span class="keyword">import</span> sqrt</div><div class="line">    tmp = feed[:]</div><div class="line">    <span class="keyword">while</span> tmp[<span class="number">-1</span>] &gt; int(sqrt(num)):</div><div class="line">        tmp.pop()</div><div class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> tmp:</div><div class="line">        <span class="keyword">if</span> num % i == <span class="number">0</span>:</div><div class="line">            <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line">    <span class="keyword">return</span> <span class="keyword">True</span></div><div class="line"></div><div class="line">limit = <span class="number">10001</span></div><div class="line">feed = [<span class="number">2</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">7</span>]</div><div class="line">temp = <span class="number">7</span></div><div class="line">counter = <span class="number">4</span></div><div class="line"><span class="keyword">while</span> counter &lt; limit :</div><div class="line">    temp += <span class="number">2</span></div><div class="line">    <span class="keyword">if</span> IsPrimeNum(temp,feed):</div><div class="line">        feed.append(temp)</div><div class="line">        counter += <span class="number">1</span></div><div class="line"><span class="keyword">print</span> temp</div></pre></td></tr></table></figure>
+</p>
+
+
+<p>执行了一下，在我这里居然用了五百秒才出结果，神啊，差不多十分钟啊。想到PHP号称速度很快，于是用PHP重新实现了一下：</p>
+
+<p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">IsPrimeNum</span><span class="params">($num,$feed)</span></span>&#123;</div><div class="line">    $base = floor(sqrt($num));</div><div class="line">    <span class="keyword">foreach</span>($feed <span class="keyword">as</span> $i=&gt;$v)&#123;</div><div class="line">        <span class="keyword">if</span>($v &gt; $base)&#123;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">if</span>($num % $v == <span class="number">0</span>)&#123;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">$limit = <span class="number">10001</span>;</div><div class="line">$feed = <span class="keyword">array</span>(<span class="number">2</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">7</span>);</div><div class="line">$counter = <span class="number">4</span>;</div><div class="line">$tmp = <span class="number">7</span>;</div><div class="line"><span class="keyword">while</span>($counter &lt; $limit)&#123;</div><div class="line">    $tmp += <span class="number">2</span>;</div><div class="line">    <span class="keyword">if</span>(IsPrimeNum($tmp,$feed))&#123;</div><div class="line">        $counter++;</div><div class="line">        $feed[] = $tmp;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">echo</span> $tmp;</div></pre></td></tr></table></figure>
+</p>
+
+
+<p>还好，七十四秒出结果，看来PHP的牛皮不是吹的。当然，Lua会更快：</p>
+
+<p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">IsPrimeNum</span><span class="params">(num,feed)</span></span></div><div class="line">    <span class="built_in">require</span>(<span class="string">'math'</span>)</div><div class="line">    <span class="keyword">local</span> limit = <span class="built_in">math</span>.<span class="built_in">floor</span>(<span class="built_in">math</span>.<span class="built_in">sqrt</span>(num))</div><div class="line">    <span class="keyword">for</span> i,v <span class="keyword">in</span> <span class="built_in">ipairs</span>(feed) <span class="keyword">do</span></div><div class="line">        <span class="keyword">if</span> v &gt; limit <span class="keyword">then</span></div><div class="line">            <span class="keyword">return</span> <span class="literal">true</span></div><div class="line">        <span class="keyword">end</span></div><div class="line">        <span class="keyword">if</span> num % v == <span class="number">0</span> <span class="keyword">then</span></div><div class="line">            <span class="keyword">return</span> <span class="literal">false</span></div><div class="line">        <span class="keyword">end</span></div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="keyword">local</span> limit = <span class="number">10001</span></div><div class="line"><span class="keyword">local</span> feed = &#123;<span class="number">2</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">7</span>&#125;</div><div class="line"><span class="keyword">local</span> counter = <span class="number">4</span></div><div class="line"><span class="keyword">local</span> tmp = <span class="number">7</span></div><div class="line"><span class="keyword">while</span> counter &lt; limit <span class="keyword">do</span></div><div class="line">    tmp = tmp + <span class="number">2</span></div><div class="line">    <span class="keyword">if</span> IsPrimeNum(tmp,feed) <span class="keyword">then</span></div><div class="line">        counter = counter + <span class="number">1</span></div><div class="line">        <span class="built_in">table</span>.<span class="built_in">insert</span>(feed,tmp)</div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="built_in">print</span>(tmp)</div></pre></td></tr></table></figure>
+</p>
+
+
+<p>执行完后还是吓了一跳，0.3秒，同样是语言，效率的差别咋就那么大呢？！我在想用Java会不会算到2009去。</p>
+
+<p>我不相信这道题用Python就那么难解，下面是用递归实现的程序：</p>
+
+<p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> math <span class="keyword">import</span> sqrt</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">GuessPrime</span><span class="params">(feed,limit)</span>:</span></div><div class="line">    <span class="keyword">if</span> feed == <span class="number">2</span> :</div><div class="line">        <span class="keyword">return</span> [<span class="number">2</span>]</div><div class="line">    <span class="keyword">elif</span> feed == <span class="number">3</span> :</div><div class="line">        <span class="keyword">return</span> [<span class="number">2</span>,<span class="number">3</span>]</div><div class="line">    </div><div class="line">    tmp = int(sqrt(feed))</div><div class="line">    primes = GuessPrime(tmp,limit)</div><div class="line">    </div><div class="line">    base = <span class="number">0</span></div><div class="line">    <span class="keyword">if</span> tmp % <span class="number">2</span> == <span class="number">0</span>:</div><div class="line">        base = tmp + <span class="number">1</span></div><div class="line">    <span class="keyword">else</span>:</div><div class="line">        base = tmp</div><div class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(base,feed,<span class="number">2</span>):</div><div class="line">        flag = <span class="number">0</span></div><div class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> primes:</div><div class="line">            <span class="keyword">if</span> i % j == <span class="number">0</span>:</div><div class="line">                flag = <span class="number">1</span></div><div class="line">                <span class="keyword">break</span></div><div class="line">        <span class="keyword">if</span> flag == <span class="number">0</span>:</div><div class="line">            primes.append(i)</div><div class="line">            <span class="keyword">if</span> len(primes) == limit:</div><div class="line">                <span class="keyword">return</span> primes</div><div class="line">    </div><div class="line">    <span class="keyword">return</span> primes</div><div class="line"></div><div class="line">limit = <span class="number">10001</span></div><div class="line">feed = <span class="number">1000000</span></div><div class="line">primes = GuessPrime(feed,limit)</div><div class="line"><span class="keyword">print</span> primes[limit<span class="number">-1</span>]</div></pre></td></tr></table></figure>
+</p>
+
+
+<p>11秒就出了结果，说到底，算法的改进才是硬道理！</p>
+
+<p><a href="http://picasaweb.google.com/lh/photo/Uqg0Cu8ZWv5tlQ84nbVGZw" target="_blank" rel="external"><img src="http://lh4.ggpht.com/_ceUJ_lBTHzc/SQsdErNSeSI/AAAAAAAAAlA/D7Wia09MD6o/s400/project_euler_problem_007.png"></a></p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/project-euler-8/">
+        ← prev <!--歐拉工程第八解-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/project-euler-6/">
+        <!--歐拉工程第六解--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>YYeTs.py：人人影視BT種子下載輔助腳本 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  十一月 14, 2011
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/python/'>Python</a> 
+    
+      <a href='/tags/編程/'>編程</a> 
+    
+      <a href='/tags/下載/'>下載</a> 
+    
+      <a href='/tags/腳本/'>腳本</a> 
+    
+      <a href='/tags/bt/'>BT</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">YYeTs.py：人人影視BT種子下載輔助腳本</h1>
+  <section class="post-content article-entry">
+    <p>这是最好的時代，这是最壞的時代。現在還有像<a href="ftp://zhongzi.yyets.net" target="_blank" rel="external">人人影視的BT種子FTP</a>这樣的站點，實在不容易。但是所有種子列在一塊，想看看最近幾天都更新了甚麼都很困難，於是早想寫個腳本省時省力。这週末終於實現了这個想法。</p>
+
+<h2>主要功能</h2>
+
+<ul>
+<li>按關鍵詞查詢種子</li>
+<li>限制查詢範圍為最近幾天新增的</li>
+<li>下載符合查詢條件的種子，允許下載前編輯任務列表</li>
+</ul>
+
+<h2>使用說明</h2>
+
+<h3>環境</h3>
+
+<ul>
+<li>Python 2.7，不支持Python3</li>
+<li>Mac OS X Lion，Archlinux測試通過，理論上支持Windows</li>
+</ul>
+
+<h3>配置</h3>
+
+<p>如果需要編輯下載任務列表（<em>即使用-s選項</em>），應事先配置環境變量<strong>YYETS_EDITOR</strong>，將值設定為一個文本編輯器的路徑，或者修改腳本的私有屬性<strong>__editor__</strong>也一樣。如果这兩個位置都沒有設置，則使用環境變量<strong>EDITOR</strong>。否則，將報“<strong>Command not found</strong>”的錯誤。</p>
+
+<p>有一點提示，如果使用GVim或MacVim，需要加上選項<strong>-f</strong>，以阻塞的方式啓動它，否則會導致下載結果不能達到預期。例如對於MacVim，可配置<strong>YYETS_EDITOR</strong>為：</p>
+
+<blockquote>
+  <p>mvim -f</p>
+</blockquote>
+
+<h3>使用舉例</h3>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 列出所有種子</span></div><div class="line">./yyets.py</div><div class="line"></div><div class="line"><span class="comment"># 搜索關鍵詞</span></div><div class="line">./yyets.py 猩球崛起 1080p</div><div class="line"></div><div class="line"><span class="comment"># 搜索最近三天新增的種子</span></div><div class="line">./yyets.py --past=3</div><div class="line"></div><div class="line"><span class="comment"># 搜索最近七天內新增的、滿足關鍵詞條件的種子</span></div><div class="line">./yyets.py --past=7 蓝精灵</div><div class="line"></div><div class="line"><span class="comment"># 下載滿足查詢條件的種子</span></div><div class="line">./yyets.py -d --past=30 1080p</div><div class="line"></div><div class="line"><span class="comment"># 下載滿足查詢條件的種子，下載前編輯任務列表</span></div><div class="line">./yyets.py -d -p --past=30 1080p</div><div class="line"></div><div class="line"><span class="comment"># 更多詳細信息，參閱幫助</span></div><div class="line">./yyets.py -h</div><div class="line">./yyets.py --<span class="built_in">help</span></div></pre></td></tr></table></figure>
+
+<h3>下載</h3>
+
+<p>移步GitHub獲取最新版本：</p>
+
+<p><a href="https://github.com/xbot/shell" target="_blank" rel="external">https://github.com/xbot/shell</a></p>
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/highlighting-paired-html-tags-using-matchtag-vim/">
+        ← prev <!--MatchTag.vim: 高亮配對的HTML標籤-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/after-reading-pro-git/">
+        <!--讀完《Pro Git》--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

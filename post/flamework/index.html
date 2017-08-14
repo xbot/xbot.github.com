@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>PHP框架實戰：Flamework | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  十二月 26, 2013
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/編程/'>編程</a> 
+    
+      <a href='/tags/php/'>PHP</a> 
+    
+      <a href='/tags/框架/'>框架</a> 
+    
+      <a href='/tags/flamework/'>Flamework</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">PHP框架實戰：Flamework</h1>
+  <section class="post-content article-entry">
+    <p>從今天開始，逐步實現一個PHP的MVC框架，以踐行平時對這方面的一些想法。</p>
+<h2 id="項目信息"><a href="#項目信息" class="headerlink" title="項目信息"></a>項目信息</h2><ul>
+<li>名稱：Flamework (<em>Flame Framework</em>)</li>
+<li>源碼：<a href="https://github.com/xbot/flamework" target="_blank" rel="external">https://github.com/xbot/flamework</a></li>
+</ul>
+<h2 id="框架特性"><a href="#框架特性" class="headerlink" title="框架特性"></a>框架特性</h2><p><strong>激進</strong></p>
+<p>用PHP高版本引入的新特性，不考慮向前兼容問題，沒有歷史包袱。</p>
+<p><strong>命名空間</strong></p>
+<p>PHP 5.3引入的命名空間可以有效避免類命名衝突，這樣可以使類名看起來更自然，不用再在類名前面加難看的前綴了。</p>
+<p><strong>類的自動加載</strong></p>
+<p>手動include會增加維護的難度，因為經常會出現一個類被從源碼中移除而它的include行還在的問題，這會拖慢程序執行速度、增加內存佔用。</p>
+<p>實現類的自動加載可以在類被引用時自動include相應的源碼。</p>
+<p><strong>異常的自動處理</strong></p>
+<p>在設計程序時，一般應該把用戶級的錯誤返回給頁面顯示，或者對一些HTTP錯誤顯示個性化的頁面（<em>例如人民群眾喜聞樂見的404頁面</em>），所以在業務邏輯、數據操作這些層一般應該逐級向上拋異常，然後在Controller裡捕獲並加工成頁面可識別的格式（<em>例如JSON</em>）。這樣做的缺點是Controller裡每個Action都包含重複的try…catch塊。</p>
+<p>異常的自動處理允許開發者指定自定義的異常處理邏輯，將異常處理與普通邏輯解耦，這樣每個Action只需實現它所關注的功能即可。</p>
+<p><strong>過濾器</strong></p>
+<p>過濾器允許面向切面編程，是將橫向邏輯與縱向邏輯解耦的重要工具。Flamework要實現針對Controller和Action兩個級別的過濾器鏈，過濾器可在該級別邏輯前後執行，並能停止該級別邏輯及後續過濾器的執行。</p>
+<p><strong>懶加載</strong></p>
+<p>對盡可能多的資源實現懶加載，例如數據庫連接、類、組件等，目的是提高效率、節約資源。</p>
+<p><strong>參數綁定</strong></p>
+<p>自動將請求中的參數與Action方法的參數綁定，從而避免在Action裡出現通過$_POST、$_GET這些數組取參數的髒代碼，也可以自動實現參數的校驗和錯誤處理。</p>
+<p><strong>ActiveRecord</strong></p>
+<p>ORM是對關係模型和對象模型的阻抗不匹配問題的解決方案，ActiveRecord是目前最流行的一種ORM的實現方式。通過AR，可以以更對象化的方式操作關係數據庫的數據。</p>
+<p><strong>依賴注入</strong></p>
+<p>依賴注入是個很好的解耦方法，也可以很優雅地實現懶加載。</p>
+<h2 id="目錄"><a href="#目錄" class="headerlink" title="目錄"></a>目錄</h2><ol>
+<li><a href="/post/flamework-code-spec">零：代碼規範</a></li>
+</ol>
+<ul>
+<li><a href="/post/flamework-entry">一：框架入口與類的自動加載</a></li>
+<li><a href="/post/flamework-error-auto-handling">二：錯誤和異常的自動處理</a></li>
+<li><a href="/post/flamework-controller-and-filter">三：實現Controller和Filter</a></li>
+<li><a href="/post/flamework-view-rendering">四：視圖的模板與渲染</a></li>
+<li><a href="/post/flamework-active-record">五：ORM與ActiveRecord</a></li>
+<li><a href="/post/flamework-dependency-injection">六：依賴注入</a></li>
+<li><a href="/post/flamework-summary">∝：烈焰之終章</a></li>
+</ul>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/flamework-code-spec/">
+        ← prev <!--PHP框架實戰（零）：代碼規範-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/books-read-in-the-second-half-of-2013/">
+        <!--這半年讀過的幾本書--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

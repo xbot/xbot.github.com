@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>PHPUnit代碼覆蓋率的統計方法 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  四月 30, 2017
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/編程/'>編程</a> 
+    
+      <a href='/tags/php/'>php</a> 
+    
+      <a href='/tags/測試/'>測試</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">PHPUnit代碼覆蓋率的統計方法</h1>
+  <section class="post-content article-entry">
+    <p>關於PHPUnit代碼覆蓋率的很多概念，官方文檔中講的十分清楚，本文僅就部分語焉不詳的細節做些補充。</p>
+<p>雖然phpunit.xml不是必需，但每次都輸入完整的命令很不方便，所以一般都要生成這個配置文件。用<code>phpunit --generate-configuration</code>生成的phpunit.xml默認包含<code>forceCoversAnnotation=&quot;true&quot;</code>，它表示必須在測試方法頭部的注釋里顯式使用<code>@covers</code>標籤聲明統計範圍，例如：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * <span class="doctag">@covers</span> Ox3f\LaravelUtils\Log\Log::&lt;public&gt;</div><div class="line"> * <span class="doctag">@covers</span> Ox3f\LaravelUtils\Log\Log::parseCallStack</div><div class="line"> * <span class="doctag">@covers</span> Ox3f\LaravelUtils\Log\Log::__construct</div><div class="line"> * <span class="doctag">@covers</span> Ox3f\LaravelUtils\Log\Log::__callStatic</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">testAll</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    <span class="comment">// ...</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>否則在執行統計代碼覆蓋率的命令時，會報risk：</p>
+<blockquote>
+<p>There was 1 risky test:</p>
+<p>1) Ox3f\LaravelUtils\Log\LogTest::testAll<br>This test does not have a @covers annotation but is expected to have one</p>
+</blockquote>
+<p>如果希望單元測試覆蓋全部代碼、且不用一一顯式聲明，可以將此選項的值改成<br><code>false</code>。</p>
+<p>之後即可使用明令<code>phpunit —coverage-html ./report</code>統計代碼覆蓋率，統計結果保存在report目錄中。</p>
+<h2 id="參考"><a href="#參考" class="headerlink" title="參考"></a>參考</h2><ul>
+<li><a href="https://phpunit.de/manual/current/zh_cn/code-coverage-analysis.html" target="_blank" rel="external">官方文檔：第11章-代碼覆蓋率分析</a></li>
+</ul>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/check-changes-of-webpage-by-comparing-screenshots/">
+        ← prev <!--通過比較截圖檢查網頁變化-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/mock-php-built-in-functions-using-dependency-injection/">
+        <!--利用依賴注入Mock PHP的內建函數--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

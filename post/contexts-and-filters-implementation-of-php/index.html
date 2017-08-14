@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>PHP流的上下文和過濾器的實現 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  六月 15, 2015
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/php/'>PHP</a> 
+    
+      <a href='/tags/源碼/'>源碼</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">PHP流的上下文和過濾器的實現</h1>
+  <section class="post-content article-entry">
+    <h2 id="上下文的實現和應用"><a href="#上下文的實現和應用" class="headerlink" title="上下文的實現和應用"></a>上下文的實現和應用</h2><p>上下文包含流的選項和流的參數兩部分內容。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function">php_stream_context *<span class="title">php_stream_context_alloc</span><span class="params">(<span class="keyword">void</span>)</span></span>;</div></pre></td></tr></table></figure>
+<p>流的選項是一系列鍵值對。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">php_stream_context_set_option</span><span class="params">(php_stream_context *context, <span class="keyword">const</span> <span class="keyword">char</span> *wrappername, <span class="keyword">const</span> <span class="keyword">char</span> *optionname, zval *optionvalue)</span></span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">php_stream_context_get_option</span><span class="params">(php_stream_context *context, <span class="keyword">const</span> <span class="keyword">char</span> *wrappername, <span class="keyword">const</span> <span class="keyword">char</span> *optionname, zval ***optionvalue)</span></span>;</div></pre></td></tr></table></figure>
+<p>流的參數目前只實現對流的事件的回調，php_stream_context-&gt;notifier存儲如下結構：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></div><div class="line">    php_stream_notification_func func;</div><div class="line">    <span class="keyword">void</span> (*dtor)(php_stream_notifier *notifier);</div><div class="line">    <span class="keyword">void</span> *ptr;</div><div class="line">    <span class="keyword">int</span> mask;</div><div class="line">    <span class="keyword">size_t</span> progress, progress_max;</div><div class="line">&#125; php_stream_notifier;</div></pre></td></tr></table></figure>
+<p>回調函數的原型為：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">void</span> <span class="params">(*php_stream_notification_func)</span><span class="params">(php_stream_context *context,</span></span></div><div class="line">		<span class="keyword">int</span> notifycode, <span class="keyword">int</span> severity,</div><div class="line">		<span class="keyword">char</span> *xmsg, <span class="keyword">int</span> xcode,</div><div class="line">		<span class="keyword">size_t</span> bytes_sofar, <span class="keyword">size_t</span> bytes_max,</div><div class="line">		<span class="keyword">void</span> * ptr TSRMLS_DC);</div></pre></td></tr></table></figure>
+<p>notifycode包含如下：</p>
+<ul>
+<li>PHP_STREAM_NOTIFY_RESOLVE：主機名解析完成</li>
+<li>PHP_STREAM_NOTIFY_CONNECT：socket連接建立</li>
+<li>PHP_STREAM_NOTIFY_AUTH_REQUIRED：需要驗證</li>
+<li>PHP_STREAM_NOTIFY_MIME_TYPE_IS：遠程資源的MIME-Type可用</li>
+<li>PHP_STREAM_NOTIFY_FILE_SIZE_IS：遠程資源的大小可用</li>
+<li>PHP_STREAM_NOTIFY_REDIRECTED：原始地址被跳轉</li>
+<li>PHP_STREAM_NOTIFY_PROGRESS：php_stream_notifier-&gt;progress和progress_max（可能的）已更新</li>
+<li>PHP_STREAM_NOTIFY_COMPLETED：流中已無可用數據</li>
+<li>PHP_STREAM_NOTIFY_FAILURE：請求失敗</li>
+<li>PHP_STREAM_NOTIFY_AUTH_RESULT：遠程驗證已完成，並且可能是成功的</li>
+</ul>
+<p>severity包含如下：</p>
+<ul>
+<li>PHP_STREAM_NOTIFY_SEVERITY_INFO</li>
+<li>PHP_STREAM_NOTIFY_SEVERITY_WARN</li>
+<li>PHP_STREAM_NOTIFY_SEVERITY_ERR</li>
+</ul>
+<p>php_stream_notifier-&gt;ptr用於存儲附加數據，如果該數據需要手工回收，需指定php_stream_notifier-&gt;dtor。</p>
+<p>php_stream_notifier-&gt;mask如果被賦值severity，其它severity的事件將不會觸發回調函數。</p>
+<h2 id="過濾器的實現和應用"><a href="#過濾器的實現和應用" class="headerlink" title="過濾器的實現和應用"></a>過濾器的實現和應用</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"ext/standard/php_string.h"</span></span></div><div class="line"></div><div class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></div><div class="line">	<span class="keyword">char</span> is_persistent;</div><div class="line">	<span class="keyword">char</span> *from_chars;</div><div class="line">	<span class="keyword">char</span> *to_chars;</div><div class="line">	<span class="keyword">int</span> tr_len;</div><div class="line">&#125; php_donie_filter_data;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">static</span> php_stream_filter_status_t <span class="title">php_donie_stream_filter</span><span class="params">(</span></span></div><div class="line">	php_stream *stream, php_stream_filter *thisfilter,</div><div class="line">	php_stream_bucket_brigade *buckets_in,</div><div class="line">	php_stream_bucket_brigade *buckets_out,</div><div class="line">	<span class="keyword">size_t</span> *bytes_consumed, <span class="keyword">int</span> flags TSRMLS_DC</div><div class="line">) &#123;</div><div class="line">	php_donie_filter_data *data = thisfilter-&gt;abstract;</div><div class="line">	php_stream_bucket *bucket;</div><div class="line">	<span class="keyword">size_t</span> consumed = <span class="number">0</span>;</div><div class="line"></div><div class="line">	<span class="keyword">while</span>(buckets_in-&gt;head) &#123;</div><div class="line">		bucket = php_stream_bucket_make_writeable(buckets_in-&gt;head TSRMLS_CC);</div><div class="line">		php_strtr(bucket-&gt;buf, bucket-&gt;buflen, data-&gt;from_chars, data-&gt;to_chars, data-&gt;tr_len);</div><div class="line">		consumed += bucket-&gt;buflen;</div><div class="line">		php_stream_bucket_append(buckets_out, bucket TSRMLS_CC);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">if</span> (bytes_consumed) &#123;</div><div class="line">		*bytes_consumed = consumed;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">return</span> PSFS_PASS_ON;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">php_donie_stream_filter_dtor</span><span class="params">(</span></span></div><div class="line">	php_stream_filter *thisfilter TSRMLS_DC</div><div class="line">) &#123;</div><div class="line">	php_donie_filter_data *data = thisfilter-&gt;abstract;</div><div class="line">	pefree(data, data-&gt;is_persistent);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">static</span> php_stream_filter_ops php_donie_stream_filter_ops = &#123;</div><div class="line">	php_donie_stream_filter,</div><div class="line">	php_donie_stream_filter_dtor,</div><div class="line">	<span class="string">"donie.to_upper_case"</span></div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">static</span> php_stream_filter *<span class="title">php_donie_stream_filter_create</span><span class="params">(</span></span></div><div class="line">	<span class="keyword">const</span> <span class="keyword">char</span> *name, zval *param, <span class="keyword">int</span> persistent TSRMLS_DC</div><div class="line">) &#123;</div><div class="line">	php_donie_filter_data *data;</div><div class="line"></div><div class="line">	data = pemalloc(<span class="keyword">sizeof</span>(php_donie_filter_data), persistent);</div><div class="line">	<span class="keyword">if</span> (!data) &#123;</div><div class="line">		<span class="keyword">return</span> <span class="literal">NULL</span>;</div><div class="line">	&#125;</div><div class="line">	data-&gt;is_persistent = persistent;</div><div class="line">	data-&gt;from_chars = <span class="string">"abcdefghijklmnopqrstuvwxyz"</span>;</div><div class="line">	data-&gt;to_chars = <span class="string">"ABCDEFGHIJKLMNOPQRSTUVWXYZ"</span>;</div><div class="line">	data-&gt;tr_len = <span class="built_in">strlen</span>(data-&gt;from_chars);</div><div class="line"></div><div class="line">	<span class="keyword">return</span> php_stream_filter_alloc(&amp;php_donie_stream_filter_ops, data, persistent);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">static</span> php_stream_filter_factory php_donie_stream_uppercase_factory = &#123;</div><div class="line">	php_donie_stream_filter_create</div><div class="line">&#125;;</div><div class="line"></div><div class="line">PHP_MINIT_FUNCTION(donie)</div><div class="line">&#123;</div><div class="line">	<span class="comment">/* register a filter */</span></div><div class="line">	php_stream_filter_register_factory(<span class="string">"donie.to_upper_case"</span>, &amp;php_donie_stream_uppercase_factory TSRMLS_CC);</div><div class="line"></div><div class="line">	<span class="keyword">return</span> SUCCESS;</div><div class="line">&#125;</div><div class="line"></div><div class="line">PHP_MSHUTDOWN_FUNCTION(donie)</div><div class="line">&#123;</div><div class="line">	<span class="comment">/* unregister the filter */</span></div><div class="line">	php_stream_filter_unregister_factory(<span class="string">"donie.to_upper_case"</span> TSRMLS_CC);</div><div class="line"></div><div class="line">	<span class="keyword">return</span> SUCCESS;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="註冊和註銷"><a href="#註冊和註銷" class="headerlink" title="註冊和註銷"></a>註冊和註銷</h3><p>分別在MINIT和MSHUTDOWN函數中調用php_stream_filter_register_factory()和php_stream_filter_unregister_factory()註冊和註銷過濾器。</p>
+<h3 id="過濾器的執行過程"><a href="#過濾器的執行過程" class="headerlink" title="過濾器的執行過程"></a>過濾器的執行過程</h3><p>當過濾器被調用時，調用方將使用php_donie_stream_filter_create()函數創建過濾器的實例。該函數在被執行時初始化過濾器的相關數據，並指定過濾器的相關操作。</p>
+<p>調用方然後將過濾器實例添加到對應的流的讀過濾器鏈或寫過濾器鏈中，當流中發生讀或寫的操作時，過濾器鏈將數據放到一或多個php_stream_bucket結構中，並傳遞給過濾器處理。</p>
+<h3 id="業務邏輯"><a href="#業務邏輯" class="headerlink" title="業務邏輯"></a>業務邏輯</h3><p>結構體php_donie_stream_filter_ops指定了過濾器的名稱和相關業務邏輯。php_donie_stream_filter_ops-&gt;php_donie_stream_filter_dtor是過濾器的析構函數。php_donie_stream_filter_ops-&gt;php_donie_stream_filter是過濾器的主要業務邏輯。</p>
+<p>在php_donie_stream_filter()中，函數接收一個php_stream_bucket鏈表buckets_in，並將處理後的php_stream_bucket追加到鏈表buckets_out中輸出。</p>
+<p>php_stream_bucket_make_writeable()將一個bucket從鏈表中移除，如果必要，複製其內部緩衝數據，以獲得對內容的寫權限。此外，對bucket的相關操作還有：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function">php_stream_bucket *<span class="title">php_stream_bucket_new</span><span class="params">(php_stream *stream, <span class="keyword">char</span> *buf, <span class="keyword">size_t</span> buflen, <span class="keyword">int</span> own_buf, <span class="keyword">int</span> buf_persistent TSRMLS_DC)</span></span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">php_stream_bucket_split</span><span class="params">(php_stream_bucket *in, php_stream_bucket **left, php_stream_bucket **right, <span class="keyword">size_t</span> length TSRMLS_DC)</span></span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">php_stream_bucket_delref</span><span class="params">(php_stream_bucket *bucket TSRMLS_DC)</span></span>;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">php_stream_bucket_addref</span><span class="params">(php_stream_bucket *bucket)</span></span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">php_stream_bucket_prepend</span><span class="params">(php_stream_bucket_brigade *brigade, php_stream_bucket *bucket TSRMLS_DC)</span></span>;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">php_stream_bucket_append</span><span class="params">(php_stream_bucket_brigade *brigade, php_stream_bucket *bucket TSRMLS_DC)</span></span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">php_stream_bucket_unlink</span><span class="params">(php_stream_bucket *bucket TSRMLS_DC)</span></span>;</div></pre></td></tr></table></figure>
+<p>若過濾器已準備好輸出的數據，返回PSFS_PASS_ON；若還需要更多數據才能結束過濾操作，返回PSFS_FEED_ME；若遇到嚴重問題，返回PSFS_ERR_FATAL。</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/create-php-extension-skeleton/">
+        ← prev <!--PHP擴展框架的創建-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/enhance-search-with-gn-in-vim/">
+        <!--使用gn操作增強Vim的搜索--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

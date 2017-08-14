@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>用NGINX實現WSS | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  二月 14, 2017
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/nginx/'>nginx</a> 
+    
+      <a href='/tags/websocket/'>websocket</a> 
+    
+      <a href='/tags/ssl/'>ssl</a> 
+    
+      <a href='/tags/编程/'>编程</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">用NGINX實現WSS</h1>
+  <section class="post-content article-entry">
+    <p>實現基於SSL的安全的WebSocket。</p>
+<h2 id="NGINX配置"><a href="#NGINX配置" class="headerlink" title="NGINX配置"></a>NGINX配置</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">server &#123;</div><div class="line">    listen 4431;</div><div class="line">    server_name ws.sample.com;</div><div class="line"></div><div class="line">    ssl on;</div><div class="line">    ssl_certificate ssl/server.crt;</div><div class="line">    ssl_certificate_key ssl/server.key;</div><div class="line">    ssl_session_timeout 5m;</div><div class="line">    ssl_session_cache shared:SSL:50m;</div><div class="line">    ssl_protocols SSLv3 SSLv2 TLSv1 TLSv1.1 TLSv1.2;</div><div class="line">    ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP;</div><div class="line"></div><div class="line">    location /</div><div class="line">    &#123;</div><div class="line">        proxy_pass http://127.0.0.1:4759;</div><div class="line">        proxy_http_version 1.1;</div><div class="line">        proxy_set_header Upgrade $http_upgrade;</div><div class="line">        proxy_set_header Connection &quot;Upgrade&quot;;</div><div class="line">        proxy_set_header X-Real-IP $remote_addr;</div><div class="line">        proxy_read_timeout 60s;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="常見問題"><a href="#常見問題" class="headerlink" title="常見問題"></a>常見問題</h2><h3 id="連不上或連接時報錯"><a href="#連不上或連接時報錯" class="headerlink" title="連不上或連接時報錯"></a>連不上或連接時報錯</h3><blockquote>
+<p>WebSocket network error: OSStatus Error -9807: Invalid certificate chain</p>
+</blockquote>
+<p>如果使用的是自簽證書或者證書針對的域名和連接所指定的不符，會出這種問題。</p>
+<h3 id="wss一分鐘自動斷開"><a href="#wss一分鐘自動斷開" class="headerlink" title="wss一分鐘自動斷開"></a>wss一分鐘自動斷開</h3><p>NGINX里設置proxy_read_timeout或者程序實現心跳。</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/postman-could-not-get-any-response/">
+        ← prev <!--Postman: Could Not Get Any Response-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/websocket-connection-header-value-must-contain-upgrade/">
+        <!--WebSocket: Connection Header Value Must Contain Upgrade--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

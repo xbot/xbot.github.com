@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>ctags vs gtags vs phpctags | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  一月 29, 2016
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/插件/'>插件</a> 
+    
+      <a href='/tags/vim/'>vim</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">ctags vs gtags vs phpctags</h1>
+  <section class="post-content article-entry">
+    <p>這兩天把源碼分析工具從ctags向gtags遷移，另外嘗試了一下phpctags。</p>
+<p>之前用ctags有兩個問題，一個是如果同一tag有多個定義，按Ctrl+]隻能跳轉到第一處。另一個是用cscope查詢tag的調用記錄時，有些tag查不到結果。</p>
+<p>幾年前接觸過gtags，因爲當時還不支持宇宙最好語言，所以沒用。這次測試了一下，前面兩個ctags的問題都可以解決。</p>
+<p>安裝後需要手工拷貝gtags.vim和gtags-cscope.vim到vim的plugin目錄，然後配置如下：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> Gtags_Close_When_Single = <span class="number">1</span></div><div class="line"><span class="keyword">let</span> Gtags_Auto_Update = <span class="number">0</span></div><div class="line"><span class="keyword">let</span> <span class="variable">g:cscope_silent</span> = <span class="number">1</span></div><div class="line"><span class="keyword">au</span> FileType php,<span class="keyword">python</span>,<span class="keyword">c</span>,cpp,javascript,<span class="keyword">go</span> <span class="keyword">map</span> &lt;C-]&gt; :Gtags<span class="symbol">&lt;CR&gt;</span><span class="symbol">&lt;CR&gt;</span></div><div class="line"><span class="keyword">au</span> FileType php,<span class="keyword">python</span>,<span class="keyword">c</span>,cpp,javascript,<span class="keyword">go</span> <span class="keyword">map</span> &lt;C-[&gt; :Gtags -r<span class="symbol">&lt;CR&gt;</span><span class="symbol">&lt;CR&gt;</span></div><div class="line"><span class="keyword">nnoremap</span> <span class="symbol">&lt;leader&gt;</span>&lt;C-]&gt; :<span class="keyword">execute</span> <span class="string">'Unite gtags/def:'</span>.<span class="built_in">expand</span>(<span class="string">'&lt;cword&gt;'</span>)<span class="symbol">&lt;CR&gt;</span></div><div class="line"><span class="keyword">nnoremap</span> <span class="symbol">&lt;leader&gt;</span>&lt;C-[&gt; :<span class="keyword">execute</span> <span class="string">'Unite gtags/ref:'</span>.<span class="built_in">expand</span>(<span class="string">'&lt;cword&gt;'</span>)<span class="symbol">&lt;CR&gt;</span></div></pre></td></tr></table></figure>
+<p>其它選項參見前面兩個文件裏的注釋。</p>
+<p>另外嘗試了一下phpctags，據說和ctags兼容并對php做了優化。實際使用效果和ctags沒發現有什麽區别，不過tagbar-phpctags倒是比tagbar用ctags時效果更好。</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/fzf-yet-another-fuzzy-finder/">
+        ← prev <!--FZF: 又一個文件模糊查詢工具-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/ctrlp-vs-unite-vs-command-t-vs-fuzzyfinder/">
+        <!--CtrlP vs Unite vs Command-T vs FuzzyFinder--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

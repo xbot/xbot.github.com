@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>PHP框架實戰（六）：依賴注入 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  三月 30, 2014
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/編程/'>編程</a> 
+    
+      <a href='/tags/php/'>PHP</a> 
+    
+      <a href='/tags/框架/'>框架</a> 
+    
+      <a href='/tags/flamework/'>Flamework</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">PHP框架實戰（六）：依賴注入</h1>
+  <section class="post-content article-entry">
+    <h2 id="簡述"><a href="#簡述" class="headerlink" title="簡述"></a>簡述</h2><p>依賴注入是個很好的解耦方法，也可以優雅的實現懶加載。</p>
+<p>以數據庫連接為例，當一個組件用到數據庫時，最簡單粗暴的辦法是在使用前創建連接：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Component</span> </span>&#123;</div><div class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">doSth</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="comment">// ...</span></div><div class="line"></div><div class="line">        $db = <span class="keyword">new</span> DatabaseConnection($schema, $host, $port, $login, $password);</div><div class="line"></div><div class="line">        <span class="comment">// ...</span></div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
+<p>這樣做的缺點是代碼一旦執行，Component行為將不可更改，有時我們需要在程序執行的過程中決定其行為。很直接地，可以想到給Component添加一個Setter方法：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Component</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> $__db;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">doSth</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="comment">// ...</span></div><div class="line"></div><div class="line">        <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;__db !== <span class="keyword">null</span>) &#123;</div><div class="line">            <span class="comment">// do something ...</span></div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="comment">// ...</span></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">setConnection</span><span class="params">($db)</span> </span>&#123;</div><div class="line">        <span class="keyword">$this</span>-&gt;__db = $db;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
+<p>這樣就把Component和數據庫連接解耦了。這時又有一個問題，怎樣管理數據庫連接？最簡單粗暴的辦法是在每次使用前創建，如果在程序中多處需要改變數據庫連接，這就把代碼寫死了。</p>
+<p>一種解決問題的方法是使用一個全局變量保存連接，對於簡單場景，這沒問題，但是這種做法會污染全局命名空間，尤其是在依賴較多的情況下，這種做法就不可取了。另一種方法就是用一個註冊表持有所有依賴，這就是依賴注入要做的事。</p>
+<p>我曾經處理過一個問題，生產環境中即使在無請求的情況下也會在短時間內生成大量會話文件，直接原因是使用了keepalived檢查系統可用性。由於程序在一開始就打開了會話，並且keepalived不能保持會話，導致每次訪問都會生成一個新的會話文件。這就是沒有使用懶加載導致的錯誤。</p>
+<p>懶加載可以讓每個組件只有在需要的情況下才被初始化，一方面簡化了代碼、提高了可讀性，另一方面也能提高程序效率、降低資源消耗。如果組件很多，而每次請求實際用到的很少，初始化所有組件產生的資源消耗將會很可觀。</p>
+<h2 id="實現"><a href="#實現" class="headerlink" title="實現"></a>實現</h2><p>用單例模式實現，以鍵值對的形式註冊依賴。同時支持以變量和callable的形式注入，前者用以註冊簡單類型或已實例化的依賴，後者可以用匿名函數的方式更靈活地管理依賴。同時，注入依賴時可以指定該依賴是否為單例模式，如果是，callable類型的依賴將會在第一次被調用後保持下來。此外，使用__call()魔術方法實現直接以getter方法的方式獲取依賴。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line"><span class="keyword">namespace</span> <span class="title">org</span>\<span class="title">x3f</span>\<span class="title">flamework</span>\<span class="title">base</span>;</div><div class="line"><span class="keyword">use</span> <span class="title">org</span>\<span class="title">x3f</span>\<span class="title">flamework</span>\<span class="title">exceptions</span>\<span class="title">FlameException</span>;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Dependency Injection Class</div><div class="line"> *</div><div class="line"> * <span class="doctag">@author</span> Donie Leigh &lt;donie.leigh<span class="doctag">@gmail</span>.com&gt;</div><div class="line"> * <span class="doctag">@link</span> http://0x3f.org</div><div class="line"> * <span class="doctag">@copyright</span> Copyright &amp;copy; 2013-2014 Donie Leigh</div><div class="line"> * <span class="doctag">@license</span> BSD (3-terms)</div><div class="line"> * <span class="doctag">@since</span> 1.0</div><div class="line"> */</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">DI</span></span></div><div class="line">&#123;</div><div class="line">    <span class="comment">/**</span></div><div class="line">     * <span class="doctag">@var</span> object Singleton instance</div><div class="line">     * <span class="doctag">@since</span> 1.0</div><div class="line">     */</div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> $_instance;</div><div class="line">    <span class="comment">/**</span></div><div class="line">     * <span class="doctag">@var</span> array Services</div><div class="line">     * <span class="doctag">@since</span> 1.0</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> $_services = <span class="keyword">array</span>();</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * Singleton constructor</div><div class="line">     * <span class="doctag">@return</span> void</div><div class="line">     * <span class="doctag">@author</span> Donie Leigh &lt;donie.leigh<span class="doctag">@gmail</span>.com&gt;</div><div class="line">     * <span class="doctag">@since</span> 1.0</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">()</span></span></div><div class="line">    &#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * Return the singleton instance</div><div class="line">     * <span class="doctag">@return</span> object Singleton instance</div><div class="line">     * <span class="doctag">@since</span> 1.0</div><div class="line">     **/</div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">function</span> <span class="title">getInstance</span><span class="params">()</span></span></div><div class="line">    &#123;</div><div class="line">        <span class="keyword">if</span> (! <span class="keyword">self</span>::$_instance <span class="keyword">instanceof</span> <span class="keyword">self</span>) &#123;</div><div class="line">            <span class="keyword">self</span>::$_instance = <span class="keyword">new</span> <span class="keyword">self</span>();</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">self</span>::$_instance;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * Add a service to the register</div><div class="line">     * <span class="doctag">@param</span> string $key Service name</div><div class="line">     * <span class="doctag">@param</span> mixed $service Callable to create a service instance or exactly an instance</div><div class="line">     * <span class="doctag">@param</span> bool $isSingleton Set true to treat this service as singleton</div><div class="line">     * <span class="doctag">@return</span> void</div><div class="line">     * <span class="doctag">@since</span> 1.0</div><div class="line">     **/</div><div class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">set</span><span class="params">($key, $service, $isSingleton=false)</span></span></div><div class="line">    &#123;</div><div class="line">        <span class="keyword">$this</span>-&gt;_services[strtolower($key)] = <span class="keyword">array</span>(</div><div class="line">            <span class="string">'service'</span> =&gt; $service,</div><div class="line">            <span class="string">'isSingleton'</span> =&gt; $isSingleton,</div><div class="line">            <span class="string">'instance'</span> =&gt; <span class="keyword">null</span></div><div class="line">        );</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * Get a service instance</div><div class="line">     * <span class="doctag">@return</span> mixed Service instance</div><div class="line">     * <span class="doctag">@since</span> 1.0</div><div class="line">     */</div><div class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">get</span><span class="params">($key)</span></span></div><div class="line">    &#123;</div><div class="line">        $key = strtolower($key);</div><div class="line">        <span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="keyword">$this</span>-&gt;_services[$key])) &#123;</div><div class="line">            $info = &amp;<span class="keyword">$this</span>-&gt;_services[$key];</div><div class="line">            <span class="keyword">if</span> ($info[<span class="string">'instance'</span>] !== <span class="keyword">null</span>)</div><div class="line">                <span class="keyword">return</span> $info[<span class="string">'instance'</span>];</div><div class="line">            <span class="keyword">if</span> (is_callable($info[<span class="string">'service'</span>])) &#123;</div><div class="line">                $instance = call_user_func($info[<span class="string">'service'</span>]);</div><div class="line">                <span class="keyword">if</span> ($info[<span class="string">'isSingleton'</span>] === <span class="keyword">true</span>)</div><div class="line">                    $info[<span class="string">'instance'</span>] = $instance;</div><div class="line">                <span class="keyword">return</span> $instance;</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">                <span class="keyword">return</span> $info[<span class="string">'service'</span>];</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * Get service with magic method</div><div class="line">     * <span class="doctag">@param</span> string $method get&#123;ServiceName&#125;</div><div class="line">     * <span class="doctag">@param</span> array $parameters Parameters, currently useless</div><div class="line">     * <span class="doctag">@return</span> mixed Service instance</div><div class="line">     * <span class="doctag">@since</span> 1.0</div><div class="line">     */</div><div class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__call</span><span class="params">($method, $parameters)</span></span></div><div class="line">    &#123;</div><div class="line">        <span class="keyword">if</span> (strpos(strtolower($method), <span class="string">'get'</span>) === <span class="number">0</span>) &#123;</div><div class="line">            $serviceName = substr($method, <span class="number">3</span>);</div><div class="line">            <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;get($serviceName);</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> FlameException(<span class="string">'Call to undefined method: '</span>.$method);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">&#125; <span class="comment">// END class DI</span></div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line">$di = DI::getInstance();</div><div class="line"></div><div class="line"><span class="comment">// 簡單類型</span></div><div class="line">$di-&gt;set(<span class="string">'foo'</span>, <span class="string">'bar'</span>);</div><div class="line"></div><div class="line"><span class="comment">// 每次調用生成不同的依賴</span></div><div class="line">$di-&gt;set(<span class="string">'newPassword'</span>, <span class="function"><span class="keyword">function</span><span class="params">()</span></span>&#123;</div><div class="line">    $pwd = ”;</div><div class="line">    $pwdLen = <span class="number">10</span>;</div><div class="line">    <span class="keyword">for</span> ($i = <span class="number">0</span>; $i &lt; $pwdLen; $i++) &#123;</div><div class="line">        $pwd .= chr(mt_rand(<span class="number">33</span>, <span class="number">126</span>));</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> $pwd;</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// 注入對象實例</span></div><div class="line">$di-&gt;set(<span class="string">'simpleSession'</span>, <span class="keyword">new</span> SimpleSession());</div><div class="line"></div><div class="line"><span class="comment">// 依賴在第一次被獲取時動態創建，然後保持為單例</span></div><div class="line">$di-&gt;set(<span class="string">'complicatedSession'</span>, <span class="function"><span class="keyword">function</span><span class="params">()</span></span>&#123;</div><div class="line">    $session = <span class="keyword">new</span> ComplicatedSession();</div><div class="line">    $session-&gt;setFirstVisitTime(time());</div><div class="line">    <span class="keyword">return</span> $session;</div><div class="line">&#125;, <span class="keyword">true</span>);</div><div class="line"></div><div class="line"><span class="comment">// 獲取依賴</span></div><div class="line"><span class="keyword">echo</span> $di-&gt;get(<span class="string">'foo'</span>);</div><div class="line"></div><div class="line"><span class="comment">// 以getter的形式獲取依賴</span></div><div class="line"><span class="keyword">echo</span> $di-&gt;getFoo();</div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
+<h2 id="總結"><a href="#總結" class="headerlink" title="總結"></a>總結</h2><p>之前的版本中，org\x3f\flamework\base\WebApplication中保存了數據庫連接和日誌級別，現在就可以把它們從這個類中解耦了。使用依賴注入，可以使框架核心保持盡可能的精簡，最大程度地保證任何一個組件都是可拆卸和更換的，也是防止過度設計的一個很好的機制。</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/project-euler-14/">
+        ← prev <!--Project Euler Problem 14 Solved-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/project-euler-13/">
+        <!--Project Euler Problem 13 Solved--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

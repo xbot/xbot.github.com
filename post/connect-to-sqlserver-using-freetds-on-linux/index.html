@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>Linux下使用freetds连接SQL Server | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  六月 20, 2010
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/計算機/'>計算機</a> 
+    
+      <a href='/tags/数据库/'>数据库</a> 
+    
+      <a href='/tags/安装/'>安装</a> 
+    
+      <a href='/tags/客户端/'>客户端</a> 
+    
+      <a href='/tags/cygwin/'>cygwin</a> 
+    
+      <a href='/tags/编译/'>编译</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">Linux下使用freetds连接SQL Server</h1>
+  <section class="post-content article-entry">
+    <p><a href="http://www.freetds.org" target="_blank" rel="external">freetds</a>是第三方、开源的数据库客户端和连接库，支持Sybase和Microsoft SQL Server，它最大的好处是允许非Windows平台的程序连接SQL Server。</p>
+<p>freetds的编译和安装命令如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">./configure --with-tdsver=8.0 --<span class="built_in">enable</span>-msdblib</div><div class="line">make</div><div class="line">make install</div></pre></td></tr></table></figure>
+<p>configure的这两个参数是必不可少的，否则可能无法连接SQL Server。</p>
+<p>安装后修改<strong>freetds.conf</strong>（<em>一般应该在/usr/local/etc/freetds.conf</em>），添加如下内容：</p>
+<blockquote><br>[mysvr]<br>        host = 10.1.29.40<br>        port = 1433<br>        tds version = 8.0<br>        client charset = utf-8<br></blockquote>
+
+<p>上述参数应根据实际情况修改。</p>
+<p>最后使用如下命令测试连接：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tsql -S mysvr -U sa -P 123456</div></pre></td></tr></table></figure>
+<p>给公司产品做Linux下的安装包，把开发环境放在了Cygwin中，非常享受在全屏、半透明的mintty下敲命令。今天发现在Cygwin下也是可以编译安装Linux下的程序的，只是效率非常低下。故上述内容对Cygwin环境同样成立。</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/howto-enable-routing-and-auto-dialing-for-unicom-adsl-modem-1/">
+        ← prev <!--网通ADSL猫开启路由和自动拨号功能的方法之一-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/howto-do-auto-listing-after-changing-directory/">
+        <!--cd到目录下后自动ls的方法--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

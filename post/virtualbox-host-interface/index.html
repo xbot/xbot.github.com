@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>VirtualBox的Host Interface网络接入方式的配置 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  一月 31, 2010
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/配置/'>配置</a> 
+    
+      <a href='/tags/計算機/'>計算機</a> 
+    
+      <a href='/tags/局域网/'>局域网</a> 
+    
+      <a href='/tags/虚拟技术/'>虚拟技术</a> 
+    
+      <a href='/tags/计算机网络/'>计算机网络</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">VirtualBox的Host Interface网络接入方式的配置</h1>
+  <section class="post-content article-entry">
+    <p><a href="http://zh.wikipedia.org/wiki/VirtualBox" target="_blank" rel="external">VirtualBox</a>安装后默认的网络接入方式是<a href="http://zh.wikipedia.org/wiki/%E7%BD%91%E7%BB%9C%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2" target="_blank" rel="external">NAT</a>，也是最简单的一种。但NAT网络中的虚拟机系统不具有和主机同一网段的IP地址，不能和主机直接通信。这对于开发者来说是不适用的。</p>
+
+<p>Host Interface网络接入方式可以使虚拟机系统获得与主机同一网段的IP地址，因此也使得虚拟机系统像主机所在的局域网中的一台真实的计算机一样，可以和其它计算机通信。</p>
+
+<p>对于Linux平台的VirtualBox，可以有两种方式实现Host Interface网络。一是使用系统网桥，二是使用VirtualBox内建的机制。</p>
+
+<p>第一种方式复杂但通用，尤其是对于2.1.0以前的版本来说，这是唯一的途径。从2.1.0开始，VirtuaBox内建了支持Host Interface的机制，这极大地简化了此类型网络的配置。</p>
+
+<p>首先，加载<strong>vboxnetflt</strong>模块：</p>
+
+<blockquote>
+  <p>sudo modprobe vboxnetflt</p>
+</blockquote>
+
+<p>然后在VirtualBox中配置虚拟机的网络连接方式，选择“<strong>Bridged Adapter</strong>”。</p>
+
+<p>最后启动虚拟机即可。</p>
+
+<p>另外，若虚拟机系统是精简版的Windows，网卡驱动可能不会自动安装，这时需要另外下載网卡的驱动并安装。</p>
+
+<p>为方便起见，可将vboxnetflt模块加入到开机自动启动的模块列表中，每种发行版设置自启动模块的位置和方法不一样，在Archlinux下，是在<strong>/etc/rc.conf</strong>文件中的<strong>modules</strong>行中设置。</p>
+
+<p><em>参考文章：<a href="http://wiki.archlinux.org/index.php/VirtualBox" target="_blank" rel="external">Archlinux Wiki: VirtualBox</a></em></p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/switching-from-ums-to-kms/">
+        ← prev <!--被迫弃UMS而用KMS-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/too-many-echoes-may-crash-php/">
+        <!--PHP后台echo过多会导致进程崩溃--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

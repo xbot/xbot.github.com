@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>APC、文件和Memcached效率對比 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  七月 13, 2011
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/編程/'>編程</a> 
+    
+      <a href='/tags/php/'>PHP</a> 
+    
+      <a href='/tags/memcached/'>Memcached</a> 
+    
+      <a href='/tags/緩存/'>緩存</a> 
+    
+      <a href='/tags/評測/'>評測</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">APC、文件和Memcached效率對比</h1>
+  <section class="post-content article-entry">
+    <p>對一個保存了100個對象實例的數組進行300次讀寫，該數組序列化後大小為232KB。</p>
+
+<h2>測試環境</h2>
+
+<table>
+    <tr>
+        <th>網絡服務器</th>
+        <th>PHP版本</th>
+        <th>操作系統</th>
+        <th>硬件配置</th>
+    </tr>
+    <tr>
+        <td>NGINX v1.0.4</td>
+        <td>PHP-FPM v5.3.6<br>APC啟用</td>
+        <td>Archlinux 32bit</td>
+        <td>Intel(R) Core(TM)2 Duo CPU T9400 @ 2.53GHz<br>Mem: 3G DDR3<br>Disk: 5400r/s</td>
+    </tr>
+</table>
+
+<h2>測試腳本</h2>
+
+<p>測試數據：</p>
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div><div class="line">213</div><div class="line">214</div><div class="line">215</div><div class="line">216</div><div class="line">217</div><div class="line">218</div><div class="line">219</div><div class="line">220</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line"><span class="comment">/*</span></div><div class="line"> * <span class="doctag">@file</span> data.php</div><div class="line"> */</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">XTest</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">var</span> $x0;</div><div class="line">    <span class="keyword">var</span> $x1;</div><div class="line">    <span class="keyword">var</span> $x2;</div><div class="line">    <span class="keyword">var</span> $x3;</div><div class="line">    <span class="keyword">var</span> $x4;</div><div class="line">    <span class="keyword">var</span> $x5;</div><div class="line">    <span class="keyword">var</span> $x6;</div><div class="line">    <span class="keyword">var</span> $x7;</div><div class="line">    <span class="keyword">var</span> $x8;</div><div class="line">    <span class="keyword">var</span> $x9;</div><div class="line">    <span class="keyword">var</span> $x10;</div><div class="line">    <span class="keyword">var</span> $x11;</div><div class="line">    <span class="keyword">var</span> $x12;</div><div class="line">    <span class="keyword">var</span> $x13;</div><div class="line">    <span class="keyword">var</span> $x14;</div><div class="line">    <span class="keyword">var</span> $x15;</div><div class="line">    <span class="keyword">var</span> $x16;</div><div class="line">    <span class="keyword">var</span> $x17;</div><div class="line">    <span class="keyword">var</span> $x18;</div><div class="line">    <span class="keyword">var</span> $x19;</div><div class="line">    <span class="keyword">var</span> $x20;</div><div class="line">    <span class="keyword">var</span> $x21;</div><div class="line">    <span class="keyword">var</span> $x22;</div><div class="line">    <span class="keyword">var</span> $x23;</div><div class="line">    <span class="keyword">var</span> $x24;</div><div class="line">    <span class="keyword">var</span> $x25;</div><div class="line">    <span class="keyword">var</span> $x26;</div><div class="line">    <span class="keyword">var</span> $x27;</div><div class="line">    <span class="keyword">var</span> $x28;</div><div class="line">    <span class="keyword">var</span> $x29;</div><div class="line">    <span class="keyword">var</span> $x30;</div><div class="line">    <span class="keyword">var</span> $x31;</div><div class="line">    <span class="keyword">var</span> $x32;</div><div class="line">    <span class="keyword">var</span> $x33;</div><div class="line">    <span class="keyword">var</span> $x34;</div><div class="line">    <span class="keyword">var</span> $x35;</div><div class="line">    <span class="keyword">var</span> $x36;</div><div class="line">    <span class="keyword">var</span> $x37;</div><div class="line">    <span class="keyword">var</span> $x38;</div><div class="line">    <span class="keyword">var</span> $x39;</div><div class="line">    <span class="keyword">var</span> $x40;</div><div class="line">    <span class="keyword">var</span> $x41;</div><div class="line">    <span class="keyword">var</span> $x42;</div><div class="line">    <span class="keyword">var</span> $x43;</div><div class="line">    <span class="keyword">var</span> $x44;</div><div class="line">    <span class="keyword">var</span> $x45;</div><div class="line">    <span class="keyword">var</span> $x46;</div><div class="line">    <span class="keyword">var</span> $x47;</div><div class="line">    <span class="keyword">var</span> $x48;</div><div class="line">    <span class="keyword">var</span> $x49;</div><div class="line">    <span class="keyword">var</span> $x50;</div><div class="line">    <span class="keyword">var</span> $x51;</div><div class="line">    <span class="keyword">var</span> $x52;</div><div class="line">    <span class="keyword">var</span> $x53;</div><div class="line">    <span class="keyword">var</span> $x54;</div><div class="line">    <span class="keyword">var</span> $x55;</div><div class="line">    <span class="keyword">var</span> $x56;</div><div class="line">    <span class="keyword">var</span> $x57;</div><div class="line">    <span class="keyword">var</span> $x58;</div><div class="line">    <span class="keyword">var</span> $x59;</div><div class="line">    <span class="keyword">var</span> $x60;</div><div class="line">    <span class="keyword">var</span> $x61;</div><div class="line">    <span class="keyword">var</span> $x62;</div><div class="line">    <span class="keyword">var</span> $x63;</div><div class="line">    <span class="keyword">var</span> $x64;</div><div class="line">    <span class="keyword">var</span> $x65;</div><div class="line">    <span class="keyword">var</span> $x66;</div><div class="line">    <span class="keyword">var</span> $x67;</div><div class="line">    <span class="keyword">var</span> $x68;</div><div class="line">    <span class="keyword">var</span> $x69;</div><div class="line">    <span class="keyword">var</span> $x70;</div><div class="line">    <span class="keyword">var</span> $x71;</div><div class="line">    <span class="keyword">var</span> $x72;</div><div class="line">    <span class="keyword">var</span> $x73;</div><div class="line">    <span class="keyword">var</span> $x74;</div><div class="line">    <span class="keyword">var</span> $x75;</div><div class="line">    <span class="keyword">var</span> $x76;</div><div class="line">    <span class="keyword">var</span> $x77;</div><div class="line">    <span class="keyword">var</span> $x78;</div><div class="line">    <span class="keyword">var</span> $x79;</div><div class="line">    <span class="keyword">var</span> $x80;</div><div class="line">    <span class="keyword">var</span> $x81;</div><div class="line">    <span class="keyword">var</span> $x82;</div><div class="line">    <span class="keyword">var</span> $x83;</div><div class="line">    <span class="keyword">var</span> $x84;</div><div class="line">    <span class="keyword">var</span> $x85;</div><div class="line">    <span class="keyword">var</span> $x86;</div><div class="line">    <span class="keyword">var</span> $x87;</div><div class="line">    <span class="keyword">var</span> $x88;</div><div class="line">    <span class="keyword">var</span> $x89;</div><div class="line">    <span class="keyword">var</span> $x90;</div><div class="line">    <span class="keyword">var</span> $x91;</div><div class="line">    <span class="keyword">var</span> $x92;</div><div class="line">    <span class="keyword">var</span> $x93;</div><div class="line">    <span class="keyword">var</span> $x94;</div><div class="line">    <span class="keyword">var</span> $x95;</div><div class="line">    <span class="keyword">var</span> $x96;</div><div class="line">    <span class="keyword">var</span> $x97;</div><div class="line">    <span class="keyword">var</span> $x98;</div><div class="line">    <span class="keyword">var</span> $x99;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">()</span></span></div><div class="line">    &#123;</div><div class="line">        <span class="keyword">$this</span>-&gt;x0 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x1 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x2 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x3 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x4 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x5 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x6 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x7 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x8 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x9 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x10 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x11 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x12 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x13 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x14 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x15 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x16 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x17 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x18 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x19 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x20 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x21 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x22 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x23 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x24 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x25 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x26 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x27 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x28 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x29 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x30 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x31 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x32 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x33 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x34 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x35 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x36 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x37 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x38 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x39 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x40 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x41 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x42 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x43 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x44 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x45 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x46 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x47 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x48 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x49 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x50 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x51 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x52 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x53 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x54 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x55 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x56 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x57 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x58 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x59 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x60 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x61 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x62 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x63 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x64 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x65 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x66 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x67 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x68 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x69 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x70 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x71 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x72 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x73 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x74 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x75 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x76 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x77 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x78 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x79 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x80 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x81 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x82 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x83 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x84 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x85 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x86 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x87 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x88 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x89 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x90 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x91 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x92 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x93 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x94 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x95 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x96 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x97 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x98 = <span class="number">1234567890</span>;</div><div class="line">        <span class="keyword">$this</span>-&gt;x99 = <span class="number">1234567890</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">$repeat = <span class="number">300</span>;</div><div class="line"></div><div class="line">$arr = <span class="keyword">array</span>();</div><div class="line"><span class="keyword">for</span> ($i = <span class="number">0</span>; $i &lt; <span class="number">100</span>; $i++) &#123;</div><div class="line">    $arr[] = <span class="keyword">new</span> XTest;</div><div class="line">&#125;</div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
+
+<p>APC:</p>
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line"><span class="comment">/*</span></div><div class="line"> * <span class="doctag">@file</span> t1.php</div><div class="line"> */</div><div class="line"><span class="keyword">include_once</span> <span class="string">'data.php'</span>;</div><div class="line"></div><div class="line">$stime = microtime(<span class="keyword">true</span>);</div><div class="line"></div><div class="line"><span class="keyword">for</span> ($i = <span class="number">0</span>; $i &lt; $repeat; $i++) &#123;</div><div class="line">    apc_store(<span class="string">'key'</span>.$i, $arr);</div><div class="line">    apc_fetch(<span class="string">'key'</span>.$i);</div><div class="line">&#125;</div><div class="line"></div><div class="line">$etime = microtime(<span class="keyword">true</span>);</div><div class="line"></div><div class="line"><span class="keyword">echo</span> $etime-$stime;</div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
+
+<p>文件：</p>
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line"><span class="comment">/*</span></div><div class="line"> * <span class="doctag">@file</span> t2.php</div><div class="line"> */</div><div class="line"><span class="keyword">include_once</span> <span class="string">'data.php'</span>;</div><div class="line"></div><div class="line">$stime = microtime(<span class="keyword">true</span>);</div><div class="line"></div><div class="line"><span class="keyword">for</span> ($i = <span class="number">0</span>; $i &lt; $repeat; $i++) &#123;</div><div class="line">    file_put_contents(<span class="string">'/tmp/xtest_key'</span>.$i.<span class="string">'.srl'</span>, serialize($arr));</div><div class="line">    unserialize(file_get_contents(<span class="string">'/tmp/xtest_key'</span>.$i.<span class="string">'.srl'</span>));</div><div class="line">&#125;</div><div class="line"></div><div class="line">$etime = microtime(<span class="keyword">true</span>);</div><div class="line"></div><div class="line"><span class="keyword">echo</span> $etime-$stime;</div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
+
+<p>Memcached:</p>
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line"><span class="comment">/*</span></div><div class="line"> * <span class="doctag">@file</span> t3.php</div><div class="line"> */</div><div class="line"><span class="keyword">include_once</span> <span class="string">'data.php'</span>;</div><div class="line"></div><div class="line">$mem = <span class="keyword">new</span> Memcached;</div><div class="line">$mem-&gt;addServer(<span class="string">"127.0.0.1"</span>, <span class="number">11211</span>);</div><div class="line"></div><div class="line">$stime = microtime(<span class="keyword">true</span>);</div><div class="line"></div><div class="line"><span class="keyword">for</span> ($i = <span class="number">0</span>; $i &lt; $repeat; $i++) &#123;</div><div class="line">    $mem-&gt;set(<span class="string">'key'</span>.$i, $arr);</div><div class="line">    $mem-&gt;get(<span class="string">'key'</span>.$i);</div><div class="line">&#125;</div><div class="line"></div><div class="line">$etime = microtime(<span class="keyword">true</span>);</div><div class="line"></div><div class="line"><span class="keyword">echo</span> $etime-$stime;</div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
+
+<h2>測試結果</h2>
+
+<table>
+    <tr>
+        <th>APC</th>
+        <th>文件</th>
+        <th>Memcached</th>
+    </tr>
+    <tr>
+        <td>3.4926421642303</td>
+        <td>3.6572530269623</td>
+        <td>4.6224999427795</td>
+    </tr>
+</table>
+
+<h2>總結</h2>
+
+<ul>
+<li>APC效率最高，Memcached效率最低</li>
+<li>APC和Memcached的測試結果很穩定，文件方式的耗時從開始時的4秒逐步降低並穩定在3.6秒</li>
+<li>猜想：
+<ul>
+<li>在IO量較小的情況下，文件讀寫可能確實比通過TCP操作Memcached效率高，但是在IO量較大的情況下，文件方式會出現瓶頸，Memcached的優勢會得到體現</li>
+<li>對於集群應用，通過NFS共享文件緩存的效率會低於Memcached</li>
+</ul></li>
+</ul>
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/manage-ssh-connections-using-pac-manager/">
+        ← prev <!--使用PAC Manager管理SSH連接-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/how-to-hide-dialog-in-installshield/">
+        <!--隱藏InstallShield對話框控件的方法--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

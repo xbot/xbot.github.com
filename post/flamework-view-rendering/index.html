@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>PHP框架實戰（四）：View的模板與渲染 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  十二月 30, 2013
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/編程/'>編程</a> 
+    
+      <a href='/tags/php/'>PHP</a> 
+    
+      <a href='/tags/框架/'>框架</a> 
+    
+      <a href='/tags/flamework/'>Flamework</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">PHP框架實戰（四）：View的模板與渲染</h1>
+  <section class="post-content article-entry">
+    <h2 id="目標"><a href="#目標" class="headerlink" title="目標"></a>目標</h2><p>實現MVC模型的<strong>V</strong>iew層，Controller的Action中應可以將從Model層獲取的數據填充到View模板中，並將渲染結果返回給訪問者。本文並不志在實現一個完備的模板框架，相應的需求可借助Smarty這樣現有的實現。</p>
+<h2 id="獲取代碼"><a href="#獲取代碼" class="headerlink" title="獲取代碼"></a>獲取代碼</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git checkout v0.4</div></pre></td></tr></table></figure>
+<h2 id="設計與實現"><a href="#設計與實現" class="headerlink" title="設計與實現"></a>設計與實現</h2><p>View的模板是最好實現的，因為PHP本身就是一個模板語言，所以這裡實現的模板主要是指幾條約定：</p>
+<ol>
+<li>模板文件本身是一個普通PHP文件，文件名後綴是“.php”；</li>
+</ol>
+<ul>
+<li>模板文件應存儲在項目指定的模板基礎目錄中；</li>
+<li>模板名稱指模板文件相對於項目的模板基礎目錄的路徑，並且去掉文件後綴；</li>
+<li>模板本身的實際效果等同於在Controller的Action中執行的代碼，故可以調用Controller的所有方法以及Flame對象的方法等內容；</li>
+<li>所有要填充到模板中的數據以鍵值對的形式存儲在一個關聯數組中，並傳遞給渲染模板的方法，在模板中使用與鍵名相同的變量調用數據；</li>
+</ul>
+<p><strong>View的渲染方法</strong></p>
+<p>添加Controller::render()方法：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line"></div><div class="line">    <span class="comment">// ...</span></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * Render the view template with data</div><div class="line">     * <span class="doctag">@param</span> string $view View template relative path to base path of the templates</div><div class="line">     *                     For example, 'post/list' point to file /srv/http/mysite/protected/view/post/list.php</div><div class="line">     * <span class="doctag">@param</span> array $data Associative array in which data is stored as key-value pairs</div><div class="line">     * <span class="doctag">@return</span> void</div><div class="line">     * <span class="doctag">@since</span> 1.0</div><div class="line">     */</div><div class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">render</span><span class="params">($view, $data)</span></span></div><div class="line">    &#123;</div><div class="line">        extract($data, EXTR_PREFIX_SAME, <span class="string">'tpl_'</span>);</div><div class="line">        $viewFile = Flame::app()-&gt;getViewPath().DIRECTORY_SEPARATOR.$view.<span class="string">'.php'</span>;</div><div class="line">        <span class="keyword">if</span> (is_readable($viewFile)) &#123;</div><div class="line">            <span class="keyword">require</span>($viewFile);</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> FlameException(<span class="string">"View template $view does not exist or cannot be readable."</span>);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// ...</span></div><div class="line"></div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
+<p>$view是模板名稱，$data是要填充到模板中的數據。</p>
+<h2 id="驗證Demo"><a href="#驗證Demo" class="headerlink" title="驗證Demo"></a>驗證Demo</h2><p>在Demo項目的protected下新增文件“view/post/list.php”，並創建不存在的這兩個上級目錄“view”和“post”。內容如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">head</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">"Content-type"</span> <span class="attr">content</span>=<span class="string">"text/html; charset=utf-8"</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">title</span>&gt;</span>Post<span class="tag">&lt;/<span class="name">title</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">head</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">h1</span>&gt;</span><span class="php"><span class="meta">&lt;?php</span> <span class="keyword">echo</span> $name; <span class="meta">?&gt;</span></span><span class="tag">&lt;/<span class="name">h1</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">p</span>&gt;</span><span class="php"><span class="meta">&lt;?php</span> <span class="keyword">echo</span> $age; <span class="meta">?&gt;</span></span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>將DefaultController::index()方法修改為：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line">    </div><div class="line">    <span class="comment">// ...</span></div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span><span class="params">()</span></span></div><div class="line">    &#123;</div><div class="line">        <span class="keyword">$this</span>-&gt;render(<span class="string">'post/list'</span>, <span class="keyword">array</span>(</div><div class="line">            <span class="string">'name'</span> =&gt; <span class="string">'leigh'</span>,</div><div class="line">            <span class="string">'age'</span> =&gt; <span class="number">23</span>,</div><div class="line">        ));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// ...</span></div><div class="line"></div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
+<p>訪問Demo項目，頁面將顯示預期的內容和樣式。</p>
+<h2 id="總結"><a href="#總結" class="headerlink" title="總結"></a>總結</h2><p>PHP本身的特點使得View這一層很容易實現。不過，隨著富客戶端的流行，MVC模型的View這一層正在被逐漸弱化，現在主流的開發方式是前端通過AJAX與服務器端交換數據，而不是把數據填充到模板中再返回給客戶端。</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/flamework-active-record/">
+        ← prev <!--PHP框架實戰（五）：ORM與ActiveRecord-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/flamework-controller-and-filter/">
+        <!--PHP框架實戰（三）：實現Controller和Filter--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

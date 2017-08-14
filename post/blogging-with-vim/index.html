@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>使用Vim寫博客 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  三月 19, 2011
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/python/'>Python</a> 
+    
+      <a href='/tags/編程/'>編程</a> 
+    
+      <a href='/tags/vim/'>Vim</a> 
+    
+      <a href='/tags/博客/'>博客</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">使用Vim寫博客</h1>
+  <section class="post-content article-entry">
+    <p><a href="http://www.vim.org/scripts/script.php?script_id=3510" target="_blank" rel="external">VimRepress</a>是Vim寫博客的插件中較新的一個，是久未更新的<a href="http://www.vim.org/scripts/script.php?script_id=1953" target="_blank" rel="external">Vimpress</a>的一個衍生版。</p>
+
+<p>雖然不是所有此類插件中功能最多的一個，但VimRepress非常實用，除包含最常用的幾個功能外，還支持<a href="http://daringfireball.net/projects/markdown/" target="_blank" rel="external">Markdown</a>。但是當前版本的VimRepress在轉換Markdown格式的字符串到HTML時，是通過直接調用外部命令<strong>markdown</strong>來實現的，這顯然只是針對Linux（及其它類UNIX）系統設計的。</p>
+
+<p>為了使VimRepress支持在Windows下使用Markdown寫文章，可以對它做一些改進。</p>
+
+<p>修改VimRepress的源文件<strong>blog.vim</strong>，在<code>if __name__ == "__main__":</code>這一行的上方加入如下兩個函數：</p>
+
+<p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">markdown_preview2</span><span class="params">()</span>:</span></div><div class="line">    <span class="keyword">import</span> sys</div><div class="line">    reload(sys)</div><div class="line">    sys.setdefaultencoding(<span class="string">'utf-8'</span>)</div><div class="line">    <span class="keyword">import</span> markdown2 <span class="keyword">as</span> mkd</div><div class="line"></div><div class="line">    <span class="keyword">global</span> vimpress_temp_dir</div><div class="line">    <span class="keyword">if</span> vimpress_temp_dir == <span class="string">''</span>:</div><div class="line">        vimpress_temp_dir = tempfile.mkdtemp(suffix=<span class="string">"vimpress"</span>)</div><div class="line">    temp_htm = os.path.join(vimpress_temp_dir, <span class="string">"vimpress_temp.htm"</span>)</div><div class="line">    html_heads = \</div><div class="line"><span class="string">"""&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;</span></div><div class="line">&lt;html&gt;</div><div class="line">&lt;head&gt;</div><div class="line">   &lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8"&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">"""</div><div class="line">    tmp_file = open(temp_htm, <span class="string">'w'</span>)</div><div class="line">    tmp_file.write(html_heads)</div><div class="line">    txt = <span class="string">"\n"</span>.join(vim.current.buffer[:])</div><div class="line">    <span class="comment">#txt = unicode(txt,'cp936')</span></div><div class="line">    tmp_file.write(mkd.markdown(txt))</div><div class="line">    <span class="comment">#tmp_file.write(mkd.markdown("\n".join(vim.current.buffer[:])))</span></div><div class="line">    tmp_file.close()</div><div class="line"></div><div class="line">    webbrowser.open(<span class="string">"file://%s"</span> % temp_htm)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">markdown_newpost2</span><span class="params">()</span>:</span></div><div class="line">    <span class="keyword">import</span> sys</div><div class="line">    reload(sys)</div><div class="line">    sys.setdefaultencoding(<span class="string">'utf-8'</span>)</div><div class="line">    <span class="keyword">import</span> markdown2 <span class="keyword">as</span> mkd</div><div class="line"></div><div class="line">    <span class="keyword">global</span> vimpress_temp_dir</div><div class="line">    <span class="keyword">if</span> vimpress_temp_dir == <span class="string">''</span>:</div><div class="line">        vimpress_temp_dir = tempfile.mkdtemp(suffix=<span class="string">"vimpress"</span>)</div><div class="line">    temp_htm = os.path.join(vimpress_temp_dir, <span class="string">"vimpress_post.htm"</span>)</div><div class="line"></div><div class="line">    title = <span class="string">""</span></div><div class="line">    title_s = <span class="number">0</span></div><div class="line">    <span class="keyword">try</span>:</div><div class="line">        <span class="keyword">while</span> title_s &lt; <span class="number">10</span>:</div><div class="line">            <span class="keyword">if</span> vim.current.buffer[title_s].startswith(<span class="string">"#"</span>):</div><div class="line">                title = vim.current.buffer[title_s].strip(<span class="string">'#'</span>)</div><div class="line">                <span class="keyword">break</span></div><div class="line">            title_s += <span class="number">1</span></div><div class="line">    <span class="keyword">except</span> IndexError:</div><div class="line">        <span class="keyword">pass</span></div><div class="line"></div><div class="line">    cur_file = vim.eval(<span class="string">'expand("%:p")'</span>)</div><div class="line">    <span class="keyword">if</span> cur_file <span class="keyword">is</span> <span class="keyword">None</span>: </div><div class="line">        cur_file = os.path.join(vimpress_temp_dir, <span class="string">"tmp_vimpress.mkd"</span>)</div><div class="line">        sys.stdout.write(<span class="string">"\n\nCurrent buffer saved to %s\n\n"</span> % cur_file)</div><div class="line">    vim.command(<span class="string">":w! %s"</span> % cur_file)</div><div class="line">    tmp_file = open(temp_htm, <span class="string">'w'</span>)</div><div class="line">    tmp_file.write(mkd.markdown(<span class="string">"\n"</span>.join(vim.current.buffer[:])))</div><div class="line">    tmp_file.close()</div><div class="line">    sys.stdout.write(<span class="string">"Press ENTER to continue."</span>)</div><div class="line">    vim.command(<span class="string">":bdelete"</span>)</div><div class="line">    vim.command(<span class="string">":r %s"</span> % temp_htm)</div><div class="line">    blog_new_post(title = title)</div></pre></td></tr></table></figure>
+</p>
+
+<p>這兩個函數修改自原有的<strong>markdown<em>preview()</em></strong>和<strong>markdownnewpost()</strong>，由調用外部的<strong>markdown</strong>命令改為調用Python的<a href="http://code.google.com/p/python-markdown2/" target="_blank" rel="external">markdown2</a>模塊來實現格式轉換。</p>
+
+<p>然後，修改<strong>blog.vim</strong>中的命令映射，使VimRepress的<code>:MarkDownPreview</code>和<code>:MarkDownNewPost</code>命令在Windows下自動調用上述兩個函數：</p>
+
+<p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> <span class="built_in">has</span>(<span class="string">"win32"</span>)</div><div class="line">    command! -nargs=<span class="number">0</span> MarkDownPreview exec(<span class="string">'py markdown_preview2()'</span>)</div><div class="line">    command! -nargs=<span class="number">0</span> MarkDownNewPost exec(<span class="string">'py markdown_newpost2()'</span>)</div><div class="line"><span class="keyword">else</span></div><div class="line">    command! -nargs=<span class="number">0</span> MarkDownPreview exec(<span class="string">'py markdown_preview()'</span>)</div><div class="line">    command! -nargs=<span class="number">0</span> MarkDownNewPost exec(<span class="string">'py markdown_newpost()'</span>)</div><div class="line"><span class="keyword">endif</span></div></pre></td></tr></table></figure>
+</p>
+
+<p>最後，只須安裝Python的markdown2模塊就可以用了。</p>
+
+<p><strong>2011-03-23更新：</strong></p>
+
+<p><a href="http://apt-blog.net/manage-multiple-wordpresses-with-new-vimpress" target="_blank" rel="external">pentie</a>已合并這些功能到<a href="http://ptcoding.googlecode.com/svn/trunk/vimpress/" target="_blank" rel="external">新版本</a>的VimRepress。</p>
+
+<p><strong>2011-04-04更新：</strong></p>
+
+<p>作為Markdown寫博的重度患者，我覺得Vim的其它相關插件都缺乏對Markdown源碼的有效管理，所以我幹脆寫了個新的插件<a href="http://0x3f.org/?p=1894">UltraBlog</a>。</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/batchcat-v03-released/">
+        ← prev <!--Batch Cat v0.3 Released-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/howto-set-the-default-vimball-install-path/">
+        <!--修改Vimball默認安裝路徑--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

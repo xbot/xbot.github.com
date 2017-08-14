@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>歐拉工程第十解 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  十一月 18, 2008
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/python/'>Python</a> 
+    
+      <a href='/tags/数学/'>数学</a> 
+    
+      <a href='/tags/歐拉工程/'>歐拉工程</a> 
+    
+      <a href='/tags/算法/'>算法</a> 
+    
+      <a href='/tags/編程/'>編程</a> 
+    
+      <a href='/tags/lua/'>Lua</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">歐拉工程第十解</h1>
+  <section class="post-content article-entry">
+    <blockquote><p>The sum of the primes below 10 is 2 + 3 + 5 + 7 = 17.</p>
+
+<p>Find the sum of all the primes below two million.</p></blockquote>
+
+<p>题目越来越变态，开始好玩儿了。</p>
+
+<p><a href="http://0x3f.org/?p=753">第七解</a>里的算法在这里算是废了，一万个素数都算得那么费劲，两百万以下的素数有十几万个，不得不用筛选法了。</p>
+
+<p>普通的筛选效率也不行，当初就是因为这个原因才没用它。不过优化过的筛选法就很奇妙了，下面是Lua的实现：</p>
+
+<p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">require</span>(<span class="string">'math'</span>)</div><div class="line"></div><div class="line"><span class="keyword">local</span> limit = <span class="number">2000000</span></div><div class="line"></div><div class="line"><span class="keyword">local</span> primes = &#123;&#125;</div><div class="line"><span class="keyword">for</span> i=<span class="number">1</span>,limit <span class="keyword">do</span></div><div class="line">    <span class="built_in">table</span>.<span class="built_in">insert</span>(primes,<span class="literal">true</span>)</div><div class="line"><span class="keyword">end</span></div><div class="line">primes[<span class="number">0</span>] = <span class="literal">false</span></div><div class="line">primes[<span class="number">1</span>] = <span class="literal">false</span></div><div class="line"></div><div class="line"><span class="keyword">for</span> i=<span class="number">0</span>,<span class="built_in">math</span>.<span class="built_in">floor</span>(<span class="built_in">math</span>.<span class="built_in">sqrt</span>(limit)) <span class="keyword">do</span></div><div class="line">    <span class="keyword">if</span> primes[i] <span class="keyword">then</span></div><div class="line">        <span class="keyword">for</span> j=<span class="built_in">math</span>.<span class="built_in">pow</span>(i,<span class="number">2</span>),limit,i <span class="keyword">do</span></div><div class="line">            primes[j] = <span class="literal">false</span></div><div class="line">        <span class="keyword">end</span></div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="keyword">local</span> sumVal = <span class="number">0</span></div><div class="line"><span class="keyword">for</span> i,j <span class="keyword">in</span> <span class="built_in">ipairs</span>(primes) <span class="keyword">do</span></div><div class="line">    <span class="keyword">if</span> j <span class="keyword">then</span></div><div class="line">        sumVal = sumVal + i</div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="built_in">print</span>(sumVal)</div></pre></td></tr></table></figure>
+</p>
+
+
+<p>在我这里两秒半就出结果了，Python的表现也不错，四秒半出结果：</p>
+
+<p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> math <span class="keyword">import</span> sqrt</div><div class="line"></div><div class="line">limit = <span class="number">2000000</span></div><div class="line">primes = [<span class="keyword">True</span> <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,limit)]</div><div class="line">primes[<span class="number">0</span>] = <span class="keyword">False</span></div><div class="line">primes[<span class="number">1</span>] = <span class="keyword">False</span></div><div class="line"></div><div class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>,int(sqrt(limit))+<span class="number">1</span>):</div><div class="line">    <span class="keyword">if</span> primes[i]:</div><div class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(i**<span class="number">2</span>,limit,i):</div><div class="line">            primes[j] = <span class="keyword">False</span></div><div class="line"></div><div class="line">sumVal = <span class="number">0</span></div><div class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(primes)):</div><div class="line">    <span class="keyword">if</span> primes[i]:</div><div class="line">        sumVal += i</div><div class="line"></div><div class="line"><span class="keyword">print</span> sumVal</div></pre></td></tr></table></figure>
+</p>
+
+
+<p><a href="http://picasaweb.google.com/lh/photo/va8CeXPxRtCojlNw4qpmBQ" target="_blank" rel="external"><img src="http://lh5.ggpht.com/_ceUJ_lBTHzc/SSIt7sQQ5RI/AAAAAAAAAms/5sZPp1KBi_4/s400/project_euler_problem_010.png"></a></p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/rxvt-unicode-256color-is-perfect/">
+        ← prev <!--完美的終端模擬器：rxvt-unicode-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/project-euler-9/">
+        <!--歐拉工程第九解--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

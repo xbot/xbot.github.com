@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>PHP框架實戰（∝）：烈焰之終章 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  一月 2, 2014
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/編程/'>編程</a> 
+    
+      <a href='/tags/php/'>PHP</a> 
+    
+      <a href='/tags/框架/'>框架</a> 
+    
+      <a href='/tags/flamework/'>Flamework</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">PHP框架實戰（∝）：烈焰之終章</h1>
+  <section class="post-content article-entry">
+    <p>寫“烈焰”（Flame）用了一周的業餘時間，主要是對平時一些想法的總結和驗證。實現了比較完整的控制器層和視圖層，對模型層的ActiveRecord實現思路做了一下梳理。</p>
+<p>當然，一個可實用的框架需要包含的東西遠不止這些。比如框架中用到代碼動態調用的地方，一定要做好語言安全子集的過濾，否則就是很大的安全漏洞。再比如需要支持依賴反轉的緩存機制，實現對多種緩存方式的平滑支持。此外，像URI路由、可擴展、多模板方案支持也都是現代框架的標配。這些留待以後有時間再討論。然而在這次練習的過程中，我突然想到一個問題——PHP是不是適合實現一個完備的框架。</p>
+<p>曾見過一句話，說PHP本身就是一個框架，後來明白，這才是微言大義。PHP有很多高級選項、高級函數和擴展，用得好事半功倍，用不好就是魔鬼。</p>
+<p>PHP本身有很多問題，協議不統一、函數命名混亂、命名空間語法怪異而且雞肋等等都是老生常談。在運行模式上，無論是Apache+PHP模塊，還是NGINX+FastCGI，都只能實現在縱向層面上對一次請求的處理，由於缺乏在內存中持續運行程序的機制，凡是對程序全局共享並持續佔有的東西都不能實現，比如數據庫連接池等，以至於很多初始化的工作對於每次請求都要重新執行一次，這意味著面向對象越徹底、封裝越多，系統資源的重複消耗越厲害，所以PHP的程序在性能和內存佔用上與Java相比有一定缺陷。因此PHP更適合短平快的應用場景，不適合實現複雜的業務邏輯。</p>
+<p>基於這個觀點，我認同混合編程。沒有哪種語言是完美的，用對的工具做對的事是最理想的。用PHP實現一個完備的框架也許不是個明智的選擇，從短平快的角度出發，它更適合用來實現微框架。</p>
+<p>現在微框架是個比較熱門的話題，我最早接觸的是Python的Bottle和Flask，短小精悍，非常容易上手。微框架主要實現控制器層和視圖層，一般不包括模型層。為了以最快的速度將請求路由到處理邏輯，一般以最直接的方式建立URI模板和回調物件之間的映射，控制器層可以以極簡的方式實現，例如只做一個像本文後面例子中那樣簡單的約定。微框架應該盡可能少地包含配置，大部分時候並不需要像Java的S.S.H那樣濫用配置，<a href="http://en.wikipedia.org/wiki/Convention_over_configuration" target="_blank" rel="external">CoC原則</a>就持這樣的觀點，約定可以解決的問題就不要用配置去做。</p>
+<p>下面只使用兩個函數和五條約定實現一個微框架：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 路由定義與應用</div><div class="line"> * <span class="doctag">@param</span> string $route 用作定義路由規則時，此參數為模板字符串，</div><div class="line"> *     使用冒號加參數名作為參數佔位符，例如：</div><div class="line"> *         on('/post/edit/:id', function($id)&#123;&#125;);</div><div class="line"> *     用做應用路由規則時，此參數為URI，例如：</div><div class="line"> *         on($_SERVER['REQUEST_URI']);</div><div class="line"> * <span class="doctag">@param</span> callable $callback 路由規則的回調邏輯，如果路由規則中</div><div class="line"> *     含有參數佔位符，回調中需存在同名的參數；當函數作為應用路</div><div class="line"> *     由規則使用時，此參數不指定</div><div class="line"> * <span class="doctag">@return</span> void</div><div class="line"> * <span class="doctag">@since</span> 1.0</div><div class="line"> */</div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">on</span><span class="params">($route, $callback)</span> </span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">static</span> $routes = <span class="keyword">array</span>();</div><div class="line">    $regex = <span class="string">'#'</span>.preg_replace(<span class="string">'#:[^\/]+#'</span>, <span class="string">'.*'</span>, $route).<span class="string">'#'</span>;</div><div class="line">    $routes[$route] = <span class="keyword">array</span>($regex, $callback);</div><div class="line">    <span class="keyword">if</span> (is_null($callback)) &#123;</div><div class="line">        <span class="keyword">foreach</span> ($routes <span class="keyword">as</span> $r=&gt;$cfg)&#123;</div><div class="line">            <span class="keyword">if</span> (preg_match($cfg[<span class="number">0</span>], $route)) &#123;</div><div class="line">                $params = <span class="keyword">array</span>();</div><div class="line">                $idx = strpos($r, <span class="string">':'</span>);</div><div class="line">                <span class="keyword">if</span> (is_int($idx)) &#123;</div><div class="line">                    $keys = explode(<span class="string">'/'</span>, substr($r, $idx));</div><div class="line">                    $keys = array_map(<span class="function"><span class="keyword">function</span><span class="params">($v)</span></span>&#123; <span class="keyword">return</span> trim($v, <span class="string">':'</span>); &#125;, $keys);</div><div class="line">                    $values = explode(<span class="string">'/'</span>, substr($route, $idx));</div><div class="line">                    $params = array_combine($keys, $values);</div><div class="line">                &#125;</div><div class="line">                call_user_func_array($callback, $params);</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">echo</span> <span class="string">'404'</span>;</div><div class="line">    &#125; </div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 視圖渲染函數</div><div class="line"> * <span class="doctag">@param</span> string $view 視圖名稱</div><div class="line"> * <span class="doctag">@param</span> array $params 關聯數組，包含需要填到視圖模板中的參數鍵值對</div><div class="line"> * <span class="doctag">@return</span> void</div><div class="line"> * <span class="doctag">@since</span> 1.0</div><div class="line"> */</div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">render</span><span class="params">($view, $params=array<span class="params">()</span>)</span> </span></div><div class="line">&#123;</div><div class="line">    extract($data, EXTR_PREFIX_SAME, <span class="string">'tpl_'</span>);</div><div class="line">    $viewFile = dirname(realpath(<span class="keyword">__FILE__</span>)).DIRECTORY_SEPARATOR.<span class="string">'view'</span></div><div class="line">        .DIRECTORY_SEPARATOR.$view.<span class="string">'.php'</span>;</div><div class="line">    <span class="keyword">if</span> (is_readable($viewFile)) &#123;</div><div class="line">        <span class="keyword">require</span>($viewFile);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="keyword">Exception</span>(<span class="string">"View template $view does not exist or cannot be readable."</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
+<p>on()身兼兩用，一是定義路由規則和對應的響應邏輯，一是對指定URI應用路由規則。render()的作用是渲染視圖模板。用法如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line"><span class="keyword">include</span> <span class="string">'micro.php'</span>;</div><div class="line"></div><div class="line">on(<span class="string">'/post/save'</span>, <span class="function"><span class="keyword">function</span><span class="params">()</span></span>&#123;</div><div class="line">    <span class="keyword">echo</span> <span class="string">"Post saved.\n"</span>;</div><div class="line">&#125;);</div><div class="line"></div><div class="line">on(<span class="string">'/mail/send/:address/:title'</span>, <span class="function"><span class="keyword">function</span><span class="params">($address, $title)</span></span>&#123;</div><div class="line">    <span class="keyword">echo</span> <span class="string">"write letter to $address with title $title\n"</span>;</div><div class="line">&#125;);</div><div class="line"></div><div class="line">on($_SERVER[<span class="string">'REQUEST_URI'</span>]);</div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
+<p>約定如下：</p>
+<ol>
+<li>每個Controller作為一個文件放在項目根目錄下的controller目錄中，名稱即文件名，後綴是“.php”；Action對應於Controller中的各個函數（注意過濾語言安全子集）；</li>
+</ol>
+<ul>
+<li>使用php.ini的配置項“auto_prepend_file”和“auto_append_file”實現過濾器；</li>
+<li>使用“set_error_handler()”和“set_exception_handler()”自動處理異常和錯誤；</li>
+<li>使用PDO實現數據庫抽象層；</li>
+<li>視圖模板用PHP腳本實現，模板文件放在當前目錄下的view目錄裡，模板文件名即模板名，後綴為“.php”；</li>
+</ul>
+<p>當然這離實際可用還差得遠，這裡只是說明一下微框架的基本理念：第一，打狗不需要金箍棒；第二，大部分項目都是在打狗。結合混合編程，這一點會更明顯。</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/after-reading-tong-jian/">
+        ← prev <!--讀完《資治通鑑》-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/flamework-active-record/">
+        <!--PHP框架實戰（五）：ORM與ActiveRecord--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

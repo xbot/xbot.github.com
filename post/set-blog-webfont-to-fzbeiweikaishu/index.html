@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>把博客字體改成了方正北魏楷書 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  八月 14, 2017
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/筆記/'>筆記</a> 
+    
+      <a href='/tags/博客/'>博客</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">把博客字體改成了方正北魏楷書</h1>
+  <section class="post-content article-entry">
+    <p>我曾說過<a href="/post/best-practices-of-calibre-on-formatting/">方正北魏楷書是最佳的閱讀字體</a>，不過後來感覺長時間閱讀的體驗還是普通的楷體更好。但這並不妨礙在Reeder、博客這種短時閱讀場合突出頁面的設計感。</p>
+<p>今天把博客（hexo）的webfont改成了方正北魏楷書，用font-spider壓縮後，從13M縮減到1.4M。方法是這樣的：</p>
+<p>首先把完整的字體複製到主題的字體目錄中（themes/crisp/source/fonts），文件名為<code>FZBeiWeiKaiShu-full.ttf</code>。</p>
+<p>在CSS中加入webfont配置：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">@<span class="keyword">font-face</span> &#123;</div><div class="line">  	<span class="attribute">font-family</span>: <span class="string">'FZBeiWeiKaiShu'</span>;</div><div class="line">    <span class="attribute">src</span>: <span class="built_in">url</span>(<span class="string">'../fonts/FZBeiWeiKaiShu.ttf'</span>) <span class="built_in">format</span>(<span class="string">'truetype'</span>),</div><div class="line">         <span class="built_in">url</span>(<span class="string">'../fonts/FZBeiWeiKaiShu-full.ttf'</span>) <span class="built_in">format</span>(<span class="string">'truetype'</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>FZBeiWeiKaiShu.ttf</code>是壓縮後的字體文件名，這樣訪問時瀏覽器會優先下載壓縮後的字體。</p>
+<p>然後把CSS中使用字體的地方都指定為<code>FZBeiWeiKaiShu</code>。</p>
+<p>在博客根目錄下創建腳本<code>update_fonts.sh</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#!/bin/sh</span></div><div class="line"></div><div class="line">hexo clean</div><div class="line">hexo g</div><div class="line"></div><div class="line">find public -name <span class="string">"*.html"</span> |xargs sed -i <span class="string">''</span> <span class="string">"s#/styles/crisp.css#<span class="variable">$HOME</span>/Projects/blog/public/styles/crisp.css#g"</span></div><div class="line">find public -name <span class="string">"*.html"</span>|xargs font-spider</div><div class="line"></div><div class="line">cp -f public/fonts/FZBeiWeiKaiShu.ttf themes/crisp/<span class="built_in">source</span>/fonts/FZBeiWeiKaiShu.ttf</div><div class="line"></div><div class="line">hexo clean</div><div class="line">hexo s -g</div></pre></td></tr></table></figure>
+<p>除非用到新的字符，否則不需要經常更新字體。</p>
+<p>font-spider會提示一共使用了多少種字符，我這麼多年也只用到三千多種，真是太沒文化了。🤥</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/make-writing-unit-tests-easier-with-vim-test/">
+        ← prev <!--用vim-test簡化單元測試的編寫-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/how-to-mock-the-db-facade-of-laravel/">
+        <!--Mock Laravel的DB Facade的方法--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>人性化Vim的預覽窗口 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  五月 29, 2011
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/配置/'>配置</a> 
+    
+      <a href='/tags/編程/'>編程</a> 
+    
+      <a href='/tags/vim/'>Vim</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">人性化Vim的預覽窗口</h1>
+  <section class="post-content article-entry">
+    <p>Vim的預覽窗口由<code>:ptag</code>等命令觸發，可用于預覽函數定義。但在缺省情況下，預覽窗口的高度是固定的，對于注釋信息較多的函數，往往不能完全顯示注釋，而對于注釋較少的函數，又會有多餘的行浪費屏幕空間。</p>
+
+<p>下面的函數用于解決這個問題：</p>
+
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="comment">" 調用:ptag命令預覽光標所在&lt;word&gt;的定義</span></div><div class="line"><span class="comment">" 對類C語言風格的函數/方法定義和注釋有效，對其餘情況仍沿用:ptag的原有效果</span></div><div class="line"><span class="function"><span class="keyword">function</span>! <span class="title">PTagIt</span><span class="params">()</span></span></div><div class="line">    exec <span class="string">"ptag "</span>.<span class="built_in">expand</span>(<span class="string">"&lt;cword&gt;"</span>)</div><div class="line">    <span class="keyword">let</span> cwin = <span class="built_in">winnr</span>()</div><div class="line">    silent! <span class="keyword">wincmd</span> <span class="keyword">P</span></div><div class="line">    <span class="keyword">let</span> lnr = <span class="built_in">line</span>(<span class="string">'.'</span>)</div><div class="line">    <span class="keyword">if</span> lnr &lt; <span class="number">3</span></div><div class="line">        <span class="keyword">return</span></div><div class="line">    <span class="keyword">endif</span></div><div class="line"></div><div class="line">    <span class="keyword">if</span> <span class="built_in">foldlevel</span>(<span class="string">'.'</span>)&gt;<span class="number">0</span></div><div class="line">        <span class="keyword">normal</span> zo</div><div class="line">    <span class="keyword">endif</span></div><div class="line"></div><div class="line">    <span class="keyword">let</span> chead = <span class="number">0</span></div><div class="line">    <span class="keyword">let</span> linestr = <span class="built_in">getline</span>(lnr-<span class="number">1</span>)</div><div class="line">    <span class="keyword">if</span> linestr =~ <span class="string">'^\s*\*/'</span></div><div class="line">        <span class="keyword">let</span> <span class="keyword">ptr</span> = lnr-<span class="number">2</span></div><div class="line">        <span class="keyword">while</span> <span class="keyword">ptr</span>&gt;<span class="number">0</span></div><div class="line">            <span class="keyword">let</span> linestr = <span class="built_in">getline</span>(<span class="keyword">ptr</span>)</div><div class="line">            <span class="keyword">if</span> linestr =~ <span class="string">'^\s*/\*'</span></div><div class="line">                <span class="keyword">let</span> chead = <span class="keyword">ptr</span></div><div class="line">                <span class="keyword">break</span></div><div class="line">            <span class="keyword">endif</span></div><div class="line">            <span class="keyword">let</span> <span class="keyword">ptr</span> = <span class="keyword">ptr</span>-<span class="number">1</span></div><div class="line">        <span class="keyword">endwhile</span></div><div class="line">    <span class="keyword">endif</span></div><div class="line"></div><div class="line">    <span class="keyword">if</span> chead&gt;<span class="number">0</span></div><div class="line">        exec <span class="string">'resize '</span>.(lnr-chead+<span class="number">1</span>)</div><div class="line">        exec <span class="string">'normal '</span>.chead.<span class="string">"z\&lt;CR&gt;"</span></div><div class="line">        exec <span class="string">'normal '</span>.lnr.<span class="string">'G'</span></div><div class="line">    <span class="keyword">endif</span></div><div class="line"></div><div class="line">    exec cwin.<span class="string">'wincmd w'</span>  </div><div class="line"><span class="keyword">endfunction</span></div><div class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;leader&gt;</span><span class="keyword">pp</span> :<span class="keyword">call</span> PTagIt()<span class="symbol">&lt;CR&gt;</span></div><div class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;leader&gt;</span><span class="keyword">pc</span> :<span class="keyword">pclose</span><span class="symbol">&lt;CR&gt;</span></div></pre></td></tr></table></figure>
+
+<p>例如對于如下的函數定義：</p>
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/*</span></div><div class="line"> * 我是一個測試函數</div><div class="line"> * <span class="doctag">@param</span> int 我是整型形參</div><div class="line"> * <span class="doctag">@param</span> string 我是字符串形參</div><div class="line"> * <span class="doctag">@param</span> array 我是返回值</div><div class="line"> */</div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span><span class="params">($bar1, $bar2)</span> </span>&#123;...&#125;</div></pre></td></tr></table></figure>
+
+<p>實際效果為打開的預覽窗口將完全顯示并只顯示以上內容。</p>
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/burn-personal-info-into-one-feed-using-yahoo-pipes/">
+        ← prev <!--聚合個人資訊-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/use-ack-as-an-alternative-to-grep/">
+        <!--ack: grep的同类替代品--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

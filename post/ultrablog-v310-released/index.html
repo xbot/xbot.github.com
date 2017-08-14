@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>UltraBlog.vim v3.1釋出：代碼重構與MacVim支持 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  十一月 5, 2011
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/python/'>Python</a> 
+    
+      <a href='/tags/編程/'>編程</a> 
+    
+      <a href='/tags/vim/'>Vim</a> 
+    
+      <a href='/tags/博客/'>博客</a> 
+    
+      <a href='/tags/plugin/'>Plugin</a> 
+    
+      <a href='/tags/ultrablog-vim/'>UltraBlog.vim</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">UltraBlog.vim v3.1釋出：代碼重構與MacVim支持</h1>
+  <section class="post-content article-entry">
+    <p>距離上一個版本的釋出已經有三個月了，这次新版並沒有增加多少功能性的內容，主要是代碼的重構和對在MacVim下穩定性的改進。</p>
+
+<p>對依賴關係檢查的不細緻導致了一些麻煩，拋出的錯誤信息有時與實際原因相距甚遠。由於開始時是以實現功能為主，所以都是直接用函數實現的，之後修修補補，代碼冗余而且維護麻煩。於是著手重構主要功能的源碼，面向對象，把所有檢查邏輯放到父類中去實現，子類只關注自身邏輯，最後新版減少了二百多行的代碼量。</p>
+
+<p>在重構的過程中偶然發現，在MacVim中，程序拋出任何異常，即便是有捕獲邏輯，也會導致編輯器崩潰。在<a href="http://stackoverflow.com/questions/5574702/how-to-print-to-stderr-in-python" target="_blank" rel="external">这裡</a>簡略地提到：</p>
+
+<blockquote>
+  <p>the failure was actual a crash, through some strange combination of threading, matplotlib pyplot backend, and ssh X11 forwarding, sys.stderr had somehow been assigned to something which python complained wasn't a file-like object</p>
+</blockquote>
+
+<p>於是將所有標準輸出與標準錯誤輸出語句換成另一種形式：</p>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 原形式</span></div><div class="line">sys.stdout.write(<span class="string">'xxx'</span>)</div><div class="line">sys.stderr.write(<span class="string">'xxx'</span>)</div><div class="line"></div><div class="line"><span class="comment"># 新形式</span></div><div class="line"><span class="keyword">print</span> &gt;&gt; sys.stdout, <span class="string">'xxx'</span></div><div class="line"><span class="keyword">print</span> &gt;&gt; sys.stderr, <span class="string">'xxx'</span></div></pre></td></tr></table></figure>
+
+<p>以上是新版主要變更的內容，此外，也順便解決了開發過程中發現的個別Bug和做了其它一些改動：</p>
+
+<ul>
+<li>Change:  The key "xmlrpc" of the settings list is dropped, a new one with the name "url" is added, you should set its value to the blog url.</li>
+<li>Change:  Source code refactorings.</li>
+<li>Change:  Solve the crash problem existing in MacVim only.</li>
+<li>Change:  <strong>:UBConv</strong> can be used in any buffer.</li>
+<li>Change:  <strong>:UBThis</strong> now has a third parameter, which enables convertions between syntaxes.</li>
+<li>Bugfix:  The second parameter of <strong>:UBThis</strong> cannot take effect.</li>
+</ul>
+
+<p>这也是將源碼從Google Code遷移到GitHub後發佈的第一個新版本，更詳細的信息請移步<a href="http://0x3f.org/?p=1894">插件主頁</a>或GitHub上的<a href="https://github.com/xbot/UltraBlog.vim" target="_blank" rel="external">代碼倉庫</a>。</p>
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/after-reading-pro-git/">
+        ← prev <!--讀完《Pro Git》-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/double-commander/">
+        <!--Double Commander: 免費、跨平台的Total Commander--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

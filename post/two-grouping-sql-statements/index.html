@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>兩條分組的SQL語句 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  一月 27, 2017
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/編程/'>編程</a> 
+    
+      <a href='/tags/sql/'>sql</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">兩條分組的SQL語句</h1>
+  <section class="post-content article-entry">
+    <p>最近做訪問統計解決的兩個問題：</p>
+<h2 id="根據日期分組"><a href="#根據日期分組" class="headerlink" title="根據日期分組"></a>根據日期分組</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">select</span> (</div><div class="line">           <span class="keyword">case</span></div><div class="line">           <span class="keyword">when</span> visit_at &gt;= <span class="number">1485014400</span> <span class="keyword">then</span> from_unixtime(visit_at, <span class="string">'%Y-%m-%d'</span>)</div><div class="line">           <span class="keyword">when</span> visit_at &gt;= <span class="number">1484928000</span></div><div class="line">       <span class="keyword">and</span> visit_at &lt; <span class="number">1485014400</span> <span class="keyword">then</span> from_unixtime(visit_at, <span class="string">'%Y-%m-%d'</span>)</div><div class="line">           <span class="keyword">else</span> <span class="number">0</span></div><div class="line">       <span class="keyword">end</span></div><div class="line">       ) <span class="keyword">col</span>, <span class="keyword">count</span>(*) <span class="keyword">as</span> pv, <span class="keyword">count</span>(<span class="keyword">distinct</span> session_id) <span class="keyword">as</span> uv</div><div class="line">  <span class="keyword">from</span> <span class="string">`statistics`</span></div><div class="line"> <span class="keyword">where</span> <span class="string">`visit_at`</span>    &gt;= <span class="number">1484496000</span></div><div class="line"> <span class="keyword">group</span> <span class="keyword">by</span> (</div><div class="line">           <span class="keyword">case</span></div><div class="line">           <span class="keyword">when</span> visit_at &gt;= <span class="number">1485014400</span> <span class="keyword">then</span> from_unixtime(visit_at, <span class="string">'%Y-%m-%d'</span>)</div><div class="line">           <span class="keyword">when</span> visit_at &gt;= <span class="number">1484928000</span></div><div class="line">       <span class="keyword">and</span> visit_at      &lt;  <span class="number">1485014400</span> <span class="keyword">then</span> from_unixtime(visit_at, <span class="string">'%Y-%m-%d'</span>)</div><div class="line">           <span class="keyword">else</span> <span class="number">0</span></div><div class="line">       <span class="keyword">end</span></div><div class="line">       )</div></pre></td></tr></table></figure>
+<h2 id="選擇每組數據的第一條"><a href="#選擇每組數據的第一條" class="headerlink" title="選擇每組數據的第一條"></a>選擇每組數據的第一條</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">select</span> a.session_id,a.created_at,a.province,a.referer,a.uri,a.ipv4,</div><div class="line">       a.user_id,b.duration,b.num</div><div class="line">  <span class="keyword">from</span> <span class="keyword">statistics</span> <span class="keyword">as</span> a</div><div class="line"> <span class="keyword">inner</span> <span class="keyword">join</span> (</div><div class="line">        <span class="keyword">select</span> session_id,</div><div class="line">               <span class="keyword">max</span>(created_at) <span class="keyword">as</span> latest_time,</div><div class="line">               <span class="keyword">count</span>(*) <span class="keyword">as</span> <span class="keyword">num</span>,<span class="keyword">sum</span>(<span class="keyword">duration</span>) <span class="keyword">as</span> <span class="keyword">duration</span></div><div class="line">          <span class="keyword">from</span> <span class="keyword">statistics</span></div><div class="line"> <span class="keyword">group</span> <span class="keyword">by</span> session_id</div><div class="line">       ) <span class="keyword">as</span> b</div><div class="line">    <span class="keyword">on</span> a.session_id=b.session_id</div><div class="line">   <span class="keyword">and</span> a.created_at=b.latest_time</div><div class="line"> <span class="keyword">ORDER</span> <span class="keyword">BY</span> a.created_at <span class="keyword">desc</span></div></pre></td></tr></table></figure>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/best-practices-of-calibre-on-formatting/">
+        ← prev <!--Calibre排版的最佳實踐-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/convert-silk-to-mp3-with-openresty/">
+        <!--用OpenResty自動轉換silk到MP3--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

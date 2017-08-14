@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>設計RESTful API的幾個原則 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  四月 21, 2017
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/編程/'>編程</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">設計RESTful API的幾個原則</h1>
+  <section class="post-content article-entry">
+    <p>REST不是一項技術，而是一種設計風格。它的核心思想是實現一種清晰明確的語義，用來描述Web操作。包含兩個主要因素：HTTP動詞和資源地址。</p>
+<h2 id="HTTP動詞的使用原則"><a href="#HTTP動詞的使用原則" class="headerlink" title="HTTP動詞的使用原則"></a>HTTP動詞的使用原則</h2><p>參與Web操作的HTTP動詞主要有GET、POST、DELETE、PUT、HEAD、PATCH。實際上，幾乎所有的操作只需GET和POST就可以實現，為什麼還要有其它幾種呢？目的就是為了實現清晰明確的語義：<code>DELETE /api/v1/post/18</code>肯定比<code>GET /api/v1/post?id=18&amp;action=delete</code>更清楚。</p>
+<p>因此HTTP動詞使用的重點在於明確語義。例如更新操作，很多文章會說創建資源用POST、修改用PUT，實際上是對REST風格理解不透徹。</p>
+<p>總體上，HTTP動詞分為兩類：冪等和非冪等。冪等是個數學概念，對於一元操作，如果它作用於任一元素兩次以上後所得的結果和第一次相同，就認為它是冪等的。簡單地說，如果一個接口，傳遞同樣的實參，多次請求的結果和一次沒有不同，就認為它是安全的、冪等的，反之，就是不安全、非冪等的。</p>
+<p>GET、DELETE、PUT、HEAD是冪等操作，POST和PATCH是非冪等操作。因此，修改操作用POST還是PUT，要看操作本身的冪等與否。舉個例子，對於修改用戶描述的接口，調用任意次得到的結果都是相同的，所以它是冪等的，應該用PUT。而對於修改用戶登錄積分的操作，假設每次登錄加十分，重復調用會導致分數重復增加，這就是不安全、非冪等的，應該用POST。</p>
+<h2 id="資源地址的命名原則"><a href="#資源地址的命名原則" class="headerlink" title="資源地址的命名原則"></a>資源地址的命名原則</h2><p>資源地址是對被操作資源位置的描述，因此應該有以下幾個原則：</p>
+<ul>
+<li>全部使用名詞</li>
+<li>不使用駝峰風格</li>
+<li>資源名稱統一使用複數</li>
+</ul>
+<p>對於前兩個，因為對資源的操作已由HTTP動詞表述，資源地址里不應該存在動詞，否則會造成語義的混亂。此外，不存在動詞也就不需要使用駝峰風格。例如，<code>GET /api/v1/getUser/89</code>，「get」在語義上就重復了。</p>
+<p>關於資源名稱用複數的原則，主要是為了API在風格上的統一，同一種資源用同一個單詞表示，單、複數用資源的id表示，URI里有id的就是單數，否則是複數。</p>
+<h2 id="結論"><a href="#結論" class="headerlink" title="結論"></a>結論</h2><p>REST是風格而不是技術，出bug的可能性不大，並不是能實現業務邏輯、沒有bug就是好代碼。風格錯了，連REST都不算。</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/get-the-inferior-class-get-the-throne/">
+        ← prev <!--得草根者得天下-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/pre-request-script-and-tests-in-postman/">
+        <!--Postman的Pre-request Script和Tests--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

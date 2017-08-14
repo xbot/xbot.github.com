@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>Oracle中對LOB字段的操作方法 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  一月 7, 2011
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/編程/'>編程</a> 
+    
+      <a href='/tags/sql/'>SQL</a> 
+    
+      <a href='/tags/oracle/'>oracle</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">Oracle中對LOB字段的操作方法</h1>
+  <section class="post-content article-entry">
+    <p>在Oracle中插入或更新LOB字段時，可以將字符串以如下方式寫入SQL語句：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">insert</span> tbl_lob (fld_lob) <span class="keyword">values</span> (utl_raw.cast_to_raw(<span class="string">'hello world'</span>));</div></pre></td></tr></table></figure>
+<p>這樣做的限制是：</p>
+<ol><br>    <li>Oracle中單條SQL語句有長度限制</li><br>    <li>cast_to_raw()對字符串有長度限制</li><br></ol>
+
+<p>因此如果要插入或更新的字符串過長，會導致執行失敗。此時應該使用dbms_lob處理LOB相關字段。下面是利用dbms_lob更新一個BLOB字段的存儲過程，對CLOB的操作同理：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">create</span> <span class="keyword">or</span> <span class="keyword">replace</span> <span class="keyword">procedure</span> updateblob(</div><div class="line">    ctbl <span class="keyword">in</span> varchar2,</div><div class="line">    cfld <span class="keyword">in</span> varchar2,</div><div class="line">    cstr <span class="keyword">in</span> varchar2,</div><div class="line">    ccond <span class="keyword">in</span> varchar2</div><div class="line">)</div><div class="line"><span class="keyword">is</span></div><div class="line">    vqry varchar2(<span class="number">1000</span>);</div><div class="line">    vblob blob;</div><div class="line">    vbatch varchar2(2000);</div><div class="line">    vstrlen number;</div><div class="line">    voffset number :=1;</div><div class="line">    vamt number :=2000;</div><div class="line"><span class="keyword">begin</span></div><div class="line">    vstrlen := <span class="keyword">length</span>(cstr);</div><div class="line"></div><div class="line">    vqry := '<span class="keyword">update</span> <span class="string">'||ctbl||'</span> <span class="keyword">set</span> <span class="string">'||cfld||'</span>=empty_blob() <span class="keyword">where</span> <span class="string">'||ccond;</span></div><div class="line">    execute immediate vqry;</div><div class="line"></div><div class="line">    vqry := '<span class="keyword">select</span> <span class="string">'||cfld||'</span> <span class="keyword">from</span> <span class="string">'||ctbl||'</span> <span class="keyword">where</span> <span class="string">'||ccond||'</span> <span class="keyword">for</span> <span class="keyword">update</span><span class="string">';</span></div><div class="line">    execute immediate vqry into vblob;</div><div class="line"></div><div class="line">    if vstrlen&gt;vamt then</div><div class="line">        while vstrlen&gt;voffset loop</div><div class="line">            vbatch := substr(cstr, voffset, vamt);</div><div class="line">            voffset := voffset+vamt;</div><div class="line">            dbms_lob.writeappend(vblob, length(vbatch), utl_raw.cast_to_raw(vbatch));</div><div class="line">        end loop;</div><div class="line">    else</div><div class="line">        dbms_lob.writeappend(vblob, length(cstr), utl_raw.cast_to_raw(cstr));</div><div class="line">    end if;</div><div class="line">    commit;</div><div class="line">end;</div></pre></td></tr></table></figure>
+<p>示例：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">-- 將tbl_lob表的fld_lob字段的值改為“hello lob !”，要求被更改的行滿足條件：</span></div><div class="line"><span class="comment">-- 1. fld_code字段的值以“2011”開頭</span></div><div class="line"><span class="comment">-- 2. fld_name字段的值等於“Hell”</span></div><div class="line"></div><div class="line"><span class="keyword">declare</span></div><div class="line">    vcond varchar2(<span class="number">1000</span>);</div><div class="line"><span class="keyword">begin</span></div><div class="line">    vcond := <span class="string">'fld_code like ''2011%'' and fld_name=''Hell'''</span>;</div><div class="line">    updateblob('tbl_lob', 'fld_lob', 'hello lob !', vcond);</div><div class="line"><span class="keyword">end</span>;</div></pre></td></tr></table></figure>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/after-reading-pragmatic-programmers/">
+        ← prev <!--讀完《程序員修煉之道》-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/darkstat-as-a-network-discharge-meter/">
+        <!--darkstat: 網絡流量監測工具--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

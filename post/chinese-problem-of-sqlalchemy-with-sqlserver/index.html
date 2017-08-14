@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>SQLAlchemy操作SQL Server的中文问题 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  二月 24, 2010
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/python/'>Python</a> 
+    
+      <a href='/tags/編程/'>編程</a> 
+    
+      <a href='/tags/sql/'>SQL</a> 
+    
+      <a href='/tags/sqlalchemy/'>SQLAlchemy</a> 
+    
+      <a href='/tags/数据库/'>数据库</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">SQLAlchemy操作SQL Server的中文问题</h1>
+  <section class="post-content article-entry">
+    <p>最初将脚本的文件编码和coding行都设定为UTF-8，在windows下执行时，中文无法保存，报编码错误。将上述两个编码改为GBK后，保存正常，但查询时报错。</p>
+
+<p>Traceback内容如下：</p>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">Traceback (most recent call last):</div><div class="line">File &quot;test.py&quot;, line 36, in &lt;code&gt;&amp;lt;module&amp;gt;&lt;/code&gt;</div><div class="line">&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;for obj in session.query(User):</div><div class="line">File &quot;C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\orm\query.py&quot;, line 1411, in instances</div><div class="line">&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;rows = [process[0](row, None) for row in fetch]</div><div class="line">File &quot;C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\orm\mapper.py&quot;, line 1788, in _instance</div><div class="line">&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;populate_state(state, dict_, row, isnew, only_load_props)</div><div class="line">File &quot;C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\orm\mapper.py&quot;, line 1677, in populate_state</div><div class="line">&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;populator(state, dict_, row, isnew=isnew, **flags)</div><div class="line">File &quot;C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\orm\strategies.py&quot;, line 118, in new_execute</div><div class="line">&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;dict_[key] = row[col]</div><div class="line">File &quot;C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\engine\base.py&quot;, line 1634, in __getitem__</div><div class="line">&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;return self.__colfuncs[key][0](self.__row)</div><div class="line">File &quot;C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\engine\base.py&quot;, line 1716, in getcol</div><div class="line">&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;return processor(row[index])</div><div class="line">File &quot;C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\types.py&quot;, line 568, in process</div><div class="line">&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;return decoder(value)[0]</div><div class="line">File &quot;C:\Python26\lib\encodings\utf_8.py&quot;, line 16, in decode</div><div class="line">&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;return codecs.utf_8_decode(input, errors, True)</div><div class="line">UnicodeEncodeError: &apos;ascii&apos; codec can&apos;t encode characters in position 0-1: ordinal not in range(128)&lt;/p&gt;</div></pre></td></tr></table></figure>
+
+<p>环境为：</p>
+
+<p>OS：Windows XP简体中文版
+DB：SQL Server 2008 Express简体中文版
+DB模块：pyodbc
+脚本文件编码：GBK
+脚本coding行：GBK</p>
+
+<p>脚本内容：</p>
+
+<p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/python</span></div><div class="line"><span class="comment"># -*- encoding: gbk -*-</span></div><div class="line"></div><div class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> create_engine</div><div class="line"><span class="keyword">from</span> sqlalchemy.ext.declarative <span class="keyword">import</span> declarative_base</div><div class="line"><span class="keyword">from</span> sqlalchemy.orm <span class="keyword">import</span> sessionmaker</div><div class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> Column, Integer, String, Text, ForeignKey, Numeric, Unicode</div><div class="line"></div><div class="line">Base = declarative_base()</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">User</span><span class="params">(Base)</span>:</span></div><div class="line">    <span class="string">"""User class"""</span></div><div class="line"></div><div class="line">    __tablename__ = <span class="string">'users'</span></div><div class="line"></div><div class="line">    id = Column(Numeric(<span class="number">22</span>,<span class="number">0</span>), primary_key=<span class="keyword">True</span>)</div><div class="line">    name = Column(Unicode(<span class="number">128</span>), nullable=<span class="keyword">False</span>, unique=<span class="keyword">True</span>)</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, id, name)</span>:</span></div><div class="line">        self.id = id</div><div class="line">        self.name = name</div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</div><div class="line">    db_engine = create_engine(<span class="string">'mssql://sa:password@localhost/mydatabase'</span>, echo=<span class="keyword">True</span>)</div><div class="line">    Session = sessionmaker(bind=db_engine)</div><div class="line">    session = Session()</div><div class="line"></div><div class="line">    Base.metadata.drop_all(db_engine)</div><div class="line">    Base.metadata.create_all(db_engine)</div><div class="line"></div><div class="line">    jim = User(<span class="number">1</span>, <span class="string">'中文'</span>)</div><div class="line">    session.add(jim)</div><div class="line">    session.commit()</div><div class="line"></div><div class="line">    <span class="string">'''</span></div><div class="line">    for obj in session.query(User):</div><div class="line">        print obj.name</div><div class="line">    '''</div></pre></td></tr></table></figure>
+</p>
+
+<p>上面的脚本执行后，数据得以正常保存，在数据库中的查询结果也正常，没有乱码。但是，当把从drop_all()到commit()行注释掉，取消for循环前后的多行字符串起止符后，即运行查询时，抛出上面的Traceback。</p>
+
+<p>Google了很长时间，没有找到有用的东西。CPyUG更没指望。</p>
+
+<p>回溯Traceback，打开sqlalchemy的types.py，UnicodeEncodeError的抛出点在String类的result_processor()方法：</p>
+
+<p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">result_processor</span><span class="params">(self, dialect, coltype)</span>:</span></div><div class="line">    wants_unicode = self.convert_unicode <span class="keyword">or</span> dialect.convert_unicode</div><div class="line">    needs_convert = wants_unicode <span class="keyword">and</span> \</div><div class="line">                    (<span class="keyword">not</span> dialect.returns_unicode_strings <span class="keyword">or</span> </div><div class="line">                    self.convert_unicode == <span class="string">'force'</span>)</div><div class="line"></div><div class="line">    <span class="keyword">if</span> needs_convert:</div><div class="line">        <span class="comment"># note we *assume* that we do not have a unicode object</span></div><div class="line">        <span class="comment"># here, instead of an expensive isinstance() check.</span></div><div class="line">        decoder = codecs.getdecoder(dialect.encoding)</div><div class="line">        <span class="function"><span class="keyword">def</span> <span class="title">process</span><span class="params">(value)</span>:</span></div><div class="line">            <span class="keyword">if</span> value <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">                <span class="comment"># decoder returns a tuple: (value, len)</span></div><div class="line">                <span class="keyword">return</span> decoder(value)[<span class="number">0</span>]</div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                <span class="keyword">return</span> value</div><div class="line">        <span class="keyword">return</span> process</div><div class="line">    <span class="keyword">else</span>:</div><div class="line">        <span class="keyword">return</span> <span class="keyword">None</span></div></pre></td></tr></table></figure>
+</p>
+
+<p>这个方法就是根据数据库方言dialect和字段类型coltype返回一个字符串的解码函数。若在if语句上面将needs_convert置为False，即不对该字段使用解码器，则再执行上面的脚本时，查询正常。</p>
+
+<p>由于前面create_engine()函数的encoding参数缺省为UTF-8，故dialect.encoding的值为“UTF-8”，故if语句中decoder实际引用的是codecs.utf_8_decode()。也就是说，result_processor()方法在实际执行过程中返回的是一个封装了utf_8_decode()函数的函数。即，UnicodeEncodeError是在对从数据库中查询出来的中文字符串进行UTF-8解码时抛出的。</p>
+
+<p>对传入process()函数的值作isinstance(value,unicode)判断，显示为True，表明从数据库中查询出来的中文本身就是unicode字节码，当对它再进行UTF-8解码时，就抛出了UnicodeEncodeError的错误。为验证以上判断，做如下实验：</p>
+
+<p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt;t = <span class="string">'中文'</span></div><div class="line">&gt;&gt;&gt;u = <span class="string">u'中文'</span></div><div class="line">&gt;&gt;&gt;isinstance(t, str)</div><div class="line"><span class="keyword">True</span></div><div class="line">&gt;&gt;&gt;isinstance(t, unicode)</div><div class="line"><span class="keyword">False</span></div><div class="line">&gt;&gt;&gt;isinstance(u, str)</div><div class="line"><span class="keyword">False</span></div><div class="line">&gt;&gt;&gt;isinstance(u, unicode)</div><div class="line"><span class="keyword">True</span></div><div class="line">&gt;&gt;&gt;x = t.decode(<span class="string">'utf-8'</span>)</div><div class="line">&gt;&gt;&gt;x</div><div class="line"><span class="string">u'\u4e2d\u6587'</span></div><div class="line">&gt;&gt;&gt;isinstance(x, unicode)</div><div class="line"><span class="keyword">True</span></div><div class="line">&gt;&gt;&gt;x == u</div><div class="line"><span class="keyword">True</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> codecs</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>dc = codecs.getdecoder(<span class="string">'utf-8'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>dc(u)</div><div class="line">Traceback (most recent call last):</div><div class="line">  File <span class="string">"&lt;input&gt;"</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</div><div class="line">  File <span class="string">"/usr/lib/python2.6/encodings/utf_8.py"</span>, line <span class="number">16</span>, <span class="keyword">in</span> decode</div><div class="line">    <span class="keyword">return</span> codecs.utf_8_decode(input, errors, <span class="keyword">True</span>)</div><div class="line">UnicodeEncodeError: <span class="string">'ascii'</span> codec can<span class="string">'t encode characters in position 0-1: ordinal not in range(128)</span></div></pre></td></tr></table></figure>
+</p>
+
+<p>得证。</p>
+
+<p>在Python中，字符串类型str和unicode类型是两种不同的数据类型，str类型的数据可以通过指定正确的编码来转换成unicode类型，对unicode类型的数据作重复的解码操作就会抛出类似上面的错误。</p>
+
+<p>实事上，若将name字段声明为String类，则保存和查询操作均无问题。但由于我需要sqlalchemy建表时将相应字段的类型设为nvarchar，故必须使用Unicode类声明该列。</p>
+
+<p>那有没有办法使result_processor()方法不返回一个对字段值作重复解码的函数呢？</p>
+
+<p>返回result_processor()方法，self.convert_unicode对于Unicode类是True，dialect.convert_unicode由create_engine()函数的convert_unicode参数控制，缺省为False，故needs_convert变量为True，无法更改；dialect.returns_unicode_strings是由sqlalchemy.engine模块default.py中的DefaultDialect类的_check_unicode_returns()方法返回的，该方法内容为：</p>
+
+<p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">_check_unicode_returns</span><span class="params">(self, connection)</span>:</span></div><div class="line">    cursor = connection.connection.cursor()</div><div class="line">    cursor.execute(</div><div class="line">        str(</div><div class="line">            expression.select( </div><div class="line">            [expression.cast(</div><div class="line">                expression.literal_column(<span class="string">"'test unicode returns'"</span>),sqltypes.VARCHAR(<span class="number">60</span>))</div><div class="line">            ]).compile(dialect=self)</div><div class="line">        )</div><div class="line">    )</div><div class="line"></div><div class="line">    row = cursor.fetchone()</div><div class="line">    result = isinstance(row[<span class="number">0</span>], unicode)</div><div class="line">    cursor.close()</div><div class="line">    <span class="keyword">return</span> result</div></pre></td></tr></table></figure>
+</p>
+
+<p>此方法的功能为生成一条SQL语句，在数据库中执行后，判断返回的值是否为unicode类型。由于SQL Server是ASCII编码，故此方法返回False。因此，dialect.returns_unicode_strings的值为False。最终，needs_convert只能为True。我觉得这是sqlalchemy的一个Bug。</p>
+
+<p>在此条件下，目前尚未找到较好的解决办法，只能使用硬编码强制置result_processor()方法中的needs_convert变量为False。</p>
+
+<p><strong>2010-02-25 更新：</strong></p>
+
+<p>谢谢KL童鞋指出问题原因和解决办法，使问题得以完美解决。</p>
+
+<p>1、由于Python在载入site模块时会删除setdefaultencoding()函数，故不能以在脚本开头调用此函数的方式指定默认编码；sitecustomize.py是一个python会自动导入的模块，故应当使用这个文件指定默认编码；</p>
+
+<p>2、我这里需要使用utf-8作默认编码器，sitecustomize.py的内容如下：</p>
+
+<p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/python</span></div><div class="line"><span class="comment"># -*- coding: gbk -*-</span></div><div class="line"><span class="keyword">import</span> sys</div><div class="line">sys.setdefaultencoding(<span class="string">'utf-8'</span>)</div></pre></td></tr></table></figure>
+</p>
+
+<p>3、将sitecustomize.py保存到python安装目录下的Lib\site-packages目录中；</p>
+
+<p>另外，在<a href="http://www.woodpecker.org.cn/diveintopython/xml_processing/unicode.html" target="_blank" rel="external">此处</a>发现了跟本问题相关的资料，辅助治疗，效果更佳。</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/neocomplcache-vim/">
+        ← prev <!--Vim的終極自動補全插件：NeoComplCache-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/switching-from-ums-to-kms/">
+        <!--被迫弃UMS而用KMS--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

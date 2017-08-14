@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>從iG:Syntax Hiliter轉換到WP-Syntax | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  四月 6, 2011
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/計算機/'>計算機</a> 
+    
+      <a href='/tags/wordpress/'>WordPress</a> 
+    
+      <a href='/tags/日志/'>日志</a> 
+    
+      <a href='/tags/牧碼志/'>牧碼志</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">從iG:Syntax Hiliter轉換到WP-Syntax</h1>
+  <section class="post-content article-entry">
+    <p>終于決定放棄使用了<a href="http://0x3f.org/?p=342">三年多</a>的iG:Syntax Hiliter，將代碼語法高亮插件換成<a href="http://wordpress.org/extend/plugins/wp-syntax/" target="_blank" rel="external">WP-Syntax</a>。</p>
+
+<p>原因是Vim的Markdown語法高亮<a href="http://www.vim.org/scripts/script.php?script_id=2882" target="_blank" rel="external">插件</a>有問題，會把iG的標簽<code>[LANG]</code>當作Markdown的超鏈接處理，結果導致插入代碼後，後面的內容被錯誤地著色，很難看。而Syntax使用<code>&lt;pre lang="LANG"&gt;</code>格式的標簽，不會有這個問題。</p>
+
+<p>其實很早就想過要換了，只是受累于使用iG進行高亮的文章太多，替換起來不方便。加上後來<a href="http://0x3f.org/?p=501">解決</a>了由于iG停止更新導致的不支持更多的語法的問題，所以就一致拖到現在。今天晚上花了一個小時就完成了替換，比想象中的要容易地多。</p>
+
+<p>根據我使用過的語法的情況，使用以下語句在數據庫中替換iG的標簽到Syntax的標簽：</p>
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[bash]'</span>,<span class="string">'&amp;lt;pre lang="bash" line="1"&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/bash]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[python]'</span>,<span class="string">'&amp;lt;pre lang="python" line="1"&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/python]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[vim]'</span>,<span class="string">'&amp;lt;pre lang="vim" line="1"&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/vim]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[java]'</span>,<span class="string">'&amp;lt;pre lang="java" line="1"&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/java]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[lua]'</span>,<span class="string">'&amp;lt;pre lang="lua" line="1"&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/lua]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[sql]'</span>,<span class="string">'&amp;lt;pre lang="sql" line="1"&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/sql]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[plsql]'</span>,<span class="string">'&amp;lt;pre lang="plsql" line="1"&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/plsql]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[php]'</span>,<span class="string">'&amp;lt;pre lang="php" line="1"&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/php]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[cpp]'</span>,<span class="string">'&amp;lt;pre lang="cpp" line="1"&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/cpp]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[inno]'</span>,<span class="string">'&amp;lt;pre lang="inno" line="1"&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/inno]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[xml]'</span>,<span class="string">'&amp;lt;pre lang="xml" line="1"&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/xml]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[html]'</span>,<span class="string">'&amp;lt;pre lang="html4strict" line="1"&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/html]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[ini]'</span>,<span class="string">'&amp;lt;pre lang="ini" line="1"&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/ini]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[pascal]'</span>,<span class="string">'&amp;lt;pre lang="pascal" line="1"&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/pascal]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[javascript]'</span>,<span class="string">'&amp;lt;pre lang="javascript" line="1"&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/javascript]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[reg]'</span>,<span class="string">'&amp;lt;pre lang="reg" line="1"&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/reg]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[css]'</span>,<span class="string">'&amp;lt;pre lang="css" line="1"&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/css]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'&amp;lt;coolcode LANG="php"&amp;gt;'</span>,<span class="string">'&amp;lt;pre lang="php" line="1"&amp;gt;'</span>);</div><div class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'&amp;lt;/coolcode&amp;gt;'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</div></pre></td></tr></table></figure>
+
+<p>即便轉換到Syntax，也不能避免Vim中Markdown語法高亮的問題，只要文字中出現成對的方括號，仍然會出問題，正確的做法是對HTML標簽中的內容不進行Markdown語法的著色。</p>
+
+<p>在轉換和寫這篇文章的過程中，發現WP-Syntax還存在一些問題，例如啟用行號後部分表格不能充滿頁面寬度的問題，還有上面這些SQL語句，必須將其中的尖括號替換成HTML實體才能正常顯示。看來雖然歷經兩三年的發展，WP-Syntax還是不很成熟。</p>
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/navicat-a-light-weight-database-client/">
+        ← prev <!--Navicat: 輕量的多數據庫客戶端-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/howto-use-tweetdeck-out-of-gnome/">
+        <!--在非GNOME環境中使用TweetDeck--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

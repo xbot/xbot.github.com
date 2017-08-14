@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>自動重映射鍵盤 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  四月 17, 2015
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/linux/'>Linux</a> 
+    
+      <a href='/tags/udev/'>udev</a> 
+    
+      <a href='/tags/鍵盤/'>鍵盤</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">自動重映射鍵盤</h1>
+  <section class="post-content article-entry">
+    <p>每次鍵盤拔出再插入時，鍵盤映射都會失效，要重新執行映射，而且要對不同的鍵盤應用不同的映射方案。試過直接添加udev規則，即使指定X Display和Xauthority也不成功。所以用pyudev寫個腳本（<a href="https://github.com/xbot/shell/blob/master/udev.py" target="_blank" rel="external">最新版本</a>）：</p>
+<figure class="highlight python"><figcaption><span>udev.py</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/env python2</span></div><div class="line"><span class="comment"># encoding: utf-8</span></div><div class="line"></div><div class="line"><span class="string">"""</span></div><div class="line">File:        udev.py</div><div class="line">Description: udev monitor script.</div><div class="line">Author:      Donie Leigh</div><div class="line">Email:       donie.leigh at gmail.com</div><div class="line">"""</div><div class="line"></div><div class="line"><span class="keyword">import</span> glib, os, time</div><div class="line"><span class="keyword">from</span> pyudev <span class="keyword">import</span> Context, Monitor</div><div class="line"></div><div class="line">PID_FILE = <span class="string">"/tmp/udev_monitor.pid"</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">remap_pokerii</span><span class="params">(device)</span>:</span></div><div class="line">    <span class="string">""" Do keyboard remapping when PokerII is plugged in.</span></div><div class="line">    """</div><div class="line">    <span class="keyword">if</span> device.get(<span class="string">'ID_VENDOR_ID'</span>) == <span class="string">'0f39'</span> \</div><div class="line">            <span class="keyword">and</span> device.action == <span class="string">'add'</span>:</div><div class="line">        time.sleep(<span class="number">1</span>)</div><div class="line">        os.system(<span class="string">'setxkbmap'</span>)</div><div class="line">        os.system(<span class="string">'xmodmap ~/.Xmodmap'</span>)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">remap_filco</span><span class="params">(device)</span>:</span></div><div class="line">    <span class="string">""" Do keyboard remapping when Filco is plugged in.</span></div><div class="line">    """</div><div class="line">    <span class="keyword">if</span> device.get(<span class="string">'ID_VENDOR_ID'</span>) == <span class="string">'04d9'</span> \</div><div class="line">            <span class="keyword">and</span> device.action == <span class="string">'add'</span>:</div><div class="line">        time.sleep(<span class="number">1</span>)</div><div class="line">        os.system(<span class="string">'setxkbmap'</span>)</div><div class="line">        os.system(<span class="string">'xmodmap ~/.Xmodmap'</span>)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">is_pid_running</span><span class="params">(pid)</span>:</span></div><div class="line">    <span class="string">""" Check if the given pid is running.</span></div><div class="line">    :pid: int</div><div class="line">    :returns: bool</div><div class="line">    """</div><div class="line">    <span class="keyword">try</span>:</div><div class="line">        os.kill(pid, <span class="number">0</span>)</div><div class="line">    <span class="keyword">except</span> OSError:</div><div class="line">        <span class="keyword">return</span> <span class="keyword">False</span></div><div class="line">    <span class="keyword">return</span> <span class="keyword">True</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">write_pid_or_die</span><span class="params">()</span>:</span></div><div class="line">    <span class="string">""" Write the current pid into pid file or exists if there is already a instance running.</span></div><div class="line">    :returns: void</div><div class="line">    """</div><div class="line">    <span class="keyword">if</span> os.path.isfile(PID_FILE):</div><div class="line">        pid = int(open(PID_FILE).read())</div><div class="line">        <span class="keyword">if</span> is_pid_running(pid):</div><div class="line">            print(<span class="string">"Process &#123;0&#125; is still running."</span>.format(pid))</div><div class="line">            <span class="keyword">raise</span> SystemExit</div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            os.remove(PID_FILE)</div><div class="line"></div><div class="line">    open(PID_FILE, <span class="string">'w'</span>).write(str(os.getpid()))</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></div><div class="line">    <span class="keyword">try</span>:</div><div class="line">        <span class="keyword">from</span> pyudev.glib <span class="keyword">import</span> MonitorObserver</div><div class="line">        <span class="function"><span class="keyword">def</span> <span class="title">device_event</span><span class="params">(observer, device)</span>:</span></div><div class="line">            remap_pokerii(device)</div><div class="line">            remap_filco(device)</div><div class="line">    <span class="keyword">except</span>:</div><div class="line">        <span class="keyword">from</span> pyudev.glib <span class="keyword">import</span> GUDevMonitorObserver <span class="keyword">as</span> MonitorObserver</div><div class="line">        <span class="function"><span class="keyword">def</span> <span class="title">device_event</span><span class="params">(observer, action, device)</span>:</span></div><div class="line">            remap_pokerii(device)</div><div class="line">            remap_filco(device)</div><div class="line"></div><div class="line">    context = Context()</div><div class="line">    monitor = Monitor.from_netlink(context)</div><div class="line"></div><div class="line">    monitor.filter_by(subsystem=<span class="string">'usb'</span>)</div><div class="line">    observer = MonitorObserver(monitor)</div><div class="line"></div><div class="line">    observer.connect(<span class="string">'device-event'</span>, device_event)</div><div class="line">    monitor.start()</div><div class="line"></div><div class="line">    glib.MainLoop().run()</div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</div><div class="line">    write_pid_or_die()</div><div class="line">    <span class="keyword">try</span>:</div><div class="line">        main()</div><div class="line">    <span class="keyword">except</span> KeyboardInterrupt:</div><div class="line">        print(<span class="string">"Game over."</span>)</div></pre></td></tr></table></figure>
+<p>有個坑，監測到鍵盤插入事件後要等一秒再應用映射，否則不成功。</p>
+<p>這裡只用了設備的Vendor ID，可以直接用lsusb看。看更多的設備屬性的命令如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 監視設備變動</span></div><div class="line">udevadm monitor --environment --udev</div><div class="line"></div><div class="line"><span class="comment"># 查看設備屬性</span></div><div class="line">udevadm info -a -n [device name]</div><div class="line"></div><div class="line"><span class="comment"># 查看文件所屬設備的屬性</span></div><div class="line">udevadm info -a -p [file name]</div></pre></td></tr></table></figure>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/hashtable-implementation-of-php/">
+        ← prev <!--PHP哈希表的實現與操作-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/monitor-home-with-raspberry-pi/">
+        <!--用樹苺派做家庭監控--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

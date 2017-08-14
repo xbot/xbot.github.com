@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>用樹苺派實現遠程下載 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  三月 28, 2015
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/樹苺派/'>樹苺派</a> 
+    
+      <a href='/tags/geek/'>Geek</a> 
+    
+      <a href='/tags/智能家居/'>智能家居</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">用樹苺派實現遠程下載</h1>
+  <section class="post-content article-entry">
+    <p>遠程用樹苺派利用空閒時間下載大文件，需要百度雲、aria2和VPS。因為網絡運營商給的IP不是真的公網IP，而且免費的動態域名服務不穩定，所以用VPS把樹苺派上的端口轉發到外網。</p>
+<h2 id="樹苺派"><a href="#樹苺派" class="headerlink" title="樹苺派"></a>樹苺派</h2><p>在樹苺派上部署aria2下載服務，並發佈到VPS。</p>
+<p>安裝aria2，創建以下配置文件，修改/media/sda1為實際下載目錄：</p>
+<figure class="highlight ini"><figcaption><span>/etc/aria2/aria2.conf</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="attr">dir</span>=/media/sda1</div><div class="line"><span class="attr">file-allocation</span>=prealloc</div><div class="line"><span class="attr">continue</span>=<span class="literal">true</span></div><div class="line"><span class="attr">log-level</span>=info</div><div class="line"><span class="comment">#log-level=debug</span></div><div class="line"><span class="attr">max-connection-per-server</span>=<span class="number">10</span></div><div class="line"><span class="attr">summary-interval</span>=<span class="number">120</span></div><div class="line"><span class="attr">daemon</span>=<span class="literal">true</span></div><div class="line"><span class="attr">enable-rpc</span>=<span class="literal">true</span></div><div class="line"><span class="attr">rpc-listen-port</span>=<span class="number">6800</span></div><div class="line"><span class="attr">rpc-listen-all</span>=<span class="literal">true</span></div><div class="line"><span class="attr">max-concurrent-downloads</span>=<span class="number">3</span></div><div class="line"><span class="attr">save-session</span>=/etc/aria2/save-session.list</div><div class="line"><span class="attr">input-file</span>=/etc/aria2/save-session.list</div><div class="line"><span class="attr">log</span>=/media/sda1/aria.log</div><div class="line"><span class="attr">disable-ipv6</span>=<span class="literal">true</span></div><div class="line"><span class="attr">disk-cache</span>=<span class="number">25</span>M</div><div class="line"><span class="attr">timeout</span>=<span class="number">600</span></div><div class="line"><span class="attr">retry-wait</span>=<span class="number">30</span></div><div class="line"><span class="attr">max-tries</span>=<span class="number">0</span></div><div class="line"><span class="attr">user-agent</span>=netdisk;<span class="number">4.4</span>.<span class="number">0.6</span>;PC;PC-Windows;<span class="number">6.2</span>.<span class="number">9200</span>;WindowsBaiduYunGuanJia</div></pre></td></tr></table></figure>
+<p>我的樹苺派用Archlinux，創建systemd的服務配置文件：</p>
+<figure class="highlight ini"><figcaption><span>/etc/systemd/system/aria2c.service</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="section">[Unit]</span></div><div class="line"><span class="attr">Description</span>=aria2c -- file download manager</div><div class="line"><span class="attr">After</span>=network.target</div><div class="line"><span class="section"> </span></div><div class="line">[Service]</div><div class="line"><span class="attr">Type</span>=forking</div><div class="line"><span class="attr">User</span>=%i</div><div class="line"><span class="attr">WorkingDirectory</span>=%h</div><div class="line"><span class="attr">Environment</span>=VAR=/var/%i</div><div class="line"><span class="attr">ExecStart</span>=/usr/bin/aria2c --daemon --enable-rpc --rpc-listen-all --rpc-allow-origin-all -c -D --conf-path=/etc/aria2/aria2.conf</div><div class="line"><span class="section"> </span></div><div class="line">[Install]</div><div class="line"><span class="attr">WantedBy</span>=multi-user.target</div></pre></td></tr></table></figure>
+<p>激活並啟動aria2服務。</p>
+<p>在NGINX的WWW目錄下安裝aria2的Web界面：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git <span class="built_in">clone</span> https://github.com/binux/yaaw.git</div></pre></td></tr></table></figure>
+<p>發佈本地服務到VPS：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 發佈NGINX</span></div><div class="line">autossh -M 5122 -R 80:localhost:80 myvps.com</div><div class="line"> </div><div class="line"><span class="comment"># 發佈aria2</span></div><div class="line">autossh -M 5124 -R 6800:localhost:6800 myvps.com</div></pre></td></tr></table></figure>
+<p>autossh用於保持SSH連接，需要VPS上啟動TCP Echo服務。</p>
+<h2 id="VPS"><a href="#VPS" class="headerlink" title="VPS"></a>VPS</h2><p>在VPS上啟用TCP Echo服務，安裝xinetd並修改配置文件：</p>
+<figure class="highlight lua"><figcaption><span>/etc/xinet.d/echo-stream</span></figcaption><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">service echo</div><div class="line">&#123;</div><div class="line">        disable         = no</div><div class="line">        id              = echo-stream</div><div class="line">        <span class="built_in">type</span>            = INTERNAL</div><div class="line">        wait            = no</div><div class="line">        socket_type     = stream</div><div class="line">        user                    = root</div><div class="line">        server                  = /usr/bin/cat</div><div class="line">        log_on_failure          += USERID</div><div class="line">        flags                   = REUSE</div><div class="line">        only_from               = <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="遠程主機"><a href="#遠程主機" class="headerlink" title="遠程主機"></a>遠程主機</h2><p>在遠程主機上配置瀏覽器的代理規則，對<strong><a href="http://localhost/yaaw" target="_blank" rel="external">http://localhost/yaaw</a></strong>和<strong><a href="http://localhost:6800/jsonrpc" target="_blank" rel="external">http://localhost:6800/jsonrpc</a></strong>兩個URL使用VPS上的VPN或Shadowsocks代理。</p>
+<p>安裝<a href="https://chrome.google.com/webstore/detail/baiduexporter/mjaenbjdjmgolhoafkohbhhbaiedbkno?utm_source=chrome-app-launcher-info-dialog" target="_blank" rel="external">Chrome擴展</a>，然後到百度雲盤裡設置aria2的RPC地址為“<strong><a href="http://localhost:6800/jsonrpc" target="_blank" rel="external">http://localhost:6800/jsonrpc</a></strong>”即可。</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/books-i-read-these-days/">
+        ← prev <!--這段時間讀的幾本書-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/php-implementation-of-runtime-mixin/">
+        <!--運行時可裝卸的Mixin的PHP實現--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

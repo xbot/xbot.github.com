@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>再次調整磁盤分區 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  四月 3, 2015
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/linux/'>linux</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">再次調整磁盤分區</h1>
+  <section class="post-content article-entry">
+    <p>自從<a href="/post/adjust-disk-partitions-in-archlinux/">上次</a>調整磁盤分區，一直把根目錄和主目錄分別掛在一個物理分區下，即使系統掛了或者換發行版也不影響主目錄。最近根分區很緊張，乾脆把兩個分區合併了。</p>
+<p>先用UNetBootin安裝Puppy Linux到U盤，需要手工修改U盤裡的syslinux.cfg，把“pmedia=<strong>cd</strong>”改成“pmedia=<strong>usbflash</strong>”，然後用U盤啟動。</p>
+<p>把主目錄的內容完整複製到移動硬盤：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 掛載主目錄</span></div><div class="line">mkdir /mnt/oldhome</div><div class="line">mount -t ext4 /dev/sda2 /mnt/oldhome</div><div class="line"></div><div class="line"><span class="comment"># 掛載移動硬盤</span></div><div class="line">mkdir /mnt/bakdisk</div><div class="line">mount -t ext4 /dev/sdc1 /mnt/bakdisk</div><div class="line"></div><div class="line"><span class="comment"># 複製主目錄</span></div><div class="line">cp -a /mnt/oldhome /mnt/bakdisk/</div><div class="line"></div><div class="line"><span class="comment"># 取消掛載主目錄</span></div><div class="line">umount /mnt/oldhome</div></pre></td></tr></table></figure>
+<p>用gparted刪除主目錄分區，合併到根分區。然後恢復主目錄：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 掛載根分區</span></div><div class="line">mkdir /mnt/newroot</div><div class="line">mount -t ext4 /dev/sda1 /mnt/newroot</div><div class="line"></div><div class="line"><span class="comment"># 恢復主目錄</span></div><div class="line">cp -a /mnt/bakdisk/* /mnt/newroot/</div><div class="line"></div><div class="line"><span class="comment"># 修改fstab，取消主目錄的掛載</span></div><div class="line">vim /mnt/newroot/etc/fstab</div><div class="line"></div><div class="line"><span class="comment"># 取消掛載</span></div><div class="line">umount /mnt/bakdisk</div><div class="line">umount /mnt/newroot</div></pre></td></tr></table></figure>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/make-nas-with-raspberry-pi/">
+        ← prev <!--用樹苺派搭NAS-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/books-i-read-these-days/">
+        <!--這段時間讀的幾本書--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

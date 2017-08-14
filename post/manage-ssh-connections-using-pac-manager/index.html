@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>使用PAC Manager管理SSH連接 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  七月 14, 2011
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/linux/'>Linux</a> 
+    
+      <a href='/tags/計算機/'>計算機</a> 
+    
+      <a href='/tags/ssh/'>SSH</a> 
+    
+      <a href='/tags/遠程控制/'>遠程控制</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">使用PAC Manager管理SSH連接</h1>
+  <section class="post-content article-entry">
+    <blockquote>
+  <p>本文發表在今年一月份的『Linuxpilot』上，已經過了半年，可以放到博客上了。本文基於PAC 2.x版，最近PAC發佈了3.0版，界面和功能都有一定的變化。</p>
+</blockquote>
+
+<h2>簡介</h2>
+
+<p><a href="http://pacmanager.sourceforge.net" target="_blank" rel="external">PAC Manager</a>（以下簡稱PAC）是一個使用Perl編程語言和GTK圖形界面開發套件實現的SSH/Telnet/Serial連接管理工具，是同類的PuTTY、SecureCRT、SSHMenu的一個開源、免費的替代品。</p>
+
+<h2>具備哪些特性</h2>
+
+<ul>
+<li>可創建本地端口轉發、遠程端口轉發和動態端口轉發，并支持X圖形界面轉發</li>
+<li>對連接分組，方便管理較多連接</li>
+<li>將指定的、已打開的連接加入集群，同一集群的所有終端共享鍵盤輸入</li>
+<li>虛擬終端窗口支持多標簽</li>
+<li>虛擬終端窗口的樣式可定制，支持半透明</li>
+<li>支持通過代理服務器建立連接</li>
+<li>支持通過Expect表達式進行自動交互</li>
+<li>支持使用本地和遠程宏管理數量眾多且復雜的常用指令</li>
+<li>支持定制連接前和斷開後自動執行的指令</li>
+<li>為每個連接保存截圖</li>
+</ul>
+
+<h2>針對重要特性的細解</h2>
+
+<h3>創建SSH隧道</h3>
+
+<p>假如當我們在進行諸如收發電郵、使用即時通訊工具聊天或者使用網絡銀行等網絡通訊行為時，也許有些重要的數據我們不希望被明文傳遞；亦或某些資源受限于網絡結構和防火牆等因素而不能被我們直接訪問，這時我們往往就可以通過SSH的端口轉發功能來實現。</p>
+
+<p>所謂端口轉發，即是指將原本使用其它TCP端口訪問的數據經由SSH連接占用的端口發送，加之這一過程也伴隨有數據的加密和解密，因此也往往被稱作“隧道”。根據連接方向的不同，SSH的隧道一般分為三種，即正向隧道、反向隧道和動態隧道；同時，根據端口轉發方式的不同，這三種隧道又分別被稱為本地端口轉發、遠程端口轉發與動態端口轉發。</p>
+
+<p>那麽這三種端口轉發方式彼此之間有什麽异同，分別又都有什麽用途呢？這裏舉個例子來說明一下。</p>
+
+<p>假設我的公司有一個較大的內部網絡，而只有一台服務器作為網關對公網提供服務。如果我需要在家裏的個人電腦上訪問公司的辦公系統，而這套系統又部署在內部網絡中的一台服務器上、不能被公網訪問，該怎麽辦呢？</p>
+
+<p>第一種情況，假設網關服務器對外提供了SSH服務，那麽我就可以在家庭電腦上使用如下指令建立一個隧道：</p>
+
+<p><code>ssh -L 9999:192.168.1.128:80 111.111.111.111</code></p>
+
+<p>這條指令中，192.168.1.128是公司辦公系統服務器在內網中的IP地址，111.111.111.111是公司網關服務器的公網IP地址。整條指令的意思是：我在家庭電腦中訪問本機的9999端口，就如同我在IP地址為111.111.111.111的公司網關服務器上訪問IP地址為192.168.1.128的主機的80端口一樣。因此，當這條指令執行成功後，我就可以在家庭電腦中通過訪問9999端口來打開公司內部辦公系統了。</p>
+
+<p>第二種情況，假設網關服務器不對外提供SSH服務但安裝了SSH客戶端，而我的家庭電腦卻安裝了SSH服務，那麽我就可以在公司網關服務器上執行如下指令建立一個隧道：</p>
+
+<p><code>ssh -R 9999:192.168.1.128:80 222.222.222.222</code></p>
+
+<p>這條指令中，222.222.222.222是家庭電腦的公網IP地址。整條指令的意思是：我在公網IP地址為222.222.222.222的電腦上訪問9999端口，就如同在本機（公司網關服務器）上訪問IP地址為192.168.1.128的主機的80端口一樣。當我回到家中，就可以和前面一樣通過訪問9999端口來打開辦公系統了。</p>
+
+<p>事實上，第一種情況是將本地端口映射為遠程主機所能訪問的資源，故稱為本地端口轉發；而第二種情況是將遠程主機的端口映射為本機所能訪問的資源，故稱為遠程端口轉發。</p>
+
+<p>但無論是本地端口轉發還是遠程端口轉發，都只能將一個資源轉發到一個端口上，假若我要訪問很多資源，豈非要建立很多SSH隧道，不但操作麻煩，而且浪費本機資源。這時，我們就可以使用第三種端口轉發方式--動態端口轉發：</p>
+
+<p><code>ssh -D 9999 111.111.111.111</code></p>
+
+<p>這條指令的意思是：我在本機訪問9999端口，就像在IP地址為111.111.111.111的主機上訪問它所能訪問的某些資源一樣。這個所謂的“某些資源”，需要由我在發起訪問請求時通過SSH隧道告訴遠程主機，事實上，SSH的動態端口轉發就是創建了一個SOCKS代理服務器。</p>
+
+<p>在PAC Manager中，我們可以在每個SSH連接的配置界面創建隧道。對于上面的例子，創建本地端口轉發時，應點擊“Local Port Forwarding”區域的“Add”按鈕，并將本地端口、遠程資源IP地址和端口分別填寫到“Local Port”、“Remote Address”和“Remote Port”中：</p>
+
+<p><a href="https://picasaweb.google.com/lh/photo/Gfzyo3h4hUrTUxA4YIlRuw?feat=embedwebsite" target="_blank" rel="external"><img src="https://lh3.googleusercontent.com/--l0NMNEs-Qs/Th70Q2lplvI/AAAAAAAABxo/EDBIPjRL0nY/s640/pac_manager_introduction-tunnel_01.png" height="166" width="640"></a></p>
+
+<p>截至當前最新的版本（2.4.1.3），PAC Manager尚未為遠程端口轉發提供像本地端口轉發功能一樣單獨的配置界面，但可以使用高級選項功能實現。在“Advanced Options”輸入框中填寫如下內容：</p>
+
+<p><a href="https://picasaweb.google.com/lh/photo/fru1uaGuVQ57mXRBiFRMeA?feat=embedwebsite" target="_blank" rel="external"><img src="https://lh6.googleusercontent.com/-iFwTWK2ZL4M/Th70Q7NcE6I/AAAAAAAABxs/pTEh2LGkwV8/s640/pac_manager_introduction-tunnel_03.png" height="31" width="640"></a></p>
+
+<p>如果需要建立多個遠程端口轉發，可以在“Advanced Options”中填寫多個類似上面內容的選項，彼此之間使用空格分隔即可。</p>
+
+<p>創建動態端口轉發時，應選中“Dynamic Port Forwarding”區域前面的復選框，然後填寫“Forwarded SOCKS Port”即可：</p>
+
+<p><a href="https://picasaweb.google.com/lh/photo/hnRb67QlipzpHb_IaeyYiw?feat=embedwebsite" target="_blank" rel="external"><img src="https://lh3.googleusercontent.com/-JHN7-EI7pjc/Th70QhAOCUI/AAAAAAAABxk/4D2e1SpcS-U/s640/pac_manager_introduction-tunnel_02.png" height="55" width="640"></a></p>
+
+<h3>連接前及斷開後的自動指令</h3>
+
+<p>通過在PAC Manager中定義連接前和斷開後的自動指令，我們可以指定一些在相應的SSH連接建立之前及斷開之後通常要在本機執行的指令。</p>
+
+<p>例如假設我使用的是計時收費的網絡服務，為了節省資費，我希望只在每次建立SSH連接時才激活網絡服務，并且在完成工作後斷開SSH連接時自動斷開網絡服務。那麽就可以在“Pre Exec”中定義激活網絡服務的指令，如下圖所示：</p>
+
+<p><a href="https://picasaweb.google.com/lh/photo/_P1JaaI5sF8gDTMulaljVA?feat=embedwebsite" target="_blank" rel="external"><img src="https://lh6.googleusercontent.com/-nPz5VHhK0vk/Th70MQLOVOI/AAAAAAAABxM/Q-mwNmyxzOo/s640/pac_manager_introduction-exec_01.png" height="136" width="640"></a></p>
+
+<p>在“Post Exec”中定義斷開網絡服務的指令，如下圖所示：</p>
+
+<p><a href="https://picasaweb.google.com/lh/photo/fsRPp-6-Uskq_MA3JxoZsA?feat=embedwebsite" target="_blank" rel="external"><img src="https://lh5.googleusercontent.com/-xjZjpDdtlkc/Th70Nqu4LRI/AAAAAAAABxU/AJZoptvtR2A/s640/pac_manager_introduction-exec_02.png" height="136" width="640"></a></p>
+
+<p>PAC Manager會在每次建立SSH連接前和斷開SSH連接後彈出對話框請求用戶選擇要在本機執行的指令。</p>
+
+<h3>Expect正則表達式</h3>
+
+<p>Expect是一個用以實現終端中自動交互功能的軟件套件，它允許用戶通過編寫腳本實現自動響應終端中的指令對用戶輸入的請求，從而將用戶從日常重復的勞動中解脫出來。利用Expect，我們可以實現自動輸入日常使用的指令中密碼的輸入；可以在安裝程式要求確認時自動確認；甚至實現一個IRC聊天機器人，在你不在時自動回復你的朋友！</p>
+
+<p>那麽在PAC Manager中，Expect是怎樣使用的呢？我們用一個示例來說明。</p>
+
+<p>假設我是公司內部郵件系統的管理員，每天下班後回到家都要時常查看一下系統的日志記錄，而郵件系統服務器位于公司內部網絡，我只有公司網關的SSH訪問權限。這樣我每次查看日志都要做至少三件事：</p>
+
+<ul>
+<li>通過SSH登錄到公司網關主機</li>
+<li>使用SCP指令從內網郵件服務器上下載日志文件到公司網關主機（需要輸入密碼）</li>
+<li>使用vi編輯器打開日志文件</li>
+</ul>
+
+<p>如果經常這樣做，會是件很煩瑣的事。那麽在PAC Manager中可以這樣實現：</p>
+
+<p>首先創建一個到公司網關的SSH連接，然後添加Expect配置如下：</p>
+
+<p><a href="https://picasaweb.google.com/lh/photo/QvMWuVXQw3YCKGJL-M6IPw?feat=embedwebsite" target="_blank" rel="external"><img src="https://lh4.googleusercontent.com/-kB7IeFYEw3o/Th70Nxj6cvI/AAAAAAAABxY/Erk3uOTnExw/s640/pac_manager_introduction-expect_01.png" height="203" width="640"></a></p>
+
+<p>第一個Expect配置項的意思是在到公司網關的SSH連接建立成功後馬上從郵件服務器（IP是192.168.1.3）上下載日志文件（mail.log），然後使用vi編輯器打開該日志文件。由于SCP指令需要輸入密碼，故第二個Expect配置項會在SCP請求密碼時自動輸入。這樣，在PAC Manager中每次連接到公司網關時就會自動下載并打開日志文件了。</p>
+
+<h3>宏</h3>
+
+<p>對于經常要做遠程管理的用戶，通常會有一些常用的指令，有時指令太多或太長，記憶和輸入都不方便，這時就可以使用PAC Manager的宏管理功能來管理這些常用指令。</p>
+
+<p>例如在下面的圖中，我們定義了兩個指令：</p>
+
+<p><a href="https://picasaweb.google.com/lh/photo/p5j9nUq8dU6tEjZD48ZqjA?feat=embedwebsite" target="_blank" rel="external"><img src="https://lh5.googleusercontent.com/-lEEfQ-KS6MI/Th70PiPEptI/AAAAAAAABxc/XVZiAi_Jcxs/s640/pac_manager_introduction-macros_01.png" height="142" width="640"></a></p>
+
+<p>然後在建立SSH連接後就可以在需要的時候通過右鍵菜單選擇要執行的指令：</p>
+
+<p><a href="https://picasaweb.google.com/lh/photo/toIv5UpSbJpWBm935x5riw?feat=embedwebsite" target="_blank" rel="external"><img src="https://lh4.googleusercontent.com/-u8Ay_1jNMmM/Th70QNyV_SI/AAAAAAAABxg/riFqK-0-Ljw/s800/pac_manager_introduction-macros_02.png" height="435" width="514"></a></p>
+
+<p>如果在編輯宏時選中了輸入框前面的“Confirm”，則表示在使用此指令前會彈出一個對話框要求用戶確認，對于一些危險的指令，這會是防止自己犯下不可饒恕的錯誤的最後一道屏障。</p>
+
+<h3>集群</h3>
+
+<p>如果您有多台遠程主機需要管理，并且經常會對所有主機都執行一些相同的操作，那麽PAC Manager的集群功能就可以免去在每台主機上都執行一遍相同指令的麻煩。</p>
+
+<p>首先我們打開三個SSH連接，假設現在需要在其中的兩台主機中輸入同樣的指令，那麽可以點擊PAC Manager主窗口上的“Clusters”按鈕，在彈出的對話框中的集群列表中新建或選擇一個集群。</p>
+
+<p>在對話框左邊的列表中列出的是當前所有打開的連接中沒有被加入集群的連接，選中其中的兩個，并點擊“Add to Cluster”，這兩個連接即被加入指定的集群中。如下圖所示：</p>
+
+<p><a href="https://picasaweb.google.com/lh/photo/KmS2UPOgXmgv5pRlFu2DMQ?feat=embedwebsite" target="_blank" rel="external"><img src="https://lh3.googleusercontent.com/-6OtjbnT17aQ/Th70NhoCZ2I/AAAAAAAABxQ/-0uDjq4WGEI/s640/pac_manager_introduction-cluster_01.png" height="452" width="640"></a></p>
+
+<p>同一集群中的所有終端窗口將共享用戶的輸入，例如在集群中的任一終端中輸入“hostname”并點擊Enter鍵，則集群中所有終端都會顯示該連接對應主機的主機名。</p>
+
+<h3>環境變量及用戶自定義變量</h3>
+
+<p>PAC Manager允許用戶在定義宏、Expect腳本和其它指令時使用系統環境變量和自定義的變量。對于某些需要用到會經常變化的特定值的指令，這個功能免去了每當這些值變化後都必須逐個修改相關指令的麻煩。</p>
+
+<p>以前面在“Expect正則表達式”節舉的例子來說，假設我不但定義了連接後自動下載日志文件的Expect表達式，還定義了幾個使用lftp指令下載遠程主機其它文件的宏，那麽每當遠程主機的FTP賬號密碼發生變化，我都必須逐個修改所有使用了這個密碼的宏，設想如果這種情況很多，那將會是怎樣的噩夢！</p>
+
+<p>此時我就可以使用自定義變量的功能定義一個變量，以存儲這個密碼，如下圖所示：</p>
+
+<p><a href="https://picasaweb.google.com/lh/photo/GbNSktQyEHUDLrwiGgQ2Zg?feat=embedwebsite" target="_blank" rel="external"><img src="https://lh5.googleusercontent.com/-qGDhT2O4fgQ/Th70Roa8eOI/AAAAAAAABxw/aDPvXG2dSLE/s640/pac_manager_introduction-user_variables_01.png" height="138" width="640"></a></p>
+
+<p>然後在所有使用這個密碼的位置使用這個變量作為替代值。查找已定義變量的方法是在指令輸入框中點擊右鍵，所有的用戶自定義變量都顯示在“User variables”菜單中：</p>
+
+<p><a href="https://picasaweb.google.com/lh/photo/P6MQxVuYx2gh1eGAzcH6qQ?feat=embedwebsite" target="_blank" rel="external"><img src="https://lh4.googleusercontent.com/-Py5Ci0-H-vE/Th70R25OsEI/AAAAAAAABx0/57aU98zSEIU/s640/pac_manager_introduction-user_variables_02.png" height="184" width="640"></a></p>
+
+<p>如果需要在指令中引入系統環境變量，則可以在與“User variables”平級的“Environment variables”菜單中選擇。</p>
+
+<h3>靈活的可定制性</h3>
+
+<p>PAC Manager提供一個簡潔直觀的全局定制界面，用戶可在其中定義程式本身行為的參數、建立連接後的虛擬終端窗口的樣式、連接的超時時間及建立連接時使用的代理服務器信息。</p>
+
+<p>它甚至為每個連接都提供了定制功能，用戶可以針對個別連接進行個性化定制，單個連接中的配置信息將會覆蓋全局配置中對應的信息。</p>
+
+<h3>管理Telnet/Serial連接</h3>
+
+<p>PAC Manager不但支持SSH協議，也可以作為Telnet和Serial協議的連接管理工具，在此不作贅述。</p>
+
+<h2>結束語</h2>
+
+<p>PAC Manager是一個年輕的項目，在用戶體驗和功能上還有很大的發展空間。但憑借出色的用戶界面設計和實用細致的功能，即使與那些老牌的同類工具相比也不遑多讓，從它華麗的現身我們高興地看到在SSH/Telnet管理工具中又多出一個易用、強大、美觀和免費的選擇。</p>
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/got-aoc-e2343f/">
+        ← prev <!--收入AOC E2343F-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/comparison-of-efficiency-for-apc-file-memcached/">
+        <!--APC、文件和Memcached效率對比--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

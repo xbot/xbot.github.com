@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>使用存取控制表在Linux用戶間共享文件 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  三月 19, 2014
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/linux/'>Linux</a> 
+    
+      <a href='/tags/cli/'>CLI</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">使用存取控制表在Linux用戶間共享文件</h1>
+  <section class="post-content article-entry">
+    <p>我用Dropbox在兩台電腦間同步個人維基數據，將數據目錄從Web Server下軟連接到Dropbox裡，而對Dropbox目錄的備份實際上只包含那個軟連接，沒有內容，結果當把備份拷貝到另一台電腦上並打開Dropbox後，維基數據被清空了！我積累多年的筆記差一點兒完蛋，幸虧單獨備份過維基。然後改將維基數據放到Dropbox裡，然後軟連接到Web Server下，新問題出現了，Web Server是以http身份運行的，對用戶主目錄沒有權限，當然也不能訪問主目錄下的Dropbox目錄。</p>
+<p>最簡單的辦法是將主目錄、Dropbox、維基目錄的權限全部設成777，顯然，這樣做太不安全。另一種方法是把Dropbox用NFS輸出，然後掛載到Web Server下，這麼做太蛋疼。最合適的解決方案是Access Control List（存取控制表），它可以為文件和目錄設置具體到單個用戶或用戶組的存取權限，實現像Windows下的文件（目錄）共享權限設置那樣的效果，而且比後者更強大、靈活。</p>
+<p>使用ACL首先需要目錄的掛載選項中包含acl，不過一般缺省都包含這一項。</p>
+<p>ACL包含兩個命令：getfacl和setfacl，前者用來查看目錄或文件的存取控制表，後者用來操作它。</p>
+<p>首先，把維基目錄的所有者改成http，並設置目錄權限為770：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">chown -R http:http ~/Dropbox/wiki</div><div class="line">chmod -R 770 ~/Dropbox/wiki</div></pre></td></tr></table></figure>
+<p>這時Web Server還是不能訪問維基目錄，使用getfacl查看用戶主目錄的ACL：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">getfacl ~</div></pre></td></tr></table></figure>
+<p>顯示結果如下：</p>
+<blockquote>
+<p>getfacl: Removing leading ‘/‘ from absolute path names<br># file: home/taoqi<br># owner: taoqi<br># group: users<br>user::rwx<br>user:root:–x<br>group::—<br>mask::–x<br>other::—  </p>
+</blockquote>
+<p>顯然，要給http用戶訪問該目錄的權限：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">setfacl -m u:http:x ~</div></pre></td></tr></table></figure>
+<p>再查看ACL，發現增加了一條：</p>
+<blockquote>
+<p>user:http:–x</p>
+</blockquote>
+<p>同理，給Dropbox目錄也加上這一條規則之後，Web Server就可以訪問維基數據目錄了。</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/project-euler-12/">
+        ← prev <!--Project Euler Problem 12 Solved-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/a-walk-through-the-west-mountain/">
+        <!--西山徒步——大覺寺至鳳凰嶺南線--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>Vim保存文件時移除尾行換行符的方法 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  十二月 5, 2010
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/配置/'>配置</a> 
+    
+      <a href='/tags/vim/'>Vim</a> 
+    
+      <a href='/tags/windows/'>Windows</a> 
+    
+      <a href='/tags/計算機/'>計算機</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">Vim保存文件時移除尾行換行符的方法</h1>
+  <section class="post-content article-entry">
+    <p>Vim認為一個文本文件的每一行都應該由一換行符結束，即使文件的最後一行也不例外。這就使得Vim保存過的文本文件在其它文本編輯器中查看時可能會在文件末尾多出一個空行。一般來說，這不是個問題，但對于程序員來說，有時候一些不規範的運行環境或其它組件就要求文件的最後一行不能有換行符，否則就會出莫名其妙的問題，尤其是在Windows環境下最常見。</p>
+<p>要在保存文件時不在最後一行添加換行符，最常見、最簡單的方法就是：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">:<span class="keyword">set</span> binary</div><div class="line">:<span class="keyword">set</span> noendofline</div></pre></td></tr></table></figure>
+<p>但是這樣做有一個問題，就是會把DOS格式的文件自動轉換成UNIX格式，WinSlave們肯定不希望這麽做。</p>
+<p>因此，可在vimrc中加入如下內容：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment">" Save the current buffer as a file with no EOF sign.</span></div><div class="line"><span class="function"><span class="keyword">function</span>! <span class="title">SaveAsNOEOF</span><span class="params">(filename)</span></span></div><div class="line">    <span class="keyword">let</span> <span class="keyword">a</span>=<span class="built_in">getline</span>(<span class="number">1</span>,<span class="built_in">line</span>(<span class="string">'$'</span>)-<span class="number">1</span>)</div><div class="line">    <span class="keyword">let</span> <span class="keyword">b</span>=<span class="keyword">map</span>(<span class="keyword">a</span>, <span class="string">'iconv(v:val,"'</span>.&amp;enc.<span class="string">'","'</span>.&amp;fenc.<span class="string">'") . nr2char(13)'</span>)</div><div class="line">    <span class="keyword">call</span> <span class="built_in">extend</span>(<span class="keyword">b</span>, <span class="built_in">getline</span>(<span class="string">'$'</span>, <span class="string">'$'</span>))</div><div class="line">    <span class="keyword">call</span> <span class="built_in">writefile</span>(<span class="keyword">b</span>,<span class="variable">a:filename</span>, <span class="string">'b'</span>)</div><div class="line">    <span class="keyword">if</span> <span class="variable">a:filename</span> == <span class="built_in">bufname</span>(<span class="string">'%'</span>)</div><div class="line">        <span class="keyword">set</span> nomodified</div><div class="line">    <span class="keyword">endif</span></div><div class="line"><span class="keyword">endfunction</span></div><div class="line"><span class="comment">" Save the current buffer and get rid of the EOF sign.</span></div><div class="line"><span class="function"><span class="keyword">function</span>! <span class="title">SaveNOEOF</span><span class="params">()</span></span></div><div class="line">    <span class="keyword">call</span> SaveAsNOEOF(<span class="built_in">bufname</span>(<span class="string">'%'</span>))</div><div class="line"><span class="keyword">endfunction</span></div><div class="line">command! -<span class="built_in">complete</span>=<span class="keyword">file</span> -nargs=<span class="number">0</span> SaveNOEOF :<span class="keyword">call</span> SaveNOEOF()</div><div class="line">command! -<span class="built_in">complete</span>=<span class="keyword">file</span> -nargs=<span class="number">1</span> SaveAsNOEOF :<span class="keyword">call</span> SaveAsNOEOF(<span class="symbol">&lt;q-args&gt;</span>)</div></pre></td></tr></table></figure>
+<p>然後就可以使用SaveNOEOF和SaveAsNOEOF兩條命令去保存沒有EOF的文件了。</p>
+<p><em>說明：本文的目的在于保存文件時移除最後一行的換行符，而并非移除EOF，上述配置中使用EOF只為記憶更容易起見。</em></p>
+<p><strong>更新：</strong></p>
+<blockquote><br><strong>2010-12-15</strong><br><br><ol><br>    <li>修正SaveNOEOF命令報缺少參數的錯誤的問題</li><br>    <li>修正保存當前buffer後沒有變更文檔修改狀態的問題</li><br>    <li>修正保存文件後總是將編碼轉換成encoding選項的值的問題</li><br></ol><br><br><br></blockquote>
+
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/batchcat-v02-released/">
+        ← prev <!--Batch Cat v0.2 Released-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/a-fools-paradise/">
+        <!--黃粱一夢--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

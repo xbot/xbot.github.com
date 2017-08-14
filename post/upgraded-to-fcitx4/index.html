@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>升級fcitx到4.0 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  十一月 20, 2010
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/archlinux/'>Archlinux</a> 
+    
+      <a href='/tags/計算機/'>計算機</a> 
+    
+      <a href='/tags/fcitx/'>fcitx</a> 
+    
+      <a href='/tags/拼音/'>拼音</a> 
+    
+      <a href='/tags/輸入法/'>輸入法</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">升級fcitx到4.0</h1>
+  <section class="post-content article-entry">
+    <p>雖然是個大版本，但4.0在實際功能上并沒有太大的進步。新版本相對于3.x增加的主要特性是：</p>
+<ol><br>  <li>支持皮膚</li><br>  <li>圖形界面的配置工具</li><br>  <li>增加系統托盤圖標</li><br>  <li>托盤圖標和輸入條提供右鍵菜單，如皮膚切換、選擇輸入法等</li><br>  <li>放棄GBK編碼，改用UTF-8編碼</li><br>  <li>拼音支持多詞庫</li><br>  <li>一系列細節功能及Bug修復</li><br></ol>
+
+<p>最主要的特性只有前兩個，可見fcitx 4.0只是這個項目涅槃後的一個新的起點，象征意義大于實際意義，尤其對于碼表輸入法用戶來說是這樣。三年前我就<a href="http://0x3f.org/?p=185">說過</a>，fcitx在用戶造詞上有個致命缺陷，就是對于多音字它總是使用字母表中聲母靠前的編碼，對于音碼或者音形碼輸入法來說，這樣造出來的詞的編碼經常會是錯的，更糟糕的是用戶還不容易自行修改詞組編碼。三年後的今天，新版本并沒有解決這個問題。</p>
+<p>此外，需要注意的是，新版本對界面和易用性的改進也帶來一些負面的影響，fcitx不再是當年以輕巧著稱的那只小企鵝了，在我這裏，它的內存占用達到了26M，所幸反應速度仍然很快。</p>
+<p>三年前，由于眾所周知的原因，fcitx的路線圖顯得非常混亂，幾個新版本都非常不穩定，所以我不再使用源中的版本，轉而編譯安裝了新版本中相對穩定的黑色星期五版，不知不覺中三年過去了，想到一直用著這個版本就這麽過來了，很感慨。要卸載編譯安裝的程序就得用源碼重新configure一下再make uninstall，所幸還能在<a href="http://www.fcitx.org/download/fcitx-3.5-BlackFri.tar.bz2" target="_blank" rel="external">這裏</a>找到這個版本。</p>
+<p>Archlinux下安裝AUR中的fcitx-config時報如下錯誤：</p>
+<blockquote><br>ERROR: certificate common name “*.github.com” doesn’t match requested host name “github.com”.<br></blockquote>
+
+<p>需要修改/etc/makepkg.conf，使wget在下載源碼時不做安全驗証：</p>
+<blockquote><br># 增加–no-check-certificate參數<br>DLAGENTS=(‘ftp::/usr/bin/wget -c –passive-ftp -t 3 –waitretry=3’<br>          ‘http::/usr/bin/wget -c -t 3 –waitretry=3 –no-check-certificate’<br>          ‘https::/usr/bin/wget -c -t 3 –waitretry=3 –no-check-certificate’<br>          ‘rsync::/usr/bin/rsync -z’<br>          ‘scp::/usr/bin/scp -C’)<br></blockquote>
+
+<p>新版本的穩定性不如黑色星期五版，如果把簡繁轉換熱鍵修改為ALT+J，使用時會導致fcitx崩潰。加之實際功能的改進不大，所以是否升級就無可無不可了。</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/oxygen-iconset-fit-for-xfce/">
+        ← prev <!--Oxygen Refit：適用于xfce的Oxygen圖標集-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/adjust-disk-partitions-in-archlinux/">
+        <!--調整Arch的磁盤分區--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

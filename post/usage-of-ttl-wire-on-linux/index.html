@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>TTL线在Linux下的用法 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  七月 18, 2010
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/計算機/'>計算機</a> 
+    
+      <a href='/tags/内核/'>内核</a> 
+    
+      <a href='/tags/破解/'>破解</a> 
+    
+      <a href='/tags/驱动/'>驱动</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">TTL线在Linux下的用法</h1>
+  <section class="post-content article-entry">
+    <p>虽然由于<a href="http://0x3f.org/?p=1544">我的H108B</a>没有TTL引脚而无法通过TTL线登入猫的<a href="http://en.wikipedia.org/wiki/BusyBox" target="_blank" rel="external">BusyBox</a>系统，但TTL线在Linux下的使用方法仍然值得一叙，因为除此之外，它还有较为广泛的用途，例如为路由器刷<a href="http://en.wikipedia.org/wiki/OpenWrt" target="_blank" rel="external">OpenWRT</a>系统等等。</p>
+<p>TTL转USB端子是目前较为常见的此类设备，这得益于它的简单易用和便携性。在这类设备上最常见的就是台湾的Prolific Technology生产的<strong>PL2303</strong>：</p>
+<p><a href="http://picasaweb.google.com/lh/photo/fAc0kt6VmnFFTUY7IA-VrA?feat=embedwebsite" target="_blank" rel="external"><img src="http://lh3.ggpht.com/_ceUJ_lBTHzc/TEHb1u6n7TI/AAAAAAAABbU/FA7aEZPTn-A/s400/C360_2010-07-17%2011-07-17.jpg"></a></p>
+<p>这种芯片的驱动已被编译进Linux内核，如果使用的是较新版本的内核，则使用该芯片的TTL转USB端子会被自动识别，通常为<strong>/dev/ttyUSB0</strong>设备，使用<strong>lsusb</strong>命令可以查看：</p>
+<blockquote><br>[lenin@archer ~]$ lsusb<br>Bus 008 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub<br>Bus 007 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub<br>Bus 006 Device 003: ID 067b:2303 Prolific Technology, Inc. PL2303 Serial Port<br>Bus 006 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub<br></blockquote>
+
+<p>将四根杜邦线连接到TTL转USB插头上，并接入相应设备的对应引脚。同一根线两端连接的引脚必须对应，另外，VCC引脚不能接线，否则会烧坏TTL转 USB芯片。</p>
+<p>在计算机上使用串口通讯程序进行操控，常见的串口通讯程序有：<a href="http://en.wikipedia.org/wiki/Minicom" target="_blank" rel="external">minicom</a>，<a href="http://en.wikipedia.org/wiki/Microcom" target="_blank" rel="external">microcom</a>，picocom，tinyserial，xgcom。</p>
+<p>以minicom为例，进入minicom的设置界面：</p>
+<blockquote>sudo minicom -s</blockquote>
+
+<p>先设置默认的通讯设备为ttyUSB0并设置硬件流控制（Hardware Flow Control）为No：</p>
+<p><a href="http://picasaweb.google.com/lh/photo/YnqotA0Fo6Z883T7aKvDcg?feat=embedwebsite" target="_blank" rel="external"><img src="http://lh5.ggpht.com/_ceUJ_lBTHzc/TEMR710O6XI/AAAAAAAABb4/noM3E7ZEiuM/s800/2010-07-17.10%3A25%3A38.%E6%88%AA%E5%8F%96%E9%80%89%E5%8C%BA.01.png"></a></p>
+<p><a href="http://picasaweb.google.com/lh/photo/G2S6THC9IqvBChZGkJfyqQ?feat=embedwebsite" target="_blank" rel="external"><img src="http://lh6.ggpht.com/_ceUJ_lBTHzc/TEMR7zBjcmI/AAAAAAAABb8/Z63_oSfjrnc/s400/2010-07-17.10%3A29%3A04.urxvt.01.png"></a></p>
+<p>保存为缺省设置：</p>
+<p><a href="http://picasaweb.google.com/lh/photo/lY9b49woVJhLdkPJqViT3Q?feat=embedwebsite" target="_blank" rel="external"><img src="http://lh4.ggpht.com/_ceUJ_lBTHzc/TEMR8Fjk3cI/AAAAAAAABcA/QnHscEzj1OY/s800/2010-07-17.10%3A29%3A35.%E6%88%AA%E5%8F%96%E9%80%89%E5%8C%BA.01.png"></a></p>
+<p>启动minicom：</p>
+<blockquote>sudo minicom</blockquote>
+
+<p>理论上说，此时即可和设备进行通讯了。</p>
+<p>Windows下要安装相应芯片的驱动，通讯程序一般用SecureCRT。</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/swfdec-as-a-slim-flash-player/">
+        ← prev <!--swfdec：简单好用的Flash播放器-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/howto-enable-routing-and-auto-dialing-for-unicom-adsl-modem-2/">
+        <!--网通ADSL猫开启路由和自动拨号功能的方法之二--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

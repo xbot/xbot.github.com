@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>用OpenResty自動轉換silk到MP3 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  一月 25, 2017
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/編程/'>編程</a> 
+    
+      <a href='/tags/openresty/'>openresty</a> 
+    
+      <a href='/tags/nginx/'>nginx</a> 
+    
+      <a href='/tags/lua/'>lua</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">用OpenResty自動轉換silk到MP3</h1>
+  <section class="post-content article-entry">
+    <p>PHP沒有原生的轉換silk格式音頻到mp3的方案，所以考慮用NGINX+Lua調用命令行工具實現。</p>
+<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>當訪問以「.silk.mp3」為後綴的文件時，查找對應的mp3文件，存在則返回，否則，如果對應的silk文件存在，調用命令行工具轉換文件格式，然後內部重定向到新生成的mp3。</p>
+<h2 id="安裝"><a href="#安裝" class="headerlink" title="安裝"></a>安裝</h2><ul>
+<li><a href="https://openresty.org/cn/download.html" target="_blank" rel="external">OpenResty</a></li>
+<li><a href="https://github.com/kn007/silk-v3-decoder" target="_blank" rel="external">silk-v3-decoder</a></li>
+<li><a href="https://ffmpeg.org" target="_blank" rel="external">ffmpeg</a></li>
+</ul>
+<h2 id="NGINX配置"><a href="#NGINX配置" class="headerlink" title="NGINX配置"></a>NGINX配置</h2><figure class="highlight nginx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">location</span> <span class="regexp">~* /.*\.silk\.mp3$</span> &#123;</div><div class="line">    <span class="attribute">content_by_lua_file</span> <span class="string">"/opt/script/silk2mp3.lua"</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="Lua腳本"><a href="#Lua腳本" class="headerlink" title="Lua腳本"></a>Lua腳本</h2><figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">file_exists</span><span class="params">(name)</span></span></div><div class="line">    <span class="keyword">local</span> f=<span class="built_in">io</span>.<span class="built_in">open</span>(name,<span class="string">"r"</span>)</div><div class="line">    <span class="keyword">if</span> f~=<span class="literal">nil</span> <span class="keyword">then</span> <span class="built_in">io</span>.<span class="built_in">close</span>(f) <span class="keyword">return</span> <span class="literal">true</span> <span class="keyword">else</span> <span class="keyword">return</span> <span class="literal">false</span> <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="keyword">local</span> resource     = ngx.var.request_filename;</div><div class="line"><span class="keyword">local</span> realResource = resource:<span class="built_in">sub</span>(<span class="number">1</span>, #resource - <span class="number">9</span>)..<span class="string">".mp3"</span>;</div><div class="line"><span class="keyword">local</span> realURI      = ngx.var.uri:<span class="built_in">sub</span>(<span class="number">1</span>, #ngx.var.uri - <span class="number">9</span>)..<span class="string">".mp3"</span>;</div><div class="line"></div><div class="line"><span class="keyword">if</span> file_exists(realResource) <span class="keyword">then</span></div><div class="line">    <span class="keyword">return</span> ngx.exec(realURI);</div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="keyword">local</span> silk = resource:<span class="built_in">sub</span>(<span class="number">1</span>, #resource - <span class="number">4</span>);</div><div class="line"></div><div class="line"><span class="keyword">if</span> <span class="keyword">not</span> file_exists(silk) <span class="keyword">then</span></div><div class="line">    <span class="keyword">return</span> ngx.<span class="built_in">exit</span>(<span class="number">404</span>);</div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="built_in">os</span>.<span class="built_in">execute</span>(<span class="string">"/bin/sh /opt/silk-v3-decoder/converter.sh \""</span>..silk..<span class="string">"\" mp3 &gt; /dev/null 2&gt;&amp;1"</span>);</div><div class="line"></div><div class="line"><span class="keyword">if</span> file_exists(realResource) <span class="keyword">then</span></div><div class="line">    <span class="keyword">return</span> ngx.exec(realURI);</div><div class="line"><span class="keyword">else</span></div><div class="line">    <span class="keyword">return</span> ngx.<span class="built_in">exit</span>(<span class="number">404</span>)</div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<h2 id="遇到的問題"><a href="#遇到的問題" class="headerlink" title="遇到的問題"></a>遇到的問題</h2><h3 id="OpenResty調用命令轉換失敗，而手工可以"><a href="#OpenResty調用命令轉換失敗，而手工可以" class="headerlink" title="OpenResty調用命令轉換失敗，而手工可以"></a>OpenResty調用命令轉換失敗，而手工可以</h3><p>silk-v3-decoder的converter.sh把所有錯誤信息都屏蔽了，需要修改腳本查看。</p>
+<p>實際情況是OpenResty的運行用戶沒有音頻文件所在目錄的權限。</p>
+<h3 id="編譯的ffmpeg轉換PCM到MP3時報錯"><a href="#編譯的ffmpeg轉換PCM到MP3時報錯" class="headerlink" title="編譯的ffmpeg轉換PCM到MP3時報錯"></a>編譯的ffmpeg轉換PCM到MP3時報錯</h3><p>silk-v3-decoder自己的decoder只是把silk轉換成PCM，然後調用ffmpeg轉換成mp3。系統中的ffmpeg是自己編譯的，在這一步報錯，大意是mp3的encoder不存在。</p>
+<p>原因是ffmpeg編譯時默認不激活mp3編碼器（猜測）或者沒安裝libmp3lame-dev，需要安裝這個開發庫並給configure指定參數「–enable-libmp3lame」。</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/two-grouping-sql-statements/">
+        ← prev <!--兩條分組的SQL語句-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/two-plant-identification-apps/">
+        <!--微軟識花和形色--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

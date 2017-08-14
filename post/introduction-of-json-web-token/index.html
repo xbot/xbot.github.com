@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>JSON Web Token簡介 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  四月 23, 2017
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/編程/'>編程</a> 
+    
+      <a href='/tags/筆記/'>筆記</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">JSON Web Token簡介</h1>
+  <section class="post-content article-entry">
+    <h2 id="什麼是JWT？"><a href="#什麼是JWT？" class="headerlink" title="什麼是JWT？"></a>什麼是JWT？</h2><p>JSON Web Token（簡稱JWT）是一種token格式，通常用來解決身份認證的問題，和會話（session）作用相同，常用在RESTful API或者OAuth認證上。</p>
+<p>和session相比，JWT有以下優勢：</p>
+<ul>
+<li>服務器端的開銷低</li>
+<li>服務器端擴展方便</li>
+<li>不用專門處理CSRF</li>
+</ul>
+<p>由於session的實現方式需要在服務器端存儲會話數據，所以當存在大量會話時，服務器端的存儲壓力會很大，並由此帶來擴展上的複雜度（共享session）。而JWT可以把這些數據存儲在token里，不需要服務器端存儲，優勢自然很明顯。</p>
+<p>對於CSRF，由於session一般使用cookie實現，所以需要專門處理這個安全隱患。JWT借助HTTP請求的header傳遞，所以偽造成本更高。</p>
+<h3 id="JWT和Bearer-Token的關係"><a href="#JWT和Bearer-Token的關係" class="headerlink" title="JWT和Bearer Token的關係"></a>JWT和Bearer Token的關係</h3><p>JWT在使用的時候要在token前面加上字符串「bearer」再填到HTTP請求的header里，這個值就是「Bearer Token」。為什麼要這麼做？它和JWT是什麼關係？</p>
+<p>簡單地說，JWT是一種token格式，Bearer Token是一種鑒權方案。</p>
+<p>HTTP的header項「Authorization」是在HTTP 1.0引入的，它的值的格式是<code>類型+token</code>，支持多種鑒權方案，bearer只是其中的一種。bearer方案中使用的token是JWT格式，這就是它們之間的關係。</p>
+<h2 id="JWT的格式"><a href="#JWT的格式" class="headerlink" title="JWT的格式"></a>JWT的格式</h2><p>JWT是一個用英文點號連接起來的、分成三個部分的字符串：header、payload和signature。</p>
+<h3 id="header"><a href="#header" class="headerlink" title="header"></a>header</h3><p>header是個base64字符串，解密後是個JSON對象，包含一些元數據。例如：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  'typ': 'JWT',</div><div class="line">  'alg': 'HS256'</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>「typ」是格式，「alg」是加密方法。</p>
+<h3 id="payload"><a href="#payload" class="headerlink" title="payload"></a>payload</h3><p>payload也是個base64字符串，解密後也是個JSON對象，一般包含兩種數據：JWT標準數據和自定義數據。</p>
+<p>JWT標準數據常見的有：</p>
+<ul>
+<li>iss：提供方。</li>
+<li>sub：主題，一般是用戶ID。</li>
+<li>exp：過期時間。</li>
+<li>iat：創建時間。</li>
+<li>jti：token的唯一標識。</li>
+</ul>
+<p>此外，和session一樣，可以把一些自定義的數據存儲在payload里。但由於token存儲在客戶端，所以不應該在這裡存儲敏感數據。</p>
+<h3 id="signature"><a href="#signature" class="headerlink" title="signature"></a>signature</h3><p>signature也是個base64字符串，解密後是個使用header里描述的加密方法針對header和payload加密的字符串。目的是防止這兩部分的數據被篡改。</p>
+<h2 id="JWT的使用原則"><a href="#JWT的使用原則" class="headerlink" title="JWT的使用原則"></a>JWT的使用原則</h2><ul>
+<li>不存放敏感信息</li>
+<li>保護好私鑰</li>
+<li>結合https使用</li>
+</ul>
+<p>都是出於安全角度考慮。token存儲在客戶端，而且base64可以被解密，所以不能存儲敏感數據。如果私鑰洩漏，意味著簽名可以被隨意偽造。使用https可以更好的保護數據，防止中間人攻擊。</p>
+<h2 id="JWT相關開發資源"><a href="#JWT相關開發資源" class="headerlink" title="JWT相關開發資源"></a>JWT相關開發資源</h2><p><a href="https://jwt.io/" target="_blank" rel="external">jwt.io</a>有各種語言的JWT開發資源。</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/introduction-of-cross-site-request-forgery/">
+        ← prev <!--Cross-site Request Forgery簡介-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/get-the-inferior-class-get-the-throne/">
+        <!--得草根者得天下--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

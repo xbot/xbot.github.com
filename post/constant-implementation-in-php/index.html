@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>PHP常量的實現和操作 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  五月 7, 2015
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/php/'>PHP</a> 
+    
+      <a href='/tags/源碼/'>源碼</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">PHP常量的實現和操作</h1>
+  <section class="post-content article-entry">
+    <h2 id="存儲結構"><a href="#存儲結構" class="headerlink" title="存儲結構"></a>存儲結構</h2><p>常量存儲在哈希表EG(zend_constants)中。</p>
+<p>常量的結構定義為：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">zend_constant</span> &#123;</span></div><div class="line">	zval value;</div><div class="line">	<span class="keyword">int</span> flags;</div><div class="line">	<span class="keyword">char</span> *name;</div><div class="line">	uint name_len;</div><div class="line">	<span class="keyword">int</span> module_number;</div><div class="line">&#125; zend_constant;</div></pre></td></tr></table></figure>
+<p>value是常量的值，是一個zval。name是常量名。module_number是模塊被加載時，PHP內核在MINIT和RINIT方法的原型裡默認傳遞的一個值，作為模塊清理時的線索，在註冊常量的接口裡直接傳遞即可。</p>
+<p>flags是常量的標識或標識組合：</p>
+<ul>
+<li>CONST_CS</li>
+<li>CONST_PERSISTENT</li>
+<li>CONST_CT_SUBST</li>
+</ul>
+<p>CONST_CS表示常量名對大小寫敏感，對應PHP函數define()的第三個參數，TRUE、FALSE、NULL這些常量名對大小寫是不敏感的。CONST_PERSISTENT表示常量在請求結束後被保存，只在PHP進程結束時才銷毀，一般在MINIT中定義的常量應該指定此參數，RINIT中定義的不指定。CONST_CT_SUBST表示在編譯時可替換，TRUE、FALSE、NULL、ZEND_THREAD_SAFE、ZEND_DEBUG_BUILD屬於此類。</p>
+<h2 id="常量的聲明"><a href="#常量的聲明" class="headerlink" title="常量的聲明"></a>常量的聲明</h2><p>常量的聲明方法有兩種，簡單的使用宏函數族REGISTER_*_CONSTANT()：</p>
+<blockquote>
+<p>REGISTER_NULL_CONSTANT(name, flags)<br>REGISTER_BOOL_CONSTANT(name, bval, flags)<br>REGISTER_LONG_CONSTANT(name, lval, flags)<br>REGISTER_DOUBLE_CONSTANT(name, dval, flags)<br>REGISTER_STRING_CONSTANT(name, str, flags)<br>REGISTER_STRINGL_CONSTANT(name, str, len, flags)</p>
+</blockquote>
+<p>由於不需指定常量名長度，所以name參數應直接使用字符串，而不是char*。</p>
+<p>如需使用變量作為name參數，使用zend_register_*_constant()函數族，並指定變量名長度（sizeof(name)）。上面的宏函數其實是對這族函數的封裝。</p>
+<blockquote>
+<p>void zend_register_long_constant(char *name, uint name_len, long lval, int flags, int module_number TSRMLS_DC)<br>void zend_register_double_constant(char *name, uint name_len, double dval, int flags, int module_number TSRMLS_DC)<br>void zend_register_bool_constant(const char *name, uint name_len, zend_bool bval, int flags, int module_number TSRMLS_DC)<br>void zend_register_string_constant(char *name, uint name_len, char *strval, int flags, int module_number TSRMLS_DC)<br>void zend_register_stringl_constant(char *name, uint name_len, char *strval, uint strlen, int flags, int module_number TSRMLS_DC)</p>
+</blockquote>
+<p>除此之外，還有REGISTER_MAIN_*_CONSTANT和REGISTER_NS_*_CONSTANT兩組宏函數。前者用於定義像E_ERROR這樣的PHP標準常量，後者定義有命令空間的常量。</p>
+<h2 id="define-和const"><a href="#define-和const" class="headerlink" title="define()和const"></a>define()和const</h2><ul>
+<li>define()是函數，在運行時定義常量<ul>
+<li>不能定義類常量</li>
+<li>可以在條件語句中使用</li>
+<li>可以指定常量是否對大小寫敏感</li>
+<li>可以用表達式作為常量值</li>
+<li>只定義全局常量，不支持命名空間</li>
+</ul>
+</li>
+<li>const是語句，在編譯時定義常量<ul>
+<li>可以定義類常量</li>
+<li>不能在條件語句中使用</li>
+<li>定義的常量對大小寫敏感</li>
+<li>不支持表達式作為常量值</li>
+<li>若腳本定義了命名空間，聲明的常量屬於該命名空間</li>
+</ul>
+</li>
+</ul>
+<h2 id="魔術常量"><a href="#魔術常量" class="headerlink" title="魔術常量"></a>魔術常量</h2><blockquote>
+<p>__LINE__<br>__FILE__<br>__DIR__<br>__FUNCTION__<br>__CLASS__<br>__METHOD__<br>__NAMESPACE__  </p>
+</blockquote>
+<p>魔術常量是在編譯時（具體地說是詞法分析時，見Zend/zend_language_scanner.l）被替換，確切地說，這些不是真正意義上的常量，只是個模板佔位符。</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/globals-implementation-in-php/">
+        ← prev <!--PHP全局變量的實現和操作-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/resource-implementation-in-php/">
+        <!--PHP资源的實現和操作--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

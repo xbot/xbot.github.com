@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>用好代碼時光機 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  十一月 21, 2014
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/編程/'>編程</a> 
+    
+      <a href='/tags/git/'>git</a> 
+    
+      <a href='/tags/svn/'>svn</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">用好代碼時光機</h1>
+  <section class="post-content article-entry">
+    <p>今天看了篇文章，講幾種常見的、糟糕的注釋用法。其中之一是把廢棄的代碼注釋起來，而不是直接删掉，原因是擔心以後可能會用。</p>
+<p>這個其實就是版本控制系統（VCS）要解決的問題之一。包括對于團隊協作的項目，經常需要看某段代碼是誰改的、什麽時間、什麽原因。都是可以用VCS很方便地解決的問題。</p>
+<p>我以前是用二分法在提交列表裏找的。其實有更好的解決方法，思路是列出源碼在曆次提交中修改的内容，然後在其中查找要找的東西就行了。</p>
+<p>git的解決方法：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git <span class="built_in">log</span> -p abc.php</div></pre></td></tr></table></figure>
+<p>svn的解決方法：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">svn <span class="built_in">log</span> --diff --internal-diff abc.php</div></pre></td></tr></table></figure>
+<p>vim的輔助函數：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="comment">" Show commit history of the current file under the given VCS in a new window</span></div><div class="line"><span class="function"><span class="keyword">function</span>! <span class="title">ShowCommitHistory</span><span class="params">(vcs)</span></span></div><div class="line">    <span class="comment">" Check parameter</span></div><div class="line">    <span class="keyword">if</span> <span class="variable">a:vcs</span> != <span class="string">'svn'</span> &amp;&amp; <span class="variable">a:vcs</span> != <span class="string">'git'</span></div><div class="line">        <span class="keyword">echoerr</span> <span class="string">'Unknow VCS: '</span>.<span class="variable">a:vcs</span></div><div class="line">        <span class="keyword">return</span></div><div class="line">    <span class="keyword">endif</span></div><div class="line"></div><div class="line">    <span class="comment">" Do the dirty work</span></div><div class="line">    <span class="keyword">let</span> fileName = <span class="built_in">expand</span>(<span class="string">'%'</span>)</div><div class="line">    <span class="keyword">if</span> !empty(fileName)</div><div class="line">        <span class="keyword">exe</span> <span class="string">'new'</span></div><div class="line">        <span class="keyword">if</span> <span class="variable">a:vcs</span> == <span class="string">'svn'</span></div><div class="line">            <span class="keyword">exe</span> <span class="string">'r !svn log --diff --internal-diff '</span>.fileName</div><div class="line">        <span class="keyword">elseif</span> <span class="variable">a:vcs</span> == <span class="string">'git'</span></div><div class="line">            <span class="keyword">exe</span> <span class="string">'r !git log -p '</span>.fileName</div><div class="line">        <span class="keyword">endif</span></div><div class="line">    <span class="keyword">else</span></div><div class="line">        <span class="keyword">echo</span> <span class="string">'File not found.'</span></div><div class="line">    <span class="keyword">endif</span></div><div class="line"><span class="keyword">endfunction</span></div><div class="line"><span class="keyword">nnoremap</span> <span class="symbol">&lt;leader&gt;</span>ssch :<span class="keyword">call</span> ShowCommitHistory(<span class="string">'svn'</span>)<span class="symbol">&lt;CR&gt;</span></div><div class="line"><span class="keyword">nnoremap</span> <span class="symbol">&lt;leader&gt;</span>gsch :<span class="keyword">call</span> ShowCommitHistory(<span class="string">'git'</span>)<span class="symbol">&lt;CR&gt;</span></div></pre></td></tr></table></figure>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/testing-with-phpunit-in-phalcon/">
+        ← prev <!--Phalcon項目中PHPUnit的初始化-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/start-taking-note-in-online-markdown-editor/">
+        <!--開始用在線Markdown編輯器記筆記--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>Vim搜索的最佳實踐 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  二月 19, 2017
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/編程/'>編程</a> 
+    
+      <a href='/tags/vim/'>vim</a> 
+    
+      <a href='/tags/最佳實踐/'>最佳實踐</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">Vim搜索的最佳實踐</h1>
+  <section class="post-content article-entry">
+    <h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><ul>
+<li>使用PCRE正则表达式在当前目录下递归搜索</li>
+<li>将选定内容自动转换成正则表达式</li>
+<li>有较高的搜索速度</li>
+</ul>
+<h2 id="依賴"><a href="#依賴" class="headerlink" title="依賴"></a>依賴</h2><ul>
+<li><a href="https://github.com/wincent/ferret" target="_blank" rel="external">Ferret</a>：實現用PCRE正則表達式遞歸搜索</li>
+<li><a href="https://github.com/ggreer/the_silver_searcher" target="_blank" rel="external">The Silver Searcher</a>：搜索速度快</li>
+</ul>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div></pre></td><td class="code"><pre><div class="line">" 在当前缓冲区中查找與替換</div><div class="line">nmap &lt;leader&gt;ff yiw/\&lt;&lt;C-R&gt;"\&gt;\C</div><div class="line">vmap &lt;leader&gt;ff y/&lt;C-R&gt;=XEscapeRegex(@")&lt;CR&gt;\C</div><div class="line">nmap &lt;leader&gt;rr yiw:%s/\&lt;&lt;C-R&gt;"\&gt;\C//g&lt;LEFT&gt;&lt;LEFT&gt;</div><div class="line">vmap &lt;leader&gt;rr y:%s/&lt;C-R&gt;=XEscapeRegex(@")&lt;CR&gt;\C//g&lt;LEFT&gt;&lt;LEFT&gt;</div><div class="line">nmap &lt;leader&gt;rl yiw:s/\&lt;&lt;C-R&gt;"\&gt;\C//g&lt;LEFT&gt;&lt;LEFT&gt;</div><div class="line">vmap &lt;leader&gt;rl y:s/&lt;C-R&gt;=XEscapeRegex(@")&lt;CR&gt;\C//g&lt;LEFT&gt;&lt;LEFT&gt;</div><div class="line"></div><div class="line">" 在当前目录下递归搜索和替换</div><div class="line">let g:FerretExecutable='ag'</div><div class="line"></div><div class="line">nmap &lt;leader&gt;ak &lt;Plug&gt;(FerretAck)</div><div class="line">nmap &lt;leader&gt;lak &lt;Plug&gt;(FerretLack)</div><div class="line">nmap &lt;leader&gt;aw &lt;Plug&gt;(FerretAckWord)</div><div class="line">nmap &lt;leader&gt;as &lt;Plug&gt;(FerretAcks)</div><div class="line">vmap &lt;leader&gt;ak y:Ack &lt;C-R&gt;=XEscapeRegex(@", 2)&lt;CR&gt;</div><div class="line">vmap &lt;leader&gt;lak y:Lack &lt;C-R&gt;=XEscapeRegex(@", 2)&lt;CR&gt;</div><div class="line"></div><div class="line">nnoremap &lt;leader&gt;a :set operatorfunc=GrepOperator&lt;CR&gt;g@</div><div class="line">vnoremap &lt;leader&gt;a :&lt;c-u&gt;call GrepOperator(visualmode())&lt;CR&gt;</div><div class="line">function! GrepOperator(type)"&#123;&#123;&#123;</div><div class="line">    if a:type ==# 'v'</div><div class="line">        normal! `&lt;v`&gt;y</div><div class="line">    elseif a:type ==# 'char'</div><div class="line">        normal! `[v`]y</div><div class="line">    else</div><div class="line">        return</div><div class="line">    endif</div><div class="line"></div><div class="line">    exec "Ack ".XEscapeRegex(@@, 2)</div><div class="line">    " exec "Grep ".XEscapeRegex(@@, 2)</div><div class="line">endfunction"&#125;&#125;&#125;</div><div class="line"></div><div class="line">" 转义正则表达式特殊字符，以便在正则表达式中使用</div><div class="line">" a:1   是否转义为vimgrep的pattern格式，1，2</div><div class="line">" a:2   是否用shellescape()转义，1是转义，2是转义并去掉两侧单引号</div><div class="line">function! XEscapeRegex(str, ...)"&#123;&#123;&#123;</div><div class="line">    let pattern = a:str</div><div class="line">    let pattern = escape(pattern, '/\.*$^~[]"')</div><div class="line"></div><div class="line">    if a:0 &amp;&amp; a:1</div><div class="line">        let pattern = escape(pattern, '()+?')</div><div class="line">        if a:1 == 2</div><div class="line">            let pattern = escape(pattern, '\')</div><div class="line">        endif</div><div class="line">    endif</div><div class="line"></div><div class="line">    if a:0 &gt; 1 &amp;&amp; a:2</div><div class="line">        let pattern = shellescape(pattern)</div><div class="line">        if a:2 == 2</div><div class="line">            let pattern = pattern[1:-2]</div><div class="line">        endif</div><div class="line">    endif</div><div class="line"></div><div class="line">    let whitespacePattern = a:0 &amp;&amp; a:1 ? '\\s\+' : '\\s\\+'</div><div class="line">    let pattern = substitute(pattern, '\s\+', whitespacePattern, 'g')</div><div class="line"></div><div class="line">    return pattern</div><div class="line">endfunction"&#125;&#125;&#125;</div></pre></td></tr></table></figure>
+<h3 id="Ferret"><a href="#Ferret" class="headerlink" title="Ferret"></a>Ferret</h3><p>Ferret是我用過的vim搜索擴展里最接近理想的一個，最大的優點是不用引號包裹搜索內容，且較大程度地支持PCRE正則表達式。</p>
+<p>EasyGrep的缺點是正則表達式必須是shellescape()過的，手寫不方便，也不直觀。Ferret在底層做了shellescape()，所以比EasyGrep簡單一些。不過Ferret對反斜槓的處理仍然不直觀，例如搜索<code>App\Link</code>，正則表達式是<code>App\\Link</code>，而Ferret里只能用<code>App\\\\Link</code>。原因是從輸入到執行，存在著三層轉義：Vim命令行、Shell、grep/ag。所以對於EasyGrep，要搜索一個<code>\</code>，必須輸入<code>\\\\\\\\</code>。對於Ferret，由於底層做了shellescape()，只需要兩層轉義，即<code>\\\\</code>。當然這樣也不方便，所以我用自定義函數XEscapeRegex()對選擇的內容做這個事，不過最完美的方法當然是Ferret自己支持，或者自己再封裝一下Ferret的命令，這樣輸入的正則表達式可讀性就正常了。</p>
+<h3 id="The-Silver-Searcher"><a href="#The-Silver-Searcher" class="headerlink" title="The Silver Searcher"></a>The Silver Searcher</h3><p>ag是我用過的搜索工具里對速度和功能兼顧得最好的。</p>
+<h3 id="搜索運算符"><a href="#搜索運算符" class="headerlink" title="搜索運算符"></a>搜索運算符</h3><p>GrepOperator是從<a href="http://learnvimscriptthehardway.stevelosh.com/" target="_blank" rel="external">Learn Vimscript the Hard Way</a>里扒出來的，可以實現自動搜索指定範圍的內容：</p>
+<ul>
+<li><code>&lt;leader&gt;aiw</code>：搜索光標下的詞</li>
+<li><code>&lt;leader&gt;a$</code>：搜索從光標到行末的內容</li>
+<li><code>&lt;leader&gt;at;</code>：搜索從光標到下一個分號的內容</li>
+</ul>
+<h3 id="轉換選定內容到正則表達式"><a href="#轉換選定內容到正則表達式" class="headerlink" title="轉換選定內容到正則表達式"></a>轉換選定內容到正則表達式</h3><p>XEscapeRegex()根據參數轉換字符串到不同格式的正則表達式。主要用途為轉換成給搜索當前緩衝區的Vim格式的正則，或給Ferret使用的PCRE格式。</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/vim-js-beautify/">
+        ← prev <!--在Vim中格式化Javascript、HTML和CSS-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/the-experience-of-bose-qc35/">
+        <!--Bose QC35，這安靜有毒--> next →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+
