@@ -6,10 +6,9 @@ comments: true
 categories: 行見
 tags:
 - 旅行
-- 五一
 - 徒步
-- 恆山
-- 雲岡石窟
+- 山
+- 佛
 ---
 
 綠野的活動。

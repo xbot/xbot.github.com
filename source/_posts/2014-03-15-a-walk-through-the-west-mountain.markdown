@@ -6,7 +6,7 @@ comments: true
 categories: 行見
 tags:
 - 徒步
-- 西山
+- 山
 - 茶
 ---
 

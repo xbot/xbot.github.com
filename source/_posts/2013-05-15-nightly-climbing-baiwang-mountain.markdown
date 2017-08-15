@@ -5,8 +5,6 @@ date: 2013-05-15 22:51
 comments: true
 categories: 行見
 tags:
-- 夜爬
-- 百望山
 - 旅行
 - 山
 ---
