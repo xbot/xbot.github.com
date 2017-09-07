@@ -1,0 +1,119 @@
+---
+title: 什麼是docker
+date: 2017-09-07 15:31:11
+categories: 計算機
+tags:
+- 筆記
+- 容器
+- docker
+---
+## 什麼是docker
+
+docker是一種容器，[這篇文章](http://www.infoq.com/cn/articles/container-landscape-2016)對容器的定義是：
+
+> 容器是一組運行在Linux操作系統上並使用命名空間進程進行分隔的進程，有了容器就無需再啓動和維護虛擬機。與虛擬機技術相比，容器的最大不同之處在於打包格式和可移植性。構建容器的目的在於為現代基礎設施降低佔用空間和啓動時間、提供重用性、更好地利用服務器資源，並更好地集成到整個開發生態系統中（例如持續集成和交付生命週期）。
+
+容器相對於虛擬機有以下優點：
+
+* 更高效地利用系統資源
+* 更快的啓動速度
+* 一致的運行環境
+* 持續的交付和部署
+* 更輕鬆的遷移
+* 維護和擴展的便利性
+
+## 基本概念
+
+### 鏡像
+Docker 鏡像是一個特殊的文件系統，除了提供容器運行時所需的程序、庫、資源、配置等文件外，還包含了一些為運行時準備的一些配置參數（如匿名卷、環境變量、用戶等）。鏡像不包含任何動態數據，其內容在構建之後也不會被改變。
+
+鏡像分為黑箱鏡像和dockerfile。
+
+前者通過實際創建和配置docker容器並通過`docker commit`記錄每個版本的變更，優點是簡單直觀，缺點是不能記錄在基礎鏡像上做了哪些操作，並且在多次修改之後，鏡像會變得很臃腫。
+
+dockerfile是鏡像的配置文件，部署時docker根據配置內容生成容器，優點是可以清楚地記錄每次修改的內容、鏡像體積很小，缺點是編寫時比較複雜。
+
+### 容器
+容器是鏡像運行的實體。
+
+### 倉庫
+分發鏡像的服務。
+
+### 編排
+容器的編排包含如下一系列任務：
+
+* 調度（包括部署、複製、擴展、復活、重新調度、升級、降級等）
+* 資源管理（內存、CPU、存儲空間、端口、IP、鏡像等）
+* 服務管理（即使用標籤、分組、命名空間、負載均衡和準備就緒檢查將多個容器編排在一起）
+
+## 安裝
+
+我在黑蘋果下安裝。Mac下安裝docker有兩種方式：Docker for Mac或Docker Toolbox。前者最簡單，後者在前者的系統要求不能被滿足的情況下使用。後者的卸載比較麻煩，具體參照[這裡](https://github.com/widuu/chinese_docker/blob/master/installation/mac.md)。
+
+我用前種方式安裝，啓動時報錯：
+
+> com.docker.osx.hyperkit.linux failed to start
+	
+解決方法是到BIOS里打開VT特性，有說法說黑蘋果不支持VT，我這裡是可以的。
+
+### 鏡像加速器
+一般用阿里雲的鏡像服務。
+
+## docker的使用
+
+### 拉取鏡像
+
+```bash
+docker pull base/archlinux
+```
+
+### 列出鏡像
+
+```bash
+docker images
+```
+
+### 創建容器
+
+```bash
+docker run --name arch --it base/archlinux bash
+```
+
+### 終止容器
+`exit`或`ctrl-d`
+
+### 啓動已終止容器
+
+```bash
+docker start arch
+```
+
+### attach運行中的容器
+
+```bash
+docker attach arch
+```
+
+### detach運行中的容器
+`ctrl+p ctrl+q`或者：
+
+```bash
+docker detach arch
+```
+
+### 查看容器
+
+```bash
+# 查看運行中的容器
+docker ps -q
+
+# 查看所有，包括已終止的
+docker ps -a
+```
+
+### 刪除已終止容器
+
+```bash
+docker rm arch
+```
+
