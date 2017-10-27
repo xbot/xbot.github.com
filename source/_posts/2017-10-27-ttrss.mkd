@@ -1,0 +1,104 @@
+---
+title: 用Tiny Tiny RSS搭建私人閱讀器的步驟
+date: 2017-10-27 14:12:16
+categories: 計算機
+tags:
+- 筆記
+---
+## 優勢
+1. 自定義過濾器
+2. 全功能，無限制
+3. 利用已有VPS，無需額外費用
+
+## 安裝
+### 安裝docker
+
+```bash
+curl https://get.docker.io/ | sh
+```
+
+### 安裝postgre
+
+```bash
+docker run -d --name ttrssdb nornagon/postgres
+```
+
+### 安裝tiny tiny rss
+
+```bash
+docker run -d --link ttrssdb:db -p 80:80 -e SELF_URL_PATH=http://example.org/ttrss fischerman/docker-ttrss
+```
+
+`example.org`替換成VPS的IP或者對應的域名。
+
+## 配置
+### 配置主程序
+訪問`http://example.org/ttrss`，用戶名`admin`，密碼`password`。
+
+### 偽裝成fever
+如果RSS閱讀器不支持ttrss，但支持fever，例如reeder，可以通過安裝插件偽裝成fever：
+
+```bash
+git clone https://github.com/rannen/tinytinyrss-fever-plugin.git
+
+docker cp fever [[CONTAINER ID]]:/var/www/plugins
+```
+
+然後去設置見面啓用fever插件，並在fever插件的配置欄設置單獨的密碼，該欄目中會顯示在RSS閱讀器中使用的接口地址，用戶名就是`admin`。
+
+## 備份
+每天凌晨3點備份數據庫到dropbox。
+
+### 下載dropbox上傳腳本
+在VPS的`/root`下執行：
+
+```bash
+wget https://raw.github.com/andreafabrizi/Dropbox-Uploader/master/dropbox_uploader.sh
+```
+
+執行命令並按提示操作：
+
+```bash
+./dropbox_uploader.sh info
+```
+
+### 創建備份腳本
+創建`/root/backup.sh`：
+
+```bash
+#!/bin/bash
+
+SCRIPT_DIR="/root"
+NOW=$(date +"%Y%m%d")
+TMP_PATH='/tmp'
+DOCKER_ID_TTRSS='39cec6a7xcb7'
+TTRSS_DB="$TMP_PATH/ttrss.sql"
+BAK_FILE_NAME="vps-$NOW.tar.gz"
+BAK_FILE="$TMP_PATH/$BAK_FILE_NAME"
+DROPBOX_DIR=""
+
+docker exec -i -t "$DOCKER_ID_TTRSS" /usr/bin/pg_dump ttrss > "$TTRSS_DB"
+echo "數據庫備份完成，打包網站數據中..."
+tar cfzP "$BAK_FILE" "$TTRSS_DB"
+echo "所有數據打包完成，準備上傳..."
+# 用腳本上傳到dropbox
+"$SCRIPT_DIR"/dropbox_uploader.sh upload "$BAK_FILE" "$DROPBOX_DIR/$BAK_FILE_NAME"
+if [ $? -eq 0 ];then
+     echo "上傳完成"
+else
+     echo "上傳失敗，重新嘗試"
+fi
+
+# 刪除本地的臨時文件
+rm -f "$TTRSS_DB" "$BAK_FILE"
+```
+
+`39cec6a7xcb7`替換成實際的postgresql容器的ID。
+
+### 創建定時任務
+在`crontab -e `里添加：
+
+```
+0 3 * * * /bin/bash /root/backup.sh > /dev/null
+```
+
