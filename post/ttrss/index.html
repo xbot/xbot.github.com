@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+    <head>
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
+        <title>用Tiny Tiny RSS搭建私人閱讀器的步驟 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True" />
+        <meta name="MobileOptimized" content="320" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <h1><a href="/">丘山</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim和Archlinux擁躉，果粉。性本愛丘山，但現居北京。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  十月 27, 2017
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href='/tags/筆記/'>筆記</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">用Tiny Tiny RSS搭建私人閱讀器的步驟</h1>
+  <section class="post-content article-entry">
+    <h2 id="優勢"><a href="#優勢" class="headerlink" title="優勢"></a>優勢</h2><ol>
+<li>自定義過濾器</li>
+<li>全功能，無限制</li>
+<li>利用已有VPS，無需額外費用</li>
+</ol>
+<h2 id="安裝"><a href="#安裝" class="headerlink" title="安裝"></a>安裝</h2><h3 id="安裝docker"><a href="#安裝docker" class="headerlink" title="安裝docker"></a>安裝docker</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">curl https://get.docker.io/ | sh</div></pre></td></tr></table></figure>
+<h3 id="安裝postgre"><a href="#安裝postgre" class="headerlink" title="安裝postgre"></a>安裝postgre</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -d --name ttrssdb nornagon/postgres</div></pre></td></tr></table></figure>
+<h3 id="安裝tiny-tiny-rss"><a href="#安裝tiny-tiny-rss" class="headerlink" title="安裝tiny tiny rss"></a>安裝tiny tiny rss</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -d --link ttrssdb:db -p 80:80 -e SELF_URL_PATH=http://example.org/ttrss fischerman/docker-ttrss</div></pre></td></tr></table></figure>
+<p><code>example.org</code>替換成VPS的IP或者對應的域名。</p>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="配置主程序"><a href="#配置主程序" class="headerlink" title="配置主程序"></a>配置主程序</h3><p>訪問<code>http://example.org/ttrss</code>，用戶名<code>admin</code>，密碼<code>password</code>。</p>
+<h3 id="偽裝成fever"><a href="#偽裝成fever" class="headerlink" title="偽裝成fever"></a>偽裝成fever</h3><p>如果RSS閱讀器不支持ttrss，但支持fever，例如reeder，可以通過安裝插件偽裝成fever：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">git <span class="built_in">clone</span> https://github.com/rannen/tinytinyrss-fever-plugin.git</div><div class="line"></div><div class="line">docker cp fever [[CONTAINER ID]]:/var/www/plugins</div></pre></td></tr></table></figure>
+<p>然後去設置見面啓用fever插件，並在fever插件的配置欄設置單獨的密碼，該欄目中會顯示在RSS閱讀器中使用的接口地址，用戶名就是<code>admin</code>。</p>
+<h2 id="備份"><a href="#備份" class="headerlink" title="備份"></a>備份</h2><p>每天凌晨3點備份數據庫到dropbox。</p>
+<h3 id="下載dropbox上傳腳本"><a href="#下載dropbox上傳腳本" class="headerlink" title="下載dropbox上傳腳本"></a>下載dropbox上傳腳本</h3><p>在VPS的<code>/root</code>下執行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">wget https://raw.github.com/andreafabrizi/Dropbox-Uploader/master/dropbox_uploader.sh</div></pre></td></tr></table></figure>
+<p>執行命令並按提示操作：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./dropbox_uploader.sh info</div></pre></td></tr></table></figure>
+<h3 id="創建備份腳本"><a href="#創建備份腳本" class="headerlink" title="創建備份腳本"></a>創建備份腳本</h3><p>創建<code>/root/backup.sh</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"></div><div class="line">SCRIPT_DIR=<span class="string">"/root"</span></div><div class="line">NOW=$(date +<span class="string">"%Y%m%d"</span>)</div><div class="line">TMP_PATH=<span class="string">'/tmp'</span></div><div class="line">DOCKER_ID_TTRSS=<span class="string">'39cec6a7xcb7'</span></div><div class="line">TTRSS_DB=<span class="string">"<span class="variable">$TMP_PATH</span>/ttrss.sql"</span></div><div class="line">BAK_FILE_NAME=<span class="string">"vps-<span class="variable">$NOW</span>.tar.gz"</span></div><div class="line">BAK_FILE=<span class="string">"<span class="variable">$TMP_PATH</span>/<span class="variable">$BAK_FILE_NAME</span>"</span></div><div class="line">DROPBOX_DIR=<span class="string">""</span></div><div class="line"></div><div class="line">docker <span class="built_in">exec</span> -i -t <span class="string">"<span class="variable">$DOCKER_ID_TTRSS</span>"</span> /usr/bin/pg_dump ttrss &gt; <span class="string">"<span class="variable">$TTRSS_DB</span>"</span></div><div class="line"><span class="built_in">echo</span> <span class="string">"數據庫備份完成，打包網站數據中..."</span></div><div class="line">tar cfzP <span class="string">"<span class="variable">$BAK_FILE</span>"</span> <span class="string">"<span class="variable">$TTRSS_DB</span>"</span></div><div class="line"><span class="built_in">echo</span> <span class="string">"所有數據打包完成，準備上傳..."</span></div><div class="line"><span class="comment"># 用腳本上傳到dropbox</span></div><div class="line"><span class="string">"<span class="variable">$SCRIPT_DIR</span>"</span>/dropbox_uploader.sh upload <span class="string">"<span class="variable">$BAK_FILE</span>"</span> <span class="string">"<span class="variable">$DROPBOX_DIR</span>/<span class="variable">$BAK_FILE_NAME</span>"</span></div><div class="line"><span class="keyword">if</span> [ $? -eq 0 ];<span class="keyword">then</span></div><div class="line">     <span class="built_in">echo</span> <span class="string">"上傳完成"</span></div><div class="line"><span class="keyword">else</span></div><div class="line">     <span class="built_in">echo</span> <span class="string">"上傳失敗，重新嘗試"</span></div><div class="line"><span class="keyword">fi</span></div><div class="line"></div><div class="line"><span class="comment"># 刪除本地的臨時文件</span></div><div class="line">rm -f <span class="string">"<span class="variable">$TTRSS_DB</span>"</span> <span class="string">"<span class="variable">$BAK_FILE</span>"</span></div></pre></td></tr></table></figure>
+<p><code>39cec6a7xcb7</code>替換成實際的postgresql容器的ID。</p>
+<h3 id="創建定時任務"><a href="#創建定時任務" class="headerlink" title="創建定時任務"></a>創建定時任務</h3><p>在<code>crontab -e</code>里添加：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">0 3 * * * /bin/bash /root/backup.sh &gt; /dev/null</div></pre></td></tr></table></figure>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>丘山</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/after-reading-tan-mei/">
+        ← 新 <!--讀完《談美》-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/talk-about-excessive-design/">
+        <!--過度優化和過度設計--> 舊 →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2017 丘山. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+
