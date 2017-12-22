@@ -8,7 +8,7 @@
         <link rel="shortcut icon" href="/asset/logo.jpg"/>
         <link rel="canonical" href="http://guolinn.com/">
         <link rel="alternate" type="application/rss+xml" title="丘山" href="/atom.xml">
-        <title>測試驅動開發的實際收益 | 晴耕雨讀</title>
+        <title>用Charles攔截iOS APP HTTPS請求 | 晴耕雨讀</title>
         <meta name="description" content="{{meta_description}}">
 
         <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
@@ -46,29 +46,24 @@
         
 
 <article class="post">
-  十二月 17, 2017
+  十二月 22, 2017
   
     <span class="taglist">  &middot; 
     
     
-      <a href='/tags/隨筆/'>隨筆</a> 
-    
       <a href='/tags/編程/'>編程</a> 
-    
-      <a href='/tags/最佳實踐/'>最佳實踐</a> 
     
     </span>
   
 
-  <h1 class="post-title">測試驅動開發的實際收益</h1>
+  <h1 class="post-title">用Charles攔截iOS APP HTTPS請求</h1>
   <section class="post-content article-entry">
-    <p>我並不試圖系統地談TDD，因為我在這方面的經驗還不足以做到這一點。但是TDD的一些方法論和工具確實解決了我在實際開發過程中遇到的一些問題。</p>
-<p>第一個問題是健壯性。尤其是對於我這樣思維發散、容易迷失又喜歡重構的人，TDD給了我一個明確的目標，在一切剛開始的時候，我要做的只是滿足測試用例，讓它們由紅變綠。到了重構階段，我就可以把精力放到優化代碼上面，且不必對健壯性有過多的擔心。在此之前，由於手動測試比較麻煩，很多時候惰性會說服潛意識告訴自己這部分邏輯很簡單、不會有什麼bug，結果提交測試後卻一再地發生問題。</p>
-<p>第二個問題是效率。曾經只有不忙的時候才會寫測試用例，但是現在一般都會寫，因為確實可以提高開發效率，而不只是保證重構的健壯性。可能對於所有對單元測試不熟悉的人來說，這都是匪夷所思的，我也曾認為單元測試只是用來保證健壯性的，必然和開發效率是一對矛盾，因為要花很多時間寫測試代碼。這種想法首先是因為對單元測試不熟悉，所以才需要花很多時間在上面。其次是沒有看到它所帶來的好處。</p>
-<p>例如你要實現一整套退款單的功能，退款單是依賴訂單的，這意味著你需要不只一條符合條件的訂單數據。但是訂單是有狀態的，隨著時間的推移、人為的操作或者開發過程中程序的影響，狀態會變得不再符合你的要求，這時候你就必須停下來去做更多符合要求的訂單。而創建訂單也存在很多麻煩，你需要找到有庫存的商品，有時候還要去庫管系統中補充庫存，然後下單並支付。最後花了很多時間做出來的訂單，因為正在開發的退款單的程序出現的一個小問題變得不能使用！時間被大量浪費在創建所依賴的上游數據上。</p>
-<p>這時候如果用單元測試並mock出依賴關係，就可以隨時隨地、無限制地執行相關的業務邏輯。對效率的提高不言而喻。</p>
-<p>特別的，mock並不是隨時可以抓起的救命稻草，它的原罪在於：不負責任地濫用mock會導致很多問題被掩蓋。因此，對mock的使用應該是節制的、目標明確的。</p>
-<p>當然，這並不包括單純地為了提高代碼覆蓋率而使用mock，只所以這是個在很多強制TDD的團隊里的普遍現象，歸根結底是因為KPI是萬惡之源，任何好的方法論，一旦淪為KPI，就離死不遠了。</p>
+    <h2 id="安裝證書"><a href="#安裝證書" class="headerlink" title="安裝證書"></a>安裝證書</h2><p>按照Charles菜單（Help -&gt; SSL Proxying -&gt; Install Charles Root Certificate on a Mobile Device or Remote Browser）的指示，設置iOS的系統代理。</p>
+<p>為了以後使用方便，可以在代理工具（如ShadowRocket）里設置，注意使用時應配置代理工具對全部流量使用代理，如果使用PAC之類動態代理可能會攔截不到。</p>
+<p>在iOS的Safari中訪問上面提示中的網址，會彈出提示安裝證書。iOS 10.3以後還要設置信任該證書（設置-&gt;通用-&gt;關於本機-&gt;證書信任設置）。</p>
+<h2 id="配置Charles攔截HTTPS請求"><a href="#配置Charles攔截HTTPS請求" class="headerlink" title="配置Charles攔截HTTPS請求"></a>配置Charles攔截HTTPS請求</h2><p>路徑為：Proxy -&gt; SSL Proxying Settings</p>
+<p>可以設置對特定的主機名和端口攔截，也可以直接保存，此時對所有請求均會攔截。</p>
+<h2 id="攔截"><a href="#攔截" class="headerlink" title="攔截"></a>攔截</h2><p>iOS中打開上述代理，APP中發送的請求就會在Charles里列出來。</p>
 
   </section>
   <footer class="post-footer">
@@ -83,14 +78,10 @@
 
 <nav class="pagination" role="pagination">
     
-    <a class="newer-posts" href="/post/ios-app-intercepting-using-charles/">
-        ← 新 <!--用Charles攔截iOS APP HTTPS請求-->
-    </a>
-    
     <span class="page-number">•</span>
     
-    <a class="older-posts" href="/post/baidupcs/">
-        <!--BaiduPCS：當前最好用的百度網盤下載工具--> 舊 →
+    <a class="older-posts" href="/post/the-real-income-of-tdd/">
+        <!--測試驅動開發的實際收益--> 舊 →
     </a>
     
 </nav>
