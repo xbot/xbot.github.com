@@ -1,0 +1,68 @@
+---
+title: 解決Laravel的Facade在被Mock時不自動注入依賴的一種方法
+date: 2018-01-30 15:41:16
+categories: 計算機
+tags:
+- 編程
+- php
+- laravel
+---
+由於集成了Mockery，Laravel的Facade對單元測試非常友好，只需要一行代碼就能實現mocking。
+
+例如，測試目標方法中調用了訂單工具類的一個方法，在使用依賴注入的方式時，需要用三行代碼實現對這個方法的mocking：
+
+```php
+$fakeOrderTool = m::mock(\App\Tool\Order::class);
+$fakeOrderTool->shouldReceive('getById')->once()->with($id)->andReturn($fakeOrder);
+$this->app->instance(\App\Tool\Order::class, $fakeOrderTool);
+```
+
+而用Facade是這樣的：
+
+```php
+OrderFacade::shouldReceive('getById')->once()->with($id)->andReturn($fakeOrder);
+```
+
+當測試目標方法也屬於訂單工具類時，需要部分mock這個類，所以還要加上一行：
+
+```php
+OrderFacade::makePartial();
+```
+
+但如果訂單工具類的構造方法里有需要注入的依賴關係，這里並不會被執行。所以我在工具類基類里封裝了一個方法，用反射機制實現手工注入依賴關係：
+
+```php
+    /**
+     * 注入依赖，用于单元测试
+     *
+     * @return  void
+     * @author  donieli
+     * @since   5
+     * @version 5
+     */
+    public function injectDependencies()
+    {
+        $reflector = new \ReflectionClass(get_class($this));
+        $params    = $reflector->getConstructor()->getParameters();
+        $args      = [];
+        foreach ($params as $param) {
+            $paramClass = $param->getClass();
+            if (empty($paramClass)) {
+                throw new \Exception('Dependency named '.$param->getName().' cannot be injected.');
+            }
+            $instance  = app()->make($paramClass->getName());
+            $args[] = $instance;
+        }
+        call_user_func_array([$this, '__construct'], $args);
+    }
+```
+
+然後就可以這樣處理：
+
+```php
+OrderFacade::shouldReceive('getById')->with($id)->once()->andReturn($fakeOrder);
+OrderFacade::makePartial();
+OrderFacade::injectDependencies();
+```
+
+
