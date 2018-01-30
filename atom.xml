@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://0x3f.org/"/>
-  <updated>2018-01-28T06:46:55.991Z</updated>
+  <updated>2018-01-30T08:16:36.776Z</updated>
   <id>http://0x3f.org/</id>
   
   <author>
@@ -14,6 +14,45 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>解決Laravel的Facade在被Mock時不自動注入依賴的一種方法</title>
+    <link href="http://0x3f.org/post/manual-dependency-injection-with-laravel/"/>
+    <id>http://0x3f.org/post/manual-dependency-injection-with-laravel/</id>
+    <published>2018-01-30T07:41:16.000Z</published>
+    <updated>2018-01-30T08:16:36.776Z</updated>
+    
+    <content type="html"><![CDATA[<p>由於集成了Mockery，Laravel的Facade對單元測試非常友好，只需要一行代碼就能實現mocking。</p>
+<p>例如，測試目標方法中調用了訂單工具類的一個方法，在使用依賴注入的方式時，需要用三行代碼實現對這個方法的mocking：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$fakeOrderTool = m::mock(\App\Tool\Order::class);</div><div class="line">$fakeOrderTool-&gt;shouldReceive(<span class="string">'getById'</span>)-&gt;once()-&gt;with($id)-&gt;andReturn($fakeOrder);</div><div class="line"><span class="keyword">$this</span>-&gt;app-&gt;instance(\App\Tool\Order::class, $fakeOrderTool);</div></pre></td></tr></table></figure>
+<p>而用Facade是這樣的：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">OrderFacade::shouldReceive(<span class="string">'getById'</span>)-&gt;once()-&gt;with($id)-&gt;andReturn($fakeOrder);</div></pre></td></tr></table></figure>
+<p>當測試目標方法也屬於訂單工具類時，需要部分mock這個類，所以還要加上一行：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">OrderFacade::makePartial();</div></pre></td></tr></table></figure>
+<p>但如果訂單工具類的構造方法里有需要注入的依賴關係，這里並不會被執行。所以我在工具類基類里封裝了一個方法，用反射機制實現手工注入依賴關係：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 注入依赖，用于单元测试</div><div class="line"> *</div><div class="line"> * <span class="doctag">@return</span>  void</div><div class="line"> * <span class="doctag">@author</span>  donieli</div><div class="line"> * <span class="doctag">@since</span>   5</div><div class="line"> * <span class="doctag">@version</span> 5</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">injectDependencies</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    $reflector = <span class="keyword">new</span> \ReflectionClass(get_class(<span class="keyword">$this</span>));</div><div class="line">    $params    = $reflector-&gt;getConstructor()-&gt;getParameters();</div><div class="line">    $args      = [];</div><div class="line">    <span class="keyword">foreach</span> ($params <span class="keyword">as</span> $param) &#123;</div><div class="line">        $paramClass = $param-&gt;getClass();</div><div class="line">        <span class="keyword">if</span> (<span class="keyword">empty</span>($paramClass)) &#123;</div><div class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> \<span class="keyword">Exception</span>(<span class="string">'Dependency named '</span>.$param-&gt;getName().<span class="string">' cannot be injected.'</span>);</div><div class="line">        &#125;</div><div class="line">        $instance  = app()-&gt;make($paramClass-&gt;getName());</div><div class="line">        $args[] = $instance;</div><div class="line">    &#125;</div><div class="line">    call_user_func_array([<span class="keyword">$this</span>, <span class="string">'__construct'</span>], $args);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>然後就可以這樣處理：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">OrderFacade::shouldReceive(<span class="string">'getById'</span>)-&gt;with($id)-&gt;once()-&gt;andReturn($fakeOrder);</div><div class="line">OrderFacade::makePartial();</div><div class="line">OrderFacade::injectDependencies();</div></pre></td></tr></table></figure>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;由於集成了Mockery，Laravel的Facade對單元測試非常友好，只需要一行代碼就能實現mocking。&lt;/p&gt;
+&lt;p&gt;例如，測試目標方法中調用了訂單工具類的一個方法，在使用依賴注入的方式時，需要用三行代碼實現對這個方法的mocking：&lt;/p&gt;
+&lt;figure c
+    
+    </summary>
+    
+      <category term="計算機" scheme="http://0x3f.org/categories/%E8%A8%88%E7%AE%97%E6%A9%9F/"/>
+    
+    
+      <category term="編程" scheme="http://0x3f.org/tags/%E7%B7%A8%E7%A8%8B/"/>
+    
+      <category term="php" scheme="http://0x3f.org/tags/php/"/>
+    
+      <category term="laravel" scheme="http://0x3f.org/tags/laravel/"/>
+    
+  </entry>
   
   <entry>
     <title>從Vultr新加坡遷移到洛杉磯</title>
@@ -662,38 +701,6 @@
     
     
       <category term="隨筆" scheme="http://0x3f.org/tags/%E9%9A%A8%E7%AD%86/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>搭好了SSR</title>
-    <link href="http://0x3f.org/post/ready-for-ssr/"/>
-    <id>http://0x3f.org/post/ready-for-ssr/</id>
-    <published>2017-10-18T07:34:33.000Z</published>
-    <updated>2017-10-22T13:37:09.982Z</updated>
-    
-    <content type="html"><![CDATA[<p>搭在vultr東京節點的SS在家裏的網絡上已經不能用了，lantern和大殺器也不穩定到基本沒有可用性的程度。短短幾天時間，三把梯子挂了仨。</p>
-<p>搭好了SSR，等着晚上回去測試。</p>
-<ul>
-<li>SSR一鍵部署腳本：<a href="https://github.com/91yun/shadowsocks_install" target="_blank" rel="external">https://github.com/91yun/shadowsocks_install</a></li>
-<li>Mac的SSR客戶端：<a href="https://github.com/qinyuhang/ShadowsocksX-NG-R/releases" target="_blank" rel="external">https://github.com/qinyuhang/ShadowsocksX-NG-R/releases</a></li>
-<li>iOS的SSR客戶端：ShadowRocket</li>
-</ul>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;搭在vultr東京節點的SS在家裏的網絡上已經不能用了，lantern和大殺器也不穩定到基本沒有可用性的程度。短短幾天時間，三把梯子挂了仨。&lt;/p&gt;
-&lt;p&gt;搭好了SSR，等着晚上回去測試。&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;SSR一鍵部署腳本：&lt;a href=&quot;https://gi
-    
-    </summary>
-    
-      <category term="計算機" scheme="http://0x3f.org/categories/%E8%A8%88%E7%AE%97%E6%A9%9F/"/>
-    
-    
-      <category term="翻牆" scheme="http://0x3f.org/tags/%E7%BF%BB%E7%89%86/"/>
     
   </entry>
   
