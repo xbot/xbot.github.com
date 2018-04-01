@@ -3,7 +3,7 @@ layout: post
 title: "Vultr基配可以部署Gitlab"
 date: 2016-12-24 17:18
 comments: true
-categories: 计算机
+categories: 計算機
 tags:
 - VPS
 - Gitlab
