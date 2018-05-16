@@ -1,0 +1,159 @@
+---
+title: 生成PDF的方案調研
+date: 2018-05-16 15:41:36
+categories: 計算機
+tags:
+- 編程
+- PHP
+---
+## 結論
+傾向於通過wkhtmltopdf+消息隊列實現。
+
+工作流程：
+ 1.  用戶保存表單
+ 2.  推送生成pdf的任務到隊列
+ 3.  同時頁面顯示「正在生成PDF文檔，請稍候」並輪詢後端接口
+ 4.  PDF生成後，頁面顯示下載按鈕
+
+## 後端
+
+### dompdf
+純PHP實現。工作原理是把HTML轉換成PDF。
+
+優點：
+ 1.  不需要PHP調用命令行，安全性高。
+
+缺點：
+ 1.  HTML/CSS支持不完全，實測多個網頁轉換後排版錯亂。
+ 2.  中文網頁轉換後，中文都是問號（網上說有解決辦法[1](http://www.cnblogs.com/xxoome/p/6083542.html)、[2](http://blog.51cto.com/lampzxr/1916038)，未測試）。
+ 3.  CPU佔用比較高（網上的說法，沒有實測具體有多高）。
+
+參考：
+
+*  [laravel-dompdf主頁](https///github.com/barryvdh/laravel-dompdf)
+
+### mpdf
+
+純PHP實現。工作原理是把HTML轉換成PDF。
+
+優點：
+ 1.  不需要PHP調用命令行，安全性高。
+
+缺點（未實測）：
+ 1.  HTML/CSS支持不完整。
+ 2.  生成PDF耗時長。
+
+參考：
+
+*  [laravel-pdf主頁](https///github.com/niklasravnsborg/laravel-pdf)
+*  [mpdf文檔](https///mpdf.github.io)
+*  [mpdf主頁](https///github.com/mpdf/mpdf)
+*  [mpdf與fpdf的使用比較](http://www.cnblogs.com/attitudeY/p/7297948.html)
+
+### PDFtk Server
+
+PDFtk Server是個命令行程序。工作原理是利用FDF表單替換PDF模板中的佔位符。實現方案有：純PHP實現FDF + PDFtk、FPDI + PDFtk。
+
+優點：
+ 1.  直接替換PDF模板，實現成本低，最大程度保證生成的PDF的效果。
+
+缺點：
+ 1.  需要允許PHP調用命令行，有安全隱患。
+ 2.  只能實現簡單的字符串替換（例如公司名稱），不能替換有格式文本。
+
+參考：
+
+*  [FPDI](https///www.setasign.com/products/fpdi/manual/#p-58)
+*  [PHP的FDF手冊](http://php.net/manual/zh/intro.fdf.php)
+*  [PDFtk的使用方法](https///stackoverflow.com/questions/1389964/merge-fdf-data-into-a-pdf-file-using-php)
+*  [純PHP實現FDF + PDFtk](https///www.sitepoint.com/filling-pdf-forms-pdftk-php/)
+
+### wkhtmltopdf
+
+wkhtmltopdf是個命令行程序。工作原理是轉換HTML到PDF。實現方案是laravel-snappy。
+
+優點：
+ 1.  由於內嵌webkit核心，HTML/CSS的支持沒有問題。
+
+缺點：
+ 1.  需要允許PHP調用命令行，有安全隱患。
+ 2.  wkhtmltopdf體積40M，併發較多時影響服務器性能和穩定性（需要考慮用隊列輔助實現，異步執行，需要需求變更交互方式）。
+
+參考：
+
+*  [laravel-snappy主頁](https///github.com/barryvdh/laravel-snappy)
+
+### CutyCapt
+
+命令行程序。工作原理和wkhtmtopdf相同。
+
+優缺點同wkhtmltopdf，但是最近的更新在13年。
+
+參考：
+
+*  [CutyCapt主頁](http://cutycapt.sourceforge.net)
+
+### Prince
+
+命令行程序。工作原理是轉換HTML到PDF。
+
+優點：
+ 1.  HTML/CSS的支持很好。
+ 2.  文檔很全
+
+缺點：
+ 1.  收費，而且很貴。（免費版會在輸出的文檔右上角打一個Logo）
+ 2.  需要允許PHP執行命令行，有安全隱患。
+ 3.  需要考慮用隊列輔助實現，異步執行，需要需求變更交互方式。
+
+參考：
+
+*  [Prince官網](https///www.princexml.com)
+
+## 前端
+
+### jsPDF
+工作原理有兩種：編程方式動態生成和轉換HTML到PDF。有三個插件支持轉換HTML到PDF：fromHTML、addHTML和html2pdf。
+
+fromHTML最老，優點是直接轉換HTML到PDF，缺點是對複雜的HTML/CSS支持得不好。實測結果，UTF-8編碼的中文網頁，轉換到PDF都是亂碼。
+
+addHTML較新，但目前處於deprecated狀態，利用html2canvas/rasterizeHTML創建一個canvas，然後把HTML轉換成圖片、再轉換成PDF。實測結果，對中文網頁和CSS支持得都不錯，但是對分頁支持得不好，指定分頁選項後圖片被拉伸並強行分割，很難看。
+
+html2pdf是正在開發的功能，還沒完成。
+
+參考：
+
+*  https://stackoverflow.com/questions/44778260/what-are-the-differences-between-jspdfs-methods-addhtml-and-fromhtml
+
+### pdfkit
+
+只能通過編程（//調用接口指定內容、分頁等相關屬性//）生成PDF，不支持從HTML轉換到PDF。
+
+### pdfmake
+
+據說擴展自pdfkit。只能通過編程（//調用接口指定內容、分頁等相關屬性//）生成PDF，不支持從HTML轉換到PDF。而且需要引用字體文件轉換成的js文件，不適合中文內容。
+
+## 變通方案
+
+### 利用瀏覽器打印PDF
+Chrome、Firefox、Safari的最新版都支持打印網頁到PDF，Edge未測試。
+
+優點：
+ 1.  實現成本低。
+
+缺點：
+ 1.  用戶體驗差。
+
+### 導出word文檔
+
+優點：
+ 1.  實現成本低。（未證實）
+
+缺點：
+ 1.  用戶可更改文檔。
+
+## 參考
+
+*  https://blog.stahlmandesign.com/export-html-to-pdf-how-hard-can-it-be/
+*  [PHP輸出PDF打印HTML5+CSS3打印格式控制(Prince和wkhtmltopdf)](https///my.oschina.net/janpoem/blog/705912)
+
