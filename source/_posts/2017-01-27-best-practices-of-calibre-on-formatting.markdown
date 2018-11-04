@@ -18,26 +18,26 @@ tags:
 ## 一、最佳排版
 最小行高：140%。
 
-![](https://ww2.sinaimg.cn/large/006tNbRwly1fc381sg3zxj30az0a5t9h.jpg)
+![](https://ws1.sinaimg.cn/large/006tNbRwly1fwvx83ybpbj30az0a5t9f.jpg)
 
 使用空白行分段，段落首行不縮進。
 
-![](https://ww4.sinaimg.cn/large/006tNbRwly1fc382vjdqtj30gc03l3yw.jpg)
+![](https://ws2.sinaimg.cn/large/006tNbRwly1fwvx8hwq08j30gc03lmxh.jpg)
 
 要嵌入字體，必須轉換成KF8格式的類型，例如azw3或者both類型的mobi：
 
-![](https://ww2.sinaimg.cn/large/006tNbRwgy1fc384tza15j30av06dwf2.jpg)
+![](https://ws3.sinaimg.cn/large/006tNbRwly1fwvx8znehdj30av06dmxo.jpg)
 
 注意：KF8格式在點選文字時，默認選中一句，而不是單字，不方便查字典。要默認選中單字，須轉換成old類型的mobi。
 
 ## 二、最佳字體
 索尼楷書
 
-![](https://ww2.sinaimg.cn/large/006tNbRwly1fc5cp6abpuj30ts14876d.jpg)
+![](https://ws4.sinaimg.cn/large/006tNbRwly1fwvx92ktu8j30ts148jys.jpg)
 
 方正北魏楷書
 
-![](https://ww2.sinaimg.cn/large/006y8lValy1fc5cp8yynhj30ts148ac4.jpg)
+![](https://ws3.sinaimg.cn/large/006tNbRwly1fwvx9fm9nlj30ts148dn4.jpg)
 
 方正宋三
 
