@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://0x3f.org/"/>
-  <updated>2018-10-13T04:34:30.408Z</updated>
+  <updated>2018-12-12T12:43:26.192Z</updated>
   <id>http://0x3f.org/</id>
   
   <author>
@@ -16,11 +16,46 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>用ALE替換了Syntastic</title>
+    <link href="http://0x3f.org/post/replace-syntastic-with-ale/"/>
+    <id>http://0x3f.org/post/replace-syntastic-with-ale/</id>
+    <published>2018-12-12T12:42:10.000Z</published>
+    <updated>2018-12-12T12:43:26.192Z</updated>
+    
+    <content type="html"><![CDATA[<p>習慣頻繁地保存源碼，但是每次保存都有明顯的卡頓，於是用Vim自己的調優功能跟蹤了一下。</p>
+<p>依次執行以下命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">:profile start profile.log</div><div class="line">:profile file *</div><div class="line">:profile func *</div></pre></td></tr></table></figure>
+<p>然後執行保存操作，再執行以下命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">:profile pause</div><div class="line">:noautocmd qall!</div></pre></td></tr></table></figure>
+<p>在當前目錄下生成的文件profile.log里，看到執行時間最長的是Syntastic的函數，禁用這個擴展後保存果然比原來快多了。</p>
+<p>但是Syntastic是個很有用的擴展，所以Google一下有沒有異步執行的方法，偶然發現了ALE，主要特性就是異步執行。試用之後覺得很好用，就把前者卸了。</p>
+<p>ALE的初始配置如下：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="comment">" ALE</span></div><div class="line"><span class="keyword">let</span> <span class="variable">g:ale_sign_column_always</span> = <span class="number">1</span></div><div class="line"><span class="keyword">let</span> <span class="variable">g:ale_set_highlights</span> = <span class="number">0</span></div><div class="line"><span class="keyword">let</span> <span class="variable">g:airline</span>#extensions#ale#enabled = <span class="number">1</span></div><div class="line"><span class="comment">"自定義error和warning圖標</span></div><div class="line"><span class="keyword">let</span> <span class="variable">g:ale_sign_error</span> = <span class="string">'✗'</span></div><div class="line"><span class="keyword">let</span> <span class="variable">g:ale_sign_warning</span> = <span class="string">'⚠'</span></div><div class="line"><span class="comment">" 顯示Linter名稱,出錯或警告等相關信息</span></div><div class="line"><span class="keyword">let</span> <span class="variable">g:ale_echo_msg_error_str</span> = <span class="string">'E'</span></div><div class="line"><span class="keyword">let</span> <span class="variable">g:ale_echo_msg_warning_str</span> = <span class="string">'W'</span></div><div class="line"><span class="keyword">let</span> <span class="variable">g:ale_echo_msg_format</span> = <span class="string">'[%linter%] %s [%severity%]'</span></div><div class="line"><span class="comment">" PHP</span></div><div class="line"><span class="keyword">let</span> <span class="variable">g:ale_php_phpcs_standard</span> = <span class="string">'PSR2'</span></div><div class="line"><span class="keyword">let</span> <span class="variable">g:ale_php_phpmd_ruleset</span> = <span class="string">'~/.phpmd.xml'</span></div><div class="line"><span class="comment">" 普通模式下，sp前往上一個錯誤或警告，sn前往下一個錯誤或警告</span></div><div class="line"><span class="keyword">nmap</span> <span class="keyword">sp</span> <span class="symbol">&lt;Plug&gt;</span>(ale_previous_wrap)</div><div class="line"><span class="keyword">nmap</span> <span class="keyword">sn</span> <span class="symbol">&lt;Plug&gt;</span>(ale_next_wrap)</div><div class="line"><span class="comment">" 觸發/關閉語法檢查</span></div><div class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;Leader&gt;</span>at :ALEToggle<span class="symbol">&lt;CR&gt;</span></div><div class="line"><span class="comment">" 查看錯誤或警告的詳細信息</span></div><div class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;Leader&gt;</span>ad :ALEDetail<span class="symbol">&lt;CR&gt;</span></div></pre></td></tr></table></figure>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;習慣頻繁地保存源碼，但是每次保存都有明顯的卡頓，於是用Vim自己的調優功能跟蹤了一下。&lt;/p&gt;
+&lt;p&gt;依次執行以下命令：&lt;/p&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div 
+    
+    </summary>
+    
+      <category term="計算機" scheme="http://0x3f.org/categories/%E8%A8%88%E7%AE%97%E6%A9%9F/"/>
+    
+    
+      <category term="vim" scheme="http://0x3f.org/tags/vim/"/>
+    
+      <category term="最佳實踐" scheme="http://0x3f.org/tags/%E6%9C%80%E4%BD%B3%E5%AF%A6%E8%B8%90/"/>
+    
+  </entry>
+  
+  <entry>
     <title>配置鼠須管的特殊符號輸入</title>
     <link href="http://0x3f.org/post/input-punctuations-with-rime/"/>
     <id>http://0x3f.org/post/input-punctuations-with-rime/</id>
     <published>2018-10-13T03:59:50.000Z</published>
-    <updated>2018-10-13T04:34:30.408Z</updated>
+    <updated>2018-11-04T04:35:09.983Z</updated>
     
     <content type="html"><![CDATA[<p><em>開源工具最常見的問題就是文檔不全，實現一個需求的時候隻能苦苦Google，甚至連蒙帶猜。這也是我逐漸傾向買用戶體驗更好的收費軟件的原因。</em></p>
 <p>鼠須管是自帶特殊符號碼表的，在用戶配置目錄中的<code>symbols.yaml</code>，但是有的碼表需要手動配置。經過查資料和摸索，關鍵在於以下幾項配置：</p>
@@ -93,7 +128,7 @@
     <link href="http://0x3f.org/post/pdf-creating-solutions/"/>
     <id>http://0x3f.org/post/pdf-creating-solutions/</id>
     <published>2018-05-16T07:41:36.000Z</published>
-    <updated>2018-05-16T07:45:52.178Z</updated>
+    <updated>2018-11-04T04:35:09.947Z</updated>
     
     <content type="html"><![CDATA[<h2 id="結論"><a href="#結論" class="headerlink" title="結論"></a>結論</h2><p>傾向於通過wkhtmltopdf+消息隊列實現。</p>
 <p>工作流程：</p>
@@ -245,7 +280,7 @@
     <link href="http://0x3f.org/post/after-reading-killing-commendatore/"/>
     <id>http://0x3f.org/post/after-reading-killing-commendatore/</id>
     <published>2018-04-22T05:55:00.000Z</published>
-    <updated>2018-04-22T05:56:39.972Z</updated>
+    <updated>2018-11-04T04:35:09.996Z</updated>
     
     <content type="html"><![CDATA[<p>讀完了《刺殺騎士團長》。</p>
 <p>開始一直以為是類似《禁閉島》那樣的表達手法，覺得當個懸疑的故事看也不錯，結果直到最後一頁，才發現連裝神弄鬼都不是，頓時覺得六十塊錢花得有點冤。單從表達手法上說，不喜歡神神叨叨的東西。憑著炒魔幻現實主義的冷飯得諾獎怕是不大可能。</p>
@@ -313,7 +348,7 @@
     <link href="http://0x3f.org/post/the-safari-extensions-i-am-using/"/>
     <id>http://0x3f.org/post/the-safari-extensions-i-am-using/</id>
     <published>2018-04-15T14:29:10.000Z</published>
-    <updated>2018-04-22T05:59:30.084Z</updated>
+    <updated>2018-11-04T04:35:09.870Z</updated>
     
     <content type="html"><![CDATA[<p>和Chrome相比，Safari更省電、需要更少的系統資源，而且Chrome還有一些莫名其妙的問題，比如在沒有運行的時候，從Alfred執行搜索會啓動兩個窗口，一個是之前的會話，另一個是當前的搜索頁面。並且，啓用了一些擴展之後Safari的體驗可以改進很多。所以平時用Safari更多一些。</p>
 <h2 id="sVim"><a href="#sVim" class="headerlink" title="sVim"></a>sVim</h2><p>作為注重效率的Vim黨和鍵盤黨，這種擴展是使用任何瀏覽器必備的東西。最常用的就是用標記打開鏈接的功能。</p>
@@ -356,7 +391,7 @@
     <link href="http://0x3f.org/post/a-simple-comparison-among-adblock-ublock-and-adblock-plus/"/>
     <id>http://0x3f.org/post/a-simple-comparison-among-adblock-ublock-and-adblock-plus/</id>
     <published>2018-04-01T14:47:47.000Z</published>
-    <updated>2018-04-05T17:19:00.703Z</updated>
+    <updated>2018-11-04T04:35:10.176Z</updated>
     
     <content type="html"><![CDATA[<p>Adblock Plus作者的那篇博客可能會影響很多人。我並不關心那些情懷的東西，只看療效。</p>
 <p>簡單地對比了下AdBlock、Adblock Plus、uBlock在Safari for Mac上的效果，所有樣本和環境均為當前最新版本。AdBlock開啓Safari內容過濾後是最好的，成功地過濾掉了我常訪問的一個BT下載網站上的所有廣告，而不開啓Safari內容過濾時，會出現部分廣告先顯示後隱藏的情況。uBlock漏掉了個別不容易屏蔽的。而Adblock Plus最差，缺省設置下一條都沒過濾掉，在選擇更多的過濾規則後才過濾掉一部分。由於樣本很單一，本結論不具有普適性。</p>
@@ -384,7 +419,7 @@
     <link href="http://0x3f.org/post/transformers-live-action-movie-series-reset/"/>
     <id>http://0x3f.org/post/transformers-live-action-movie-series-reset/</id>
     <published>2018-02-18T03:51:13.000Z</published>
-    <updated>2018-04-01T15:00:55.000Z</updated>
+    <updated>2018-11-04T04:35:09.984Z</updated>
     
     <content type="html"><![CDATA[<p>根據這條<a href="http://news.tfw2005.com/2018/02/16/transformers-cinematic-universe-current-movie-series-rebooted-358641" target="_blank" rel="external">消息</a>，變形金剛真人電影系列將會被新團隊重置，原定在明年的第6部被取消。也就是說，看完今年大黃蜂的電影後，2021年前都不會有變形金剛主題的新片了。</p>
 <p>這種壯士斷腕的做法多少算是個好消息吧，經歷了變5的失敗，再讓麥克爾貝這麼折騰下去，變形金剛這個IP就完蛋了。</p>
@@ -447,7 +482,7 @@
     <link href="http://0x3f.org/post/story-of-changing-sim-card/"/>
     <id>http://0x3f.org/post/story-of-changing-sim-card/</id>
     <published>2018-02-16T09:24:59.000Z</published>
-    <updated>2018-04-01T15:00:55.000Z</updated>
+    <updated>2018-11-04T04:35:10.004Z</updated>
     
     <content type="html"><![CDATA[<p>我媽的老SIM卡不能用在iPhone里。因為我的卡就是從大卡剪過來的，所以騎車轉了一大圈，臨近年關，大部分修手機的店、合作營業廳都關了，最後一個賣手機的店里的老闆說這種老卡不能剪，只能換卡。</p>
 <p>之前聽附近移動營業廳里的大堂經理說，換卡需要機主本人、身份證和服務密碼，而且異地補卡只能去部分較大的營業廳。這個可以在網上營業廳里查到。</p>
@@ -483,7 +518,7 @@
     <link href="http://0x3f.org/post/philips-hx9903-42/"/>
     <id>http://0x3f.org/post/philips-hx9903-42/</id>
     <published>2018-02-10T09:23:15.000Z</published>
-    <updated>2018-04-01T15:00:55.000Z</updated>
+    <updated>2018-11-04T04:35:09.976Z</updated>
     
     <content type="html"><![CDATA[<p>效果雖說沒別人說的誇張，也的確刷得很乾淨，再就是緩解了胳膊的疲勞感。</p>
 <p>有個問題。剛開始的幾天，雖然電池已經充滿，但是震動強度很一般，而且手柄底部的壓力警示燈一直閃，試過拔掉刷頭，問題還在，說明是手柄的問題。直到提示電量緊張後第二次充電，之後才恢復正常。</p>
@@ -514,7 +549,7 @@
     <link href="http://0x3f.org/post/migrate-from-authy-to-otp-auth/"/>
     <id>http://0x3f.org/post/migrate-from-authy-to-otp-auth/</id>
     <published>2018-02-06T14:53:40.000Z</published>
-    <updated>2018-04-01T15:00:55.000Z</updated>
+    <updated>2018-11-04T04:35:09.964Z</updated>
     
     <content type="html"><![CDATA[<p>Authy的界面很花哨，但並不實用，管理多個兩步驗證賬號時查詢效率很低。OTP Auth採用更直觀的列表佈局，並且支持搜索，在用戶體驗和效率上有更大的優勢。兩者之間沒有批量遷移數據的方式，只能逐個手動添加，很麻煩。</p>
 ]]></content>
@@ -540,7 +575,7 @@
     <link href="http://0x3f.org/post/better-to-do-defenses-against-xss-in-front-end/"/>
     <id>http://0x3f.org/post/better-to-do-defenses-against-xss-in-front-end/</id>
     <published>2018-02-06T07:13:17.000Z</published>
-    <updated>2018-04-01T15:00:55.000Z</updated>
+    <updated>2018-11-04T04:35:10.016Z</updated>
     
     <content type="html"><![CDATA[<p>很多項目會把轉義操作放在後端接口獲取參數的地方，從而忽略了這樣一個問題——為什麼主流框架都不在獲取參數的方法里實現這一點？</p>
 <p>以Laravel為例，如果可以這樣獲取轉義後的參數：<code>$request-&gt;escape(&#39;content&#39;)</code>，代碼會顯得更優雅，而實際上只能用自己封裝的函數手工轉義：<code>my_escape($request-&gt;get(&#39;content&#39;))</code>，很醜陋的代碼。</p>
@@ -568,7 +603,7 @@
     <link href="http://0x3f.org/post/rent-subsides-within-10km-is-wise/"/>
     <id>http://0x3f.org/post/rent-subsides-within-10km-is-wise/</id>
     <published>2018-02-06T03:12:23.000Z</published>
-    <updated>2018-04-01T15:00:55.000Z</updated>
+    <updated>2018-11-04T04:35:10.018Z</updated>
     
     <content type="html"><![CDATA[<p>十公里以內是個很適合通勤的距離，以任何一種公共交通方式都可以把時間控制在半小時左右。</p>
 <p>通勤時間每增加半小時，生活質量都會下降一個量級，而生活質量是會直接影響一個人的工作質量和穩定性的。所以有些公司有十公里內租房補貼的福利，這項制度天才的地方在於，如果把這些補貼以工資的形式發放，員工可能仍然會因為住得遠導致幸福感很差，所以增加了很多不穩定的因素。這項制度間接地強制員工把自己收入的一部分用在提高自己生活質量上面，記得那個朝三暮四、朝四暮三的故事嗎？公司花同樣的錢，卻得到了更大的價值。</p>
@@ -620,7 +655,7 @@
     <link href="http://0x3f.org/post/manual-dependency-injection-with-laravel/"/>
     <id>http://0x3f.org/post/manual-dependency-injection-with-laravel/</id>
     <published>2018-01-30T07:41:16.000Z</published>
-    <updated>2018-04-01T15:00:55.000Z</updated>
+    <updated>2018-11-04T04:35:10.026Z</updated>
     
     <content type="html"><![CDATA[<p>由於集成了Mockery，Laravel的Facade對單元測試非常友好，只需要一行代碼就能實現mocking。</p>
 <p>例如，測試目標方法中調用了訂單工具類的一個方法，在使用依賴注入的方式時，需要用三行代碼實現對這個方法的mocking：</p>
@@ -659,7 +694,7 @@
     <link href="http://0x3f.org/post/migrate-vultr-from-singapore-to-los-angeles/"/>
     <id>http://0x3f.org/post/migrate-vultr-from-singapore-to-los-angeles/</id>
     <published>2018-01-28T06:15:57.000Z</published>
-    <updated>2018-04-01T15:00:55.000Z</updated>
+    <updated>2018-11-04T04:35:09.969Z</updated>
     
     <content type="html"><![CDATA[<p>Vultr新加坡節點掛了兩天了，不能翻牆簡直什麼都乾不了。早上用CloudSpeed看了下，洛杉磯機房的響應速度還不錯，就遷移了過去。</p>
 <h2 id="ShadowsocksR"><a href="#ShadowsocksR" class="headerlink" title="ShadowsocksR"></a>ShadowsocksR</h2><p>這個很簡單，用<a href="https://github.com/91yun/shadowsocks_install" target="_blank" rel="external">一鍵安裝腳本</a>。</p>
@@ -692,7 +727,7 @@
     <link href="http://0x3f.org/post/unlox/"/>
     <id>http://0x3f.org/post/unlox/</id>
     <published>2018-01-14T08:52:11.000Z</published>
-    <updated>2018-04-01T15:00:55.000Z</updated>
+    <updated>2018-11-04T04:35:09.883Z</updated>
     
     <content type="html"><![CDATA[<p>買了Unlox。早就知道MacID，陰差陽錯一直沒買，所以這又是一次後知後覺的行為。</p>
 <p>曾經用過一段時間ControlPlane，通過多種條件自動判斷場景以啓用或關閉鎖屏密碼。後來在一次系統升級之後就不能用了。因為這個東西本身體驗也不是很好，免費的東西折騰起來太耗費精力，所以付費買體驗也是個不錯的選擇。</p>
@@ -725,7 +760,7 @@
     <link href="http://0x3f.org/post/the-best-practice-of-password-management/"/>
     <id>http://0x3f.org/post/the-best-practice-of-password-management/</id>
     <published>2017-12-27T09:26:17.000Z</published>
-    <updated>2018-04-01T15:00:55.000Z</updated>
+    <updated>2018-11-04T04:35:09.956Z</updated>
     
     <content type="html"><![CDATA[<p>通密之所以不應該被過分指責，是因為有其存在的道理，沒有哪種方案的管理成本比它更低，它不需要購買昂貴的1password，不需要擔心臨時用的時候突然想不起來，而且，只要這個密碼足夠強壯並且使用環境足夠安全，大多數情況下也不會有什麼問題。通密的問題在於它的風險成本太高，一旦一處洩漏，所有使用這個密碼的地方都不安全。</p>
 <p>另一個極端是，使用很複雜的密碼，每個賬號都不同，甚至用密碼生成工具生成完全沒有規律的隨機字符串。這種方案的安全性很高，高到連你自己都記不住。</p>
@@ -762,39 +797,6 @@
     
     
       <category term="最佳實踐" scheme="http://0x3f.org/tags/%E6%9C%80%E4%BD%B3%E5%AF%A6%E8%B8%90/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Laravel單元測試錯誤：1205 Lock wait timeout exceeded</title>
-    <link href="http://0x3f.org/post/1205-lock-wait-timeout-exceeded/"/>
-    <id>http://0x3f.org/post/1205-lock-wait-timeout-exceeded/</id>
-    <published>2017-12-22T07:47:32.000Z</published>
-    <updated>2018-04-01T15:00:55.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>錯誤信息：</p>
-<blockquote>
-<p>1205 Lock wait timeout exceeded; try restarting transaction</p>
-</blockquote>
-<p>原因之一是測試用例里重寫的tearDown()方法中沒有調用父類的該方法。因為DatabaseTransaction這個trait自動開啓了事務，對應的回滾方法在測試用例基類的tearDown()中執行。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;錯誤信息：&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;1205 Lock wait timeout exceeded; try restarting transaction&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;原因之一是測試用例里重寫的tearDown()方法中沒有調用
-    
-    </summary>
-    
-      <category term="計算機" scheme="http://0x3f.org/categories/%E8%A8%88%E7%AE%97%E6%A9%9F/"/>
-    
-    
-      <category term="laravel" scheme="http://0x3f.org/tags/laravel/"/>
-    
-      <category term="單元測試" scheme="http://0x3f.org/tags/%E5%96%AE%E5%85%83%E6%B8%AC%E8%A9%A6/"/>
     
   </entry>
   
