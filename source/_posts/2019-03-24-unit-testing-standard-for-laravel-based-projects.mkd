@@ -1,0 +1,167 @@
+---
+title: 基于Laravel的項目的單元測試規範
+categories: 計算機
+tags:
+  - 單元測試
+  - 編程
+  - PHP
+  - Laravel
+date: 2019-03-24 22:42:08
+---
+
+
+單元測試是個好東西，解決了我很多問題，不論開發效率還是代碼質量，都給我助益良多。最近想在團隊内部推廣，就拟了個規範草稿：
+
+- 什麽是單元？
+
+  單元是邏輯的最小單位，是函數或方法。
+
+  單元測試意味着隻測試單元本身，單元内部調用的其它接口、函數和方法等均稱爲依賴關系。依賴關系自有它們對應的單元測試負責，不在本單元的測試範圍内。
+
+- 怎麽測試單元？（Stub & Mock）
+
+  依賴關系是脆弱的，它會導緻單元測試的編寫和運行效率低下，甚至易于失敗。以下是項目中的一個測試用例，由于依賴了用戶服務，且該服務在我家無法訪問，導緻測試失敗：
+
+  ```
+    donie@Donies > ~/Projects/app/service-biz >> master > phpunitat57                                  -- INSERT --
+    PHPUnit 5.7.26 by Sebastian Bergmann and contributors.
+    
+    ......E.                                                            8 / 8 (100%)
+    
+    Time: 5.59 seconds, Memory: 22.00MB
+    
+    There was 1 error:
+    
+    1) Tests\\Quotation\\QuotationTest::testUpdateQuotationProject
+    GuzzleHttp\\Exception\\ConnectException: cURL error 28: Connection timed out after 2003 milliseconds (see <http://curl.haxx.se/libcurl/c/libcurl-errors.html>)
+    
+    /Users/donie/Projects/app/service-biz/vendor/guzzlehttp/guzzle/src/Handler/CurlFactory.php:186
+    /Users/donie/Projects/app/service-biz/vendor/guzzlehttp/guzzle/src/Handler/CurlFactory.php:150
+    /Users/donie/Projects/app/service-biz/vendor/guzzlehttp/guzzle/src/Handler/CurlFactory.php:103
+    /Users/donie/Projects/app/service-biz/vendor/guzzlehttp/guzzle/src/Handler/CurlHandler.php:43
+    /Users/donie/Projects/app/service-biz/vendor/guzzlehttp/guzzle/src/Handler/Proxy.php:28
+    /Users/donie/Projects/app/service-biz/vendor/guzzlehttp/guzzle/src/Handler/Proxy.php:51
+    /Users/donie/Projects/app/service-biz/vendor/guzzlehttp/guzzle/src/PrepareBodyMiddleware.php:72
+    /Users/donie/Projects/app/service-biz/vendor/guzzlehttp/guzzle/src/Middleware.php:30
+    /Users/donie/Projects/app/service-biz/vendor/guzzlehttp/guzzle/src/RedirectMiddleware.php:68
+    /Users/donie/Projects/app/service-biz/vendor/guzzlehttp/guzzle/src/Middleware.php:59
+    /Users/donie/Projects/app/service-biz/vendor/guzzlehttp/guzzle/src/HandlerStack.php:67
+    /Users/donie/Projects/app/service-biz/vendor/guzzlehttp/guzzle/src/Client.php:275
+    /Users/donie/Projects/app/service-biz/vendor/guzzlehttp/guzzle/src/Client.php:123
+    /Users/donie/Projects/app/service-biz/vendor/guzzlehttp/guzzle/src/Client.php:129
+    /Users/donie/Projects/app/service-biz/app/Services/UserService.php:61
+    /Users/donie/Projects/app/service-biz/app/Services/UserService.php:96
+    /Users/donie/Projects/app/service-biz/app/Services/QuotationService.php:121
+    /Users/donie/Projects/app/service-biz/vendor/illuminate/support/Facades/Facade.php:221
+    /Users/donie/Projects/app/service-biz/tests/Quotation/QuotationTest.php:154
+    
+    ERRORS!
+    Tests: 8, Assertions: 8, Errors: 1.
+  ```
+
+  要實現真正的單元測試，不可避免地要對單元内部的依賴關系進行僞造，即Mock。
+
+- 規範
+
+  - 目錄結構
+
+    ```
+    tests/
+        ↳ Api/
+        ↳ Services/
+        ↳ Repositories/
+        ↳ Helpers/
+        ↳ TestCase.php
+        ↳ TransactionalTestCase.php
+    ```
+
+  - 繼承關系
+
+    ```
+    App\Tests\TestCase
+        ↳Tests\TestCase
+            ↳Tests\Api\TagTest
+            ...
+        ↳Tests\TransactionalTestCase
+            ↳Tests\Services\TagTest
+            ...
+    ```
+
+  - 接口測試
+
+    - 所有接口都必須有測試用例，代碼覆蓋率100%
+    - 位于`tests/Api`下，命名空間是`Tests/Api`
+    - 和被測試的Controller對應
+    - 隻測試路由和Action本單元的代碼，不測試具體業務邏輯
+    - 具體業務邏輯封裝在Service層，由該層的單元測試負責
+    - 測試代碼中通過Facade實現對Service層的Mock
+
+  - 單元測試
+
+    - Service 
+      - 所有Service層的方法都必須有測試用例，代碼覆蓋率不低于90%
+      - 位于`tests/Services`目錄下，命名空間是`Tests/Services`
+      - 和被測試的Service對應
+      - 通過Facade調用Service層并實現對被測試單元依賴關系的Mock
+    - Repository 
+      - 複雜的或有必要的方法要有測試用例，其餘可以通過Service層的單元測試覆蓋到，代碼覆蓋率不低于90%
+      - 位于`tests/Repositories`目錄下，命名空間是`Tests/Repositories`
+      - 和被測試的Repository對應
+    - Helper Functions 
+      - 複雜的或有必要的函數要有測試用例，其餘可以通過其它層的單元測試覆蓋到，代碼覆蓋率100%
+      - 位于`tests/Helpers`目錄下，命名空間是`Tests/Helpers`
+      - 每個測試用例和被測試的helper函數對應
+
+  - 輔助方法
+
+    基類中封裝如下輔助方法：
+
+    ```php
+    /**
+     * Mock一個對象并返回僞造的實例
+     *
+     * 可通過回調匿名函數定制Mock的實例的行爲特征。
+     * 當$inject參數爲false時，Mock的實例不被注入容器，缺省爲注入。
+     *
+     * @param mixed $class 類名字符串或類本身
+     * @param callable $handler 回調匿名函數，接收Mock的實例作爲參數，用于定制實例自身行爲特征
+     * @param bool $inject 是否注入容器，缺省爲true
+     *
+     * @return \\Mockery\\MockInterface
+     */
+    protected function mock($class, callable $handler = null, bool $inject = true): MockInterface
+    {
+        $mockedObj = \Mockery::mock($class);
+    
+        if (is_callable($handler)) {
+            call_user_func($handler, $mockedObj);
+        }
+    
+        if ($inject) {
+            $this->app->instance($class, $mockedObj);
+        }
+    
+        return $mockedObj;
+    }
+      
+    /**
+     * Mock一個單例模式的類
+     *
+     * 可通過回調匿名函數定制Mock的實例的行爲特征。
+     *
+     * @param mixed    $class   類名字符串或類本身
+     * @param callable $handler 回調匿名函數，接收Mock的實例作爲參數，用于定制實例自身行爲特征
+     */
+    protected function mockSingleton($class, callable $handler = null): void
+    {
+        $mockedObj = \Mockery::mock($class);
+    
+        if (is_callable($handler)) {
+            call_user_func($handler, $mockedObj);
+        }
+    
+        $ref = new \ReflectionProperty($class, 'instance');
+        $ref->setAccessible(true);
+        $ref->setValue(null, $mockedObj);
+    }
+    ```
