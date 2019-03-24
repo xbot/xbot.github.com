@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="en">
-    <head>
+    <head><meta name="generator" content="Hexo 3.8.0">
 		
         <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="description" content="">
-        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="shortcut icon" href="/asset/logo.jpg">
         <link rel="canonical" href="http://guolinn.com/">
         <link rel="alternate" type="application/rss+xml" title="晴耕雨讀" href="/atom.xml">
         <title>用NGINX實現WSS | 晴耕雨讀</title>
@@ -13,9 +13,9 @@
 
         <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
-        <meta name="HandheldFriendly" content="True" />
-        <meta name="MobileOptimized" content="320" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="HandheldFriendly" content="True">
+        <meta name="MobileOptimized" content="320">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -28,7 +28,7 @@
 	
 
         <header id="header">
-            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀"></a>
             <h1><a href="/">晴耕雨讀</a></h1>
             <p>程序員，最佳實踐和閱讀愛好者，Vim、Archlinux、Mac、iOS擁躉，帝都低端人口。</p>
             <div id="follow-icons">
@@ -51,13 +51,13 @@
     <span class="taglist">  &middot; 
     
     
-      <a href='/tags/nginx/'>nginx</a> 
+      <a href="/tags/nginx/">nginx</a> 
     
-      <a href='/tags/websocket/'>websocket</a> 
+      <a href="/tags/websocket/">websocket</a> 
     
-      <a href='/tags/ssl/'>ssl</a> 
+      <a href="/tags/ssl/">ssl</a> 
     
-      <a href='/tags/编程/'>编程</a> 
+      <a href="/tags/编程/">编程</a> 
     
     </span>
   
@@ -65,7 +65,7 @@
   <h1 class="post-title">用NGINX實現WSS</h1>
   <section class="post-content article-entry">
     <p>實現基於SSL的安全的WebSocket。</p>
-<h2 id="NGINX配置"><a href="#NGINX配置" class="headerlink" title="NGINX配置"></a>NGINX配置</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">server &#123;</div><div class="line">    listen 4431;</div><div class="line">    server_name ws.sample.com;</div><div class="line"></div><div class="line">    ssl on;</div><div class="line">    ssl_certificate ssl/server.crt;</div><div class="line">    ssl_certificate_key ssl/server.key;</div><div class="line">    ssl_session_timeout 5m;</div><div class="line">    ssl_session_cache shared:SSL:50m;</div><div class="line">    ssl_protocols SSLv3 SSLv2 TLSv1 TLSv1.1 TLSv1.2;</div><div class="line">    ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP;</div><div class="line"></div><div class="line">    location /</div><div class="line">    &#123;</div><div class="line">        proxy_pass http://127.0.0.1:4759;</div><div class="line">        proxy_http_version 1.1;</div><div class="line">        proxy_set_header Upgrade $http_upgrade;</div><div class="line">        proxy_set_header Connection &quot;Upgrade&quot;;</div><div class="line">        proxy_set_header X-Real-IP $remote_addr;</div><div class="line">        proxy_read_timeout 60s;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="NGINX配置"><a href="#NGINX配置" class="headerlink" title="NGINX配置"></a>NGINX配置</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen 4431;</span><br><span class="line">    server_name ws.sample.com;</span><br><span class="line"></span><br><span class="line">    ssl on;</span><br><span class="line">    ssl_certificate ssl/server.crt;</span><br><span class="line">    ssl_certificate_key ssl/server.key;</span><br><span class="line">    ssl_session_timeout 5m;</span><br><span class="line">    ssl_session_cache shared:SSL:50m;</span><br><span class="line">    ssl_protocols SSLv3 SSLv2 TLSv1 TLSv1.1 TLSv1.2;</span><br><span class="line">    ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP;</span><br><span class="line"></span><br><span class="line">    location /</span><br><span class="line">    &#123;</span><br><span class="line">        proxy_pass http://127.0.0.1:4759;</span><br><span class="line">        proxy_http_version 1.1;</span><br><span class="line">        proxy_set_header Upgrade $http_upgrade;</span><br><span class="line">        proxy_set_header Connection &quot;Upgrade&quot;;</span><br><span class="line">        proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">        proxy_read_timeout 60s;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="常見問題"><a href="#常見問題" class="headerlink" title="常見問題"></a>常見問題</h2><h3 id="連不上或連接時報錯"><a href="#連不上或連接時報錯" class="headerlink" title="連不上或連接時報錯"></a>連不上或連接時報錯</h3><blockquote>
 <p>WebSocket network error: OSStatus Error -9807: Invalid certificate chain</p>
 </blockquote>

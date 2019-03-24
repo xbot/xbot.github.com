@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="en">
-    <head>
+    <head><meta name="generator" content="Hexo 3.8.0">
 		
         <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="description" content="">
-        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="shortcut icon" href="/asset/logo.jpg">
         <link rel="canonical" href="http://guolinn.com/">
         <link rel="alternate" type="application/rss+xml" title="晴耕雨讀" href="/atom.xml">
         <title>UltraBlog.vim v3.1釋出：代碼重構與MacVim支持 | 晴耕雨讀</title>
@@ -13,9 +13,9 @@
 
         <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
-        <meta name="HandheldFriendly" content="True" />
-        <meta name="MobileOptimized" content="320" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="HandheldFriendly" content="True">
+        <meta name="MobileOptimized" content="320">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -28,7 +28,7 @@
 	
 
         <header id="header">
-            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀"></a>
             <h1><a href="/">晴耕雨讀</a></h1>
             <p>程序員，最佳實踐和閱讀愛好者，Vim、Archlinux、Mac、iOS擁躉，帝都低端人口。</p>
             <div id="follow-icons">
@@ -51,17 +51,17 @@
     <span class="taglist">  &middot; 
     
     
-      <a href='/tags/python/'>Python</a> 
+      <a href="/tags/python/">Python</a> 
     
-      <a href='/tags/編程/'>編程</a> 
+      <a href="/tags/編程/">編程</a> 
     
-      <a href='/tags/vim/'>Vim</a> 
+      <a href="/tags/vim/">Vim</a> 
     
-      <a href='/tags/博客/'>博客</a> 
+      <a href="/tags/博客/">博客</a> 
     
-      <a href='/tags/plugin/'>Plugin</a> 
+      <a href="/tags/plugin/">Plugin</a> 
     
-      <a href='/tags/ultrablog-vim/'>UltraBlog.vim</a> 
+      <a href="/tags/ultrablog-vim/">UltraBlog.vim</a> 
     
     </span>
   
@@ -72,7 +72,7 @@
 
 <p>對依賴關係檢查的不細緻導致了一些麻煩，拋出的錯誤信息有時與實際原因相距甚遠。由於開始時是以實現功能為主，所以都是直接用函數實現的，之後修修補補，代碼冗余而且維護麻煩。於是著手重構主要功能的源碼，面向對象，把所有檢查邏輯放到父類中去實現，子類只關注自身邏輯，最後新版減少了二百多行的代碼量。</p>
 
-<p>在重構的過程中偶然發現，在MacVim中，程序拋出任何異常，即便是有捕獲邏輯，也會導致編輯器崩潰。在<a href="http://stackoverflow.com/questions/5574702/how-to-print-to-stderr-in-python" target="_blank" rel="external">这裡</a>簡略地提到：</p>
+<p>在重構的過程中偶然發現，在MacVim中，程序拋出任何異常，即便是有捕獲邏輯，也會導致編輯器崩潰。在<a href="http://stackoverflow.com/questions/5574702/how-to-print-to-stderr-in-python" target="_blank" rel="noopener">这裡</a>簡略地提到：</p>
 
 <blockquote>
   <p>the failure was actual a crash, through some strange combination of threading, matplotlib pyplot backend, and ssh X11 forwarding, sys.stderr had somehow been assigned to something which python complained wasn't a file-like object</p>
@@ -80,7 +80,7 @@
 
 <p>於是將所有標準輸出與標準錯誤輸出語句換成另一種形式：</p>
 
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 原形式</span></div><div class="line">sys.stdout.write(<span class="string">'xxx'</span>)</div><div class="line">sys.stderr.write(<span class="string">'xxx'</span>)</div><div class="line"></div><div class="line"><span class="comment"># 新形式</span></div><div class="line"><span class="keyword">print</span> &gt;&gt; sys.stdout, <span class="string">'xxx'</span></div><div class="line"><span class="keyword">print</span> &gt;&gt; sys.stderr, <span class="string">'xxx'</span></div></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 原形式</span></span><br><span class="line">sys.stdout.write(<span class="string">'xxx'</span>)</span><br><span class="line">sys.stderr.write(<span class="string">'xxx'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 新形式</span></span><br><span class="line"><span class="keyword">print</span> &gt;&gt; sys.stdout, <span class="string">'xxx'</span></span><br><span class="line"><span class="keyword">print</span> &gt;&gt; sys.stderr, <span class="string">'xxx'</span></span><br></pre></td></tr></table></figure>
 
 <p>以上是新版主要變更的內容，此外，也順便解決了開發過程中發現的個別Bug和做了其它一些改動：</p>
 
@@ -93,7 +93,7 @@
 <li>Bugfix:  The second parameter of <strong>:UBThis</strong> cannot take effect.</li>
 </ul>
 
-<p>这也是將源碼從Google Code遷移到GitHub後發佈的第一個新版本，更詳細的信息請移步<a href="http://0x3f.org/?p=1894">插件主頁</a>或GitHub上的<a href="https://github.com/xbot/UltraBlog.vim" target="_blank" rel="external">代碼倉庫</a>。</p>
+<p>这也是將源碼從Google Code遷移到GitHub後發佈的第一個新版本，更詳細的信息請移步<a href="http://0x3f.org/?p=1894">插件主頁</a>或GitHub上的<a href="https://github.com/xbot/UltraBlog.vim" target="_blank" rel="noopener">代碼倉庫</a>。</p>
 
 <p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
 
@@ -110,8 +110,8 @@
 
 <nav class="pagination" role="pagination">
     
-    <a class="newer-posts" href="/post/yyets-torrents-download-script/">
-        ← 新 <!--YYeTs.py：人人影視BT種子下載輔助腳本-->
+    <a class="newer-posts" href="/post/after-reading-pro-git/">
+        ← 新 <!--讀完《Pro Git》-->
     </a>
     
     <span class="page-number">•</span>

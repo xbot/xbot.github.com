@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="en">
-    <head>
+    <head><meta name="generator" content="Hexo 3.8.0">
 		
         <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="description" content="">
-        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="shortcut icon" href="/asset/logo.jpg">
         <link rel="canonical" href="http://guolinn.com/">
         <link rel="alternate" type="application/rss+xml" title="晴耕雨讀" href="/atom.xml">
         <title>PHP框架實戰（一）：框架入口與類的自動加載 | 晴耕雨讀</title>
@@ -13,9 +13,9 @@
 
         <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
-        <meta name="HandheldFriendly" content="True" />
-        <meta name="MobileOptimized" content="320" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="HandheldFriendly" content="True">
+        <meta name="MobileOptimized" content="320">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -28,7 +28,7 @@
 	
 
         <header id="header">
-            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀"></a>
             <h1><a href="/">晴耕雨讀</a></h1>
             <p>程序員，最佳實踐和閱讀愛好者，Vim、Archlinux、Mac、iOS擁躉，帝都低端人口。</p>
             <div id="follow-icons">
@@ -51,13 +51,13 @@
     <span class="taglist">  &middot; 
     
     
-      <a href='/tags/編程/'>編程</a> 
+      <a href="/tags/編程/">編程</a> 
     
-      <a href='/tags/php/'>PHP</a> 
+      <a href="/tags/php/">PHP</a> 
     
-      <a href='/tags/框架/'>框架</a> 
+      <a href="/tags/框架/">框架</a> 
     
-      <a href='/tags/flamework/'>Flamework</a> 
+      <a href="/tags/flamework/">Flamework</a> 
     
     </span>
   
@@ -65,23 +65,23 @@
   <h1 class="post-title">PHP框架實戰（一）：框架入口與類的自動加載</h1>
   <section class="post-content article-entry">
     <h2 id="目標"><a href="#目標" class="headerlink" title="目標"></a>目標</h2><p>實現框架入口和類的自動加載。</p>
-<h2 id="獲取代碼"><a href="#獲取代碼" class="headerlink" title="獲取代碼"></a>獲取代碼</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git checkout v0.1</div></pre></td></tr></table></figure>
+<h2 id="獲取代碼"><a href="#獲取代碼" class="headerlink" title="獲取代碼"></a>獲取代碼</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout v0.1</span><br></pre></td></tr></table></figure>
 <h2 id="設計與實現"><a href="#設計與實現" class="headerlink" title="設計與實現"></a>設計與實現</h2><p>通過兩個類實現本次目標。</p>
 <p>靜態類Flame作為整個框架的入口，實現一系列框架級公用靜態方法（<em>例如創建應用實例和自動加載類</em>）。</p>
 <p>WebApplication是應用的抽象層，實現應用的入口和其它應用級（<strong>即運行時</strong>）公用方法（<em>例如讀取配置文件</em>）。</p>
 <p><strong>程序入口</strong></p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line"><span class="comment">// ...</span></div><div class="line">Flame::createApplication($config)-&gt;run();</div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line">Flame::createApplication($config)-&gt;run();</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 <p>此處傳入的$config是應用配置文件的路徑，該配置文件內容格式如下：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line"><span class="keyword">return</span> <span class="keyword">array</span>(</div><div class="line">    <span class="string">'opt1'</span> =&gt; <span class="string">'val1'</span>,</div><div class="line">    <span class="comment">// ...</span></div><div class="line">);</div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">return</span> <span class="keyword">array</span>(</span><br><span class="line">    <span class="string">'opt1'</span> =&gt; <span class="string">'val1'</span>,</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 <p>在文件中直接return一個關聯數組的好處是，加載該文件時，include()函數的返回值就是該數組，代碼更簡潔，效率比解析其它格式配置文件高。</p>
 <p><strong>類的自動加載</strong></p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line"><span class="comment">// ...</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Flame</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="comment">// ...</span></div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">function</span> <span class="title">autoload</span><span class="params">($className)</span></span></div><div class="line">    &#123;</div><div class="line">        <span class="keyword">if</span> (!<span class="keyword">isset</span>(<span class="keyword">self</span>::$_namespaces[<span class="keyword">__NAMESPACE__</span>]))</div><div class="line">            <span class="keyword">self</span>::$_namespaces[<span class="keyword">__NAMESPACE__</span>] = dirname(<span class="keyword">__FILE__</span>);</div><div class="line">        <span class="keyword">foreach</span> (<span class="keyword">self</span>::$_namespaces <span class="keyword">as</span> $ns=&gt;$path)&#123;</div><div class="line">            <span class="keyword">if</span> (strpos($className, $ns) === <span class="number">0</span>) &#123;</div><div class="line">                $classFile = $path.str_replace(<span class="string">'\\'</span>, DIRECTORY_SEPARATOR, substr($className, strlen($ns))).<span class="string">'.php'</span>;</div><div class="line">                <span class="keyword">include</span>($classFile);</div><div class="line">                <span class="keyword">return</span> class_exists($className);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// ...</span></div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line">spl_autoload_register(<span class="keyword">__NAMESPACE__</span>.<span class="string">'\\Flame::autoload'</span>);</div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Flame</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">function</span> <span class="title">autoload</span><span class="params">($className)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (!<span class="keyword">isset</span>(<span class="keyword">self</span>::$_namespaces[<span class="keyword">__NAMESPACE__</span>]))</span><br><span class="line">            <span class="keyword">self</span>::$_namespaces[<span class="keyword">__NAMESPACE__</span>] = dirname(<span class="keyword">__FILE__</span>);</span><br><span class="line">        <span class="keyword">foreach</span> (<span class="keyword">self</span>::$_namespaces <span class="keyword">as</span> $ns=&gt;$path)&#123;</span><br><span class="line">            <span class="keyword">if</span> (strpos($className, $ns) === <span class="number">0</span>) &#123;</span><br><span class="line">                $classFile = $path.str_replace(<span class="string">'\\'</span>, DIRECTORY_SEPARATOR, substr($className, strlen($ns))).<span class="string">'.php'</span>;</span><br><span class="line">                <span class="keyword">include</span>($classFile);</span><br><span class="line">                <span class="keyword">return</span> class_exists($className);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">spl_autoload_register(<span class="keyword">__NAMESPACE__</span>.<span class="string">'\\Flame::autoload'</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 <p>通過函數spl_autoload_register()註冊Flame::autoload()方法。當用到一個類時，PHP會先檢查該類是否已加載，如果沒有，就把包括命名空間在內的完整的類名傳遞給autoload()，最終完成類的加載。</p>
 <blockquote>
 <p>當不填參數調用spl_autoload_register()時，PHP使用默認的spl_autoload()函數加載類文件，如果命名空間與目錄結構完全對應，也可以實現自動加載，而且效率比指定的自定義加載方法更高。但是spl_autoload()有個歷久彌新的Bug，它總是試圖加載文件名是小寫字母的文件，例如，假如類名是MyClass，spl_autoload()就去找文件名為myclass.php的文件，然而一般情況是文件名與類名相同，即MyClass.php，這在大小寫敏感的系統中就找不到了。這個函數的開發者得有多恨Linux啊。</p>
 </blockquote>
 <h2 id="驗證Demo"><a href="#驗證Demo" class="headerlink" title="驗證Demo"></a>驗證Demo</h2><p>整個Demo程序的index.php只需包含以下代碼即可：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line"><span class="keyword">require_once</span> <span class="string">'../flamework/Flame.php'</span>;</div><div class="line"><span class="keyword">use</span> <span class="title">org</span>\<span class="title">x3f</span>\<span class="title">flamework</span>\<span class="title">Flame</span> <span class="title">as</span> <span class="title">Flame</span>;</div><div class="line"></div><div class="line">$_config = <span class="string">'protected/config.php'</span>;</div><div class="line"></div><div class="line">Flame::createApplication($_config)-&gt;run();</div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">require_once</span> <span class="string">'../flamework/Flame.php'</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">org</span>\<span class="title">x3f</span>\<span class="title">flamework</span>\<span class="title">Flame</span> <span class="title">as</span> <span class="title">Flame</span>;</span><br><span class="line"></span><br><span class="line">$_config = <span class="string">'protected/config.php'</span>;</span><br><span class="line"></span><br><span class="line">Flame::createApplication($_config)-&gt;run();</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 <h2 id="總結"><a href="#總結" class="headerlink" title="總結"></a>總結</h2><p>這樣一個最簡單的框架就實現了。</p>
 <p>通過這兩個類，將框架級靜態邏輯與運行時的動態邏輯分開。對應用高度的抽象和OOP封裝使框架和應用的代碼更易讀。單一的應用入口也方便實現一些橫向邏輯（<em>例如過濾器</em>）。</p>
 <p>此外，利用include()會將它所加載的腳本中return的值作為自身返回值的特性實現配置文件的讀取，簡化了代碼，提高了效率。類的自動加載使開發者不必再關心類文件的引入和移除，避免因多餘的include或require而導致效率下降和資源浪費。</p>

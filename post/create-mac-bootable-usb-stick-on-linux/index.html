@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="en">
-    <head>
+    <head><meta name="generator" content="Hexo 3.8.0">
 		
         <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="description" content="">
-        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="shortcut icon" href="/asset/logo.jpg">
         <link rel="canonical" href="http://guolinn.com/">
         <link rel="alternate" type="application/rss+xml" title="晴耕雨讀" href="/atom.xml">
         <title>Linux下做Mac OSX安裝U盤的步驟 | 晴耕雨讀</title>
@@ -13,9 +13,9 @@
 
         <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
-        <meta name="HandheldFriendly" content="True" />
-        <meta name="MobileOptimized" content="320" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="HandheldFriendly" content="True">
+        <meta name="MobileOptimized" content="320">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -28,7 +28,7 @@
 	
 
         <header id="header">
-            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀"></a>
             <h1><a href="/">晴耕雨讀</a></h1>
             <p>程序員，最佳實踐和閱讀愛好者，Vim、Archlinux、Mac、iOS擁躉，帝都低端人口。</p>
             <div id="follow-icons">
@@ -51,9 +51,9 @@
     <span class="taglist">  &middot; 
     
     
-      <a href='/tags/archlinux/'>archlinux</a> 
+      <a href="/tags/archlinux/">archlinux</a> 
     
-      <a href='/tags/mac/'>mac</a> 
+      <a href="/tags/mac/">mac</a> 
     
     </span>
   
@@ -61,7 +61,7 @@
   <h1 class="post-title">Linux下做Mac OSX安裝U盤的步驟</h1>
   <section class="post-content article-entry">
     <p>假設U盤對應/dev/sdb1、OSX安裝包是osx.dmg。整個過程就是提取出一系列文件，然後複制到U盤裏。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 格式化U盤爲hfs+文件系統</span></div><div class="line">sudo mkfs.hfsplus -v EICaptianInstall /dev/sdb1</div><div class="line"> </div><div class="line"><span class="comment"># 提取和挂載第一個光盤鏡像</span></div><div class="line">dmg2img -p 5 osx.dmg osx.img</div><div class="line">mkdir raw &amp;&amp; sudo mount -o loop osx.img raw</div><div class="line"> </div><div class="line"><span class="comment"># 提取和挂載第二個光盤鏡像</span></div><div class="line">dmg2img -p 5 raw/Install\ OS\ X\ El\ Capitan.app/Contents/SharedSupport/InstallESD.dmg InstallESD.img</div><div class="line">mkdir esd &amp;&amp; sudo mount -o loop InstallESD.img esd</div><div class="line"> </div><div class="line"><span class="comment"># 提取和挂載第三個光盤鏡像</span></div><div class="line">dmg2img -p 4 esd/BaseSystem.dmg BaseSystem.img</div><div class="line">mkdir base &amp;&amp; sudo mount -o loop BaseSystem.img base</div><div class="line"> </div><div class="line"><span class="comment"># 挂載U盤</span></div><div class="line">mkdir usb &amp;&amp; sudo mount /dev/sdb1 usb</div><div class="line"> </div><div class="line"><span class="comment"># 複制一系列文件</span></div><div class="line">sudo cp -r base/* usb/</div><div class="line">sudo rm usb/System/Installation/Packages</div><div class="line">sudo cp -r esd/Packages usb/System/Installation/</div><div class="line">sudo cp esd/BaseSystem.* usb/</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 格式化U盤爲hfs+文件系統</span></span><br><span class="line">sudo mkfs.hfsplus -v EICaptianInstall /dev/sdb1</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 提取和挂載第一個光盤鏡像</span></span><br><span class="line">dmg2img -p 5 osx.dmg osx.img</span><br><span class="line">mkdir raw &amp;&amp; sudo mount -o loop osx.img raw</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 提取和挂載第二個光盤鏡像</span></span><br><span class="line">dmg2img -p 5 raw/Install\ OS\ X\ El\ Capitan.app/Contents/SharedSupport/InstallESD.dmg InstallESD.img</span><br><span class="line">mkdir esd &amp;&amp; sudo mount -o loop InstallESD.img esd</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 提取和挂載第三個光盤鏡像</span></span><br><span class="line">dmg2img -p 4 esd/BaseSystem.dmg BaseSystem.img</span><br><span class="line">mkdir base &amp;&amp; sudo mount -o loop BaseSystem.img base</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 挂載U盤</span></span><br><span class="line">mkdir usb &amp;&amp; sudo mount /dev/sdb1 usb</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 複制一系列文件</span></span><br><span class="line">sudo cp -r base/* usb/</span><br><span class="line">sudo rm usb/System/Installation/Packages</span><br><span class="line">sudo cp -r esd/Packages usb/System/Installation/</span><br><span class="line">sudo cp esd/BaseSystem.* usb/</span><br></pre></td></tr></table></figure>
 <p>注意dmg2img的參數-p表示提取dmg的第幾個分區，似乎不同的OSX版本提取哪個分區也不一樣，判斷方法就是先執行<code>dmg2img osx.dmg</code>，看哪個分區提取得最慢就選哪個。</p>
 
   </section>

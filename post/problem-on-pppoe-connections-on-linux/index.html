@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="en">
-    <head>
+    <head><meta name="generator" content="Hexo 3.8.0">
 		
         <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="description" content="">
-        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="shortcut icon" href="/asset/logo.jpg">
         <link rel="canonical" href="http://guolinn.com/">
         <link rel="alternate" type="application/rss+xml" title="晴耕雨讀" href="/atom.xml">
         <title>Linux下pppoe连接建立后仍不能上网的问题 | 晴耕雨讀</title>
@@ -13,9 +13,9 @@
 
         <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
-        <meta name="HandheldFriendly" content="True" />
-        <meta name="MobileOptimized" content="320" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="HandheldFriendly" content="True">
+        <meta name="MobileOptimized" content="320">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -28,7 +28,7 @@
 	
 
         <header id="header">
-            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀"></a>
             <h1><a href="/">晴耕雨讀</a></h1>
             <p>程序員，最佳實踐和閱讀愛好者，Vim、Archlinux、Mac、iOS擁躉，帝都低端人口。</p>
             <div id="follow-icons">
@@ -51,15 +51,15 @@
     <span class="taglist">  &middot; 
     
     
-      <a href='/tags/配置/'>配置</a> 
+      <a href="/tags/配置/">配置</a> 
     
-      <a href='/tags/計算機/'>計算機</a> 
+      <a href="/tags/計算機/">計算機</a> 
     
-      <a href='/tags/archlinux/'>Archlinux</a> 
+      <a href="/tags/archlinux/">Archlinux</a> 
     
-      <a href='/tags/bash/'>BASH</a> 
+      <a href="/tags/bash/">BASH</a> 
     
-      <a href='/tags/adsl/'>ADSL</a> 
+      <a href="/tags/adsl/">ADSL</a> 
     
     </span>
   
@@ -70,19 +70,19 @@
 <p>pppoe可以连接，ifconfig可以看到ppp0接口，一切正常，只是不能上网。</p>
 <p><strong>解决办法</strong></p>
 <p>使用如下命令查看路由表：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">route</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">route</span><br></pre></td></tr></table></figure>
 <p>正常情况下返回的结果中应该有如下内容：</p>
 <blockquote><br>default  *  0.0.0.0   U   0   0  0 ppp0<br></blockquote>
 
 <p>如果没有，可手工添加：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">route add default dev ppp0</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">route add default dev ppp0</span><br></pre></td></tr></table></figure>
 <p>如果可以上网，就成功了。</p>
 <p>使用如下脚本在pppoe连接成功时自动添加路由表项：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#!/bin/sh</span></div><div class="line"> </div><div class="line"><span class="keyword">if</span> ifconfig ppp0  &gt; /dev/null 2&gt;&amp;1 ; <span class="keyword">then</span></div><div class="line">    route del default</div><div class="line">    route add default dev ppp0</div><div class="line"><span class="keyword">fi</span></div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span> ifconfig ppp0  &gt; /dev/null 2&gt;&amp;1 ; <span class="keyword">then</span></span><br><span class="line">    route del default</span><br><span class="line">    route add default dev ppp0</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
 <p>将上述内容保存成名为<strong>01-route.sh</strong>的文件，权限<strong>755</strong>，放到<strong>/etc/ppp/ip-up.d</strong>目录下。</p>
 <p>然后创建以下两个脚本：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"> </div><div class="line"><span class="keyword">if</span> ifconfig ppp0  &gt; /dev/null 2&gt;&amp;1 ; <span class="keyword">then</span></div><div class="line">    <span class="built_in">echo</span> <span class="string">'PPPOE has already been switched on !'</span></div><div class="line">    <span class="built_in">exit</span> 0</div><div class="line"><span class="keyword">fi</span></div><div class="line"> </div><div class="line">off</div><div class="line"> </div><div class="line">sudo pon</div><div class="line">sleep 5</div><div class="line">sudo /etc/ppp/ip-up</div></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"> </div><div class="line"><span class="keyword">if</span> ! ifconfig ppp0  &gt; /dev/null 2&gt;&amp;1 ; <span class="keyword">then</span></div><div class="line">    <span class="built_in">echo</span> <span class="string">'PPPOE has already been switched off !'</span></div><div class="line">    <span class="built_in">exit</span> 0</div><div class="line"><span class="keyword">fi</span></div><div class="line"> </div><div class="line">sudo poff</div><div class="line">sudo /etc/ppp/ip-down</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span> ifconfig ppp0  &gt; /dev/null 2&gt;&amp;1 ; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">'PPPOE has already been switched on !'</span></span><br><span class="line">    <span class="built_in">exit</span> 0</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"> </span><br><span class="line">off</span><br><span class="line"> </span><br><span class="line">sudo pon</span><br><span class="line">sleep 5</span><br><span class="line">sudo /etc/ppp/ip-up</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span> ! ifconfig ppp0  &gt; /dev/null 2&gt;&amp;1 ; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">'PPPOE has already been switched off !'</span></span><br><span class="line">    <span class="built_in">exit</span> 0</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"> </span><br><span class="line">sudo poff</span><br><span class="line">sudo /etc/ppp/ip-down</span><br></pre></td></tr></table></figure>
 <p>分别命名为<strong>on</strong>和<strong>off</strong>并复制到环境变量PATH下，以后即可使用这两个脚本建立和注销pppoe连接。</p>
 <p><strong>原因分析</strong></p>
 <p>问题的原因是pppoe连接建立时，没有自动往路由表中添加相关路由项。</p>
@@ -102,8 +102,8 @@
 
 <nav class="pagination" role="pagination">
     
-    <a class="newer-posts" href="/post/howto-enable-routing-and-auto-dialing-for-unicom-adsl-modem-2/">
-        ← 新 <!--网通ADSL猫开启路由和自动拨号功能的方法之二-->
+    <a class="newer-posts" href="/post/usage-of-ttl-wire-on-linux/">
+        ← 新 <!--TTL线在Linux下的用法-->
     </a>
     
     <span class="page-number">•</span>

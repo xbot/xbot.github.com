@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="en">
-    <head>
+    <head><meta name="generator" content="Hexo 3.8.0">
 		
         <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="description" content="">
-        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="shortcut icon" href="/asset/logo.jpg">
         <link rel="canonical" href="http://guolinn.com/">
         <link rel="alternate" type="application/rss+xml" title="晴耕雨讀" href="/atom.xml">
         <title>關於PyGTK.CellRenderer的回調方法中聚焦異常的問題 | 晴耕雨讀</title>
@@ -13,9 +13,9 @@
 
         <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
-        <meta name="HandheldFriendly" content="True" />
-        <meta name="MobileOptimized" content="320" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="HandheldFriendly" content="True">
+        <meta name="MobileOptimized" content="320">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -28,7 +28,7 @@
 	
 
         <header id="header">
-            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀"></a>
             <h1><a href="/">晴耕雨讀</a></h1>
             <p>程序員，最佳實踐和閱讀愛好者，Vim、Archlinux、Mac、iOS擁躉，帝都低端人口。</p>
             <div id="follow-icons">
@@ -51,11 +51,11 @@
     <span class="taglist">  &middot; 
     
     
-      <a href='/tags/python/'>Python</a> 
+      <a href="/tags/python/">Python</a> 
     
-      <a href='/tags/編程/'>編程</a> 
+      <a href="/tags/編程/">編程</a> 
     
-      <a href='/tags/pygtk/'>PyGTK</a> 
+      <a href="/tags/pygtk/">PyGTK</a> 
     
     </span>
   
@@ -68,7 +68,7 @@
 
 <p>示意代碼如下：</p>
 
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># pygtk.CellRenderer的edited事件的回調方法</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">onCellEdited</span><span class="params">(self, cell, path, newText, userData)</span>:</span></div><div class="line">    store,colNum = userData</div><div class="line">    <span class="comment"># 使用事件驅動的設計理念，創建一個自定義的事件</span></div><div class="line">    evt = ServerTypeChangedEvent(self, cell, usrData)</div><div class="line"></div><div class="line">    <span class="comment"># 事件入隊列</span></div><div class="line">    EventQueue.fireEvent(evt)</div><div class="line">    <span class="comment"># 處理事件隊列，如果截獲異常，提示並重新聚焦Cell</span></div><div class="line">    <span class="keyword">try</span>:</div><div class="line">        EventQueue.processEvents()</div><div class="line">    <span class="keyword">except</span> Exception,e:</div><div class="line">        self.alert(e.message)</div><div class="line">        col = self.treeView.get_column(colNum<span class="number">-1</span>)</div><div class="line">        <span class="comment"># 聚焦Cell，並選中Cell中的內容</span></div><div class="line">        self.treeView.set_cursor_on_cell(path, col, cell, <span class="keyword">True</span>)</div></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># pygtk.CellRenderer的edited事件的回調方法</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">onCellEdited</span><span class="params">(self, cell, path, newText, userData)</span>:</span></span><br><span class="line">    store,colNum = userData</span><br><span class="line">    <span class="comment"># 使用事件驅動的設計理念，創建一個自定義的事件</span></span><br><span class="line">    evt = ServerTypeChangedEvent(self, cell, usrData)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 事件入隊列</span></span><br><span class="line">    EventQueue.fireEvent(evt)</span><br><span class="line">    <span class="comment"># 處理事件隊列，如果截獲異常，提示並重新聚焦Cell</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        EventQueue.processEvents()</span><br><span class="line">    <span class="keyword">except</span> Exception,e:</span><br><span class="line">        self.alert(e.message)</span><br><span class="line">        col = self.treeView.get_column(colNum<span class="number">-1</span>)</span><br><span class="line">        <span class="comment"># 聚焦Cell，並選中Cell中的內容</span></span><br><span class="line">        self.treeView.set_cursor_on_cell(path, col, cell, <span class="keyword">True</span>)</span><br></pre></td></tr></table></figure>
 
 <p>關鍵的代碼在最後一行，通過調用TreeView的set_cursor_on_cell方法聚焦Cell並選中其內容。但就是這一步出了問題，報如下警告：</p>
 
@@ -78,13 +78,13 @@
 
 <p>此後整個TreeView的行為表現不正常，表現為可直接修改其它Cell的內容，且原Cell一直處於聚焦狀態。</p>
 
-<p>此問題的原因是：edited事件在Cell的輸入控件被銷毀前就發出了，這時在事件的回調方法中重新聚焦該Cell就導致了這個問題（<em>詳見<a href="http://www.gtkforums.com/viewtopic.php?t=4619" target="_blank" rel="external">這裡</a></em>）。</p>
+<p>此問題的原因是：edited事件在Cell的輸入控件被銷毀前就發出了，這時在事件的回調方法中重新聚焦該Cell就導致了這個問題（<em>詳見<a href="http://www.gtkforums.com/viewtopic.php?t=4619" target="_blank" rel="noopener">這裡</a></em>）。</p>
 
 <p>解決方法是借助glib.idle_add函數，在PyGTK空閒的時候再調用set_cursor_on_cell方法，由於此時原控件已被銷毀，所以不會有問題。</p>
 
 <p>修改後的代碼如下：</p>
 
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">onCellEdited</span><span class="params">(self, cell, path, newText, userData)</span>:</span></div><div class="line">    store,colNum = userData</div><div class="line">    evt = ServerTypeChangedEvent(self, cell, usrData)</div><div class="line"></div><div class="line">    EventQueue.fireEvent(evt)</div><div class="line">    <span class="keyword">try</span>:</div><div class="line">        EventQueue.processEvents()</div><div class="line">    <span class="keyword">except</span> Exception,e:</div><div class="line">        self.alert(e.message)</div><div class="line">        col = self.treeView.get_column(colNum<span class="number">-1</span>)</div><div class="line">        <span class="comment">#self.treeView.set_cursor_on_cell(path, col, cell, True)</span></div><div class="line">        <span class="keyword">import</span> glib</div><div class="line">        glib.idle_add(self.treeView.set_cursor_on_cell, path, col, cell, <span class="keyword">True</span>)</div></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">onCellEdited</span><span class="params">(self, cell, path, newText, userData)</span>:</span></span><br><span class="line">    store,colNum = userData</span><br><span class="line">    evt = ServerTypeChangedEvent(self, cell, usrData)</span><br><span class="line"></span><br><span class="line">    EventQueue.fireEvent(evt)</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        EventQueue.processEvents()</span><br><span class="line">    <span class="keyword">except</span> Exception,e:</span><br><span class="line">        self.alert(e.message)</span><br><span class="line">        col = self.treeView.get_column(colNum<span class="number">-1</span>)</span><br><span class="line">        <span class="comment">#self.treeView.set_cursor_on_cell(path, col, cell, True)</span></span><br><span class="line">        <span class="keyword">import</span> glib</span><br><span class="line">        glib.idle_add(self.treeView.set_cursor_on_cell, path, col, cell, <span class="keyword">True</span>)</span><br></pre></td></tr></table></figure>
 
 <p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
 

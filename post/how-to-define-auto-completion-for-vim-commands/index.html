@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="en">
-    <head>
+    <head><meta name="generator" content="Hexo 3.8.0">
 		
         <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="description" content="">
-        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="shortcut icon" href="/asset/logo.jpg">
         <link rel="canonical" href="http://guolinn.com/">
         <link rel="alternate" type="application/rss+xml" title="晴耕雨讀" href="/atom.xml">
         <title>Vim自定義命令的參數自動補全 | 晴耕雨讀</title>
@@ -13,9 +13,9 @@
 
         <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
-        <meta name="HandheldFriendly" content="True" />
-        <meta name="MobileOptimized" content="320" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="HandheldFriendly" content="True">
+        <meta name="MobileOptimized" content="320">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -28,7 +28,7 @@
 	
 
         <header id="header">
-            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀"></a>
             <h1><a href="/">晴耕雨讀</a></h1>
             <p>程序員，最佳實踐和閱讀愛好者，Vim、Archlinux、Mac、iOS擁躉，帝都低端人口。</p>
             <div id="follow-icons">
@@ -51,9 +51,9 @@
     <span class="taglist">  &middot; 
     
     
-      <a href='/tags/編程/'>編程</a> 
+      <a href="/tags/編程/">編程</a> 
     
-      <a href='/tags/vim/'>Vim</a> 
+      <a href="/tags/vim/">Vim</a> 
     
     </span>
   
@@ -64,21 +64,21 @@
 
 <p>Vim對自定義命令提供了多種補全參數的方式，詳見<code>:h command-complete</code>。其中，最常用的當屬<strong>custom</strong>：</p>
 
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">command! -nargs=? -<span class="built_in">complete</span>=custom,StatusCmpl UBSend exec(<span class="string">'py ub_send_item(&lt;f-args&gt;)'</span>)</div></pre></td></tr></table></figure>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">command! -nargs=? -<span class="built_in">complete</span>=custom,StatusCmpl UBSend exec(<span class="string">'py ub_send_item(&lt;f-args&gt;)'</span>)</span><br></pre></td></tr></table></figure>
 
 <p>以上代碼定義了一個自定義命令<strong>UBSend</strong>，它可以獲得一個或零個參數（<em>-nargs=?</em>），如果指定參數，則補全方式采用<strong>custom</strong>，該方式調用一個名為<strong>StatusCmpl</strong>的函數并以其返回值作為補全的值域：</p>
 
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span>! <span class="title">StatusCmpl</span><span class="params">(ArgLead, CmdLine, CursorPos)</span></span></div><div class="line">  <span class="keyword">return</span> <span class="string">"draft\npublish\nprivate\npending\n"</span></div><div class="line"><span class="keyword">endfunction</span></div></pre></td></tr></table></figure>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span>! <span class="title">StatusCmpl</span><span class="params">(ArgLead, CmdLine, CursorPos)</span></span></span><br><span class="line">  <span class="keyword">return</span> <span class="string">"draft\npublish\nprivate\npending\n"</span></span><br><span class="line"><span class="keyword">endfunction</span></span><br></pre></td></tr></table></figure>
 
 <p>從以上代碼可以看出，該函數需要接受三個參數，返回值應該是一個用換行符“\n”分割的字符串，在執行補全時，Vim自動使用正則表達式匹配備選項。對于只有一個參數的情況，這種實現方式簡單高效。</p>
 
 <p>對于參數較多的情況，<strong>customlist</strong>補全方式最為適用：</p>
 
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">command! -nargs=* -<span class="built_in">complete</span>=customlist,UBNewCmpl UBNew exec(<span class="string">'py ub_new_item(&lt;f-args&gt;)'</span>)</div></pre></td></tr></table></figure>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">command! -nargs=* -<span class="built_in">complete</span>=customlist,UBNewCmpl UBNew exec(<span class="string">'py ub_new_item(&lt;f-args&gt;)'</span>)</span><br></pre></td></tr></table></figure>
 
 <p>以上代碼定義了命令<strong>UBNew</strong>，<strong>customlist</strong>補全方式調用函數<strong>UBNewCmpl</strong>獲取補全的值域：</p>
 
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span>! <span class="title">UBNewCmpl</span><span class="params">(ArgLead, CmdLine, CursorPos)</span></span></div><div class="line">    <span class="keyword">let</span> lst = <span class="keyword">split</span>(<span class="variable">a:CmdLine</span>)</div><div class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(<span class="variable">a:ArgLead</span>)&gt;<span class="number">0</span></div><div class="line">        <span class="keyword">let</span> lst = lst[<span class="number">0</span>:-<span class="number">2</span>]</div><div class="line">    <span class="keyword">endif</span></div><div class="line"></div><div class="line">    <span class="keyword">let</span> results = []</div><div class="line">    <span class="comment">" For the first argument, complete the object type</span></div><div class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(lst)==<span class="number">1</span></div><div class="line">        <span class="keyword">let</span> objects = [<span class="string">'post'</span>,<span class="string">'page'</span>,<span class="string">'tmpl'</span>]</div><div class="line">        <span class="keyword">for</span> obj in objects</div><div class="line">            <span class="keyword">if</span> <span class="built_in">stridx</span>(obj,<span class="variable">a:ArgLead</span>)==<span class="number">0</span></div><div class="line">                <span class="keyword">call</span> <span class="built_in">add</span>(results,obj)</div><div class="line">            <span class="keyword">endif</span></div><div class="line">        <span class="keyword">endfor</span></div><div class="line">    <span class="comment">" For the second argument, complete the syntax for :UBNew post or :UBNew</span></div><div class="line">    <span class="comment">" page</span></div><div class="line">    <span class="keyword">elseif</span> <span class="built_in">len</span>(lst)==<span class="number">2</span> &amp;&amp; <span class="built_in">count</span>([<span class="string">'post'</span>, <span class="string">'page'</span>], lst[<span class="number">1</span>])==<span class="number">1</span></div><div class="line">        <span class="keyword">let</span> syntaxes = [<span class="string">'markdown'</span>,<span class="string">'html'</span>,<span class="string">'rst'</span>,<span class="string">'textile'</span>,<span class="string">'latex'</span>]</div><div class="line">        <span class="keyword">for</span> synx in syntaxes</div><div class="line">            <span class="keyword">if</span> <span class="built_in">stridx</span>(synx,<span class="variable">a:ArgLead</span>)==<span class="number">0</span></div><div class="line">                <span class="keyword">call</span> <span class="built_in">add</span>(results,synx)</div><div class="line">            <span class="keyword">endif</span></div><div class="line">        <span class="keyword">endfor</span></div><div class="line">    <span class="keyword">endif</span></div><div class="line">    <span class="keyword">return</span> results</div><div class="line"><span class="keyword">endfunction</span></div></pre></td></tr></table></figure>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span>! <span class="title">UBNewCmpl</span><span class="params">(ArgLead, CmdLine, CursorPos)</span></span></span><br><span class="line">    <span class="keyword">let</span> lst = <span class="keyword">split</span>(<span class="variable">a:CmdLine</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(<span class="variable">a:ArgLead</span>)&gt;<span class="number">0</span></span><br><span class="line">        <span class="keyword">let</span> lst = lst[<span class="number">0</span>:-<span class="number">2</span>]</span><br><span class="line">    <span class="keyword">endif</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> results = []</span><br><span class="line">    <span class="comment">" For the first argument, complete the object type</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(lst)==<span class="number">1</span></span><br><span class="line">        <span class="keyword">let</span> objects = [<span class="string">'post'</span>,<span class="string">'page'</span>,<span class="string">'tmpl'</span>]</span><br><span class="line">        <span class="keyword">for</span> obj in objects</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">stridx</span>(obj,<span class="variable">a:ArgLead</span>)==<span class="number">0</span></span><br><span class="line">                <span class="keyword">call</span> <span class="built_in">add</span>(results,obj)</span><br><span class="line">            <span class="keyword">endif</span></span><br><span class="line">        <span class="keyword">endfor</span></span><br><span class="line">    <span class="comment">" For the second argument, complete the syntax for :UBNew post or :UBNew</span></span><br><span class="line">    <span class="comment">" page</span></span><br><span class="line">    <span class="keyword">elseif</span> <span class="built_in">len</span>(lst)==<span class="number">2</span> &amp;&amp; <span class="built_in">count</span>([<span class="string">'post'</span>, <span class="string">'page'</span>], lst[<span class="number">1</span>])==<span class="number">1</span></span><br><span class="line">        <span class="keyword">let</span> syntaxes = [<span class="string">'markdown'</span>,<span class="string">'html'</span>,<span class="string">'rst'</span>,<span class="string">'textile'</span>,<span class="string">'latex'</span>]</span><br><span class="line">        <span class="keyword">for</span> synx in syntaxes</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">stridx</span>(synx,<span class="variable">a:ArgLead</span>)==<span class="number">0</span></span><br><span class="line">                <span class="keyword">call</span> <span class="built_in">add</span>(results,synx)</span><br><span class="line">            <span class="keyword">endif</span></span><br><span class="line">        <span class="keyword">endfor</span></span><br><span class="line">    <span class="keyword">endif</span></span><br><span class="line">    <span class="keyword">return</span> results</span><br><span class="line"><span class="keyword">endfunction</span></span><br></pre></td></tr></table></figure>
 
 <p>這時侯，前面提到的三個參數就派上用場了。<strong>ArgLead</strong>是進行補全時，已輸入的參數部分，例如輸入<code>:UBNew p</code>，然後按Tab鍵，則ArgLead的值就是“p”；<strong>CmdLine</strong>是已經輸入的命令的全部，按上例，這個參數的值就是“UBNew p”；<strong>CursorPost</strong>是當前光標距離命令行開頭的字符數。利用這三個參數，就可以判斷正在補全命令的第幾個參數，進而利用ArgLead篩選該參數的值域。</p>
 

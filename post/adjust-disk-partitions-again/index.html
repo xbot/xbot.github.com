@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="en">
-    <head>
+    <head><meta name="generator" content="Hexo 3.8.0">
 		
         <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="description" content="">
-        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="shortcut icon" href="/asset/logo.jpg">
         <link rel="canonical" href="http://guolinn.com/">
         <link rel="alternate" type="application/rss+xml" title="晴耕雨讀" href="/atom.xml">
         <title>再次調整磁盤分區 | 晴耕雨讀</title>
@@ -13,9 +13,9 @@
 
         <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
-        <meta name="HandheldFriendly" content="True" />
-        <meta name="MobileOptimized" content="320" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="HandheldFriendly" content="True">
+        <meta name="MobileOptimized" content="320">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -28,7 +28,7 @@
 	
 
         <header id="header">
-            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀"></a>
             <h1><a href="/">晴耕雨讀</a></h1>
             <p>程序員，最佳實踐和閱讀愛好者，Vim、Archlinux、Mac、iOS擁躉，帝都低端人口。</p>
             <div id="follow-icons">
@@ -51,7 +51,7 @@
     <span class="taglist">  &middot; 
     
     
-      <a href='/tags/linux/'>linux</a> 
+      <a href="/tags/linux/">linux</a> 
     
     </span>
   
@@ -61,9 +61,9 @@
     <p>自從<a href="/post/adjust-disk-partitions-in-archlinux/">上次</a>調整磁盤分區，一直把根目錄和主目錄分別掛在一個物理分區下，即使系統掛了或者換發行版也不影響主目錄。最近根分區很緊張，乾脆把兩個分區合併了。</p>
 <p>先用UNetBootin安裝Puppy Linux到U盤，需要手工修改U盤裡的syslinux.cfg，把“pmedia=<strong>cd</strong>”改成“pmedia=<strong>usbflash</strong>”，然後用U盤啟動。</p>
 <p>把主目錄的內容完整複製到移動硬盤：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 掛載主目錄</span></div><div class="line">mkdir /mnt/oldhome</div><div class="line">mount -t ext4 /dev/sda2 /mnt/oldhome</div><div class="line"></div><div class="line"><span class="comment"># 掛載移動硬盤</span></div><div class="line">mkdir /mnt/bakdisk</div><div class="line">mount -t ext4 /dev/sdc1 /mnt/bakdisk</div><div class="line"></div><div class="line"><span class="comment"># 複製主目錄</span></div><div class="line">cp -a /mnt/oldhome /mnt/bakdisk/</div><div class="line"></div><div class="line"><span class="comment"># 取消掛載主目錄</span></div><div class="line">umount /mnt/oldhome</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 掛載主目錄</span></span><br><span class="line">mkdir /mnt/oldhome</span><br><span class="line">mount -t ext4 /dev/sda2 /mnt/oldhome</span><br><span class="line"></span><br><span class="line"><span class="comment"># 掛載移動硬盤</span></span><br><span class="line">mkdir /mnt/bakdisk</span><br><span class="line">mount -t ext4 /dev/sdc1 /mnt/bakdisk</span><br><span class="line"></span><br><span class="line"><span class="comment"># 複製主目錄</span></span><br><span class="line">cp -a /mnt/oldhome /mnt/bakdisk/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 取消掛載主目錄</span></span><br><span class="line">umount /mnt/oldhome</span><br></pre></td></tr></table></figure>
 <p>用gparted刪除主目錄分區，合併到根分區。然後恢復主目錄：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 掛載根分區</span></div><div class="line">mkdir /mnt/newroot</div><div class="line">mount -t ext4 /dev/sda1 /mnt/newroot</div><div class="line"></div><div class="line"><span class="comment"># 恢復主目錄</span></div><div class="line">cp -a /mnt/bakdisk/* /mnt/newroot/</div><div class="line"></div><div class="line"><span class="comment"># 修改fstab，取消主目錄的掛載</span></div><div class="line">vim /mnt/newroot/etc/fstab</div><div class="line"></div><div class="line"><span class="comment"># 取消掛載</span></div><div class="line">umount /mnt/bakdisk</div><div class="line">umount /mnt/newroot</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 掛載根分區</span></span><br><span class="line">mkdir /mnt/newroot</span><br><span class="line">mount -t ext4 /dev/sda1 /mnt/newroot</span><br><span class="line"></span><br><span class="line"><span class="comment"># 恢復主目錄</span></span><br><span class="line">cp -a /mnt/bakdisk/* /mnt/newroot/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改fstab，取消主目錄的掛載</span></span><br><span class="line">vim /mnt/newroot/etc/fstab</span><br><span class="line"></span><br><span class="line"><span class="comment"># 取消掛載</span></span><br><span class="line">umount /mnt/bakdisk</span><br><span class="line">umount /mnt/newroot</span><br></pre></td></tr></table></figure>
 
   </section>
   <footer class="post-footer">

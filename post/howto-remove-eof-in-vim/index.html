@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="en">
-    <head>
+    <head><meta name="generator" content="Hexo 3.8.0">
 		
         <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="description" content="">
-        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="shortcut icon" href="/asset/logo.jpg">
         <link rel="canonical" href="http://guolinn.com/">
         <link rel="alternate" type="application/rss+xml" title="晴耕雨讀" href="/atom.xml">
         <title>Vim保存文件時移除尾行換行符的方法 | 晴耕雨讀</title>
@@ -13,9 +13,9 @@
 
         <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
-        <meta name="HandheldFriendly" content="True" />
-        <meta name="MobileOptimized" content="320" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="HandheldFriendly" content="True">
+        <meta name="MobileOptimized" content="320">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -28,7 +28,7 @@
 	
 
         <header id="header">
-            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀"></a>
             <h1><a href="/">晴耕雨讀</a></h1>
             <p>程序員，最佳實踐和閱讀愛好者，Vim、Archlinux、Mac、iOS擁躉，帝都低端人口。</p>
             <div id="follow-icons">
@@ -51,13 +51,13 @@
     <span class="taglist">  &middot; 
     
     
-      <a href='/tags/配置/'>配置</a> 
+      <a href="/tags/配置/">配置</a> 
     
-      <a href='/tags/vim/'>Vim</a> 
+      <a href="/tags/vim/">Vim</a> 
     
-      <a href='/tags/windows/'>Windows</a> 
+      <a href="/tags/windows/">Windows</a> 
     
-      <a href='/tags/計算機/'>計算機</a> 
+      <a href="/tags/計算機/">計算機</a> 
     
     </span>
   
@@ -66,10 +66,10 @@
   <section class="post-content article-entry">
     <p>Vim認為一個文本文件的每一行都應該由一換行符結束，即使文件的最後一行也不例外。這就使得Vim保存過的文本文件在其它文本編輯器中查看時可能會在文件末尾多出一個空行。一般來說，這不是個問題，但對于程序員來說，有時候一些不規範的運行環境或其它組件就要求文件的最後一行不能有換行符，否則就會出莫名其妙的問題，尤其是在Windows環境下最常見。</p>
 <p>要在保存文件時不在最後一行添加換行符，最常見、最簡單的方法就是：</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">:<span class="keyword">set</span> binary</div><div class="line">:<span class="keyword">set</span> noendofline</div></pre></td></tr></table></figure>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">:<span class="keyword">set</span> binary</span><br><span class="line">:<span class="keyword">set</span> noendofline</span><br></pre></td></tr></table></figure>
 <p>但是這樣做有一個問題，就是會把DOS格式的文件自動轉換成UNIX格式，WinSlave們肯定不希望這麽做。</p>
 <p>因此，可在vimrc中加入如下內容：</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment">" Save the current buffer as a file with no EOF sign.</span></div><div class="line"><span class="function"><span class="keyword">function</span>! <span class="title">SaveAsNOEOF</span><span class="params">(filename)</span></span></div><div class="line">    <span class="keyword">let</span> <span class="keyword">a</span>=<span class="built_in">getline</span>(<span class="number">1</span>,<span class="built_in">line</span>(<span class="string">'$'</span>)-<span class="number">1</span>)</div><div class="line">    <span class="keyword">let</span> <span class="keyword">b</span>=<span class="keyword">map</span>(<span class="keyword">a</span>, <span class="string">'iconv(v:val,"'</span>.&amp;enc.<span class="string">'","'</span>.&amp;fenc.<span class="string">'") . nr2char(13)'</span>)</div><div class="line">    <span class="keyword">call</span> <span class="built_in">extend</span>(<span class="keyword">b</span>, <span class="built_in">getline</span>(<span class="string">'$'</span>, <span class="string">'$'</span>))</div><div class="line">    <span class="keyword">call</span> <span class="built_in">writefile</span>(<span class="keyword">b</span>,<span class="variable">a:filename</span>, <span class="string">'b'</span>)</div><div class="line">    <span class="keyword">if</span> <span class="variable">a:filename</span> == <span class="built_in">bufname</span>(<span class="string">'%'</span>)</div><div class="line">        <span class="keyword">set</span> nomodified</div><div class="line">    <span class="keyword">endif</span></div><div class="line"><span class="keyword">endfunction</span></div><div class="line"><span class="comment">" Save the current buffer and get rid of the EOF sign.</span></div><div class="line"><span class="function"><span class="keyword">function</span>! <span class="title">SaveNOEOF</span><span class="params">()</span></span></div><div class="line">    <span class="keyword">call</span> SaveAsNOEOF(<span class="built_in">bufname</span>(<span class="string">'%'</span>))</div><div class="line"><span class="keyword">endfunction</span></div><div class="line">command! -<span class="built_in">complete</span>=<span class="keyword">file</span> -nargs=<span class="number">0</span> SaveNOEOF :<span class="keyword">call</span> SaveNOEOF()</div><div class="line">command! -<span class="built_in">complete</span>=<span class="keyword">file</span> -nargs=<span class="number">1</span> SaveAsNOEOF :<span class="keyword">call</span> SaveAsNOEOF(<span class="symbol">&lt;q-args&gt;</span>)</div></pre></td></tr></table></figure>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">" Save the current buffer as a file with no EOF sign.</span></span><br><span class="line"><span class="function"><span class="keyword">function</span>! <span class="title">SaveAsNOEOF</span><span class="params">(filename)</span></span></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">a</span>=<span class="built_in">getline</span>(<span class="number">1</span>,<span class="built_in">line</span>(<span class="string">'$'</span>)-<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">b</span>=<span class="keyword">map</span>(<span class="keyword">a</span>, <span class="string">'iconv(v:val,"'</span>.&amp;enc.<span class="string">'","'</span>.&amp;fenc.<span class="string">'") . nr2char(13)'</span>)</span><br><span class="line">    <span class="keyword">call</span> <span class="built_in">extend</span>(<span class="keyword">b</span>, <span class="built_in">getline</span>(<span class="string">'$'</span>, <span class="string">'$'</span>))</span><br><span class="line">    <span class="keyword">call</span> <span class="built_in">writefile</span>(<span class="keyword">b</span>,<span class="variable">a:filename</span>, <span class="string">'b'</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="variable">a:filename</span> == <span class="built_in">bufname</span>(<span class="string">'%'</span>)</span><br><span class="line">        <span class="keyword">set</span> nomodified</span><br><span class="line">    <span class="keyword">endif</span></span><br><span class="line"><span class="keyword">endfunction</span></span><br><span class="line"><span class="comment">" Save the current buffer and get rid of the EOF sign.</span></span><br><span class="line"><span class="function"><span class="keyword">function</span>! <span class="title">SaveNOEOF</span><span class="params">()</span></span></span><br><span class="line">    <span class="keyword">call</span> SaveAsNOEOF(<span class="built_in">bufname</span>(<span class="string">'%'</span>))</span><br><span class="line"><span class="keyword">endfunction</span></span><br><span class="line">command! -<span class="built_in">complete</span>=<span class="keyword">file</span> -nargs=<span class="number">0</span> SaveNOEOF :<span class="keyword">call</span> SaveNOEOF()</span><br><span class="line">command! -<span class="built_in">complete</span>=<span class="keyword">file</span> -nargs=<span class="number">1</span> SaveAsNOEOF :<span class="keyword">call</span> SaveAsNOEOF(<span class="symbol">&lt;q-args&gt;</span>)</span><br></pre></td></tr></table></figure>
 <p>然後就可以使用SaveNOEOF和SaveAsNOEOF兩條命令去保存沒有EOF的文件了。</p>
 <p><em>說明：本文的目的在于保存文件時移除最後一行的換行符，而并非移除EOF，上述配置中使用EOF只為記憶更容易起見。</em></p>
 <p><strong>更新：</strong></p>

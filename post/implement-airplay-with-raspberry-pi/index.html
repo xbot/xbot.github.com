@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="en">
-    <head>
+    <head><meta name="generator" content="Hexo 3.8.0">
 		
         <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="description" content="">
-        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="shortcut icon" href="/asset/logo.jpg">
         <link rel="canonical" href="http://guolinn.com/">
         <link rel="alternate" type="application/rss+xml" title="晴耕雨讀" href="/atom.xml">
         <title>用Raspberry Pi實現音頻Airplay | 晴耕雨讀</title>
@@ -13,9 +13,9 @@
 
         <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
-        <meta name="HandheldFriendly" content="True" />
-        <meta name="MobileOptimized" content="320" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="HandheldFriendly" content="True">
+        <meta name="MobileOptimized" content="320">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -28,7 +28,7 @@
 	
 
         <header id="header">
-            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀"></a>
             <h1><a href="/">晴耕雨讀</a></h1>
             <p>程序員，最佳實踐和閱讀愛好者，Vim、Archlinux、Mac、iOS擁躉，帝都低端人口。</p>
             <div id="follow-icons">
@@ -51,9 +51,9 @@
     <span class="taglist">  &middot; 
     
     
-      <a href='/tags/最佳實踐/'>最佳實踐</a> 
+      <a href="/tags/最佳實踐/">最佳實踐</a> 
     
-      <a href='/tags/樹莓派/'>樹莓派</a> 
+      <a href="/tags/樹莓派/">樹莓派</a> 
     
     </span>
   
@@ -64,15 +64,15 @@
 <p>用樹莓派做音頻airplay效果不錯，老書架音箱又可以用起來了。</p>
 <p>實現方式是shairplay-sync，利用HDMI轉VGA線上的3.5mm音頻輸出孔，因為我的樹莓派2B的3.5mm音視頻輸出口沒有合適的轉接頭。</p>
 <p>我用的是Arch Linux ARM，需要手動開啓HDMI輸出。修改<code>/boot/config.txt</code>：</p>
-<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="attr">hdmi_force_hotplug</span>=<span class="number">1</span></div><div class="line"><span class="attr">hdmi_drive</span>=<span class="number">2</span></div><div class="line"><span class="attr">config_hdmi_boost</span>=<span class="number">4</span></div><div class="line"><span class="attr">dtparam</span>=audio=<span class="literal">on</span></div></pre></td></tr></table></figure>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">hdmi_force_hotplug</span>=<span class="number">1</span></span><br><span class="line"><span class="attr">hdmi_drive</span>=<span class="number">2</span></span><br><span class="line"><span class="attr">config_hdmi_boost</span>=<span class="number">4</span></span><br><span class="line"><span class="attr">dtparam</span>=audio=<span class="literal">on</span></span><br></pre></td></tr></table></figure>
 <p>重啓後，用alsamixer把樹莓派音量調整到最大值。</p>
 <p>AUR里沒有針對ARM的shairplay-sync，需要手動編譯：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git <span class="built_in">clone</span> https://github.com/mikebrady/shairport-sync.git</div></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 生成configure</span></div><div class="line">autoreconf -i -f</div></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 針對systemd編譯</span></div><div class="line"></div><div class="line">./configure --sysconfdir=/etc --with-alsa --with-avahi --with-ssl=openssl --with-metadata --with-soxr --with-systemd</div><div class="line"></div><div class="line"></div><div class="line"><span class="comment"># END</span></div></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 如果shairport-sync用戶不存在，新增用戶和用戶組</span></div><div class="line"></div><div class="line">getent group shairport-sync &amp;&gt;/dev/null || sudo groupadd -r shairport-sync &gt;/dev/null</div><div class="line"></div><div class="line">getent passwd shairport-sync &amp;&gt; /dev/null || sudo useradd -r -M -g shairport-sync -s /usr/bin/nologin -G audio shairport-sync &gt;/dev/null</div><div class="line"></div><div class="line"></div><div class="line"><span class="comment"># END</span></div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/mikebrady/shairport-sync.git</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成configure</span></span><br><span class="line">autoreconf -i -f</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 針對systemd編譯</span></span><br><span class="line"></span><br><span class="line">./configure --sysconfdir=/etc --with-alsa --with-avahi --with-ssl=openssl --with-metadata --with-soxr --with-systemd</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># END</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 如果shairport-sync用戶不存在，新增用戶和用戶組</span></span><br><span class="line"></span><br><span class="line">getent group shairport-sync &amp;&gt;/dev/null || sudo groupadd -r shairport-sync &gt;/dev/null</span><br><span class="line"></span><br><span class="line">getent passwd shairport-sync &amp;&gt; /dev/null || sudo useradd -r -M -g shairport-sync -s /usr/bin/nologin -G audio shairport-sync &gt;/dev/null</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># END</span></span><br></pre></td></tr></table></figure>
 <p>airplay默認的服務名和樹莓派的hostname一致，可以到<code>/etc/shairport-sync.conf</code>里修改：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">general = &#123;</div><div class="line">    name = &quot;pi&quot;;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">general = &#123;</span><br><span class="line">    name = &quot;pi&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="FAQ"><a href="#FAQ" class="headerlink" title="FAQ"></a>FAQ</h2><h3 id="ALSA-lib-confmisc-c-767-parse-card-cannot-find-card-‘0’"><a href="#ALSA-lib-confmisc-c-767-parse-card-cannot-find-card-‘0’" class="headerlink" title="ALSA lib confmisc.c:767:(parse_card) cannot find card ‘0’"></a>ALSA lib confmisc.c:767:(parse_card) cannot find card ‘0’</h3><p>樹莓派沒聲音，嘗試用mpg123播放mp3時報這個錯。解決辦法是在<code>/boot/config.txt</code>里增加<code>dtparam=audio=on</code>。</p>
 
   </section>

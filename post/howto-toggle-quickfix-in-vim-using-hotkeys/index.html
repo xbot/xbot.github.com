@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="en">
-    <head>
+    <head><meta name="generator" content="Hexo 3.8.0">
 		
         <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="description" content="">
-        <link rel="shortcut icon" href="/asset/logo.jpg"/>
+        <link rel="shortcut icon" href="/asset/logo.jpg">
         <link rel="canonical" href="http://guolinn.com/">
         <link rel="alternate" type="application/rss+xml" title="晴耕雨讀" href="/atom.xml">
         <title>使用热键切换Vim的QuickFix窗口打开状态 | 晴耕雨讀</title>
@@ -13,9 +13,9 @@
 
         <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
-        <meta name="HandheldFriendly" content="True" />
-        <meta name="MobileOptimized" content="320" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="HandheldFriendly" content="True">
+        <meta name="MobileOptimized" content="320">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -28,7 +28,7 @@
 	
 
         <header id="header">
-            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀" /></a>
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀"></a>
             <h1><a href="/">晴耕雨讀</a></h1>
             <p>程序員，最佳實踐和閱讀愛好者，Vim、Archlinux、Mac、iOS擁躉，帝都低端人口。</p>
             <div id="follow-icons">
@@ -51,11 +51,11 @@
     <span class="taglist">  &middot; 
     
     
-      <a href='/tags/vim/'>Vim</a> 
+      <a href="/tags/vim/">Vim</a> 
     
-      <a href='/tags/計算機/'>計算機</a> 
+      <a href="/tags/計算機/">計算機</a> 
     
-      <a href='/tags/热键/'>热键</a> 
+      <a href="/tags/热键/">热键</a> 
     
     </span>
   
@@ -63,8 +63,8 @@
   <h1 class="post-title">使用热键切换Vim的QuickFix窗口打开状态</h1>
   <section class="post-content article-entry">
     <p>QuickFix窗口只有打開和關閉的命令，而使用一個熱鍵來切換打開狀態可以減少熱鍵資源的浪費，使用也更方便。</p>
-<p>從<a href="http://vim.wikia.com/wiki/Toggle_to_open_or_close_the_quickfix_window" target="_blank" rel="external">這裏</a>找到使用自定義函數完成此功能的方法：使用一個全局變量記錄QuickFix窗口的打開狀態，從而判斷是應該關閉還是打開。但其提供的函數存在狀態同步的問題，假如在QuickFix窗口中使用“:q”退出窗口，此方法將不能正常工作。評論中給出了很好的解決方法，但其提供的代碼有些小問題，修改之後如下：</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;leader&gt;</span><span class="keyword">co</span> :QFix<span class="symbol">&lt;CR&gt;</span></div><div class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;leader&gt;</span>ct :<span class="keyword">call</span> QFixToggle(<span class="number">1</span>)<span class="symbol">&lt;CR&gt;</span></div><div class="line">command! -bang -nargs=? QFix <span class="keyword">call</span> QFixToggle(<span class="symbol">&lt;bang&gt;</span><span class="number">0</span>)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span>! <span class="title">QFixToggle</span><span class="params">(forced)</span></span></div><div class="line">    <span class="keyword">if</span> <span class="built_in">exists</span>(<span class="string">"g:qfix_win"</span>) &amp;&amp; <span class="variable">a:forced</span> != <span class="number">0</span></div><div class="line">        <span class="keyword">cclose</span></div><div class="line">    <span class="keyword">else</span></div><div class="line">        <span class="keyword">if</span> <span class="built_in">exists</span>(<span class="string">"g:my_quickfix_win_height"</span>)</div><div class="line">            <span class="keyword">execute</span> <span class="string">"copen "</span>.<span class="variable">g:my_quickfix_win_height</span></div><div class="line">        <span class="keyword">else</span></div><div class="line">            <span class="keyword">copen</span></div><div class="line">        <span class="keyword">endif</span></div><div class="line">    <span class="keyword">endif</span></div><div class="line"><span class="keyword">endfunction</span></div><div class="line"></div><div class="line"><span class="keyword">augroup</span> QFixToggle</div><div class="line">    autocmd!</div><div class="line">    <span class="keyword">autocmd</span> BufWinEnter quickfix <span class="keyword">let</span> <span class="variable">g:qfix_win</span> = <span class="built_in">bufnr</span>(<span class="string">"$"</span>)</div><div class="line">    <span class="keyword">autocmd</span> BufWinLeave * <span class="keyword">if</span> <span class="built_in">exists</span>(<span class="string">"g:qfix_win"</span>) &amp;&amp; <span class="built_in">expand</span>(<span class="string">"&lt;abuf&gt;"</span>) == <span class="variable">g:qfix_win</span> | unlet! <span class="variable">g:qfix_win</span> | <span class="keyword">endif</span></div><div class="line"><span class="keyword">augroup</span> END</div></pre></td></tr></table></figure>
+<p>從<a href="http://vim.wikia.com/wiki/Toggle_to_open_or_close_the_quickfix_window" target="_blank" rel="noopener">這裏</a>找到使用自定義函數完成此功能的方法：使用一個全局變量記錄QuickFix窗口的打開狀態，從而判斷是應該關閉還是打開。但其提供的函數存在狀態同步的問題，假如在QuickFix窗口中使用“:q”退出窗口，此方法將不能正常工作。評論中給出了很好的解決方法，但其提供的代碼有些小問題，修改之後如下：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;leader&gt;</span><span class="keyword">co</span> :QFix<span class="symbol">&lt;CR&gt;</span></span><br><span class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;leader&gt;</span>ct :<span class="keyword">call</span> QFixToggle(<span class="number">1</span>)<span class="symbol">&lt;CR&gt;</span></span><br><span class="line">command! -bang -nargs=? QFix <span class="keyword">call</span> QFixToggle(<span class="symbol">&lt;bang&gt;</span><span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span>! <span class="title">QFixToggle</span><span class="params">(forced)</span></span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">exists</span>(<span class="string">"g:qfix_win"</span>) &amp;&amp; <span class="variable">a:forced</span> != <span class="number">0</span></span><br><span class="line">        <span class="keyword">cclose</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">exists</span>(<span class="string">"g:my_quickfix_win_height"</span>)</span><br><span class="line">            <span class="keyword">execute</span> <span class="string">"copen "</span>.<span class="variable">g:my_quickfix_win_height</span></span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">copen</span></span><br><span class="line">        <span class="keyword">endif</span></span><br><span class="line">    <span class="keyword">endif</span></span><br><span class="line"><span class="keyword">endfunction</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">augroup</span> QFixToggle</span><br><span class="line">    autocmd!</span><br><span class="line">    <span class="keyword">autocmd</span> BufWinEnter quickfix <span class="keyword">let</span> <span class="variable">g:qfix_win</span> = <span class="built_in">bufnr</span>(<span class="string">"$"</span>)</span><br><span class="line">    <span class="keyword">autocmd</span> BufWinLeave * <span class="keyword">if</span> <span class="built_in">exists</span>(<span class="string">"g:qfix_win"</span>) &amp;&amp; <span class="built_in">expand</span>(<span class="string">"&lt;abuf&gt;"</span>) == <span class="variable">g:qfix_win</span> | unlet! <span class="variable">g:qfix_win</span> | <span class="keyword">endif</span></span><br><span class="line"><span class="keyword">augroup</span> END</span><br></pre></td></tr></table></figure>
 
   </section>
   <footer class="post-footer">
