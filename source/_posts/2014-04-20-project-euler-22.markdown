@@ -3,13 +3,13 @@ layout: post
 title: "Project Euler Problem 22 Solved"
 date: 2014-04-20 08:03
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - golang
 - python
 - php
-- 歐拉工程
-- 編程
+- 欧拉工程
+- 编程
 ---
 
 Names scores

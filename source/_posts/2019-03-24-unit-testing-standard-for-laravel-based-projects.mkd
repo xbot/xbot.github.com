@@ -1,26 +1,26 @@
 ---
-title: 基于Laravel的項目的單元測試規範
-categories: 計算機
+title: 基于Laravel的项目的单元测试规范
+categories: 计算机
 tags:
-  - 單元測試
-  - 編程
+  - 单元测试
+  - 编程
   - PHP
   - Laravel
 date: 2019-03-24 22:42:08
 ---
 
 
-單元測試是個好東西，解決了我很多問題，不論開發效率還是代碼質量，都給我助益良多。最近想在團隊内部推廣，就拟了個規範草稿：
+单元测试是个好东西，解决了我很多问题，不论开发效率还是代码质量，都给我助益良多。最近想在团队内部推广，就拟了个规范草稿：
 
-- 什麽是單元？
+- 什么是单元？
 
-  單元是邏輯的最小單位，是函數或方法。
+  单元是逻辑的最小单位，是函数或方法。
 
-  單元測試意味着隻測試單元本身，單元内部調用的其它接口、函數和方法等均稱爲依賴關系。依賴關系自有它們對應的單元測試負責，不在本單元的測試範圍内。
+  单元测试意味着只测试单元本身，单元内部调用的其它接口、函数和方法等均称为依赖关系。依赖关系自有它们对应的单元测试负责，不在本单元的测试范围内。
 
-- 怎麽測試單元？（Stub & Mock）
+- 怎么测试单元？（Stub & Mock）
 
-  依賴關系是脆弱的，它會導緻單元測試的編寫和運行效率低下，甚至易于失敗。以下是項目中的一個測試用例，由于依賴了用戶服務，且該服務在我家無法訪問，導緻測試失敗：
+  依赖关系是脆弱的，它会导致单元测试的编写和运行效率低下，甚至易于失败。以下是项目中的一个测试用例，由于依赖了用户服务，且该服务在我家无法访问，导致测试失败：
 
   ```
     donie@Donies > ~/Projects/app/service-biz >> master > phpunitat57                                  -- INSERT --
@@ -59,11 +59,11 @@ date: 2019-03-24 22:42:08
     Tests: 8, Assertions: 8, Errors: 1.
   ```
 
-  要實現真正的單元測試，不可避免地要對單元内部的依賴關系進行僞造，即Mock。
+  要实现真正的单元测试，不可避免地要对单元内部的依赖关系进行伪造，即Mock。
 
-- 規範
+- 规范
 
-  - 目錄結構
+  - 目录结构
 
     ```
     tests/
@@ -75,7 +75,7 @@ date: 2019-03-24 22:42:08
         ↳ TransactionalTestCase.php
     ```
 
-  - 繼承關系
+  - 继承关系
 
     ```
     App\Tests\TestCase
@@ -87,45 +87,45 @@ date: 2019-03-24 22:42:08
             ...
     ```
 
-  - 接口測試
+  - 接口测试
 
-    - 所有接口都必須有測試用例，代碼覆蓋率100%
-    - 位于`tests/Api`下，命名空間是`Tests/Api`
-    - 和被測試的Controller對應
-    - 隻測試路由和Action本單元的代碼，不測試具體業務邏輯
-    - 具體業務邏輯封裝在Service層，由該層的單元測試負責
-    - 測試代碼中通過Facade實現對Service層的Mock
+    - 所有接口都必须有测试用例，代码覆盖率100%
+    - 位于`tests/Api`下，命名空间是`Tests/Api`
+    - 和被测试的Controller对应
+    - 只测试路由和Action本单元的代码，不测试具体业务逻辑
+    - 具体业务逻辑封装在Service层，由该层的单元测试负责
+    - 测试代码中通过Facade实现对Service层的Mock
 
-  - 單元測試
+  - 单元测试
 
     - Service 
-      - 所有Service層的方法都必須有測試用例，代碼覆蓋率不低于90%
-      - 位于`tests/Services`目錄下，命名空間是`Tests/Services`
-      - 和被測試的Service對應
-      - 通過Facade調用Service層并實現對被測試單元依賴關系的Mock
+      - 所有Service层的方法都必须有测试用例，代码覆盖率不低于90%
+      - 位于`tests/Services`目录下，命名空间是`Tests/Services`
+      - 和被测试的Service对应
+      - 通过Facade调用Service层并实现对被测试单元依赖关系的Mock
     - Repository 
-      - 複雜的或有必要的方法要有測試用例，其餘可以通過Service層的單元測試覆蓋到，代碼覆蓋率不低于90%
-      - 位于`tests/Repositories`目錄下，命名空間是`Tests/Repositories`
-      - 和被測試的Repository對應
+      - 复杂的或有必要的方法要有测试用例，其余可以通过Service层的单元测试覆盖到，代码覆盖率不低于90%
+      - 位于`tests/Repositories`目录下，命名空间是`Tests/Repositories`
+      - 和被测试的Repository对应
     - Helper Functions 
-      - 複雜的或有必要的函數要有測試用例，其餘可以通過其它層的單元測試覆蓋到，代碼覆蓋率100%
-      - 位于`tests/Helpers`目錄下，命名空間是`Tests/Helpers`
-      - 每個測試用例和被測試的helper函數對應
+      - 复杂的或有必要的函数要有测试用例，其余可以通过其它层的单元测试覆盖到，代码覆盖率100%
+      - 位于`tests/Helpers`目录下，命名空间是`Tests/Helpers`
+      - 每个测试用例和被测试的helper函数对应
 
-  - 輔助方法
+  - 辅助方法
 
-    基類中封裝如下輔助方法：
+    基类中封装如下辅助方法：
 
     ```php
     /**
-     * Mock一個對象并返回僞造的實例
+     * Mock一个对象并返回伪造的实例
      *
-     * 可通過回調匿名函數定制Mock的實例的行爲特征。
-     * 當$inject參數爲false時，Mock的實例不被注入容器，缺省爲注入。
+     * 可通过回调匿名函数定制Mock的实例的行为特征。
+     * 当$inject参数为false时，Mock的实例不被注入容器，缺省为注入。
      *
-     * @param mixed $class 類名字符串或類本身
-     * @param callable $handler 回調匿名函數，接收Mock的實例作爲參數，用于定制實例自身行爲特征
-     * @param bool $inject 是否注入容器，缺省爲true
+     * @param mixed $class 类名字符串或类本身
+     * @param callable $handler 回调匿名函数，接收Mock的实例作为参数，用于定制实例自身行为特征
+     * @param bool $inject 是否注入容器，缺省为true
      *
      * @return \\Mockery\\MockInterface
      */
@@ -145,12 +145,12 @@ date: 2019-03-24 22:42:08
     }
       
     /**
-     * Mock一個單例模式的類
+     * Mock一个单例模式的类
      *
-     * 可通過回調匿名函數定制Mock的實例的行爲特征。
+     * 可通过回调匿名函数定制Mock的实例的行为特征。
      *
-     * @param mixed    $class   類名字符串或類本身
-     * @param callable $handler 回調匿名函數，接收Mock的實例作爲參數，用于定制實例自身行爲特征
+     * @param mixed    $class   类名字符串或类本身
+     * @param callable $handler 回调匿名函数，接收Mock的实例作为参数，用于定制实例自身行为特征
      */
     protected function mockSingleton($class, callable $handler = null): void
     {

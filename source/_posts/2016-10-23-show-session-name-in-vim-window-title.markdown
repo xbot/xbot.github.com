@@ -1,14 +1,14 @@
 ---
 layout: post
-title: "在Vim窗口标題中顯示會話名"
+title: "在Vim窗口标题中显示会话名"
 date: 2016-10-23 11:52
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - Vim
 ---
 
-同時處理多個項目時，在窗口标題中顯示會話名，方便區分，需用[session][1]管理會話。
+同时处理多个项目时，在窗口标题中显示会话名，方便区分，需用[session][1]管理会话。
 
 ```vim
 " custom the window title

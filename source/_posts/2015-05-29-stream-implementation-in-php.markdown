@@ -1,25 +1,25 @@
 ---
 layout: post
-title: "PHP流的實現"
+title: "PHP流的实现"
 date: 2015-05-29 17:33
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - PHP
-- 源碼
+- 源码
 ---
 
 ## 流的概念
 
-流是一系列概念的集合，包括流包裝器、流資源、流操作、上下文等內容。流是對不同資源進行操作的抽象，允許線性地從指定位置讀取或寫入數據，通過一套統一的API簡化對資源操作的實現。
+流是一系列概念的集合，包括流包装器、流资源、流操作、上下文等内容。流是对不同资源进行操作的抽象，允许线性地从指定位置读取或写入数据，通过一套统一的API简化对资源操作的实现。
 
-流由scheme://target指代，scheme是包裝器（Wrapper）的名字，target是流的目標地址。
+流由scheme://target指代，scheme是包装器（Wrapper）的名字，target是流的目标地址。
 
-PHP的流的實現較Java簡單，後者可以通過嵌套實現更靈活的應用。
+PHP的流的实现较Java简单，后者可以通过嵌套实现更灵活的应用。
 
-## 流的實現
+## 流的实现
 
-### 存儲結構
+### 存储结构
 
 {% codeblock lang:c %}
 struct _php_stream  {
@@ -75,9 +75,9 @@ typedef struct _php_stream_ops  {
 } php_stream_ops;
 {% endcodeblock %}
 
-php_stream結構體最重要的成員是ops和abstract。ops包含了流實例的所有操作邏輯，特別地，php_stream_ops->close在php_stream結構被回收前提供了回收與該流實例相關的資源的機會。abstract用來存儲一個自定義結構的數據，在流的操作邏輯裡可以方便的訪問。
+php_stream结构体最重要的成员是ops和abstract。ops包含了流实例的所有操作逻辑，特别地，php_stream_ops->close在php_stream结构被回收前提供了回收与该流实例相关的资源的机会。abstract用来存储一个自定义结构的数据，在流的操作逻辑里可以方便的访问。
 
-### 實現
+### 实现
 
 {% codeblock lang:c %}
 #define PHP_DONIESTREAM_STREAMTYPE "doniestream"
@@ -120,13 +120,13 @@ static php_stream_ops php_doniestream_ops = {
 };
 {% endcodeblock %}
 
-主要是流的操作邏輯的實現，最後構建的php_stream_ops結構用於後面流包裝器中初始化流實例時賦給php_stream->ops。
+主要是流的操作逻辑的实现，最后构建的php_stream_ops结构用于后面流包装器中初始化流实例时赋给php_stream->ops。
 
-## 包裝器的實現
+## 包装器的实现
 
-Wrapper是對某一協議的封裝，主要包含對該類型的流的一系列操作邏輯的實現。
+Wrapper是对某一协议的封装，主要包含对该类型的流的一系列操作逻辑的实现。
 
-### 存儲結構
+### 存储结构
 
 {% codeblock lang:c %}
 struct _php_stream_wrapper	{
@@ -159,9 +159,9 @@ typedef struct _php_stream_wrapper_ops {
 } php_stream_wrapper_ops;
 {% endcodeblock %}
 
-php_stream_wrapper中最重要的是ops成員，它包含了所有該類型的流的操作邏輯的實現。其中最重要的是stream_opener和stream_closer，前者是流的實例化邏輯，後者是流的析構邏輯。特別的，stream_closer主要是用來銷毀php_stream結構，而php_stream_ops->close是用來回收所有和該流實例相關的資源。
+php_stream_wrapper中最重要的是ops成员，它包含了所有该类型的流的操作逻辑的实现。其中最重要的是stream_opener和stream_closer，前者是流的实例化逻辑，后者是流的析构逻辑。特别的，stream_closer主要是用来销毁php_stream结构，而php_stream_ops->close是用来回收所有和该流实例相关的资源。
 
-### 實現
+### 实现
 
 {% codeblock lang:c %}
 #define PHP_DONIESTREAM_WRAPPER "donie"
@@ -243,10 +243,10 @@ PHP_MSHUTDOWN_FUNCTION(donie)
 }
 {% endcodeblock %}
 
-PHP_DONIESTREAM_WRAPPER定義了協議名“donie”，所有對格式為“donie://XXX”地址的操作將由這個流實現。
+PHP_DONIESTREAM_WRAPPER定义了协议名“donie”，所有对格式为“donie://XXX”地址的操作将由这个流实现。
 
-donie_stream_data是一個自定義的結構體，在創建流實例的時候初始化並賦給php_stream->abstract，為以後對流的操作提供方便。
+donie_stream_data是一个自定义的结构体，在创建流实例的时候初始化并赋给php_stream->abstract，为以后对流的操作提供方便。
 
-這裡只實現了最關鍵的stream_opener函數，其中，用php_stream_alloc()創建新的流實例。
+这里只实现了最关键的stream_opener函数，其中，用php_stream_alloc()创建新的流实例。
 
-最後在模塊的MINIT中用php_register_url_stream_wrapper()註冊包裝器，並在MSHUTDOWN中用php_unregister_url_stream_wrapper()註銷。
+最后在模块的MINIT中用php_register_url_stream_wrapper()注册包装器，并在MSHUTDOWN中用php_unregister_url_stream_wrapper()注销。

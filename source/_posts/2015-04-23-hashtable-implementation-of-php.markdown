@@ -1,37 +1,37 @@
 ---
 layout: post
-title: "PHP哈希表的實現與操作"
+title: "PHP哈希表的实现与操作"
 date: 2015-04-23 15:56
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - PHP
-- 源碼
+- 源码
 ---
 
-## 結構
+## 结构
 
 {% codeblock lang:c %}
-// 哈希表結構
+// 哈希表结构
 typedef struct _hashtable {
     uint nTableSize;
     uint nTableMask;
-    uint nNumOfElements;           // 全部元素數
-    ulong nNextFreeElement;        // 下一個可用的整數鍵
-    Bucket *pInternalPointer;      // 枚舉操作時使用，指向當前Bucket
+    uint nNumOfElements;           // 全部元素数
+    ulong nNextFreeElement;        // 下一个可用的整数键
+    Bucket *pInternalPointer;      // 枚举操作时使用，指向当前Bucket
     Bucket *pListHead;
     Bucket *pListTail;
     Bucket **arBuckets;
-    dtor_func_t pDestructor;       // 元素的析構函數
-    zend_bool persistent;          // 是否在本次請求結束後保留哈希表
-    unsigned char nApplyCount;     // 循環級別，防止循環引用導致遍歷哈希表時死循環
-    zend_bool bApplyProtection;    // 是否防止死循環
+    dtor_func_t pDestructor;       // 元素的析构函数
+    zend_bool persistent;          // 是否在本次请求结束后保留哈希表
+    unsigned char nApplyCount;     // 循环级别，防止循环引用导致遍历哈希表时死循环
+    zend_bool bApplyProtection;    // 是否防止死循环
 #if ZEND_DEBUG
     int inconsistent;
 #endif
 } HashTable;
 
-// Bucket結構
+// Bucket结构
 typedef struct bucket {
     ulong h;
     uint nKeyLength;
@@ -45,27 +45,27 @@ typedef struct bucket {
 } Bucket;
 {% endcodeblock %}
 
-### 哈希衝突處理
+### 哈希冲突处理
 
-哈希表通過計算鍵值的哈希值，將對應的數據映射到對應的槽上。理論上會存在不同的鍵的哈希值相同的情況。
+哈希表通过计算键值的哈希值，将对应的数据映射到对应的槽上。理论上会存在不同的键的哈希值相同的情况。
 
-處理哈希衝突的方法一般有兩種：開放尋址和鏈表。開放尋址法是將衝突的元素順序放到下一個空槽，理論上會導致衝突越來越多，性能快速下降。鏈表法是將衝突的元素插入對應的槽，與前一個元素組成一個鏈表。PHP使用鏈表法。
+处理哈希冲突的方法一般有两种：开放寻址和链表。开放寻址法是将冲突的元素顺序放到下一个空槽，理论上会导致冲突越来越多，性能快速下降。链表法是将冲突的元素插入对应的槽，与前一个元素组成一个链表。PHP使用链表法。
 
-PHP的哈希表中的Buckets組成兩種雙向鏈表。一種由每個槽中的所有Bucket分別組成，一種是整個哈希表中的Bucket組成一個。Bucket結構裡，pNext指向該槽的鏈表中的下一個Bucket，pLast指向上一個；pListNext指向整個哈希表鏈表的下一個Bucket，pListLast指向上一個。
+PHP的哈希表中的Buckets组成两种双向链表。一种由每个槽中的所有Bucket分别组成，一种是整个哈希表中的Bucket组成一个。Bucket结构里，pNext指向该槽的链表中的下一个Bucket，pLast指向上一个；pListNext指向整个哈希表链表的下一个Bucket，pListLast指向上一个。
 
-### pData與pDataPtr
+### pData与pDataPtr
 
-賦值到Bucket時，數據會被複製一份，pData中保存指向該數據拷貝的指針。特別地，如果保存一個指針到Bucket，會先將該指針保存到pDataPtr，然後將pData指向pDataPtr，即pData中保存的是指向pDataPtr中保存的指針的指針。這樣可以避免一次拷貝數據時分配內存的操作，提高效率。
+赋值到Bucket时，数据会被复制一份，pData中保存指向该数据拷贝的指针。特别地，如果保存一个指针到Bucket，会先将该指针保存到pDataPtr，然后将pData指向pDataPtr，即pData中保存的是指向pDataPtr中保存的指针的指针。这样可以避免一次拷贝数据时分配内存的操作，提高效率。
 
-### nTableSize與nTableMask
+### nTableSize与nTableMask
 
-nTableSize保存的是arBuckets的Bucket個數。它的值永遠是個大於等於8的、2的n次方的整數。當現有容量不滿足需要時，arBuckets會重新分配一個大小是原來兩倍的空間，nTableSize相應地被更新為新的數值。
+nTableSize保存的是arBuckets的Bucket个数。它的值永远是个大于等于8的、2的n次方的整数。当现有容量不满足需要时，arBuckets会重新分配一个大小是原来两倍的空间，nTableSize相应地被更新为新的数值。
 
 nTableMask = nTableSize - 1
 
-哈希值h一般比nTableSize大，所以要用哈希值對nTableSize取模，以確定對應的Bucket。由於取模操作運算量大，且nTableSize永遠是2的n次冪，所以用“**h & (nTableSize - 1)**”替代。
+哈希值h一般比nTableSize大，所以要用哈希值对nTableSize取模，以确定对应的Bucket。由于取模操作运算量大，且nTableSize永远是2的n次幂，所以用“**h & (nTableSize - 1)**”替代。
 
-## 初始化與銷毀
+## 初始化与销毁
 
 {% codeblock lang:c %}
 // init hashtable
@@ -85,27 +85,27 @@ return SUCCESS;
 
 ### 初始化哈希表
 
-ALLOC_HASHTABLE就是用emalloc()分配內存。
+ALLOC_HASHTABLE就是用emalloc()分配内存。
 
 #### zend_hash_init()
 
 >zend_hash_init(HashTable *ht, uint nSize, dtor_func_t pDestructor, zend_bool persistent ZEND_FILE_LINE_DC)
 
-nSize是哈希表的初始長度，實際分配為最接近指定值的2的n次方，最小為8。
+nSize是哈希表的初始长度，实际分配为最接近指定值的2的n次方，最小为8。
 
-pDestructor是被存儲數據的析構函數，默認為ZVAL_PTR_DTOR，對於一般情況（Bucket中存儲的是zval）適用。
+pDestructor是被存储数据的析构函数，默认为ZVAL_PTR_DTOR，对于一般情况（Bucket中存储的是zval）适用。
 
-persistent，1表示本次請求結束後保留哈希表，0反之。
+persistent，1表示本次请求结束后保留哈希表，0反之。
 
-### 銷毀哈希表
+### 销毁哈希表
 
-zend_hash_clean()對HT所有Bucket調用析構函數，並重置HT的所有指針。
+zend_hash_clean()对HT所有Bucket调用析构函数，并重置HT的所有指针。
 
-zend_hash_destroy()除了銷毀所有Bucket存儲的數據，連arBuckets的空間也釋放掉。
+zend_hash_destroy()除了销毁所有Bucket存储的数据，连arBuckets的空间也释放掉。
 
-FREE_HASHTABLE宏其實就是efree()。
+FREE_HASHTABLE宏其实就是efree()。
 
-## 操作數字鍵
+## 操作数字键
 
 {% codeblock lang:c %}
 // add a string with an integer key 2 to myht
@@ -166,7 +166,7 @@ else
 }
 {% endcodeblock %}
 
-## 操作字符串鍵
+## 操作字符串键
 
 {% codeblock lang:c %}
 // add an integer indexed by a string key, using zend_hash_update()
@@ -225,15 +225,15 @@ else
 }
 {% endcodeblock %}
 
-### 鍵的長度
+### 键的长度
 
-鍵長包括鍵字符串末尾的NUL字節。如果直接指定，應是**sizeof("key1")**；如果是char\*類型變量，應是**strlen(key1)+1**。
+键长包括键字符串末尾的NUL字节。如果直接指定，应是**sizeof("key1")**；如果是char\*类型变量，应是**strlen(key1)+1**。
 
 ### 快速操作
 
-適用於頻繁操作特定鍵的場景，只計算一次哈希值，加速操作。
+适用于频繁操作特定键的场景，只计算一次哈希值，加速操作。
 
-對應的，有一組名帶“quick”的函數。
+对应的，有一组名带“quick”的函数。
 
 {% codeblock lang:c %}
 // quick operations leveraging a one-time hashed value
@@ -247,7 +247,7 @@ zend_hash_quick_update(myht, "motto", sizeof("motto"), h, &zv5, sizeof(zval *), 
 php_printf("The value indexed by motto is updated with the quick operation.\n");
 {% endcodeblock %}
 
-## 遍歷
+## 遍历
 
 {% codeblock lang:c %}
 static int hashtable_traverse_callback(void *pDest TSRMLS_DC, int num_args, va_list args, zend_hash_key *hash_key)
@@ -273,9 +273,9 @@ static int hashtable_traverse_callback(void *pDest TSRMLS_DC, int num_args, va_l
 zend_hash_apply_with_arguments(myht, hashtable_traverse_callback, 1, "nonsense");
 {% endcodeblock %}
 
-### 三個函數
+### 三个函数
 
-遍歷哈希表的三個函數：
+遍历哈希表的三个函数：
 
 {% codeblock lang:c %}
 void zend_hash_apply(HashTable *ht, apply_func_t apply_func TSRMLS_DC);
@@ -287,7 +287,7 @@ void zend_hash_apply_with_arguments(
 );
 {% endcodeblock %}
 
-三個函數接受的回調函數的類型：
+三个函数接受的回调函数的类型：
 
 {% codeblock lang:c %}
 typedef int (*apply_func_t)(void *pDest TSRMLS_DC);
@@ -297,7 +297,7 @@ typedef int (*apply_func_args_t)(
 );
 {% endcodeblock %}
 
-zend_hash_key的定義為：
+zend_hash_key的定义为：
 
 {% codeblock lang:c %}
 typedef struct _zend_hash_key {
@@ -307,16 +307,16 @@ typedef struct _zend_hash_key {
 } zend_hash_key;
 {% endcodeblock %}
 
-nKeyLength為0表示索引是整數，值為h；否則是字符串，值為arKey。
+nKeyLength为0表示索引是整数，值为h；否则是字符串，值为arKey。
 
-回調函數的返回值：
+回调函数的返回值：
 
-  - ZEND_HASH_APPLY_KEEP：繼續遍歷。
-  - ZEND_HASH_APPLY_REMOVE：遍歷後刪除遍歷過的元素。
-  - ZEND_HASH_APPLY_STOP：遍歷當前元素後停止。
-  - ZEND_HASH_APPLY_REMOVE | ZEND_HASH_APPLY_STOP：遍歷當前元素後，刪除該元素並停止。
+  - ZEND_HASH_APPLY_KEEP：继续遍历。
+  - ZEND_HASH_APPLY_REMOVE：遍历后删除遍历过的元素。
+  - ZEND_HASH_APPLY_STOP：遍历当前元素后停止。
+  - ZEND_HASH_APPLY_REMOVE | ZEND_HASH_APPLY_STOP：遍历当前元素后，删除该元素并停止。
 
-## 枚舉
+## 枚举
 
 {% codeblock lang:c %}
 // iterating the hash table
@@ -341,13 +341,13 @@ for (zend_hash_internal_pointer_reset_ex(myht, &pos);
 }
 {% endcodeblock %}
 
-### 三個函數
+### 三个函数
 
-三個函數均帶“\_ex”後綴，使用外部指針。不帶此後綴的函數使用哈希表內部指針，此時嵌套地遍歷哈希表可能導致指針修改錯誤。
+三个函数均带“\_ex”后缀，使用外部指针。不带此后缀的函数使用哈希表内部指针，此时嵌套地遍历哈希表可能导致指针修改错误。
 
-### 取鍵的新方式
+### 取键的新方式
 
-PHP 5.5以上版本新增函數，直接取鍵值到zval：
+PHP 5.5以上版本新增函数，直接取键值到zval：
 
 {% codeblock lang:c %}
 zval *key;
@@ -355,17 +355,17 @@ MAKE_STD_ZVAL(key);
 zend_hash_get_current_key_zval_ex(myht, key, &pos);
 {% endcodeblock %}
 
-## 複製與合併
+## 复制与合并
 
 {% codeblock lang:c %}
 zend_hash_copy(ht_target, ht_source, (copy_ctor_func_t) zval_add_ref, NULL, sizeof(zval *));
 {% endcodeblock %}
 
-zval_add_ref是適用於zval的回調函數，直接引用原數據。
+zval_add_ref是适用于zval的回调函数，直接引用原数据。
 
-當目標哈希表已存在對應鍵值的數據時，目標元素會被源元素覆蓋。使用zend_hash_merge()可通過最後一個參數指定是否用源數據覆蓋目標數據。
+当目标哈希表已存在对应键值的数据时，目标元素会被源元素覆盖。使用zend_hash_merge()可通过最后一个参数指定是否用源数据覆盖目标数据。
 
-函數zend_hash_merge_ex()可指定一個回調函數，用於過濾要合併的元素：
+函数zend_hash_merge_ex()可指定一个回调函数，用于过滤要合并的元素：
 
 {% codeblock lang:c %}
 zend_hash_merge_ex(
@@ -374,7 +374,7 @@ zend_hash_merge_ex(
 );
 {% endcodeblock %}
 
-回調函數的格式為：
+回调函数的格式为：
 
 {% codeblock lang:c %}
 typedef zend_bool (*merge_checker_func_t)(
@@ -382,32 +382,32 @@ typedef zend_bool (*merge_checker_func_t)(
 );
 {% endcodeblock %}
 
-## 比較、排序和極值
+## 比较、排序和极值
 
-比較函數：
+比较函数：
 
 {% codeblock lang:c %}
 int zend_hash_compare(
     HashTable *ht1, HashTable *ht2, compare_func_t compar, zend_bool ordered TSRMLS_DC
 );
 
-// 回調函數：
+// 回调函数：
 typedef int (*compare_func_t)(const void *left, const void *right TSRMLS_DC);
 {% endcodeblock %}
 
-排序函數：
+排序函数：
 
 {% codeblock lang:c %}
 int zend_hash_sort(HashTable *ht, sort_func_t sort_func, compare_func_t compar, int renumber TSRMLS_DC);
 
-// 回調函數
+// 回调函数
 typedef void (*sort_func_t)(
     void *buckets, size_t num_of_buckets, register size_t size_of_bucket,
     compare_func_t compare_func TSRMLS_DC
 );
 {% endcodeblock %}
 
-極值函數：
+极值函数：
 
 {% codeblock lang:c %}
 int zend_hash_minmax(
@@ -415,4 +415,4 @@ int zend_hash_minmax(
 );
 {% endcodeblock %}
 
-flag=0，極小值寫入pData；flag=1，極大值寫入pData。
+flag=0，极小值写入pData；flag=1，极大值写入pData。

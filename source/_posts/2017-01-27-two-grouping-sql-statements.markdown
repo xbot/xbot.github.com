@@ -1,17 +1,17 @@
 ---
 layout: post
-title: "兩條分組的SQL語句"
+title: "两条分组的SQL语句"
 date: 2017-01-27 17:51
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - sql
-- 編程
+- 编程
 ---
 
-最近做訪問統計解決的兩個問題：
+最近做访问统计解决的两个问题：
 
-## 根據日期分組
+## 根据日期分组
 
 ```sql
 select (
@@ -34,7 +34,7 @@ select (
        )
 ```
 
-## 選擇每組數據的第一條
+## 选择每组数据的第一条
 
 ```sql
 select a.session_id,a.created_at,a.province,a.referer,a.uri,a.ipv4,

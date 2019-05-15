@@ -1,18 +1,18 @@
 ---
 layout: post
-title: "用樹苺派搭NAS"
+title: "用树苺派搭NAS"
 date: 2015-04-03 15:13
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
-- 樹苺派
+- 树苺派
 - Geek
 - 智能家居
 ---
 
-為了讓盒子能直接播放[遠程下載](/post/remote-downloading-with-raspberry-pi/)的電影，繼續在樹苺派上搭NAS。
+为了让盒子能直接播放[远程下载](/post/remote-downloading-with-raspberry-pi/)的电影，继续在树苺派上搭NAS。
 
-安裝samba，然後配置：
+安装samba，然后配置：
 
 {% codeblock lang:ini /etc/samba/smb.conf %}
 [nas]
@@ -24,10 +24,10 @@ directory mask = 0771
 read only = no
 {% endcodeblock %}
 
-把Linux用戶添加到samba並設置密碼：
+把Linux用户添加到samba并设置密码：
 
 {% codeblock lang:bash %}
 smbpasswd -a pi
 {% endcodeblock %}
 
-盒子上的Kodi硬解有問題，用ES+MX Player替代。電腦上用Kodi。
+盒子上的Kodi硬解有问题，用ES+MX Player替代。电脑上用Kodi。

@@ -1,24 +1,24 @@
 ---
-title: 利用命名空間Mock PHP的內建函數
+title: 利用命名空间Mock PHP的内建函数
 date: 2017-04-30 09:06:17
-categories: 計算機
+categories: 计算机
 tags:
 - php
-- 編程
-- 測試
+- 编程
+- 测试
 ---
 
-## 簡述
+## 简述
 
-Mock PHP的內建函數一般有兩種方法：命名空間法和依賴注入法。
+Mock PHP的内建函数一般有两种方法：命名空间法和依赖注入法。
 
-命名空間法是利用PHP優先使用同命名空間內函數的特性，在測試對象的命名空間內重載內建函數來實現。前提是內建函數在被調用時沒有使用命名空間，例如：`\debug_backtrace()`是不能使用本方法的。
+命名空间法是利用PHP优先使用同命名空间内函数的特性，在测试对象的命名空间内重载内建函数来实现。前提是内建函数在被调用时没有使用命名空间，例如：`\debug_backtrace()`是不能使用本方法的。
 
-上篇文章[《接口編程中記錄日誌的最佳實踐》](/post/the-best-practice-of-logging-in-api-programming/)中實現的日誌類中，核心部分調用了`debug_backtrace()`函數獲取方法調用堆棧。下面討論下如何利用命名空間法實現對此函數的mock。
+上篇文章[《接口编程中记录日志的最佳实践》](/post/the-best-practice-of-logging-in-api-programming/)中实现的日志类中，核心部分调用了`debug_backtrace()`函数获取方法调用堆栈。下面讨论下如何利用命名空间法实现对此函数的mock。
 
-## 實現
+## 实现
 
-先看代碼：
+先看代码：
 
 ```php
 <?php
@@ -116,7 +116,7 @@ class LogTest extends TestCase
 }
 ```
 
-最重要的是第一行，這裡把測試類的命名空間設置得和測試對象一致，這樣在下面重載的`debug_backtrace()`函數就會在測試對象中被優先使用。
+最重要的是第一行，这里把测试类的命名空间设置得和测试对象一致，这样在下面重载的`debug_backtrace()`函数就会在测试对象中被优先使用。
 
-在重載的函數中，通過全局變量`$calledInController`選擇輸出事先捕獲的真實數據，從而mock出符合我們需要的函數。
+在重载的函数中，通过全局变量`$calledInController`选择输出事先捕获的真实数据，从而mock出符合我们需要的函数。
 

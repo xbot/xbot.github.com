@@ -3,9 +3,9 @@ layout: post
 title: "Kindle Lazybones: Control Kindle From Your Phone"
 date: 2016-06-06 10:33
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
-- 編程
+- 编程
 - Kindle
 ---
 
@@ -55,7 +55,7 @@ For how to do that, refer to [Kindle 5.6.5 越狱教程：支持所有 5.6.5 固
 
 KUAL is an application launcher for Kindle, MRPI is a package installer plugin for KUAL and USBNetwork is a package which provides SSH service for Kindle.
 
-For how to do that, refer to [Kindle 5.6.5 越狱插件资源下載及详细安装步骤](http://kindlefere.com/post/311.html) in chinese or the following in english:
+For how to do that, refer to [Kindle 5.6.5 越狱插件资源下载及详细安装步骤](http://kindlefere.com/post/311.html) in chinese or the following in english:
 
   - [KUAL: Kindle Unified Application Launcher (v 2.6)](http://www.mobileread.com/forums/showthread.php?t=203326)
   - [MobileRead Package Installer](http://www.mobileread.com/forums/showthread.php?t=251143)

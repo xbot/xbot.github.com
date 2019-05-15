@@ -1,9 +1,9 @@
 ---
 layout: post
-title: "用銳速加速Shadowsocks"
+title: "用锐速加速Shadowsocks"
 date: 2016-12-25 15:39
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - vps
 - vultr
@@ -11,11 +11,11 @@ tags:
 - shadowsocks
 ---
 
-各種VPS加速方案一般都是重復發包的原理，也就是用流量換速度。
+各种VPS加速方案一般都是重复发包的原理，也就是用流量换速度。
 
-先嘗試了kcptun，因為據說資源佔用很低，不過部署後打不開網頁。然後試了一下銳速，用一鍵腳本安裝，很方便，而且不像kcptun，不需要客戶端。部署前在Youtube只能看最低清晰度，現在在網絡條件好的情況下，720p也不卡，效果很明顯。
+先尝试了kcptun，因为据说资源占用很低，不过部署后打不开网页。然后试了一下锐速，用一键脚本安装，很方便，而且不像kcptun，不需要客户端。部署前在Youtube只能看最低清晰度，现在在网络条件好的情况下，720p也不卡，效果很明显。
 
-不過銳速不支持OpenVZ，所以搬瓦工用不了，我用的 [Vultr]() 東京機房的基礎配置。
+不过锐速不支持OpenVZ，所以搬瓦工用不了，我用的 [Vultr]() 东京机房的基础配置。
 
-## 參考
-* [銳速破解版linux一鍵自動安裝包](https://www.91yun.org/archives/683)
+## 参考
+* [锐速破解版linux一键自动安装包](https://www.91yun.org/archives/683)

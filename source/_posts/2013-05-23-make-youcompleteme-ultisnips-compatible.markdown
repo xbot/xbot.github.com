@@ -3,7 +3,7 @@ layout: post
 title: "How to Make YouCompleteMe Compatible with UltiSnips"
 date: 2013-05-23 11:26
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - Vim
 - 插件
@@ -29,10 +29,10 @@ Then set the default action of SuperTab to triggering \<C-TAB\>:
 
 OK, job done.
 
-### 相關閱讀：
+### 相关阅读：
 
-* [用neocomplete換掉了YouCompleteMe](/post/replace-youcompleteme-with-neocomplete/)
-* [Vim的終極自動補全插件：NeoComplCache](/post/neocomplcache-vim/)
+* [用neocomplete换掉了YouCompleteMe](/post/replace-youcompleteme-with-neocomplete/)
+* [Vim的终极自动补全插件：NeoComplCache](/post/neocomplcache-vim/)
 
 [NeoComplCache]: https://github.com/Shougo/neocomplcache
 [YouCompleteMe]: https://github.com/Valloric/YouCompleteMe

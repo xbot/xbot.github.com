@@ -1,36 +1,36 @@
 ---
 layout: post
-title: "PHP框架實戰（一）：框架入口與類的自動加載"
+title: "PHP框架实战（一）：框架入口与类的自动加载"
 date: 2013-12-28 01:56
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - PHP
 - Flamework
 - 框架
-- 編程
+- 编程
 ---
 
-目標
+目标
 ----
 
-實現框架入口和類的自動加載。
+实现框架入口和类的自动加载。
 
-獲取代碼
+获取代码
 --------
 
 {% codeblock lang:bash %}
 git checkout v0.1
 {% endcodeblock %}
 
-設計與實現
+设计与实现
 ----------
 
-通過兩個類實現本次目標。
+通过两个类实现本次目标。
 
-靜態類Flame作為整個框架的入口，實現一系列框架級公用靜態方法（_例如創建應用實例和自動加載類_）。
+静态类Flame作为整个框架的入口，实现一系列框架级公用静态方法（_例如创建应用实例和自动加载类_）。
 
-WebApplication是應用的抽象層，實現應用的入口和其它應用級（**即運行時**）公用方法（_例如讀取配置文件_）。
+WebApplication是应用的抽象层，实现应用的入口和其它应用级（**即运行时**）公用方法（_例如读取配置文件_）。
 
 **程序入口**
 
@@ -41,7 +41,7 @@ Flame::createApplication($config)->run();
 ?>
 {% endcodeblock %}
 
-此處傳入的$config是應用配置文件的路徑，該配置文件內容格式如下：
+此处传入的$config是应用配置文件的路径，该配置文件内容格式如下：
 
 {% codeblock lang:php %}
 <?php
@@ -52,9 +52,9 @@ return array(
 ?>
 {% endcodeblock %}
 
-在文件中直接return一個關聯數組的好處是，加載該文件時，include()函數的返回值就是該數組，代碼更簡潔，效率比解析其它格式配置文件高。
+在文件中直接return一个关联数组的好处是，加载该文件时，include()函数的返回值就是该数组，代码更简洁，效率比解析其它格式配置文件高。
 
-**類的自動加載**
+**类的自动加载**
 
 {% codeblock lang:php %}
 <?php
@@ -85,14 +85,14 @@ spl_autoload_register(__NAMESPACE__.'\\Flame::autoload');
 ?>
 {% endcodeblock %}
 
-通過函數spl_autoload_register()註冊Flame::autoload()方法。當用到一個類時，PHP會先檢查該類是否已加載，如果沒有，就把包括命名空間在內的完整的類名傳遞給autoload()，最終完成類的加載。
+通过函数spl_autoload_register()注册Flame::autoload()方法。当用到一个类时，PHP会先检查该类是否已加载，如果没有，就把包括命名空间在内的完整的类名传递给autoload()，最终完成类的加载。
 
-> 當不填參數調用spl_autoload_register()時，PHP使用默認的spl_autoload()函數加載類文件，如果命名空間與目錄結構完全對應，也可以實現自動加載，而且效率比指定的自定義加載方法更高。但是spl_autoload()有個歷久彌新的Bug，它總是試圖加載文件名是小寫字母的文件，例如，假如類名是MyClass，spl_autoload()就去找文件名為myclass.php的文件，然而一般情況是文件名與類名相同，即MyClass.php，這在大小寫敏感的系統中就找不到了。這個函數的開發者得有多恨Linux啊。
+> 当不填参数调用spl_autoload_register()时，PHP使用默认的spl_autoload()函数加载类文件，如果命名空间与目录结构完全对应，也可以实现自动加载，而且效率比指定的自定义加载方法更高。但是spl_autoload()有个历久弥新的Bug，它总是试图加载文件名是小写字母的文件，例如，假如类名是MyClass，spl_autoload()就去找文件名为myclass.php的文件，然而一般情况是文件名与类名相同，即MyClass.php，这在大小写敏感的系统中就找不到了。这个函数的开发者得有多恨Linux啊。
 
-驗證Demo
+验证Demo
 --------
 
-整個Demo程序的index.php只需包含以下代碼即可：
+整个Demo程序的index.php只需包含以下代码即可：
 
 {% codeblock lang:php %}
 <?php
@@ -105,11 +105,11 @@ Flame::createApplication($_config)->run();
 ?>
 {% endcodeblock %}
 
-總結
+总结
 ----
 
-這樣一個最簡單的框架就實現了。
+这样一个最简单的框架就实现了。
 
-通過這兩個類，將框架級靜態邏輯與運行時的動態邏輯分開。對應用高度的抽象和OOP封裝使框架和應用的代碼更易讀。單一的應用入口也方便實現一些橫向邏輯（_例如過濾器_）。
+通过这两个类，将框架级静态逻辑与运行时的动态逻辑分开。对应用高度的抽象和OOP封装使框架和应用的代码更易读。单一的应用入口也方便实现一些横向逻辑（_例如过滤器_）。
 
-此外，利用include()會將它所加載的腳本中return的值作為自身返回值的特性實現配置文件的讀取，簡化了代碼，提高了效率。類的自動加載使開發者不必再關心類文件的引入和移除，避免因多餘的include或require而導致效率下降和資源浪費。
+此外，利用include()会将它所加载的脚本中return的值作为自身返回值的特性实现配置文件的读取，简化了代码，提高了效率。类的自动加载使开发者不必再关心类文件的引入和移除，避免因多余的include或require而导致效率下降和资源浪费。

@@ -1,16 +1,16 @@
 ---
 layout: post
-title: "Vim強制在PHP中使用HTML註釋的方法"
+title: "Vim强制在PHP中使用HTML注释的方法"
 date: 2014-11-13 21:45
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - vim
 - php
 - html
 ---
 
-對PHP頁面模板中的HTML做註釋，NERDCommenter是根據文件類型處理的，所以必須臨時轉換文件類型：
+对PHP页面模板中的HTML做注释，NERDCommenter是根据文件类型处理的，所以必须临时转换文件类型：
 
 {% codeblock lang:vim %}
 " 强制使用HTML的注释
@@ -35,4 +35,4 @@ au FileType php nmap <buffer> <leader>fhcu :call ForceHTMLComment("n", "Uncommen
 au FileType php vmap <buffer> <leader>fhcu :call ForceHTMLComment("x", "Uncomment")<CR>
 {% endcodeblock %}
 
-有日子沒寫vimscript了，手都生了。
+有日子没写vimscript了，手都生了。

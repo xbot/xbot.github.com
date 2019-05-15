@@ -1,32 +1,32 @@
 ---
 layout: post
-title: "運行時可裝卸的Mixin的PHP實現"
+title: "运行时可装卸的Mixin的PHP实现"
 date: 2014-12-04 11:52
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
-- 編程
+- 编程
 - php
 ---
 
-PHP的Trait可以實現加載時（load time）的混入（mixin）。作爲元編程的一部分，運行時（run time）的混入擁有更大的靈活性。下面利用PHP的魔術方法實現運行時的混入。
+PHP的Trait可以实现加载时（load time）的混入（mixin）。作为元编程的一部分，运行时（run time）的混入拥有更大的灵活性。下面利用PHP的魔术方法实现运行时的混入。
 
 ```php
 <?php
 /**
- * 支持混入的類
+ * 支持混入的类
  */
 class Component
 {
     // ...
     
-    // 所有混入的實例
+    // 所有混入的实例
     private $_behaviors = [];
     
     /**
-     * 魔術方法
+     * 魔术方法
      * @param string $name 方法名
-     * @param array $arguments 參數數組
+     * @param array $arguments 参数数组
      * @return mixed
      * @throws MethodNotFoundException
      */
@@ -40,8 +40,8 @@ class Component
     }
     
     /**
-     * 魔術方法，從混入對象實例中取屬性值
-     * @param string $attrName 屬性名
+     * 魔术方法，从混入对象实例中取属性值
+     * @param string $attrName 属性名
      * @return mixed
      * @throws AttrNotFoundException
      */
@@ -56,9 +56,9 @@ class Component
     }
     
     /**
-     * 附加混入對象實例
-     * @param object $behavior 混入對象實例
-     * @param string $name 混入對象實例名稱
+     * 附加混入对象实例
+     * @param object $behavior 混入对象实例
+     * @param string $name 混入对象实例名称
      * @return void
      */
     public function attachBehavior($behavior, $name='') {
@@ -69,8 +69,8 @@ class Component
     }
     
     /**
-     * 卸載混入對象實例
-     * @param string $name 混入對象實例名稱
+     * 卸载混入对象实例
+     * @param string $name 混入对象实例名称
      * @return void
      */
     public function detachBehavior($name) {
@@ -85,16 +85,16 @@ class Component
 ```php
 <?php
 /**
- * 混入類
+ * 混入类
  */
 class Behavior
 {
     // ...
     
     /**
-     * 将本實例混入指定對象
-     * @param object $object 支持混入的實例
-     * @param string $name 目标對象存儲本混入對象實例的鍵值
+     * 将本实例混入指定对象
+     * @param object $object 支持混入的实例
+     * @param string $name 目标对象存储本混入对象实例的键值
      * @return void
      * @throws BehaviorNotAttachableException
      */

@@ -1,23 +1,23 @@
 ---
 layout: post
-title: "PHP數組的實現與操作"
+title: "PHP数组的实现与操作"
 date: 2015-04-24 12:09
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - PHP
-- 源碼
+- 源码
 ---
 
-## 存儲結構
+## 存储结构
 
-和其它變量一樣，PHP的數組也是一個zval。存儲數據的哈希表存放在zval->value->ht中。
+和其它变量一样，PHP的数组也是一个zval。存储数据的哈希表存放在zval->value->ht中。
 
-## 符號表操作
+## 符号表操作
 
-為實現可轉換成整數的字符串鍵與整數鍵指向同一個元素，在哈希表操作的基礎上封裝了一層，對可轉換成整數的字符串鍵轉換成整數，然後調用zend_hash_index\_\*操作，否則調用zend_hash\_\*操作。這就是符號表操作。
+为实现可转换成整数的字符串键与整数键指向同一个元素，在哈希表操作的基础上封装了一层，对可转换成整数的字符串键转换成整数，然后调用zend_hash_index\_\*操作，否则调用zend_hash\_\*操作。这就是符号表操作。
 
-用ZEND_HANDLE_NUMERIC處理整數字符串鍵：
+用ZEND_HANDLE_NUMERIC处理整数字符串键：
 
 {% codeblock lang:c %}
 static inline int zend_symtable_find(
@@ -28,7 +28,7 @@ static inline int zend_symtable_find(
 }
 {% endcodeblock %}
 
-其它符號表操作函數：
+其它符号表操作函数：
 
 {% codeblock lang:c %}
 static inline int zend_symtable_exists(HashTable *ht, const char *arKey, uint nKeyLength);
@@ -41,19 +41,19 @@ static inline int zend_symtable_update_current_key_ex(
 );
 {% endcodeblock %}
 
-## 數組操作
+## 数组操作
 
 ### 初始化
 
 {% codeblock lang:c %}
-// 初始化數組
+// 初始化数组
 zval *zv1;
 array_init(zv1);
 
-// 初始化數組並指定哈希表nTableSize的值
+// 初始化数组并指定哈希表nTableSize的值
 array_init_size(zv1, 100);
 
-// 在函數中返回數組：把返回值初始化為數組
+// 在函数中返回数组：把返回值初始化为数组
 array_init(return_value);
 {% endcodeblock %}
 
@@ -70,7 +70,7 @@ int add_assoc_*(zval *arg, const char *key, ...);
 int add_assoc_*_ex(zval *arg, const char *key, uint key_len, ...);
 {% endcodeblock %}
 
-星號表示類型名，可用類型名如下：
+星号表示类型名，可用类型名如下：
 
 |Type	|Additional arguments|
 | ----------- | ------------ |
@@ -83,9 +83,9 @@ int add_assoc_*_ex(zval *arg, const char *key, uint key_len, ...);
 |resource	|int r|
 |zval	|zval *value|
 
-#### 字符串長度的處理
+#### 字符串长度的处理
 
-上述操作對字符串鍵和字符串值的長度的要求不同。\_ex函數要求傳入字符串鍵的長度，此長度包含NUL字節。\_stringl函數要求傳入字符串值的長度，此長度不包含NUL字節。
+上述操作对字符串键和字符串值的长度的要求不同。\_ex函数要求传入字符串键的长度，此长度包含NUL字节。\_stringl函数要求传入字符串值的长度，此长度不包含NUL字节。
 
 ### 栗子
 

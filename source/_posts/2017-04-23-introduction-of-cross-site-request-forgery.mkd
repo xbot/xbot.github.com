@@ -1,23 +1,23 @@
 ---
-title: Cross-site Request Forgery簡介
+title: Cross-site Request Forgery简介
 date: 2017-04-23 20:55:58
-categories: 計算機
+categories: 计算机
 tags:
-- 筆記
-- 編程
+- 笔记
+- 编程
 ---
 
-## 什麼是CSRF
+## 什么是CSRF
 
-Cross-site Request Forgery（簡稱CSRF），意思是跨站請求偽造。原理是利用網站服務器對瀏覽器的信任，通過一些技術手段欺騙用戶的瀏覽器訪問自己曾經認證過的網站，並執行一些危害用戶利益的操作。
+Cross-site Request Forgery（简称CSRF），意思是跨站请求伪造。原理是利用网站服务器对浏览器的信任，通过一些技术手段欺骗用户的浏览器访问自己曾经认证过的网站，并执行一些危害用户利益的操作。
 
-例如，假設網站的會話信息保存在cookie中，提現的請求是`GET http://www.sample.com/withdraw?toCard=123456&amount=10000`，攻擊者在自己的網頁中通過img標籤、iframe或者AJAX訪問這個鏈接，並誘使用戶訪問這個網頁，如果用戶剛剛登錄過sample.com，餘額就會被轉走。
+例如，假设网站的会话信息保存在cookie中，提现的请求是`GET http://www.sample.com/withdraw?toCard=123456&amount=10000`，攻击者在自己的网页中通过img标签、iframe或者AJAX访问这个链接，并诱使用户访问这个网页，如果用户刚刚登录过sample.com，余额就会被转走。
 
 ## 防止CSRF的方法
 
-CSRF的關鍵在於用戶的鑒權信息保存在cookie中，或攻擊者可以拿到它。目前防止CSRF攻擊的方法主要有兩種：JWT和表單校驗token。
+CSRF的关键在于用户的鉴权信息保存在cookie中，或攻击者可以拿到它。目前防止CSRF攻击的方法主要有两种：JWT和表单校验token。
 
-JWT的token通過HTTP請求的header傳遞，且由於瀏覽器的跨站限制，釣魚網頁中的JS無法拿到token，從而達到防止CSRF的目的。關於JWT更詳細的介紹在「[JSON Web Token簡介](/post/introduction-of-json-web-token/)」。
+JWT的token通过HTTP请求的header传递，且由于浏览器的跨站限制，钓鱼网页中的JS无法拿到token，从而达到防止CSRF的目的。关于JWT更详细的介绍在「[JSON Web Token简介](/post/introduction-of-json-web-token/)」。
 
-表單校驗token通常是存儲在表單的隱藏字段中的一個隨機字符串，服務器端通過比對表單提交的token判斷請求是否偽造，此時需要注意服務器端的CORS配置，即便在有需要的情況下開放了，也應該嚴格限制允許的HTTP方法和域，否則，釣魚網頁的JS就可以拿到這個token，從而實現CSRF。
+表单校验token通常是存储在表单的隐藏字段中的一个随机字符串，服务器端通过比对表单提交的token判断请求是否伪造，此时需要注意服务器端的CORS配置，即便在有需要的情况下开放了，也应该严格限制允许的HTTP方法和域，否则，钓鱼网页的JS就可以拿到这个token，从而实现CSRF。
 

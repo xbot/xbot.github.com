@@ -1,24 +1,24 @@
 ---
-title: 用MySQL的全文檢索實現相關性排序
+title: 用MySQL的全文检索实现相关性排序
 date: 2017-06-19 23:10:41
-categories: 計算機
+categories: 计算机
 tags:
 - mysql
-- 全文檢索
-- 數據庫
-- 編程
+- 全文检索
+- 数据库
+- 编程
 ---
 
-實現根據文章的關鍵詞搜索出相關的文章，並按相關性排序。
+实现根据文章的关键词搜索出相关的文章，并按相关性排序。
 
-數據庫版本是5.6.x，還不能像5.7那樣支持中文的全文檢索，所以另外創建一列保存關鍵詞的編碼。方法為base64轉碼並去掉「%」符號：
+数据库版本是5.6.x，还不能像5.7那样支持中文的全文检索，所以另外创建一列保存关键词的编码。方法为base64转码并去掉「%」符号：
 
 ```php
 <?php
 /**
- * 轉換關鍵詞到全文檢索的格式
+ * 转换关键词到全文检索的格式
  *
- * @param   mixed $keywords 關鍵詞數組或英文逗號分隔的字符串
+ * @param   mixed $keywords 关键词数组或英文逗号分隔的字符串
  * @return  string
  */
 function encode_keywords($keywords)
@@ -33,13 +33,13 @@ function encode_keywords($keywords)
 }
 ```
 
-對該列創建全文檢索的索引：
+对该列创建全文检索的索引：
 
 ```sql
 CREATE FULLTEXT INDEX idx_post_keywords ON posts (keywords_ft);
 ```
 
-查詢語句：
+查询语句：
 
 ```sql
 SELECT

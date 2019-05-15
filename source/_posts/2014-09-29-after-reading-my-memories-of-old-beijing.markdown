@@ -1,12 +1,12 @@
 ---
 layout: post
-title: "讀完《城南舊事》"
+title: "读完《城南旧事》"
 date: 2014-10-26 09:40
 comments: true
 categories: 青梅煮酒
 tags:
-- 讀書
-- 小說
+- 读书
+- 小说
 ---
 
 {% img http://pic.yupoo.com/leninlee/E9VO58ag/medish.jpg %}

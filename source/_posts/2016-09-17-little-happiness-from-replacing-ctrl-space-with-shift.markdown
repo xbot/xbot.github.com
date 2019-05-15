@@ -1,16 +1,16 @@
 ---
 layout: post
-title: "小確幸，用shift切換輸入法"
+title: "小确幸，用shift切换输入法"
 date: 2016-09-17 15:36
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - mac
 ---
 
-把Alfred升級到3，就想著把切換中英輸入狀態的問題一塊解決掉。
+把Alfred升级到3，就想著把切换中英输入状态的问题一块解决掉。
 
-Alfred可以設置默認使用英文輸入狀態，然後用Karabiner把Shift_L映射成Ctrl+Space。現在切換輸入狀態和用Alfred的效率都高多了。
+Alfred可以设置默认使用英文输入状态，然后用Karabiner把Shift_L映射成Ctrl+Space。现在切换输入状态和用Alfred的效率都高多了。
 
 ```xml
 <item>

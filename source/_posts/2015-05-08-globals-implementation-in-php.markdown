@@ -1,15 +1,15 @@
 ---
 layout: post
-title: "PHP全局變量的實現和操作"
+title: "PHP全局变量的实现和操作"
 date: 2015-05-08 17:23
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - PHP
-- 源碼
+- 源码
 ---
 
-## 擴展內部的全局變量
+## 扩展内部的全局变量
 
 {% codeblock lang:c php_donie.h %}
 ZEND_BEGIN_MODULE_GLOBALS(donie)
@@ -54,25 +54,25 @@ ZEND_FUNCTION(donie_test_ext_globals)
 }
 {% endcodeblock %}
 
-### 聲明
+### 声明
 
-ZEND\_BEGIN\_MODULE\_GLOBALS和ZEND\_END\_MODULE\_GLOBALS及其間的內容實際上聲明了一個結構體zend\_donie\_globals。
+ZEND\_BEGIN\_MODULE\_GLOBALS和ZEND\_END\_MODULE\_GLOBALS及其间的内容实际上声明了一个结构体zend\_donie\_globals。
 
-根據是否開啟線程安全的情況，ZEND\_DECLARE\_MODULE\_GLOBALS做不同的事：未開啟線程安全，直接聲明zend\_donie\_globals類型的變量；已開啟線程安全，聲明一個整形變量donie\_globals\_id。
+根据是否开启线程安全的情况，ZEND\_DECLARE\_MODULE\_GLOBALS做不同的事：未开启线程安全，直接声明zend\_donie\_globals类型的变量；已开启线程安全，声明一个整形变量donie\_globals\_id。
 
 ### 初始化
 
-在未開啟線程安全時，ZEND\_INIT\_MODULE\_GLOBALS調用第二個參數指定的函數初始化全局變量；已開啟線程安全時，調用ts\_allocate\_id()分配一個資源ID，並調用第二個參數代表的函數。
+在未开启线程安全时，ZEND\_INIT\_MODULE\_GLOBALS调用第二个参数指定的函数初始化全局变量；已开启线程安全时，调用ts\_allocate\_id()分配一个资源ID，并调用第二个参数代表的函数。
 
-### 訪問
+### 访问
 
-DONIE\_G在擴展的頭文件裡，生成擴展框架時默認就有。
+DONIE\_G在扩展的头文件里，生成扩展框架时默认就有。
 
-### 銷毀
+### 销毁
 
-開啟線程安全時，ZEND\_INIT\_MODULE\_GLOBALS的第三個參數指定的析構函數會自動被調用。未開啟線程安全時，由於該宏只調用第二個參數初始化全局變量，第三個參數沒有用，所以需要在MSHUTDOWN中手工調用析構函數。
+开启线程安全时，ZEND\_INIT\_MODULE\_GLOBALS的第三个参数指定的析构函数会自动被调用。未开启线程安全时，由于该宏只调用第二个参数初始化全局变量，第三个参数没有用，所以需要在MSHUTDOWN中手工调用析构函数。
 
-## 用戶空間的超級全局變量
+## 用户空间的超级全局变量
 
 {% codeblock lang:c %}
 static zend_bool php_donie_autoglobal_callback(const char *name, uint name_len TSRMLS_DC)
@@ -94,7 +94,7 @@ PHP_MINIT_FUNCTION(donie)
 }
 {% endcodeblock %}
 
-zend\_register\_auto\_global()註冊了$\_DONIE這樣一個全局變量。在代碼的編譯時，如果PHP內核發現代碼中沒有使用這個全局變量，不會進行初始化；若有使用，會調用php\_donie\_autoglobal\_callback進行初始化。PHP4中沒有php\_donie\_autoglobal\_callback這個參數。
+zend\_register\_auto\_global()注册了$\_DONIE这样一个全局变量。在代码的编译时，如果PHP内核发现代码中没有使用这个全局变量，不会进行初始化；若有使用，会调用php\_donie\_autoglobal\_callback进行初始化。PHP4中没有php\_donie\_autoglobal\_callback这个参数。
 
-php\_donie\_autoglobal\_callback做的事就是初始化一個zval並加入符號表。如果此函數返回0，則只會被調用一次，如果返回非0，在代碼編譯時，每發現一次該全局變量，就調用一次這個函數。
+php\_donie\_autoglobal\_callback做的事就是初始化一个zval并加入符号表。如果此函数返回0，则只会被调用一次，如果返回非0，在代码编译时，每发现一次该全局变量，就调用一次这个函数。
 

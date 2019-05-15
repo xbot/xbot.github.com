@@ -1,41 +1,41 @@
 ---
 layout: post
-title: "用樹苺派做家庭監控"
+title: "用树苺派做家庭监控"
 date: 2015-04-07 10:56
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
-- 樹苺派
+- 树苺派
 - 智能家居
 - Geek
 ---
 
-用樹苺派做視頻監控，當視野內有物體移動時，自動拍照、錄視頻、同步到遠程主機，並提醒到遠程電腦和手機。
+用树苺派做视频监控，当视野内有物体移动时，自动拍照、录视频、同步到远程主机，并提醒到远程电脑和手机。
 
-## 用Motion做視頻監控
+## 用Motion做视频监控
 
-安裝Motion，修改幾項必要的配置：
+安装Motion，修改几项必要的配置：
 
 {% codeblock lang:ini /etc/motion/motion.conf %}
-# 照片和視頻存儲路徑
+# 照片和视频存储路径
 target_dir = /media/sda1/cam
 
-# 允許局域網內其它主機訪問視頻
+# 允许局域网内其它主机访问视频
 webcam_localhost off
 
-# 監測到移動物體時，創建作為標識的臨時文件
+# 监测到移动物体时，创建作为标识的临时文件
 on_event_start "echo 1 > /tmp/invasion_detected"
 
-# 移動物體消失時，移除臨時文件
+# 移动物体消失时，移除临时文件
 on_event_end "rm /tmp/invasion_detected"
 
-# 監測到移動物體並在保存第一張照片時，發送提醒到電腦和手機
+# 监测到移动物体并在保存第一张照片时，发送提醒到电脑和手机
 on_picture_save [ -f /tmp/invasion_detected ] && [ `cat /tmp/invasion_detected` -gt 0 ] && echo 0 > /tmp/invasion_detected && proxychains /root/SmartHome/script/alert.py -f %f
 {% endcodeblock %}
 
 ## 用Lsyncd同步到VPS
 
-安裝lsyncd並配置：
+安装lsyncd并配置：
 
 {% codeblock lang:lua /etc/lsyncd.conf %}
 settings{
@@ -60,9 +60,9 @@ sync{
 }
 {% endcodeblock %}
 
-## 用PushBullet通知電腦和手機
+## 用PushBullet通知电脑和手机
 
-Python有幾個封裝好PushBullet API的模塊，pushbullet.py在被Motion執行的時候報IOError，pushybullet的文件上傳有問題，所以程序裡用yapbl。
+Python有几个封装好PushBullet API的模块，pushbullet.py在被Motion执行的时候报IOError，pushybullet的文件上传有问题，所以程序里用yapbl。
 
 {% codeblock lang:bash %}
 git clone https://github.com/xbot/SmartHome.git
@@ -70,4 +70,4 @@ git clone https://github.com/xbot/SmartHome.git
 
 修改alert.py，填上自己的PushBullet API Key。
 
-訪問PushBullet的API需要科學上網，在Motion的on_picture_save裡用proxychains執行PushBullet腳本。
+访问PushBullet的API需要科学上网，在Motion的on_picture_save里用proxychains执行PushBullet脚本。

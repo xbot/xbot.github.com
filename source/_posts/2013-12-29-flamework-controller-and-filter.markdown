@@ -1,40 +1,40 @@
 ---
 layout: post
-title: "PHP框架實戰（三）：實現Controller和Filter"
+title: "PHP框架实战（三）：实现Controller和Filter"
 date: 2013-12-29 20:40
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - PHP
 - Flamework
 - 框架
-- 編程
+- 编程
 ---
 
-目標
+目标
 ----
 
-實現Controller和Filter，程序可以從HTTP請求中解析Controller和Action，並在這兩個切面級別實現Filter鏈。此外，在Controller中，可以使用Action的參數直接訪問HTTP請求中的同名參數。
+实现Controller和Filter，程序可以从HTTP请求中解析Controller和Action，并在这两个切面级别实现Filter链。此外，在Controller中，可以使用Action的参数直接访问HTTP请求中的同名参数。
 
-獲取代碼
+获取代码
 --------
 
-項目目錄結構做了調整，framework目錄存放Flamework框架源碼，demo目錄存放示例項目。
+项目目录结构做了调整，framework目录存放Flamework框架源码，demo目录存放示例项目。
 
 {% codeblock lang:bash %}
 git checkout v0.3
 {% endcodeblock %}
 
-設計與實現
+设计与实现
 ----------
 
-**Controller的實現**
+**Controller的实现**
 
-要求請求URL的格式如下：
+要求请求URL的格式如下：
 
 >http://www.mydomain.com/index.php?r=post/save
 
-**r**表示Route，斜杠前面的**post**表示Controller的名稱，後面的**save**表示Action的名稱。對HTTP請求的各種處理邏輯封裝在新對象HttpRequest中：
+**r**表示Route，斜杠前面的**post**表示Controller的名称，后面的**save**表示Action的名称。对HTTP请求的各种处理逻辑封装在新对象HttpRequest中：
 
 {% codeblock lang:php %}
 <?php
@@ -158,9 +158,9 @@ class HttpRequest
 ?>
 {% endcodeblock %}
 
-考慮到HttpRequest可能在多個地方被調用，所以用單例模式實現。
+考虑到HttpRequest可能在多个地方被调用，所以用单例模式实现。
 
-WebApplication中添加如下內容：
+WebApplication中添加如下内容：
 
 {% codeblock lang:php %}
 <?php
@@ -223,9 +223,9 @@ class WebApplication {
 ?>
 {% endcodeblock %}
 
-程序應指定一個缺省的Controller，覆蓋$defaultController屬性即可，默認為“default”。Controller的類名應在名稱後面加“Controller”字樣的後綴。由於需要包含命名空間的完整類名來動態實例化Controller，故Controller的源碼中都應在最後返回其命名空間（_return \_\_NAMESPACE\_\_;_）。
+程序应指定一个缺省的Controller，覆盖$defaultController属性即可，默认为“default”。Controller的类名应在名称后面加“Controller”字样的后缀。由于需要包含命名空间的完整类名来动态实例化Controller，故Controller的源码中都应在最后返回其命名空间（_return \_\_NAMESPACE\_\_;_）。
 
-增加Controller類，作為所有Controller的父類：
+增加Controller类，作为所有Controller的父类：
 
 {% codeblock lang:php %}
 <?php
@@ -312,11 +312,11 @@ class Controller
 ?>
 {% endcodeblock %}
 
-Controller::process()是入口方法，它會通過反射機制實現HTTP參數與Action參數的綁定，並指定Action。
+Controller::process()是入口方法，它会通过反射机制实现HTTP参数与Action参数的绑定，并指定Action。
 
-**Filter與Filter鏈的實現**
+**Filter与Filter链的实现**
 
-Filter中實現before()和after()方法，Filter鏈通過對Filter按順序遞歸調用，實現所有Filter::before()方法在切面之前順序執行，並且所有Filter::after()方法在切面之後逆序執行。
+Filter中实现before()和after()方法，Filter链通过对Filter按顺序递归调用，实现所有Filter::before()方法在切面之前顺序执行，并且所有Filter::after()方法在切面之后逆序执行。
 
 {% codeblock lang:php %}
 <?php
@@ -451,7 +451,7 @@ class FilterChain
 ?>
 {% endcodeblock %}
 
-對FilterChain和Filter的使用方法在前面的WebApplication::run()和Controller::process()中均有包含。Controller級的Filter在配置文件中設置，內容如下：
+对FilterChain和Filter的使用方法在前面的WebApplication::run()和Controller::process()中均有包含。Controller级的Filter在配置文件中设置，内容如下：
 
 {% codeblock lang:php %}
 <?php
@@ -470,7 +470,7 @@ return array(
 ?>
 {% endcodeblock %}
 
-Action級的Filter在Controller裡覆蓋$filters屬性：
+Action级的Filter在Controller里覆盖$filters属性：
 
 {% codeblock lang:php %}
 <?php
@@ -484,12 +484,12 @@ Action級的Filter在Controller裡覆蓋$filters屬性：
 ?>
 {% endcodeblock %}
 
-Action級別的Filter通過$filters數組中的正則表達式選擇適用的Action。
+Action级别的Filter通过$filters数组中的正则表达式选择适用的Action。
 
-Demo驗證
+Demo验证
 --------
 
-Demo中實現了兩個Controller級別的Filter（_GlobalFilterA和GlobalFilterB_），一個Action級別的Filter（_ActionFilterC_），訪問demo項目，頁面打印如下結果：
+Demo中实现了两个Controller级别的Filter（_GlobalFilterA和GlobalFilterB_），一个Action级别的Filter（_ActionFilterC_），访问demo项目，页面打印如下结果：
 
 >org\x3f\flamedemo\filter\GlobalFilterA::before
 org\x3f\flamedemo\filter\GlobalFilterB::before
@@ -499,7 +499,7 @@ org\x3f\flamedemo\filter\ActionFilterC::after
 org\x3f\flamedemo\filter\GlobalFilterB::after
 org\x3f\flamedemo\filter\GlobalFilterA::after
 
-總結
+总结
 ----
 
-WebApplication作為程序的統一入口，通過對HTTP請求的解析動態創建Controller，並借此實現了Controller級別的Filter鏈。Controller通過反射機制實現了HTTP參數與Action參數的綁定，以及Action級別的Filter鏈。而通過對Filter的遞歸執行，Filter鏈實現了面向切面編程。
+WebApplication作为程序的统一入口，通过对HTTP请求的解析动态创建Controller，并借此实现了Controller级别的Filter链。Controller通过反射机制实现了HTTP参数与Action参数的绑定，以及Action级别的Filter链。而通过对Filter的递归执行，Filter链实现了面向切面编程。

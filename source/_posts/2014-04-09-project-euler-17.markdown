@@ -3,12 +3,12 @@ layout: post
 title: "Project Euler Problem 17 Solved"
 date: 2014-04-09 22:29
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - golang
 - python
-- 歐拉工程
-- 編程
+- 欧拉工程
+- 编程
 ---
 
 Number letter counts

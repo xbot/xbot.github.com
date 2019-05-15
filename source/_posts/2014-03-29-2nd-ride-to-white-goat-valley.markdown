@@ -1,16 +1,16 @@
 ---
 layout: post
-title: "二騎白羊溝"
+title: "二骑白羊沟"
 date: 2014-03-29 20:16
 comments: true
-categories: 行見
+categories: 行见
 tags:
-- 騎行
+- 骑行
 ---
 
-桃花、迎春花開得很好，但沒有秋天長滿路邊的花有氣氛。早上去得晚了，陽坊鎮的小籠包收攤了……
+桃花、迎春花开得很好，但没有秋天长满路边的花有气氛。早上去得晚了，阳坊镇的小笼包收摊了……
 
-交作業：
+交作业：
 
 {% img http://pic.yupoo.com/leninlee/DDU0q8d7/medish.jpg %}
 
@@ -18,10 +18,10 @@ tags:
 
 {% img http://pic.yupoo.com/leninlee/DDU0s9ak/medish.jpg %}
 
-這次一口氣上了魔鬼六連彎，彎口溪水別樣清啊：
+这次一口气上了魔鬼六连弯，弯口溪水别样清啊：
 
 {% img http://pic.yupoo.com/leninlee/DDU0s3cm/medish.jpg %}
 
-小藍月湖，命名權是我的：
+小蓝月湖，命名权是我的：
 
 {% img http://pic.yupoo.com/leninlee/DDU2DREG/medish.jpg %}

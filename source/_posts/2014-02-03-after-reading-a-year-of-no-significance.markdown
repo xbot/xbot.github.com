@@ -1,15 +1,15 @@
 ---
 layout: post
-title: "讀完《萬歷十五年》"
+title: "读完《万历十五年》"
 date: 2014-02-03 13:17
 comments: true
 categories: 青梅煮酒
 tags:
-- 讀書
+- 读书
 - Kindle
-- 電子書
+- 电子书
 ---
 
 {% img http://pic.yupoo.com/leninlee/DvE1PYrK/medish.jpg %}
 
-國史奇書，一本書讀懂三百年大明。
+国史奇书，一本书读懂三百年大明。

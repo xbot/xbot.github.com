@@ -1,15 +1,15 @@
 ---
 layout: post
-title: "簡化Vim Addons Manager安裝擴展的操作"
+title: "简化Vim Addons Manager安装扩展的操作"
 date: 2016-01-20 18:05
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - vim
-- 編程
+- 编程
 ---
 
-相對Sublime的Package Control，VAM安裝和卸載擴展的操作很煩瑣。以下腳本在安裝完擴展後自動註冊，無須手工添加到vimrc，另外增加命令:UninstallAddons，從註冊表中刪除擴展。
+相对Sublime的Package Control，VAM安装和卸载扩展的操作很烦琐。以下脚本在安装完扩展后自动注册，无须手工添加到vimrc，另外增加命令:UninstallAddons，从注册表中删除扩展。
 
 {% codeblock lang:vim %}
 set runtimepath+=~/.vim/addons/vim-addon-manager

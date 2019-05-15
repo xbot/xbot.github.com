@@ -1,13 +1,13 @@
 ---
 layout: post
-title: UltraBlog.vim v3.0釋出：全文檢索與事件驅動
+title: UltraBlog.vim v3.0释出：全文检索与事件驱动
 tags:
 - Plugin
 - Python
 - UltraBlog.vim
 - Vim
 - 博客
-- 編程
+- 编程
 status: publish
 type: post
 published: true
@@ -16,25 +16,25 @@ meta:
   aktt_notify_twitter: 'no'
   views: '651'
 ---
-<p>用了一周的業餘時間，昨天我釋出了<a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>的3.0版。新版本主要加入了全文檢索的功能，並引入事件驅動的模式。</p>
+<p>用了一周的业余时间，昨天我释出了<a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>的3.0版。新版本主要加入了全文检索的功能，并引入事件驱动的模式。</p>
 
-<p>全文檢索是我蓄謀已久的功能，一個不能搜索的博客客戶端的管理功能是大打折扣的。得益於SQLite數據庫和SQLAlchemy框架，全文檢索的實現是很簡單的，新增加的<code>:UBFind</code>命令將在所有文章和頁面的標題與內容中查詢，並將搜索結果顯示在一個可分頁的列表中。這個命令支持任意多個關鍵詞，各關鍵詞之間遵循與的關係。此外，檢索結果中，所有的關鍵詞將被自動標記為高亮。</p>
+<p>全文检索是我蓄谋已久的功能，一个不能搜索的博客客户端的管理功能是大打折扣的。得益于SQLite数据库和SQLAlchemy框架，全文检索的实现是很简单的，新增加的<code>:UBFind</code>命令将在所有文章和页面的标题与内容中查询，并将搜索结果显示在一个可分页的列表中。这个命令支持任意多个关键词，各关键词之间遵循与的关系。此外，检索结果中，所有的关键词将被自动标记为高亮。</p>
 
-<p>事件驅動模式的引入是我悍然將版本號跳躍到3.x的主要原因。</p>
+<p>事件驱动模式的引入是我悍然将版本号跳跃到3.x的主要原因。</p>
 
-<p>在前幾個版本中，我實現了對多窗口的支持，它使得用戶可以在新窗口中打開列表中的文章。但UltraBlog.vim最初開發的時候並沒有考慮到多窗口的問題，所有命令都只針對當前窗口進行操作。這就有了緩衝區內容同步的問題，假如在一個新的緩衝區中打開了和另一個緩衝區相同的文章，則一個緩衝區內容的改變不會同步到另外一個中，這多少是有些隱患的。</p>
+<p>在前几个版本中，我实现了对多窗口的支持，它使得用户可以在新窗口中打开列表中的文章。但UltraBlog.vim最初开发的时候并没有考虑到多窗口的问题，所有命令都只针对当前窗口进行操作。这就有了缓冲区内容同步的问题，假如在一个新的缓冲区中打开了和另一个缓冲区相同的文章，则一个缓冲区内容的改变不会同步到另外一个中，这多少是有些隐患的。</p>
 
-<p>最直接的做法是在所有可能改變緩衝區內容的功能中加入對其它緩衝區的處理，但這樣做有不少問題：</p>
+<p>最直接的做法是在所有可能改变缓冲区内容的功能中加入对其它缓冲区的处理，但这样做有不少问题：</p>
 
 <ul>
-<li>代碼耦合度太高，違反K.I.S.S原則，不利於今後的開發和維護</li>
-<li>函數體過長，我討厭難看的代碼</li>
-<li>代碼冗餘，重複勞動</li>
+<li>代码耦合度太高，违反K.I.S.S原则，不利于今后的开发和维护</li>
+<li>函数体过长，我讨厌难看的代码</li>
+<li>代码冗余，重复劳动</li>
 </ul>
 
-<p>事件驅動模式可以很好的解決以上問題，一個函數只干一件事，做完後一個事件拋出去，至於連帶著要做什麼，誰監聽這個事件誰去處理，代碼的耦合度很低，復用度很高，易於維護和閱讀。</p>
+<p>事件驱动模式可以很好的解决以上问题，一个函数只干一件事，做完后一个事件抛出去，至于连带著要做什么，谁监听这个事件谁去处理，代码的耦合度很低，复用度很高，易于维护和阅读。</p>
 
-<p>UltraBlog.vim引入事件驅動模式處理緩衝區同步的問題。不同的操作拋出不同的事件，所有的事件繼承自父類<strong>UBEvent</strong>：</p>
+<p>UltraBlog.vim引入事件驱动模式处理缓冲区同步的问题。不同的操作抛出不同的事件，所有的事件继承自父类<strong>UBEvent</strong>：</p>
 
 {% codeblock lang:python %}
 class UBEvent:
@@ -50,7 +50,7 @@ class UBPostSendEvent(UBEvent): pass
 class UBPostSaveEvent(UBEvent): pass
 {% endcodeblock %}
 
-<p>一個可能改變緩衝區內容的操作執行完後，創建一個特定的事件並將其加入到事件隊列中。事件隊列類中存放兩個列表，一是事件隊列，二是事件監聽器列表；提供三個方法，分別用來註冊事件監聽器、對事件執行入隊列操作和處理隊列中所有事件：</p>
+<p>一个可能改变缓冲区内容的操作执行完后，创建一个特定的事件并将其加入到事件队列中。事件队列类中存放两个列表，一是事件队列，二是事件监听器列表；提供三个方法，分别用来注册事件监听器、对事件执行入队列操作和处理队列中所有事件：</p>
 
 {% codeblock lang:python %}
 class UBEventQueue:
@@ -74,7 +74,7 @@ class UBEventQueue:
         cls.listeners.append(lsnr)
 {% endcodeblock %}
 
-<p>事件隊列對事件的處理是通過事件監聽器進行的，每個事件監聽器要實現兩個功能：識別監聽對象和處理監聽對象。所有具體事件的監聽類都是<strong>UBListener</strong>的子類：</p>
+<p>事件队列对事件的处理是通过事件监听器进行的，每个事件监听器要实现两个功能：识别监听对象和处理监听对象。所有具体事件的监听类都是<strong>UBListener</strong>的子类：</p>
 
 {% codeblock lang:python %}
 class UBListener():
@@ -112,7 +112,7 @@ class UBPostSaveListener(UBListener):
                 ub_set_view_outdated(nr)
 {% endcodeblock %}
 
-<p>事件監聽器遍歷所有滿足處理條件的緩衝區，對當前緩衝區，立即刷新，其餘的標記為已過期。同時利用Vim自身的事件驅動特性，在進入已過期的緩衝區時，再更新之，也就是傳說中的懶加載模式：</p>
+<p>事件监听器遍历所有满足处理条件的缓冲区，对当前缓冲区，立即刷新，其余的标记为已过期。同时利用Vim自身的事件驱动特性，在进入已过期的缓冲区时，再更新之，也就是传说中的懒加载模式：</p>
 
 {% codeblock lang:vim %}
 au BufEnter * py __ub_on_buffer_enter()
@@ -128,6 +128,6 @@ def __ub_on_buffer_enter():
         ub_set_view_outdated('%', False)
 {% endcodeblock %}
 
-<p>此外，隨著代碼量的增加，原來把全部代碼都放在一個文件中的做法不再適用，尤其是以<a href="http://en.wikipedia.org/wiki/Here_document">Here Document</a>形式存放在vim腳本文件中的Python代碼不能被ctags識別，所以按類別分別存放到<strong>$VIMRUNTIME/plugin/ultrablog/</strong>下的幾個Python源文件中。</p>
+<p>此外，随著代码量的增加，原来把全部代码都放在一个文件中的做法不再适用，尤其是以<a href="http://en.wikipedia.org/wiki/Here_document">Here Document</a>形式存放在vim脚本文件中的Python代码不能被ctags识别，所以按类别分别存放到<strong>$VIMRUNTIME/plugin/ultrablog/</strong>下的几个Python源文件中。</p>
 
 <p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>

@@ -1,23 +1,23 @@
 ---
 layout: post
-title: "PHP流的上下文和過濾器的實現"
+title: "PHP流的上下文和过滤器的实现"
 date: 2015-06-15 19:15
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - PHP
-- 源碼
+- 源码
 ---
 
-## 上下文的實現和應用
+## 上下文的实现和应用
 
-上下文包含流的選項和流的參數兩部分內容。
+上下文包含流的选项和流的参数两部分内容。
 
 {% codeblock lang:c %}
 php_stream_context *php_stream_context_alloc(void);
 {% endcodeblock %}
 
-流的選項是一系列鍵值對。
+流的选项是一系列键值对。
 
 {% codeblock lang:c %}
 int php_stream_context_set_option(php_stream_context *context, const char *wrappername, const char *optionname, zval *optionvalue);
@@ -25,7 +25,7 @@ int php_stream_context_set_option(php_stream_context *context, const char *w
 int php_stream_context_get_option(php_stream_context *context, const char *wrappername, const char *optionname, zval ***optionvalue);
 {% endcodeblock %}
 
-流的參數目前只實現對流的事件的回調，php_stream_context->notifier存儲如下結構：
+流的参数目前只实现对流的事件的回调，php_stream_context->notifier存储如下结构：
 
 {% codeblock lang:c %}
 typedef struct {
@@ -37,7 +37,7 @@ typedef struct {
 } php_stream_notifier;
 {% endcodeblock %}
 
-回調函數的原型為：
+回调函数的原型为：
 
 {% codeblock lang:c %}
 typedef void (*php_stream_notification_func)(php_stream_context *context,
@@ -49,16 +49,16 @@ typedef void (*php_stream_notification_func)(php_stream_context *context,
 
 notifycode包含如下：
 
-  - PHP_STREAM_NOTIFY_RESOLVE：主機名解析完成
-  - PHP_STREAM_NOTIFY_CONNECT：socket連接建立
-  - PHP_STREAM_NOTIFY_AUTH_REQUIRED：需要驗證
-  - PHP_STREAM_NOTIFY_MIME_TYPE_IS：遠程資源的MIME-Type可用
-  - PHP_STREAM_NOTIFY_FILE_SIZE_IS：遠程資源的大小可用
-  - PHP_STREAM_NOTIFY_REDIRECTED：原始地址被跳轉
+  - PHP_STREAM_NOTIFY_RESOLVE：主机名解析完成
+  - PHP_STREAM_NOTIFY_CONNECT：socket连接建立
+  - PHP_STREAM_NOTIFY_AUTH_REQUIRED：需要验证
+  - PHP_STREAM_NOTIFY_MIME_TYPE_IS：远程资源的MIME-Type可用
+  - PHP_STREAM_NOTIFY_FILE_SIZE_IS：远程资源的大小可用
+  - PHP_STREAM_NOTIFY_REDIRECTED：原始地址被跳转
   - PHP_STREAM_NOTIFY_PROGRESS：php_stream_notifier->progress和progress_max（可能的）已更新
-  - PHP_STREAM_NOTIFY_COMPLETED：流中已無可用數據
-  - PHP_STREAM_NOTIFY_FAILURE：請求失敗
-  - PHP_STREAM_NOTIFY_AUTH_RESULT：遠程驗證已完成，並且可能是成功的
+  - PHP_STREAM_NOTIFY_COMPLETED：流中已无可用数据
+  - PHP_STREAM_NOTIFY_FAILURE：请求失败
+  - PHP_STREAM_NOTIFY_AUTH_RESULT：远程验证已完成，并且可能是成功的
 
 severity包含如下：
 
@@ -66,12 +66,12 @@ severity包含如下：
   - PHP_STREAM_NOTIFY_SEVERITY_WARN
   - PHP_STREAM_NOTIFY_SEVERITY_ERR
 
-php_stream_notifier->ptr用於存儲附加數據，如果該數據需要手工回收，需指定php_stream_notifier->dtor。
+php_stream_notifier->ptr用于存储附加数据，如果该数据需要手工回收，需指定php_stream_notifier->dtor。
 
-php_stream_notifier->mask如果被賦值severity，其它severity的事件將不會觸發回調函數。
+php_stream_notifier->mask如果被赋值severity，其它severity的事件将不会触发回调函数。
 
 
-## 過濾器的實現和應用
+## 过滤器的实现和应用
 
 {% codeblock lang:c %}
 #include "ext/standard/php_string.h"
@@ -158,23 +158,23 @@ PHP_MSHUTDOWN_FUNCTION(donie)
 }
 {% endcodeblock %}
 
-### 註冊和註銷
+### 注册和注销
 
-分別在MINIT和MSHUTDOWN函數中調用php_stream_filter_register_factory()和php_stream_filter_unregister_factory()註冊和註銷過濾器。
+分别在MINIT和MSHUTDOWN函数中调用php_stream_filter_register_factory()和php_stream_filter_unregister_factory()注册和注销过滤器。
 
-### 過濾器的執行過程
+### 过滤器的执行过程
 
-當過濾器被調用時，調用方將使用php_donie_stream_filter_create()函數創建過濾器的實例。該函數在被執行時初始化過濾器的相關數據，並指定過濾器的相關操作。
+当过滤器被调用时，调用方将使用php_donie_stream_filter_create()函数创建过滤器的实例。该函数在被执行时初始化过滤器的相关数据，并指定过滤器的相关操作。
 
-調用方然後將過濾器實例添加到對應的流的讀過濾器鏈或寫過濾器鏈中，當流中發生讀或寫的操作時，過濾器鏈將數據放到一或多個php_stream_bucket結構中，並傳遞給過濾器處理。
+调用方然后将过滤器实例添加到对应的流的读过滤器链或写过滤器链中，当流中发生读或写的操作时，过滤器链将数据放到一或多个php_stream_bucket结构中，并传递给过滤器处理。
 
-### 業務邏輯
+### 业务逻辑
 
-結構體php_donie_stream_filter_ops指定了過濾器的名稱和相關業務邏輯。php_donie_stream_filter_ops->php_donie_stream_filter_dtor是過濾器的析構函數。php_donie_stream_filter_ops->php_donie_stream_filter是過濾器的主要業務邏輯。
+结构体php_donie_stream_filter_ops指定了过滤器的名称和相关业务逻辑。php_donie_stream_filter_ops->php_donie_stream_filter_dtor是过滤器的析构函数。php_donie_stream_filter_ops->php_donie_stream_filter是过滤器的主要业务逻辑。
 
-在php_donie_stream_filter()中，函數接收一個php_stream_bucket鏈表buckets_in，並將處理後的php_stream_bucket追加到鏈表buckets_out中輸出。
+在php_donie_stream_filter()中，函数接收一个php_stream_bucket链表buckets_in，并将处理后的php_stream_bucket追加到链表buckets_out中输出。
 
-php_stream_bucket_make_writeable()將一個bucket從鏈表中移除，如果必要，複製其內部緩衝數據，以獲得對內容的寫權限。此外，對bucket的相關操作還有：
+php_stream_bucket_make_writeable()将一个bucket从链表中移除，如果必要，复制其内部缓冲数据，以获得对内容的写权限。此外，对bucket的相关操作还有：
 
 {% codeblock lang:c %}
 php_stream_bucket *php_stream_bucket_new(php_stream *stream, char *buf, size_t buflen, int own_buf, int buf_persistent TSRMLS_DC);
@@ -190,4 +190,4 @@ void php_stream_bucket_append(php_stream_bucket_brigade *brigade, php_stream_b
 void php_stream_bucket_unlink(php_stream_bucket *bucket TSRMLS_DC);
 {% endcodeblock %}
 
-若過濾器已準備好輸出的數據，返回PSFS_PASS_ON；若還需要更多數據才能結束過濾操作，返回PSFS_FEED_ME；若遇到嚴重問題，返回PSFS_ERR_FATAL。
+若过滤器已准备好输出的数据，返回PSFS_PASS_ON；若还需要更多数据才能结束过滤操作，返回PSFS_FEED_ME；若遇到严重问题，返回PSFS_ERR_FATAL。

@@ -1,21 +1,21 @@
 ---
 layout: post
-title: "在i3wm狀態欄顯示股票信息"
+title: "在i3wm状态栏显示股票信息"
 date: 2015-06-12 17:39
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - Linux
 - i3wm
 - 股票
-- 編程
+- 编程
 ---
 
-效果如圖：
+效果如图：
 
 {% img http://pic.yupoo.com/leninlee/EIOXvoh8/medish.jpg %}
 
-創建腳本，並賦可執行權限：
+创建脚本，并赋可执行权限：
 
 {% codeblock lang:bash ~/.i3/myi3status.sh %}
 #!/bin/sh
@@ -41,7 +41,7 @@ do
 done
 {% endcodeblock %}
 
-如果i3status.conf中啟用了JSON格式輸出（支持顏色），應啟用上面腳本中第一塊的代碼，否則使用後面的。啟動JSON格式輸出的內容具體如下：
+如果i3status.conf中启用了JSON格式输出（支持颜色），应启用上面脚本中第一块的代码，否则使用后面的。启动JSON格式输出的内容具体如下：
 
 {% codeblock lang:javascript ~/.i3status.conf %}
 general {
@@ -50,7 +50,7 @@ general {
 }
 {% endcodeblock %}
 
-在i3wm的配置文件中用以上腳本替換i3status：
+在i3wm的配置文件中用以上脚本替换i3status：
 
 {% codeblock lang:javascript ~/.i3/config %}
 bar {
@@ -65,7 +65,7 @@ bar {
 }
 {% endcodeblock %}
 
-在和上面腳本同路徑下創建腳本：
+在和上面脚本同路径下创建脚本：
 
 {% codeblock lang:php ~/.i3/stock.php %}
 #!/bin/env php
@@ -218,7 +218,7 @@ foreach ($lines as $line) {
 echo implode('; ', $result);
 {% endcodeblock %}
 
-腳本從~/.stocks中讀取股票代碼：
+脚本从~/.stocks中读取股票代码：
 
 {% codeblock lang:javascript ~/.stocks %}
 sh601985

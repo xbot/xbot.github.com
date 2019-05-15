@@ -3,7 +3,7 @@ layout: post
 title: ! 'UltraBlog.vim: Ultimate Vim Blogging Plugin'
 date: 2011-04-02 00:00
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - Markdown
 - Plugin
@@ -13,7 +13,7 @@ tags:
 - UltraBlog.vim
 - Vim
 - 博客
-- 編程
+- 编程
 ---
 
 <h2>Introduction</h2>

@@ -1,12 +1,12 @@
 ---
 layout: post
-title: "讀完《邊城》"
+title: "读完《边城》"
 date: 2014-10-26 09:32
 comments: true
 categories: 青梅煮酒
 tags:
-- 讀書
-- 小說
+- 读书
+- 小说
 ---
 
 {% img http://pic.yupoo.com/leninlee/E9VMRoII/medish.jpg %}

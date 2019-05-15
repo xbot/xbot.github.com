@@ -1,15 +1,15 @@
 ---
-title: 解決Laravel的Facade在被Mock時不自動注入依賴的一種方法
+title: 解决Laravel的Facade在被Mock时不自动注入依赖的一种方法
 date: 2018-01-30 15:41:16
-categories: 計算機
+categories: 计算机
 tags:
-- 編程
+- 编程
 - php
 - laravel
 ---
-由於集成了Mockery，Laravel的Facade對單元測試非常友好，只需要一行代碼就能實現mocking。
+由于集成了Mockery，Laravel的Facade对单元测试非常友好，只需要一行代码就能实现mocking。
 
-例如，測試目標方法中調用了訂單工具類的一個方法，在使用依賴注入的方式時，需要用三行代碼實現對這個方法的mocking：
+例如，测试目标方法中调用了订单工具类的一个方法，在使用依赖注入的方式时，需要用三行代码实现对这个方法的mocking：
 
 ```php
 $fakeOrderTool = m::mock(\App\Tool\Order::class);
@@ -17,19 +17,19 @@ $fakeOrderTool->shouldReceive('getById')->once()->with($id)->andReturn($fakeOrde
 $this->app->instance(\App\Tool\Order::class, $fakeOrderTool);
 ```
 
-而用Facade是這樣的：
+而用Facade是这样的：
 
 ```php
 OrderFacade::shouldReceive('getById')->once()->with($id)->andReturn($fakeOrder);
 ```
 
-當測試目標方法也屬於訂單工具類時，需要部分mock這個類，所以還要加上一行：
+当测试目标方法也属于订单工具类时，需要部分mock这个类，所以还要加上一行：
 
 ```php
 OrderFacade::makePartial();
 ```
 
-但如果訂單工具類的構造方法里有需要注入的依賴關係，這里並不會被執行。所以我在工具類基類里封裝了一個方法，用反射機制實現手工注入依賴關係：
+但如果订单工具类的构造方法里有需要注入的依赖关系，这里并不会被执行。所以我在工具类基类里封装了一个方法，用反射机制实现手工注入依赖关系：
 
 ```php
     /**
@@ -57,7 +57,7 @@ OrderFacade::makePartial();
     }
 ```
 
-然後就可以這樣處理：
+然后就可以这样处理：
 
 ```php
 OrderFacade::shouldReceive('getById')->with($id)->once()->andReturn($fakeOrder);

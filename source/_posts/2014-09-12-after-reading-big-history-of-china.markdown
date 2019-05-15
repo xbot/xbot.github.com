@@ -1,12 +1,12 @@
 ---
 layout: post
-title: "讀完《中國大歷史》"
+title: "读完《中国大历史》"
 date: 2014-09-12 23:07
 comments: true
 categories: 青梅煮酒
 tags:
-- 讀書
-- 歷史
+- 读书
+- 历史
 ---
 
 {% img http://pic.yupoo.com/leninlee/E3k8bFJc/medium.jpg %}

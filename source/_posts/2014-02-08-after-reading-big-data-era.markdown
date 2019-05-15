@@ -1,17 +1,17 @@
 ---
 layout: post
-title: "讀完《大數據時代》"
+title: "读完《大数据时代》"
 date: 2014-02-08 10:11
 comments: true
 categories: 青梅煮酒
 tags:
-- 讀書
+- 读书
 - Kindle
-- 電子書
-- 互聯網
-- 大數據
+- 电子书
+- 互联网
+- 大数据
 ---
 
 {% img http://pic.yupoo.com/leninlee/DwnY4bqO/medish.jpg %}
 
-讀完，我首先感到的不是大數據有多可愛，而是有多可怕。
+读完，我首先感到的不是大数据有多可爱，而是有多可怕。

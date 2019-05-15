@@ -3,12 +3,12 @@ layout: post
 title: "Project Euler Problem 15 Solved"
 date: 2014-04-02 21:44
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - golang
 - python
-- 歐拉工程
-- 編程
+- 欧拉工程
+- 编程
 ---
 
 Lattice paths

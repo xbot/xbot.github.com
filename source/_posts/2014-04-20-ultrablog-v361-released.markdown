@@ -1,21 +1,21 @@
 ---
 layout: post
-title: "UltraBlog.vim v3.6.1: 文章分類自動補全"
+title: "UltraBlog.vim v3.6.1: 文章分类自动补全"
 date: 2014-04-20 22:50
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - Plugin
 - Python
 - UltraBlog.vim
 - Vim
 - 博客
-- 編程
+- 编程
 ---
 
-春節期間收到兩個issue，一直拖到今天才有時間完成。
+春节期间收到两个issue，一直拖到今天才有时间完成。
 
-增加了一個功能，在文章編輯視圖的元數據中分類那行，使用熱鍵\<C-X\>\<C-U\>自動完成文章的分類。在配置數組**ub_blog**中增加鍵值對“categories”，默認使用這一項的值實現自動完成，如下：
+增加了一个功能，在文章编辑视图的元数据中分类那行，使用热键\<C-X\>\<C-U\>自动完成文章的分类。在配置数组**ub_blog**中增加键值对“categories”，默认使用这一项的值实现自动完成，如下：
 
 {% codeblock lang:vim %}
 let ub_blog = {'login_name':'admin',
@@ -27,6 +27,6 @@ let ub_blog = {'login_name':'admin',
             \}
 {% endcodeblock %}
 
-如果這一項不存在，將從博客中拉取分類數據。
+如果这一项不存在，将从博客中拉取分类数据。
 
-自從遷移到Octopress，有兩年不用Wordpress了，沒想到居然還有人在用[UltraBlog.vim](/post/ultrablog-as-an-ultimate-vim-blogging-plugin/)。
+自从迁移到Octopress，有两年不用Wordpress了，没想到居然还有人在用[UltraBlog.vim](/post/ultrablog-as-an-ultimate-vim-blogging-plugin/)。

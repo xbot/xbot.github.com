@@ -1,75 +1,75 @@
 ---
 layout: post
-title: "PHP框架實戰：Flamework"
+title: "PHP框架实战：Flamework"
 date: 2013-12-26 20:24
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - PHP
 - Flamework
 - 框架
-- 編程
+- 编程
 ---
 
-從今天開始，逐步實現一個PHP的MVC框架，以踐行平時對這方面的一些想法。
+从今天开始，逐步实现一个PHP的MVC框架，以践行平时对这方面的一些想法。
 
-項目信息
+项目信息
 --------
 
- - 名稱：Flamework (_Flame Framework_)
- - 源碼：https://github.com/xbot/flamework
+ - 名称：Flamework (_Flame Framework_)
+ - 源码：https://github.com/xbot/flamework
 
 框架特性
 --------
 
-**激進**
+**激进**
 
-用PHP高版本引入的新特性，不考慮向前兼容問題，沒有歷史包袱。
+用PHP高版本引入的新特性，不考虑向前兼容问题，没有历史包袱。
 
-**命名空間**
+**命名空间**
 
-PHP 5.3引入的命名空間可以有效避免類命名衝突，這樣可以使類名看起來更自然，不用再在類名前面加難看的前綴了。
+PHP 5.3引入的命名空间可以有效避免类命名冲突，这样可以使类名看起来更自然，不用再在类名前面加难看的前缀了。
 
-**類的自動加載**
+**类的自动加载**
 
-手動include會增加維護的難度，因為經常會出現一個類被從源碼中移除而它的include行還在的問題，這會拖慢程序執行速度、增加內存佔用。
+手动include会增加维护的难度，因为经常会出现一个类被从源码中移除而它的include行还在的问题，这会拖慢程序执行速度、增加内存占用。
 
-實現類的自動加載可以在類被引用時自動include相應的源碼。
+实现类的自动加载可以在类被引用时自动include相应的源码。
 
-**異常的自動處理**
+**异常的自动处理**
 
-在設計程序時，一般應該把用戶級的錯誤返回給頁面顯示，或者對一些HTTP錯誤顯示個性化的頁面（_例如人民群眾喜聞樂見的404頁面_），所以在業務邏輯、數據操作這些層一般應該逐級向上拋異常，然後在Controller裡捕獲並加工成頁面可識別的格式（_例如JSON_）。這樣做的缺點是Controller裡每個Action都包含重複的try...catch塊。
+在设计程序时，一般应该把用户级的错误返回给页面显示，或者对一些HTTP错误显示个性化的页面（_例如人民群众喜闻乐见的404页面_），所以在业务逻辑、数据操作这些层一般应该逐级向上抛异常，然后在Controller里捕获并加工成页面可识别的格式（_例如JSON_）。这样做的缺点是Controller里每个Action都包含重复的try...catch块。
 
-異常的自動處理允許開發者指定自定義的異常處理邏輯，將異常處理與普通邏輯解耦，這樣每個Action只需實現它所關注的功能即可。
+异常的自动处理允许开发者指定自定义的异常处理逻辑，将异常处理与普通逻辑解耦，这样每个Action只需实现它所关注的功能即可。
 
-**過濾器**
+**过滤器**
 
-過濾器允許面向切面編程，是將橫向邏輯與縱向邏輯解耦的重要工具。Flamework要實現針對Controller和Action兩個級別的過濾器鏈，過濾器可在該級別邏輯前後執行，並能停止該級別邏輯及後續過濾器的執行。
+过滤器允许面向切面编程，是将横向逻辑与纵向逻辑解耦的重要工具。Flamework要实现针对Controller和Action两个级别的过滤器链，过滤器可在该级别逻辑前后执行，并能停止该级别逻辑及后续过滤器的执行。
 
-**懶加載**
+**懒加载**
 
-對盡可能多的資源實現懶加載，例如數據庫連接、類、組件等，目的是提高效率、節約資源。
+对尽可能多的资源实现懒加载，例如数据库连接、类、组件等，目的是提高效率、节约资源。
 
-**參數綁定**
+**参数绑定**
 
-自動將請求中的參數與Action方法的參數綁定，從而避免在Action裡出現通過$\_POST、$\_GET這些數組取參數的髒代碼，也可以自動實現參數的校驗和錯誤處理。
+自动将请求中的参数与Action方法的参数绑定，从而避免在Action里出现通过$\_POST、$\_GET这些数组取参数的脏代码，也可以自动实现参数的校验和错误处理。
 
 **ActiveRecord**
 
-ORM是對關係模型和對象模型的阻抗不匹配問題的解決方案，ActiveRecord是目前最流行的一種ORM的實現方式。通過AR，可以以更對象化的方式操作關係數據庫的數據。
+ORM是对关系模型和对象模型的阻抗不匹配问题的解决方案，ActiveRecord是目前最流行的一种ORM的实现方式。通过AR，可以以更对象化的方式操作关系数据库的数据。
 
-**依賴注入**
+**依赖注入**
 
-依賴注入是個很好的解耦方法，也可以很優雅地實現懶加載。
+依赖注入是个很好的解耦方法，也可以很优雅地实现懒加载。
 
-目錄
+目录
 ----
 
-  1. [零：代碼規範](/post/flamework-code-spec)
-  - [一：框架入口與類的自動加載](/post/flamework-entry)
-  - [二：錯誤和異常的自動處理](/post/flamework-error-auto-handling)
-  - [三：實現Controller和Filter](/post/flamework-controller-and-filter)
-  - [四：視圖的模板與渲染](/post/flamework-view-rendering)
-  - [五：ORM與ActiveRecord](/post/flamework-active-record)
-  - [六：依賴注入](/post/flamework-dependency-injection)
-  - [∝：烈焰之終章](/post/flamework-summary)
+  1. [零：代码规范](/post/flamework-code-spec)
+  - [一：框架入口与类的自动加载](/post/flamework-entry)
+  - [二：错误和异常的自动处理](/post/flamework-error-auto-handling)
+  - [三：实现Controller和Filter](/post/flamework-controller-and-filter)
+  - [四：视图的模板与渲染](/post/flamework-view-rendering)
+  - [五：ORM与ActiveRecord](/post/flamework-active-record)
+  - [六：依赖注入](/post/flamework-dependency-injection)
+  - [∝：烈焰之终章](/post/flamework-summary)

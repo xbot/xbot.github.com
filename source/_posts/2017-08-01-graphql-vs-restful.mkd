@@ -1,27 +1,27 @@
 ---
-title: GraphQL：RESTful之外的接口實現方案
+title: GraphQL：RESTful之外的接口实现方案
 date: 2017-08-01 17:36:27
-categories: 計算機
+categories: 计算机
 tags:
 - php
-- 編程
+- 编程
 ---
 
-和RESTfull一樣，GraphQL也是一種基於HTTP的接口實現方式。它區別於前者的主要有兩點：數據格式的自定義和請求的合併。
+和RESTfull一样，GraphQL也是一种基于HTTP的接口实现方式。它区别于前者的主要有两点：数据格式的自定义和请求的合并。
 
-本質上，GraphQL是為了解決RESTful中前後端在業務邏輯上的耦合關係。在RESTful中，接口是為前端具體的業務需求定制的，從實現什麼樣的功能，到返回哪些數據，都是既定的，所以很難被其它業務邏輯共用，即使可以共用，前端也必須發送多個請求到後端，因而造成資源浪費、效率下降。
+本质上，GraphQL是为了解决RESTful中前后端在业务逻辑上的耦合关系。在RESTful中，接口是为前端具体的业务需求定制的，从实现什么样的功能，到返回哪些数据，都是既定的，所以很难被其它业务逻辑共用，即使可以共用，前端也必须发送多个请求到后端，因而造成资源浪费、效率下降。
 
-GraphQL實現的是一套邏輯積木，每個封裝好的業務邏輯都是原子的，前端可以自由選擇使用哪些，也可以定制返回數據的格式。並且這一切，都可以通過一次請求實現。
+GraphQL实现的是一套逻辑积木，每个封装好的业务逻辑都是原子的，前端可以自由选择使用哪些，也可以定制返回数据的格式。并且这一切，都可以通过一次请求实现。
 
-當然，GraphQL也有一些短板。比如緩存，對於RESTfull接口，可以根據操作的冪等性實現負載均衡層面的緩存，而對於GraphQL，由於請求數據格式靈活且可能很大，請求會用POST方式發送，這樣就必須改變緩存的實現方式。再一點是嵌套的層級問題，GraphQL的靈活性允許查詢類型之間彼此嵌套，如果層級過多，可能導致嚴重的性能和可用性問題，因此需要注意限制嵌套的層級。還有就是GraphQL的實現複雜度比RESTful要高，需要權衡使用哪種實現方案。
+当然，GraphQL也有一些短板。比如缓存，对于RESTfull接口，可以根据操作的幂等性实现负载均衡层面的缓存，而对于GraphQL，由于请求数据格式灵活且可能很大，请求会用POST方式发送，这样就必须改变缓存的实现方式。再一点是嵌套的层级问题，GraphQL的灵活性允许查询类型之间彼此嵌套，如果层级过多，可能导致严重的性能和可用性问题，因此需要注意限制嵌套的层级。还有就是GraphQL的实现复杂度比RESTful要高，需要权衡使用哪种实现方案。
 
-GraphQL用schema管理接口，可以根據業務等因素劃分schema，例如需要權限驗證的和公開的。每個schema包含兩類接口：query和mutation，分別用來查詢和變更數據。
+GraphQL用schema管理接口，可以根据业务等因素划分schema，例如需要权限验证的和公开的。每个schema包含两类接口：query和mutation，分别用来查询和变更数据。
 
-下面在Laravel中簡單實現一個query接口。
+下面在Laravel中简单实现一个query接口。
 
-先安裝[folklore/graphql](https://github.com/Folkloreatelier/laravel-graphql)庫。
+先安装[folklore/graphql](https://github.com/Folkloreatelier/laravel-graphql)库。
 
-實現文章類型：
+实现文章类型：
 
 ```php
 namespace App\GraphQL\Type;
@@ -53,7 +53,7 @@ class PostType extends GraphQLType {
 }
 ```
 
-實現文章的查詢邏輯：
+实现文章的查询逻辑：
 
 ```php
 namespace App\GraphQL\Query;
@@ -82,7 +82,7 @@ class PostQuery extends Query {
 }
 ```
 
-在`config/graphql.php`中註冊類型和邏輯：
+在`config/graphql.php`中注册类型和逻辑：
 
 ```php
 'schemas' => [
@@ -101,9 +101,9 @@ class PostQuery extends Query {
 ],
 ```
 
-請求及結果如下：
+请求及结果如下：
 
 ![](https://ws4.sinaimg.cn/large/006tNbRwly1fwvwx9cf6hj30gi0fhmyk.jpg)
 
-GraphQL並不是RESTful的替代方案，是否用前者替代後者，取決於是否願意為了靈活性而增加複雜度。兩者有各自的適用領域，GraphQL更適合用來實現開放接口。
+GraphQL并不是RESTful的替代方案，是否用前者替代后者，取决于是否愿意为了灵活性而增加复杂度。两者有各自的适用领域，GraphQL更适合用来实现开放接口。
 

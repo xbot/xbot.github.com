@@ -1,29 +1,29 @@
 ---
 layout: post
-title: "JSON是對象還是字符串？"
+title: "JSON是对象还是字符串？"
 date: 2016-11-08 10:46
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
-- 筆記
+- 笔记
 ---
 
-前兩天，一個前端跟我爭論說JSON是對象。我在接口文檔里的數據格式寫的是JSON，結果對方真就傳了個對象過來。
+前两天，一个前端跟我争论说JSON是对象。我在接口文档里的数据格式写的是JSON，结果对方真就传了个对象过来。
 
-要搞清楚JSON是什麼，先得知道JSON是為瞭解決什麼問題的。維基百科里的定義是：
+要搞清楚JSON是什么，先得知道JSON是为了解决什么问题的。维基百科里的定义是：
 
-> JSON（JavaScript Object Notation）是一種由道格拉斯·克羅克福特構想設計、輕量級的數據交換語言，以文字為基礎，且易於讓人閱讀。儘管JSON是Javascript的一個子集，但JSON是獨立於語言的文本格式，並且採用了類似於C語言家族的一些習慣。
+> JSON（JavaScript Object Notation）是一种由道格拉斯·克罗克福特构想设计、轻量级的数据交换语言，以文字为基础，且易于让人阅读。尽管JSON是Javascript的一个子集，但JSON是独立于语言的文本格式，并且采用了类似于C语言家族的一些习惯。
 
-所以說，JSON是為瞭解決語言之間數據交換的一種文本格式，體現在數據上，JSON就是字符串類型。那麼為什麼需要為數據交換制訂一種通用的文本格式呢？可以做一個簡單的試驗：
+所以说，JSON是为了解决语言之间数据交换的一种文本格式，体现在数据上，JSON就是字符串类型。那么为什么需要为数据交换制订一种通用的文本格式呢？可以做一个简单的试验：
 
-用JavaScript建立一個到PHP的WebSocket併發送一個對象：
+用JavaScript建立一个到PHP的WebSocket并发送一个对象：
 
 ```javascript
 var ws = new WebSocket('ws://127.0.0.1:4759');
 ws.send({name:"hello"});
 ```
 
-PHP接收並打印對象：
+PHP接收并打印对象：
 
 ```php
 use Workerman\Worker;
@@ -34,10 +34,10 @@ $worker->onMessage = function($connection, $data) {
 Worker::runAll();
 ```
 
-得到的結果是：
+得到的结果是：
 
 > [object Object]
 
-所以，一種語言的對象的實例以二進制形式直接傳遞給另一種語言是無法識別的，因此需要把對象數據用文本描述之後再行傳遞。
+所以，一种语言的对象的实例以二进制形式直接传递给另一种语言是无法识别的，因此需要把对象数据用文本描述之后再行传递。
 
-此外，相對於XML等其它格式，JSON有可讀性上的優勢，如果是對象，二進制的數據哪來的可讀性？
+此外，相对于XML等其它格式，JSON有可读性上的优势，如果是对象，二进制的数据哪来的可读性？

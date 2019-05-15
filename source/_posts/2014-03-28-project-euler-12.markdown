@@ -3,11 +3,11 @@ layout: post
 title: "Project Euler Problem 12 Solved"
 date: 2014-03-28 22:51
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - golang
-- 歐拉工程
-- 編程
+- 欧拉工程
+- 编程
 ---
 
 Highly divisible triangular number

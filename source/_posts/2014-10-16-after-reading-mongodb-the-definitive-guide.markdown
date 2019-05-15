@@ -1,19 +1,19 @@
 ---
 layout: post
-title: "讀完《MongoDB權威指南》第二版"
+title: "读完《MongoDB权威指南》第二版"
 date: 2014-10-26 10:01
 comments: true
 categories: 青梅煮酒
 tags:
-- 讀書
-- 計算機
-- 數據庫
+- 读书
+- 计算机
+- 数据库
 - NoSQL
 - MongoDB
 ---
 
 {% img http://pic.yupoo.com/leninlee/E9VWUjut/medish.jpg %}
 
-第二版比第一版補充了很多內容，介紹得很詳細，是學習mongodb的好書。
+第二版比第一版补充了很多内容，介绍得很详细，是学习mongodb的好书。
 
-但是翻譯版有很多印刷錯誤，個別譯句也有問題。
+但是翻译版有很多印刷错误，个别译句也有问题。

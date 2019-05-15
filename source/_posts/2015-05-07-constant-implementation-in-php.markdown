@@ -1,19 +1,19 @@
 ---
 layout: post
-title: "PHP常量的實現和操作"
+title: "PHP常量的实现和操作"
 date: 2015-05-07 16:29
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - PHP
-- 源碼
+- 源码
 ---
 
-## 存儲結構
+## 存储结构
 
-常量存儲在哈希表EG(zend\_constants)中。
+常量存储在哈希表EG(zend\_constants)中。
 
-常量的結構定義為：
+常量的结构定义为：
 
 {% codeblock lang:c %}
 typedef struct _zend_constant {
@@ -25,19 +25,19 @@ typedef struct _zend_constant {
 } zend_constant;
 {% endcodeblock %}
 
-value是常量的值，是一個zval。name是常量名。module\_number是模塊被加載時，PHP內核在MINIT和RINIT方法的原型裡默認傳遞的一個值，作為模塊清理時的線索，在註冊常量的接口裡直接傳遞即可。
+value是常量的值，是一个zval。name是常量名。module\_number是模块被加载时，PHP内核在MINIT和RINIT方法的原型里默认传递的一个值，作为模块清理时的线索，在注册常量的接口里直接传递即可。
 
-flags是常量的標識或標識組合：
+flags是常量的标识或标识组合：
 
   - CONST\_CS
   - CONST\_PERSISTENT
   - CONST\_CT\_SUBST
 
-CONST\_CS表示常量名對大小寫敏感，對應PHP函數define()的第三個參數，TRUE、FALSE、NULL這些常量名對大小寫是不敏感的。CONST\_PERSISTENT表示常量在請求結束後被保存，只在PHP進程結束時才銷毀，一般在MINIT中定義的常量應該指定此參數，RINIT中定義的不指定。CONST\_CT\_SUBST表示在編譯時可替換，TRUE、FALSE、NULL、ZEND\_THREAD\_SAFE、ZEND\_DEBUG\_BUILD屬於此類。
+CONST\_CS表示常量名对大小写敏感，对应PHP函数define()的第三个参数，TRUE、FALSE、NULL这些常量名对大小写是不敏感的。CONST\_PERSISTENT表示常量在请求结束后被保存，只在PHP进程结束时才销毁，一般在MINIT中定义的常量应该指定此参数，RINIT中定义的不指定。CONST\_CT\_SUBST表示在编译时可替换，TRUE、FALSE、NULL、ZEND\_THREAD\_SAFE、ZEND\_DEBUG\_BUILD属于此类。
 
-## 常量的聲明
+## 常量的声明
 
-常量的聲明方法有兩種，簡單的使用宏函數族REGISTER\_\*\_CONSTANT()：
+常量的声明方法有两种，简单的使用宏函数族REGISTER\_\*\_CONSTANT()：
 
 >REGISTER\_NULL\_CONSTANT(name, flags)
 >REGISTER\_BOOL\_CONSTANT(name, bval, flags)
@@ -46,9 +46,9 @@ CONST\_CS表示常量名對大小寫敏感，對應PHP函數define()的第三個
 >REGISTER\_STRING\_CONSTANT(name, str, flags)
 >REGISTER\_STRINGL\_CONSTANT(name, str, len, flags)
 
-由於不需指定常量名長度，所以name參數應直接使用字符串，而不是char\*。
+由于不需指定常量名长度，所以name参数应直接使用字符串，而不是char\*。
 
-如需使用變量作為name參數，使用zend\_register\_\*\_constant()函數族，並指定變量名長度（sizeof(name)）。上面的宏函數其實是對這族函數的封裝。
+如需使用变量作为name参数，使用zend\_register\_\*\_constant()函数族，并指定变量名长度（sizeof(name)）。上面的宏函数其实是对这族函数的封装。
 
 >void zend\_register\_long\_constant(char \*name, uint name\_len, long lval, int flags, int module\_number TSRMLS\_DC)
 >void zend\_register\_double\_constant(char \*name, uint name\_len, double dval, int flags, int module\_number TSRMLS\_DC)
@@ -56,24 +56,24 @@ CONST\_CS表示常量名對大小寫敏感，對應PHP函數define()的第三個
 >void zend\_register\_string\_constant(char \*name, uint name\_len, char \*strval, int flags, int module\_number TSRMLS\_DC)
 >void zend\_register\_stringl\_constant(char \*name, uint name\_len, char \*strval, uint strlen, int flags, int module\_number TSRMLS\_DC)
 
-除此之外，還有REGISTER\_MAIN\_\*\_CONSTANT和REGISTER\_NS\_\*\_CONSTANT兩組宏函數。前者用於定義像E\_ERROR這樣的PHP標準常量，後者定義有命令空間的常量。
+除此之外，还有REGISTER\_MAIN\_\*\_CONSTANT和REGISTER\_NS\_\*\_CONSTANT两组宏函数。前者用于定义像E\_ERROR这样的PHP标准常量，后者定义有命令空间的常量。
 
 ## define()和const
 
-  - define()是函數，在運行時定義常量
-    - 不能定義類常量
-    - 可以在條件語句中使用
-    - 可以指定常量是否對大小寫敏感
-    - 可以用表達式作為常量值
-    - 只定義全局常量，不支持命名空間
-  - const是語句，在編譯時定義常量
-    - 可以定義類常量
-    - 不能在條件語句中使用
-    - 定義的常量對大小寫敏感
-    - 不支持表達式作為常量值
-    - 若腳本定義了命名空間，聲明的常量屬於該命名空間
+  - define()是函数，在运行时定义常量
+    - 不能定义类常量
+    - 可以在条件语句中使用
+    - 可以指定常量是否对大小写敏感
+    - 可以用表达式作为常量值
+    - 只定义全局常量，不支持命名空间
+  - const是语句，在编译时定义常量
+    - 可以定义类常量
+    - 不能在条件语句中使用
+    - 定义的常量对大小写敏感
+    - 不支持表达式作为常量值
+    - 若脚本定义了命名空间，声明的常量属于该命名空间
 
-## 魔術常量
+## 魔术常量
 
 >\_\_LINE\_\_  
 >\_\_FILE\_\_  
@@ -83,4 +83,4 @@ CONST\_CS表示常量名對大小寫敏感，對應PHP函數define()的第三個
 >\_\_METHOD\_\_  
 >\_\_NAMESPACE\_\_  
 
-魔術常量是在編譯時（具體地說是詞法分析時，見Zend/zend\_language\_scanner.l）被替換，確切地說，這些不是真正意義上的常量，只是個模板佔位符。
+魔术常量是在编译时（具体地说是词法分析时，见Zend/zend\_language\_scanner.l）被替换，确切地说，这些不是真正意义上的常量，只是个模板占位符。

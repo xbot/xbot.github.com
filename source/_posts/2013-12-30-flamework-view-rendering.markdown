@@ -1,38 +1,38 @@
 ---
 layout: post
-title: "PHP框架實戰（四）：View的模板與渲染"
+title: "PHP框架实战（四）：View的模板与渲染"
 date: 2013-12-30 21:05
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - PHP
 - Flamework
 - 框架
-- 編程
+- 编程
 ---
 
-目標
+目标
 ----
 
-實現MVC模型的**V**iew層，Controller的Action中應可以將從Model層獲取的數據填充到View模板中，並將渲染結果返回給訪問者。本文並不志在實現一個完備的模板框架，相應的需求可借助Smarty這樣現有的實現。
+实现MVC模型的**V**iew层，Controller的Action中应可以将从Model层获取的数据填充到View模板中，并将渲染结果返回给访问者。本文并不志在实现一个完备的模板框架，相应的需求可借助Smarty这样现有的实现。
 
-獲取代碼
+获取代码
 --------
 
 {% codeblock lang:bash %}
 git checkout v0.4
 {% endcodeblock %}
 
-設計與實現
+设计与实现
 ----------
 
-View的模板是最好實現的，因為PHP本身就是一個模板語言，所以這裡實現的模板主要是指幾條約定：
+View的模板是最好实现的，因为PHP本身就是一个模板语言，所以这里实现的模板主要是指几条约定：
 
-  1. 模板文件本身是一個普通PHP文件，文件名後綴是“.php”；
-  - 模板文件應存儲在項目指定的模板基礎目錄中；
-  - 模板名稱指模板文件相對於項目的模板基礎目錄的路徑，並且去掉文件後綴；
-  - 模板本身的實際效果等同於在Controller的Action中執行的代碼，故可以調用Controller的所有方法以及Flame對象的方法等內容；
-  - 所有要填充到模板中的數據以鍵值對的形式存儲在一個關聯數組中，並傳遞給渲染模板的方法，在模板中使用與鍵名相同的變量調用數據；
+  1. 模板文件本身是一个普通PHP文件，文件名后缀是“.php”；
+  - 模板文件应存储在项目指定的模板基础目录中；
+  - 模板名称指模板文件相对于项目的模板基础目录的路径，并且去掉文件后缀；
+  - 模板本身的实际效果等同于在Controller的Action中执行的代码，故可以调用Controller的所有方法以及Flame对象的方法等内容；
+  - 所有要填充到模板中的数据以键值对的形式存储在一个关联数组中，并传递给渲染模板的方法，在模板中使用与键名相同的变量调用数据；
 
 **View的渲染方法**
 
@@ -67,12 +67,12 @@ View的模板是最好實現的，因為PHP本身就是一個模板語言，所�
 ?>
 {% endcodeblock %}
 
-$view是模板名稱，$data是要填充到模板中的數據。
+$view是模板名称，$data是要填充到模板中的数据。
 
-驗證Demo
+验证Demo
 --------
 
-在Demo項目的protected下新增文件“view/post/list.php”，並創建不存在的這兩個上級目錄“view”和“post”。內容如下：
+在Demo项目的protected下新增文件“view/post/list.php”，并创建不存在的这两个上级目录“view”和“post”。内容如下：
 
 {% codeblock lang:html %}
 <html>
@@ -87,7 +87,7 @@ $view是模板名稱，$data是要填充到模板中的數據。
 </html>
 {% endcodeblock %}
 
-將DefaultController::index()方法修改為：
+将DefaultController::index()方法修改为：
 
 {% codeblock lang:php %}
 <?php
@@ -107,9 +107,9 @@ $view是模板名稱，$data是要填充到模板中的數據。
 ?>
 {% endcodeblock %}
 
-訪問Demo項目，頁面將顯示預期的內容和樣式。
+访问Demo项目，页面将显示预期的内容和样式。
 
-總結
+总结
 ----
 
-PHP本身的特點使得View這一層很容易實現。不過，隨著富客戶端的流行，MVC模型的View這一層正在被逐漸弱化，現在主流的開發方式是前端通過AJAX與服務器端交換數據，而不是把數據填充到模板中再返回給客戶端。
+PHP本身的特点使得View这一层很容易实现。不过，随著富客户端的流行，MVC模型的View这一层正在被逐渐弱化，现在主流的开发方式是前端通过AJAX与服务器端交换数据，而不是把数据填充到模板中再返回给客户端。

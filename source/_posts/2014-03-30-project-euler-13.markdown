@@ -3,11 +3,11 @@ layout: post
 title: "Project Euler Problem 13 Solved"
 date: 2014-03-30 09:50
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - golang
-- 歐拉工程
-- 編程
+- 欧拉工程
+- 编程
 ---
 
 Large sum

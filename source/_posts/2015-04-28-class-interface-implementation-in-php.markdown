@@ -1,17 +1,17 @@
 ---
 layout: post
-title: "PHP類和接口的實現"
+title: "PHP类和接口的实现"
 date: 2015-04-28 18:38
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - PHP
-- 源碼
+- 源码
 ---
 
-## Class的實現
+## Class的实现
 
-類的註冊是在擴展的MINIT方法裡。
+类的注册是在扩展的MINIT方法里。
 
 {% codeblock lang:c %}
 /*
@@ -135,7 +135,7 @@ PHP_MINIT_FUNCTION(donie)
 }
 {% endcodeblock %}
 
-#### 方法修飾符
+#### 方法修饰符
 
 >ZEND_ACC_PUBLIC  
 >ZEND_ACC_PROTECTED  
@@ -144,13 +144,13 @@ PHP_MINIT_FUNCTION(donie)
 >ZEND_ACC_FINAL  
 >ZEND_ACC_ABSTRACT  
 
-不直接在PHP_ME裡使用ZEND_ACC_ABSTRACT定義抽象方法，用PHP_ABSTRACT_ME()。
+不直接在PHP_ME里使用ZEND_ACC_ABSTRACT定义抽象方法，用PHP_ABSTRACT_ME()。
 
-#### 取對象句柄
+#### 取对象句柄
 
-在方法的定義裡使用getThis()拿當前對象的句柄。
+在方法的定义里使用getThis()拿当前对象的句柄。
 
-#### 屬性的聲明和存取
+#### 属性的声明和存取
 
 >zend_declare_property_null(... TSRMLS_DC)  
 >zend_declare_property_bool(..., long value TSRMLS_DC)  
@@ -159,24 +159,24 @@ PHP_MINIT_FUNCTION(donie)
 >zend_declare_property_string(..., const char *value TSRMLS_DC)  
 >zend_declare_property_stringl(..., const char *value, int value_len TSRMLS_DC)  
 
-屬性的修飾符和方法相同。
+属性的修饰符和方法相同。
 
-屬性的獲取使用zend_read_property_*()這組函數。
+属性的获取使用zend_read_property_*()这组函数。
 
-屬性的更新使用zend_update_property_*()這組函數。
+属性的更新使用zend_update_property_*()这组函数。
 
-靜態屬性的獲取和更新分別使用zend\_read\_static\_property\_\*()函數組和zend\_update\_static\_property\_\*()函數組。與以上不同的是，參數中不需要對象句柄。
+静态属性的获取和更新分别使用zend\_read\_static\_property\_\*()函数组和zend\_update\_static\_property\_\*()函数组。与以上不同的是，参数中不需要对象句柄。
 
-類常量的聲明使用zend_declare_class_constant_*()函數組，參數與聲明屬性相同，只是不需要修飾符。
+类常量的声明使用zend_declare_class_constant_*()函数组，参数与声明属性相同，只是不需要修饰符。
 
-#### 繼承類
+#### 继承类
 
 用zend_register_internal_class_ex()。
 
-#### 聲明接口
+#### 声明接口
 
-和聲明類一樣，先聲明一組抽象方法，然後用zend_register_internal_interface()註冊。
+和声明类一样，先声明一组抽象方法，然后用zend_register_internal_interface()注册。
 
-#### 實現接口
+#### 实现接口
 
 用zend_class_implements()。

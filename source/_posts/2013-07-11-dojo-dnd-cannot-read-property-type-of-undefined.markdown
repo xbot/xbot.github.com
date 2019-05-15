@@ -3,29 +3,29 @@ layout: post
 title: "Dojo DnD: Cannot read property 'type' of undefined"
 date: 2013-07-11 22:44
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - Dojo
 - Javascript
-- 編程
+- 编程
 ---
-場景如下：
+场景如下：
 
-假設有兩個Widget：ItemListWidget和ItemWidget，後者要被創建多份並追加到前者內部，同時ItemListWidget要作為dojo/dnd/Source，每個ItemWidget作為一個單元可被拖拽到另外一個dojo/dnd/Target容器中。
+假设有两个Widget：ItemListWidget和ItemWidget，后者要被创建多份并追加到前者内部，同时ItemListWidget要作为dojo/dnd/Source，每个ItemWidget作为一个单元可被拖拽到另外一个dojo/dnd/Target容器中。
 
-問題是，當Source被創建後，再添加到ItemListWidget的ItemWidget實例在被拖拽時會報如下錯誤：
+问题是，当Source被创建后，再添加到ItemListWidget的ItemWidget实例在被拖拽时会报如下错误：
 
 > Uncaught TypeError: Cannot read property 'type' of undefined
 
-在Chrome開發工具中點開這個錯誤，顯示以下內容：
+在Chrome开发工具中点开这个错误，显示以下内容：
 
 {% img http://pic.yupoo.com/leninlee/D0dD4euT/cULuA.png %}
 
-從方法的註釋或API中可以看到，checkAcceptance()是用來判斷當前拖拽對象是否在這個target接受的範圍之內，接受規則用Source和Target的構造參數中的“accept”定義。在這個方法裡通過Source.getItem()方法拿到的對象是null，上述錯誤就是從這兒報出來的。
+从方法的注释或API中可以看到，checkAcceptance()是用来判断当前拖拽对象是否在这个target接受的范围之内，接受规则用Source和Target的构造参数中的“accept”定义。在这个方法里通过Source.getItem()方法拿到的对象是null，上述错误就是从这儿报出来的。
 
-接合API和Reference Guide發現，每個Source中的可拖拽項目在Source中都要有一個對應的對象，這個對象至少包括兩個屬性：“data”和“type”。在[Reference Guide](http://dojotoolkit.org/reference-guide/1.9/dojo/dnd.html)中，對這兩個屬性有詳細說明，簡言之，data是向Target傳遞的數據，type是被Target用來判斷拖拽個體是否屬於接受範圍的依據。
+接合API和Reference Guide发现，每个Source中的可拖拽项目在Source中都要有一个对应的对象，这个对象至少包括两个属性：“data”和“type”。在[Reference Guide](http://dojotoolkit.org/reference-guide/1.9/dojo/dnd.html)中，对这两个属性有详细说明，简言之，data是向Target传递的数据，type是被Target用来判断拖拽个体是否属于接受范围的依据。
 
-當Source實例被創建時，已經存在於ItemListWidget中的ItemWidget實例會被自動創建對應的上述對象，但之後加入的不會。解決的辦法是調用Source.setItem()方法為每一個新加入的ItemWidget關聯相應的對象，或在ItemWidget中添加一個構造參數，用於指定Source，並在postCreate()方法中為當前ItemWidget實例關聯相應的對象:
+当Source实例被创建时，已经存在于ItemListWidget中的ItemWidget实例会被自动创建对应的上述对象，但之后加入的不会。解决的办法是调用Source.setItem()方法为每一个新加入的ItemWidget关联相应的对象，或在ItemWidget中添加一个构造参数，用于指定Source，并在postCreate()方法中为当前ItemWidget实例关联相应的对象:
 
 {% codeblock lang:javascript %}
 define([
@@ -34,12 +34,12 @@ define([
 ], function(declare, _WidgetBase){
     return declare("ItemWidget", [_WidgetBase], {
 
-        // 本Widget實例所屬的Source實例
+        // 本Widget实例所属的Source实例
         dndSrc: null,
         
         postCreate: function() {
             this.inherited(arguments);
-            // 不需要傳遞數據時，可忽略data參數
+            // 不需要传递数据时，可忽略data参数
             if (this.dndSrc !== null)
                 this.dndSrc.setItem(this.id, {type:["text"]});
         }

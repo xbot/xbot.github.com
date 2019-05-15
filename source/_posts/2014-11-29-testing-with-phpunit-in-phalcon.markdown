@@ -1,25 +1,25 @@
 ---
 layout: post
-title: "Phalcon項目中PHPUnit的初始化"
+title: "Phalcon项目中PHPUnit的初始化"
 date: 2014-11-29 09:58
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - php
 - phalcon
 - phpunit
-- 編程
+- 编程
 ---
 
-參考[官方文檔](http://docs.phalconphp.com/zh/latest/reference/unit-testing.html)，稍作修改。
+参考[官方文档](http://docs.phalconphp.com/zh/latest/reference/unit-testing.html)，稍作修改。
 
-在項目下創建目錄unittests，進入目錄執行：
+在项目下创建目录unittests，进入目录执行：
 
 ```bash
 composer require phpunit/phpunit
 ```
 
-創建tests目錄并在其中創建文件Bootstrap.php：
+创建tests目录并在其中创建文件Bootstrap.php：
 
 ```php
 <?php
@@ -39,7 +39,7 @@ set_include_path(
 // required for phalcon/incubator
 include __DIR__ . "/../vendor/autoload.php";
 
-// 加載項目文件
+// 加载项目文件
 $config = require_once PROJECT_DIR.'/web/config/config.php';
 require_once PROJECT_DIR.'/web/config/loader.php';
 $loader->registerDirs(array(
@@ -55,13 +55,13 @@ require_once PROJECT_DIR.'/web/config/services.php';
 DI::setDefault($di);
 ```
 
-安裝phalcon的phpunit輔助庫：
+安装phalcon的phpunit辅助库：
 
 ```bash
 composer require phalcon/incubator
 ```
 
-創建phpunit.xml：
+创建phpunit.xml：
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -82,7 +82,7 @@ composer require phalcon/incubator
 </phpunit>
 ```
 
-創建單元測試基類UnitTestCase.php：
+创建单元测试基类UnitTestCase.php：
 
 ```php
 <?php
@@ -133,7 +133,7 @@ abstract class UnitTestCase extends PhalconTestCase {
 }
 ```
 
-創建單元測試類testsTestUnitTest.php：
+创建单元测试类testsTestUnitTest.php：
 
 ```php
 <?php
@@ -153,11 +153,11 @@ class UnitTests extends \UnitTestCase {
 }
 ```
 
-在tests目錄下建立phpunit的軟連接并執行測試：
+在tests目录下建立phpunit的软连接并执行测试：
 
 ```bash
 ln -sf ../vendor/bin/phpunit run
 ./run
 ```
 
-**另**：發現個詭異的問題，如果Model中不覆蓋getSource()方法，單元測試中會自動找用下劃線分隔的表名，即假如Model名爲FooBar，會去找foo_bar的表名，但正常執行程序時找的是foobar。在官方論壇問的[問題](http://forum.phalconphp.com/discussion/4078/whats-the-principle-when-phalcon-gets-the-table-name-of-a-model)還木有解決。phalcon坑挺多的。
+**另**：发现个诡异的问题，如果Model中不覆盖getSource()方法，单元测试中会自动找用下划线分隔的表名，即假如Model名为FooBar，会去找foo_bar的表名，但正常执行程序时找的是foobar。在官方论坛问的[问题](http://forum.phalconphp.com/discussion/4078/whats-the-principle-when-phalcon-gets-the-table-name-of-a-model)还木有解决。phalcon坑挺多的。

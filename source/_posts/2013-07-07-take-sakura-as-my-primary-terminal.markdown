@@ -3,10 +3,10 @@ layout: post
 title: "Take Sakura as My Primary Terminal"
 date: 2013-07-07 12:07
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - Linux
-- 終端
+- 终端
 - sakura
 - rxvt
 - powerline

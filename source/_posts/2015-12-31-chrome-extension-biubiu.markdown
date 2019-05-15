@@ -3,9 +3,9 @@ layout: post
 title: "BiuBiu: A Chrome Extension Blocking AJAX Requests"
 date: 2015-12-31 14:19
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
-- 編程
+- 编程
 - javascript
 - chrome
 ---

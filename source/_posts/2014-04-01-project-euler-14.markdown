@@ -3,11 +3,11 @@ layout: post
 title: "Project Euler Problem 14 Solved"
 date: 2014-04-01 22:17
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - golang
-- 歐拉工程
-- 編程
+- 欧拉工程
+- 编程
 ---
 
 Longest Collatz sequence

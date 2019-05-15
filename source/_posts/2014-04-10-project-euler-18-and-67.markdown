@@ -3,12 +3,12 @@ layout: post
 title: "Project Euler Problem 18&67 Solved"
 date: 2014-04-10 21:28
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - golang
 - python
-- 歐拉工程
-- 編程
+- 欧拉工程
+- 编程
 ---
 
 Maximum path sum I

@@ -1,22 +1,22 @@
 ---
 layout: post
-title: "用Dojo實現拖放操作的最佳實踐"
+title: "用Dojo实现拖放操作的最佳实践"
 date: 2013-11-05 16:58
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - Dojo
 - Javascript
-- 編程
+- 编程
 ---
-網上關於Dojo實現拖放操作的資料都講得很淺，所以我在研究這個東西的時候在一些細節上費了不少功夫，例如創建自定義樣式的拖拽物件、將光標置於拖拽開始時的位置等等。這些細節一般在實現個性化的拖放操作時都要涉及，但幾乎找不到任何直接的資料，所以本文斗膽宣稱是當前Dojo拖放的最佳實踐。
+网上关于Dojo实现拖放操作的资料都讲得很浅，所以我在研究这个东西的时候在一些细节上费了不少功夫，例如创建自定义样式的拖拽物件、将光标置于拖拽开始时的位置等等。这些细节一般在实现个性化的拖放操作时都要涉及，但几乎找不到任何直接的资料，所以本文斗胆宣称是当前Dojo拖放的最佳实践。
 
-創建自定義樣式的拖拽物件
+创建自定义样式的拖拽物件
 ------------------------
 
-Dojo缺省的拖拽物件樣式很醜，通過覆蓋官方文檔裡列出的幾個CSS的class可以有限地調整部分樣式，如果需要更多個性化，就需要使用自定義的物件模板。
+Dojo缺省的拖拽物件样式很丑，通过覆盖官方文档里列出的几个CSS的class可以有限地调整部分样式，如果需要更多个性化，就需要使用自定义的物件模板。
 
-通過重載Source對象的creator方法可以實現這一點。這個方法會在創建拖拽物件的時候被調用，如果hint參數的值為“avatar”就表示將被創建的是被拖拽物件，此時可以使用預先定義好的模板avatarTmpl創建物件的node。
+通过重载Source对象的creator方法可以实现这一点。这个方法会在创建拖拽物件的时候被调用，如果hint参数的值为“avatar”就表示将被创建的是被拖拽物件，此时可以使用预先定义好的模板avatarTmpl创建物件的node。
 
 {% codeblock lang:javascript %}
 this.dndSrc = new Source(this.itemList.domNode, {
@@ -32,12 +32,12 @@ this.dndSrc = new Source(this.itemList.domNode, {
 });
 {% endcodeblock %}
 
-置光標位置於拖拽起始處
+置光标位置于拖拽起始处
 ----------------------
 
-在拖拽開始後，Dojo默認將光標置於被拖拽物件的左上角，而一般把光標置於拖拽開始時相對於物件的位置處顯得比較自然。
+在拖拽开始后，Dojo默认将光标置于被拖拽物件的左上角，而一般把光标置于拖拽开始时相对于物件的位置处显得比较自然。
 
-實現方式是先記錄拖拽開始時光標的位置，然後設置dojo.dnd.Manager的兩個位移屬性。
+实现方式是先记录拖拽开始时光标的位置，然后设置dojo.dnd.Manager的两个位移属性。
 
 {% codeblock lang:javascript %}
 on(this.domNode, 'mousedown', lang.hitch(this, this._setDndOffset))
@@ -52,12 +52,12 @@ _setDndOffset: function(evt){
 },
 {% endcodeblock %}
 
-使鼠標事件穿透被拖拽物件
+使鼠标事件穿透被拖拽物件
 ------------------------
 
-將光標置於物件開始被拖拽時的位置後，物件本身會擋住mouseover事件，導致Target不能獲知物件被拖拽到自己上方，以致能拖不能放。
+将光标置于物件开始被拖拽时的位置后，物件本身会挡住mouseover事件，导致Target不能获知物件被拖拽到自己上方，以致能拖不能放。
 
-解決方法是通過CSS使鼠標事件穿透被拖拽物件。
+解决方法是通过CSS使鼠标事件穿透被拖拽物件。
 
 {% codeblock lang:javascript %}
 .dojoDndAvatar {

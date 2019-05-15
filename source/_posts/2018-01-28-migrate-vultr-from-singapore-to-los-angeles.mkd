@@ -1,36 +1,36 @@
 ---
-title: 從Vultr新加坡遷移到洛杉磯
+title: 从Vultr新加坡迁移到洛杉矶
 date: 2018-01-28 14:15:57
-categories: 計算機
+categories: 计算机
 tags:
-- 筆記
+- 笔记
 ---
-Vultr新加坡節點掛了兩天了，不能翻牆簡直什麼都乾不了。早上用CloudSpeed看了下，洛杉磯機房的響應速度還不錯，就遷移了過去。
+Vultr新加坡节点挂了两天了，不能翻墙简直什么都干不了。早上用CloudSpeed看了下，洛杉矶机房的响应速度还不错，就迁移了过去。
 
 ## ShadowsocksR
-這個很簡單，用[一鍵安裝腳本](https://github.com/91yun/shadowsocks_install)。
+这个很简单，用[一键安装脚本](https://github.com/91yun/shadowsocks_install)。
 
-## 網絡加速
-用BBR，[一鍵安裝腳本](https://teddysun.com/489.html)。
+## 网络加速
+用BBR，[一键安装脚本](https://teddysun.com/489.html)。
 
 ## Tiny Tiny RSS
-先按照之前的[筆記](/post/ttrss/)安裝ttrss。
+先按照之前的[笔记](/post/ttrss/)安装ttrss。
 
-然後重建一個空的ttrss的數據庫：
+然后重建一个空的ttrss的数据库：
 
 ```bash
 docker exec f6d92ad8efba /usr/bin/psql -c "drop database ttrss"
 docker exec f6d92ad8efba /usr/bin/psql -c "create database ttrss"
 ```
 
-把數據庫的備份複製到容器里並導入：
+把数据库的备份复制到容器里并导入：
 
 ```bash
 docker cp ttrss.sql f6d92ad8efba:/tmp/ttrss.sql
 docker exec f6d92ad8efba /usr/bin/psql -d ttrss -f /tmp/ttrss.sql postgres
 ```
 
-以root身份登錄容器並刪除備份文件：
+以root身份登录容器并删除备份文件：
 
 ```bash
 docker exec -it --user root f6d92ad8efba /bin/sh

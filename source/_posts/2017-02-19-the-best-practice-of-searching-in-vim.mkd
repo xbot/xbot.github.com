@@ -1,11 +1,11 @@
 ---
-title: Vim搜索的最佳實踐
+title: Vim搜索的最佳实践
 date: 2017-02-19 20:37:18
-categories: 計算機
+categories: 计算机
 tags:
 - vim
-- 最佳實踐
-- 編程
+- 最佳实践
+- 编程
 ---
 
 ## 目标
@@ -14,15 +14,15 @@ tags:
 * 将选定内容自动转换成正则表达式
 * 有较高的搜索速度
 
-## 依賴
+## 依赖
 
-* [Ferret](https://github.com/wincent/ferret)：實現用PCRE正則表達式遞歸搜索
+* [Ferret](https://github.com/wincent/ferret)：实现用PCRE正则表达式递归搜索
 * [The Silver Searcher](https://github.com/ggreer/the_silver_searcher)：搜索速度快
 
 ## 配置
 
 ```vim
-" 在当前缓冲区中查找與替換
+" 在当前缓冲区中查找与替换
 nmap <leader>ff yiw/\<<C-R>"\>\C
 vmap <leader>ff y/<C-R>=XEscapeRegex(@")<CR>\C
 nmap <leader>rr yiw:%s/\<<C-R>"\>\C//g<LEFT><LEFT>
@@ -85,22 +85,22 @@ endfunction"}}}
 
 ### Ferret
 
-Ferret是我用過的vim搜索擴展里最接近理想的一個，最大的優點是不用引號包裹搜索內容，且較大程度地支持PCRE正則表達式。
+Ferret是我用过的vim搜索扩展里最接近理想的一个，最大的优点是不用引号包裹搜索内容，且较大程度地支持PCRE正则表达式。
 
-EasyGrep的缺點是正則表達式必須是shellescape()過的，手寫不方便，也不直觀。Ferret在底層做了shellescape()，所以比EasyGrep簡單一些。不過Ferret對反斜槓的處理仍然不直觀，例如搜索`App\Link`，正則表達式是`App\\Link`，而Ferret里只能用`App\\\\Link`。原因是從輸入到執行，存在著三層轉義：Vim命令行、Shell、grep/ag。所以對於EasyGrep，要搜索一個`\`，必須輸入`\\\\\\\\`。對於Ferret，由於底層做了shellescape()，只需要兩層轉義，即`\\\\`。當然這樣也不方便，所以我用自定義函數XEscapeRegex()對選擇的內容做這個事，不過最完美的方法當然是Ferret自己支持，或者自己再封裝一下Ferret的命令，這樣輸入的正則表達式可讀性就正常了。
+EasyGrep的缺点是正则表达式必须是shellescape()过的，手写不方便，也不直观。Ferret在底层做了shellescape()，所以比EasyGrep简单一些。不过Ferret对反斜杠的处理仍然不直观，例如搜索`App\Link`，正则表达式是`App\\Link`，而Ferret里只能用`App\\\\Link`。原因是从输入到执行，存在著三层转义：Vim命令行、Shell、grep/ag。所以对于EasyGrep，要搜索一个`\`，必须输入`\\\\\\\\`。对于Ferret，由于底层做了shellescape()，只需要两层转义，即`\\\\`。当然这样也不方便，所以我用自定义函数XEscapeRegex()对选择的内容做这个事，不过最完美的方法当然是Ferret自己支持，或者自己再封装一下Ferret的命令，这样输入的正则表达式可读性就正常了。
 
 ### The Silver Searcher
 
-ag是我用過的搜索工具里對速度和功能兼顧得最好的。
+ag是我用过的搜索工具里对速度和功能兼顾得最好的。
 
-### 搜索運算符
+### 搜索运算符
 
-GrepOperator是從[Learn Vimscript the Hard Way](http://learnvimscriptthehardway.stevelosh.com/)里扒出來的，可以實現自動搜索指定範圍的內容：
+GrepOperator是从[Learn Vimscript the Hard Way](http://learnvimscriptthehardway.stevelosh.com/)里扒出来的，可以实现自动搜索指定范围的内容：
 
-* `<leader>aiw`：搜索光標下的詞
-* `<leader>a$`：搜索從光標到行末的內容
-* `<leader>at;`：搜索從光標到下一個分號的內容
+* `<leader>aiw`：搜索光标下的词
+* `<leader>a$`：搜索从光标到行末的内容
+* `<leader>at;`：搜索从光标到下一个分号的内容
 
-### 轉換選定內容到正則表達式
+### 转换选定内容到正则表达式
 
-XEscapeRegex()根據參數轉換字符串到不同格式的正則表達式。主要用途為轉換成給搜索當前緩衝區的Vim格式的正則，或給Ferret使用的PCRE格式。
+XEscapeRegex()根据参数转换字符串到不同格式的正则表达式。主要用途为转换成给搜索当前缓冲区的Vim格式的正则，或给Ferret使用的PCRE格式。

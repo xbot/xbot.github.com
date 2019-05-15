@@ -1,14 +1,14 @@
 ---
-title: '用ALE替換了Syntastic'
+title: '用ALE替换了Syntastic'
 date: 2018-12-12 20:42:10
-categories: 計算機
+categories: 计算机
 tags:
 - vim
-- 最佳實踐
+- 最佳实践
 ---
-習慣頻繁地保存源碼，但是每次保存都有明顯的卡頓，於是用Vim自己的調優功能跟蹤了一下。
+习惯频繁地保存源码，但是每次保存都有明显的卡顿，于是用Vim自己的调优功能跟踪了一下。
 
-依次執行以下命令：
+依次执行以下命令：
 
 ```
 :profile start profile.log
@@ -16,16 +16,16 @@ tags:
 :profile func *
 ```
 
-然後執行保存操作，再執行以下命令：
+然后执行保存操作，再执行以下命令：
 
 ```
 :profile pause
 :noautocmd qall!
 ```
 
-在當前目錄下生成的文件profile.log里，看到執行時間最長的是Syntastic的函數，禁用這個擴展後保存果然比原來快多了。
+在当前目录下生成的文件profile.log里，看到执行时间最长的是Syntastic的函数，禁用这个扩展后保存果然比原来快多了。
 
-但是Syntastic是個很有用的擴展，所以Google一下有沒有異步執行的方法，偶然發現了ALE，主要特性就是異步執行。試用之後覺得很好用，就把前者卸了。
+但是Syntastic是个很有用的扩展，所以Google一下有没有异步执行的方法，偶然发现了ALE，主要特性就是异步执行。试用之后觉得很好用，就把前者卸了。
 
 ALE的初始配置如下：
 
@@ -34,21 +34,21 @@ ALE的初始配置如下：
 let g:ale_sign_column_always = 1
 let g:ale_set_highlights = 0
 let g:airline#extensions#ale#enabled = 1
-"自定義error和warning圖標
+"自定义error和warning图标
 let g:ale_sign_error = '✗'
 let g:ale_sign_warning = '⚠'
-" 顯示Linter名稱,出錯或警告等相關信息
+" 显示Linter名称,出错或警告等相关信息
 let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 " PHP
 let g:ale_php_phpcs_standard = 'PSR2'
 let g:ale_php_phpmd_ruleset = '~/.phpmd.xml'
-" 普通模式下，sp前往上一個錯誤或警告，sn前往下一個錯誤或警告
+" 普通模式下，sp前往上一个错误或警告，sn前往下一个错误或警告
 nmap sp <Plug>(ale_previous_wrap)
 nmap sn <Plug>(ale_next_wrap)
-" 觸發/關閉語法檢查
+" 触发/关闭语法检查
 nmap <Leader>at :ALEToggle<CR>
-" 查看錯誤或警告的詳細信息
+" 查看错误或警告的详细信息
 nmap <Leader>ad :ALEDetail<CR>
 ```

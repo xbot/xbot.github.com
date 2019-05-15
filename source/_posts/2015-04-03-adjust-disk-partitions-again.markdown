@@ -1,49 +1,49 @@
 ---
 layout: post
-title: "再次調整磁盤分區"
+title: "再次调整磁盘分区"
 date: 2015-04-03 14:44
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - linux
 ---
 
-自從[上次](/post/adjust-disk-partitions-in-archlinux/)調整磁盤分區，一直把根目錄和主目錄分別掛在一個物理分區下，即使系統掛了或者換發行版也不影響主目錄。最近根分區很緊張，乾脆把兩個分區合併了。
+自从[上次](/post/adjust-disk-partitions-in-archlinux/)调整磁盘分区，一直把根目录和主目录分别挂在一个物理分区下，即使系统挂了或者换发行版也不影响主目录。最近根分区很紧张，干脆把两个分区合并了。
 
-先用UNetBootin安裝Puppy Linux到U盤，需要手工修改U盤裡的syslinux.cfg，把“pmedia=**cd**”改成“pmedia=**usbflash**”，然後用U盤啟動。
+先用UNetBootin安装Puppy Linux到U盘，需要手工修改U盘里的syslinux.cfg，把“pmedia=**cd**”改成“pmedia=**usbflash**”，然后用U盘启动。
 
-把主目錄的內容完整複製到移動硬盤：
+把主目录的内容完整复制到移动硬盘：
 
 {% codeblock lang:bash %}
-# 掛載主目錄
+# 挂载主目录
 mkdir /mnt/oldhome
 mount -t ext4 /dev/sda2 /mnt/oldhome
 
-# 掛載移動硬盤
+# 挂载移动硬盘
 mkdir /mnt/bakdisk
 mount -t ext4 /dev/sdc1 /mnt/bakdisk
 
-# 複製主目錄
+# 复制主目录
 cp -a /mnt/oldhome /mnt/bakdisk/
 
-# 取消掛載主目錄
+# 取消挂载主目录
 umount /mnt/oldhome
 {% endcodeblock %}
 
-用gparted刪除主目錄分區，合併到根分區。然後恢復主目錄：
+用gparted删除主目录分区，合并到根分区。然后恢复主目录：
 
 {% codeblock lang:bash %}
-# 掛載根分區
+# 挂载根分区
 mkdir /mnt/newroot
 mount -t ext4 /dev/sda1 /mnt/newroot
 
-# 恢復主目錄
+# 恢复主目录
 cp -a /mnt/bakdisk/* /mnt/newroot/
 
-# 修改fstab，取消主目錄的掛載
+# 修改fstab，取消主目录的挂载
 vim /mnt/newroot/etc/fstab
 
-# 取消掛載
+# 取消挂载
 umount /mnt/bakdisk
 umount /mnt/newroot
 {% endcodeblock %}

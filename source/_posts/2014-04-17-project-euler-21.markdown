@@ -3,12 +3,12 @@ layout: post
 title: "Project Euler Problem 21 Solved"
 date: 2014-04-17 22:18
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - golang
 - python
-- 歐拉工程
-- 編程
+- 欧拉工程
+- 编程
 ---
 
 Amicable numbers

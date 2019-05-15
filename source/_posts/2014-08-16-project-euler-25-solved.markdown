@@ -3,9 +3,9 @@ layout: post
 title: "Project Euler Problem 25 Solved"
 date: 2014-08-16 17:32
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
-- 編程
+- 编程
 - euler
 ---
 

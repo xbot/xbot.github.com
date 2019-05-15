@@ -3,12 +3,12 @@ layout: post
 title: "Project Euler Problem 16 Solved"
 date: 2014-04-08 21:57
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - golang
 - python
-- 歐拉工程
-- 編程
+- 欧拉工程
+- 编程
 ---
 
 Power digit sum

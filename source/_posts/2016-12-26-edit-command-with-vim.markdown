@@ -1,15 +1,15 @@
 ---
 layout: post
-title: "小確幸，用Vim編輯當前命令行"
+title: "小确幸，用Vim编辑当前命令行"
 date: 2016-12-26 11:58
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - linux
 - cli
 - mac
 ---
 
-修改很長的命令是件痛苦的事，在Linux下，可以通過快捷鍵`Ctrl+X Ctrl+E`調用`$EDITOR`快速編輯當前命令行的內容，保存退出後，結果會呈現在光標下。
+修改很长的命令是件痛苦的事，在Linux下，可以通过快捷键`Ctrl+X Ctrl+E`调用`$EDITOR`快速编辑当前命令行的内容，保存退出后，结果会呈现在光标下。
 
-不過在Mac OS的iTerm2下，似乎是因為`Ctrl+X`被佔用而不能生效。誤打誤撞地發現了另外一個方法，使用oh-my-zsh並且開啓了vi mode的話，先進入vi mode，然後輸入`v`，同樣可以實現這樣的功能。
+不过在Mac OS的iTerm2下，似乎是因为`Ctrl+X`被占用而不能生效。误打误撞地发现了另外一个方法，使用oh-my-zsh并且开启了vi mode的话，先进入vi mode，然后输入`v`，同样可以实现这样的功能。

@@ -1,17 +1,17 @@
 ---
 layout: post
-title: "PHP擴展框架的創建"
+title: "PHP扩展框架的创建"
 date: 2015-06-18 14:15
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - PHP
-- 源碼
+- 源码
 ---
 
-## 創建項目
+## 创建项目
 
-在PHP源碼目錄下的ext目錄下執行：
+在PHP源码目录下的ext目录下执行：
 
 {% codeblock lang:c %}
 ./ext_skel --extname=foobar
@@ -23,27 +23,27 @@ tags:
 >dnl Make sure that the comment is aligned:  
 >dnl [  --with-foobar             Include foobar support])
 
-## 編譯與安裝
+## 编译与安装
 
-在foobar目錄下執行以下命令，生成configure腳本：
+在foobar目录下执行以下命令，生成configure脚本：
 
 {% codeblock lang:bash %}
 /usr/bin/phpize
 {% endcodeblock %}
 
-執行configure：
+执行configure：
 
 {% codeblock lang:bash %}
 ./configure --with-php-config=/usr/bin/php-config
 {% endcodeblock %}
 
-編譯安裝：
+编译安装：
 
 {% codeblock lang:bash %}
 sudo make install
 {% endcodeblock %}
 
-修改php.ini，啟用擴展：
+修改php.ini，启用扩展：
 
 {% codeblock lang:ini %}
 extension=foobar.so

@@ -1,46 +1,46 @@
 ---
 layout: post
-title: "PHP框架實戰（五）：ORM與ActiveRecord"
+title: "PHP框架实战（五）：ORM与ActiveRecord"
 date: 2014-01-01 20:45
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - PHP
 - Flamework
 - 框架
-- 編程
+- 编程
 ---
 
-簡述
+简述
 ----
 
-Model是MVC框架中最複雜的部分，它要提供與業務邏輯相關的數據及數據處理方法的封裝，一般要提供數據對象、數據庫連接、事務管理、SQL語句構造、數據CRUD、高級通用業務邏輯等一系列功能。由於Model與Controller和View是解耦的，並且本身具備很高的通用性和複雜性，所以有很多獨立的實現。本文希望能通過開發一個簡單的ActiveRecord，驗證這種Model實現方案的原理和過程。
+Model是MVC框架中最复杂的部分，它要提供与业务逻辑相关的数据及数据处理方法的封装，一般要提供数据对象、数据库连接、事务管理、SQL语句构造、数据CRUD、高级通用业务逻辑等一系列功能。由于Model与Controller和View是解耦的，并且本身具备很高的通用性和复杂性，所以有很多独立的实现。本文希望能通过开发一个简单的ActiveRecord，验证这种Model实现方案的原理和过程。
 
-ORM：對象關係映射
+ORM：对象关系映射
 -----------------
 
-ORM的全稱是Object Relational Mapping，即對象關係映射。它是為了解決關係數據庫的數學模型和編程語言的對象模型之間的阻抗不匹配問題而提出的解決方案。
+ORM的全称是Object Relational Mapping，即对象关系映射。它是为了解决关系数据库的数学模型和编程语言的对象模型之间的阻抗不匹配问题而提出的解决方案。
 
-阻抗不匹配是個逼格很高的詞。
+阻抗不匹配是个逼格很高的词。
 
-阻抗是指電路中的電容、電感、電阻對交流電的障礙作用，就像電阻對直流電的障礙作用。兩個系統傳遞信號可以形象地看成電壓的傳遞，公式為：
+阻抗是指电路中的电容、电感、电阻对交流电的障碍作用，就像电阻对直流电的障碍作用。两个系统传递信号可以形象地看成电压的传递，公式为：
 
 >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**U**(out) \* **Z**(in)  
 **U**(in) =  --------------------------  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Z**(in) + **Z**(out)
 
-即輸入電壓等於輸出電壓與輸入阻抗的積除以輸入阻抗與輸出阻抗的和。
+即输入电压等于输出电压与输入阻抗的积除以输入阻抗与输出阻抗的和。
 
-理想情況肯定是輸入電壓等於輸出電壓，這時信號是沒有失真的，也就是要求Z(in)與Z(in)+Z(out)之商無限逼近1，這個過程就叫阻抗匹配。關係型數據庫是建立在數學模型的基礎上，而編程語言中的對象是建立在人對客觀世界認知的具象模型上。說白了，阻抗不匹配問題就是說因這兩種模型不一致而導致的問題。
+理想情况肯定是输入电压等于输出电压，这时信号是没有失真的，也就是要求Z(in)与Z(in)+Z(out)之商无限逼近1，这个过程就叫阻抗匹配。关系型数据库是建立在数学模型的基础上，而编程语言中的对象是建立在人对客观世界认知的具象模型上。说白了，阻抗不匹配问题就是说因这两种模型不一致而导致的问题。
 
-ORM通過建立表與對象、列與屬性（_这只是一般情况_）之間的映射關係而解決問題，這可以實現像操作對象一樣對數據庫中的數據進行增刪改查，簡化了開發過程。不過ORM的缺點是不能很好地處理複雜數據關係，會出現效率低下的問題，因此必要時仍然需要直接使用SQL。
+ORM通过建立表与对象、列与属性（_这只是一般情况_）之间的映射关系而解决问题，这可以实现像操作对象一样对数据库中的数据进行增删改查，简化了开发过程。不过ORM的缺点是不能很好地处理复杂数据关系，会出现效率低下的问题，因此必要时仍然需要直接使用SQL。
 
 ActiveRecord
 ------------
 
-ActiveRecord是Ruby on Rails提出的一個概念，其實就是ORM的一種實現，它是對象類型、數據、CRUD方法的合體，使對數據的操作以更具象化的方式實現。下面介紹在Flamework中實現一個簡單的ActiveRecord的過程。
+ActiveRecord是Ruby on Rails提出的一个概念，其实就是ORM的一种实现，它是对象类型、数据、CRUD方法的合体，使对数据的操作以更具象化的方式实现。下面介绍在Flamework中实现一个简单的ActiveRecord的过程。
 
-首先實現數據庫的接口，提供數據庫連接、查詢、執行SQL語句、事務管理等基本功能。這裡使用PDO實現：
+首先实现数据库的接口，提供数据库连接、查询、执行SQL语句、事务管理等基本功能。这里使用PDO实现：
 
 {% codeblock lang:php %}
 <?php
@@ -179,7 +179,7 @@ class DBConnection
 ?>
 {% endcodeblock %}
 
-然後實現ActiveRecord類：
+然后实现ActiveRecord类：
 
 {% codeblock lang:php %}
 <?php
@@ -416,16 +416,16 @@ abstract class ActiveRecord
 ?>
 {% endcodeblock %}
 
-約定，所有子類都必須覆蓋和實現getModel()、getTableName()、getPrimaryKey()這三個方法。getModel()返回不包含具體數據的ActiveRecord實例，用於執行對象類型範疇的操作，例如查詢符合特定條件的對象。在包含具體數據的ActiveRecord實例中執行針對該具體對象的操作，例如保存和刪除。
+约定，所有子类都必须覆盖和实现getModel()、getTableName()、getPrimaryKey()这三个方法。getModel()返回不包含具体数据的ActiveRecord实例，用于执行对象类型范畴的操作，例如查询符合特定条件的对象。在包含具体数据的ActiveRecord实例中执行针对该具体对象的操作，例如保存和删除。
 
-為了更好地區分ActiveRecord的屬性和對象數據，這裡將對象數據存放在關聯數組ActiveRecord::$\_data裡，然後使用\_\_get()、\_\_set()等魔術方法實現像使用ActiveRecord自身屬性一樣使用對象數據。
+为了更好地区分ActiveRecord的属性和对象数据，这里将对象数据存放在关联数组ActiveRecord::$\_data里，然后使用\_\_get()、\_\_set()等魔术方法实现像使用ActiveRecord自身属性一样使用对象数据。
 
-在更新對象時，出於性能考慮，應該只更新被修改過的列。這裡借助魔術方法\_\_set()，實現向對象屬性賦值時將被修改的屬性和值添加到關聯數組ActiveRecord::$\_dirtyData中。最後構造update語句時，從該數組中取值即可。
+在更新对象时，出于性能考虑，应该只更新被修改过的列。这里借助魔术方法\_\_set()，实现向对象属性赋值时将被修改的属性和值添加到关联数组ActiveRecord::$\_dirtyData中。最后构造update语句时，从该数组中取值即可。
 
 ActiveRecord的使用
 ------------------
 
-在Demo項目中實現一個對象，繼承ActiveRecord：
+在Demo项目中实现一个对象，继承ActiveRecord：
 
 {% codeblock lang:php %}
 <?php
@@ -457,18 +457,18 @@ class Post extends ActiveRecord
 
 {% codeblock lang:php %}
 <?php
-// 根據ID查詢對象
+// 根据ID查询对象
 $p = Post::getModel()->findByPk(1);
 var_dump($p);
 
-// 更新對象
+// 更新对象
 $p = new Post();
 $p->setIsNew(false);
 $p->id = 3;
 $p->title = 'bad name 2';
 $p->save();
 
-// 刪除對象
+// 删除对象
 $p = new Post();
 $p->setIsNew(false);
 $p->id = 3;
@@ -476,9 +476,9 @@ $p->delete();
 ?>
 {% endcodeblock %}
 
-總結
+总结
 ----
 
-ORM的根本任務是解決關係模型與對象模型的阻抗不匹配問題。而ActiveRecord是時下很流行的一種ORM的實現方式。在對ActiveRecord的實現中使用了PDO，這是PHP 5.1開始引入的一個輕量的數據訪問抽象層，相比以前針對每種數據庫使用不同的函數集的方式，它使PHP的數據庫操作變得更簡單。此外，魔術方法的使用簡化了代碼，使數據操作變得更靈活。
+ORM的根本任务是解决关系模型与对象模型的阻抗不匹配问题。而ActiveRecord是时下很流行的一种ORM的实现方式。在对ActiveRecord的实现中使用了PDO，这是PHP 5.1开始引入的一个轻量的数据访问抽象层，相比以前针对每种数据库使用不同的函数集的方式，它使PHP的数据库操作变得更简单。此外，魔术方法的使用简化了代码，使数据操作变得更灵活。
 
-本文只實現了一個最基本的ActiveRecord，實際使用時，還要包含SQL語句構造等複雜的邏輯，不過只要弄清楚了核心原理和實現方式，其它也就水到渠成了。
+本文只实现了一个最基本的ActiveRecord，实际使用时，还要包含SQL语句构造等复杂的逻辑，不过只要弄清楚了核心原理和实现方式，其它也就水到渠成了。

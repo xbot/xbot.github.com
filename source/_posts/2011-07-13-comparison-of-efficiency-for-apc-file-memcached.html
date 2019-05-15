@@ -1,12 +1,12 @@
 ---
 layout: post
-title: APC、文件和Memcached效率對比
+title: APC、文件和Memcached效率对比
 tags:
 - Memcached
 - PHP
-- 編程
-- 緩存
-- 評測
+- 编程
+- 缓存
+- 评测
 status: publish
 type: post
 published: true
@@ -15,28 +15,28 @@ meta:
   aktt_notify_twitter: 'no'
   views: '581'
 ---
-<p>對一個保存了100個對象實例的數組進行300次讀寫，該數組序列化後大小為232KB。</p>
+<p>对一个保存了100个对象实例的数组进行300次读写，该数组序列化后大小为232KB。</p>
 
-<h2>測試環境</h2>
+<h2>测试环境</h2>
 
 <table>
     <tr>
-        <th>網絡服務器</th>
+        <th>网络服务器</th>
         <th>PHP版本</th>
-        <th>操作系統</th>
+        <th>操作系统</th>
         <th>硬件配置</th>
     </tr>
     <tr>
         <td>NGINX v1.0.4</td>
-        <td>PHP-FPM v5.3.6<br>APC啟用</td>
+        <td>PHP-FPM v5.3.6<br>APC启用</td>
         <td>Archlinux 32bit</td>
         <td>Intel(R) Core(TM)2 Duo CPU T9400 @ 2.53GHz<br>Mem: 3G DDR3<br>Disk: 5400r/s</td>
     </tr>
 </table>
 
-<h2>測試腳本</h2>
+<h2>测试脚本</h2>
 
-<p>測試數據：</p>
+<p>测试数据：</p>
 
 {% codeblock lang:php %}
 <?php
@@ -330,7 +330,7 @@ echo $etime-$stime;
 ?>
 {% endcodeblock %}
 
-<h2>測試結果</h2>
+<h2>测试结果</h2>
 
 <table>
     <tr>
@@ -345,15 +345,15 @@ echo $etime-$stime;
     </tr>
 </table>
 
-<h2>總結</h2>
+<h2>总结</h2>
 
 <ul>
 <li>APC效率最高，Memcached效率最低</li>
-<li>APC和Memcached的測試結果很穩定，文件方式的耗時從開始時的4秒逐步降低並穩定在3.6秒</li>
+<li>APC和Memcached的测试结果很稳定，文件方式的耗时从开始时的4秒逐步降低并稳定在3.6秒</li>
 <li>猜想：
 <ul>
-<li>在IO量較小的情況下，文件讀寫可能確實比通過TCP操作Memcached效率高，但是在IO量較大的情況下，文件方式會出現瓶頸，Memcached的優勢會得到體現</li>
-<li>對於集群應用，通過NFS共享文件緩存的效率會低於Memcached</li>
+<li>在IO量较小的情况下，文件读写可能确实比通过TCP操作Memcached效率高，但是在IO量较大的情况下，文件方式会出现瓶颈，Memcached的优势会得到体现</li>
+<li>对于集群应用，通过NFS共享文件缓存的效率会低于Memcached</li>
 </ul></li>
 </ul>
 

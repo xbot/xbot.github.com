@@ -1,10 +1,10 @@
 ---
 layout: post
-title: 在Archlinux下使用thinkfan控制Thinkpad x220的風扇轉速
+title: 在Archlinux下使用thinkfan控制Thinkpad x220的风扇转速
 tags:
 - Archlinux
 - ThinkPad
-- 計算機
+- 计算机
 status: publish
 type: post
 published: true
@@ -14,20 +14,20 @@ meta:
   posturl_add_url: 'yes'
   views: '118'
 ---
-<p>Archlinux目前對Thinkpad風扇的自動控制效果並不好，氣溫上升後很容易出現一直在三千多轉一直跑的問題。thinkfan是目前用的比較多的自動控制風扇轉速的程序，但Google到的配置thinkfan的文章大多語焉不詳，可能是跟具體的發行版有關，因為貌似有些發行版中安裝了thinkfan後會自動生成缺省的配置文件，但在目前的AUR中的包被安裝後卻沒有生成任何配置文件。</p>
+<p>Archlinux目前对Thinkpad风扇的自动控制效果并不好，气温上升后很容易出现一直在三千多转一直跑的问题。thinkfan是目前用的比较多的自动控制风扇转速的程序，但Google到的配置thinkfan的文章大多语焉不详，可能是跟具体的发行版有关，因为貌似有些发行版中安装了thinkfan后会自动生成缺省的配置文件，但在目前的AUR中的包被安装后却没有生成任何配置文件。</p>
 
-<p>下面是我在Archlinux下配置的步驟，實際效果很好，現在只要不看視頻、不編譯程序、不啟動Chromium，一般是兩千九百轉的速度，安靜多了。</p>
+<p>下面是我在Archlinux下配置的步骤，实际效果很好，现在只要不看视频、不编译程序、不启动Chromium，一般是两千九百转的速度，安静多了。</p>
 
 <h2>lm_sensors</h2>
 
-<p>安裝lm_sensors並執行命令初始化：</p>
+<p>安装lm_sensors并执行命令初始化：</p>
 
 {% codeblock lang:bash %}
-# 一路回車
+# 一路回车
 sudo sensors-detect
 {% endcodeblock %}
 
-<p>將sensors加入rc.conf中DAEMONS中，開機啟動。</p>
+<p>将sensors加入rc.conf中DAEMONS中，开机启动。</p>
 
 <p>启动sensors服务：</p>
 
@@ -43,11 +43,11 @@ sudo rc.d start sensors
 options thinkpad_acpi fan_control=1
 {% endcodeblock %}
 
-<p>我這裡雖沒有把thinkpad_acpi加到rc.conf的MODULES中，但lsmod也是可以看到它的，說明還是自動啟用了。要使上面這項配置生效，必須重啟電腦，我這裡重啟thinkpad_acpi模塊時報錯說該模塊正在被使用。</p>
+<p>我这里虽没有把thinkpad_acpi加到rc.conf的MODULES中，但lsmod也是可以看到它的，说明还是自动启用了。要使上面这项配置生效，必须重启电脑，我这里重启thinkpad_acpi模块时报错说该模块正在被使用。</p>
 
 <h2>thinkfan</h2>
 
-<p>安裝thinkfan並修改文件“<strong>/etc/default/thinkfan</strong>”：</p>
+<p>安装thinkfan并修改文件“<strong>/etc/default/thinkfan</strong>”：</p>
 
 {% codeblock %}
 START=yes
@@ -67,21 +67,21 @@ sensor /sys/class/hwmon/hwmon0/temp1_input
 (7, 63, 32767)
 {% endcodeblock %}
 
-<p>將thinkfan加入rc.conf的DAEMONS中，開機自動啟動。</p>
+<p>将thinkfan加入rc.conf的DAEMONS中，开机自动启动。</p>
 
-<p>啟動thinkfan：</p>
+<p>启动thinkfan：</p>
 
 {% codeblock lang:bash %}
 sudo thinkfan
 {% endcodeblock %}
 
-<h2>查看狀態</h2>
+<h2>查看状态</h2>
 
 {% codeblock lang:bash %}
 # 看CPU温度和风扇转速
 sensors
 
-# 看風扇詳細信息
+# 看风扇详细信息
 cat /proc/acpi/ibm/fan
 {% endcodeblock %}
 

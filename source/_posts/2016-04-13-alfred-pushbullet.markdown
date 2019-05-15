@@ -3,9 +3,9 @@ layout: post
 title: "Alfred-pushbullet: Push a text to your phone"
 date: 2016-04-13 17:30
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
-- 編程
+- 编程
 - Mac
 - alfred
 ---

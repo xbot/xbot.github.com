@@ -1,12 +1,12 @@
 ---
 layout: post
-title: "讀過Hello Android"
+title: "读过Hello Android"
 date: 2013-02-21 21:01
 comments: true
 categories: 青梅煮酒
 ---
-春節前花了一周時間讀完了這本書。
+春节前花了一周时间读完了这本书。
 
-是本不錯的Android入門教材，能讓人快速地搭出開發環境，瞭解Android應用的運作機制，對於移動應用開發的初學者尤其有用。當然，這種書一般不會講得很全面，更深的東西還是要看官方文檔，只是Android的官方指南寫得比較散，並且過於簡單，不適合初學者。
+是本不错的Android入门教材，能让人快速地搭出开发环境，了解Android应用的运作机制，对于移动应用开发的初学者尤其有用。当然，这种书一般不会讲得很全面，更深的东西还是要看官方文档，只是Android的官方指南写得比较散，并且过于简单，不适合初学者。
 
 {% img http://pic.yupoo.com/leninlee/CEUw95b5/gewxz.jpg %}

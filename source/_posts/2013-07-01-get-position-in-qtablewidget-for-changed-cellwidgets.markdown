@@ -3,11 +3,11 @@ layout: post
 title: "PySide: How to Get the Position of a Widget-Value-Changed Cell in QTableWidget"
 date: 2013-07-01 00:57
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - Python
 - PySide
-- 編程
+- 编程
 ---
 Assume we have created an instance of QTableWidget, in which cells are filled with widgets like QComboBox, QCheckBox, etc. When values are changed, we need to get the row and column indexes of the cells. But the QTableWidget.cellChanged() and QTableWidget.itemChanged() signals are only effective for cells containing QTableWidgetItem instances, for those in which widgets are filled in with QTableWidget.setCellWidget(), this doesn't work.
 

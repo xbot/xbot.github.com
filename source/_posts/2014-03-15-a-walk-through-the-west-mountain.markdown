@@ -1,29 +1,29 @@
 ---
 layout: post
-title: "西山徒步——大覺寺至鳳凰嶺南線"
+title: "西山徒步——大觉寺至凤凰岭南线"
 date: 2014-03-15 19:56
 comments: true
-categories: 行見
+categories: 行见
 tags:
 - 徒步
 - 山
 - 茶
 ---
 
-從大覺寺上，至鳳凰嶺南線下，全程十六公里，最高海拔一千多米，上升一千米，用時七個多小時，難度適中。全程用行者騎行軟件記錄，挺好用，GPS定位准，耗電不大，魅族MX3大概用了60%的電。
+从大觉寺上，至凤凰岭南线下，全程十六公里，最高海拔一千多米，上升一千米，用时七个多小时，难度适中。全程用行者骑行软件记录，挺好用，GPS定位准，耗电不大，魅族MX3大概用了60%的电。
 
-記錄數據：
+记录数据：
 
 {% img http://pic.yupoo.com/leninlee/DBVrawlL/medish.jpg %}
 {% img http://pic.yupoo.com/leninlee/DBVraDFN/medish.jpg %}
 {% img http://pic.yupoo.com/leninlee/DBVqWKLy/medish.jpg %}
 
-山上的公路很好，在這裡騎行挺好的，只是不知道從哪上來：
+山上的公路很好，在这里骑行挺好的，只是不知道从哪上来：
 
 {% img http://pic.yupoo.com/leninlee/DBVrlHDT/medish.jpg %}
 {% img http://pic.yupoo.com/leninlee/DBVr8MUb/medish.jpg %}
 {% img http://pic.yupoo.com/leninlee/DBVr9DBD/medish.jpg %}
 
-在山上接了壺泉水，陸羽《茶經·煮》裡說：“其水，用山水上，江水中，井水下”，上水烹茶，不言其中：
+在山上接了壶泉水，陆羽《茶经·煮》里说：“其水，用山水上，江水中，井水下”，上水烹茶，不言其中：
 
 {% img http://pic.yupoo.com/leninlee/DBVrbnSf/medish.jpg %}

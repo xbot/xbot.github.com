@@ -1,32 +1,32 @@
 ---
 layout: post
-title: "PHP框架實戰（二）：錯誤和異常的自動處理"
+title: "PHP框架实战（二）：错误和异常的自动处理"
 date: 2013-12-28 13:40
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - PHP
 - Flamework
 - 框架
-- 編程
+- 编程
 ---
 
-目標
+目标
 ----
 
-實現錯誤和異常的自動捕獲和處理。
+实现错误和异常的自动捕获和处理。
 
-獲取代碼
+获取代码
 --------
 
 {% codeblock lang:bash %}
 git checkout v0.2
 {% endcodeblock %}
 
-設計與實現
+设计与实现
 ----------
 
-使用set_error_handler()和set_exception_handler()兩個函數註冊錯誤和異常的處理方法，並在兩個處理方法中先調用用戶自定義的錯誤和異常處理邏輯，如果自定義邏輯不存在或者返回false，繼續調用框架缺省的處理邏輯，輸出錯誤信息到頁面。
+使用set_error_handler()和set_exception_handler()两个函数注册错误和异常的处理方法，并在两个处理方法中先调用用户自定义的错误和异常处理逻辑，如果自定义逻辑不存在或者返回false，继续调用框架缺省的处理逻辑，输出错误信息到页面。
 
 {% codeblock lang:php %}
 <?php
@@ -175,9 +175,9 @@ class WebApplication {
 ?>
 {% endcodeblock %}
 
-“handleError()”和“handleException()”中先調用了“restore_error_handler()”和“restore_exception_handler()”，用於防止遞歸處理。
+“handleError()”和“handleException()”中先调用了“restore_error_handler()”和“restore_exception_handler()”，用于防止递归处理。
 
-開發者可以在配置數組中指定自定義的錯誤和異常處理邏輯：
+开发者可以在配置数组中指定自定义的错误和异常处理逻辑：
 
 {% codeblock lang:php %}
 <?php
@@ -192,14 +192,14 @@ return array(
 ?>
 {% endcodeblock %}
 
-“errorHandler”和“exceptionHandler”的值必須是一個callable類型，在這個callable結束時，如果不希望後續邏輯（_例如框架自己的錯誤、異常處理邏輯_）繼續處理，就返回true，此時程序將會終止執行並退出。
+“errorHandler”和“exceptionHandler”的值必须是一个callable类型，在这个callable结束时，如果不希望后续逻辑（_例如框架自己的错误、异常处理逻辑_）继续处理，就返回true，此时程序将会终止执行并退出。
 
-Demo驗證
+Demo验证
 --------
 
-在WebApplication::run()中拋出一個異常或使用trigger_error()觸發一個錯誤，可以看到均被攔截和處理。
+在WebApplication::run()中抛出一个异常或使用trigger_error()触发一个错误，可以看到均被拦截和处理。
 
-總結
+总结
 ----
 
-引入錯誤和異常的自動處理可以極大地簡化代碼。我們經常需要在AJAX請求出錯時返回一個JSON字符串，並由客戶端決定如何處理，這時就可以使用自定義的處理邏輯處理錯誤和異常，而Controller裡只實現正常的邏輯即可，無需再有大量難看的try...catch塊。
+引入错误和异常的自动处理可以极大地简化代码。我们经常需要在AJAX请求出错时返回一个JSON字符串，并由客户端决定如何处理，这时就可以使用自定义的处理逻辑处理错误和异常，而Controller里只实现正常的逻辑即可，无需再有大量难看的try...catch块。

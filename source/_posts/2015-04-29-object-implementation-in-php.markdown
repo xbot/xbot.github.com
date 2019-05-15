@@ -1,17 +1,17 @@
 ---
 layout: post
-title: "PHP對象的實現和操作"
+title: "PHP对象的实现和操作"
 date: 2015-04-29 23:00
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - PHP
-- 源碼
+- 源码
 ---
 
-## Object的存儲結構
+## Object的存储结构
 
-對象實例用zval存儲。zval->type == IS_OBJECT，zval->value->obj存儲zend_object_value類型的結構體變量。
+对象实例用zval存储。zval->type == IS_OBJECT，zval->value->obj存储zend_object_value类型的结构体变量。
 
 {% codeblock lang:c %}
 typedef struct _zend_object_value {
@@ -20,33 +20,33 @@ typedef struct _zend_object_value {
 } zend_object_value;
 {% endcodeblock %}
 
-zend_object_handle是一個unsigned int，是對象的ID。zend_object_handlers存儲對象所有的行為。
+zend_object_handle是一个unsigned int，是对象的ID。zend_object_handlers存储对象所有的行为。
 
-## Object的實例化過程
+## Object的实例化过程
 
-Object的初始化用以下幾個宏函數：
+Object的初始化用以下几个宏函数：
 
   - object_init(zval *arg)
   - object_init_ex(zval \*arg, zend_class_entry *class_type)
   - object_and_properties_init(zval \*arg, zend_class_entry \*class_type, HashTable *properties)
 
-底層都是調用_object_and_properties_init(zval \*arg, zend_class_entry \*class_type, HashTable *properties)實現。這個函數做以下幾件事：
+底层都是调用_object_and_properties_init(zval \*arg, zend_class_entry \*class_type, HashTable *properties)实现。这个函数做以下几件事：
 
-  - 檢查類是否可實例化（例如接口、抽象類等不允許初始化）
-  - 處理類常量
-  - 檢查類是否存在自定義實例化邏輯
-    - 若存在，調用自定義實例化邏輯
-    - 若不存在，調用缺省的函數zend_objects_new(zend_object \*\*object, zend_class_entry *class_type)
-  - 把實例化的zend_object類型的數據存入zval中
+  - 检查类是否可实例化（例如接口、抽象类等不允许初始化）
+  - 处理类常量
+  - 检查类是否存在自定义实例化逻辑
+    - 若存在，调用自定义实例化逻辑
+    - 若不存在，调用缺省的函数zend_objects_new(zend_object \*\*object, zend_class_entry *class_type)
+  - 把实例化的zend_object类型的数据存入zval中
 
-zend_objects_new()做這些事：
+zend_objects_new()做这些事：
 
-  - 分配一個zend_object類型的內存空間
-  - 初始化zend_object類型數據
-  - 把zend_object類型數據存入對象倉庫（Objects Store）
+  - 分配一个zend_object类型的内存空间
+  - 初始化zend_object类型数据
+  - 把zend_object类型数据存入对象仓库（Objects Store）
     - zend_objects_store_put(void *object, zend_objects_store_dtor_t dtor, zend_objects_free_object_storage_t free_storage, zend_objects_store_clone_t clone）
 
-## zend_object的存儲結構
+## zend_object的存储结构
 
 {% codeblock lang:c %}
 typedef struct _zend_object {
@@ -57,9 +57,9 @@ typedef struct _zend_object {
 } zend_object;
 {% endcodeblock %}
 
-ce是類的定義。properties_table存儲類裡預定義的屬性。properties存儲非預定義屬性。
+ce是类的定义。properties_table存储类里预定义的属性。properties存储非预定义属性。
 
-guards存儲屬性名到zend_guard結構的映射關係。
+guards存储属性名到zend_guard结构的映射关系。
 
 {% codeblock lang:c %}
 typedef struct _zend_guard {
@@ -71,13 +71,13 @@ typedef struct _zend_guard {
 } zend_guard;
 {% endcodeblock %}
 
-此結構用於在操作屬性時，防止遞歸調用。例如給對象一個新屬性賦值時，\_\_set()函數理論上會遞歸調用自己，所以此結構用於判斷該屬性是否已在\_\_set()中。
+此结构用于在操作属性时，防止递归调用。例如给对象一个新属性赋值时，\_\_set()函数理论上会递归调用自己，所以此结构用于判断该属性是否已在\_\_set()中。
 
-## 屬性的存儲結構
+## 属性的存储结构
 
-在zend_object的存儲結構裡，哈希表properties存儲類的非預定義屬性的名称和值。
+在zend_object的存储结构里，哈希表properties存储类的非预定义属性的名称和值。
 
-對於預定義的屬性，由於PHP的哈希表的存儲開銷很大，所以把屬性信息（即下面的zend_property_info結構體）存儲在zend_class_entry裡，對象裡用C的數組存儲所有預定義屬性的zval的指針，並把偏移量記錄在屬性信息裡，這就是properties_table。
+对于预定义的属性，由于PHP的哈希表的存储开销很大，所以把属性信息（即下面的zend_property_info结构体）存储在zend_class_entry里，对象里用C的数组存储所有预定义属性的zval的指针，并把偏移量记录在属性信息里，这就是properties_table。
 
 {% codeblock lang:c %}
 typedef struct _zend_property_info {
@@ -92,20 +92,20 @@ typedef struct _zend_property_info {
 } zend_property_info;
 {% endcodeblock %}
 
-### 屬性名的編碼
+### 属性名的编码
 
-在類的繼承關係中，同名不同類型（public，private等）的屬性各自單獨存儲，所以屬性名在底層是經過編碼的，規則如下：
+在类的继承关系中，同名不同类型（public，private等）的属性各自单独存储，所以属性名在底层是经过编码的，规则如下：
 
 >class Foo { private $prop;   } => "\0Foo\0prop"  
 >class Bar { private $prop;   } => "\0Bar\0prop"  
 >class Rab { protected $prop; } => "\0*\0prop"  
 >class Oof { public $prop;    } => "prop"  
 
-大部分情況下，對屬性操作的API自動處理屬性名的編碼。只有當需要直接訪問property_info->name或zobj->properties時才需要自行處理，此時使用zend_(un)mangle_property_name()函數。
+大部分情况下，对属性操作的API自动处理属性名的编码。只有当需要直接访问property_info->name或zobj->properties时才需要自行处理，此时使用zend_(un)mangle_property_name()函数。
 
-## Objects Store的存儲結構
+## Objects Store的存储结构
 
-對象倉庫是一個可變數組，存儲多個zend_object_store_bucket結構。
+对象仓库是一个可变数组，存储多个zend_object_store_bucket结构。
 
 {% codeblock lang:c %}
 typedef struct _zend_objects_store {
@@ -116,11 +116,11 @@ typedef struct _zend_objects_store {
 } zend_objects_store;
 {% endcodeblock %}
 
-size是對象倉庫的容量。top是下一個可用的對象句柄，對象句柄從1開始，以保證所有句柄都為真。對象倉庫通過每個Bucket的free_list結構維護一個可用的Bucket鏈表，free_list_head記錄鏈表的頭部。
+size是对象仓库的容量。top是下一个可用的对象句柄，对象句柄从1开始，以保证所有句柄都为真。对象仓库通过每个Bucket的free_list结构维护一个可用的Bucket链表，free_list_head记录链表的头部。
 
-### zend_object_store_bucket的存儲結構
+### zend_object_store_bucket的存储结构
 
-每個對象的信息存儲在一個bucket裡。
+每个对象的信息存储在一个bucket里。
 
 {% codeblock lang:c %}
 typedef struct _zend_object_store_bucket {
@@ -143,25 +143,25 @@ typedef struct _zend_object_store_bucket {
 } zend_object_store_bucket;
 {% endcodeblock %}
 
-桶被佔用的時候，valid為1，否則為0。
+桶被占用的时候，valid为1，否则为0。
 
-對象被銷毀時，dtor被調用後，destructor_called被置為1，防止在被free時重複調用dtor，具體見**Object的二階銷毀邏輯**。
+对象被销毁时，dtor被调用后，destructor_called被置为1，防止在被free时重复调用dtor，具体见**Object的二阶销毁逻辑**。
 
-_store_object裡存儲對象的主要信息。zend_objects_store_put()傳入的zend_object結構體存儲在object裡。dtor和free_storage見**Object的二階銷毀邏輯**。clone是對象的克隆函數。handlers存儲對象的一系列操作函數，缺省為std_object_handlers。refcount是對象的引用計數。buffered是垃圾回收需要用到的數據。
+_store_object里存储对象的主要信息。zend_objects_store_put()传入的zend_object结构体存储在object里。dtor和free_storage见**Object的二阶销毁逻辑**。clone是对象的克隆函数。handlers存储对象的一系列操作函数，缺省为std_object_handlers。refcount是对象的引用计数。buffered是垃圾回收需要用到的数据。
 
-free_list記錄對象倉庫中可用的Bucket鏈表中下一個可用的Bucket。
+free_list记录对象仓库中可用的Bucket链表中下一个可用的Bucket。
 
 ### Object Store的操作
 
-  - zend_objects_store_put()：註冊對象到倉庫
-  - zend_object_store_get_object_by_handle()：通過對象句柄取對象
-  - zend_object_store_get_object()：通過zval取對象，返回void*
-  - zend_objects_get_address()：和zend_object_store_get_object()一樣，但返回zend_object*
+  - zend_objects_store_put()：注册对象到仓库
+  - zend_object_store_get_object_by_handle()：通过对象句柄取对象
+  - zend_object_store_get_object()：通过zval取对象，返回void*
+  - zend_objects_get_address()：和zend_object_store_get_object()一样，但返回zend_object*
 
-## Object的二階銷毀邏輯
+## Object的二阶销毁逻辑
 
-對象的銷毀分兩個步驟，一是對象的析構，一是內存的釋放。前者調用對象的dtor，後者調用free_storage。一般先析構，再釋放內存，但兩者可各自分開執行。
+对象的销毁分两个步骤，一是对象的析构，一是内存的释放。前者调用对象的dtor，后者调用free_storage。一般先析构，再释放内存，但两者可各自分开执行。
 
-dtor中可以執行用戶空間的PHP代碼，主要是PHP類的__destruct()。PHP腳本執行完成後銷毀對象並結束進程（executor shutdown），在這個過程進行到一半的時候執行用戶空間代碼可能會出問題，所以這麼區別主要是為了在進程結束過程中不會調用用戶空間代碼。
+dtor中可以执行用户空间的PHP代码，主要是PHP类的__destruct()。PHP脚本执行完成后销毁对象并结束进程（executor shutdown），在这个过程进行到一半的时候执行用户空间代码可能会出问题，所以这么区别主要是为了在进程结束过程中不会调用用户空间代码。
 
-此外，dtor並不是必須執行的，如果一個對象的dtor調用的用戶空間代碼裡執行了die()，後續對象的dtor不會被執行。所以大部分情況下，開發者可以自定義free_storage函數，而使用缺省的zend_objects_destroy_object作為dtor。
+此外，dtor并不是必须执行的，如果一个对象的dtor调用的用户空间代码里执行了die()，后续对象的dtor不会被执行。所以大部分情况下，开发者可以自定义free_storage函数，而使用缺省的zend_objects_destroy_object作为dtor。

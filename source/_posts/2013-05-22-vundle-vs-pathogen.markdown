@@ -3,7 +3,7 @@ layout: post
 title: "Vundle vs Pathogen"
 date: 2013-05-22 21:33
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - Vim
 - 插件

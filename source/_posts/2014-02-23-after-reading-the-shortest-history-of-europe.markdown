@@ -1,14 +1,14 @@
 ---
 layout: post
-title: "讀完《你一定愛讀的極簡歐洲史》"
+title: "读完《你一定爱读的极简欧洲史》"
 date: 2014-02-23 20:57
 comments: true
 categories: 青梅煮酒
 tags:
-- 讀書
+- 读书
 - Kindle
-- 電子書
-- 歷史
+- 电子书
+- 历史
 ---
 
 {% img http://pic.yupoo.com/leninlee/DyJGJDhw/medish.jpg %}

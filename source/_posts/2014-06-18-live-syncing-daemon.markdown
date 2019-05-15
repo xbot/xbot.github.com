@@ -3,17 +3,17 @@ layout: post
 title: "使用lsyncd同步文件"
 date: 2014-06-18 14:03
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - Linux
-- 應用
+- 应用
 ---
 
-lsyncd全稱“Live Syncing Daemon”，是Linux下的文件自动同步工具，同时支持SSH、rsync的实现方式。相对于rsync+inotify，它速度更快，也更穩定。
+lsyncd全称“Live Syncing Daemon”，是Linux下的文件自动同步工具，同时支持SSH、rsync的实现方式。相对于rsync+inotify，它速度更快，也更稳定。
 
-對於SSH的方式，需要目標機器中已啟動SSHD，並把源機器上的公鑰加到目標機器root用戶的authorized_keys中，私鑰應放在源機器上運行lsyncd的用戶的.ssh目錄中，密鑰放錯了用戶，會導致無法同步。
+对于SSH的方式，需要目标机器中已启动SSHD，并把源机器上的公钥加到目标机器root用户的authorized_keys中，私钥应放在源机器上运行lsyncd的用户的.ssh目录中，密钥放错了用户，会导致无法同步。
 
-然後就是在源機器上創建配置文件，lsyncd的配置文件是個lua腳本：
+然后就是在源机器上创建配置文件，lsyncd的配置文件是个lua脚本：
 
 {% codeblock lang:lua lsyncd.conf %}
 settings{
@@ -38,7 +38,7 @@ sync{
 }
 {% endcodeblock %}
 
-然後啟動lsyncd：
+然后启动lsyncd：
 
 {% codeblock lang:bash %}
 sudo lsyncd /etc/lsyncd.conf

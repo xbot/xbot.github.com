@@ -1,36 +1,36 @@
 ---
 layout: post
-title: "使用存取控制表在Linux用戶間共享文件"
+title: "使用存取控制表在Linux用户间共享文件"
 date: 2014-03-19 22:38
 comments: true
-categories: 計算機
+categories: 计算机
 tags:
 - Linux
 - CLI
 ---
 
-我用Dropbox在兩台電腦間同步個人維基數據，將數據目錄從Web Server下軟連接到Dropbox裡，而對Dropbox目錄的備份實際上只包含那個軟連接，沒有內容，結果當把備份拷貝到另一台電腦上並打開Dropbox後，維基數據被清空了！我積累多年的筆記差一點兒完蛋，幸虧單獨備份過維基。然後改將維基數據放到Dropbox裡，然後軟連接到Web Server下，新問題出現了，Web Server是以http身份運行的，對用戶主目錄沒有權限，當然也不能訪問主目錄下的Dropbox目錄。
+我用Dropbox在两台电脑间同步个人维基数据，将数据目录从Web Server下软连接到Dropbox里，而对Dropbox目录的备份实际上只包含那个软连接，没有内容，结果当把备份拷贝到另一台电脑上并打开Dropbox后，维基数据被清空了！我积累多年的笔记差一点儿完蛋，幸亏单独备份过维基。然后改将维基数据放到Dropbox里，然后软连接到Web Server下，新问题出现了，Web Server是以http身份运行的，对用户主目录没有权限，当然也不能访问主目录下的Dropbox目录。
 
-最簡單的辦法是將主目錄、Dropbox、維基目錄的權限全部設成777，顯然，這樣做太不安全。另一種方法是把Dropbox用NFS輸出，然後掛載到Web Server下，這麼做太蛋疼。最合適的解決方案是Access Control List（存取控制表），它可以為文件和目錄設置具體到單個用戶或用戶組的存取權限，實現像Windows下的文件（目錄）共享權限設置那樣的效果，而且比後者更強大、靈活。
+最简单的办法是将主目录、Dropbox、维基目录的权限全部设成777，显然，这样做太不安全。另一种方法是把Dropbox用NFS输出，然后挂载到Web Server下，这么做太蛋疼。最合适的解决方案是Access Control List（存取控制表），它可以为文件和目录设置具体到单个用户或用户组的存取权限，实现像Windows下的文件（目录）共享权限设置那样的效果，而且比后者更强大、灵活。
 
-使用ACL首先需要目錄的掛載選項中包含acl，不過一般缺省都包含這一項。
+使用ACL首先需要目录的挂载选项中包含acl，不过一般缺省都包含这一项。
 
-ACL包含兩個命令：getfacl和setfacl，前者用來查看目錄或文件的存取控制表，後者用來操作它。
+ACL包含两个命令：getfacl和setfacl，前者用来查看目录或文件的存取控制表，后者用来操作它。
 
-首先，把維基目錄的所有者改成http，並設置目錄權限為770：
+首先，把维基目录的所有者改成http，并设置目录权限为770：
 
 {% codeblock lang:bash %}
 chown -R http:http ~/Dropbox/wiki
 chmod -R 770 ~/Dropbox/wiki
 {% endcodeblock %}
 
-這時Web Server還是不能訪問維基目錄，使用getfacl查看用戶主目錄的ACL：
+这时Web Server还是不能访问维基目录，使用getfacl查看用户主目录的ACL：
 
 {% codeblock lang:bash %}
 getfacl ~
 {% endcodeblock %}
 
-顯示結果如下：
+显示结果如下：
 
 >getfacl: Removing leading '/' from absolute path names  
 \# file: home/taoqi  
@@ -42,14 +42,14 @@ group::---
 mask::--x  
 other::---  
 
-顯然，要給http用戶訪問該目錄的權限：
+显然，要给http用户访问该目录的权限：
 
 {% codeblock lang:bash %}
 setfacl -m u:http:x ~
 {% endcodeblock %}
 
-再查看ACL，發現增加了一條：
+再查看ACL，发现增加了一条：
 
 >user:http:--x
 
-同理，給Dropbox目錄也加上這一條規則之後，Web Server就可以訪問維基數據目錄了。
+同理，给Dropbox目录也加上这一条规则之后，Web Server就可以访问维基数据目录了。
