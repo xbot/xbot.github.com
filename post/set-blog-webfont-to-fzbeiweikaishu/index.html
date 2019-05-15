@@ -9,7 +9,7 @@
         <link rel="shortcut icon" href="/asset/logo.jpg">
         <link rel="canonical" href="http://guolinn.com/">
         <link rel="alternate" type="application/rss+xml" title="晴耕雨讀" href="/atom.xml">
-        <title>把博客字體改成了方正北魏楷書 | 晴耕雨讀</title>
+        <title>把博客字体改成了方正北魏楷书 | 晴耕雨讀</title>
         <meta name="description" content="{{meta_description}}">
 
         <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
@@ -52,26 +52,26 @@
     <span class="taglist">  &middot; 
     
     
-      <a href="/tags/筆記/">筆記</a> 
+      <a href="/tags/笔记/">笔记</a> 
     
       <a href="/tags/博客/">博客</a> 
     
     </span>
   
 
-  <h1 class="post-title">把博客字體改成了方正北魏楷書</h1>
+  <h1 class="post-title">把博客字体改成了方正北魏楷书</h1>
   <section class="post-content article-entry">
-    <p>我曾說過<a href="/post/best-practices-of-calibre-on-formatting/">方正北魏楷書是最佳的閱讀字體</a>，不過後來感覺長時間閱讀的體驗還是普通的楷體更好。但這並不妨礙在Reeder、博客這種短時閱讀場合突出頁面的設計感。</p>
-<p>今天把博客（hexo）的webfont改成了方正北魏楷書，用font-spider壓縮後，從13M縮減到1.4M。方法是這樣的：</p>
-<p>首先把完整的字體複製到主題的字體目錄中（themes/crisp/source/fonts），文件名為<code>FZBeiWeiKaiShu-full.ttf</code>。</p>
+    <p>我曾说过<a href="/post/best-practices-of-calibre-on-formatting/">方正北魏楷书是最佳的阅读字体</a>，不过后来感觉长时间阅读的体验还是普通的楷体更好。但这并不妨碍在Reeder、博客这种短时阅读场合突出页面的设计感。</p>
+<p>今天把博客（hexo）的webfont改成了方正北魏楷书，用font-spider压缩后，从13M缩减到1.4M。方法是这样的：</p>
+<p>首先把完整的字体复制到主题的字体目录中（themes/crisp/source/fonts），文件名为<code>FZBeiWeiKaiShu-full.ttf</code>。</p>
 <p>在CSS中加入webfont配置：</p>
 <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@<span class="keyword">font-face</span> &#123;</span><br><span class="line">  	<span class="attribute">font-family</span>: <span class="string">'FZBeiWeiKaiShu'</span>;</span><br><span class="line">    <span class="attribute">src</span>: <span class="built_in">url</span>(<span class="string">'../fonts/FZBeiWeiKaiShu.ttf'</span>) <span class="built_in">format</span>(<span class="string">'truetype'</span>),</span><br><span class="line">         <span class="built_in">url</span>(<span class="string">'../fonts/FZBeiWeiKaiShu-full.ttf'</span>) <span class="built_in">format</span>(<span class="string">'truetype'</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><code>FZBeiWeiKaiShu.ttf</code>是壓縮後的字體文件名，這樣訪問時瀏覽器會優先下載壓縮後的字體。</p>
-<p>然後把CSS中使用字體的地方都指定為<code>FZBeiWeiKaiShu</code>。</p>
-<p>在博客根目錄下創建腳本<code>update_fonts.sh</code>：</p>
+<p><code>FZBeiWeiKaiShu.ttf</code>是压缩后的字体文件名，这样访问时浏览器会优先下载压缩后的字体。</p>
+<p>然后把CSS中使用字体的地方都指定为<code>FZBeiWeiKaiShu</code>。</p>
+<p>在博客根目录下创建脚本<code>update_fonts.sh</code>：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"></span><br><span class="line">hexo clean</span><br><span class="line">hexo g</span><br><span class="line"></span><br><span class="line">find public -name <span class="string">"*.html"</span> |xargs sed -i <span class="string">''</span> <span class="string">"s#/styles/crisp.css#<span class="variable">$HOME</span>/Projects/blog/public/styles/crisp.css#g"</span></span><br><span class="line">find public -name <span class="string">"*.html"</span>|xargs font-spider</span><br><span class="line"></span><br><span class="line">cp -f public/fonts/FZBeiWeiKaiShu.ttf themes/crisp/<span class="built_in">source</span>/fonts/FZBeiWeiKaiShu.ttf</span><br><span class="line"></span><br><span class="line">hexo clean</span><br><span class="line">hexo s -g</span><br></pre></td></tr></table></figure>
-<p>除非用到新的字符，否則不需要經常更新字體。</p>
-<p>font-spider會提示一共使用了多少種字符，我這麼多年也只用到三千多種，真是太沒文化了。🤥</p>
+<p>除非用到新的字符，否则不需要经常更新字体。</p>
+<p>font-spider会提示一共使用了多少种字符，我这么多年也只用到三千多种，真是太没文化了。🤥</p>
 
   </section>
   <footer class="post-footer">
@@ -87,7 +87,7 @@
 <nav class="pagination" role="pagination">
     
     <a class="newer-posts" href="/post/make-writing-unit-tests-easier-with-vim-test/">
-        ← 新 <!--用vim-test簡化單元測試的編寫-->
+        ← 新 <!--用vim-test简化单元测试的编写-->
     </a>
     
     <span class="page-number">•</span>

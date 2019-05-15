@@ -54,7 +54,7 @@
     
       <a href="/tags/vim/">Vim</a> 
     
-      <a href="/tags/計算機/">計算機</a> 
+      <a href="/tags/计算机/">计算机</a> 
     
       <a href="/tags/热键/">热键</a> 
     
@@ -63,8 +63,8 @@
 
   <h1 class="post-title">使用热键切换Vim的QuickFix窗口打开状态</h1>
   <section class="post-content article-entry">
-    <p>QuickFix窗口只有打開和關閉的命令，而使用一個熱鍵來切換打開狀態可以減少熱鍵資源的浪費，使用也更方便。</p>
-<p>從<a href="http://vim.wikia.com/wiki/Toggle_to_open_or_close_the_quickfix_window" target="_blank" rel="noopener">這裏</a>找到使用自定義函數完成此功能的方法：使用一個全局變量記錄QuickFix窗口的打開狀態，從而判斷是應該關閉還是打開。但其提供的函數存在狀態同步的問題，假如在QuickFix窗口中使用“:q”退出窗口，此方法將不能正常工作。評論中給出了很好的解決方法，但其提供的代碼有些小問題，修改之後如下：</p>
+    <p>QuickFix窗口只有打开和关闭的命令，而使用一个热键来切换打开状态可以减少热键资源的浪费，使用也更方便。</p>
+<p>从<a href="http://vim.wikia.com/wiki/Toggle_to_open_or_close_the_quickfix_window" target="_blank" rel="noopener">这里</a>找到使用自定义函数完成此功能的方法：使用一个全局变量记录QuickFix窗口的打开状态，从而判断是应该关闭还是打开。但其提供的函数存在状态同步的问题，假如在QuickFix窗口中使用“:q”退出窗口，此方法将不能正常工作。评论中给出了很好的解决方法，但其提供的代码有些小问题，修改之后如下：</p>
 <figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;leader&gt;</span><span class="keyword">co</span> :QFix<span class="symbol">&lt;CR&gt;</span></span><br><span class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;leader&gt;</span>ct :<span class="keyword">call</span> QFixToggle(<span class="number">1</span>)<span class="symbol">&lt;CR&gt;</span></span><br><span class="line">command! -bang -nargs=? QFix <span class="keyword">call</span> QFixToggle(<span class="symbol">&lt;bang&gt;</span><span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span>! <span class="title">QFixToggle</span><span class="params">(forced)</span></span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">exists</span>(<span class="string">"g:qfix_win"</span>) &amp;&amp; <span class="variable">a:forced</span> != <span class="number">0</span></span><br><span class="line">        <span class="keyword">cclose</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">exists</span>(<span class="string">"g:my_quickfix_win_height"</span>)</span><br><span class="line">            <span class="keyword">execute</span> <span class="string">"copen "</span>.<span class="variable">g:my_quickfix_win_height</span></span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">copen</span></span><br><span class="line">        <span class="keyword">endif</span></span><br><span class="line">    <span class="keyword">endif</span></span><br><span class="line"><span class="keyword">endfunction</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">augroup</span> QFixToggle</span><br><span class="line">    autocmd!</span><br><span class="line">    <span class="keyword">autocmd</span> BufWinEnter quickfix <span class="keyword">let</span> <span class="variable">g:qfix_win</span> = <span class="built_in">bufnr</span>(<span class="string">"$"</span>)</span><br><span class="line">    <span class="keyword">autocmd</span> BufWinLeave * <span class="keyword">if</span> <span class="built_in">exists</span>(<span class="string">"g:qfix_win"</span>) &amp;&amp; <span class="built_in">expand</span>(<span class="string">"&lt;abuf&gt;"</span>) == <span class="variable">g:qfix_win</span> | unlet! <span class="variable">g:qfix_win</span> | <span class="keyword">endif</span></span><br><span class="line"><span class="keyword">augroup</span> END</span><br></pre></td></tr></table></figure>
 
   </section>
@@ -81,7 +81,7 @@
 <nav class="pagination" role="pagination">
     
     <a class="newer-posts" href="/post/howto-cool-archlinux-down/">
-        ← 新 <!--Arch不完全降溫筆記-->
+        ← 新 <!--Arch不完全降温笔记-->
     </a>
     
     <span class="page-number">•</span>

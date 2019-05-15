@@ -9,7 +9,7 @@
         <link rel="shortcut icon" href="/asset/logo.jpg">
         <link rel="canonical" href="http://guolinn.com/">
         <link rel="alternate" type="application/rss+xml" title="晴耕雨讀" href="/atom.xml">
-        <title>PHP對象的實現和操作 | 晴耕雨讀</title>
+        <title>PHP对象的实现和操作 | 晴耕雨讀</title>
         <meta name="description" content="{{meta_description}}">
 
         <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
@@ -54,73 +54,73 @@
     
       <a href="/tags/php/">PHP</a> 
     
-      <a href="/tags/源碼/">源碼</a> 
+      <a href="/tags/源码/">源码</a> 
     
     </span>
   
 
-  <h1 class="post-title">PHP對象的實現和操作</h1>
+  <h1 class="post-title">PHP对象的实现和操作</h1>
   <section class="post-content article-entry">
-    <h2 id="Object的存儲結構"><a href="#Object的存儲結構" class="headerlink" title="Object的存儲結構"></a>Object的存儲結構</h2><p>對象實例用zval存儲。zval-&gt;type == IS_OBJECT，zval-&gt;value-&gt;obj存儲zend_object_value類型的結構體變量。</p>
+    <h2 id="Object的存储结构"><a href="#Object的存储结构" class="headerlink" title="Object的存储结构"></a>Object的存储结构</h2><p>对象实例用zval存储。zval-&gt;type == IS_OBJECT，zval-&gt;value-&gt;obj存储zend_object_value类型的结构体变量。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">zend_object_value</span> &#123;</span></span><br><span class="line">    zend_object_handle handle;</span><br><span class="line">    <span class="keyword">const</span> zend_object_handlers *handlers;</span><br><span class="line">&#125; zend_object_value;</span><br></pre></td></tr></table></figure>
-<p>zend_object_handle是一個unsigned int，是對象的ID。zend_object_handlers存儲對象所有的行為。</p>
-<h2 id="Object的實例化過程"><a href="#Object的實例化過程" class="headerlink" title="Object的實例化過程"></a>Object的實例化過程</h2><p>Object的初始化用以下幾個宏函數：</p>
+<p>zend_object_handle是一个unsigned int，是对象的ID。zend_object_handlers存储对象所有的行为。</p>
+<h2 id="Object的实例化过程"><a href="#Object的实例化过程" class="headerlink" title="Object的实例化过程"></a>Object的实例化过程</h2><p>Object的初始化用以下几个宏函数：</p>
 <ul>
 <li>object_init(zval *arg)</li>
 <li>object_init_ex(zval *arg, zend_class_entry *class_type)</li>
 <li>object_and_properties_init(zval *arg, zend_class_entry *class_type, HashTable *properties)</li>
 </ul>
-<p>底層都是調用_object_and_properties_init(zval *arg, zend_class_entry *class_type, HashTable *properties)實現。這個函數做以下幾件事：</p>
+<p>底层都是调用_object_and_properties_init(zval *arg, zend_class_entry *class_type, HashTable *properties)实现。这个函数做以下几件事：</p>
 <ul>
-<li>檢查類是否可實例化（例如接口、抽象類等不允許初始化）</li>
-<li>處理類常量</li>
-<li>檢查類是否存在自定義實例化邏輯<ul>
-<li>若存在，調用自定義實例化邏輯</li>
-<li>若不存在，調用缺省的函數zend_objects_new(zend_object **object, zend_class_entry *class_type)</li>
+<li>检查类是否可实例化（例如接口、抽象类等不允许初始化）</li>
+<li>处理类常量</li>
+<li>检查类是否存在自定义实例化逻辑<ul>
+<li>若存在，调用自定义实例化逻辑</li>
+<li>若不存在，调用缺省的函数zend_objects_new(zend_object **object, zend_class_entry *class_type)</li>
 </ul>
 </li>
-<li>把實例化的zend_object類型的數據存入zval中</li>
+<li>把实例化的zend_object类型的数据存入zval中</li>
 </ul>
-<p>zend_objects_new()做這些事：</p>
+<p>zend_objects_new()做这些事：</p>
 <ul>
-<li>分配一個zend_object類型的內存空間</li>
-<li>初始化zend_object類型數據</li>
-<li>把zend_object類型數據存入對象倉庫（Objects Store）<ul>
+<li>分配一个zend_object类型的内存空间</li>
+<li>初始化zend_object类型数据</li>
+<li>把zend_object类型数据存入对象仓库（Objects Store）<ul>
 <li>zend_objects_store_put(void *object, zend_objects_store_dtor_t dtor, zend_objects_free_object_storage_t free_storage, zend_objects_store_clone_t clone）</li>
 </ul>
 </li>
 </ul>
-<h2 id="zend-object的存儲結構"><a href="#zend-object的存儲結構" class="headerlink" title="zend_object的存儲結構"></a>zend_object的存儲結構</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">zend_object</span> &#123;</span></span><br><span class="line">    zend_class_entry *ce;</span><br><span class="line">    HashTable *properties;</span><br><span class="line">    zval **properties_table;</span><br><span class="line">    HashTable *guards; <span class="comment">/* protects from __get/__set ... recursion */</span></span><br><span class="line">&#125; zend_object;</span><br></pre></td></tr></table></figure>
-<p>ce是類的定義。properties_table存儲類裡預定義的屬性。properties存儲非預定義屬性。</p>
-<p>guards存儲屬性名到zend_guard結構的映射關係。</p>
+<h2 id="zend-object的存储结构"><a href="#zend-object的存储结构" class="headerlink" title="zend_object的存储结构"></a>zend_object的存储结构</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">zend_object</span> &#123;</span></span><br><span class="line">    zend_class_entry *ce;</span><br><span class="line">    HashTable *properties;</span><br><span class="line">    zval **properties_table;</span><br><span class="line">    HashTable *guards; <span class="comment">/* protects from __get/__set ... recursion */</span></span><br><span class="line">&#125; zend_object;</span><br></pre></td></tr></table></figure>
+<p>ce是类的定义。properties_table存储类里预定义的属性。properties存储非预定义属性。</p>
+<p>guards存储属性名到zend_guard结构的映射关系。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">zend_guard</span> &#123;</span></span><br><span class="line">    zend_bool in_get;</span><br><span class="line">    zend_bool in_set;</span><br><span class="line">    zend_bool in_unset;</span><br><span class="line">    zend_bool in_isset;</span><br><span class="line">    zend_bool dummy; <span class="comment">/* sizeof(zend_guard) must not be equal to sizeof(void*) */</span></span><br><span class="line">&#125; zend_guard;</span><br></pre></td></tr></table></figure>
-<p>此結構用於在操作屬性時，防止遞歸調用。例如給對象一個新屬性賦值時，__set()函數理論上會遞歸調用自己，所以此結構用於判斷該屬性是否已在__set()中。</p>
-<h2 id="屬性的存儲結構"><a href="#屬性的存儲結構" class="headerlink" title="屬性的存儲結構"></a>屬性的存儲結構</h2><p>在zend_object的存儲結構裡，哈希表properties存儲類的非預定義屬性的名称和值。</p>
-<p>對於預定義的屬性，由於PHP的哈希表的存儲開銷很大，所以把屬性信息（即下面的zend_property_info結構體）存儲在zend_class_entry裡，對象裡用C的數組存儲所有預定義屬性的zval的指針，並把偏移量記錄在屬性信息裡，這就是properties_table。</p>
+<p>此结构用于在操作属性时，防止递归调用。例如给对象一个新属性赋值时，__set()函数理论上会递归调用自己，所以此结构用于判断该属性是否已在__set()中。</p>
+<h2 id="属性的存储结构"><a href="#属性的存储结构" class="headerlink" title="属性的存储结构"></a>属性的存储结构</h2><p>在zend_object的存储结构里，哈希表properties存储类的非预定义属性的名称和值。</p>
+<p>对于预定义的属性，由于PHP的哈希表的存储开销很大，所以把属性信息（即下面的zend_property_info结构体）存储在zend_class_entry里，对象里用C的数组存储所有预定义属性的zval的指针，并把偏移量记录在属性信息里，这就是properties_table。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">zend_property_info</span> &#123;</span></span><br><span class="line">    zend_uint flags;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *name;</span><br><span class="line">    <span class="keyword">int</span> name_length;</span><br><span class="line">    ulong h;                 <span class="comment">/* hash of name */</span></span><br><span class="line">    <span class="keyword">int</span> offset;              <span class="comment">/* storage offset */</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *doc_comment;</span><br><span class="line">    <span class="keyword">int</span> doc_comment_len;</span><br><span class="line">    zend_class_entry *ce;    <span class="comment">/* CE of declaring class */</span></span><br><span class="line">&#125; zend_property_info;</span><br></pre></td></tr></table></figure>
-<h3 id="屬性名的編碼"><a href="#屬性名的編碼" class="headerlink" title="屬性名的編碼"></a>屬性名的編碼</h3><p>在類的繼承關係中，同名不同類型（public，private等）的屬性各自單獨存儲，所以屬性名在底層是經過編碼的，規則如下：</p>
+<h3 id="属性名的编码"><a href="#属性名的编码" class="headerlink" title="属性名的编码"></a>属性名的编码</h3><p>在类的继承关系中，同名不同类型（public，private等）的属性各自单独存储，所以属性名在底层是经过编码的，规则如下：</p>
 <blockquote>
 <p>class Foo { private $prop;   } =&gt; “\0Foo\0prop”<br>class Bar { private $prop;   } =&gt; “\0Bar\0prop”<br>class Rab { protected $prop; } =&gt; “\0*\0prop”<br>class Oof { public $prop;    } =&gt; “prop”  </p>
 </blockquote>
-<p>大部分情況下，對屬性操作的API自動處理屬性名的編碼。只有當需要直接訪問property_info-&gt;name或zobj-&gt;properties時才需要自行處理，此時使用zend_(un)mangle_property_name()函數。</p>
-<h2 id="Objects-Store的存儲結構"><a href="#Objects-Store的存儲結構" class="headerlink" title="Objects Store的存儲結構"></a>Objects Store的存儲結構</h2><p>對象倉庫是一個可變數組，存儲多個zend_object_store_bucket結構。</p>
+<p>大部分情况下，对属性操作的API自动处理属性名的编码。只有当需要直接访问property_info-&gt;name或zobj-&gt;properties时才需要自行处理，此时使用zend_(un)mangle_property_name()函数。</p>
+<h2 id="Objects-Store的存储结构"><a href="#Objects-Store的存储结构" class="headerlink" title="Objects Store的存储结构"></a>Objects Store的存储结构</h2><p>对象仓库是一个可变数组，存储多个zend_object_store_bucket结构。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">zend_objects_store</span> &#123;</span></span><br><span class="line">    zend_object_store_bucket *object_buckets;</span><br><span class="line">    zend_uint top;</span><br><span class="line">    zend_uint size;</span><br><span class="line">    <span class="keyword">int</span> free_list_head;</span><br><span class="line">&#125; zend_objects_store;</span><br></pre></td></tr></table></figure>
-<p>size是對象倉庫的容量。top是下一個可用的對象句柄，對象句柄從1開始，以保證所有句柄都為真。對象倉庫通過每個Bucket的free_list結構維護一個可用的Bucket鏈表，free_list_head記錄鏈表的頭部。</p>
-<h3 id="zend-object-store-bucket的存儲結構"><a href="#zend-object-store-bucket的存儲結構" class="headerlink" title="zend_object_store_bucket的存儲結構"></a>zend_object_store_bucket的存儲結構</h3><p>每個對象的信息存儲在一個bucket裡。</p>
+<p>size是对象仓库的容量。top是下一个可用的对象句柄，对象句柄从1开始，以保证所有句柄都为真。对象仓库通过每个Bucket的free_list结构维护一个可用的Bucket链表，free_list_head记录链表的头部。</p>
+<h3 id="zend-object-store-bucket的存储结构"><a href="#zend-object-store-bucket的存储结构" class="headerlink" title="zend_object_store_bucket的存储结构"></a>zend_object_store_bucket的存储结构</h3><p>每个对象的信息存储在一个bucket里。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">zend_object_store_bucket</span> &#123;</span></span><br><span class="line">    zend_bool destructor_called;</span><br><span class="line">    zend_bool valid;</span><br><span class="line">    <span class="keyword">union</span> _store_bucket &#123;</span><br><span class="line">        <span class="class"><span class="keyword">struct</span> _<span class="title">store_object</span> &#123;</span></span><br><span class="line">            <span class="keyword">void</span> *object;</span><br><span class="line">            <span class="keyword">zend_objects_store_dtor_t</span> dtor;</span><br><span class="line">            <span class="keyword">zend_objects_free_object_storage_t</span> free_storage;</span><br><span class="line">            <span class="keyword">zend_objects_store_clone_t</span> clone;</span><br><span class="line">            <span class="keyword">const</span> zend_object_handlers *handlers;</span><br><span class="line">            zend_uint refcount;</span><br><span class="line">            gc_root_buffer *buffered;</span><br><span class="line">        &#125; obj;</span><br><span class="line">        <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">            <span class="keyword">int</span> next;</span><br><span class="line">        &#125; free_list;</span><br><span class="line">    &#125; bucket;</span><br><span class="line">&#125; zend_object_store_bucket;</span><br></pre></td></tr></table></figure>
-<p>桶被佔用的時候，valid為1，否則為0。</p>
-<p>對象被銷毀時，dtor被調用後，destructor_called被置為1，防止在被free時重複調用dtor，具體見<strong>Object的二階銷毀邏輯</strong>。</p>
-<p>_store_object裡存儲對象的主要信息。zend_objects_store_put()傳入的zend_object結構體存儲在object裡。dtor和free_storage見<strong>Object的二階銷毀邏輯</strong>。clone是對象的克隆函數。handlers存儲對象的一系列操作函數，缺省為std_object_handlers。refcount是對象的引用計數。buffered是垃圾回收需要用到的數據。</p>
-<p>free_list記錄對象倉庫中可用的Bucket鏈表中下一個可用的Bucket。</p>
+<p>桶被占用的时候，valid为1，否则为0。</p>
+<p>对象被销毁时，dtor被调用后，destructor_called被置为1，防止在被free时重复调用dtor，具体见<strong>Object的二阶销毁逻辑</strong>。</p>
+<p>_store_object里存储对象的主要信息。zend_objects_store_put()传入的zend_object结构体存储在object里。dtor和free_storage见<strong>Object的二阶销毁逻辑</strong>。clone是对象的克隆函数。handlers存储对象的一系列操作函数，缺省为std_object_handlers。refcount是对象的引用计数。buffered是垃圾回收需要用到的数据。</p>
+<p>free_list记录对象仓库中可用的Bucket链表中下一个可用的Bucket。</p>
 <h3 id="Object-Store的操作"><a href="#Object-Store的操作" class="headerlink" title="Object Store的操作"></a>Object Store的操作</h3><ul>
-<li>zend_objects_store_put()：註冊對象到倉庫</li>
-<li>zend_object_store_get_object_by_handle()：通過對象句柄取對象</li>
-<li>zend_object_store_get_object()：通過zval取對象，返回void*</li>
-<li>zend_objects_get_address()：和zend_object_store_get_object()一樣，但返回zend_object*</li>
+<li>zend_objects_store_put()：注册对象到仓库</li>
+<li>zend_object_store_get_object_by_handle()：通过对象句柄取对象</li>
+<li>zend_object_store_get_object()：通过zval取对象，返回void*</li>
+<li>zend_objects_get_address()：和zend_object_store_get_object()一样，但返回zend_object*</li>
 </ul>
-<h2 id="Object的二階銷毀邏輯"><a href="#Object的二階銷毀邏輯" class="headerlink" title="Object的二階銷毀邏輯"></a>Object的二階銷毀邏輯</h2><p>對象的銷毀分兩個步驟，一是對象的析構，一是內存的釋放。前者調用對象的dtor，後者調用free_storage。一般先析構，再釋放內存，但兩者可各自分開執行。</p>
-<p>dtor中可以執行用戶空間的PHP代碼，主要是PHP類的__destruct()。PHP腳本執行完成後銷毀對象並結束進程（executor shutdown），在這個過程進行到一半的時候執行用戶空間代碼可能會出問題，所以這麼區別主要是為了在進程結束過程中不會調用用戶空間代碼。</p>
-<p>此外，dtor並不是必須執行的，如果一個對象的dtor調用的用戶空間代碼裡執行了die()，後續對象的dtor不會被執行。所以大部分情況下，開發者可以自定義free_storage函數，而使用缺省的zend_objects_destroy_object作為dtor。</p>
+<h2 id="Object的二阶销毁逻辑"><a href="#Object的二阶销毁逻辑" class="headerlink" title="Object的二阶销毁逻辑"></a>Object的二阶销毁逻辑</h2><p>对象的销毁分两个步骤，一是对象的析构，一是内存的释放。前者调用对象的dtor，后者调用free_storage。一般先析构，再释放内存，但两者可各自分开执行。</p>
+<p>dtor中可以执行用户空间的PHP代码，主要是PHP类的__destruct()。PHP脚本执行完成后销毁对象并结束进程（executor shutdown），在这个过程进行到一半的时候执行用户空间代码可能会出问题，所以这么区别主要是为了在进程结束过程中不会调用用户空间代码。</p>
+<p>此外，dtor并不是必须执行的，如果一个对象的dtor调用的用户空间代码里执行了die()，后续对象的dtor不会被执行。所以大部分情况下，开发者可以自定义free_storage函数，而使用缺省的zend_objects_destroy_object作为dtor。</p>
 
   </section>
   <footer class="post-footer">
@@ -136,13 +136,13 @@
 <nav class="pagination" role="pagination">
     
     <a class="newer-posts" href="/post/resource-implementation-in-php/">
-        ← 新 <!--PHP资源的實現和操作-->
+        ← 新 <!--PHP资源的实现和操作-->
     </a>
     
     <span class="page-number">•</span>
     
     <a class="older-posts" href="/post/class-interface-implementation-in-php/">
-        <!--PHP類和接口的實現--> 舊 →
+        <!--PHP类和接口的实现--> 舊 →
     </a>
     
 </nav>

@@ -9,7 +9,7 @@
         <link rel="shortcut icon" href="/asset/logo.jpg">
         <link rel="canonical" href="http://guolinn.com/">
         <link rel="alternate" type="application/rss+xml" title="晴耕雨讀" href="/atom.xml">
-        <title>再次調整磁盤分區 | 晴耕雨讀</title>
+        <title>再次调整磁盘分区 | 晴耕雨讀</title>
         <meta name="description" content="{{meta_description}}">
 
         <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
@@ -57,14 +57,14 @@
     </span>
   
 
-  <h1 class="post-title">再次調整磁盤分區</h1>
+  <h1 class="post-title">再次调整磁盘分区</h1>
   <section class="post-content article-entry">
-    <p>自從<a href="/post/adjust-disk-partitions-in-archlinux/">上次</a>調整磁盤分區，一直把根目錄和主目錄分別掛在一個物理分區下，即使系統掛了或者換發行版也不影響主目錄。最近根分區很緊張，乾脆把兩個分區合併了。</p>
-<p>先用UNetBootin安裝Puppy Linux到U盤，需要手工修改U盤裡的syslinux.cfg，把“pmedia=<strong>cd</strong>”改成“pmedia=<strong>usbflash</strong>”，然後用U盤啟動。</p>
-<p>把主目錄的內容完整複製到移動硬盤：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 掛載主目錄</span></span><br><span class="line">mkdir /mnt/oldhome</span><br><span class="line">mount -t ext4 /dev/sda2 /mnt/oldhome</span><br><span class="line"></span><br><span class="line"><span class="comment"># 掛載移動硬盤</span></span><br><span class="line">mkdir /mnt/bakdisk</span><br><span class="line">mount -t ext4 /dev/sdc1 /mnt/bakdisk</span><br><span class="line"></span><br><span class="line"><span class="comment"># 複製主目錄</span></span><br><span class="line">cp -a /mnt/oldhome /mnt/bakdisk/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 取消掛載主目錄</span></span><br><span class="line">umount /mnt/oldhome</span><br></pre></td></tr></table></figure>
-<p>用gparted刪除主目錄分區，合併到根分區。然後恢復主目錄：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 掛載根分區</span></span><br><span class="line">mkdir /mnt/newroot</span><br><span class="line">mount -t ext4 /dev/sda1 /mnt/newroot</span><br><span class="line"></span><br><span class="line"><span class="comment"># 恢復主目錄</span></span><br><span class="line">cp -a /mnt/bakdisk/* /mnt/newroot/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改fstab，取消主目錄的掛載</span></span><br><span class="line">vim /mnt/newroot/etc/fstab</span><br><span class="line"></span><br><span class="line"><span class="comment"># 取消掛載</span></span><br><span class="line">umount /mnt/bakdisk</span><br><span class="line">umount /mnt/newroot</span><br></pre></td></tr></table></figure>
+    <p>自从<a href="/post/adjust-disk-partitions-in-archlinux/">上次</a>调整磁盘分区，一直把根目录和主目录分别挂在一个物理分区下，即使系统挂了或者换发行版也不影响主目录。最近根分区很紧张，干脆把两个分区合并了。</p>
+<p>先用UNetBootin安装Puppy Linux到U盘，需要手工修改U盘里的syslinux.cfg，把“pmedia=<strong>cd</strong>”改成“pmedia=<strong>usbflash</strong>”，然后用U盘启动。</p>
+<p>把主目录的内容完整复制到移动硬盘：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 挂载主目录</span></span><br><span class="line">mkdir /mnt/oldhome</span><br><span class="line">mount -t ext4 /dev/sda2 /mnt/oldhome</span><br><span class="line"></span><br><span class="line"><span class="comment"># 挂载移动硬盘</span></span><br><span class="line">mkdir /mnt/bakdisk</span><br><span class="line">mount -t ext4 /dev/sdc1 /mnt/bakdisk</span><br><span class="line"></span><br><span class="line"><span class="comment"># 复制主目录</span></span><br><span class="line">cp -a /mnt/oldhome /mnt/bakdisk/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 取消挂载主目录</span></span><br><span class="line">umount /mnt/oldhome</span><br></pre></td></tr></table></figure>
+<p>用gparted删除主目录分区，合并到根分区。然后恢复主目录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 挂载根分区</span></span><br><span class="line">mkdir /mnt/newroot</span><br><span class="line">mount -t ext4 /dev/sda1 /mnt/newroot</span><br><span class="line"></span><br><span class="line"><span class="comment"># 恢复主目录</span></span><br><span class="line">cp -a /mnt/bakdisk/* /mnt/newroot/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改fstab，取消主目录的挂载</span></span><br><span class="line">vim /mnt/newroot/etc/fstab</span><br><span class="line"></span><br><span class="line"><span class="comment"># 取消挂载</span></span><br><span class="line">umount /mnt/bakdisk</span><br><span class="line">umount /mnt/newroot</span><br></pre></td></tr></table></figure>
 
   </section>
   <footer class="post-footer">
@@ -80,13 +80,13 @@
 <nav class="pagination" role="pagination">
     
     <a class="newer-posts" href="/post/make-nas-with-raspberry-pi/">
-        ← 新 <!--用樹苺派搭NAS-->
+        ← 新 <!--用树苺派搭NAS-->
     </a>
     
     <span class="page-number">•</span>
     
     <a class="older-posts" href="/post/books-i-read-these-days/">
-        <!--這段時間讀的幾本書--> 舊 →
+        <!--这段时间读的几本书--> 舊 →
     </a>
     
 </nav>

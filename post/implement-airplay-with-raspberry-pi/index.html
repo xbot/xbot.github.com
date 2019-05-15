@@ -9,7 +9,7 @@
         <link rel="shortcut icon" href="/asset/logo.jpg">
         <link rel="canonical" href="http://guolinn.com/">
         <link rel="alternate" type="application/rss+xml" title="晴耕雨讀" href="/atom.xml">
-        <title>用Raspberry Pi實現音頻Airplay | 晴耕雨讀</title>
+        <title>用Raspberry Pi实现音频Airplay | 晴耕雨讀</title>
         <meta name="description" content="{{meta_description}}">
 
         <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
@@ -52,29 +52,29 @@
     <span class="taglist">  &middot; 
     
     
-      <a href="/tags/最佳實踐/">最佳實踐</a> 
+      <a href="/tags/最佳实践/">最佳实践</a> 
     
-      <a href="/tags/樹莓派/">樹莓派</a> 
+      <a href="/tags/树莓派/">树莓派</a> 
     
     </span>
   
 
-  <h1 class="post-title">用Raspberry Pi實現音頻Airplay</h1>
+  <h1 class="post-title">用Raspberry Pi实现音频Airplay</h1>
   <section class="post-content article-entry">
     <img src="http://ww1.sinaimg.cn/large/006tKfTcly1fepi05fa8ej31kw1kwx6q.jpg" width="600">
-<p>用樹莓派做音頻airplay效果不錯，老書架音箱又可以用起來了。</p>
-<p>實現方式是shairplay-sync，利用HDMI轉VGA線上的3.5mm音頻輸出孔，因為我的樹莓派2B的3.5mm音視頻輸出口沒有合適的轉接頭。</p>
-<p>我用的是Arch Linux ARM，需要手動開啓HDMI輸出。修改<code>/boot/config.txt</code>：</p>
+<p>用树莓派做音频airplay效果不错，老书架音箱又可以用起来了。</p>
+<p>实现方式是shairplay-sync，利用HDMI转VGA线上的3.5mm音频输出孔，因为我的树莓派2B的3.5mm音视频输出口没有合适的转接头。</p>
+<p>我用的是Arch Linux ARM，需要手动开启HDMI输出。修改<code>/boot/config.txt</code>：</p>
 <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">hdmi_force_hotplug</span>=<span class="number">1</span></span><br><span class="line"><span class="attr">hdmi_drive</span>=<span class="number">2</span></span><br><span class="line"><span class="attr">config_hdmi_boost</span>=<span class="number">4</span></span><br><span class="line"><span class="attr">dtparam</span>=audio=<span class="literal">on</span></span><br></pre></td></tr></table></figure>
-<p>重啓後，用alsamixer把樹莓派音量調整到最大值。</p>
-<p>AUR里沒有針對ARM的shairplay-sync，需要手動編譯：</p>
+<p>重启后，用alsamixer把树莓派音量调整到最大值。</p>
+<p>AUR里没有针对ARM的shairplay-sync，需要手动编译：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/mikebrady/shairport-sync.git</span><br></pre></td></tr></table></figure>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成configure</span></span><br><span class="line">autoreconf -i -f</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 針對systemd編譯</span></span><br><span class="line"></span><br><span class="line">./configure --sysconfdir=/etc --with-alsa --with-avahi --with-ssl=openssl --with-metadata --with-soxr --with-systemd</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># END</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 如果shairport-sync用戶不存在，新增用戶和用戶組</span></span><br><span class="line"></span><br><span class="line">getent group shairport-sync &amp;&gt;/dev/null || sudo groupadd -r shairport-sync &gt;/dev/null</span><br><span class="line"></span><br><span class="line">getent passwd shairport-sync &amp;&gt; /dev/null || sudo useradd -r -M -g shairport-sync -s /usr/bin/nologin -G audio shairport-sync &gt;/dev/null</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># END</span></span><br></pre></td></tr></table></figure>
-<p>airplay默認的服務名和樹莓派的hostname一致，可以到<code>/etc/shairport-sync.conf</code>里修改：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 针对systemd编译</span></span><br><span class="line"></span><br><span class="line">./configure --sysconfdir=/etc --with-alsa --with-avahi --with-ssl=openssl --with-metadata --with-soxr --with-systemd</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># END</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 如果shairport-sync用户不存在，新增用户和用户组</span></span><br><span class="line"></span><br><span class="line">getent group shairport-sync &amp;&gt;/dev/null || sudo groupadd -r shairport-sync &gt;/dev/null</span><br><span class="line"></span><br><span class="line">getent passwd shairport-sync &amp;&gt; /dev/null || sudo useradd -r -M -g shairport-sync -s /usr/bin/nologin -G audio shairport-sync &gt;/dev/null</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># END</span></span><br></pre></td></tr></table></figure>
+<p>airplay默认的服务名和树莓派的hostname一致，可以到<code>/etc/shairport-sync.conf</code>里修改：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">general = &#123;</span><br><span class="line">    name = &quot;pi&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="FAQ"><a href="#FAQ" class="headerlink" title="FAQ"></a>FAQ</h2><h3 id="ALSA-lib-confmisc-c-767-parse-card-cannot-find-card-‘0’"><a href="#ALSA-lib-confmisc-c-767-parse-card-cannot-find-card-‘0’" class="headerlink" title="ALSA lib confmisc.c:767:(parse_card) cannot find card ‘0’"></a>ALSA lib confmisc.c:767:(parse_card) cannot find card ‘0’</h3><p>樹莓派沒聲音，嘗試用mpg123播放mp3時報這個錯。解決辦法是在<code>/boot/config.txt</code>里增加<code>dtparam=audio=on</code>。</p>
+<h2 id="FAQ"><a href="#FAQ" class="headerlink" title="FAQ"></a>FAQ</h2><h3 id="ALSA-lib-confmisc-c-767-parse-card-cannot-find-card-‘0’"><a href="#ALSA-lib-confmisc-c-767-parse-card-cannot-find-card-‘0’" class="headerlink" title="ALSA lib confmisc.c:767:(parse_card) cannot find card ‘0’"></a>ALSA lib confmisc.c:767:(parse_card) cannot find card ‘0’</h3><p>树莓派没声音，尝试用mpg123播放mp3时报这个错。解决办法是在<code>/boot/config.txt</code>里增加<code>dtparam=audio=on</code>。</p>
 
   </section>
   <footer class="post-footer">
@@ -96,7 +96,7 @@
     <span class="page-number">•</span>
     
     <a class="older-posts" href="/post/the-best-practice-of-writing-api-documents/">
-        <!--編寫接口文檔的最佳實踐--> 舊 →
+        <!--编写接口文档的最佳实践--> 舊 →
     </a>
     
 </nav>

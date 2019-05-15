@@ -9,7 +9,7 @@
         <link rel="shortcut icon" href="/asset/logo.jpg">
         <link rel="canonical" href="http://guolinn.com/">
         <link rel="alternate" type="application/rss+xml" title="晴耕雨讀" href="/atom.xml">
-        <title>用MySQL的全文檢索實現相關性排序 | 晴耕雨讀</title>
+        <title>用MySQL的全文检索实现相关性排序 | 晴耕雨讀</title>
         <meta name="description" content="{{meta_description}}">
 
         <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
@@ -52,25 +52,25 @@
     <span class="taglist">  &middot; 
     
     
-      <a href="/tags/編程/">編程</a> 
+      <a href="/tags/编程/">编程</a> 
     
-      <a href="/tags/數據庫/">數據庫</a> 
+      <a href="/tags/数据库/">数据库</a> 
     
       <a href="/tags/mysql/">mysql</a> 
     
-      <a href="/tags/全文檢索/">全文檢索</a> 
+      <a href="/tags/全文检索/">全文检索</a> 
     
     </span>
   
 
-  <h1 class="post-title">用MySQL的全文檢索實現相關性排序</h1>
+  <h1 class="post-title">用MySQL的全文检索实现相关性排序</h1>
   <section class="post-content article-entry">
-    <p>實現根據文章的關鍵詞搜索出相關的文章，並按相關性排序。</p>
-<p>數據庫版本是5.6.x，還不能像5.7那樣支持中文的全文檢索，所以另外創建一列保存關鍵詞的編碼。方法為base64轉碼並去掉「%」符號：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 轉換關鍵詞到全文檢索的格式</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span>   mixed $keywords 關鍵詞數組或英文逗號分隔的字符串</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span>  string</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">encode_keywords</span><span class="params">($keywords)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $encoder = <span class="function"><span class="keyword">function</span> <span class="params">($keyword)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> str_replace(<span class="string">'%'</span>, <span class="string">''</span>, urlencode(trim($keyword)));</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">if</span> (!is_array($keywords)) &#123;</span><br><span class="line">        $keywords = explode(<span class="string">','</span>, $keywords);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> implode(<span class="string">' '</span>, array_map($encoder, $keywords));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>對該列創建全文檢索的索引：</p>
+    <p>实现根据文章的关键词搜索出相关的文章，并按相关性排序。</p>
+<p>数据库版本是5.6.x，还不能像5.7那样支持中文的全文检索，所以另外创建一列保存关键词的编码。方法为base64转码并去掉「%」符号：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 转换关键词到全文检索的格式</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span>   mixed $keywords 关键词数组或英文逗号分隔的字符串</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span>  string</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">encode_keywords</span><span class="params">($keywords)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $encoder = <span class="function"><span class="keyword">function</span> <span class="params">($keyword)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> str_replace(<span class="string">'%'</span>, <span class="string">''</span>, urlencode(trim($keyword)));</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">if</span> (!is_array($keywords)) &#123;</span><br><span class="line">        $keywords = explode(<span class="string">','</span>, $keywords);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> implode(<span class="string">' '</span>, array_map($encoder, $keywords));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对该列创建全文检索的索引：</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> FULLTEXT <span class="keyword">INDEX</span> idx_post_keywords <span class="keyword">ON</span> posts (keywords_ft);</span><br></pre></td></tr></table></figure>
-<p>查詢語句：</p>
+<p>查询语句：</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">    <span class="keyword">id</span>,</span><br><span class="line">    title,</span><br><span class="line">    keywords,</span><br><span class="line">    (<span class="keyword">MATCH</span> (keywords_ft) AGAINST (<span class="string">'E697B6E5B09A E5A8B1E4B990E59C88'</span> <span class="keyword">IN</span> <span class="keyword">NATURAL</span> <span class="keyword">LANGUAGE</span> <span class="keyword">MODE</span>)) <span class="keyword">AS</span> <span class="string">`score`</span></span><br><span class="line"><span class="keyword">FROM</span></span><br><span class="line">    posts</span><br><span class="line"><span class="keyword">WHERE</span></span><br><span class="line">    <span class="keyword">MATCH</span> (keywords_ft) AGAINST (<span class="string">'E697B6E5B09A E5A8B1E4B990E59C88'</span> <span class="keyword">IN</span> <span class="keyword">NATURAL</span> <span class="keyword">LANGUAGE</span> <span class="keyword">MODE</span>)</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> score <span class="keyword">DESC</span></span><br><span class="line"><span class="keyword">LIMIT</span> <span class="number">10</span></span><br></pre></td></tr></table></figure>
 
   </section>
@@ -87,13 +87,13 @@
 <nav class="pagination" role="pagination">
     
     <a class="newer-posts" href="/post/fine-tune-mycli/">
-        ← 新 <!--調校mycli-->
+        ← 新 <!--调校mycli-->
     </a>
     
     <span class="page-number">•</span>
     
     <a class="older-posts" href="/post/copyq/">
-        <!--CopyQ，也許是Linux最好的剪貼板管理工具--> 舊 →
+        <!--CopyQ，也许是Linux最好的剪贴板管理工具--> 舊 →
     </a>
     
 </nav>

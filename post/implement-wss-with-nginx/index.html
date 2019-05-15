@@ -9,7 +9,7 @@
         <link rel="shortcut icon" href="/asset/logo.jpg">
         <link rel="canonical" href="http://guolinn.com/">
         <link rel="alternate" type="application/rss+xml" title="晴耕雨讀" href="/atom.xml">
-        <title>用NGINX實現WSS | 晴耕雨讀</title>
+        <title>用NGINX实现WSS | 晴耕雨讀</title>
         <meta name="description" content="{{meta_description}}">
 
         <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
@@ -52,26 +52,26 @@
     <span class="taglist">  &middot; 
     
     
+      <a href="/tags/编程/">编程</a> 
+    
       <a href="/tags/nginx/">nginx</a> 
     
       <a href="/tags/websocket/">websocket</a> 
     
       <a href="/tags/ssl/">ssl</a> 
     
-      <a href="/tags/编程/">编程</a> 
-    
     </span>
   
 
-  <h1 class="post-title">用NGINX實現WSS</h1>
+  <h1 class="post-title">用NGINX实现WSS</h1>
   <section class="post-content article-entry">
-    <p>實現基於SSL的安全的WebSocket。</p>
+    <p>实现基于SSL的安全的WebSocket。</p>
 <h2 id="NGINX配置"><a href="#NGINX配置" class="headerlink" title="NGINX配置"></a>NGINX配置</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen 4431;</span><br><span class="line">    server_name ws.sample.com;</span><br><span class="line"></span><br><span class="line">    ssl on;</span><br><span class="line">    ssl_certificate ssl/server.crt;</span><br><span class="line">    ssl_certificate_key ssl/server.key;</span><br><span class="line">    ssl_session_timeout 5m;</span><br><span class="line">    ssl_session_cache shared:SSL:50m;</span><br><span class="line">    ssl_protocols SSLv3 SSLv2 TLSv1 TLSv1.1 TLSv1.2;</span><br><span class="line">    ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP;</span><br><span class="line"></span><br><span class="line">    location /</span><br><span class="line">    &#123;</span><br><span class="line">        proxy_pass http://127.0.0.1:4759;</span><br><span class="line">        proxy_http_version 1.1;</span><br><span class="line">        proxy_set_header Upgrade $http_upgrade;</span><br><span class="line">        proxy_set_header Connection &quot;Upgrade&quot;;</span><br><span class="line">        proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">        proxy_read_timeout 60s;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="常見問題"><a href="#常見問題" class="headerlink" title="常見問題"></a>常見問題</h2><h3 id="連不上或連接時報錯"><a href="#連不上或連接時報錯" class="headerlink" title="連不上或連接時報錯"></a>連不上或連接時報錯</h3><blockquote>
+<h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><h3 id="连不上或连接时报错"><a href="#连不上或连接时报错" class="headerlink" title="连不上或连接时报错"></a>连不上或连接时报错</h3><blockquote>
 <p>WebSocket network error: OSStatus Error -9807: Invalid certificate chain</p>
 </blockquote>
-<p>如果使用的是自簽證書或者證書針對的域名和連接所指定的不符，會出這種問題。</p>
-<h3 id="wss一分鐘自動斷開"><a href="#wss一分鐘自動斷開" class="headerlink" title="wss一分鐘自動斷開"></a>wss一分鐘自動斷開</h3><p>NGINX里設置proxy_read_timeout或者程序實現心跳。</p>
+<p>如果使用的是自签证书或者证书针对的域名和连接所指定的不符，会出这种问题。</p>
+<h3 id="wss一分钟自动断开"><a href="#wss一分钟自动断开" class="headerlink" title="wss一分钟自动断开"></a>wss一分钟自动断开</h3><p>NGINX里设置proxy_read_timeout或者程序实现心跳。</p>
 
   </section>
   <footer class="post-footer">

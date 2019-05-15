@@ -9,7 +9,7 @@
         <link rel="shortcut icon" href="/asset/logo.jpg">
         <link rel="canonical" href="http://guolinn.com/">
         <link rel="alternate" type="application/rss+xml" title="晴耕雨讀" href="/atom.xml">
-        <title>PHP大量常量應集中使用APC定義 | 晴耕雨讀</title>
+        <title>PHP大量常量应集中使用APC定义 | 晴耕雨讀</title>
         <meta name="description" content="{{meta_description}}">
 
         <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
@@ -52,7 +52,7 @@
     <span class="taglist">  &middot; 
     
     
-      <a href="/tags/編程/">編程</a> 
+      <a href="/tags/编程/">编程</a> 
     
       <a href="/tags/php/">PHP</a> 
     
@@ -61,11 +61,11 @@
     </span>
   
 
-  <h1 class="post-title">PHP大量常量應集中使用APC定義</h1>
+  <h1 class="post-title">PHP大量常量应集中使用APC定义</h1>
   <section class="post-content article-entry">
-    <p>用xdebug跟蹤程序性能時，發現一個定義了約七百個常量的文件，include_once()時消耗約六十毫秒的時間。事實上define()的效率比較低，如果需要定義大量常量，使用APC擴展提供的apc_define_constants()效果會好得多。</p>
+    <p>用xdebug跟踪程序性能时，发现一个定义了约七百个常量的文件，include_once()时消耗约六十毫秒的时间。事实上define()的效率比较低，如果需要定义大量常量，使用APC扩展提供的apc_define_constants()效果会好得多。</p>
 
-<p>下面是對這個文件改造前後效率跟蹤結果的對比：</p>
+<p>下面是对这个文件改造前后效率跟踪结果的对比：</p>
 
 <table>
     <tr>
@@ -74,25 +74,25 @@
         <th>apc_define_constants()方案（ms）</th>
     </tr>
     <tr>
-        <td>啟動Web服務和PHP，第一次運行</td>
+        <td>启动Web服务和PHP，第一次运行</td>
         <td>58</td>
         <td>4</td>
     </tr>
     <tr>
-        <td>不重啟Web服務和PHP，第二次運行</td>
+        <td>不重启Web服务和PHP，第二次运行</td>
         <td>65</td>
         <td>1</td>
     </tr>
     <tr>
-        <td>不重啟Web服務和PHP，第三次運行</td>
+        <td>不重启Web服务和PHP，第三次运行</td>
         <td>66</td>
         <td>1</td>
     </tr>
 </table>
 
-<p>由此可見，apc_define_constants()不但在初次調用時效能就超過define()，而且由於APC自身的緩存功能，在後續調用時效率會有進一步的提高，而define()基本沒有變化。</p>
+<p>由此可见，apc_define_constants()不但在初次调用时效能就超过define()，而且由于APC自身的缓存功能，在后续调用时效率会有进一步的提高，而define()基本没有变化。</p>
 
-<p>以下是apc_define_constants()的代碼示例：</p>
+<p>以下是apc_define_constants()的代码示例：</p>
 
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span>(!apc_load_constants(<span class="string">'my_constants'</span>)) &#123;</span><br><span class="line">    $constants = <span class="keyword">array</span>(</span><br><span class="line">        <span class="string">'ONE'</span>   =&gt; <span class="number">1</span>,</span><br><span class="line">        <span class="string">'TWO'</span>   =&gt; <span class="number">2</span>,</span><br><span class="line">        <span class="string">'THREE'</span> =&gt; <span class="number">3</span>,</span><br><span class="line">    );</span><br><span class="line">    apc_define_constants(<span class="string">'my_constants'</span>, $constants);</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 
@@ -111,14 +111,14 @@
 
 <nav class="pagination" role="pagination">
     
-    <a class="newer-posts" href="/post/ultrablog-v340-released/">
-        ← 新 <!--UltraBlog.vim v3.4.0: 正則表達式、批量替換和調試模式-->
+    <a class="newer-posts" href="/post/fsockopen-fails-connecting-localhost/">
+        ← 新 <!--慎用PHP的fsockopen()连接localhost-->
     </a>
     
     <span class="page-number">•</span>
     
-    <a class="older-posts" href="/post/fsockopen-fails-connecting-localhost/">
-        <!--慎用PHP的fsockopen()連接localhost--> 舊 →
+    <a class="older-posts" href="/post/ultrablog-v330-released/">
+        <!--UltraBlog.vim v3.3.0：I18N、超时时间和其它--> 舊 →
     </a>
     
 </nav>

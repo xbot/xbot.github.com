@@ -9,7 +9,7 @@
         <link rel="shortcut icon" href="/asset/logo.jpg">
         <link rel="canonical" href="http://guolinn.com/">
         <link rel="alternate" type="application/rss+xml" title="晴耕雨讀" href="/atom.xml">
-        <title>基于Laravel的項目的單元測試規範 | 晴耕雨讀</title>
+        <title>基于Laravel的项目的单元测试规范 | 晴耕雨讀</title>
         <meta name="description" content="{{meta_description}}">
 
         <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
@@ -52,74 +52,74 @@
     <span class="taglist">  &middot; 
     
     
-      <a href="/tags/編程/">編程</a> 
+      <a href="/tags/编程/">编程</a> 
     
       <a href="/tags/php/">PHP</a> 
     
-      <a href="/tags/單元測試/">單元測試</a> 
+      <a href="/tags/单元测试/">单元测试</a> 
     
       <a href="/tags/laravel/">Laravel</a> 
     
     </span>
   
 
-  <h1 class="post-title">基于Laravel的項目的單元測試規範</h1>
+  <h1 class="post-title">基于Laravel的项目的单元测试规范</h1>
   <section class="post-content article-entry">
-    <p>單元測試是個好東西，解決了我很多問題，不論開發效率還是代碼質量，都給我助益良多。最近想在團隊内部推廣，就拟了個規範草稿：</p>
+    <p>单元测试是个好东西，解决了我很多问题，不论开发效率还是代码质量，都给我助益良多。最近想在团队内部推广，就拟了个规范草稿：</p>
 <ul>
-<li><p>什麽是單元？</p>
-<p>單元是邏輯的最小單位，是函數或方法。</p>
-<p>單元測試意味着隻測試單元本身，單元内部調用的其它接口、函數和方法等均稱爲依賴關系。依賴關系自有它們對應的單元測試負責，不在本單元的測試範圍内。</p>
+<li><p>什么是单元？</p>
+<p>单元是逻辑的最小单位，是函数或方法。</p>
+<p>单元测试意味着只测试单元本身，单元内部调用的其它接口、函数和方法等均称为依赖关系。依赖关系自有它们对应的单元测试负责，不在本单元的测试范围内。</p>
 </li>
-<li><p>怎麽測試單元？（Stub &amp; Mock）</p>
-<p>依賴關系是脆弱的，它會導緻單元測試的編寫和運行效率低下，甚至易于失敗。以下是項目中的一個測試用例，由于依賴了用戶服務，且該服務在我家無法訪問，導緻測試失敗：</p>
+<li><p>怎么测试单元？（Stub &amp; Mock）</p>
+<p>依赖关系是脆弱的，它会导致单元测试的编写和运行效率低下，甚至易于失败。以下是项目中的一个测试用例，由于依赖了用户服务，且该服务在我家无法访问，导致测试失败：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">donie@Donies &gt; ~/Projects/app/service-biz &gt;&gt; master &gt; phpunitat57                                  -- INSERT --</span><br><span class="line">PHPUnit 5.7.26 by Sebastian Bergmann and contributors.</span><br><span class="line"></span><br><span class="line">......E.                                                            8 / 8 (100%)</span><br><span class="line"></span><br><span class="line">Time: 5.59 seconds, Memory: 22.00MB</span><br><span class="line"></span><br><span class="line">There was 1 error:</span><br><span class="line"></span><br><span class="line">1) Tests\\Quotation\\QuotationTest::testUpdateQuotationProject</span><br><span class="line">GuzzleHttp\\Exception\\ConnectException: cURL error 28: Connection timed out after 2003 milliseconds (see &lt;http://curl.haxx.se/libcurl/c/libcurl-errors.html&gt;)</span><br><span class="line"></span><br><span class="line">/Users/donie/Projects/app/service-biz/vendor/guzzlehttp/guzzle/src/Handler/CurlFactory.php:186</span><br><span class="line">/Users/donie/Projects/app/service-biz/vendor/guzzlehttp/guzzle/src/Handler/CurlFactory.php:150</span><br><span class="line">/Users/donie/Projects/app/service-biz/vendor/guzzlehttp/guzzle/src/Handler/CurlFactory.php:103</span><br><span class="line">/Users/donie/Projects/app/service-biz/vendor/guzzlehttp/guzzle/src/Handler/CurlHandler.php:43</span><br><span class="line">/Users/donie/Projects/app/service-biz/vendor/guzzlehttp/guzzle/src/Handler/Proxy.php:28</span><br><span class="line">/Users/donie/Projects/app/service-biz/vendor/guzzlehttp/guzzle/src/Handler/Proxy.php:51</span><br><span class="line">/Users/donie/Projects/app/service-biz/vendor/guzzlehttp/guzzle/src/PrepareBodyMiddleware.php:72</span><br><span class="line">/Users/donie/Projects/app/service-biz/vendor/guzzlehttp/guzzle/src/Middleware.php:30</span><br><span class="line">/Users/donie/Projects/app/service-biz/vendor/guzzlehttp/guzzle/src/RedirectMiddleware.php:68</span><br><span class="line">/Users/donie/Projects/app/service-biz/vendor/guzzlehttp/guzzle/src/Middleware.php:59</span><br><span class="line">/Users/donie/Projects/app/service-biz/vendor/guzzlehttp/guzzle/src/HandlerStack.php:67</span><br><span class="line">/Users/donie/Projects/app/service-biz/vendor/guzzlehttp/guzzle/src/Client.php:275</span><br><span class="line">/Users/donie/Projects/app/service-biz/vendor/guzzlehttp/guzzle/src/Client.php:123</span><br><span class="line">/Users/donie/Projects/app/service-biz/vendor/guzzlehttp/guzzle/src/Client.php:129</span><br><span class="line">/Users/donie/Projects/app/service-biz/app/Services/UserService.php:61</span><br><span class="line">/Users/donie/Projects/app/service-biz/app/Services/UserService.php:96</span><br><span class="line">/Users/donie/Projects/app/service-biz/app/Services/QuotationService.php:121</span><br><span class="line">/Users/donie/Projects/app/service-biz/vendor/illuminate/support/Facades/Facade.php:221</span><br><span class="line">/Users/donie/Projects/app/service-biz/tests/Quotation/QuotationTest.php:154</span><br><span class="line"></span><br><span class="line">ERRORS!</span><br><span class="line">Tests: 8, Assertions: 8, Errors: 1.</span><br></pre></td></tr></table></figure>
-<p>要實現真正的單元測試，不可避免地要對單元内部的依賴關系進行僞造，即Mock。</p>
+<p>要实现真正的单元测试，不可避免地要对单元内部的依赖关系进行伪造，即Mock。</p>
 </li>
-<li><p>規範</p>
+<li><p>规范</p>
 <ul>
-<li><p>目錄結構</p>
+<li><p>目录结构</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">tests/</span><br><span class="line">    ↳ Api/</span><br><span class="line">    ↳ Services/</span><br><span class="line">    ↳ Repositories/</span><br><span class="line">    ↳ Helpers/</span><br><span class="line">    ↳ TestCase.php</span><br><span class="line">    ↳ TransactionalTestCase.php</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>繼承關系</p>
+<li><p>继承关系</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">App\Tests\TestCase</span><br><span class="line">    ↳Tests\TestCase</span><br><span class="line">        ↳Tests\Api\TagTest</span><br><span class="line">        ...</span><br><span class="line">    ↳Tests\TransactionalTestCase</span><br><span class="line">        ↳Tests\Services\TagTest</span><br><span class="line">        ...</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>接口測試</p>
+<li><p>接口测试</p>
 <ul>
-<li>所有接口都必須有測試用例，代碼覆蓋率100%</li>
-<li>位于<code>tests/Api</code>下，命名空間是<code>Tests/Api</code></li>
-<li>和被測試的Controller對應</li>
-<li>隻測試路由和Action本單元的代碼，不測試具體業務邏輯</li>
-<li>具體業務邏輯封裝在Service層，由該層的單元測試負責</li>
-<li>測試代碼中通過Facade實現對Service層的Mock</li>
+<li>所有接口都必须有测试用例，代码覆盖率100%</li>
+<li>位于<code>tests/Api</code>下，命名空间是<code>Tests/Api</code></li>
+<li>和被测试的Controller对应</li>
+<li>只测试路由和Action本单元的代码，不测试具体业务逻辑</li>
+<li>具体业务逻辑封装在Service层，由该层的单元测试负责</li>
+<li>测试代码中通过Facade实现对Service层的Mock</li>
 </ul>
 </li>
-<li><p>單元測試</p>
+<li><p>单元测试</p>
 <ul>
 <li>Service <ul>
-<li>所有Service層的方法都必須有測試用例，代碼覆蓋率不低于90%</li>
-<li>位于<code>tests/Services</code>目錄下，命名空間是<code>Tests/Services</code></li>
-<li>和被測試的Service對應</li>
-<li>通過Facade調用Service層并實現對被測試單元依賴關系的Mock</li>
+<li>所有Service层的方法都必须有测试用例，代码覆盖率不低于90%</li>
+<li>位于<code>tests/Services</code>目录下，命名空间是<code>Tests/Services</code></li>
+<li>和被测试的Service对应</li>
+<li>通过Facade调用Service层并实现对被测试单元依赖关系的Mock</li>
 </ul>
 </li>
 <li>Repository <ul>
-<li>複雜的或有必要的方法要有測試用例，其餘可以通過Service層的單元測試覆蓋到，代碼覆蓋率不低于90%</li>
-<li>位于<code>tests/Repositories</code>目錄下，命名空間是<code>Tests/Repositories</code></li>
-<li>和被測試的Repository對應</li>
+<li>复杂的或有必要的方法要有测试用例，其余可以通过Service层的单元测试覆盖到，代码覆盖率不低于90%</li>
+<li>位于<code>tests/Repositories</code>目录下，命名空间是<code>Tests/Repositories</code></li>
+<li>和被测试的Repository对应</li>
 </ul>
 </li>
 <li>Helper Functions <ul>
-<li>複雜的或有必要的函數要有測試用例，其餘可以通過其它層的單元測試覆蓋到，代碼覆蓋率100%</li>
-<li>位于<code>tests/Helpers</code>目錄下，命名空間是<code>Tests/Helpers</code></li>
-<li>每個測試用例和被測試的helper函數對應</li>
+<li>复杂的或有必要的函数要有测试用例，其余可以通过其它层的单元测试覆盖到，代码覆盖率100%</li>
+<li>位于<code>tests/Helpers</code>目录下，命名空间是<code>Tests/Helpers</code></li>
+<li>每个测试用例和被测试的helper函数对应</li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p>輔助方法</p>
-<p>基類中封裝如下輔助方法：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Mock一個對象并返回僞造的實例</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 可通過回調匿名函數定制Mock的實例的行爲特征。</span></span><br><span class="line"><span class="comment"> * 當$inject參數爲false時，Mock的實例不被注入容器，缺省爲注入。</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> mixed $class 類名字符串或類本身</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> callable $handler 回調匿名函數，接收Mock的實例作爲參數，用于定制實例自身行爲特征</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> bool $inject 是否注入容器，缺省爲true</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> \\Mockery\\MockInterface</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">mock</span><span class="params">($class, callable $handler = null, bool $inject = true)</span>: <span class="title">MockInterface</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $mockedObj = \Mockery::mock($class);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (is_callable($handler)) &#123;</span><br><span class="line">        call_user_func($handler, $mockedObj);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ($inject) &#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;app-&gt;instance($class, $mockedObj);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> $mockedObj;</span><br><span class="line">&#125;</span><br><span class="line">  </span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Mock一個單例模式的類</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 可通過回調匿名函數定制Mock的實例的行爲特征。</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> mixed    $class   類名字符串或類本身</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> callable $handler 回調匿名函數，接收Mock的實例作爲參數，用于定制實例自身行爲特征</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">mockSingleton</span><span class="params">($class, callable $handler = null)</span>: <span class="title">void</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $mockedObj = \Mockery::mock($class);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (is_callable($handler)) &#123;</span><br><span class="line">        call_user_func($handler, $mockedObj);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    $ref = <span class="keyword">new</span> \ReflectionProperty($class, <span class="string">'instance'</span>);</span><br><span class="line">    $ref-&gt;setAccessible(<span class="keyword">true</span>);</span><br><span class="line">    $ref-&gt;setValue(<span class="keyword">null</span>, $mockedObj);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<li><p>辅助方法</p>
+<p>基类中封装如下辅助方法：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Mock一个对象并返回伪造的实例</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 可通过回调匿名函数定制Mock的实例的行为特征。</span></span><br><span class="line"><span class="comment"> * 当$inject参数为false时，Mock的实例不被注入容器，缺省为注入。</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> mixed $class 类名字符串或类本身</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> callable $handler 回调匿名函数，接收Mock的实例作为参数，用于定制实例自身行为特征</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> bool $inject 是否注入容器，缺省为true</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> \\Mockery\\MockInterface</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">mock</span><span class="params">($class, callable $handler = null, bool $inject = true)</span>: <span class="title">MockInterface</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $mockedObj = \Mockery::mock($class);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (is_callable($handler)) &#123;</span><br><span class="line">        call_user_func($handler, $mockedObj);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ($inject) &#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;app-&gt;instance($class, $mockedObj);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> $mockedObj;</span><br><span class="line">&#125;</span><br><span class="line">  </span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Mock一个单例模式的类</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 可通过回调匿名函数定制Mock的实例的行为特征。</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> mixed    $class   类名字符串或类本身</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> callable $handler 回调匿名函数，接收Mock的实例作为参数，用于定制实例自身行为特征</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">mockSingleton</span><span class="params">($class, callable $handler = null)</span>: <span class="title">void</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $mockedObj = \Mockery::mock($class);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (is_callable($handler)) &#123;</span><br><span class="line">        call_user_func($handler, $mockedObj);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    $ref = <span class="keyword">new</span> \ReflectionProperty($class, <span class="string">'instance'</span>);</span><br><span class="line">    $ref-&gt;setAccessible(<span class="keyword">true</span>);</span><br><span class="line">    $ref-&gt;setValue(<span class="keyword">null</span>, $mockedObj);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
 </li>
@@ -139,13 +139,13 @@
 <nav class="pagination" role="pagination">
     
     <a class="newer-posts" href="/post/investigation-report-of-git-flows/">
-        ← 新 <!--Git工作流調研報告-->
+        ← 新 <!--Git工作流调研报告-->
     </a>
     
     <span class="page-number">•</span>
     
     <a class="older-posts" href="/post/replace-syntastic-with-ale/">
-        <!--用ALE替換了Syntastic--> 舊 →
+        <!--用ALE替换了Syntastic--> 舊 →
     </a>
     
 </nav>

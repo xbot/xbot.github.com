@@ -9,7 +9,7 @@
         <link rel="shortcut icon" href="/asset/logo.jpg">
         <link rel="canonical" href="http://guolinn.com/">
         <link rel="alternate" type="application/rss+xml" title="晴耕雨讀" href="/atom.xml">
-        <title>用ALE替換了Syntastic | 晴耕雨讀</title>
+        <title>用ALE替换了Syntastic | 晴耕雨讀</title>
         <meta name="description" content="{{meta_description}}">
 
         <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
@@ -52,24 +52,24 @@
     <span class="taglist">  &middot; 
     
     
-      <a href="/tags/最佳實踐/">最佳實踐</a> 
-    
       <a href="/tags/vim/">vim</a> 
+    
+      <a href="/tags/最佳实践/">最佳实践</a> 
     
     </span>
   
 
-  <h1 class="post-title">用ALE替換了Syntastic</h1>
+  <h1 class="post-title">用ALE替换了Syntastic</h1>
   <section class="post-content article-entry">
-    <p>習慣頻繁地保存源碼，但是每次保存都有明顯的卡頓，於是用Vim自己的調優功能跟蹤了一下。</p>
-<p>依次執行以下命令：</p>
+    <p>习惯频繁地保存源码，但是每次保存都有明显的卡顿，于是用Vim自己的调优功能跟踪了一下。</p>
+<p>依次执行以下命令：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">:profile start profile.log</span><br><span class="line">:profile file *</span><br><span class="line">:profile func *</span><br></pre></td></tr></table></figure>
-<p>然後執行保存操作，再執行以下命令：</p>
+<p>然后执行保存操作，再执行以下命令：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">:profile pause</span><br><span class="line">:noautocmd qall!</span><br></pre></td></tr></table></figure>
-<p>在當前目錄下生成的文件profile.log里，看到執行時間最長的是Syntastic的函數，禁用這個擴展後保存果然比原來快多了。</p>
-<p>但是Syntastic是個很有用的擴展，所以Google一下有沒有異步執行的方法，偶然發現了ALE，主要特性就是異步執行。試用之後覺得很好用，就把前者卸了。</p>
+<p>在当前目录下生成的文件profile.log里，看到执行时间最长的是Syntastic的函数，禁用这个扩展后保存果然比原来快多了。</p>
+<p>但是Syntastic是个很有用的扩展，所以Google一下有没有异步执行的方法，偶然发现了ALE，主要特性就是异步执行。试用之后觉得很好用，就把前者卸了。</p>
 <p>ALE的初始配置如下：</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">" ALE</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">g:ale_sign_column_always</span> = <span class="number">1</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">g:ale_set_highlights</span> = <span class="number">0</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">g:airline</span>#extensions#ale#enabled = <span class="number">1</span></span><br><span class="line"><span class="comment">"自定義error和warning圖標</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">g:ale_sign_error</span> = <span class="string">'✗'</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">g:ale_sign_warning</span> = <span class="string">'⚠'</span></span><br><span class="line"><span class="comment">" 顯示Linter名稱,出錯或警告等相關信息</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">g:ale_echo_msg_error_str</span> = <span class="string">'E'</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">g:ale_echo_msg_warning_str</span> = <span class="string">'W'</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">g:ale_echo_msg_format</span> = <span class="string">'[%linter%] %s [%severity%]'</span></span><br><span class="line"><span class="comment">" PHP</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">g:ale_php_phpcs_standard</span> = <span class="string">'PSR2'</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">g:ale_php_phpmd_ruleset</span> = <span class="string">'~/.phpmd.xml'</span></span><br><span class="line"><span class="comment">" 普通模式下，sp前往上一個錯誤或警告，sn前往下一個錯誤或警告</span></span><br><span class="line"><span class="keyword">nmap</span> <span class="keyword">sp</span> <span class="symbol">&lt;Plug&gt;</span>(ale_previous_wrap)</span><br><span class="line"><span class="keyword">nmap</span> <span class="keyword">sn</span> <span class="symbol">&lt;Plug&gt;</span>(ale_next_wrap)</span><br><span class="line"><span class="comment">" 觸發/關閉語法檢查</span></span><br><span class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;Leader&gt;</span>at :ALEToggle<span class="symbol">&lt;CR&gt;</span></span><br><span class="line"><span class="comment">" 查看錯誤或警告的詳細信息</span></span><br><span class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;Leader&gt;</span>ad :ALEDetail<span class="symbol">&lt;CR&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">" ALE</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">g:ale_sign_column_always</span> = <span class="number">1</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">g:ale_set_highlights</span> = <span class="number">0</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">g:airline</span>#extensions#ale#enabled = <span class="number">1</span></span><br><span class="line"><span class="comment">"自定义error和warning图标</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">g:ale_sign_error</span> = <span class="string">'✗'</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">g:ale_sign_warning</span> = <span class="string">'⚠'</span></span><br><span class="line"><span class="comment">" 显示Linter名称,出错或警告等相关信息</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">g:ale_echo_msg_error_str</span> = <span class="string">'E'</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">g:ale_echo_msg_warning_str</span> = <span class="string">'W'</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">g:ale_echo_msg_format</span> = <span class="string">'[%linter%] %s [%severity%]'</span></span><br><span class="line"><span class="comment">" PHP</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">g:ale_php_phpcs_standard</span> = <span class="string">'PSR2'</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">g:ale_php_phpmd_ruleset</span> = <span class="string">'~/.phpmd.xml'</span></span><br><span class="line"><span class="comment">" 普通模式下，sp前往上一个错误或警告，sn前往下一个错误或警告</span></span><br><span class="line"><span class="keyword">nmap</span> <span class="keyword">sp</span> <span class="symbol">&lt;Plug&gt;</span>(ale_previous_wrap)</span><br><span class="line"><span class="keyword">nmap</span> <span class="keyword">sn</span> <span class="symbol">&lt;Plug&gt;</span>(ale_next_wrap)</span><br><span class="line"><span class="comment">" 触发/关闭语法检查</span></span><br><span class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;Leader&gt;</span>at :ALEToggle<span class="symbol">&lt;CR&gt;</span></span><br><span class="line"><span class="comment">" 查看错误或警告的详细信息</span></span><br><span class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;Leader&gt;</span>ad :ALEDetail<span class="symbol">&lt;CR&gt;</span></span><br></pre></td></tr></table></figure>
 
   </section>
   <footer class="post-footer">
@@ -85,13 +85,13 @@
 <nav class="pagination" role="pagination">
     
     <a class="newer-posts" href="/post/unit-testing-standard-for-laravel-based-projects/">
-        ← 新 <!--基于Laravel的項目的單元測試規範-->
+        ← 新 <!--基于Laravel的项目的单元测试规范-->
     </a>
     
     <span class="page-number">•</span>
     
     <a class="older-posts" href="/post/input-punctuations-with-rime/">
-        <!--配置鼠須管的特殊符號輸入--> 舊 →
+        <!--配置鼠须管的特殊符号输入--> 舊 →
     </a>
     
 </nav>

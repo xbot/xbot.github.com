@@ -9,7 +9,7 @@
         <link rel="shortcut icon" href="/asset/logo.jpg">
         <link rel="canonical" href="http://guolinn.com/">
         <link rel="alternate" type="application/rss+xml" title="晴耕雨讀" href="/atom.xml">
-        <title>UltraBlog.vim v3.1釋出：代碼重構與MacVim支持 | 晴耕雨讀</title>
+        <title>UltraBlog.vim v3.1释出：代码重构与MacVim支持 | 晴耕雨讀</title>
         <meta name="description" content="{{meta_description}}">
 
         <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
@@ -54,7 +54,7 @@
     
       <a href="/tags/python/">Python</a> 
     
-      <a href="/tags/編程/">編程</a> 
+      <a href="/tags/编程/">编程</a> 
     
       <a href="/tags/vim/">Vim</a> 
     
@@ -67,23 +67,23 @@
     </span>
   
 
-  <h1 class="post-title">UltraBlog.vim v3.1釋出：代碼重構與MacVim支持</h1>
+  <h1 class="post-title">UltraBlog.vim v3.1释出：代码重构与MacVim支持</h1>
   <section class="post-content article-entry">
-    <p>距離上一個版本的釋出已經有三個月了，这次新版並沒有增加多少功能性的內容，主要是代碼的重構和對在MacVim下穩定性的改進。</p>
+    <p>距离上一个版本的释出已经有三个月了，这次新版并没有增加多少功能性的内容，主要是代码的重构和对在MacVim下稳定性的改进。</p>
 
-<p>對依賴關係檢查的不細緻導致了一些麻煩，拋出的錯誤信息有時與實際原因相距甚遠。由於開始時是以實現功能為主，所以都是直接用函數實現的，之後修修補補，代碼冗余而且維護麻煩。於是著手重構主要功能的源碼，面向對象，把所有檢查邏輯放到父類中去實現，子類只關注自身邏輯，最後新版減少了二百多行的代碼量。</p>
+<p>对依赖关系检查的不细致导致了一些麻烦，抛出的错误信息有时与实际原因相距甚远。由于开始时是以实现功能为主，所以都是直接用函数实现的，之后修修补补，代码冗余而且维护麻烦。于是著手重构主要功能的源码，面向对象，把所有检查逻辑放到父类中去实现，子类只关注自身逻辑，最后新版减少了二百多行的代码量。</p>
 
-<p>在重構的過程中偶然發現，在MacVim中，程序拋出任何異常，即便是有捕獲邏輯，也會導致編輯器崩潰。在<a href="http://stackoverflow.com/questions/5574702/how-to-print-to-stderr-in-python" target="_blank" rel="noopener">这裡</a>簡略地提到：</p>
+<p>在重构的过程中偶然发现，在MacVim中，程序抛出任何异常，即便是有捕获逻辑，也会导致编辑器崩溃。在<a href="http://stackoverflow.com/questions/5574702/how-to-print-to-stderr-in-python" target="_blank" rel="noopener">这里</a>简略地提到：</p>
 
 <blockquote>
   <p>the failure was actual a crash, through some strange combination of threading, matplotlib pyplot backend, and ssh X11 forwarding, sys.stderr had somehow been assigned to something which python complained wasn't a file-like object</p>
 </blockquote>
 
-<p>於是將所有標準輸出與標準錯誤輸出語句換成另一種形式：</p>
+<p>于是将所有标准输出与标准错误输出语句换成另一种形式：</p>
 
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 原形式</span></span><br><span class="line">sys.stdout.write(<span class="string">'xxx'</span>)</span><br><span class="line">sys.stderr.write(<span class="string">'xxx'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 新形式</span></span><br><span class="line"><span class="keyword">print</span> &gt;&gt; sys.stdout, <span class="string">'xxx'</span></span><br><span class="line"><span class="keyword">print</span> &gt;&gt; sys.stderr, <span class="string">'xxx'</span></span><br></pre></td></tr></table></figure>
 
-<p>以上是新版主要變更的內容，此外，也順便解決了開發過程中發現的個別Bug和做了其它一些改動：</p>
+<p>以上是新版主要变更的内容，此外，也顺便解决了开发过程中发现的个别Bug和做了其它一些改动：</p>
 
 <ul>
 <li>Change:  The key "xmlrpc" of the settings list is dropped, a new one with the name "url" is added, you should set its value to the blog url.</li>
@@ -94,7 +94,7 @@
 <li>Bugfix:  The second parameter of <strong>:UBThis</strong> cannot take effect.</li>
 </ul>
 
-<p>这也是將源碼從Google Code遷移到GitHub後發佈的第一個新版本，更詳細的信息請移步<a href="http://0x3f.org/?p=1894">插件主頁</a>或GitHub上的<a href="https://github.com/xbot/UltraBlog.vim" target="_blank" rel="noopener">代碼倉庫</a>。</p>
+<p>这也是将源码从Google Code迁移到GitHub后发布的第一个新版本，更详细的信息请移步<a href="http://0x3f.org/?p=1894">插件主页</a>或GitHub上的<a href="https://github.com/xbot/UltraBlog.vim" target="_blank" rel="noopener">代码仓库</a>。</p>
 
 <p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
 
@@ -111,14 +111,14 @@
 
 <nav class="pagination" role="pagination">
     
-    <a class="newer-posts" href="/post/yyets-torrents-download-script/">
-        ← 新 <!--YYeTs.py：人人影視BT種子下載輔助腳本-->
+    <a class="newer-posts" href="/post/after-reading-pro-git/">
+        ← 新 <!--读完《Pro Git》-->
     </a>
     
     <span class="page-number">•</span>
     
     <a class="older-posts" href="/post/double-commander/">
-        <!--Double Commander: 免費、跨平台的Total Commander--> 舊 →
+        <!--Double Commander: 免费、跨平台的Total Commander--> 舊 →
     </a>
     
 </nav>

@@ -9,7 +9,7 @@
         <link rel="shortcut icon" href="/asset/logo.jpg">
         <link rel="canonical" href="http://guolinn.com/">
         <link rel="alternate" type="application/rss+xml" title="晴耕雨讀" href="/atom.xml">
-        <title>GraphQL：RESTful之外的接口實現方案 | 晴耕雨讀</title>
+        <title>GraphQL：RESTful之外的接口实现方案 | 晴耕雨讀</title>
         <meta name="description" content="{{meta_description}}">
 
         <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
@@ -52,31 +52,31 @@
     <span class="taglist">  &middot; 
     
     
-      <a href="/tags/編程/">編程</a> 
+      <a href="/tags/编程/">编程</a> 
     
       <a href="/tags/php/">php</a> 
     
     </span>
   
 
-  <h1 class="post-title">GraphQL：RESTful之外的接口實現方案</h1>
+  <h1 class="post-title">GraphQL：RESTful之外的接口实现方案</h1>
   <section class="post-content article-entry">
-    <p>和RESTfull一樣，GraphQL也是一種基於HTTP的接口實現方式。它區別於前者的主要有兩點：數據格式的自定義和請求的合併。</p>
-<p>本質上，GraphQL是為了解決RESTful中前後端在業務邏輯上的耦合關係。在RESTful中，接口是為前端具體的業務需求定制的，從實現什麼樣的功能，到返回哪些數據，都是既定的，所以很難被其它業務邏輯共用，即使可以共用，前端也必須發送多個請求到後端，因而造成資源浪費、效率下降。</p>
-<p>GraphQL實現的是一套邏輯積木，每個封裝好的業務邏輯都是原子的，前端可以自由選擇使用哪些，也可以定制返回數據的格式。並且這一切，都可以通過一次請求實現。</p>
-<p>當然，GraphQL也有一些短板。比如緩存，對於RESTfull接口，可以根據操作的冪等性實現負載均衡層面的緩存，而對於GraphQL，由於請求數據格式靈活且可能很大，請求會用POST方式發送，這樣就必須改變緩存的實現方式。再一點是嵌套的層級問題，GraphQL的靈活性允許查詢類型之間彼此嵌套，如果層級過多，可能導致嚴重的性能和可用性問題，因此需要注意限制嵌套的層級。還有就是GraphQL的實現複雜度比RESTful要高，需要權衡使用哪種實現方案。</p>
-<p>GraphQL用schema管理接口，可以根據業務等因素劃分schema，例如需要權限驗證的和公開的。每個schema包含兩類接口：query和mutation，分別用來查詢和變更數據。</p>
-<p>下面在Laravel中簡單實現一個query接口。</p>
-<p>先安裝<a href="https://github.com/Folkloreatelier/laravel-graphql" target="_blank" rel="noopener">folklore/graphql</a>庫。</p>
-<p>實現文章類型：</p>
+    <p>和RESTfull一样，GraphQL也是一种基于HTTP的接口实现方式。它区别于前者的主要有两点：数据格式的自定义和请求的合并。</p>
+<p>本质上，GraphQL是为了解决RESTful中前后端在业务逻辑上的耦合关系。在RESTful中，接口是为前端具体的业务需求定制的，从实现什么样的功能，到返回哪些数据，都是既定的，所以很难被其它业务逻辑共用，即使可以共用，前端也必须发送多个请求到后端，因而造成资源浪费、效率下降。</p>
+<p>GraphQL实现的是一套逻辑积木，每个封装好的业务逻辑都是原子的，前端可以自由选择使用哪些，也可以定制返回数据的格式。并且这一切，都可以通过一次请求实现。</p>
+<p>当然，GraphQL也有一些短板。比如缓存，对于RESTfull接口，可以根据操作的幂等性实现负载均衡层面的缓存，而对于GraphQL，由于请求数据格式灵活且可能很大，请求会用POST方式发送，这样就必须改变缓存的实现方式。再一点是嵌套的层级问题，GraphQL的灵活性允许查询类型之间彼此嵌套，如果层级过多，可能导致严重的性能和可用性问题，因此需要注意限制嵌套的层级。还有就是GraphQL的实现复杂度比RESTful要高，需要权衡使用哪种实现方案。</p>
+<p>GraphQL用schema管理接口，可以根据业务等因素划分schema，例如需要权限验证的和公开的。每个schema包含两类接口：query和mutation，分别用来查询和变更数据。</p>
+<p>下面在Laravel中简单实现一个query接口。</p>
+<p>先安装<a href="https://github.com/Folkloreatelier/laravel-graphql" target="_blank" rel="noopener">folklore/graphql</a>库。</p>
+<p>实现文章类型：</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> <span class="title">App</span>\<span class="title">GraphQL</span>\<span class="title">Type</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">GraphQL</span>\<span class="title">Type</span>\<span class="title">Definition</span>\<span class="title">Type</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Folklore</span>\<span class="title">GraphQL</span>\<span class="title">Support</span>\<span class="title">Type</span> <span class="title">as</span> <span class="title">GraphQLType</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PostType</span> <span class="keyword">extends</span> <span class="title">GraphQLType</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">fields</span><span class="params">()</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		<span class="keyword">return</span> [</span><br><span class="line">			<span class="string">'id'</span> =&gt; [</span><br><span class="line">				<span class="string">'type'</span> =&gt; Type::nonNull(Type::string()),</span><br><span class="line">				<span class="string">'description'</span> =&gt; <span class="string">'The id of the post'</span></span><br><span class="line">			],</span><br><span class="line">			<span class="string">'title'</span> =&gt; [</span><br><span class="line">				<span class="string">'type'</span> =&gt; Type::string(),</span><br><span class="line">				<span class="string">'description'</span> =&gt; <span class="string">'Post title'</span></span><br><span class="line">			]</span><br><span class="line">		];</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">resolveTitleField</span><span class="params">($root, $args)</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		<span class="keyword">return</span> $root-&gt;post_title;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>實現文章的查詢邏輯：</p>
+<p>实现文章的查询逻辑：</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> <span class="title">App</span>\<span class="title">GraphQL</span>\<span class="title">Query</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">GraphQL</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">GraphQL</span>\<span class="title">Type</span>\<span class="title">Definition</span>\<span class="title">Type</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Folklore</span>\<span class="title">GraphQL</span>\<span class="title">Support</span>\<span class="title">Query</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">App</span>\<span class="title">Models</span>\<span class="title">Post</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PostQuery</span> <span class="keyword">extends</span> <span class="title">Query</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">type</span><span class="params">()</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		<span class="keyword">return</span> Type::listOf(GraphQL::type(<span class="string">'Post'</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">resolve</span><span class="params">($root, $args)</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(<span class="keyword">isset</span>($args[<span class="string">'id'</span>])) &#123;</span><br><span class="line">			<span class="keyword">return</span> Post::where(<span class="string">'id'</span> , $args[<span class="string">'id'</span>])-&gt;get();</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> Post::all();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在<code>config/graphql.php</code>中註冊類型和邏輯：</p>
+<p>在<code>config/graphql.php</code>中注册类型和逻辑：</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'schemas'</span> =&gt; [</span><br><span class="line">   <span class="string">'default'</span> =&gt; [</span><br><span class="line">       <span class="string">'query'</span> =&gt; [</span><br><span class="line">           <span class="string">'posts'</span> =&gt; <span class="string">'App\GraphQL\Query\PostQuery'</span></span><br><span class="line">       ],</span><br><span class="line">       <span class="string">'mutation'</span> =&gt; [</span><br><span class="line"></span><br><span class="line">       ]</span><br><span class="line">   ],</span><br><span class="line">],</span><br><span class="line"></span><br><span class="line"><span class="string">'types'</span> =&gt; [</span><br><span class="line">   <span class="string">'Post'</span> =&gt; <span class="string">'App\GraphQL\Type\PostType'</span>,</span><br><span class="line">],</span><br></pre></td></tr></table></figure>
-<p>請求及結果如下：</p>
+<p>请求及结果如下：</p>
 <p><img src="https://ws4.sinaimg.cn/large/006tNbRwly1fwvwx9cf6hj30gi0fhmyk.jpg" alt=""></p>
-<p>GraphQL並不是RESTful的替代方案，是否用前者替代後者，取決於是否願意為了靈活性而增加複雜度。兩者有各自的適用領域，GraphQL更適合用來實現開放接口。</p>
+<p>GraphQL并不是RESTful的替代方案，是否用前者替代后者，取决于是否愿意为了灵活性而增加复杂度。两者有各自的适用领域，GraphQL更适合用来实现开放接口。</p>
 
   </section>
   <footer class="post-footer">
@@ -92,13 +92,13 @@
 <nav class="pagination" role="pagination">
     
     <a class="newer-posts" href="/post/reconcile-neocomplete-with-ultisnips/">
-        ← 新 <!--使neocomplete和ultisnips共用tab鍵的方法-->
+        ← 新 <!--使neocomplete和ultisnips共用tab键的方法-->
     </a>
     
     <span class="page-number">•</span>
     
     <a class="older-posts" href="/post/replaced-vam-with-vim-plug/">
-        <!--用vim-plug換掉了vim-addon-manager--> 舊 →
+        <!--用vim-plug换掉了vim-addon-manager--> 舊 →
     </a>
     
 </nav>

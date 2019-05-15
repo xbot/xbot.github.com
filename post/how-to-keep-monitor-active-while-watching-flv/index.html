@@ -9,7 +9,7 @@
         <link rel="shortcut icon" href="/asset/logo.jpg">
         <link rel="canonical" href="http://guolinn.com/">
         <link rel="alternate" type="application/rss+xml" title="晴耕雨讀" href="/atom.xml">
-        <title>禁止屏幕在播放視頻時自動關閉 | 晴耕雨讀</title>
+        <title>禁止屏幕在播放视频时自动关闭 | 晴耕雨讀</title>
         <meta name="description" content="{{meta_description}}">
 
         <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
@@ -54,22 +54,22 @@
     
       <a href="/tags/linux/">Linux</a> 
     
-      <a href="/tags/編程/">編程</a> 
+      <a href="/tags/编程/">编程</a> 
     
       <a href="/tags/bash/">BASH</a> 
     
-      <a href="/tags/腳本/">腳本</a> 
+      <a href="/tags/脚本/">脚本</a> 
     
     </span>
   
 
-  <h1 class="post-title">禁止屏幕在播放視頻時自動關閉</h1>
+  <h1 class="post-title">禁止屏幕在播放视频时自动关闭</h1>
   <section class="post-content article-entry">
-    <p>貌似Lose系統下看在線視頻的時候不會超時自動關閉屏幕，但是我在Arch下就一直晃鼠標、按鍵盤來著，這嚴重違反了DRY原則。於是昨天終於寫了這個腳本，當全屏播放視頻的時候，關閉屏保和顯示器的節能特性，否則則激活它們。由於是在X的級別實現，理論上應當適合所有桌面環境。</p>
+    <p>貌似Lose系统下看在线视频的时候不会超时自动关闭屏幕，但是我在Arch下就一直晃鼠标、按键盘来著，这严重违反了DRY原则。于是昨天终于写了这个脚本，当全屏播放视频的时候，关闭屏保和显示器的节能特性，否则则激活它们。由于是在X的级别实现，理论上应当适合所有桌面环境。</p>
 
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># Baby-sitter of the monitor's DPMS</span></span><br><span class="line"></span><br><span class="line">idle_period=60</span><br><span class="line">ss_switch_off=0</span><br><span class="line">ss_is_off=0</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">true</span>; <span class="keyword">do</span></span><br><span class="line">    <span class="comment"># Read DPMS state</span></span><br><span class="line">    xset -q|grep <span class="string">"DPMS is Disabled"</span> &gt; /dev/null &amp;&amp; ss_is_off=1 || ss_is_off=0</span><br><span class="line">    <span class="comment"># Get pid of the current window</span></span><br><span class="line">    active_window_id=`xprop -root | grep <span class="string">"_NET_ACTIVE_WINDOW(WINDOW)"</span> | cut -d<span class="string">" "</span> -f5`</span><br><span class="line">    decimal_id=`xprop -id <span class="variable">$active_window_id</span> | grep PID | cut -d<span class="string">" "</span> -f3`</span><br><span class="line">    <span class="comment"># Traverse all libflashplayer.so</span></span><br><span class="line">    <span class="keyword">for</span> pid <span class="keyword">in</span> `ps -ef|grep -v grep|grep libflashplayer.so|awk <span class="string">'&#123;print $2&#125;'</span>`; <span class="keyword">do</span></span><br><span class="line">        <span class="comment"># If the current window is libflashplayer.so</span></span><br><span class="line">        <span class="keyword">if</span> [ <span class="string">"<span class="variable">$pid</span>"</span> -eq <span class="string">"<span class="variable">$decimal_id</span>"</span> ]; <span class="keyword">then</span></span><br><span class="line">            ss_switch_off=1</span><br><span class="line">            <span class="built_in">break</span></span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            ss_switch_off=0</span><br><span class="line">        <span class="keyword">fi</span></span><br><span class="line">    <span class="keyword">done</span></span><br><span class="line">    <span class="keyword">if</span> [ <span class="variable">$ss_switch_off</span> -eq 1 ]; <span class="keyword">then</span></span><br><span class="line">        <span class="comment"># Turn off DPMS</span></span><br><span class="line">        <span class="built_in">echo</span> Turn off DPMS</span><br><span class="line">        <span class="keyword">if</span> [ <span class="variable">$ss_is_off</span> -eq 0 ]; <span class="keyword">then</span></span><br><span class="line">            <span class="built_in">echo</span> Action</span><br><span class="line">            xset s off</span><br><span class="line">            xset -dpms</span><br><span class="line">        <span class="keyword">fi</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="comment"># Turn on DPMS</span></span><br><span class="line">        <span class="built_in">echo</span> Turn on DPMS</span><br><span class="line">        <span class="keyword">if</span> [ <span class="variable">$ss_is_off</span> -eq 1 ]; <span class="keyword">then</span></span><br><span class="line">            <span class="built_in">echo</span> Action</span><br><span class="line">            xset +dpms</span><br><span class="line">            xset s on</span><br><span class="line">        <span class="keyword">fi</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">    sleep <span class="variable">$idle_period</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
 
-<p>似乎對非全屏播放的情況沒有什麼好方法。</p>
+<p>似乎对非全屏播放的情况没有什么好方法。</p>
 
 <p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
 
@@ -87,13 +87,13 @@
 <nav class="pagination" role="pagination">
     
     <a class="newer-posts" href="/post/turbocrm-cluster-express-v1-released/">
-        ← 新 <!--TurboCRM Cluster Express v1.0 釋出-->
+        ← 新 <!--TurboCRM Cluster Express v1.0 释出-->
     </a>
     
     <span class="page-number">•</span>
     
     <a class="older-posts" href="/post/the-focus-issue-of-pygtk-cellrenderer/">
-        <!--關於PyGTK.CellRenderer的回調方法中聚焦異常的問題--> 舊 →
+        <!--关于PyGTK.CellRenderer的回调方法中聚焦异常的问题--> 舊 →
     </a>
     
 </nav>
