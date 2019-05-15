@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+    <head><meta name="generator" content="Hexo 3.8.0">
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <link rel="shortcut icon" href="/asset/logo.jpg">
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="晴耕雨讀" href="/atom.xml">
+        <title>Git工作流調研報告 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True">
+        <meta name="MobileOptimized" content="320">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀"></a>
+            <h1><a href="/">晴耕雨讀</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim、Archlinux、Mac、iOS擁躉，帝都低端人口。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  五月 15, 2019
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href="/tags/git/">git</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">Git工作流調研報告</h1>
+  <section class="post-content article-entry">
+    <h2 id="面臨的問題"><a href="#面臨的問題" class="headerlink" title="面臨的問題"></a>面臨的問題</h2><ol>
+<li><p>測試環境雜亂導緻的問題</p>
+<p>每個任務都要搭建測試環境，或者把閑置的測試環境切換到待測試分支。麻煩，而且容易出問題。</p>
+</li>
+<li><p>搶占beta環境的問題</p>
+<p>每個任務部署到beta環境時都要和别人确認，同時其它任務都要等待。</p>
+</li>
+<li><p>上線任務A把尚在測試中的任務B的部分代碼部署上線的問題</p>
+<p>先把feature分支合并到master分支，再部署到beta環境。</p>
+</li>
+<li><p>任務A和B在邏輯上互斥或者代碼有沖突，導緻問題在上線後才發現</p>
+<p>測試階段是針對每個feature分支測試，而不是針對一個集成的分支。</p>
+</li>
+<li><p>不能保證所有上線的代碼都經過測試</p>
+<p>直接把feature分支合并到master分支，不能保證所有代碼都經過測試。</p>
+</li>
+</ol>
+<h2 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h2><p>直接原因：</p>
+<ul>
+<li>用feature分支部署測試，導緻有多套測試環境。</li>
+<li>隻有一個beta環境，導緻搶占。</li>
+<li>部署到beta環境前先把feature分支和master合并，導緻上線時把尚在beta環境測試的代碼帶上線。</li>
+</ul>
+<p>根本原因是，<strong>一個項目</strong>同時有<strong>多個任務并行</strong>開發上線。</p>
+<h2 id="兩種發布模式"><a href="#兩種發布模式" class="headerlink" title="兩種發布模式"></a>兩種發布模式</h2><ul>
+<li>按版本發布 <ul>
+<li>優點 <ul>
+<li>可以有專門的分支跟蹤測試、beta環境，這兩個環境各自隻部署一個實例即可。</li>
+</ul>
+</li>
+<li>缺點 <ul>
+<li>存在版本發布周期，做完的任務不能馬上上線。</li>
+<li>要改變我們目前的發布模式，産品部門的規劃也要調整，業務部門的接受度也是個問題。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>持續發布 <ul>
+<li>優點 <ul>
+<li>和我們目前的發布模式一緻，隻需要調整内部工作流即可，産品部門和業務部門無感。</li>
+</ul>
+</li>
+<li>缺點 <ul>
+<li>多任務并行開發和上線的問題很難解決。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="選型的基本原則"><a href="#選型的基本原則" class="headerlink" title="選型的基本原則"></a>選型的基本原則</h2><ul>
+<li>要保證所有上線的代碼是經過測試的。</li>
+<li>解決上述問題。</li>
+<li>減少開發、測試、運維的負擔。</li>
+</ul>
+<h2 id="調研的工作流"><a href="#調研的工作流" class="headerlink" title="調研的工作流"></a>調研的工作流</h2><h3 id="Git-Flow"><a href="#Git-Flow" class="headerlink" title="Git Flow"></a>Git Flow</h3><p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1g3221nqkh0j31470u0qa0.jpg" alt=""></p>
+<p>Git Flow是個基于按版本發布模型的工作流：</p>
+<ol>
+<li>一方面，标準的git flow存在按版本打标簽的操作，版本号沖突處理起來很麻煩。當然，也可以不用标準的git flow命令，而是用基本的git命令，但是操作會複雜很多，要求用戶對git flow的原理有很強的掌握。</li>
+<li>另一方面，develop是其它分支的上遊，這意味着隻有當develop分支穩定之後才可以發布上線，而這一點對于多任務并行開發的場景來說，很難保證。</li>
+<li>需要和産品部門協商，統一規劃版本發布周期，每個版本包含的所有任務統一集中上線。</li>
+<li>能解決所有問題，但是結合我們自身的情況，再考慮到網站屬于持續發布的模型，改成按版本發布不現實。</li>
+</ol>
+<h3 id="Github-Flow"><a href="#Github-Flow" class="headerlink" title="Github Flow"></a>Github Flow</h3><p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g32227lrnsj320b0ou0ux.jpg" alt="Github_Flow-5c5cc2b5-db48-4868-a5f8-e598155c93c5"></p>
+<p>Github Flow是基于持續發布模型的工作流。也和我們之前的方案大體一緻。</p>
+<h3 id="Gitlab-Flow"><a href="#Gitlab-Flow" class="headerlink" title="Gitlab Flow"></a>Gitlab Flow</h3><p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g3222i6ac2j328q0u0gps.jpg" alt="Gitlab_Flow-d0abbf6d-e4e4-4b2e-8383-a402fa458776"></p>
+<p>Gitlab Flow是在Github Flow的基礎上做的擴展：增加了用于跟蹤預發布環境和線上環境的分支，并約定由上遊到下遊的合并規則。即master分支是一切分支的上遊，所有分支必須基于master分支創建，并且由上遊向下遊合并。</p>
+<p>同樣，Gitlab Flow也沒有解決以上問題。</p>
+<h3 id="其它方案（一）"><a href="#其它方案（一）" class="headerlink" title="其它方案（一）"></a>其它方案（一）</h3><p>在現有工作流的基礎上調整細節：</p>
+<ul>
+<li>承認master分支和線上環境一緻，即合并到master分支的内容，默認立即上線。進一步地，可以實現自動化部署。</li>
+<li>用feature分支實現開發、測試、beta的整個過程，上線前合并到master。</li>
+<li>分别在提測、部署beta、上線節點前必須合并master分支的最新變更。</li>
+<li>合并時如果有沖突，解決完後必須回歸測試相關功能。</li>
+</ul>
+<p>存在的問題：</p>
+<ol>
+<li><p>能解決問題1、2、3，解決不了問題4和5。</p>
+</li>
+<li><p>環境部署比較麻煩</p>
+<p>測試、beta環境的部署可以用自動化的方案減少部署的負擔。</p>
+</li>
+<li><p>可能不能保證合并到master分支的内容都經過測試，例如feature分支和master分支合并出錯，或者合并到master前追加了一部分代碼。</p>
+<p>所以當feature分支進入beta階段時，就應該把它保護起來，隻允許改bug。如果和master分支出現了沖突，解決完沖突後要回歸測試。</p>
+<ul>
+<li>缺點 <ul>
+<li>把臨時分支設成被保護狀态很麻煩。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>每個階段解決完與master的沖突後，都需要回歸測試。</p>
+</li>
+</ol>
+<h3 id="其它方案（二）"><a href="#其它方案（二）" class="headerlink" title="其它方案（二）"></a>其它方案（二）</h3><p><img src="https://ws3.sinaimg.cn/large/006tNc79gy1g3220wzigvj31pz0u0wiq.jpg" alt=""></p>
+<p>存在的問題：</p>
+<ol>
+<li>能解決問題1、2、3、4，解決不了問題5。</li>
+<li>因爲在合并feature分支時，要在dev和beta中解決沖突，所以這兩個分支不能被保護，存在被濫用的可能性。可能影響測試和beta環境的穩定性。 <ul>
+<li>也可以保護這兩個分支，當feature分支和它們存在沖突時，再從feature分支檢出新分支，在這個分支上合并沖突并通過MR合并到dev或beta分支。如果之後需要改bug，在原來的feature分支上開發，然後合并到新分支，再通過MR合并到dev或beta分支。</li>
+</ul>
+</li>
+<li>可能存在部署測試、beta、上線每個階段都需要合并沖突的情況。</li>
+</ol>
+<h3 id="其它方案（三）"><a href="#其它方案（三）" class="headerlink" title="其它方案（三）"></a>其它方案（三）</h3><p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1g32231qxa0j31sx0u0gtw.jpg" alt="其它方案（三）"></p>
+<p>存在的問題：</p>
+<ol>
+<li>本質上和前一種方案沒有區别。</li>
+<li>能解決問題1、2、3、4，解決不了問題5。</li>
+<li>能解決dev和beta分支沒有被保護導緻濫用的問題。</li>
+<li>同樣可能存在個人倉庫的永久分支被濫用的問題。</li>
+<li>操作比較複雜。</li>
+</ol>
+<h2 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h2><ul>
+<li style="list-style: none"><input type="checkbox"> 我們的beta環境其實是第二個測試環境，是否真有必要？</li>
+</ul>
+<h2 id="總結"><a href="#總結" class="headerlink" title="總結"></a>總結</h2><p>保證所有代碼都經過測試的原則和多任務并行開發上線的模式是一對矛盾。要保證前者，就必須使代碼在各分支間單向流動，比如feature分支合并到dev分支、dev合并到beta分支、beta分支再合并到master分支。要實現後者，單向流動就不可取，否則就會出現問題2和3。</p>
+<p>Git Flow是最大程度能解決以上所有問題的方案，不過結合我們自身的情況很難實施。</p>
+<p>“其它方案（二）”是個各方面比較均衡的方案，能解決大部分問題。前提是假設開發者會遵循提交标準：</p>
+<ul>
+<li>隻在feature開發完成才合并到dev或beta分支</li>
+<li>不直接在dev或beta分支上做提交</li>
+<li>不對dev或beta分支做改變提交曆史等危險操作</li>
+<li>不在上線前夾帶私貨（把未經測試的代碼合并到master分支）</li>
+</ul>
+<p>沒有哪個工作流能完全解決我們的問題，最終還是要和團隊協作模式的調整配合。</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>晴耕雨讀</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/unit-testing-standard-for-laravel-based-projects/">
+        <!--基于Laravel的項目的單元測試規範--> 舊 →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2019 晴耕雨讀. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+
