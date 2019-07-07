@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+    <head><meta name="generator" content="Hexo 3.8.0">
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <meta name="referrer" content="no-referrer">
+        <link rel="shortcut icon" href="/asset/logo.jpg">
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="晴耕雨讀" href="/atom.xml">
+        <title>对比Laravel Excel和Spout的读写性能 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True">
+        <meta name="MobileOptimized" content="320">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀"></a>
+            <h1><a href="/">晴耕雨讀</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim、Archlinux、Mac、iOS擁躉，帝都低端人口。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  七月 7, 2019
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href="/tags/编程/">编程</a> 
+    
+      <a href="/tags/php/">PHP</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">对比Laravel Excel和Spout的读写性能</h1>
+  <section class="post-content article-entry">
+    <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">./artisan excel:write --driver=spout --amount=100000</span><br><span class="line">写入数据100000行。</span><br><span class="line">用时：156秒。</span><br><span class="line">最大使用内存：2750.5106964111 M。</span><br><span class="line"></span><br><span class="line">./artisan excel:write --driver=laravel-excel --amount=100000</span><br><span class="line">写入数据100000行。</span><br><span class="line">用时：305秒。</span><br><span class="line">最大使用内存：1330.7370758057 M。</span><br><span class="line"></span><br><span class="line">./artisan excel:read ./storage/app/test.xlsx --driver=spout</span><br><span class="line">读取数据100001行。</span><br><span class="line">用时：576秒。</span><br><span class="line">最大使用内存：122.15303039551 M。</span><br><span class="line"></span><br><span class="line">./artisan excel:read ./storage/app/test.xlsx --driver=laravel-excel</span><br><span class="line">读取数据100001行。</span><br><span class="line">用时：166秒。</span><br><span class="line">最大使用内存：739.48976898193 M。</span><br></pre></td></tr></table></figure>
+<p>基本上，Laravel Excel写XLSX的性能是Spout的一半，但内存占用是对方的一半。而在读文件上，前者的性能是后者的约3倍多，而内存占用是后者的6倍。</p>
+<p>测试环境：</p>
+<ul>
+<li>MBP 3.1 GHz Intel Core i5 8G内存</li>
+<li>PHP 7.1.30</li>
+<li>Laravel 5.8.27</li>
+<li>Laravel Excel 3.1.14</li>
+<li>Spout 3.0.1</li>
+</ul>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>晴耕雨讀</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/after-reading-chapter-14-of-clean-code/">
+        <!--《Clean Code》第十四章读后--> 舊 →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2019 晴耕雨讀. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+
