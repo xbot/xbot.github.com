@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+    <head><meta name="generator" content="Hexo 3.8.0">
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <meta name="referrer" content="no-referrer">
+        <link rel="shortcut icon" href="/asset/logo.jpg">
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="晴耕雨讀" href="/atom.xml">
+        <title>PHP单元测试的技巧 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True">
+        <meta name="MobileOptimized" content="320">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀"></a>
+            <h1><a href="/">晴耕雨讀</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim、Archlinux、Mac、iOS擁躉，帝都低端人口。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  八月 13, 2019
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href="/tags/编程/">编程</a> 
+    
+      <a href="/tags/php/">PHP</a> 
+    
+      <a href="/tags/最佳实践/">最佳实践</a> 
+    
+      <a href="/tags/单元测试/">单元测试</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">PHP单元测试的技巧</h1>
+  <section class="post-content article-entry">
+    <p>以下是我平时写单元测试时总结的一些最佳实践，有些是和具体的框架强相关的。</p>
+<h2 id="利用Model-Factory生成测试数据"><a href="#利用Model-Factory生成测试数据" class="headerlink" title="利用Model Factory生成测试数据"></a>利用Model Factory生成测试数据</h2><p>Laravel/Lumen的Model Factory是个很好的工具。</p>
+<p>事先定义好主要对象的Model Factory，可以在写单元测试的代码时方便地生成临时数据：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 在数据库中创建一条发票的数据，并返回其Model的实例</span></span><br><span class="line">$invoice = factory(\App\Models\Invoice::class)-&gt;create();</span><br></pre></td></tr></table></figure>
+<p>此外，借助<a href="https://github.com/fzaninotto/Faker" target="_blank" rel="noopener">Faker</a>，可以为Model Factory定义仿真数据：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">$factory-&gt;define(\App\Models\Invoice::class, <span class="function"><span class="keyword">function</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">    $faker = Faker\Factory::create(<span class="string">'zh_CN'</span>);</span><br><span class="line">    $enFaker = Faker\Factory::create(<span class="string">'en_US'</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> [</span><br><span class="line">        <span class="string">'user_id'</span>                      =&gt; <span class="number">1</span>,</span><br><span class="line">        <span class="string">'amount'</span>                       =&gt; <span class="number">100</span>,</span><br><span class="line">        <span class="string">'title'</span>                        =&gt; $faker-&gt;company,</span><br><span class="line">        <span class="string">'taxpayer_id'</span>                  =&gt; $faker-&gt;randomNumber(),</span><br><span class="line">        <span class="string">'bank'</span>                         =&gt; $faker-&gt;bank,</span><br><span class="line">        <span class="string">'account'</span>                      =&gt; $enFaker-&gt;bankAccountNumber,</span><br><span class="line">        <span class="string">'company_registration_address'</span> =&gt; $faker-&gt;address,</span><br><span class="line">        <span class="string">'company_registration_phone'</span>   =&gt; $faker-&gt;phoneNumber,</span><br><span class="line">        <span class="string">'consignee_name'</span>               =&gt; $faker-&gt;name,</span><br><span class="line">        <span class="string">'consignee_province'</span>           =&gt; $faker-&gt;state,</span><br><span class="line">        <span class="string">'consignee_city'</span>               =&gt; $faker-&gt;city,</span><br><span class="line">        <span class="string">'consignee_district'</span>           =&gt; $faker-&gt;citySuffix,</span><br><span class="line">        <span class="string">'consignee_address'</span>            =&gt; $faker-&gt;address,</span><br><span class="line">        <span class="string">'consignee_phone'</span>              =&gt; $faker-&gt;phoneNumber,</span><br><span class="line">        <span class="string">'zip_code'</span>                     =&gt; $faker-&gt;postcode,</span><br><span class="line">        <span class="string">'remark'</span>                       =&gt; $faker-&gt;text,</span><br><span class="line">        <span class="string">'status'</span>                       =&gt; <span class="number">1</span>,</span><br><span class="line">    ];</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h2 id="只伪造被测单元所需的数据"><a href="#只伪造被测单元所需的数据" class="headerlink" title="只伪造被测单元所需的数据"></a>只伪造被测单元所需的数据</h2><p>单元测试只关注被测单元本身，并不关注整体功能，所以无须保证测试数据的完整性。换言之，如果被测单元只用到了订单主表数据，就没必要创建一个包含子单、SPU/SKU、支付记录等在内的完整订单。</p>
+<h2 id="利用dataProvider简化测试代码"><a href="#利用dataProvider简化测试代码" class="headerlink" title="利用dataProvider简化测试代码"></a>利用dataProvider简化测试代码</h2><p>当多个测试用例逻辑相似时，可以把它们抽象成一个测试方法，并用dataProvider提供每个用例的数据和断言。从而使测试代码变得更为简洁、易懂和便于维护。</p>
+<h2 id="单独测试被测单元的校验逻辑"><a href="#单独测试被测单元的校验逻辑" class="headerlink" title="单独测试被测单元的校验逻辑"></a>单独测试被测单元的校验逻辑</h2><p>通常我们会用标准的IO模型实现一个方法，同时对包含校验不合法在内的异常情况抛出相应异常。</p>
+<p>PHPUnit提供了expectException()系列方法用于断言异常的抛出。但由于代码抛出了异常、程序被中断，故无法在一次测试中对多个异常做断言。</p>
+<p>因此，可以把对一个方法校验逻辑的测试单独抽象出一个测试方法，并用dataProvider提供测试数据和断言。</p>
+<h2 id="利用工具查看代码覆盖率"><a href="#利用工具查看代码覆盖率" class="headerlink" title="利用工具查看代码覆盖率"></a>利用工具查看代码覆盖率</h2><p>PHPUnit提供参数<code>--coverage-html</code>生成覆盖率分析结果的HTML页面，但在IDE或编辑器里相对实时地查看结果会更方便。</p>
+<p>主流IDE或编辑器一般都集成了这个功能或提供了相关插件，如<a href="https://marketplace.visualstudio.com/items?itemName=ryanluker.vscode-coverage-gutters" target="_blank" rel="noopener">Coverage Gutters</a>。</p>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>晴耕雨讀</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <a class="newer-posts" href="/post/unit-test-oriented-programming/">
+        ← 新 <!--面向单元测试编程-->
+    </a>
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/unit-test-in-laravel-complains-validation-rule-not-exist/">
+        <!--Lumen单元测试提示自定义校验规则不存在的问题--> 舊 →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2019 晴耕雨讀. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+

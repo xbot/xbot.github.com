@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+    <head><meta name="generator" content="Hexo 3.8.0">
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <meta name="referrer" content="no-referrer">
+        <link rel="shortcut icon" href="/asset/logo.jpg">
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="晴耕雨讀" href="/atom.xml">
+        <title>利用单元测试为开发提效 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True">
+        <meta name="MobileOptimized" content="320">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀"></a>
+            <h1><a href="/">晴耕雨讀</a></h1>
+            <p>程序員，最佳實踐和閱讀愛好者，Vim、Archlinux、Mac、iOS擁躉，帝都低端人口。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  八月 13, 2019
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href="/tags/编程/">编程</a> 
+    
+      <a href="/tags/php/">PHP</a> 
+    
+      <a href="/tags/单元测试/">单元测试</a> 
+    
+      <a href="/tags/laravel/">Laravel</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">利用单元测试为开发提效</h1>
+  <section class="post-content article-entry">
+    <p>单元测试可以方便地伪造和回滚测试数据，这个特性决定了它其实是一个效率工具。</p>
+<p>例如在开发退款单、发票的时候，由于这种后置的功能依赖订单、支付、库存等前置的数据，因此需要频繁地创建这些测试数据，这就导致开发的效率极低，有时甚至需要切换多个系统做诸如增加库存、下单、支付等操作。虽然在开发环境可以通过直接修改数据使之恢复可被测试的状态，但仍然存在效率很低、遗留垃圾数据和存在隐患等问题。</p>
+<p>单元测试可以完美地解决这些问题。</p>
+<h2 id="伪造测试数据"><a href="#伪造测试数据" class="headerlink" title="伪造测试数据"></a>伪造测试数据</h2><p>在Laravel/Lumen中，利用Model Factory、Faker可以很方便地伪造测试数据。进一步地，只需要伪造被测单元依赖的数据，不需要真实、完整的数据。这些在<a href="/phpunit-tips">《单元测试的技巧》</a>一文中有详细介绍。</p>
+<p>测试数据只是被测单元依赖关系的一种，利用Mockery框架对依赖关系做伪造和断言是非常重要的知识。Mock是单元测试的灵魂！</p>
+<h2 id="回滚数据库"><a href="#回滚数据库" class="headerlink" title="回滚数据库"></a>回滚数据库</h2><p>Laravel/Lumen提供了DatabaseTransactions和DatabaseMigrations（不同版本可能有差异）这样的Trait，可以自动在每个测试方法执行后自动回滚数据库。</p>
+<h2 id="调试代码"><a href="#调试代码" class="headerlink" title="调试代码"></a>调试代码</h2><p>不管是调试测试代码还是被测单元，调试代码在结合单元测试的开发过程中都是个强需求。通常调试代码有两种方式：打印并中断（echo &amp; die）和单步调试。这两者在单元测试中都可以很方便地实现。</p>
+<h3 id="打印并中断"><a href="#打印并中断" class="headerlink" title="打印并中断"></a>打印并中断</h3><p>某些版本的PHPUnit会抑制标准输出，某些配置项（<code>beStrictAboutOutputDuringTests=&quot;true&quot;</code>）也会导致在有标准输出时中断单元测试的执行。可通过把信息打印到标准错误输出设备绕过：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fwrite(STDERR, <span class="string">"Behold:\n"</span> . var_export($order, <span class="keyword">true</span>) . <span class="string">"\n"</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="单步调试"><a href="#单步调试" class="headerlink" title="单步调试"></a>单步调试</h3><p>单元测试是通过命令行执行的，因此可以利用XDebug支持CLI的特性触发单步调试：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export XDEBUG_CONFIG="idekey=VSCODE"</span><br></pre></td></tr></table></figure>
+<h2 id="性能调优"><a href="#性能调优" class="headerlink" title="性能调优"></a>性能调优</h2><p>和单步调试一样，可以通过环境变量实现：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export XDEBUG_CONFIG="idekey=VSCODE profiler_enable=1"</span><br></pre></td></tr></table></figure>
+<p>但是性能分析会极大地降低代码执行效率，因此建议通过命令参数的方式实现：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php -d "xdebug.profiler_enable=1" ./vendor/bin/phpunit</span><br></pre></td></tr></table></figure>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>晴耕雨讀</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/unit-test-oriented-programming/">
+        <!--面向单元测试编程--> 舊 →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2019 晴耕雨讀. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+
