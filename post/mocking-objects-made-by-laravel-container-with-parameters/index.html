@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+    <head><meta name="generator" content="Hexo 3.8.0">
+		
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="">
+        <meta name="referrer" content="no-referrer">
+        <link rel="shortcut icon" href="/asset/logo.jpg">
+        <link rel="canonical" href="http://guolinn.com/">
+        <link rel="alternate" type="application/rss+xml" title="晴耕雨讀" href="/atom.xml">
+        <title>解决Laravel中makeWith()无法取到被mock的实例的问题 | 晴耕雨讀</title>
+        <meta name="description" content="{{meta_description}}">
+
+        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
+        <meta name="HandheldFriendly" content="True">
+        <meta name="MobileOptimized" content="320">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+    
+		<body class="post-template">
+	
+
+        <header id="header">
+            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀"></a>
+            <h1><a href="/">晴耕雨讀</a></h1>
+            <p>程序員，數碼、變形金剛、最佳實踐和閱讀愛好者，拜王大爺教教主，帝都低端人口。</p>
+            <div id="follow-icons">
+          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
+          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
+          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
+  </div>
+<h6><a href="/archives">歸檔</a></h6>
+<h6><a href="/about">關於</a></h6>
+<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+
+        </header>
+
+        <main id="content">
+        
+
+<article class="post">
+  八月 16, 2019
+  
+    <span class="taglist">  &middot; 
+    
+    
+      <a href="/tags/编程/">编程</a> 
+    
+      <a href="/tags/php/">PHP</a> 
+    
+      <a href="/tags/单元测试/">单元测试</a> 
+    
+      <a href="/tags/laravel-lumen/">Laravel/Lumen</a> 
+    
+    </span>
+  
+
+  <h1 class="post-title">解决Laravel中makeWith()无法取到被mock的实例的问题</h1>
+  <section class="post-content article-entry">
+    <p>被测单元有一行实例化一个类的代码，而且该类的构造方法需要参数。基于面向单元测试编程的原则，通过容器的makeWith()方法实现：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$api = app()-&gt;makeWith(Api::class, [<span class="string">'config'</span> =&gt; $config]);</span><br></pre></td></tr></table></figure>
+<p>但是在执行单元测试时发现，虽然测试代码中已经mock了这个类且注入到容器，但在被测单元中取到的还是原类的实例。</p>
+<p>实际上，测试代码中在将mock的实例注入容器时使用的是instance()方法：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">$this</span>-&gt;app-&gt;instance($class, $mockedObj);</span><br></pre></td></tr></table></figure>
+<p>而容器在取带构造参数的类的实例时，并不取通过instance()方法注册进来的实例：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">resolve</span><span class="params">($abstract, $parameters = [])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $abstract = <span class="keyword">$this</span>-&gt;getAlias($abstract);</span><br><span class="line"></span><br><span class="line">    $needsContextualBuild = ! <span class="keyword">empty</span>($parameters) || ! is_null(</span><br><span class="line">        <span class="keyword">$this</span>-&gt;getContextualConcrete($abstract)</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// If an instance of the type is currently being managed as a singleton we'll</span></span><br><span class="line">    <span class="comment">// just return an existing instance instead of instantiating new instances</span></span><br><span class="line">    <span class="comment">// so the developer can keep using the same objects instance every time.</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="keyword">$this</span>-&gt;instances[$abstract]) &amp;&amp; ! $needsContextualBuild) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;instances[$abstract];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">$this</span>-&gt;with[] = $parameters;</span><br><span class="line"></span><br><span class="line">    $concrete = <span class="keyword">$this</span>-&gt;getConcrete($abstract);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// We're ready to instantiate an instance of the concrete type registered for</span></span><br><span class="line">    <span class="comment">// the binding. This will instantiate the types, as well as resolve any of</span></span><br><span class="line">    <span class="comment">// its "nested" dependencies recursively until all have gotten resolved.</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;isBuildable($concrete, $abstract)) &#123;</span><br><span class="line">        $object = <span class="keyword">$this</span>-&gt;build($concrete);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        $object = <span class="keyword">$this</span>-&gt;make($concrete);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当存在构造参数时，容器认为是“上下文相关的构造”（needsContextualBuild），所以尝试通过具体的（concrete）逻辑实时构造。</p>
+<p>进一步地，getConcrete()方法的实现如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">getConcrete</span><span class="params">($abstract)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (! is_null($concrete = <span class="keyword">$this</span>-&gt;getContextualConcrete($abstract))) &#123;</span><br><span class="line">        <span class="keyword">return</span> $concrete;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// If we don't have a registered resolver or concrete for the type, we'll just</span></span><br><span class="line">    <span class="comment">// assume each type is a concrete name and will attempt to resolve it as is</span></span><br><span class="line">    <span class="comment">// since the container should be able to resolve concretes automatically.</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="keyword">$this</span>-&gt;bindings[$abstract])) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;bindings[$abstract][<span class="string">'concrete'</span>];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> $abstract;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>它从bindings数组中获取构造逻辑。因此，可以将测试代码中注册被mock的实例的方法改成如下所示：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">$this</span>-&gt;app-&gt;offsetSet($class, $mockedObj);</span><br></pre></td></tr></table></figure>
+<p>因为offsetSet()方法就是通过bind()方法把被mock的实例注册到容器的：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">offsetSet</span><span class="params">($key, $value)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;bind($key, $value <span class="keyword">instanceof</span> Closure ? $value : <span class="function"><span class="keyword">function</span> <span class="params">()</span> <span class="title">use</span> <span class="params">($value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> $value;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+  </section>
+  <footer class="post-footer">
+    <!--
+    <section class="author">
+      <h4>晴耕雨讀</h4>
+      <p></p>
+    </section>
+    -->
+  </footer>
+</article>
+
+<nav class="pagination" role="pagination">
+    
+    <span class="page-number">•</span>
+    
+    <a class="older-posts" href="/post/use-unit-test-as-an-efficiency-tool/">
+        <!--利用单元测试为开发提效--> 舊 →
+    </a>
+    
+</nav>
+<div id="comments">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+      var disqus_shortname = '0x3f';
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+
+        </main>
+        <footer id="footer">
+            <section id="footer-message">&copy; 2006 - 2019 晴耕雨讀. All rights reserved.</section>
+        </footer>
+        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
+    </body>
+</html>
+
+
