@@ -1,67 +1,99 @@
-<!doctype html>
-<html lang="en">
-    <head><meta name="generator" content="Hexo 3.8.0">
-		
-        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <meta name="description" content="">
-        <meta name="referrer" content="no-referrer">
-        <link rel="shortcut icon" href="/asset/logo.jpg">
-        <link rel="canonical" href="http://guolinn.com/">
-        <link rel="alternate" type="application/rss+xml" title="晴耕雨讀" href="/atom.xml">
-        <title>生成PDF的方案调研 | 晴耕雨讀</title>
-        <meta name="description" content="{{meta_description}}">
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>生成PDF的方案调研 - 晴耕雨讀</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="结论倾向于通过wkhtmltopdf+消息队列实现。 工作流程：  用户保存表单 推送生成pdf的任务到队列 同时页面显示「正在生成PDF文档，请稍候」并轮询后端接口 PDF生成后，页面显示下载按钮  后端dompdf纯PHP实现。工作原理是把HTML转换成PDF。 优点：  不需要PHP调用命令行，安全性高。  缺点：  HTML/CSS支持不完全，实测多个网页转换后排版错乱。 中文网页转换后，">
+<meta name="keywords" content="编程,PHP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="生成PDF的方案调研">
+<meta property="og:url" content="http://0x3f.org/post/pdf-creating-solutions/index.html">
+<meta property="og:site_name" content="晴耕雨讀">
+<meta property="og:description" content="结论倾向于通过wkhtmltopdf+消息队列实现。 工作流程：  用户保存表单 推送生成pdf的任务到队列 同时页面显示「正在生成PDF文档，请稍候」并轮询后端接口 PDF生成后，页面显示下载按钮  后端dompdf纯PHP实现。工作原理是把HTML转换成PDF。 优点：  不需要PHP调用命令行，安全性高。  缺点：  HTML/CSS支持不完全，实测多个网页转换后排版错乱。 中文网页转换后，">
+<meta property="og:locale" content="zh-TW">
+<meta property="og:updated_time" content="2019-05-15T09:39:38.694Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="生成PDF的方案调研">
+<meta name="twitter:description" content="结论倾向于通过wkhtmltopdf+消息队列实现。 工作流程：  用户保存表单 推送生成pdf的任务到队列 同时页面显示「正在生成PDF文档，请稍候」并轮询后端接口 PDF生成后，页面显示下载按钮  后端dompdf纯PHP实现。工作原理是把HTML转换成PDF。 优点：  不需要PHP调用命令行，安全性高。  缺点：  HTML/CSS支持不完全，实测多个网页转换后排版错乱。 中文网页转换后，">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="/webfonts/ptserif/main.css" rel="stylesheet" type="text/css">
+  <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
 
-        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
-        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
-        <meta name="HandheldFriendly" content="True">
-        <meta name="MobileOptimized" content="320">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-        <![endif]-->
+</head>
+</html>
+<body>
+  <div id="container">
+    <!-- blair add baidu tongji start... @2017.10.03 -->
+<!-- blair add baidu tongji end ! @2017.10.03 -->
 
-    </head>
-    
-		<body class="post-template">
-	
-
-        <header id="header">
-            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀"></a>
-            <h1><a href="/">晴耕雨讀</a></h1>
-            <p>程序員，數碼、變形金剛、最佳實踐和閱讀愛好者，拜王大爺教教主，帝都低端人口。</p>
-            <div id="follow-icons">
-          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
-          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
-          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
-  </div>
-<h6><a href="/archives">歸檔</a></h6>
-<h6><a href="/about">關於</a></h6>
-<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
-
-        </header>
-
-        <main id="content">
+<header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
+      <a id="logo" class="logo" href="/"></a>
+      <nav id="main-nav">
         
+          <a class="main-nav-link" href="/archives">目录</a>
+        
+          <a class="main-nav-link" href="/categories">分类</a>
+        
+          <a class="main-nav-link" href="/tags">标签</a>
+        
+          <a class="main-nav-link" href="/about">关于</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div id="search-form-wrap">
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
 
-<article class="post">
-  五月 16, 2018
+    <br>
+    <section id="main" class="outer"><article id="post-pdf-creating-solutions" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
   
-    <span class="taglist">  &middot; 
-    
-    
-      <a href="/tags/编程/">编程</a> 
-    
-      <a href="/tags/php/">PHP</a> 
-    
-    </span>
+    <h1 class="article-title" itemprop="name">
+      生成PDF的方案调研
+      <small class="article-detail-date-index">&nbsp; 2018-05-16</small>
+    </h1>
   
 
-  <h1 class="post-title">生成PDF的方案调研</h1>
-  <section class="post-content article-entry">
-    <h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>倾向于通过wkhtmltopdf+消息队列实现。</p>
+
+        <div class="page-title"></div>
+        <br>
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/pdf-creating-solutions/" class="article-date">
+  <time datetime="2018-05-16T07:41:36.000Z" itemprop="datePublished">2018-05-16</time>
+</a>-->
+      <!-- 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+--><!-- by blair 160724 -->
+      <!-- by blair
+      
+      -->
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>倾向于通过wkhtmltopdf+消息队列实现。</p>
 <p>工作流程：</p>
 <ol>
 <li>用户保存表单</li>
@@ -186,51 +218,126 @@
 <li><a href="https///my.oschina.net/janpoem/blog/705912">PHP输出PDF打印HTML5+CSS3打印格式控制(Prince和wkhtmltopdf)</a></li>
 </ul>
 
-  </section>
-  <footer class="post-footer">
-    <!--
-    <section class="author">
-      <h4>晴耕雨讀</h4>
-      <p></p>
-    </section>
-    -->
-  </footer>
+      
+     <!-- by blair add this if sentence at 20160725 -->
+      <br>
+      
+<!--
+<div id="bottom-donation-section">
+<span style="font-size: 1.0em; padding:0em 1em 0.5em 1em; margin: 0 auto;">
+  <strong style="vertical-align: top;">分享到:</strong>
+    <div class="j_handlclick"  style="background: url(/images/logos/share_facebook_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://www.facebook.com/sharer/sharer.php?u=" target="_blank">
+    </div>
+    <div class="j_handlclick"  style="background: url(/images/logos/share_weibo_icon.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://service.weibo.com/share/share.php?url" target="_blank">
+    </div>
+    <div class="j_handlclick"  style="background: url(/images/logos/share_wechat_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://api.addthis.com/oexchange/0.8/forward/wechat/offer?url=" target="_blank">
+    </div>
+    <div class="j_handlclick"  style="background: url(/images/logos/share_twitter_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://twitter.com/intent/tweet?url=" target="_blank">
+    </div>
+  <br>  
+  <br>  
+  &nbsp;&nbsp;如果您觉得这篇文章对您的学习很有帮助, 请您也分享它, 让它能再次帮助到更多的需要学习的人.
+您的<a href="/support/"><strong>支持</strong></a>将鼓励我继续创作 !
+  <br>  
+
+</span>
+</div>
+-->
+<div class="well">
+  <!--
+  原创文章，转载请注明： 转载自<a href="http://52binge.github.io"> Blair Chan's Blog</a>，作者：
+  <a href="/about">Blair Chan</a> <br>
+  -->
+  本文基于<a target="_blank" title="Creative Commons Attribution 4.0 international License" href="https://creativecommons.org/licenses/by-nc/4.0/">署名4.0国际许可协议</a>发布，转载请保留本文署名和文章链接。 如您有任何授权方面的协商，请联系我。
+</div>
+ <!-- by blair add 160724-->
+    
+    </div>
+    
+      <div class="article-toc">
+        <h3>Contents</h3>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#结论"><span class="toc-text">结论</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后端"><span class="toc-text">后端</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#dompdf"><span class="toc-text">dompdf</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mpdf"><span class="toc-text">mpdf</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PDFtk-Server"><span class="toc-text">PDFtk Server</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#wkhtmltopdf"><span class="toc-text">wkhtmltopdf</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CutyCapt"><span class="toc-text">CutyCapt</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Prince"><span class="toc-text">Prince</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#前端"><span class="toc-text">前端</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#jsPDF"><span class="toc-text">jsPDF</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pdfkit"><span class="toc-text">pdfkit</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pdfmake"><span class="toc-text">pdfmake</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#变通方案"><span class="toc-text">变通方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#利用浏览器打印PDF"><span class="toc-text">利用浏览器打印PDF</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#导出word文档"><span class="toc-text">导出word文档</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-text">参考</span></a></li></ol>
+      </div>
+    
+    
+      <footer class="article-footer">
+        <!-- <div class="well" style="width:100px; height:30px;"></div>  by blair-->
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+ <!-- by blair add 160724-->
+        <!--
+        <div style="width:100px; height:30px;"></div> by blair add 160724
+        -->
+        
+  <div class="article-tag">
+    <a class="article-tag-link" href="/tags/php/">PHP</a><span></span><a class="article-tag-link" href="/tags/编程/">编程</a>
+  </div>
+
+
+      </footer>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/post/i-am-wang-zhandou/" id="article-nav-newer" class="article-nav-link-wrap">
+      <div class="article-nav-title"><span>&lt;</span>&nbsp;
+        
+          我叫王战斗
+        
+      </div>
+    </a>
+  
+  
+    <a href="/post/after-reading-killing-commendatore/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">少不读村上&nbsp;<span>&gt;</span></div>
+    </a>
+  
+</nav>
+
+  
 </article>
 
-<nav class="pagination" role="pagination">
+</section>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 晴耕雨讀&nbsp;
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/52binge/hexo-theme-blairos">blairos</a>
+    </div>
+  </div>
+</footer>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX"],
+    tex2jax: {
+      inlineMath: [ ['$','$'], ['\\(','\\)'] ],
+      displayMath: [ ['$$','$$']],
+      processEscapes: true
+    }
+  });
+</script>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML,http://myserver.com/MathJax/config/local/local.js">
+</script>
+
     
-    <a class="newer-posts" href="/post/i-am-wang-zhandou/">
-        ← 新 <!--我叫王战斗-->
-    </a>
-    
-    <span class="page-number">•</span>
-    
-    <a class="older-posts" href="/post/after-reading-killing-commendatore/">
-        <!--少不读村上--> 舊 →
-    </a>
-    
-</nav>
-<div id="comments">
-  <div id="disqus_thread"></div>
-  <script type="text/javascript">
-      var disqus_shortname = '0x3f';
-      (function() {
-          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-      })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
-</div>
+
+<script src="/js/jquery.min.js"></script>
 
 
-        </main>
-        <footer id="footer">
-            <section id="footer-message">&copy; 2006 - 2019 晴耕雨讀. All rights reserved.</section>
-        </footer>
-        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
-    </body>
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
 </html>
-
-

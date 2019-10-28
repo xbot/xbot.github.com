@@ -1,124 +1,212 @@
-<!doctype html>
-<html lang="en">
-    <head><meta name="generator" content="Hexo 3.8.0">
-		
-        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <meta name="description" content="">
-        <meta name="referrer" content="no-referrer">
-        <link rel="shortcut icon" href="/asset/logo.jpg">
-        <link rel="canonical" href="http://guolinn.com/">
-        <link rel="alternate" type="application/rss+xml" title="晴耕雨讀" href="/atom.xml">
-        <title>批量下载视频的BASH脚本 | 晴耕雨讀</title>
-        <meta name="description" content="{{meta_description}}">
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>批量下载视频的BASH脚本 - 晴耕雨讀</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="两周前为了批量下载某视频网站中的电视剧，写了个BASH脚本。将电视剧列表页面的URL地址作为唯一参数传给脚本，然后就会把所有视频下载到当前目录下，并自动重命名，同时生成一个M3U格式的播放列表。 由于在线视频不支持断点续传，所以对于单个视频来说无法实现。但对于整个批量下载任务来说，实现了宏观上的断点续传，已经下载的视频不会被重复下载。由于有些视频网站会在午夜更改视频地址，所以这一点很有用。 主流视">
+<meta name="keywords" content="编程,BASH,下载,脚本,视频">
+<meta property="og:type" content="article">
+<meta property="og:title" content="批量下载视频的BASH脚本">
+<meta property="og:url" content="http://0x3f.org/post/a-bash-script-downloading-videos-in-batch/index.html">
+<meta property="og:site_name" content="晴耕雨讀">
+<meta property="og:description" content="两周前为了批量下载某视频网站中的电视剧，写了个BASH脚本。将电视剧列表页面的URL地址作为唯一参数传给脚本，然后就会把所有视频下载到当前目录下，并自动重命名，同时生成一个M3U格式的播放列表。 由于在线视频不支持断点续传，所以对于单个视频来说无法实现。但对于整个批量下载任务来说，实现了宏观上的断点续传，已经下载的视频不会被重复下载。由于有些视频网站会在午夜更改视频地址，所以这一点很有用。 主流视">
+<meta property="og:locale" content="zh-TW">
+<meta property="og:updated_time" content="2019-05-15T09:39:38.549Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="批量下载视频的BASH脚本">
+<meta name="twitter:description" content="两周前为了批量下载某视频网站中的电视剧，写了个BASH脚本。将电视剧列表页面的URL地址作为唯一参数传给脚本，然后就会把所有视频下载到当前目录下，并自动重命名，同时生成一个M3U格式的播放列表。 由于在线视频不支持断点续传，所以对于单个视频来说无法实现。但对于整个批量下载任务来说，实现了宏观上的断点续传，已经下载的视频不会被重复下载。由于有些视频网站会在午夜更改视频地址，所以这一点很有用。 主流视">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="/webfonts/ptserif/main.css" rel="stylesheet" type="text/css">
+  <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
 
-        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
-        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
-        <meta name="HandheldFriendly" content="True">
-        <meta name="MobileOptimized" content="320">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-        <![endif]-->
+</head>
+</html>
+<body>
+  <div id="container">
+    <!-- blair add baidu tongji start... @2017.10.03 -->
+<!-- blair add baidu tongji end ! @2017.10.03 -->
 
-    </head>
-    
-		<body class="post-template">
-	
-
-        <header id="header">
-            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀"></a>
-            <h1><a href="/">晴耕雨讀</a></h1>
-            <p>程序員，數碼、變形金剛、最佳實踐和閱讀愛好者，拜王大爺教教主，帝都低端人口。</p>
-            <div id="follow-icons">
-          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
-          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
-          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
-  </div>
-<h6><a href="/archives">歸檔</a></h6>
-<h6><a href="/about">關於</a></h6>
-<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
-
-        </header>
-
-        <main id="content">
+<header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
+      <a id="logo" class="logo" href="/"></a>
+      <nav id="main-nav">
         
+          <a class="main-nav-link" href="/archives">目录</a>
+        
+          <a class="main-nav-link" href="/categories">分类</a>
+        
+          <a class="main-nav-link" href="/tags">标签</a>
+        
+          <a class="main-nav-link" href="/about">关于</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div id="search-form-wrap">
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
 
-<article class="post">
-  八月 28, 2010
+    <br>
+    <section id="main" class="outer"><article id="post-a-bash-script-downloading-videos-in-batch" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
   
-    <span class="taglist">  &middot; 
-    
-    
-      <a href="/tags/编程/">编程</a> 
-    
-      <a href="/tags/bash/">BASH</a> 
-    
-      <a href="/tags/下载/">下载</a> 
-    
-      <a href="/tags/脚本/">脚本</a> 
-    
-      <a href="/tags/视频/">视频</a> 
-    
-    </span>
+    <h1 class="article-title" itemprop="name">
+      批量下载视频的BASH脚本
+      <small class="article-detail-date-index">&nbsp; 2010-08-28</small>
+    </h1>
   
 
-  <h1 class="post-title">批量下载视频的BASH脚本</h1>
-  <section class="post-content article-entry">
-    <p>两周前为了批量下载某视频网站中的电视剧，写了个BASH脚本。将电视剧列表页面的URL地址作为唯一参数传给脚本，然后就会把所有视频下载到当前目录下，并自动重命名，同时生成一个M3U格式的播放列表。</p>
+
+        <div class="page-title"></div>
+        <br>
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/a-bash-script-downloading-videos-in-batch/" class="article-date">
+  <time datetime="2010-08-27T16:00:00.000Z" itemprop="datePublished">2010-08-28</time>
+</a>-->
+      <!-- 
+--><!-- by blair 160724 -->
+      <!-- by blair
+      
+      -->
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>两周前为了批量下载某视频网站中的电视剧，写了个BASH脚本。将电视剧列表页面的URL地址作为唯一参数传给脚本，然后就会把所有视频下载到当前目录下，并自动重命名，同时生成一个M3U格式的播放列表。</p>
 <p>由于在线视频不支持断点续传，所以对于单个视频来说无法实现。但对于整个批量下载任务来说，实现了宏观上的断点续传，已经下载的视频不会被重复下载。由于有些视频网站会在午夜更改视频地址，所以这一点很有用。</p>
 <p>主流视频网站应该是都支持的，我只测试了我下载电视剧的网站，<strong>不支持的都是非主流的！</strong></p>
 <p>唯一可能需要注意的依赖是PHP，必须安装后才能使用。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">print_help_msg</span></span> () &#123;</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"You see, I'm nothing ."</span></span><br><span class="line">    <span class="built_in">exit</span> 0</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">check_param</span></span> () &#123;</span><br><span class="line">    <span class="keyword">if</span> [ <span class="variable">$#</span> -ne 1 ]; <span class="keyword">then</span></span><br><span class="line">        print_help_msg</span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">check_m3u</span></span> () &#123;</span><br><span class="line">    <span class="keyword">if</span> ! [ -a p.m3u ] || [ `wc -l p.m3u|awk <span class="string">'&#123; print $1 &#125;'</span>` -eq 0 ]; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">'#EXTM3U'</span> &gt; p.m3u</span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">check_param $*</span><br><span class="line">check_m3u</span><br><span class="line"></span><br><span class="line"><span class="built_in">export</span> LC_ALL=en_US.UTF-8</span><br><span class="line"></span><br><span class="line">ue=$(php -r <span class="string">"echo urlencode('<span class="variable">$1</span>');"</span>)</span><br><span class="line">parser=<span class="string">"http://www.flvcd.com/parse.php?flag=&amp;format=&amp;kw=<span class="variable">$ue</span>&amp;sbt=%BF%AA%CA%BCGO%21"</span></span><br><span class="line"><span class="keyword">if</span> ! wget <span class="variable">$parser</span> -U mozilla -O meta.html ; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"Unable to touch the parser, check network status for the cause ."</span></span><br><span class="line">    <span class="built_in">exit</span> 0</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">grep <span class="string">"&lt;N&gt;"</span> meta.html &gt; title.lst</span><br><span class="line">grep <span class="string">"&lt;U&gt;"</span> meta.html &gt; url.lst</span><br><span class="line">iconv -f gbk -t utf-8 title.lst -o title.lst</span><br><span class="line">sed -i <span class="string">'s/&lt;N&gt;//g'</span> title.lst</span><br><span class="line">sed -i <span class="string">'s/ //g'</span> title.lst</span><br><span class="line">sed -i <span class="string">'s/&lt;U&gt;//g'</span> url.lst</span><br><span class="line"></span><br><span class="line">l1=`wc -l title.lst|awk <span class="string">'&#123; print $1 &#125;'</span>`</span><br><span class="line">l2=`wc -l url.lst|awk <span class="string">'&#123; print $1 &#125;'</span>`</span><br><span class="line"><span class="keyword">if</span> [ <span class="string">"<span class="variable">$l1</span>"</span> != <span class="string">"<span class="variable">$l2</span>"</span> ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"Title.lst has <span class="variable">$l1</span> lines, but url.lst got <span class="variable">$l2</span>."</span></span><br><span class="line">    <span class="built_in">exit</span> 0</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$l1</span> -eq 0 ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"Nothing got from the parser, check meta.html for detail info."</span></span><br><span class="line">    <span class="built_in">exit</span> 0</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">arrTitle=(`cat title.lst`)</span><br><span class="line">arrURL=(`cat url.lst`)</span><br><span class="line"></span><br><span class="line">idx=$((`wc -l p.m3u|awk <span class="string">'&#123; print $1 &#125;'</span>`-1))</span><br><span class="line"><span class="keyword">while</span> [ <span class="variable">$idx</span> -lt <span class="variable">$l1</span> ]; <span class="keyword">do</span></span><br><span class="line">    title=<span class="variable">$&#123;arrTitle[$idx]&#125;</span></span><br><span class="line">    url=<span class="variable">$&#123;arrURL[$idx]&#125;</span></span><br><span class="line">    idx=$((idx+1))</span><br><span class="line">    <span class="keyword">if</span> ! wget <span class="variable">$url</span> -U mozilla -O <span class="string">"<span class="variable">$&#123;title&#125;</span>.flv"</span> ; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">"Failed fetching <span class="variable">$&#123;title&#125;</span>.flv, maybe its URL has been changed !"</span></span><br><span class="line">        <span class="built_in">exit</span> 0</span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">    cmd=<span class="string">"sed -i '\$a\\<span class="variable">$&#123;title&#125;</span>.flv' p.m3u"</span></span><br><span class="line">    <span class="built_in">eval</span> <span class="variable">$cmd</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">'done !'</span></span><br><span class="line"><span class="built_in">exit</span> 0</span><br></pre></td></tr></table></figure>
 <p>另外，使用VLC执行播放列表效果灰常不错，视频之间衔接平滑流畅。</p>
 
-  </section>
-  <footer class="post-footer">
-    <!--
-    <section class="author">
-      <h4>晴耕雨讀</h4>
-      <p></p>
-    </section>
-    -->
-  </footer>
+      
+     <!-- by blair add this if sentence at 20160725 -->
+      <br>
+      
+<!--
+<div id="bottom-donation-section">
+<span style="font-size: 1.0em; padding:0em 1em 0.5em 1em; margin: 0 auto;">
+  <strong style="vertical-align: top;">分享到:</strong>
+    <div class="j_handlclick"  style="background: url(/images/logos/share_facebook_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://www.facebook.com/sharer/sharer.php?u=" target="_blank">
+    </div>
+    <div class="j_handlclick"  style="background: url(/images/logos/share_weibo_icon.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://service.weibo.com/share/share.php?url" target="_blank">
+    </div>
+    <div class="j_handlclick"  style="background: url(/images/logos/share_wechat_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://api.addthis.com/oexchange/0.8/forward/wechat/offer?url=" target="_blank">
+    </div>
+    <div class="j_handlclick"  style="background: url(/images/logos/share_twitter_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://twitter.com/intent/tweet?url=" target="_blank">
+    </div>
+  <br>  
+  <br>  
+  &nbsp;&nbsp;如果您觉得这篇文章对您的学习很有帮助, 请您也分享它, 让它能再次帮助到更多的需要学习的人.
+您的<a href="/support/"><strong>支持</strong></a>将鼓励我继续创作 !
+  <br>  
+
+</span>
+</div>
+-->
+<div class="well">
+  <!--
+  原创文章，转载请注明： 转载自<a href="http://52binge.github.io"> Blair Chan's Blog</a>，作者：
+  <a href="/about">Blair Chan</a> <br>
+  -->
+  本文基于<a target="_blank" title="Creative Commons Attribution 4.0 international License" href="https://creativecommons.org/licenses/by-nc/4.0/">署名4.0国际许可协议</a>发布，转载请保留本文署名和文章链接。 如您有任何授权方面的协商，请联系我。
+</div>
+ <!-- by blair add 160724-->
+    
+    </div>
+    
+    
+      <footer class="article-footer">
+        <!-- <div class="well" style="width:100px; height:30px;"></div>  by blair-->
+        
+ <!-- by blair add 160724-->
+        <!--
+        <div style="width:100px; height:30px;"></div> by blair add 160724
+        -->
+        
+  <div class="article-tag">
+    <a class="article-tag-link" href="/tags/bash/">BASH</a><span></span><a class="article-tag-link" href="/tags/下载/">下载</a><span></span><a class="article-tag-link" href="/tags/编程/">编程</a><span></span><a class="article-tag-link" href="/tags/脚本/">脚本</a><span></span><a class="article-tag-link" href="/tags/视频/">视频</a>
+  </div>
+
+
+      </footer>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/post/after-reading-wordpress-plug-in-development/" id="article-nav-newer" class="article-nav-link-wrap">
+      <div class="article-nav-title"><span>&lt;</span>&nbsp;
+        
+          读完《WordPress Plug-in Development》
+        
+      </div>
+    </a>
+  
+  
+    <a href="/post/howto-auto-maximize-gvim-at-startup/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">启动GVim时自动最大化窗口的方法&nbsp;<span>&gt;</span></div>
+    </a>
+  
+</nav>
+
+  
 </article>
 
-<nav class="pagination" role="pagination">
+</section>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 晴耕雨讀&nbsp;
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/52binge/hexo-theme-blairos">blairos</a>
+    </div>
+  </div>
+</footer>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX"],
+    tex2jax: {
+      inlineMath: [ ['$','$'], ['\\(','\\)'] ],
+      displayMath: [ ['$$','$$']],
+      processEscapes: true
+    }
+  });
+</script>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML,http://myserver.com/MathJax/config/local/local.js">
+</script>
+
     
-    <a class="newer-posts" href="/post/after-reading-wordpress-plug-in-development/">
-        ← 新 <!--读完《WordPress Plug-in Development》-->
-    </a>
-    
-    <span class="page-number">•</span>
-    
-    <a class="older-posts" href="/post/howto-auto-maximize-gvim-at-startup/">
-        <!--启动GVim时自动最大化窗口的方法--> 舊 →
-    </a>
-    
-</nav>
-<div id="comments">
-  <div id="disqus_thread"></div>
-  <script type="text/javascript">
-      var disqus_shortname = '0x3f';
-      (function() {
-          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-      })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
-</div>
+
+<script src="/js/jquery.min.js"></script>
 
 
-        </main>
-        <footer id="footer">
-            <section id="footer-message">&copy; 2006 - 2019 晴耕雨讀. All rights reserved.</section>
-        </footer>
-        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
-    </body>
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
 </html>
-
-

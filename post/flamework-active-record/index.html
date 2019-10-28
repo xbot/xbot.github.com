@@ -1,71 +1,99 @@
-<!doctype html>
-<html lang="en">
-    <head><meta name="generator" content="Hexo 3.8.0">
-		
-        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <meta name="description" content="">
-        <meta name="referrer" content="no-referrer">
-        <link rel="shortcut icon" href="/asset/logo.jpg">
-        <link rel="canonical" href="http://guolinn.com/">
-        <link rel="alternate" type="application/rss+xml" title="晴耕雨讀" href="/atom.xml">
-        <title>PHP框架实战（五）：ORM与ActiveRecord | 晴耕雨讀</title>
-        <meta name="description" content="{{meta_description}}">
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>PHP框架实战（五）：ORM与ActiveRecord - 晴耕雨讀</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="简述Model是MVC框架中最复杂的部分，它要提供与业务逻辑相关的数据及数据处理方法的封装，一般要提供数据对象、数据库连接、事务管理、SQL语句构造、数据CRUD、高级通用业务逻辑等一系列功能。由于Model与Controller和View是解耦的，并且本身具备很高的通用性和复杂性，所以有很多独立的实现。本文希望能通过开发一个简单的ActiveRecord，验证这种Model实现方案的原理和过程。">
+<meta name="keywords" content="编程,PHP,框架,Flamework">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PHP框架实战（五）：ORM与ActiveRecord">
+<meta property="og:url" content="http://0x3f.org/post/flamework-active-record/index.html">
+<meta property="og:site_name" content="晴耕雨讀">
+<meta property="og:description" content="简述Model是MVC框架中最复杂的部分，它要提供与业务逻辑相关的数据及数据处理方法的封装，一般要提供数据对象、数据库连接、事务管理、SQL语句构造、数据CRUD、高级通用业务逻辑等一系列功能。由于Model与Controller和View是解耦的，并且本身具备很高的通用性和复杂性，所以有很多独立的实现。本文希望能通过开发一个简单的ActiveRecord，验证这种Model实现方案的原理和过程。">
+<meta property="og:locale" content="zh-TW">
+<meta property="og:updated_time" content="2019-05-15T09:39:38.598Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PHP框架实战（五）：ORM与ActiveRecord">
+<meta name="twitter:description" content="简述Model是MVC框架中最复杂的部分，它要提供与业务逻辑相关的数据及数据处理方法的封装，一般要提供数据对象、数据库连接、事务管理、SQL语句构造、数据CRUD、高级通用业务逻辑等一系列功能。由于Model与Controller和View是解耦的，并且本身具备很高的通用性和复杂性，所以有很多独立的实现。本文希望能通过开发一个简单的ActiveRecord，验证这种Model实现方案的原理和过程。">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="/webfonts/ptserif/main.css" rel="stylesheet" type="text/css">
+  <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
 
-        <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
-        <link rel="stylesheet" type="text/css" href="/styles/crisp.css">
-        <meta name="HandheldFriendly" content="True">
-        <meta name="MobileOptimized" content="320">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-        <![endif]-->
+</head>
+</html>
+<body>
+  <div id="container">
+    <!-- blair add baidu tongji start... @2017.10.03 -->
+<!-- blair add baidu tongji end ! @2017.10.03 -->
 
-    </head>
-    
-		<body class="post-template">
-	
-
-        <header id="header">
-            <a id="logo" href="/"><img src="/asset/logo.jpg" alt="晴耕雨讀"></a>
-            <h1><a href="/">晴耕雨讀</a></h1>
-            <p>程序員，數碼、變形金剛、最佳實踐和閱讀愛好者，拜王大爺教教主，帝都低端人口。</p>
-            <div id="follow-icons">
-          <a href="http://github.com/xbot"><i class="fa fa-github-square fa-2x"></i></a>
-          <a href="http://twitter.com/leninlee"><i class="fa fa-twitter-square fa-2x"></i></a>
-          <a href="/atom.xml"><i class="fa fa-rss-square fa-2x"></i></a>
-  </div>
-<h6><a href="/archives">歸檔</a></h6>
-<h6><a href="/about">關於</a></h6>
-<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input"><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
-
-        </header>
-
-        <main id="content">
+<header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
+      <a id="logo" class="logo" href="/"></a>
+      <nav id="main-nav">
         
+          <a class="main-nav-link" href="/archives">目录</a>
+        
+          <a class="main-nav-link" href="/categories">分类</a>
+        
+          <a class="main-nav-link" href="/tags">标签</a>
+        
+          <a class="main-nav-link" href="/about">关于</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div id="search-form-wrap">
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
 
-<article class="post">
-  一月 1, 2014
+    <br>
+    <section id="main" class="outer"><article id="post-flamework-active-record" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
   
-    <span class="taglist">  &middot; 
-    
-    
-      <a href="/tags/编程/">编程</a> 
-    
-      <a href="/tags/php/">PHP</a> 
-    
-      <a href="/tags/框架/">框架</a> 
-    
-      <a href="/tags/flamework/">Flamework</a> 
-    
-    </span>
+    <h1 class="article-title" itemprop="name">
+      PHP框架实战（五）：ORM与ActiveRecord
+      <small class="article-detail-date-index">&nbsp; 2014-01-01</small>
+    </h1>
   
 
-  <h1 class="post-title">PHP框架实战（五）：ORM与ActiveRecord</h1>
-  <section class="post-content article-entry">
-    <h2 id="简述"><a href="#简述" class="headerlink" title="简述"></a>简述</h2><p>Model是MVC框架中最复杂的部分，它要提供与业务逻辑相关的数据及数据处理方法的封装，一般要提供数据对象、数据库连接、事务管理、SQL语句构造、数据CRUD、高级通用业务逻辑等一系列功能。由于Model与Controller和View是解耦的，并且本身具备很高的通用性和复杂性，所以有很多独立的实现。本文希望能通过开发一个简单的ActiveRecord，验证这种Model实现方案的原理和过程。</p>
+
+        <div class="page-title"></div>
+        <br>
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/flamework-active-record/" class="article-date">
+  <time datetime="2014-01-01T12:45:00.000Z" itemprop="datePublished">2014-01-01</time>
+</a>-->
+      <!-- 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+--><!-- by blair 160724 -->
+      <!-- by blair
+      
+      -->
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="简述"><a href="#简述" class="headerlink" title="简述"></a>简述</h2><p>Model是MVC框架中最复杂的部分，它要提供与业务逻辑相关的数据及数据处理方法的封装，一般要提供数据对象、数据库连接、事务管理、SQL语句构造、数据CRUD、高级通用业务逻辑等一系列功能。由于Model与Controller和View是解耦的，并且本身具备很高的通用性和复杂性，所以有很多独立的实现。本文希望能通过开发一个简单的ActiveRecord，验证这种Model实现方案的原理和过程。</p>
 <h2 id="ORM：对象关系映射"><a href="#ORM：对象关系映射" class="headerlink" title="ORM：对象关系映射"></a>ORM：对象关系映射</h2><p>ORM的全称是Object Relational Mapping，即对象关系映射。它是为了解决关系数据库的数学模型和编程语言的对象模型之间的阻抗不匹配问题而提出的解决方案。</p>
 <p>阻抗不匹配是个逼格很高的词。</p>
 <p>阻抗是指电路中的电容、电感、电阻对交流电的障碍作用，就像电阻对直流电的障碍作用。两个系统传递信号可以形象地看成电压的传递，公式为：</p>
@@ -90,51 +118,126 @@
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>ORM的根本任务是解决关系模型与对象模型的阻抗不匹配问题。而ActiveRecord是时下很流行的一种ORM的实现方式。在对ActiveRecord的实现中使用了PDO，这是PHP 5.1开始引入的一个轻量的数据访问抽象层，相比以前针对每种数据库使用不同的函数集的方式，它使PHP的数据库操作变得更简单。此外，魔术方法的使用简化了代码，使数据操作变得更灵活。</p>
 <p>本文只实现了一个最基本的ActiveRecord，实际使用时，还要包含SQL语句构造等复杂的逻辑，不过只要弄清楚了核心原理和实现方式，其它也就水到渠成了。</p>
 
-  </section>
-  <footer class="post-footer">
-    <!--
-    <section class="author">
-      <h4>晴耕雨讀</h4>
-      <p></p>
-    </section>
-    -->
-  </footer>
+      
+     <!-- by blair add this if sentence at 20160725 -->
+      <br>
+      
+<!--
+<div id="bottom-donation-section">
+<span style="font-size: 1.0em; padding:0em 1em 0.5em 1em; margin: 0 auto;">
+  <strong style="vertical-align: top;">分享到:</strong>
+    <div class="j_handlclick"  style="background: url(/images/logos/share_facebook_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://www.facebook.com/sharer/sharer.php?u=" target="_blank">
+    </div>
+    <div class="j_handlclick"  style="background: url(/images/logos/share_weibo_icon.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://service.weibo.com/share/share.php?url" target="_blank">
+    </div>
+    <div class="j_handlclick"  style="background: url(/images/logos/share_wechat_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://api.addthis.com/oexchange/0.8/forward/wechat/offer?url=" target="_blank">
+    </div>
+    <div class="j_handlclick"  style="background: url(/images/logos/share_twitter_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://twitter.com/intent/tweet?url=" target="_blank">
+    </div>
+  <br>  
+  <br>  
+  &nbsp;&nbsp;如果您觉得这篇文章对您的学习很有帮助, 请您也分享它, 让它能再次帮助到更多的需要学习的人.
+您的<a href="/support/"><strong>支持</strong></a>将鼓励我继续创作 !
+  <br>  
+
+</span>
+</div>
+-->
+<div class="well">
+  <!--
+  原创文章，转载请注明： 转载自<a href="http://52binge.github.io"> Blair Chan's Blog</a>，作者：
+  <a href="/about">Blair Chan</a> <br>
+  -->
+  本文基于<a target="_blank" title="Creative Commons Attribution 4.0 international License" href="https://creativecommons.org/licenses/by-nc/4.0/">署名4.0国际许可协议</a>发布，转载请保留本文署名和文章链接。 如您有任何授权方面的协商，请联系我。
+</div>
+ <!-- by blair add 160724-->
+    
+    </div>
+    
+      <div class="article-toc">
+        <h3>Contents</h3>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#简述"><span class="toc-text">简述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ORM：对象关系映射"><span class="toc-text">ORM：对象关系映射</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ActiveRecord"><span class="toc-text">ActiveRecord</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ActiveRecord的使用"><span class="toc-text">ActiveRecord的使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-text">总结</span></a></li></ol>
+      </div>
+    
+    
+      <footer class="article-footer">
+        <!-- <div class="well" style="width:100px; height:30px;"></div>  by blair-->
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+ <!-- by blair add 160724-->
+        <!--
+        <div style="width:100px; height:30px;"></div> by blair add 160724
+        -->
+        
+  <div class="article-tag">
+    <a class="article-tag-link" href="/tags/flamework/">Flamework</a><span></span><a class="article-tag-link" href="/tags/php/">PHP</a><span></span><a class="article-tag-link" href="/tags/框架/">框架</a><span></span><a class="article-tag-link" href="/tags/编程/">编程</a>
+  </div>
+
+
+      </footer>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/post/flamework-summary/" id="article-nav-newer" class="article-nav-link-wrap">
+      <div class="article-nav-title"><span>&lt;</span>&nbsp;
+        
+          PHP框架实战（∝）：烈焰之终章
+        
+      </div>
+    </a>
+  
+  
+    <a href="/post/flamework-view-rendering/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">PHP框架实战（四）：View的模板与渲染&nbsp;<span>&gt;</span></div>
+    </a>
+  
+</nav>
+
+  
 </article>
 
-<nav class="pagination" role="pagination">
+</section>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 晴耕雨讀&nbsp;
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/52binge/hexo-theme-blairos">blairos</a>
+    </div>
+  </div>
+</footer>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX"],
+    tex2jax: {
+      inlineMath: [ ['$','$'], ['\\(','\\)'] ],
+      displayMath: [ ['$$','$$']],
+      processEscapes: true
+    }
+  });
+</script>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML,http://myserver.com/MathJax/config/local/local.js">
+</script>
+
     
-    <a class="newer-posts" href="/post/flamework-summary/">
-        ← 新 <!--PHP框架实战（∝）：烈焰之终章-->
-    </a>
-    
-    <span class="page-number">•</span>
-    
-    <a class="older-posts" href="/post/flamework-view-rendering/">
-        <!--PHP框架实战（四）：View的模板与渲染--> 舊 →
-    </a>
-    
-</nav>
-<div id="comments">
-  <div id="disqus_thread"></div>
-  <script type="text/javascript">
-      var disqus_shortname = '0x3f';
-      (function() {
-          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-      })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-  <a href="http://disqus.com" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
-</div>
+
+<script src="/js/jquery.min.js"></script>
 
 
-        </main>
-        <footer id="footer">
-            <section id="footer-message">&copy; 2006 - 2019 晴耕雨讀. All rights reserved.</section>
-        </footer>
-        <script type="text/javascript" src="http://tajs.qq.com/stats?sId=61071954" charset="UTF-8"></script>
-    </body>
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
 </html>
-
-
