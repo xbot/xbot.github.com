@@ -15,6 +15,8 @@ tags:
 BadMethodCallException: Method [validateIdList] does not exist.
 ```
 
+<!-- more -->
+
 `id_list`是一个自定义的校验规则，通过`Illuminate\Support\Facades\Validator::extend()`在`AppServiceProvider::boot()`中注册。由于存在一个和该规则配套的、通过`Illuminate\Support\Facades\Request::macro()`注册的扩展方法`getIDs()`，故通过`Illuminate\Support\Facades\Request::hasMacro()`判断当该方法不存在时才注册，并把这个校验规则的注册逻辑也放到了这个判断里。
 
 同一接口，在Postman中测试并无异常。通过日志看到，`AppServiceProvider::boot()`被执行了两次，这也很好理解，执行单元测试本身时会初始化一次，当单元测试调用被测试接口时，是第二次调用。也就是在这次调用中，抛出了这个异常。
