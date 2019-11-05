@@ -55,6 +55,74 @@
 
     <br>
     <section id="main" class="outer">
+      <article id="post-globals-implementation-in-php" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/globals-implementation-in-php/"><strong>PHP全局变量的实现和操作</strong></a>
+      <small class="article-date-index">&nbsp; 2015-05-08</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/globals-implementation-in-php/" class="article-date">
+  <time datetime="2015-05-08T09:23:00.000Z" itemprop="datePublished">2015-05-08</time>
+</a>-->
+      <!--
+  <div class="article-category-index">
+    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+-->
+      <!--
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="扩展内部的全局变量"><a href="#扩展内部的全局变量" class="headerlink" title="扩展内部的全局变量"></a>扩展内部的全局变量</h2><figure class="highlight c"><figcaption><span>php_donie.h</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ZEND_BEGIN_MODULE_GLOBALS(donie)</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">long</span> global_long;</span><br><span class="line">	<span class="keyword">char</span> *global_string;</span><br><span class="line">ZEND_END_MODULE_GLOBALS(donie)</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><figcaption><span>donie.c</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">ZEND_DECLARE_MODULE_GLOBALS(donie);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">php_donie_init_globals</span><span class="params">(zend_donie_globals *donie_globals)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	donie_globals-&gt;global_long = <span class="number">2015</span>;</span><br><span class="line">	donie_globals-&gt;global_string = <span class="string">"Long live Donie Leigh !"</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">php_donie_globals_dtor</span><span class="params">(zend_donie_globals *donie_globals)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	php_printf(<span class="string">"php_donie_globals_dtor triggered."</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">PHP_MINIT_FUNCTION(donie)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">/* init extension globals */</span></span><br><span class="line">	ZEND_INIT_MODULE_GLOBALS(donie, php_donie_init_globals, php_donie_globals_dtor);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> SUCCESS;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">PHP_RSHUTDOWN_FUNCTION(donie)</span><br><span class="line">&#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> ZTS</span></span><br><span class="line">	php_donie_globals_dtor(&amp;donie_globals);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> SUCCESS;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">ZEND_FUNCTION(donie_test_ext_globals)</span><br><span class="line">&#123;</span><br><span class="line">	php_printf(<span class="string">"%s"</span>, DONIE_G(global_string));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="声明"><a href="#声明" class="headerlink" title="声明"></a>声明</h3><p>ZEND_BEGIN_MODULE_GLOBALS和ZEND_END_MODULE_GLOBALS及其间的内容实际上声明了一个结构体zend_donie_globals。</p>
+<p>根据是否开启线程安全的情况，ZEND_DECLARE_MODULE_GLOBALS做不同的事：未开启线程安全，直接声明zend_donie_globals类型的变量；已开启线程安全，声明一个整形变量donie_globals_id。</p>
+<h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><p>在未开启线程安全时，ZEND_INIT_MODULE_GLOBALS调用第二个参数指定的函数初始化全局变量；已开启线程安全时，调用ts_allocate_id()分配一个资源ID，并调用第二个参数代表的函数。</p>
+<h3 id="访问"><a href="#访问" class="headerlink" title="访问"></a>访问</h3><p>DONIE_G在扩展的头文件里，生成扩展框架时默认就有。</p>
+<h3 id="销毁"><a href="#销毁" class="headerlink" title="销毁"></a>销毁</h3><p>开启线程安全时，ZEND_INIT_MODULE_GLOBALS的第三个参数指定的析构函数会自动被调用。未开启线程安全时，由于该宏只调用第二个参数初始化全局变量，第三个参数没有用，所以需要在MSHUTDOWN中手工调用析构函数。</p>
+<h2 id="用户空间的超级全局变量"><a href="#用户空间的超级全局变量" class="headerlink" title="用户空间的超级全局变量"></a>用户空间的超级全局变量</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> zend_bool <span class="title">php_donie_autoglobal_callback</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *name, uint name_len TSRMLS_DC)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	zval *donie_val;</span><br><span class="line">	MAKE_STD_ZVAL(donie_val);</span><br><span class="line">	array_init(donie_val);</span><br><span class="line">	add_next_index_string(donie_val, <span class="string">"Hello autoglobals !"</span>, <span class="number">1</span>);</span><br><span class="line">	ZEND_SET_SYMBOL(&amp;EG(symbol_table), <span class="string">"_DONIE"</span>, donie_val);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">PHP_MINIT_FUNCTION(donie)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">/* declare userspace super globals */</span></span><br><span class="line">	zend_register_auto_global(<span class="string">"_DONIE"</span>, <span class="keyword">sizeof</span>(<span class="string">"_DONIE"</span>)<span class="number">-1</span>, <span class="number">0</span>, php_donie_autoglobal_callback TSRMLS_CC);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> SUCCESS;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>zend_register_auto_global()注册了$_DONIE这样一个全局变量。在代码的编译时，如果PHP内核发现代码中没有使用这个全局变量，不会进行初始化；若有使用，会调用php_donie_autoglobal_callback进行初始化。PHP4中没有php_donie_autoglobal_callback这个参数。</p>
+<p>php_donie_autoglobal_callback做的事就是初始化一个zval并加入符号表。如果此函数返回0，则只会被调用一次，如果返回非0，在代码编译时，每发现一次该全局变量，就调用一次这个函数。</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-constant-implementation-in-php" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -857,72 +925,8 @@
 
 
     
-      <article id="post-make-nas-with-raspberry-pi" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/make-nas-with-raspberry-pi/"><strong>用树苺派搭NAS</strong></a>
-      <small class="article-date-index">&nbsp; 2015-04-03</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/make-nas-with-raspberry-pi/" class="article-date">
-  <time datetime="2015-04-03T07:13:00.000Z" itemprop="datePublished">2015-04-03</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>为了让盒子能直接播放<a href="/post/remote-downloading-with-raspberry-pi/">远程下载</a>的电影，继续在树苺派上搭NAS。</p>
-<p>安装samba，然后配置：</p>
-<figure class="highlight"><figcaption><span>/etc/samba/smb.conf</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[nas]</span></span><br><span class="line"><span class="attr">path</span> = /media/sda1</span><br><span class="line">valid users = @users</span><br><span class="line">force group = users</span><br><span class="line">create mask = 0660</span><br><span class="line">directory mask = 0771</span><br><span class="line">read only = no</span><br></pre></td></tr></table></figure>
-<p>把Linux用户添加到samba并设置密码：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">smbpasswd -a pi</span><br></pre></td></tr></table></figure>
-<p>盒子上的Kodi硬解有问题，用ES+MX Player替代。电脑上用Kodi。</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
       <nav id="page-nav">
-        <a class="extend prev" rel="prev" href="/page/17/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/">16</a><a class="page-number" href="/page/17/">17</a><span class="page-number current">18</span><a class="page-number" href="/page/19/">19</a><a class="page-number" href="/page/20/">20</a><span class="space">&hellip;</span><a class="page-number" href="/page/40/">40</a><a class="extend next" rel="next" href="/page/19/">Next &raquo;</a>
+        <a class="extend prev" rel="prev" href="/page/17/">&laquo; Назад</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/">16</a><a class="page-number" href="/page/17/">17</a><span class="page-number current">18</span><a class="page-number" href="/page/19/">19</a><a class="page-number" href="/page/20/">20</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/19/">Далее &raquo;</a>
       </nav>
     
 

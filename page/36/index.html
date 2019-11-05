@@ -55,6 +55,64 @@
 
     <br>
     <section id="main" class="outer">
+      <article id="post-howto-auto-maximize-gvim-at-startup" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/howto-auto-maximize-gvim-at-startup/"><strong>启动GVim时自动最大化窗口的方法</strong></a>
+      <small class="article-date-index">&nbsp; 2010-08-25</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/howto-auto-maximize-gvim-at-startup/" class="article-date">
+  <time datetime="2010-08-24T16:00:00.000Z" itemprop="datePublished">2010-08-25</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>根据帮助文档，gvim在windows下的最大化是通过模拟打开窗口菜单并点击最大化菜单项实现的，而在Linux下的方法较为灵活。</p>
+<p>下面的方法是在vim中通过调用wmctrl实现最大化的方法：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="built_in">has</span>(<span class="string">'win32'</span>)</span><br><span class="line">    <span class="keyword">au</span> GUIEnter * <span class="keyword">simalt</span> ~<span class="keyword">x</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="keyword">au</span> GUIEnter * <span class="keyword">call</span> MaximizeWindow()</span><br><span class="line"><span class="keyword">endif</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span>! <span class="title">MaximizeWindow</span><span class="params">()</span></span></span><br><span class="line">    <span class="keyword">silent</span> !wmctrl -r :ACTIVE: -<span class="keyword">b</span> <span class="built_in">add</span>,maximized_vert,maximized_horz</span><br><span class="line"><span class="keyword">endfunction</span></span><br></pre></td></tr></table></figure>
+<p>当然也可以通过配置窗口管理器规则实现自动最大化，但上面的方法更灵活。</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-howto-run-sql-scripts-in-mysql-oracle-within-installshield" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -235,81 +293,6 @@
 
 
     
-      <article id="post-usage-of-ttl-wire-on-linux" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/usage-of-ttl-wire-on-linux/"><strong>TTL线在Linux下的用法</strong></a>
-      <small class="article-date-index">&nbsp; 2010-07-18</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/usage-of-ttl-wire-on-linux/" class="article-date">
-  <time datetime="2010-07-17T16:00:00.000Z" itemprop="datePublished">2010-07-18</time>
-</a>-->
-      <!--
--->
-      <!--
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>虽然由于<a href="http://0x3f.org/?p=1544">我的H108B</a>没有TTL引脚而无法通过TTL线登入猫的<a href="http://en.wikipedia.org/wiki/BusyBox" target="_blank" rel="noopener">BusyBox</a>系统，但TTL线在Linux下的使用方法仍然值得一叙，因为除此之外，它还有较为广泛的用途，例如为路由器刷<a href="http://en.wikipedia.org/wiki/OpenWrt" target="_blank" rel="noopener">OpenWRT</a>系统等等。</p>
-<p>TTL转USB端子是目前较为常见的此类设备，这得益于它的简单易用和便携性。在这类设备上最常见的就是台湾的Prolific Technology生产的<strong>PL2303</strong>：</p>
-<p><a href="http://picasaweb.google.com/lh/photo/fAc0kt6VmnFFTUY7IA-VrA?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh3.ggpht.com/_ceUJ_lBTHzc/TEHb1u6n7TI/AAAAAAAABbU/FA7aEZPTn-A/s400/C360_2010-07-17%2011-07-17.jpg"></a></p>
-<p>这种芯片的驱动已被编译进Linux内核，如果使用的是较新版本的内核，则使用该芯片的TTL转USB端子会被自动识别，通常为<strong>/dev/ttyUSB0</strong>设备，使用<strong>lsusb</strong>命令可以查看：</p>
-<blockquote><br>[lenin@archer ~]$ lsusb<br>Bus 008 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub<br>Bus 007 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub<br>Bus 006 Device 003: ID 067b:2303 Prolific Technology, Inc. PL2303 Serial Port<br>Bus 006 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub<br></blockquote>
-
-<p>将四根杜邦线连接到TTL转USB插头上，并接入相应设备的对应引脚。同一根线两端连接的引脚必须对应，另外，VCC引脚不能接线，否则会烧坏TTL转 USB芯片。</p>
-<p>在计算机上使用串口通讯程序进行操控，常见的串口通讯程序有：<a href="http://en.wikipedia.org/wiki/Minicom" target="_blank" rel="noopener">minicom</a>，<a href="http://en.wikipedia.org/wiki/Microcom" target="_blank" rel="noopener">microcom</a>，picocom，tinyserial，xgcom。</p>
-<p>以minicom为例，进入minicom的设置界面：</p>
-<blockquote>sudo minicom -s</blockquote>
-
-<p>先设置默认的通讯设备为ttyUSB0并设置硬件流控制（Hardware Flow Control）为No：</p>
-<p><a href="http://picasaweb.google.com/lh/photo/YnqotA0Fo6Z883T7aKvDcg?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh5.ggpht.com/_ceUJ_lBTHzc/TEMR710O6XI/AAAAAAAABb4/noM3E7ZEiuM/s800/2010-07-17.10%3A25%3A38.%E6%88%AA%E5%8F%96%E9%80%89%E5%8C%BA.01.png"></a></p>
-<p><a href="http://picasaweb.google.com/lh/photo/G2S6THC9IqvBChZGkJfyqQ?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh6.ggpht.com/_ceUJ_lBTHzc/TEMR7zBjcmI/AAAAAAAABb8/Z63_oSfjrnc/s400/2010-07-17.10%3A29%3A04.urxvt.01.png"></a></p>
-<p>保存为缺省设置：</p>
-<p><a href="http://picasaweb.google.com/lh/photo/lY9b49woVJhLdkPJqViT3Q?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh4.ggpht.com/_ceUJ_lBTHzc/TEMR8Fjk3cI/AAAAAAAABcA/QnHscEzj1OY/s800/2010-07-17.10%3A29%3A35.%E6%88%AA%E5%8F%96%E9%80%89%E5%8C%BA.01.png"></a></p>
-<p>启动minicom：</p>
-<blockquote>sudo minicom</blockquote>
-
-<p>理论上说，此时即可和设备进行通讯了。</p>
-<p>Windows下要安装相应芯片的驱动，通讯程序一般用SecureCRT。</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
       <article id="post-howto-enable-routing-and-auto-dialing-for-unicom-adsl-modem-2" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -394,6 +377,81 @@
 <p><a href="http://picasaweb.google.com/lh/photo/omFbqTXkvVV4L86vGqyyng?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh3.ggpht.com/_ceUJ_lBTHzc/TEHb19lGCzI/AAAAAAAABbc/7zaShWAUvUM/s400/C360_2010-07-17%2011-06-21.jpg"></a></p>
 <p><a href="http://picasaweb.google.com/lh/photo/JfG_3EgD8BDChZVBM6xx9Q?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh6.ggpht.com/_ceUJ_lBTHzc/TEHb2HXkwhI/AAAAAAAABbg/HazHHwsfXHk/s400/C360_2010-07-17%2011-06-09.jpg"></a></p>
 <p><em>以上照片出自G7+Camera360</em></p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
+      <article id="post-usage-of-ttl-wire-on-linux" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/usage-of-ttl-wire-on-linux/"><strong>TTL线在Linux下的用法</strong></a>
+      <small class="article-date-index">&nbsp; 2010-07-18</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/usage-of-ttl-wire-on-linux/" class="article-date">
+  <time datetime="2010-07-17T16:00:00.000Z" itemprop="datePublished">2010-07-18</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>虽然由于<a href="http://0x3f.org/?p=1544">我的H108B</a>没有TTL引脚而无法通过TTL线登入猫的<a href="http://en.wikipedia.org/wiki/BusyBox" target="_blank" rel="noopener">BusyBox</a>系统，但TTL线在Linux下的使用方法仍然值得一叙，因为除此之外，它还有较为广泛的用途，例如为路由器刷<a href="http://en.wikipedia.org/wiki/OpenWrt" target="_blank" rel="noopener">OpenWRT</a>系统等等。</p>
+<p>TTL转USB端子是目前较为常见的此类设备，这得益于它的简单易用和便携性。在这类设备上最常见的就是台湾的Prolific Technology生产的<strong>PL2303</strong>：</p>
+<p><a href="http://picasaweb.google.com/lh/photo/fAc0kt6VmnFFTUY7IA-VrA?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh3.ggpht.com/_ceUJ_lBTHzc/TEHb1u6n7TI/AAAAAAAABbU/FA7aEZPTn-A/s400/C360_2010-07-17%2011-07-17.jpg"></a></p>
+<p>这种芯片的驱动已被编译进Linux内核，如果使用的是较新版本的内核，则使用该芯片的TTL转USB端子会被自动识别，通常为<strong>/dev/ttyUSB0</strong>设备，使用<strong>lsusb</strong>命令可以查看：</p>
+<blockquote><br>[lenin@archer ~]$ lsusb<br>Bus 008 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub<br>Bus 007 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub<br>Bus 006 Device 003: ID 067b:2303 Prolific Technology, Inc. PL2303 Serial Port<br>Bus 006 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub<br></blockquote>
+
+<p>将四根杜邦线连接到TTL转USB插头上，并接入相应设备的对应引脚。同一根线两端连接的引脚必须对应，另外，VCC引脚不能接线，否则会烧坏TTL转 USB芯片。</p>
+<p>在计算机上使用串口通讯程序进行操控，常见的串口通讯程序有：<a href="http://en.wikipedia.org/wiki/Minicom" target="_blank" rel="noopener">minicom</a>，<a href="http://en.wikipedia.org/wiki/Microcom" target="_blank" rel="noopener">microcom</a>，picocom，tinyserial，xgcom。</p>
+<p>以minicom为例，进入minicom的设置界面：</p>
+<blockquote>sudo minicom -s</blockquote>
+
+<p>先设置默认的通讯设备为ttyUSB0并设置硬件流控制（Hardware Flow Control）为No：</p>
+<p><a href="http://picasaweb.google.com/lh/photo/YnqotA0Fo6Z883T7aKvDcg?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh5.ggpht.com/_ceUJ_lBTHzc/TEMR710O6XI/AAAAAAAABb4/noM3E7ZEiuM/s800/2010-07-17.10%3A25%3A38.%E6%88%AA%E5%8F%96%E9%80%89%E5%8C%BA.01.png"></a></p>
+<p><a href="http://picasaweb.google.com/lh/photo/G2S6THC9IqvBChZGkJfyqQ?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh6.ggpht.com/_ceUJ_lBTHzc/TEMR7zBjcmI/AAAAAAAABb8/Z63_oSfjrnc/s400/2010-07-17.10%3A29%3A04.urxvt.01.png"></a></p>
+<p>保存为缺省设置：</p>
+<p><a href="http://picasaweb.google.com/lh/photo/lY9b49woVJhLdkPJqViT3Q?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh4.ggpht.com/_ceUJ_lBTHzc/TEMR8Fjk3cI/AAAAAAAABcA/QnHscEzj1OY/s800/2010-07-17.10%3A29%3A35.%E6%88%AA%E5%8F%96%E9%80%89%E5%8C%BA.01.png"></a></p>
+<p>启动minicom：</p>
+<blockquote>sudo minicom</blockquote>
+
+<p>理论上说，此时即可和设备进行通讯了。</p>
+<p>Windows下要安装相应芯片的驱动，通讯程序一般用SecureCRT。</p>
 
       
     </div>
@@ -684,67 +742,8 @@
 
 
     
-      <article id="post-after-upgrading-to-wordpress30" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/after-upgrading-to-wordpress30/"><strong>升级到wordpress3.0</strong></a>
-      <small class="article-date-index">&nbsp; 2010-06-19</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/after-upgrading-to-wordpress30/" class="article-date">
-  <time datetime="2010-06-18T16:00:00.000Z" itemprop="datePublished">2010-06-19</time>
-</a>-->
-      <!--
--->
-      <!--
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>昨天发现wordpress3.0已经发布，就顺手升级了。</p>
-<p>略看了一下更新内容，几乎没什么让我感兴趣的，但与MU版本的合并堪称WP历史上的一个里程碑，从此一套WP可以支持创建多个博客了。</p>
-<p>但我最近几度都想把博客换到dokuwiki下。</p>
-<p>自从<a href="http://0x3f.org/?p=1455">开始用dokuwiki来组织知识和GTD</a>以来，我对wiki产生了越来越深的痴迷，最主要的原因就是它可以用很简单的语法写出格式规整的文章，我几乎可以不用考虑排版布局而只需把注意力放在文章内容上就行了。而将wiki上的文章发到博客上时，还需要重写，比较浪费时间。</p>
-<p>但我最终放弃这个想法，最主要的原因是博客文章太多了，截至现在已经有五百多篇且大多是用HTML写的，难以转换。何况WP作为一个博客系统较wiki有着天生的优势，使用较为方便，如果用wiki来做博客，要做不少工作。</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
       <nav id="page-nav">
-        <a class="extend prev" rel="prev" href="/page/35/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/34/">34</a><a class="page-number" href="/page/35/">35</a><span class="page-number current">36</span><a class="page-number" href="/page/37/">37</a><a class="page-number" href="/page/38/">38</a><span class="space">&hellip;</span><a class="page-number" href="/page/40/">40</a><a class="extend next" rel="next" href="/page/37/">Next &raquo;</a>
+        <a class="extend prev" rel="prev" href="/page/35/">&laquo; Назад</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/34/">34</a><a class="page-number" href="/page/35/">35</a><span class="page-number current">36</span><a class="page-number" href="/page/37/">37</a><a class="page-number" href="/page/38/">38</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/37/">Далее &raquo;</a>
       </nav>
     
 
