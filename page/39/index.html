@@ -20,6 +20,19 @@
   <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
   <link rel="stylesheet" href="/css/style.css">
   
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-93233020-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
 
 </head>
 </html>
@@ -55,7 +68,7 @@
 
     <br>
     <section id="main" class="outer">
-      <article id="post-too-many-echoes-may-crash-php" class="article article-type-post" itemscope="" itemprop="blogPost">
+      <article id="post-virtualbox-host-interface" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
     
@@ -63,7 +76,7 @@
         
   
     <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/too-many-echoes-may-crash-php/"><strong>PHP后台echo过多会导致进程崩溃</strong></a>
+      <a class="article-title-index" href="/post/virtualbox-host-interface/"><strong>VirtualBox的Host Interface网络接入方式的配置</strong></a>
       <small class="article-date-index">&nbsp; 2010-01-31</small>
       <!--<a>
       <div = post.date  </div>
@@ -77,7 +90,7 @@
       </header>
     
     <div class="article-meta">
-      <!--<a href="/post/too-many-echoes-may-crash-php/" class="article-date">
+      <!--<a href="/post/virtualbox-host-interface/" class="article-date">
   <time datetime="2010-01-30T16:00:00.000Z" itemprop="datePublished">2010-01-31</time>
 </a>-->
       <!--
@@ -89,10 +102,29 @@
 	
     <div class="article-entry" itemprop="articleBody">
       
-        <p>这是去年晚些时侯发现的一个问题。</p>
-<p>公司产品的后台定时任务应该是用独立的PHP进程驱动的。在做一个项目的时候，为了便于手工调试，我在定时任务中使用了大量的echo输出信息并在浏览器中手工执行此任务的脚本。</p>
-<p>手工执行通过，输出信息完全没有问题。但在实际运行的过程中，一个很诡异的事情发生了：即使我将实际处理数据的代码全部注释掉，只对原始数据做简单的查询，此定时任务仍然极其健壮地中途退出。最要命的是无论程序日志还是PHP的错误日志，都没有任何相关信息。直到后来我把所有echo输出都取消，问题才解决。</p>
-<p>事后模糊地记得很久以前似乎在哪本书上看到过在无输出设备的情况下echo过多数据会导致PHP进程崩溃的内容，但原因已想不起来了。</p>
+        <p><a href="http://zh.wikipedia.org/wiki/VirtualBox" target="_blank" rel="noopener">VirtualBox</a>安装后默认的网络接入方式是<a href="http://zh.wikipedia.org/wiki/%E7%BD%91%E7%BB%9C%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2" target="_blank" rel="noopener">NAT</a>，也是最简单的一种。但NAT网络中的虚拟机系统不具有和主机同一网段的IP地址，不能和主机直接通信。这对于开发者来说是不适用的。</p>
+
+<p>Host Interface网络接入方式可以使虚拟机系统获得与主机同一网段的IP地址，因此也使得虚拟机系统像主机所在的局域网中的一台真实的计算机一样，可以和其它计算机通信。</p>
+
+<p>对于Linux平台的VirtualBox，可以有两种方式实现Host Interface网络。一是使用系统网桥，二是使用VirtualBox内建的机制。</p>
+
+<p>第一种方式复杂但通用，尤其是对于2.1.0以前的版本来说，这是唯一的途径。从2.1.0开始，VirtuaBox内建了支持Host Interface的机制，这极大地简化了此类型网络的配置。</p>
+
+<p>首先，加载<strong>vboxnetflt</strong>模块：</p>
+
+<blockquote>
+  <p>sudo modprobe vboxnetflt</p>
+</blockquote>
+
+<p>然后在VirtualBox中配置虚拟机的网络连接方式，选择“<strong>Bridged Adapter</strong>”。</p>
+
+<p>最后启动虚拟机即可。</p>
+
+<p>另外，若虚拟机系统是精简版的Windows，网卡驱动可能不会自动安装，这时需要另外下载网卡的驱动并安装。</p>
+
+<p>为方便起见，可将vboxnetflt模块加入到开机自动启动的模块列表中，每种发行版设置自启动模块的位置和方法不一样，在Archlinux下，是在<strong>/etc/rc.conf</strong>文件中的<strong>modules</strong>行中设置。</p>
+
+<p><em>参考文章：<a href="http://wiki.archlinux.org/index.php/VirtualBox" target="_blank" rel="noopener">Archlinux Wiki: VirtualBox</a></em></p>
 
       
     </div>
@@ -882,7 +914,7 @@ Find the product <b><em>abc</em></b>.
 
     
       <nav id="page-nav">
-        <a class="extend prev" rel="prev" href="/page/38/">&laquo; Назад</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/37/">37</a><a class="page-number" href="/page/38/">38</a><span class="page-number current">39</span><a class="page-number" href="/page/40/">40</a><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/40/">Далее &raquo;</a>
+        <a class="extend prev" rel="prev" href="/page/38/">&laquo; 上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/37/">37</a><a class="page-number" href="/page/38/">38</a><span class="page-number current">39</span><a class="page-number" href="/page/40/">40</a><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/40/">下一页 &raquo;</a>
       </nav>
     
 
