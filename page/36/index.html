@@ -70,6 +70,70 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-a-bash-script-downloading-videos-in-batch" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/a-bash-script-downloading-videos-in-batch/"><strong>批量下载视频的BASH脚本</strong></a>
+      <small class="article-date-index">&nbsp; 2010-08-28</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/a-bash-script-downloading-videos-in-batch/" class="article-date">
+  <time datetime="2010-08-27T16:00:00.000Z" itemprop="datePublished">2010-08-28</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/a-bash-script-downloading-videos-in-batch/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>两周前为了批量下载某视频网站中的电视剧，写了个BASH脚本。将电视剧列表页面的URL地址作为唯一参数传给脚本，然后就会把所有视频下载到当前目录下，并自动重命名，同时生成一个M3U格式的播放列表。</p>
+<p>由于在线视频不支持断点续传，所以对于单个视频来说无法实现。但对于整个批量下载任务来说，实现了宏观上的断点续传，已经下载的视频不会被重复下载。由于有些视频网站会在午夜更改视频地址，所以这一点很有用。</p>
+<p>主流视频网站应该是都支持的，我只测试了我下载电视剧的网站，<strong>不支持的都是非主流的！</strong></p>
+<p>唯一可能需要注意的依赖是PHP，必须安装后才能使用。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">print_help_msg</span></span> () &#123;</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"You see, I'm nothing ."</span></span><br><span class="line">    <span class="built_in">exit</span> 0</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">check_param</span></span> () &#123;</span><br><span class="line">    <span class="keyword">if</span> [ <span class="variable">$#</span> -ne 1 ]; <span class="keyword">then</span></span><br><span class="line">        print_help_msg</span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">check_m3u</span></span> () &#123;</span><br><span class="line">    <span class="keyword">if</span> ! [ -a p.m3u ] || [ `wc -l p.m3u|awk <span class="string">'&#123; print $1 &#125;'</span>` -eq 0 ]; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">'#EXTM3U'</span> &gt; p.m3u</span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">check_param $*</span><br><span class="line">check_m3u</span><br><span class="line"></span><br><span class="line"><span class="built_in">export</span> LC_ALL=en_US.UTF-8</span><br><span class="line"></span><br><span class="line">ue=$(php -r <span class="string">"echo urlencode('<span class="variable">$1</span>');"</span>)</span><br><span class="line">parser=<span class="string">"http://www.flvcd.com/parse.php?flag=&amp;format=&amp;kw=<span class="variable">$ue</span>&amp;sbt=%BF%AA%CA%BCGO%21"</span></span><br><span class="line"><span class="keyword">if</span> ! wget <span class="variable">$parser</span> -U mozilla -O meta.html ; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"Unable to touch the parser, check network status for the cause ."</span></span><br><span class="line">    <span class="built_in">exit</span> 0</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">grep <span class="string">"&lt;N&gt;"</span> meta.html &gt; title.lst</span><br><span class="line">grep <span class="string">"&lt;U&gt;"</span> meta.html &gt; url.lst</span><br><span class="line">iconv -f gbk -t utf-8 title.lst -o title.lst</span><br><span class="line">sed -i <span class="string">'s/&lt;N&gt;//g'</span> title.lst</span><br><span class="line">sed -i <span class="string">'s/ //g'</span> title.lst</span><br><span class="line">sed -i <span class="string">'s/&lt;U&gt;//g'</span> url.lst</span><br><span class="line"></span><br><span class="line">l1=`wc -l title.lst|awk <span class="string">'&#123; print $1 &#125;'</span>`</span><br><span class="line">l2=`wc -l url.lst|awk <span class="string">'&#123; print $1 &#125;'</span>`</span><br><span class="line"><span class="keyword">if</span> [ <span class="string">"<span class="variable">$l1</span>"</span> != <span class="string">"<span class="variable">$l2</span>"</span> ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"Title.lst has <span class="variable">$l1</span> lines, but url.lst got <span class="variable">$l2</span>."</span></span><br><span class="line">    <span class="built_in">exit</span> 0</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$l1</span> -eq 0 ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"Nothing got from the parser, check meta.html for detail info."</span></span><br><span class="line">    <span class="built_in">exit</span> 0</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">arrTitle=(`cat title.lst`)</span><br><span class="line">arrURL=(`cat url.lst`)</span><br><span class="line"></span><br><span class="line">idx=$((`wc -l p.m3u|awk <span class="string">'&#123; print $1 &#125;'</span>`-1))</span><br><span class="line"><span class="keyword">while</span> [ <span class="variable">$idx</span> -lt <span class="variable">$l1</span> ]; <span class="keyword">do</span></span><br><span class="line">    title=<span class="variable">$&#123;arrTitle[$idx]&#125;</span></span><br><span class="line">    url=<span class="variable">$&#123;arrURL[$idx]&#125;</span></span><br><span class="line">    idx=$((idx+1))</span><br><span class="line">    <span class="keyword">if</span> ! wget <span class="variable">$url</span> -U mozilla -O <span class="string">"<span class="variable">$&#123;title&#125;</span>.flv"</span> ; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">"Failed fetching <span class="variable">$&#123;title&#125;</span>.flv, maybe its URL has been changed !"</span></span><br><span class="line">        <span class="built_in">exit</span> 0</span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">    cmd=<span class="string">"sed -i '\$a\\<span class="variable">$&#123;title&#125;</span>.flv' p.m3u"</span></span><br><span class="line">    <span class="built_in">eval</span> <span class="variable">$cmd</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">'done !'</span></span><br><span class="line"><span class="built_in">exit</span> 0</span><br></pre></td></tr></table></figure>
+<p>另外，使用VLC执行播放列表效果灰常不错，视频之间衔接平滑流畅。</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-howto-auto-maximize-gvim-at-startup" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -324,6 +388,85 @@ ga('send', 'pageview');
 
 
     
+      <article id="post-usage-of-ttl-wire-on-linux" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/usage-of-ttl-wire-on-linux/"><strong>TTL线在Linux下的用法</strong></a>
+      <small class="article-date-index">&nbsp; 2010-07-18</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/usage-of-ttl-wire-on-linux/" class="article-date">
+  <time datetime="2010-07-17T16:00:00.000Z" itemprop="datePublished">2010-07-18</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/usage-of-ttl-wire-on-linux/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>虽然由于<a href="http://0x3f.org/?p=1544">我的H108B</a>没有TTL引脚而无法通过TTL线登入猫的<a href="http://en.wikipedia.org/wiki/BusyBox" target="_blank" rel="noopener">BusyBox</a>系统，但TTL线在Linux下的使用方法仍然值得一叙，因为除此之外，它还有较为广泛的用途，例如为路由器刷<a href="http://en.wikipedia.org/wiki/OpenWrt" target="_blank" rel="noopener">OpenWRT</a>系统等等。</p>
+<p>TTL转USB端子是目前较为常见的此类设备，这得益于它的简单易用和便携性。在这类设备上最常见的就是台湾的Prolific Technology生产的<strong>PL2303</strong>：</p>
+<p><a href="http://picasaweb.google.com/lh/photo/fAc0kt6VmnFFTUY7IA-VrA?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh3.ggpht.com/_ceUJ_lBTHzc/TEHb1u6n7TI/AAAAAAAABbU/FA7aEZPTn-A/s400/C360_2010-07-17%2011-07-17.jpg"></a></p>
+<p>这种芯片的驱动已被编译进Linux内核，如果使用的是较新版本的内核，则使用该芯片的TTL转USB端子会被自动识别，通常为<strong>/dev/ttyUSB0</strong>设备，使用<strong>lsusb</strong>命令可以查看：</p>
+<blockquote><br>[lenin@archer ~]$ lsusb<br>Bus 008 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub<br>Bus 007 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub<br>Bus 006 Device 003: ID 067b:2303 Prolific Technology, Inc. PL2303 Serial Port<br>Bus 006 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub<br></blockquote>
+
+<p>将四根杜邦线连接到TTL转USB插头上，并接入相应设备的对应引脚。同一根线两端连接的引脚必须对应，另外，VCC引脚不能接线，否则会烧坏TTL转 USB芯片。</p>
+<p>在计算机上使用串口通讯程序进行操控，常见的串口通讯程序有：<a href="http://en.wikipedia.org/wiki/Minicom" target="_blank" rel="noopener">minicom</a>，<a href="http://en.wikipedia.org/wiki/Microcom" target="_blank" rel="noopener">microcom</a>，picocom，tinyserial，xgcom。</p>
+<p>以minicom为例，进入minicom的设置界面：</p>
+<blockquote>sudo minicom -s</blockquote>
+
+<p>先设置默认的通讯设备为ttyUSB0并设置硬件流控制（Hardware Flow Control）为No：</p>
+<p><a href="http://picasaweb.google.com/lh/photo/YnqotA0Fo6Z883T7aKvDcg?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh5.ggpht.com/_ceUJ_lBTHzc/TEMR710O6XI/AAAAAAAABb4/noM3E7ZEiuM/s800/2010-07-17.10%3A25%3A38.%E6%88%AA%E5%8F%96%E9%80%89%E5%8C%BA.01.png"></a></p>
+<p><a href="http://picasaweb.google.com/lh/photo/G2S6THC9IqvBChZGkJfyqQ?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh6.ggpht.com/_ceUJ_lBTHzc/TEMR7zBjcmI/AAAAAAAABb8/Z63_oSfjrnc/s400/2010-07-17.10%3A29%3A04.urxvt.01.png"></a></p>
+<p>保存为缺省设置：</p>
+<p><a href="http://picasaweb.google.com/lh/photo/lY9b49woVJhLdkPJqViT3Q?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh4.ggpht.com/_ceUJ_lBTHzc/TEMR8Fjk3cI/AAAAAAAABcA/QnHscEzj1OY/s800/2010-07-17.10%3A29%3A35.%E6%88%AA%E5%8F%96%E9%80%89%E5%8C%BA.01.png"></a></p>
+<p>启动minicom：</p>
+<blockquote>sudo minicom</blockquote>
+
+<p>理论上说，此时即可和设备进行通讯了。</p>
+<p>Windows下要安装相应芯片的驱动，通讯程序一般用SecureCRT。</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-howto-enable-routing-and-auto-dialing-for-unicom-adsl-modem-2" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -412,85 +555,6 @@ ga('send', 'pageview');
 <p><a href="http://picasaweb.google.com/lh/photo/omFbqTXkvVV4L86vGqyyng?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh3.ggpht.com/_ceUJ_lBTHzc/TEHb19lGCzI/AAAAAAAABbc/7zaShWAUvUM/s400/C360_2010-07-17%2011-06-21.jpg"></a></p>
 <p><a href="http://picasaweb.google.com/lh/photo/JfG_3EgD8BDChZVBM6xx9Q?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh6.ggpht.com/_ceUJ_lBTHzc/TEHb2HXkwhI/AAAAAAAABbg/HazHHwsfXHk/s400/C360_2010-07-17%2011-06-09.jpg"></a></p>
 <p><em>以上照片出自G7+Camera360</em></p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-usage-of-ttl-wire-on-linux" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/usage-of-ttl-wire-on-linux/"><strong>TTL线在Linux下的用法</strong></a>
-      <small class="article-date-index">&nbsp; 2010-07-18</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/usage-of-ttl-wire-on-linux/" class="article-date">
-  <time datetime="2010-07-17T16:00:00.000Z" itemprop="datePublished">2010-07-18</time>
-</a>-->
-      <!--
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/usage-of-ttl-wire-on-linux/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>虽然由于<a href="http://0x3f.org/?p=1544">我的H108B</a>没有TTL引脚而无法通过TTL线登入猫的<a href="http://en.wikipedia.org/wiki/BusyBox" target="_blank" rel="noopener">BusyBox</a>系统，但TTL线在Linux下的使用方法仍然值得一叙，因为除此之外，它还有较为广泛的用途，例如为路由器刷<a href="http://en.wikipedia.org/wiki/OpenWrt" target="_blank" rel="noopener">OpenWRT</a>系统等等。</p>
-<p>TTL转USB端子是目前较为常见的此类设备，这得益于它的简单易用和便携性。在这类设备上最常见的就是台湾的Prolific Technology生产的<strong>PL2303</strong>：</p>
-<p><a href="http://picasaweb.google.com/lh/photo/fAc0kt6VmnFFTUY7IA-VrA?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh3.ggpht.com/_ceUJ_lBTHzc/TEHb1u6n7TI/AAAAAAAABbU/FA7aEZPTn-A/s400/C360_2010-07-17%2011-07-17.jpg"></a></p>
-<p>这种芯片的驱动已被编译进Linux内核，如果使用的是较新版本的内核，则使用该芯片的TTL转USB端子会被自动识别，通常为<strong>/dev/ttyUSB0</strong>设备，使用<strong>lsusb</strong>命令可以查看：</p>
-<blockquote><br>[lenin@archer ~]$ lsusb<br>Bus 008 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub<br>Bus 007 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub<br>Bus 006 Device 003: ID 067b:2303 Prolific Technology, Inc. PL2303 Serial Port<br>Bus 006 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub<br></blockquote>
-
-<p>将四根杜邦线连接到TTL转USB插头上，并接入相应设备的对应引脚。同一根线两端连接的引脚必须对应，另外，VCC引脚不能接线，否则会烧坏TTL转 USB芯片。</p>
-<p>在计算机上使用串口通讯程序进行操控，常见的串口通讯程序有：<a href="http://en.wikipedia.org/wiki/Minicom" target="_blank" rel="noopener">minicom</a>，<a href="http://en.wikipedia.org/wiki/Microcom" target="_blank" rel="noopener">microcom</a>，picocom，tinyserial，xgcom。</p>
-<p>以minicom为例，进入minicom的设置界面：</p>
-<blockquote>sudo minicom -s</blockquote>
-
-<p>先设置默认的通讯设备为ttyUSB0并设置硬件流控制（Hardware Flow Control）为No：</p>
-<p><a href="http://picasaweb.google.com/lh/photo/YnqotA0Fo6Z883T7aKvDcg?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh5.ggpht.com/_ceUJ_lBTHzc/TEMR710O6XI/AAAAAAAABb4/noM3E7ZEiuM/s800/2010-07-17.10%3A25%3A38.%E6%88%AA%E5%8F%96%E9%80%89%E5%8C%BA.01.png"></a></p>
-<p><a href="http://picasaweb.google.com/lh/photo/G2S6THC9IqvBChZGkJfyqQ?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh6.ggpht.com/_ceUJ_lBTHzc/TEMR7zBjcmI/AAAAAAAABb8/Z63_oSfjrnc/s400/2010-07-17.10%3A29%3A04.urxvt.01.png"></a></p>
-<p>保存为缺省设置：</p>
-<p><a href="http://picasaweb.google.com/lh/photo/lY9b49woVJhLdkPJqViT3Q?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh4.ggpht.com/_ceUJ_lBTHzc/TEMR8Fjk3cI/AAAAAAAABcA/QnHscEzj1OY/s800/2010-07-17.10%3A29%3A35.%E6%88%AA%E5%8F%96%E9%80%89%E5%8C%BA.01.png"></a></p>
-<p>启动minicom：</p>
-<blockquote>sudo minicom</blockquote>
-
-<p>理论上说，此时即可和设备进行通讯了。</p>
-<p>Windows下要安装相应芯片的驱动，通讯程序一般用SecureCRT。</p>
 
       
     </div>
@@ -667,75 +731,6 @@ ga('send', 'pageview');
 
 
     
-      <article id="post-connect-to-sqlserver-using-freetds-on-linux" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/connect-to-sqlserver-using-freetds-on-linux/"><strong>Linux下使用freetds连接SQL Server</strong></a>
-      <small class="article-date-index">&nbsp; 2010-06-20</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/connect-to-sqlserver-using-freetds-on-linux/" class="article-date">
-  <time datetime="2010-06-19T16:00:00.000Z" itemprop="datePublished">2010-06-20</time>
-</a>-->
-      <!--
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/connect-to-sqlserver-using-freetds-on-linux/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a href="http://www.freetds.org" target="_blank" rel="noopener">freetds</a>是第三方、开源的数据库客户端和连接库，支持Sybase和Microsoft SQL Server，它最大的好处是允许非Windows平台的程序连接SQL Server。</p>
-<p>freetds的编译和安装命令如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">./configure --with-tdsver=8.0 --<span class="built_in">enable</span>-msdblib</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
-<p>configure的这两个参数是必不可少的，否则可能无法连接SQL Server。</p>
-<p>安装后修改<strong>freetds.conf</strong>（<em>一般应该在/usr/local/etc/freetds.conf</em>），添加如下内容：</p>
-<blockquote><br>[mysvr]<br>        host = 10.1.29.40<br>        port = 1433<br>        tds version = 8.0<br>        client charset = utf-8<br></blockquote>
-
-<p>上述参数应根据实际情况修改。</p>
-<p>最后使用如下命令测试连接：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tsql -S mysvr -U sa -P 123456</span><br></pre></td></tr></table></figure>
-<p>给公司产品做Linux下的安装包，把开发环境放在了Cygwin中，非常享受在全屏、半透明的mintty下敲命令。今天发现在Cygwin下也是可以编译安装Linux下的程序的，只是效率非常低下。故上述内容对Cygwin环境同样成立。</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
       <article id="post-howto-do-auto-listing-after-changing-directory" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -807,7 +802,7 @@ ga('send', 'pageview');
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2019 晴耕雨讀&nbsp;
+      &copy; 2020 晴耕雨讀&nbsp;
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/52binge/hexo-theme-blairos">blairos</a>
     </div>
   </div>

@@ -151,6 +151,68 @@ ga('send', 'pageview');
 
 
     
+      <article id="post-too-many-echoes-may-crash-php" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/too-many-echoes-may-crash-php/"><strong>PHP后台echo过多会导致进程崩溃</strong></a>
+      <small class="article-date-index">&nbsp; 2010-01-31</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/too-many-echoes-may-crash-php/" class="article-date">
+  <time datetime="2010-01-30T16:00:00.000Z" itemprop="datePublished">2010-01-31</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/too-many-echoes-may-crash-php/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>这是去年晚些时侯发现的一个问题。</p>
+<p>公司产品的后台定时任务应该是用独立的PHP进程驱动的。在做一个项目的时候，为了便于手工调试，我在定时任务中使用了大量的echo输出信息并在浏览器中手工执行此任务的脚本。</p>
+<p>手工执行通过，输出信息完全没有问题。但在实际运行的过程中，一个很诡异的事情发生了：即使我将实际处理数据的代码全部注释掉，只对原始数据做简单的查询，此定时任务仍然极其健壮地中途退出。最要命的是无论程序日志还是PHP的错误日志，都没有任何相关信息。直到后来我把所有echo输出都取消，问题才解决。</p>
+<p>事后模糊地记得很久以前似乎在哪本书上看到过在无输出设备的情况下echo过多数据会导致PHP进程崩溃的内容，但原因已想不起来了。</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-cube-is-back" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -854,107 +916,6 @@ Find the product <b><em>abc</em></b>.
 
 
     
-      <article id="post-project-euler-7" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/project-euler-7/"><strong>欧拉工程第七解</strong></a>
-      <small class="article-date-index">&nbsp; 2008-10-31</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/project-euler-7/" class="article-date">
-  <time datetime="2008-10-30T16:00:00.000Z" itemprop="datePublished">2008-10-31</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/project-euler-7/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>第七解：</p>
-
-<blockquote><p>By listing the first six prime numbers: 2, 3, 5, 7, 11, and 13, we can see that the 6th prime is 13.</p>
-
-<p>What is the 10001st prime number?</p></blockquote>
-
-<p>穷举，并加以最大程度的优化：对大于2的素数，只判断奇数；判断一个奇数是否素数时，只拿已经找到的素数中小于第这个数平方根的数来相除，如果均不能整除，就是素数。Python的实现：</p>
-
-<p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">IsPrimeNum</span><span class="params">(num,feed)</span>:</span></span><br><span class="line">    <span class="keyword">from</span> math <span class="keyword">import</span> sqrt</span><br><span class="line">    tmp = feed[:]</span><br><span class="line">    <span class="keyword">while</span> tmp[<span class="number">-1</span>] &gt; int(sqrt(num)):</span><br><span class="line">        tmp.pop()</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> tmp:</span><br><span class="line">        <span class="keyword">if</span> num % i == <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">False</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">True</span></span><br><span class="line"></span><br><span class="line">limit = <span class="number">10001</span></span><br><span class="line">feed = [<span class="number">2</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">7</span>]</span><br><span class="line">temp = <span class="number">7</span></span><br><span class="line">counter = <span class="number">4</span></span><br><span class="line"><span class="keyword">while</span> counter &lt; limit :</span><br><span class="line">    temp += <span class="number">2</span></span><br><span class="line">    <span class="keyword">if</span> IsPrimeNum(temp,feed):</span><br><span class="line">        feed.append(temp)</span><br><span class="line">        counter += <span class="number">1</span></span><br><span class="line"><span class="keyword">print</span> temp</span><br></pre></td></tr></table></figure>
-</p>
-
-
-<p>执行了一下，在我这里居然用了五百秒才出结果，神啊，差不多十分钟啊。想到PHP号称速度很快，于是用PHP重新实现了一下：</p>
-
-<p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">IsPrimeNum</span><span class="params">($num,$feed)</span></span>&#123;</span><br><span class="line">    $base = floor(sqrt($num));</span><br><span class="line">    <span class="keyword">foreach</span>($feed <span class="keyword">as</span> $i=&gt;$v)&#123;</span><br><span class="line">        <span class="keyword">if</span>($v &gt; $base)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>($num % $v == <span class="number">0</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$limit = <span class="number">10001</span>;</span><br><span class="line">$feed = <span class="keyword">array</span>(<span class="number">2</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">7</span>);</span><br><span class="line">$counter = <span class="number">4</span>;</span><br><span class="line">$tmp = <span class="number">7</span>;</span><br><span class="line"><span class="keyword">while</span>($counter &lt; $limit)&#123;</span><br><span class="line">    $tmp += <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">if</span>(IsPrimeNum($tmp,$feed))&#123;</span><br><span class="line">        $counter++;</span><br><span class="line">        $feed[] = $tmp;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> $tmp;</span><br></pre></td></tr></table></figure>
-</p>
-
-
-<p>还好，七十四秒出结果，看来PHP的牛皮不是吹的。当然，Lua会更快：</p>
-
-<p>
-<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">IsPrimeNum</span><span class="params">(num,feed)</span></span></span><br><span class="line">    <span class="built_in">require</span>(<span class="string">'math'</span>)</span><br><span class="line">    <span class="keyword">local</span> limit = <span class="built_in">math</span>.<span class="built_in">floor</span>(<span class="built_in">math</span>.<span class="built_in">sqrt</span>(num))</span><br><span class="line">    <span class="keyword">for</span> i,v <span class="keyword">in</span> <span class="built_in">ipairs</span>(feed) <span class="keyword">do</span></span><br><span class="line">        <span class="keyword">if</span> v &gt; limit <span class="keyword">then</span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">if</span> num % v == <span class="number">0</span> <span class="keyword">then</span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> limit = <span class="number">10001</span></span><br><span class="line"><span class="keyword">local</span> feed = &#123;<span class="number">2</span>,<span class="number">3</span>,<span class="number">5</span>,<span class="number">7</span>&#125;</span><br><span class="line"><span class="keyword">local</span> counter = <span class="number">4</span></span><br><span class="line"><span class="keyword">local</span> tmp = <span class="number">7</span></span><br><span class="line"><span class="keyword">while</span> counter &lt; limit <span class="keyword">do</span></span><br><span class="line">    tmp = tmp + <span class="number">2</span></span><br><span class="line">    <span class="keyword">if</span> IsPrimeNum(tmp,feed) <span class="keyword">then</span></span><br><span class="line">        counter = counter + <span class="number">1</span></span><br><span class="line">        <span class="built_in">table</span>.<span class="built_in">insert</span>(feed,tmp)</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(tmp)</span><br></pre></td></tr></table></figure>
-</p>
-
-
-<p>执行完后还是吓了一跳，0.3秒，同样是语言，效率的差别咋就那么大呢？！我在想用Java会不会算到2009去。</p>
-
-<p>我不相信这道题用Python就那么难解，下面是用递归实现的程序：</p>
-
-<p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> sqrt</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">GuessPrime</span><span class="params">(feed,limit)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> feed == <span class="number">2</span> :</span><br><span class="line">        <span class="keyword">return</span> [<span class="number">2</span>]</span><br><span class="line">    <span class="keyword">elif</span> feed == <span class="number">3</span> :</span><br><span class="line">        <span class="keyword">return</span> [<span class="number">2</span>,<span class="number">3</span>]</span><br><span class="line">    </span><br><span class="line">    tmp = int(sqrt(feed))</span><br><span class="line">    primes = GuessPrime(tmp,limit)</span><br><span class="line">    </span><br><span class="line">    base = <span class="number">0</span></span><br><span class="line">    <span class="keyword">if</span> tmp % <span class="number">2</span> == <span class="number">0</span>:</span><br><span class="line">        base = tmp + <span class="number">1</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        base = tmp</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(base,feed,<span class="number">2</span>):</span><br><span class="line">        flag = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> primes:</span><br><span class="line">            <span class="keyword">if</span> i % j == <span class="number">0</span>:</span><br><span class="line">                flag = <span class="number">1</span></span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">if</span> flag == <span class="number">0</span>:</span><br><span class="line">            primes.append(i)</span><br><span class="line">            <span class="keyword">if</span> len(primes) == limit:</span><br><span class="line">                <span class="keyword">return</span> primes</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> primes</span><br><span class="line"></span><br><span class="line">limit = <span class="number">10001</span></span><br><span class="line">feed = <span class="number">1000000</span></span><br><span class="line">primes = GuessPrime(feed,limit)</span><br><span class="line"><span class="keyword">print</span> primes[limit<span class="number">-1</span>]</span><br></pre></td></tr></table></figure>
-</p>
-
-
-<p>11秒就出了结果，说到底，算法的改进才是硬道理！</p>
-
-<p><a href="http://picasaweb.google.com/lh/photo/Uqg0Cu8ZWv5tlQ84nbVGZw" target="_blank" rel="noopener"><img src="http://lh4.ggpht.com/_ceUJ_lBTHzc/SQsdErNSeSI/AAAAAAAAAlA/D7Wia09MD6o/s400/project_euler_problem_007.png"></a></p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
       <nav id="page-nav">
         <a class="extend prev" rel="prev" href="/page/38/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/37/">37</a><a class="page-number" href="/page/38/">38</a><span class="page-number current">39</span><a class="page-number" href="/page/40/">40</a><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/40/">Next &raquo;</a>
       </nav>
@@ -965,7 +926,7 @@ Find the product <b><em>abc</em></b>.
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2019 晴耕雨讀&nbsp;
+      &copy; 2020 晴耕雨讀&nbsp;
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/52binge/hexo-theme-blairos">blairos</a>
     </div>
   </div>

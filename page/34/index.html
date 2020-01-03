@@ -70,6 +70,75 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-howto-remove-eof-in-vim" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/howto-remove-eof-in-vim/"><strong>Vim保存文件时移除尾行换行符的方法</strong></a>
+      <small class="article-date-index">&nbsp; 2010-12-05</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/howto-remove-eof-in-vim/" class="article-date">
+  <time datetime="2010-12-04T16:00:00.000Z" itemprop="datePublished">2010-12-05</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/howto-remove-eof-in-vim/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Vim认为一个文本文件的每一行都应该由一换行符结束，即使文件的最后一行也不例外。这就使得Vim保存过的文本文件在其它文本编辑器中查看时可能会在文件末尾多出一个空行。一般来说，这不是个问题，但对于程序员来说，有时候一些不规范的运行环境或其它组件就要求文件的最后一行不能有换行符，否则就会出莫名其妙的问题，尤其是在Windows环境下最常见。</p>
+<p>要在保存文件时不在最后一行添加换行符，最常见、最简单的方法就是：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">:<span class="keyword">set</span> binary</span><br><span class="line">:<span class="keyword">set</span> noendofline</span><br></pre></td></tr></table></figure>
+<p>但是这样做有一个问题，就是会把DOS格式的文件自动转换成UNIX格式，WinSlave们肯定不希望这么做。</p>
+<p>因此，可在vimrc中加入如下内容：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">" Save the current buffer as a file with no EOF sign.</span></span><br><span class="line"><span class="function"><span class="keyword">function</span>! <span class="title">SaveAsNOEOF</span><span class="params">(filename)</span></span></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">a</span>=<span class="built_in">getline</span>(<span class="number">1</span>,<span class="built_in">line</span>(<span class="string">'$'</span>)-<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">b</span>=<span class="keyword">map</span>(<span class="keyword">a</span>, <span class="string">'iconv(v:val,"'</span>.&amp;enc.<span class="string">'","'</span>.&amp;fenc.<span class="string">'") . nr2char(13)'</span>)</span><br><span class="line">    <span class="keyword">call</span> <span class="built_in">extend</span>(<span class="keyword">b</span>, <span class="built_in">getline</span>(<span class="string">'$'</span>, <span class="string">'$'</span>))</span><br><span class="line">    <span class="keyword">call</span> <span class="built_in">writefile</span>(<span class="keyword">b</span>,<span class="variable">a:filename</span>, <span class="string">'b'</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="variable">a:filename</span> == <span class="built_in">bufname</span>(<span class="string">'%'</span>)</span><br><span class="line">        <span class="keyword">set</span> nomodified</span><br><span class="line">    <span class="keyword">endif</span></span><br><span class="line"><span class="keyword">endfunction</span></span><br><span class="line"><span class="comment">" Save the current buffer and get rid of the EOF sign.</span></span><br><span class="line"><span class="function"><span class="keyword">function</span>! <span class="title">SaveNOEOF</span><span class="params">()</span></span></span><br><span class="line">    <span class="keyword">call</span> SaveAsNOEOF(<span class="built_in">bufname</span>(<span class="string">'%'</span>))</span><br><span class="line"><span class="keyword">endfunction</span></span><br><span class="line">command! -<span class="built_in">complete</span>=<span class="keyword">file</span> -nargs=<span class="number">0</span> SaveNOEOF :<span class="keyword">call</span> SaveNOEOF()</span><br><span class="line">command! -<span class="built_in">complete</span>=<span class="keyword">file</span> -nargs=<span class="number">1</span> SaveAsNOEOF :<span class="keyword">call</span> SaveAsNOEOF(<span class="symbol">&lt;q-args&gt;</span>)</span><br></pre></td></tr></table></figure>
+<p>然后就可以使用SaveNOEOF和SaveAsNOEOF两条命令去保存没有EOF的文件了。</p>
+<p><em>说明：本文的目的在于保存文件时移除最后一行的换行符，而并非移除EOF，上述配置中使用EOF只为记忆更容易起见。</em></p>
+<p><strong>更新：</strong></p>
+<blockquote><br><strong>2010-12-15</strong><br><br><ol><br>    <li>修正SaveNOEOF命令报缺少参数的错误的问题</li><br>    <li>修正保存当前buffer后没有变更文档修改状态的问题</li><br>    <li>修正保存文件后总是将编码转换成encoding选项的值的问题</li><br></ol><br><br><br></blockquote>
+
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-a-fools-paradise" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -707,87 +776,6 @@ initrd /boot/kernel26.img
 
 
     
-      <article id="post-howto-create-bootable-udisk-for-puppylinux" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/howto-create-bootable-udisk-for-puppylinux/"><strong>制作Puppy Linux的启动U盘</strong></a>
-      <small class="article-date-index">&nbsp; 2010-11-11</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/howto-create-bootable-udisk-for-puppylinux/" class="article-date">
-  <time datetime="2010-11-10T16:00:00.000Z" itemprop="datePublished">2010-11-11</time>
-</a>-->
-      <!--
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/howto-create-bootable-udisk-for-puppylinux/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Puppy Linux的体积只有一百多兆字节，但图形界面实现得很完备，也包含了很多短小精悍的工具，安装和使用都很方便，非常适合用来做日常维护工具盘。</p>
-<p>Puppy自带了傻瓜式的启动U盘制作工具，但官方只提供整个发行版的ISO镜像下载，通常需要刻录成光盘并引导系统启动后才可以继续将Puppy安装到U盘。其实也可以不刻录光盘，而是把Puppy安装到硬盘上。</p>
-<p>Puppy本身封装得很好，对软硬件环境的要求不高，完全可以安装到一个独立的目录中而不影响其它操作系统。本文基于Linux环境下通过GRUB引导的前提，Windows下应该可以通过GRUB4DOS引导。</p>
-<ol>
-<li>挂载Puppy的ISO镜像到一个目录：</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mount -o loop puppy.iso /media/puppy</span><br></pre></td></tr></table></figure>
-<ol start="2">
-<li>复制镜像中的所有文件到根目录下的puppy目录：</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo mkdir /puppy</span><br><span class="line">sudo cp -a /media/puppy/* /puppy</span><br></pre></td></tr></table></figure>
-<ol start="3">
-<li>修改GRUB的引导文件，加入Puppy的引导项：</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /boot/grub/menu.lst</span><br></pre></td></tr></table></figure>
-<blockquote><br># (2) Puppy<br>title Puppy<br>root (hd0,2)<br>kernel /puppy/vmlinuz root=/dev/ram0<br>initrd /puppy/initrd.gz<br></blockquote>
-
-<ol start="4">
-<li><p>重启系统并启动到Puppy</p>
-</li>
-<li><p>使用桌面上的<strong>Setup</strong>中的<strong>Puppy Universal Installer</strong>制作启动U盘。不过虽然这是官方推荐的制作工具，但我的杂牌U盘无论如何也不能引导系统，最后使用另一个备选的工具“<strong>BootFlash USB Installer</strong>”的<strong>USB-HDD</strong>模式制作成功。</p>
-</li>
-</ol>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
       <nav id="page-nav">
         <a class="extend prev" rel="prev" href="/page/33/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/32/">32</a><a class="page-number" href="/page/33/">33</a><span class="page-number current">34</span><a class="page-number" href="/page/35/">35</a><a class="page-number" href="/page/36/">36</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/35/">Next &raquo;</a>
       </nav>
@@ -798,7 +786,7 @@ initrd /boot/kernel26.img
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2019 晴耕雨讀&nbsp;
+      &copy; 2020 晴耕雨讀&nbsp;
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/52binge/hexo-theme-blairos">blairos</a>
     </div>
   </div>

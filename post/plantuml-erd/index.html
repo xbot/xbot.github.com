@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>用PlantUML实现ERD - 晴耕雨讀</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="很长一段时间，我们都在用MySQLWorkbench画ER图。但是这个东西有一些缺陷，导致体验很不好。 首先它生成的文件是二进制的，做不了版本控制。这意味着在版本迭代的过程中做数据结构评审的体验很糟糕。其次，离线文件难以管理，不利于团队协作。第三，图形界面虽然简单，但并不等价于高效。用它画图的成本还是比较高的。 PlantUML是个基于文本、灵活且强大的UML画图工具，高度可定制，而且可以集成到多">
+<meta name="keywords" content="编程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用PlantUML实现ERD">
+<meta property="og:url" content="http://0x3f.org/post/plantuml-erd/index.html">
+<meta property="og:site_name" content="晴耕雨讀">
+<meta property="og:description" content="很长一段时间，我们都在用MySQLWorkbench画ER图。但是这个东西有一些缺陷，导致体验很不好。 首先它生成的文件是二进制的，做不了版本控制。这意味着在版本迭代的过程中做数据结构评审的体验很糟糕。其次，离线文件难以管理，不利于团队协作。第三，图形界面虽然简单，但并不等价于高效。用它画图的成本还是比较高的。 PlantUML是个基于文本、灵活且强大的UML画图工具，高度可定制，而且可以集成到多">
+<meta property="og:locale" content="zh-TW">
+<meta property="og:image" content="http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/xbot/plantuml-erd/master/examples/Posts.md">
+<meta property="og:updated_time" content="2020-01-03T09:58:19.476Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="用PlantUML实现ERD">
+<meta name="twitter:description" content="很长一段时间，我们都在用MySQLWorkbench画ER图。但是这个东西有一些缺陷，导致体验很不好。 首先它生成的文件是二进制的，做不了版本控制。这意味着在版本迭代的过程中做数据结构评审的体验很糟糕。其次，离线文件难以管理，不利于团队协作。第三，图形界面虽然简单，但并不等价于高效。用它画图的成本还是比较高的。 PlantUML是个基于文本、灵活且强大的UML画图工具，高度可定制，而且可以集成到多">
+<meta name="twitter:image" content="http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/xbot/plantuml-erd/master/examples/Posts.md">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="/webfonts/ptserif/main.css" rel="stylesheet" type="text/css">
+  <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-93233020-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+</head>
+</html>
+<body>
+  <div id="container">
+    <!-- blair add baidu tongji start... @2017.10.03 -->
+<!-- blair add baidu tongji end ! @2017.10.03 -->
+
+<header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
+      <a id="logo" class="logo" href="/"></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/archives">目录</a>
+        
+          <a class="main-nav-link" href="/categories">分类</a>
+        
+          <a class="main-nav-link" href="/tags">标签</a>
+        
+          <a class="main-nav-link" href="https://t.me/s/blingings">不灵</a>
+        
+          <a class="main-nav-link" href="/about">关于</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div id="search-form-wrap">
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
+
+    <br>
+    <section id="main" class="outer"><article id="post-plantuml-erd" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      用PlantUML实现ERD
+      <small class="article-detail-date-index">&nbsp; 2020-01-03</small>
+    </h1>
+  
+
+
+        <div class="page-title"></div>
+        <br>
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/plantuml-erd/" class="article-date">
+  <time datetime="2020-01-03T09:01:41.000Z" itemprop="datePublished">2020-01-03</time>
+</a>-->
+      <!-- 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+--><!-- by blair 160724 -->
+      <!-- by blair
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/plantuml-erd/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>很长一段时间，我们都在用MySQLWorkbench画ER图。但是这个东西有一些缺陷，导致体验很不好。</p>
+<p>首先它生成的文件是二进制的，做不了版本控制。这意味着在版本迭代的过程中做数据结构评审的体验很糟糕。其次，离线文件难以管理，不利于团队协作。第三，图形界面虽然简单，但并不等价于高效。用它画图的成本还是比较高的。</p>
+<p>PlantUML是个基于文本、灵活且强大的UML画图工具，高度可定制，而且可以集成到多种开发工具中。主流的IDE、文本编辑器都可以集成PlantUML，以便用自己最熟悉的工具画图并实时预览。基于文本的特性使得版本控制和Code Review很容易实现。如果VCS用的是Gitlab，可以更进一步，借助PlantUML Server实现实时预览。即使对于像Github这种暂时没有提供支持的Web平台，也有变通的解决方案。</p>
+<a id="more"></a>
+<p>基于以上情况，我封装了一个用PlantUML画ER图的模板。用这个模板画图的源码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line"></span><br><span class="line">!include https://raw.githubusercontent.com/xbot/plantuml-erd/master/src/Library.iuml</span><br><span class="line"></span><br><span class="line">&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;</span><br><span class="line">&apos; Entities</span><br><span class="line">&apos;</span><br><span class="line">&apos; Relationships</span><br><span class="line">&apos; one-to-one relationship</span><br><span class="line">&apos;     user -- user_profile : &quot;A user only \nhas one profile&quot;</span><br><span class="line">&apos; one to may relationship</span><br><span class="line">&apos;     user --&gt; session : &quot;A user may have\n many sessions&quot;</span><br><span class="line">&apos; many to many relationship</span><br><span class="line">&apos; Add mark if you like</span><br><span class="line">&apos;     user &quot;1&quot; --&gt; &quot;*&quot; user_group : &quot;A user may be \nin many groups&quot;</span><br><span class="line">&apos;     group &quot;1&quot; --&gt; &quot;0..N&quot; user_group : &quot;A group may \ncontain many users&quot;</span><br><span class="line">&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;</span><br><span class="line"></span><br><span class="line">Table(posts, 文章表) &#123;</span><br><span class="line">    PRIMARY_KEY</span><br><span class="line">    TIMESTAMPS</span><br><span class="line">    Column(&quot;title&quot;, &quot;NVARCHAR[30]&quot;, 1, &quot;&quot;, &quot;标题&quot;)</span><br><span class="line">    Column(&quot;status&quot;, UN(&quot;TINYINT&quot;), 1, &quot;1&quot;, &quot;状态&quot;, &quot;1:草稿; 2:已发布&quot;)</span><br><span class="line">    Column(&quot;source&quot;, UN(&quot;TINYINT&quot;), 1, &quot;&quot;, &quot;来源：1，原创；2，转载&quot;)</span><br><span class="line">    Column(&quot;category_id&quot;, PK_TYPE, 1, &quot;&quot;, &quot;分类&quot;)</span><br><span class="line">    Column(&quot;created_by&quot;, PK_TYPE, 1, &quot;0&quot;, &quot;创建者ID&quot;)</span><br><span class="line">    Column(&quot;published_at&quot;, &quot;DATETIME&quot;, 0, &quot;&quot;, &quot;发表时间&quot;)</span><br><span class="line">    Column(&quot;content&quot;, &quot;TEXT&quot;, 1, &quot;&quot;, &quot;内容&quot;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Table(comments, 评论表) &#123;</span><br><span class="line">    PRIMARY_KEY</span><br><span class="line">    TIMESTAMPS</span><br><span class="line">    Column(&quot;post_id&quot;, PK_TYPE, 1, &quot;&quot;, &quot;文章ID&quot;)</span><br><span class="line">    Column(&quot;user_id&quot;, PK_TYPE, 1, &quot;&quot;, &quot;用户ID&quot;)</span><br><span class="line">    Column(&quot;content&quot;, &quot;NVARCHAR[255]&quot;, 1, &quot;&quot;, &quot;评论内容&quot;)</span><br><span class="line">&#125;</span><br><span class="line">posts --&gt; comments</span><br><span class="line"></span><br><span class="line">Table(post_logs, 文章日志表) &#123;</span><br><span class="line">    PRIMARY_KEY</span><br><span class="line">    TIMESTAMPS</span><br><span class="line">    Column(&quot;post_id&quot;, PK_TYPE, 1, &quot;&quot;, &quot;文章ID&quot;)</span><br><span class="line">    Column(&quot;user_id&quot;, PK_TYPE, 1, &quot;&quot;, &quot;操作者ID&quot;)</span><br><span class="line">    Column(&quot;action&quot;, UN(&quot;TINYINT&quot;), 1, &quot;0&quot;, &quot;操作类型&quot;, &quot;1:创建; 2:修改; 3:删除&quot;)</span><br><span class="line">    Column(&quot;data&quot;, &quot;TEXT&quot;, 0, &quot;&quot;, &quot;操作详情&quot;)</span><br><span class="line">&#125;</span><br><span class="line">posts --&gt; post_logs</span><br><span class="line"></span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+<p>效果：</p>
+<p><img src="http://www.plantuml.com/plantuml/proxy?cache=no&amp;src=https://raw.githubusercontent.com/xbot/plantuml-erd/master/examples/Posts.md" alt="Example 1"></p>
+<p>具体的源码和例子可以参考<a href="https://github.com/xbot/plantuml-erd" target="_blank" rel="noopener">Git仓库</a>。</p>
+<p>下面说说怎么集成到Gitlab。</p>
+<p>首先需要一个可用的PlantUML Server。官方提供了一个现成的、开放的服务（<code>http://www.plantuml.com/plantuml/</code>）。如果对响应速度或私密性有要求，就需要部署私有的服务了。</p>
+<p><a href="https://github.com/plantuml/plantuml-server" target="_blank" rel="noopener">官方</a>提供了多种部署方式，我用的是最简单的docker方式。</p>
+<p>首先克隆官方仓库。</p>
+<p>然后在仓库根目录下执行命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 18080:8080 plantuml/plantuml-server:jetty</span><br></pre></td></tr></table></figure>
+<p>其中“18080”是服务器提供对外服务的端口。</p>
+<p>最后，把上述服务地址配置到Gitlab里即可，选项路径为<code>管理区域→Settings→PlantUML</code>。</p>
+<p>之后，可以创建Markdown文件，格式为：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="code">```plantuml</span></span><br><span class="line"><span class="code">PlantUML源码</span></span><br><span class="line"><span class="code">```</span></span><br></pre></td></tr></table></figure>
+<p>当在Gitlab中点击该文件时，就会显示实时渲染的图了。</p>
+<p>对于Github这种暂时不支持集成PlantUML的平台，可以利用PlantUML Server提供的代理服务实现，拼接一个如下所示的URL并当作图片链接插入网页即可：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://www.plantuml.com/plantuml/proxy?cache=no&amp;src=https://raw.githubusercontent.com/xbot/plantuml-erd/master/examples/Posts.md</span><br></pre></td></tr></table></figure>
+
+      
+     <!-- by blair add this if sentence at 20160725 -->
+      <br>
+      
+<!--
+<div id="bottom-donation-section">
+<span style="font-size: 1.0em; padding:0em 1em 0.5em 1em; margin: 0 auto;">
+  <strong style="vertical-align: top;">分享到:</strong>
+    <div class="j_handlclick"  style="background: url(/images/logos/share_facebook_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://www.facebook.com/sharer/sharer.php?u=" target="_blank">
+    </div>
+    <div class="j_handlclick"  style="background: url(/images/logos/share_weibo_icon.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://service.weibo.com/share/share.php?url" target="_blank">
+    </div>
+    <div class="j_handlclick"  style="background: url(/images/logos/share_wechat_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://api.addthis.com/oexchange/0.8/forward/wechat/offer?url=" target="_blank">
+    </div>
+    <div class="j_handlclick"  style="background: url(/images/logos/share_twitter_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://twitter.com/intent/tweet?url=" target="_blank">
+    </div>
+  <br>  
+  <br>  
+  &nbsp;&nbsp;如果您觉得这篇文章对您的学习很有帮助, 请您也分享它, 让它能再次帮助到更多的需要学习的人.
+您的<a href="/support/"><strong>支持</strong></a>将鼓励我继续创作 !
+  <br>  
+
+</span>
+</div>
+-->
+<div class="well">
+  <!--
+  原创文章，转载请注明： 转载自<a href="http://52binge.github.io"> Blair Chan's Blog</a>，作者：
+  <a href="/about">Blair Chan</a> <br>
+  -->
+  本文基于<a target="_blank" title="Creative Commons Attribution 4.0 international License" href="https://creativecommons.org/licenses/by-nc/4.0/">署名4.0国际许可协议</a>发布，转载请保留本文署名和文章链接。 如您有任何授权方面的协商，请联系我。
+</div>
+ <!-- by blair add 160724-->
+    
+    </div>
+    
+    
+      <footer class="article-footer">
+        <!-- <div class="well" style="width:100px; height:30px;"></div>  by blair-->
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+ <!-- by blair add 160724-->
+        <!--
+        <div style="width:100px; height:30px;"></div> by blair add 160724
+        -->
+        
+  <div class="article-tag">
+    <a class="article-tag-link" href="/tags/编程/">编程</a>
+  </div>
+
+
+      </footer>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/post/the-expirence-of-airpods-pro/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">AirPods Pro的使用感受&nbsp;<span>&gt;</span></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</section>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 晴耕雨讀&nbsp;
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/52binge/hexo-theme-blairos">blairos</a>
+    </div>
+  </div>
+</footer>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX"],
+    tex2jax: {
+      inlineMath: [ ['$','$'], ['\\(','\\)'] ],
+      displayMath: [ ['$$','$$']],
+      processEscapes: true
+    }
+  });
+</script>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML,http://myserver.com/MathJax/config/local/local.js">
+</script>
+
+    
+<script type="text/javascript"> <!-- add by blair 0724 type=text/javascript -->
+  var disqus_shortname = '0x3f';
+  
+  var disqus_url = 'http://0x3f.org/post/plantuml-erd/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="/js/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

@@ -70,6 +70,109 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-how-to-control-fan-speed-with-thinkfan" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/how-to-control-fan-speed-with-thinkfan/"><strong>在Archlinux下使用thinkfan控制Thinkpad x220的风扇转速</strong></a>
+      <small class="article-date-index">&nbsp; 2012-04-14</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/how-to-control-fan-speed-with-thinkfan/" class="article-date">
+  <time datetime="2012-04-13T16:00:00.000Z" itemprop="datePublished">2012-04-14</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/how-to-control-fan-speed-with-thinkfan/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Archlinux目前对Thinkpad风扇的自动控制效果并不好，气温上升后很容易出现一直在三千多转一直跑的问题。thinkfan是目前用的比较多的自动控制风扇转速的程序，但Google到的配置thinkfan的文章大多语焉不详，可能是跟具体的发行版有关，因为貌似有些发行版中安装了thinkfan后会自动生成缺省的配置文件，但在目前的AUR中的包被安装后却没有生成任何配置文件。</p>
+
+<p>下面是我在Archlinux下配置的步骤，实际效果很好，现在只要不看视频、不编译程序、不启动Chromium，一般是两千九百转的速度，安静多了。</p>
+
+<h2>lm_sensors</h2>
+
+<p>安装lm_sensors并执行命令初始化：</p>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 一路回车</span></span><br><span class="line">sudo sensors-detect</span><br></pre></td></tr></table></figure>
+
+<p>将sensors加入rc.conf中DAEMONS中，开机启动。</p>
+
+<p>启动sensors服务：</p>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo rc.d start sensors</span><br></pre></td></tr></table></figure>
+
+<h2>thinkpad_acpi</h2>
+
+<p>修改文件“<strong>/etc/modprobe.d/thinkpad_acpi.conf</strong>”：</p>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">options thinkpad_acpi fan_control=1</span><br></pre></td></tr></table></figure>
+
+<p>我这里虽没有把thinkpad_acpi加到rc.conf的MODULES中，但lsmod也是可以看到它的，说明还是自动启用了。要使上面这项配置生效，必须重启电脑，我这里重启thinkpad_acpi模块时报错说该模块正在被使用。</p>
+
+<h2>thinkfan</h2>
+
+<p>安装thinkfan并修改文件“<strong>/etc/default/thinkfan</strong>”：</p>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">START=yes</span><br></pre></td></tr></table></figure>
+
+<p>修改文件“<strong>/etc/thinkfan.conf</strong>”：</p>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">sensor /sys/class/hwmon/hwmon0/temp1_input</span><br><span class="line"></span><br><span class="line">(0,  0, 55)</span><br><span class="line">(1, 48, 60)</span><br><span class="line">(2, 50, 61)</span><br><span class="line">(3, 52, 63)</span><br><span class="line">(4, 56, 65)</span><br><span class="line">(5, 59, 66)</span><br><span class="line">(7, 63, 32767)</span><br></pre></td></tr></table></figure>
+
+<p>将thinkfan加入rc.conf的DAEMONS中，开机自动启动。</p>
+
+<p>启动thinkfan：</p>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo thinkfan</span><br></pre></td></tr></table></figure>
+
+<h2>查看状态</h2>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 看CPU温度和风扇转速</span></span><br><span class="line">sensors</span><br><span class="line"></span><br><span class="line"><span class="comment"># 看风扇详细信息</span></span><br><span class="line">cat /proc/acpi/ibm/fan</span><br></pre></td></tr></table></figure>
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-turbocrm-cluster-express-v1-released" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -717,69 +820,6 @@ ga('send', 'pageview');
 
 
     
-      <article id="post-highlighting-paired-html-tags-using-matchtag-vim" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/highlighting-paired-html-tags-using-matchtag-vim/"><strong>MatchTag.vim: 高亮配对的HTML标签</strong></a>
-      <small class="article-date-index">&nbsp; 2011-11-23</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/highlighting-paired-html-tags-using-matchtag-vim/" class="article-date">
-  <time datetime="2011-11-22T16:00:00.000Z" itemprop="datePublished">2011-11-23</time>
-</a>-->
-      <!--
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/highlighting-paired-html-tags-using-matchtag-vim/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>两年前我曾在<a href="http://vim.1045645.n5.nabble.com/How-can-Vim-highlight-the-matching-tag-when-I-put-the-cursor-on-the-other-one-in-a-pair-of-tags-td1177554.html" target="_blank" rel="noopener">Vim邮件列表</a>里问怎样高亮配对的HTML标签，但没能解决。今天意外收到一封邮件，Linqq童鞋在<a href="http://stackoverflow.com/questions/8168320/can-vim-highlight-matching-html-tags-like-notepad" target="_blank" rel="noopener">StackOverflow</a>上问了同样的问题，有人就写了这个<a href="http://www.vim.org/scripts/script.php?script_id=3818" target="_blank" rel="noopener">插件</a>。</p>
-
-<p><a href="https://picasaweb.google.com/lh/photo/wGB584-nLWrQRHCQ7qgADdMTjNZETYmyPJy0liipFm0?feat=embedwebsite" target="_blank" rel="noopener"><img src="https://lh3.googleusercontent.com/-ojoHK5ST944/Ts0QmwHOCXI/AAAAAAAAB1Q/ye0ko4Ob-gc/s800/2011-11-23.22%25253A40%25253A58.%2525E6%252593%2525B7%2525E5%25258F%252596%2525E9%252581%2525B8%2525E5%25258F%252596%2525E5%25258D%252580%2525E5%25259F%25259F.01.png" height="103" width="268"></a></p>
-
-<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
       <nav id="page-nav">
         <a class="extend prev" rel="prev" href="/page/27/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="page-number" href="/page/27/">27</a><span class="page-number current">28</span><a class="page-number" href="/page/29/">29</a><a class="page-number" href="/page/30/">30</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/29/">Next &raquo;</a>
       </nav>
@@ -790,7 +830,7 @@ ga('send', 'pageview');
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2019 晴耕雨讀&nbsp;
+      &copy; 2020 晴耕雨讀&nbsp;
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/52binge/hexo-theme-blairos">blairos</a>
     </div>
   </div>

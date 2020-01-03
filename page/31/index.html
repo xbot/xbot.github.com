@@ -70,6 +70,89 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-ultrablog-development-note" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/ultrablog-development-note/"><strong>UltraBlog.vim开发手记</strong></a>
+      <small class="article-date-index">&nbsp; 2011-04-11</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/ultrablog-development-note/" class="article-date">
+  <time datetime="2011-04-10T16:00:00.000Z" itemprop="datePublished">2011-04-11</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/ultrablog-development-note/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>对于<a href="http://blog.sina.com.cn/s/blog_694377f90100rmko.html" target="_blank" rel="noopener">博客已死</a>的说法，我一点都不感到奇怪。早在几年前博客还比较火的时候我就表达过对博客泡沫的<a href="http://0x3f.org/?p=209">看法</a>。</p>
+
+<p>经历了短暂的<a href="http://0x3f.org/?p=354">tumblog</a>的风头，微博成为现在最火的媒介。说博客已死，无非就是说微博将成为个人信息传播的主流。好吧，现在我知道那时候我所说的不懂什么是博客的人都去干什么了。</p>
+
+<p>但是博客还是会继续发展，微博的兴起只会减少滥竽充数。因为微博突出的是时效性，最缺乏的是系统性和可重复更新的能力。微博的短处，正是博客的长处。这让我对博客有了一个新的、迟到了很久的认识──一个好的博客，它的文章不应该是写掉就忘的，而应该是不断地更新著的。</p>
+
+<p><a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>就是出于这个需要而写的。</p>
+
+<p>我对博客客户端的使用大概可以追溯到四五年前，那时候博客正火，在比较了几个<a href="http://en.wikipedia.org/wiki/Blog_service_provider" target="_blank" rel="noopener">BSP</a>后选择了<a href="http://www.blogcn.com/" target="_blank" rel="noopener">中国博客网</a>，就是因为他们提供桌面客户端。后来独博之后也试用过几个通用的客户端，但都没坚持多久，最根本的原因是它们几乎无一例外地都是<a href="http://zh.wikipedia.org/wiki/%E6%89%80%E8%A6%8B%E5%8D%B3%E6%89%80%E5%BE%97" target="_blank" rel="noopener">WYSIWYG</a>。而WYSIWYG的编辑器生成的HTML源码几乎都使用inline的样式，这就导致文章的排版布局很难控制，我对WYSIWYG其实是很抵触的，至今都不怎么用Office这类东西。</p>
+
+<p>后来我意识到，我所需要的是样式与内容分离，于是准备自己写一个<a href="http://0x3f.org/?p=331">客户端</a>，后来由于工作的原因不了了之。与此同时，我自定义了一套文章格式并用Java写了一个转换文章到HTML的<a href="http://0x3f.org/?p=342">工具</a>，直到后来发现<a href="http://0x3f.org/?p=383">Markdown</a>，我才知道我其实是需要一个轻量标记语言。</p>
+
+<p>使用Markdown之后，写博客开始变得轻松愉快。我一度用过一段时间<a href="http://www.scintilla.org/SciTE.html" target="_blank" rel="noopener">SciTE</a>，还用<a href="http://zh.wikipedia.org/wiki/Lua" target="_blank" rel="noopener">Lua</a>写了个<a href="http://0x3f.org/?p=499">辅助脚本</a>。但是我需要一个完整的客户端来管理文章，而这是一个编辑器所不能胜任的，所以就著手实现一个支持Markdown的<a href="http://0x3f.org/?p=812">客户端</a>。这一次走得比较远，<a href="http://0x3f.org/?p=812">ForeverFantasy</a>最终达到了可用的程度，我一度用它写过一段时间的博客。但是作为一个Vim重症患者，wxPython的编辑器部件是远远达不到我需要的水平的。虽然后来还<a href="http://0x3f.org/?p=1409">实现</a>了调用外部程序处理文章内容（<em>当然也可以调用Vim</em>），但总归觉得不舒服，至今已经一年没更新了。</p>
+
+<p>直到前段时间试用了一下<a href="http://0x3f.org/?p=1861">VimRepress</a>，在修改这个插件的时候突然受到启发，我这几年的需求原来是可以这么简单地解决的。</p>
+
+<p>其实在几年前<a href="http://www.vim.org/scripts/script.php?script_id=1953" target="_blank" rel="noopener">vimpress</a>刚刚发布的时候我就了解过这个东西，包括此后接连发布的几个Vim写博客的插件，它们和我原来写的SciTE的那个辅助脚本没有本质的区别，都是博客编辑器。与完整的客户端相比，编辑器缺少对本地文章源码的管理，而且它们不记录文章源码和发布的文章的关联关系，简单地说是无状态的。这不符合博客文章持续更新的观点。</p>
+
+<p>UltraBlog.vim使用<a href="http://www.sqlalchemy.org/" target="_blank" rel="noopener">SQLAlchemy</a>做数据库抽象层，将所有文章的源码及其状态保存在本地的一个SQLite数据库中，并且以此为基础，通过<a href="http://en.wikipedia.org/wiki/XML-RPC" target="_blank" rel="noopener">XMLRPC</a>接口实现对博客文章、页面的<a href="http://en.wikipedia.org/wiki/Create,_read,_update_and_delete" target="_blank" rel="noopener">CRUD</a>操作。同时利用Vim分模式的特点实现了可分页的文章列表和文章编辑视图。</p>
+
+<p>UltraBlog.vim目前支持Markdown和HTML两种格式的文章，它最大的特点是在Markdown格式的源码和发布到博客中的文章之间建立联系，你可以随时修改本地数据库中的Markdown源码并更新博客中对应的文章。</p>
+
+<p>新的功能还会不断地加入。</p>
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-gnome3-launch-party" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -910,93 +993,6 @@ ga('send', 'pageview');
 
 
     
-      <article id="post-blogging-with-vim" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/blogging-with-vim/"><strong>使用Vim写博客</strong></a>
-      <small class="article-date-index">&nbsp; 2011-03-19</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/blogging-with-vim/" class="article-date">
-  <time datetime="2011-03-18T16:00:00.000Z" itemprop="datePublished">2011-03-19</time>
-</a>-->
-      <!--
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/blogging-with-vim/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a href="http://www.vim.org/scripts/script.php?script_id=3510" target="_blank" rel="noopener">VimRepress</a>是Vim写博客的插件中较新的一个，是久未更新的<a href="http://www.vim.org/scripts/script.php?script_id=1953" target="_blank" rel="noopener">Vimpress</a>的一个衍生版。</p>
-
-<p>虽然不是所有此类插件中功能最多的一个，但VimRepress非常实用，除包含最常用的几个功能外，还支持<a href="http://daringfireball.net/projects/markdown/" target="_blank" rel="noopener">Markdown</a>。但是当前版本的VimRepress在转换Markdown格式的字符串到HTML时，是通过直接调用外部命令<strong>markdown</strong>来实现的，这显然只是针对Linux（及其它类UNIX）系统设计的。</p>
-
-<p>为了使VimRepress支持在Windows下使用Markdown写文章，可以对它做一些改进。</p>
-
-<p>修改VimRepress的源文件<strong>blog.vim</strong>，在<code>if __name__ == "__main__":</code>这一行的上方加入如下两个函数：</p>
-
-<p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">markdown_preview2</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">import</span> sys</span><br><span class="line">    reload(sys)</span><br><span class="line">    sys.setdefaultencoding(<span class="string">'utf-8'</span>)</span><br><span class="line">    <span class="keyword">import</span> markdown2 <span class="keyword">as</span> mkd</span><br><span class="line"></span><br><span class="line">    <span class="keyword">global</span> vimpress_temp_dir</span><br><span class="line">    <span class="keyword">if</span> vimpress_temp_dir == <span class="string">''</span>:</span><br><span class="line">        vimpress_temp_dir = tempfile.mkdtemp(suffix=<span class="string">"vimpress"</span>)</span><br><span class="line">    temp_htm = os.path.join(vimpress_temp_dir, <span class="string">"vimpress_temp.htm"</span>)</span><br><span class="line">    html_heads = \</span><br><span class="line"><span class="string">"""&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;</span></span><br><span class="line"><span class="string">&lt;html&gt;</span></span><br><span class="line"><span class="string">&lt;head&gt;</span></span><br><span class="line"><span class="string">   &lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8"&gt;</span></span><br><span class="line"><span class="string">&lt;/head&gt;</span></span><br><span class="line"><span class="string">&lt;body&gt;</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line">    tmp_file = open(temp_htm, <span class="string">'w'</span>)</span><br><span class="line">    tmp_file.write(html_heads)</span><br><span class="line">    txt = <span class="string">"\n"</span>.join(vim.current.buffer[:])</span><br><span class="line">    <span class="comment">#txt = unicode(txt,'cp936')</span></span><br><span class="line">    tmp_file.write(mkd.markdown(txt))</span><br><span class="line">    <span class="comment">#tmp_file.write(mkd.markdown("\n".join(vim.current.buffer[:])))</span></span><br><span class="line">    tmp_file.close()</span><br><span class="line"></span><br><span class="line">    webbrowser.open(<span class="string">"file://%s"</span> % temp_htm)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">markdown_newpost2</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">import</span> sys</span><br><span class="line">    reload(sys)</span><br><span class="line">    sys.setdefaultencoding(<span class="string">'utf-8'</span>)</span><br><span class="line">    <span class="keyword">import</span> markdown2 <span class="keyword">as</span> mkd</span><br><span class="line"></span><br><span class="line">    <span class="keyword">global</span> vimpress_temp_dir</span><br><span class="line">    <span class="keyword">if</span> vimpress_temp_dir == <span class="string">''</span>:</span><br><span class="line">        vimpress_temp_dir = tempfile.mkdtemp(suffix=<span class="string">"vimpress"</span>)</span><br><span class="line">    temp_htm = os.path.join(vimpress_temp_dir, <span class="string">"vimpress_post.htm"</span>)</span><br><span class="line"></span><br><span class="line">    title = <span class="string">""</span></span><br><span class="line">    title_s = <span class="number">0</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">while</span> title_s &lt; <span class="number">10</span>:</span><br><span class="line">            <span class="keyword">if</span> vim.current.buffer[title_s].startswith(<span class="string">"#"</span>):</span><br><span class="line">                title = vim.current.buffer[title_s].strip(<span class="string">'#'</span>)</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            title_s += <span class="number">1</span></span><br><span class="line">    <span class="keyword">except</span> IndexError:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">    cur_file = vim.eval(<span class="string">'expand("%:p")'</span>)</span><br><span class="line">    <span class="keyword">if</span> cur_file <span class="keyword">is</span> <span class="keyword">None</span>: </span><br><span class="line">        cur_file = os.path.join(vimpress_temp_dir, <span class="string">"tmp_vimpress.mkd"</span>)</span><br><span class="line">        sys.stdout.write(<span class="string">"\n\nCurrent buffer saved to %s\n\n"</span> % cur_file)</span><br><span class="line">    vim.command(<span class="string">":w! %s"</span> % cur_file)</span><br><span class="line">    tmp_file = open(temp_htm, <span class="string">'w'</span>)</span><br><span class="line">    tmp_file.write(mkd.markdown(<span class="string">"\n"</span>.join(vim.current.buffer[:])))</span><br><span class="line">    tmp_file.close()</span><br><span class="line">    sys.stdout.write(<span class="string">"Press ENTER to continue."</span>)</span><br><span class="line">    vim.command(<span class="string">":bdelete"</span>)</span><br><span class="line">    vim.command(<span class="string">":r %s"</span> % temp_htm)</span><br><span class="line">    blog_new_post(title = title)</span><br></pre></td></tr></table></figure>
-</p>
-
-<p>这两个函数修改自原有的<strong>markdown<em>preview()</em></strong>和<strong>markdownnewpost()</strong>，由调用外部的<strong>markdown</strong>命令改为调用Python的<a href="http://code.google.com/p/python-markdown2/" target="_blank" rel="noopener">markdown2</a>模块来实现格式转换。</p>
-
-<p>然后，修改<strong>blog.vim</strong>中的命令映射，使VimRepress的<code>:MarkDownPreview</code>和<code>:MarkDownNewPost</code>命令在Windows下自动调用上述两个函数：</p>
-
-<p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="built_in">has</span>(<span class="string">"win32"</span>)</span><br><span class="line">    command! -nargs=<span class="number">0</span> MarkDownPreview exec(<span class="string">'py markdown_preview2()'</span>)</span><br><span class="line">    command! -nargs=<span class="number">0</span> MarkDownNewPost exec(<span class="string">'py markdown_newpost2()'</span>)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    command! -nargs=<span class="number">0</span> MarkDownPreview exec(<span class="string">'py markdown_preview()'</span>)</span><br><span class="line">    command! -nargs=<span class="number">0</span> MarkDownNewPost exec(<span class="string">'py markdown_newpost()'</span>)</span><br><span class="line"><span class="keyword">endif</span></span><br></pre></td></tr></table></figure>
-</p>
-
-<p>最后，只须安装Python的markdown2模块就可以用了。</p>
-
-<p><strong>2011-03-23更新：</strong></p>
-
-<p><a href="http://apt-blog.net/manage-multiple-wordpresses-with-new-vimpress" target="_blank" rel="noopener">pentie</a>已合并这些功能到<a href="http://ptcoding.googlecode.com/svn/trunk/vimpress/" target="_blank" rel="noopener">新版本</a>的VimRepress。</p>
-
-<p><strong>2011-04-04更新：</strong></p>
-
-<p>作为Markdown写博的重度患者，我觉得Vim的其它相关插件都缺乏对Markdown源码的有效管理，所以我干脆写了个新的插件<a href="http://0x3f.org/?p=1894">UltraBlog</a>。</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
       <nav id="page-nav">
         <a class="extend prev" rel="prev" href="/page/30/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/29/">29</a><a class="page-number" href="/page/30/">30</a><span class="page-number current">31</span><a class="page-number" href="/page/32/">32</a><a class="page-number" href="/page/33/">33</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/32/">Next &raquo;</a>
       </nav>
@@ -1007,7 +1003,7 @@ ga('send', 'pageview');
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2019 晴耕雨讀&nbsp;
+      &copy; 2020 晴耕雨讀&nbsp;
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/52binge/hexo-theme-blairos">blairos</a>
     </div>
   </div>
