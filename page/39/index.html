@@ -70,7 +70,7 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
-      <article id="post-virtualbox-host-interface" class="article article-type-post" itemscope="" itemprop="blogPost">
+      <article id="post-switching-from-ums-to-kms" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
     
@@ -78,8 +78,8 @@ ga('send', 'pageview');
         
   
     <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/virtualbox-host-interface/"><strong>VirtualBox的Host Interface网络接入方式的配置</strong></a>
-      <small class="article-date-index">&nbsp; 2010-01-31</small>
+      <a class="article-title-index" href="/post/switching-from-ums-to-kms/"><strong>被迫弃UMS而用KMS</strong></a>
+      <small class="article-date-index">&nbsp; 2010-02-13</small>
       <!--<a>
       <div = post.date  </div>
       </a>-->
@@ -92,15 +92,15 @@ ga('send', 'pageview');
       </header>
     
     <div class="article-meta">
-      <!--<a href="/post/virtualbox-host-interface/" class="article-date">
-  <time datetime="2010-01-30T16:00:00.000Z" itemprop="datePublished">2010-01-31</time>
+      <!--<a href="/post/switching-from-ums-to-kms/" class="article-date">
+  <time datetime="2010-02-12T16:00:00.000Z" itemprop="datePublished">2010-02-13</time>
 </a>-->
       <!--
 -->
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/virtualbox-host-interface/#disqus_thread" class="article-comment-link">Comments</a>
+          <a href="http://0x3f.org/post/switching-from-ums-to-kms/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -108,29 +108,25 @@ ga('send', 'pageview');
 	
     <div class="article-entry" itemprop="articleBody">
       
-        <p><a href="http://zh.wikipedia.org/wiki/VirtualBox" target="_blank" rel="noopener">VirtualBox</a>安装后默认的网络接入方式是<a href="http://zh.wikipedia.org/wiki/%E7%BD%91%E7%BB%9C%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2" target="_blank" rel="noopener">NAT</a>，也是最简单的一种。但NAT网络中的虚拟机系统不具有和主机同一网段的IP地址，不能和主机直接通信。这对于开发者来说是不适用的。</p>
+        <p>昨天更新了一下系统，今天开机就白屏了。于是先关掉Compiz，看了一下Archlinux的<a href="http://www.archlinux.org/news/484/" target="_blank" rel="noopener">新闻</a>，发现新的<strong>xf86-video-intel</strong>中已经移除了UMS，也就意味着只能使用KMS做3D加速了。</p>
 
-<p>Host Interface网络接入方式可以使虚拟机系统获得与主机同一网段的IP地址，因此也使得虚拟机系统像主机所在的局域网中的一台真实的计算机一样，可以和其它计算机通信。</p>
+<p><a href="http://www.thinkwiki.org/wiki/Intel_Graphics_Media_Accelerator_950#User_mode_setting_.28UMS.29" target="_blank" rel="noopener">UMS</a>的全称是<strong>User Mode-Setting</strong>，是一种传统的图形界面初始化方案，即在X加载之后由它初始化图形界面。这种方案的弊端是虚拟终端不具备显示和处理图形的能力，同时虚拟终端和图形界面之间的切换显得缓慢并带有闪烁。</p>
 
-<p>对于Linux平台的VirtualBox，可以有两种方式实现Host Interface网络。一是使用系统网桥，二是使用VirtualBox内建的机制。</p>
+<p><a href="http://wiki.archlinux.org/index.php/KMS" target="_blank" rel="noopener">KMS</a>的全称是<strong>Kernel Mode-Setting</strong>，是新一代图形界面初始化方案，它将图形界面的初始化由X加载之后由X负责进行改为在内核初始化时由内核进行。KMS的好处不仅仅是解决了上面UMS的问题，同时也使得Linux具备了在启动时显示漂亮的开机图示的能力。另外，在3D加速性能和低功耗方面，KMS也较UMS更胜一筹。</p>
 
-<p>第一种方式复杂但通用，尤其是对于2.1.0以前的版本来说，这是唯一的途径。从2.1.0开始，VirtuaBox内建了支持Host Interface的机制，这极大地简化了此类型网络的配置。</p>
+<p>我的<a href="http://0x3f.org/?p=819">Thinkpad X200</a>使用的是Intel GMA 945的芯片组，而Archlinux的<a href="http://wiki.archlinux.org/index.php/Intel_(简体中文)#KMS_.28Kernel_Mode_Setting.29" target="_blank" rel="noopener">Wiki</a>上仍以915为例，所以尝试着做如下内容：</p>
 
-<p>首先，加载<strong>vboxnetflt</strong>模块：</p>
+<p>一、去除/boot/grub/menu.lst中Kernel启动参数中的<a href="http://0x3f.org/?p=866">vga参数</a>；</p>
+
+<p>二、加入以下内容到/etc/modprobe.d/modprobe.conf：</p>
 
 <blockquote>
-  <p>sudo modprobe vboxnetflt</p>
+  <p>options i945 modeset=1</p>
 </blockquote>
 
-<p>然后在VirtualBox中配置虚拟机的网络连接方式，选择“<strong>Bridged Adapter</strong>”。</p>
+<p>三、在/etc/rc.conf中的<strong>MODULES</strong>行加入<strong>intel_agp</strong>和<strong>i945</strong>；</p>
 
-<p>最后启动虚拟机即可。</p>
-
-<p>另外，若虚拟机系统是精简版的Windows，网卡驱动可能不会自动安装，这时需要另外下载网卡的驱动并安装。</p>
-
-<p>为方便起见，可将vboxnetflt模块加入到开机自动启动的模块列表中，每种发行版设置自启动模块的位置和方法不一样，在Archlinux下，是在<strong>/etc/rc.conf</strong>文件中的<strong>modules</strong>行中设置。</p>
-
-<p><em>参考文章：<a href="http://wiki.archlinux.org/index.php/VirtualBox" target="_blank" rel="noopener">Archlinux Wiki: VirtualBox</a></em></p>
+<p>重启系统后，Compiz白屏问题解决，3D加速性能似乎有所上升。</p>
 
       
     </div>
@@ -193,6 +189,87 @@ ga('send', 'pageview');
 <p>公司产品的后台定时任务应该是用独立的PHP进程驱动的。在做一个项目的时候，为了便于手工调试，我在定时任务中使用了大量的echo输出信息并在浏览器中手工执行此任务的脚本。</p>
 <p>手工执行通过，输出信息完全没有问题。但在实际运行的过程中，一个很诡异的事情发生了：即使我将实际处理数据的代码全部注释掉，只对原始数据做简单的查询，此定时任务仍然极其健壮地中途退出。最要命的是无论程序日志还是PHP的错误日志，都没有任何相关信息。直到后来我把所有echo输出都取消，问题才解决。</p>
 <p>事后模糊地记得很久以前似乎在哪本书上看到过在无输出设备的情况下echo过多数据会导致PHP进程崩溃的内容，但原因已想不起来了。</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
+      <article id="post-virtualbox-host-interface" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/virtualbox-host-interface/"><strong>VirtualBox的Host Interface网络接入方式的配置</strong></a>
+      <small class="article-date-index">&nbsp; 2010-01-31</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/virtualbox-host-interface/" class="article-date">
+  <time datetime="2010-01-30T16:00:00.000Z" itemprop="datePublished">2010-01-31</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/virtualbox-host-interface/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="http://zh.wikipedia.org/wiki/VirtualBox" target="_blank" rel="noopener">VirtualBox</a>安装后默认的网络接入方式是<a href="http://zh.wikipedia.org/wiki/%E7%BD%91%E7%BB%9C%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2" target="_blank" rel="noopener">NAT</a>，也是最简单的一种。但NAT网络中的虚拟机系统不具有和主机同一网段的IP地址，不能和主机直接通信。这对于开发者来说是不适用的。</p>
+
+<p>Host Interface网络接入方式可以使虚拟机系统获得与主机同一网段的IP地址，因此也使得虚拟机系统像主机所在的局域网中的一台真实的计算机一样，可以和其它计算机通信。</p>
+
+<p>对于Linux平台的VirtualBox，可以有两种方式实现Host Interface网络。一是使用系统网桥，二是使用VirtualBox内建的机制。</p>
+
+<p>第一种方式复杂但通用，尤其是对于2.1.0以前的版本来说，这是唯一的途径。从2.1.0开始，VirtuaBox内建了支持Host Interface的机制，这极大地简化了此类型网络的配置。</p>
+
+<p>首先，加载<strong>vboxnetflt</strong>模块：</p>
+
+<blockquote>
+  <p>sudo modprobe vboxnetflt</p>
+</blockquote>
+
+<p>然后在VirtualBox中配置虚拟机的网络连接方式，选择“<strong>Bridged Adapter</strong>”。</p>
+
+<p>最后启动虚拟机即可。</p>
+
+<p>另外，若虚拟机系统是精简版的Windows，网卡驱动可能不会自动安装，这时需要另外下载网卡的驱动并安装。</p>
+
+<p>为方便起见，可将vboxnetflt模块加入到开机自动启动的模块列表中，每种发行版设置自启动模块的位置和方法不一样，在Archlinux下，是在<strong>/etc/rc.conf</strong>文件中的<strong>modules</strong>行中设置。</p>
+
+<p><em>参考文章：<a href="http://wiki.archlinux.org/index.php/VirtualBox" target="_blank" rel="noopener">Archlinux Wiki: VirtualBox</a></em></p>
 
       
     </div>
@@ -796,106 +873,6 @@ Find the product <b><em>abc</em></b>.
 
 
 <p><a href="http://picasaweb.google.com/lh/photo/klDX8mgZYS4EiKJ3qCQBKA" target="_blank" rel="noopener"><img src="http://lh5.ggpht.com/_ceUJ_lBTHzc/SRhQhDVQ9aI/AAAAAAAAAmM/gTI91RFIk4M/s400/project_euler_problem_009.png"></a></p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-project-euler-8" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/project-euler-8/"><strong>欧拉工程第八解</strong></a>
-      <small class="article-date-index">&nbsp; 2008-11-09</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/project-euler-8/" class="article-date">
-  <time datetime="2008-11-08T16:00:00.000Z" itemprop="datePublished">2008-11-09</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/project-euler-8/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <blockquote><p>Find the greatest product of five consecutive digits in the 1000-digit number.</p>
-
-<p>73167176531330624919225119674426574742355349194934
-96983520312774506326239578318016984801869478851843
-85861560789112949495459501737958331952853208805511
-12540698747158523863050715693290963295227443043557
-66896648950445244523161731856403098711121722383113
-62229893423380308135336276614282806444486645238749
-30358907296290491560440772390713810515859307960866
-70172427121883998797908792274921901699720888093776
-65727333001053367881220235421809751254540594752243
-52584907711670556013604839586446706324415722155397
-53697817977846174064955149290862569321978468622482
-83972241375657056057490261407972968652414535100474
-82166370484403199890008895243450658541227588666881
-16427171479924442928230863465674813919123162824586
-17866458359124566529476545682848912883142607690042
-24219022671055626321111109370544217506941658960408
-07198403850962455444362981230987879927244284909188
-84580156166097919133875499200524063689912560717606
-05886116467109405077541002256983155200055935729725
-71636269561882670428252483600823257530420752963450</p></blockquote>
-
-<p>穷举，解：</p>
-
-<p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">MakeProduct</span><span class="params">(strNum)</span>:</span></span><br><span class="line">    prod = <span class="number">1</span></span><br><span class="line">    <span class="keyword">for</span> char <span class="keyword">in</span> strNum:</span><br><span class="line">        prod = prod * int(char)</span><br><span class="line">    <span class="keyword">return</span> prod</span><br><span class="line">    </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">GetTheFirstProduct</span><span class="params">(strNum)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> len(strNum) &lt; <span class="number">5</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>,<span class="number">0</span></span><br><span class="line">    <span class="keyword">return</span> MakeProduct(strNum[:<span class="number">5</span>]),strNum[<span class="number">1</span>:]</span><br><span class="line"></span><br><span class="line">num = <span class="string">'7316717653133062491922511967442657474235534919493496983520312774506326239578318016984801869478851843858615607891129494954595017379583319528532088055111254069874715852386305071569329096329522744304355766896648950445244523161731856403098711121722383113622298934233803081353362766142828064444866452387493035890729629049156044077239071381051585930796086670172427121883998797908792274921901699720888093776657273330010533678812202354218097512545405947522435258490771167055601360483958644670632441572215539753697817977846174064955149290862569321978468622482839722413756570560574902614079729686524145351004748216637048440319989000889524345065854122758866688116427171479924442928230863465674813919123162824586178664583591245665294765456828489128831426076900422421902267105562632111110937054421750694165896040807198403850962455444362981230987879927244284909188845801561660979191338754992005240636899125607176060588611646710940507754100225698315520005593572972571636269561882670428252483600823257530420752963450'</span></span><br><span class="line"></span><br><span class="line">largestProduct = <span class="number">0</span></span><br><span class="line"><span class="keyword">while</span> len(num) &gt;= <span class="number">5</span>:</span><br><span class="line">    tmp = GetTheFirstProduct(num)</span><br><span class="line">    <span class="keyword">if</span> tmp == (<span class="number">0</span>,<span class="number">0</span>):</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    num = tmp[<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">if</span> largestProduct &lt; tmp[<span class="number">0</span>]:</span><br><span class="line">        largestProduct = tmp[<span class="number">0</span>]</span><br><span class="line"><span class="keyword">print</span> largestProduct</span><br></pre></td></tr></table></figure>
-</p>
-
-
-<p>如果先找到下五个均不为零的连续整数，然后计算它们的积并以之参与比较，效率会更高：</p>
-
-<p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">MakeProduct</span><span class="params">(strNum)</span>:</span></span><br><span class="line">    prod = <span class="number">1</span></span><br><span class="line">    <span class="keyword">for</span> char <span class="keyword">in</span> strNum:</span><br><span class="line">        prod = prod * int(char)</span><br><span class="line">    <span class="keyword">return</span> prod</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">GetTheFirstProduct</span><span class="params">(strNum)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> len(strNum) &lt; <span class="number">5</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>,<span class="number">0</span></span><br><span class="line">    subStr = strNum[:<span class="number">5</span>]</span><br><span class="line">    index = subStr.rfind(<span class="string">'0'</span>)</span><br><span class="line">    <span class="keyword">if</span> index == <span class="number">-1</span>:</span><br><span class="line">        <span class="keyword">return</span> MakeProduct(subStr),strNum[<span class="number">1</span>:]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> GetTheFirstProduct(strNum[index+<span class="number">1</span>:])</span><br><span class="line"></span><br><span class="line">num = <span class="string">'7316717653133062491922511967442657474235534919493496983520312774506326239578318016984801869478851843858615607891129494954595017379583319528532088055111254069874715852386305071569329096329522744304355766896648950445244523161731856403098711121722383113622298934233803081353362766142828064444866452387493035890729629049156044077239071381051585930796086670172427121883998797908792274921901699720888093776657273330010533678812202354218097512545405947522435258490771167055601360483958644670632441572215539753697817977846174064955149290862569321978468622482839722413756570560574902614079729686524145351004748216637048440319989000889524345065854122758866688116427171479924442928230863465674813919123162824586178664583591245665294765456828489128831426076900422421902267105562632111110937054421750694165896040807198403850962455444362981230987879927244284909188845801561660979191338754992005240636899125607176060588611646710940507754100225698315520005593572972571636269561882670428252483600823257530420752963450'</span></span><br><span class="line"></span><br><span class="line">largestProduct = <span class="number">0</span></span><br><span class="line"><span class="keyword">while</span> len(num) &gt;= <span class="number">5</span>:</span><br><span class="line">    tmp = GetTheFirstProduct(num)</span><br><span class="line">    <span class="keyword">if</span> tmp == (<span class="number">0</span>,<span class="number">0</span>):</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    num = tmp[<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">if</span> largestProduct &lt; tmp[<span class="number">0</span>]:</span><br><span class="line">        largestProduct = tmp[<span class="number">0</span>]</span><br><span class="line"><span class="keyword">print</span> largestProduct</span><br></pre></td></tr></table></figure>
-</p>
-
-
-<p><a href="http://picasaweb.google.com/lh/photo/Vn9LGTrybisNKHkZlt3xyg" target="_blank" rel="noopener"><img src="http://lh5.ggpht.com/_ceUJ_lBTHzc/SRbvCN1WOxI/AAAAAAAAAls/3nyCRKFKNyE/s400/project_euler_problem_008.png"></a></p>
 
       
     </div>

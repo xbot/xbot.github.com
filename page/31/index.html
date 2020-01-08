@@ -70,6 +70,101 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-comparison-of-serialization-methods-of-php" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/comparison-of-serialization-methods-of-php/"><strong>PHP序列化方案效率比较</strong></a>
+      <small class="article-date-index">&nbsp; 2011-04-17</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/comparison-of-serialization-methods-of-php/" class="article-date">
+  <time datetime="2011-04-16T16:00:00.000Z" itemprop="datePublished">2011-04-17</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/comparison-of-serialization-methods-of-php/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>同时对以下几种PHP的序列化方案进行了测试：</p>
+
+<ul>
+<li>serialize() and unserialize()</li>
+<li>json_encode() and json_decode()</li>
+<li>msgpack_serialize() and msgpack_unserialize()</li>
+<li>igbinary_serialize() and igbinary_unserialize()</li>
+</ul>
+
+<p>测试环境：</p>
+
+<ul>
+<li>OS:        Archlinux 32-bit</li>
+<li>CPU:       CORE 2 DUO T9400, 2.53GHz</li>
+<li>Mem:       DDR3, 3G</li>
+<li>Server:    nginx v1.0.0</li>
+<li>PHP:       php v5.3.6 + php-fpm</li>
+<li>Profiler:  xhprof v0.9.2</li>
+</ul>
+
+<p>测试代码块：</p>
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;value = str_repeat(<span class="string">'a'</span>, <span class="number">1000</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">produce</span><span class="params">($num)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $arr = <span class="keyword">array</span>();</span><br><span class="line">    <span class="keyword">for</span> ($i = <span class="number">0</span>; $i &lt; $num; $i++) &#123;</span><br><span class="line">        $arr[] = <span class="keyword">new</span> Test();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    $data = serialize($arr);</span><br><span class="line"></span><br><span class="line">    $arr = unserialize($data);</span><br><span class="line"></span><br><span class="line">    $data = json_encode($arr);</span><br><span class="line"></span><br><span class="line">    $arr = json_decode($data);</span><br><span class="line"></span><br><span class="line">    $data = msgpack_serialize($arr);</span><br><span class="line"></span><br><span class="line">    $arr = msgpack_unserialize($data);</span><br><span class="line"></span><br><span class="line">    $data = igbinary_serialize($arr);</span><br><span class="line"></span><br><span class="line">    $arr = igbinary_unserialize($data);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">produce(<span class="number">10000</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>测试结果：</p>
+
+<p><a href="https://picasaweb.google.com/lh/photo/TAyUpJxyW3RVj18DU4B9gg?feat=embedwebsite" target="_blank" rel="noopener"><img src="https://lh6.googleusercontent.com/-2iBCMB4kyOg/Taq-aeruqEI/AAAAAAAABp4/wyqG-Qt5s0c/s400/php_serialization.png" height="124" width="400"></a></p>
+
+<ul>
+<li>序列化性能：serialize() <strong><em>24.611ms</em></strong> &gt; msgpack_serialize() <strong><em>32.687ms</em></strong> &gt; igbinary_serialize() <strong><em>36.012ms</em></strong> &gt; json_encode() <strong><em>132.142ms</em></strong></li>
+<li>反序列化性能：igbinary_unserialize() <strong><em>12.141ms</em></strong> &gt; msgpack_unserialize() <strong><em>17.185ms</em></strong> &gt; unserialize() <strong><em>28.723ms</em></strong> &gt; json_decode() <strong><em>183.141ms</em></strong></li>
+<li>综合性能：igbinary <strong><em>48.153ms</em></strong> &gt; msgpack <strong><em>49.872ms</em></strong> &gt; serialize <strong><em>53.334ms</em></strong> &gt; json <strong><em>315.283ms</em></strong></li>
+</ul>
+
+<p>测试结果并没有像传说中的那样，官方的序列化和反序列化函数性能与msgpack和igbinary两个第三方的扩展相差不大，而JSON性能非常差。</p>
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-ultrablog-development-note" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -236,79 +331,6 @@ ga('send', 'pageview');
 
 
     
-      <article id="post-migrate-from-igsyntax-hiliter-to-wp-syntax" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/migrate-from-igsyntax-hiliter-to-wp-syntax/"><strong>从iG:Syntax Hiliter转换到WP-Syntax</strong></a>
-      <small class="article-date-index">&nbsp; 2011-04-06</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/migrate-from-igsyntax-hiliter-to-wp-syntax/" class="article-date">
-  <time datetime="2011-04-05T16:00:00.000Z" itemprop="datePublished">2011-04-06</time>
-</a>-->
-      <!--
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/migrate-from-igsyntax-hiliter-to-wp-syntax/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>终于决定放弃使用了<a href="http://0x3f.org/?p=342">三年多</a>的iG:Syntax Hiliter，将代码语法高亮插件换成<a href="http://wordpress.org/extend/plugins/wp-syntax/" target="_blank" rel="noopener">WP-Syntax</a>。</p>
-
-<p>原因是Vim的Markdown语法高亮<a href="http://www.vim.org/scripts/script.php?script_id=2882" target="_blank" rel="noopener">插件</a>有问题，会把iG的标签<code>[LANG]</code>当作Markdown的超链接处理，结果导致插入代码后，后面的内容被错误地著色，很难看。而Syntax使用<code>&lt;pre lang="LANG"&gt;</code>格式的标签，不会有这个问题。</p>
-
-<p>其实很早就想过要换了，只是受累于使用iG进行高亮的文章太多，替换起来不方便。加上后来<a href="http://0x3f.org/?p=501">解决</a>了由于iG停止更新导致的不支持更多的语法的问题，所以就一致拖到现在。今天晚上花了一个小时就完成了替换，比想象中的要容易地多。</p>
-
-<p>根据我使用过的语法的情况，使用以下语句在数据库中替换iG的标签到Syntax的标签：</p>
-
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[bash]'</span>,<span class="string">'&amp;lt;pre lang="bash" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/bash]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[python]'</span>,<span class="string">'&amp;lt;pre lang="python" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/python]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[vim]'</span>,<span class="string">'&amp;lt;pre lang="vim" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/vim]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[java]'</span>,<span class="string">'&amp;lt;pre lang="java" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/java]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[lua]'</span>,<span class="string">'&amp;lt;pre lang="lua" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/lua]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[sql]'</span>,<span class="string">'&amp;lt;pre lang="sql" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/sql]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[plsql]'</span>,<span class="string">'&amp;lt;pre lang="plsql" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/plsql]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[php]'</span>,<span class="string">'&amp;lt;pre lang="php" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/php]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[cpp]'</span>,<span class="string">'&amp;lt;pre lang="cpp" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/cpp]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[inno]'</span>,<span class="string">'&amp;lt;pre lang="inno" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/inno]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[xml]'</span>,<span class="string">'&amp;lt;pre lang="xml" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/xml]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[html]'</span>,<span class="string">'&amp;lt;pre lang="html4strict" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/html]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[ini]'</span>,<span class="string">'&amp;lt;pre lang="ini" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/ini]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[pascal]'</span>,<span class="string">'&amp;lt;pre lang="pascal" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/pascal]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[javascript]'</span>,<span class="string">'&amp;lt;pre lang="javascript" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/javascript]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[reg]'</span>,<span class="string">'&amp;lt;pre lang="reg" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/reg]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[css]'</span>,<span class="string">'&amp;lt;pre lang="css" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/css]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'&amp;lt;coolcode LANG="php"&amp;gt;'</span>,<span class="string">'&amp;lt;pre lang="php" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'&amp;lt;/coolcode&amp;gt;'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br></pre></td></tr></table></figure>
-
-<p>即便转换到Syntax，也不能避免Vim中Markdown语法高亮的问题，只要文字中出现成对的方括号，仍然会出问题，正确的做法是对HTML标签中的内容不进行Markdown语法的著色。</p>
-
-<p>在转换和写这篇文章的过程中，发现WP-Syntax还存在一些问题，例如启用行号后部分表格不能充满页面宽度的问题，还有上面这些SQL语句，必须将其中的尖括号替换成HTML实体才能正常显示。看来虽然历经两三年的发展，WP-Syntax还是不很成熟。</p>
-
-<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
       <article id="post-navicat-a-light-weight-database-client" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -361,6 +383,79 @@ ga('send', 'pageview');
 <p>Navicat另外一个为人所忽略的优点是对SQLite的支持，我曾花不少时间找一个好的SQLite的客户端，大部分搜索结果都介绍的是另外一个<a href="http://sqliteman.com/" target="_blank" rel="noopener">Sqliteman</a>，但是我始终不能习惯它，感觉这个东西功能少而且不好用。直到发现Navicat，才算找到一个完善的SQLite客户端。</p>
 
 <p>对于跨平台的特性，Navicat对Linux平台的支持其实是通过wine实现的，好在其安装包对wine已做过定制，运行状况良好。</p>
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
+      <article id="post-migrate-from-igsyntax-hiliter-to-wp-syntax" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/migrate-from-igsyntax-hiliter-to-wp-syntax/"><strong>从iG:Syntax Hiliter转换到WP-Syntax</strong></a>
+      <small class="article-date-index">&nbsp; 2011-04-06</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/migrate-from-igsyntax-hiliter-to-wp-syntax/" class="article-date">
+  <time datetime="2011-04-05T16:00:00.000Z" itemprop="datePublished">2011-04-06</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/migrate-from-igsyntax-hiliter-to-wp-syntax/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>终于决定放弃使用了<a href="http://0x3f.org/?p=342">三年多</a>的iG:Syntax Hiliter，将代码语法高亮插件换成<a href="http://wordpress.org/extend/plugins/wp-syntax/" target="_blank" rel="noopener">WP-Syntax</a>。</p>
+
+<p>原因是Vim的Markdown语法高亮<a href="http://www.vim.org/scripts/script.php?script_id=2882" target="_blank" rel="noopener">插件</a>有问题，会把iG的标签<code>[LANG]</code>当作Markdown的超链接处理，结果导致插入代码后，后面的内容被错误地著色，很难看。而Syntax使用<code>&lt;pre lang="LANG"&gt;</code>格式的标签，不会有这个问题。</p>
+
+<p>其实很早就想过要换了，只是受累于使用iG进行高亮的文章太多，替换起来不方便。加上后来<a href="http://0x3f.org/?p=501">解决</a>了由于iG停止更新导致的不支持更多的语法的问题，所以就一致拖到现在。今天晚上花了一个小时就完成了替换，比想象中的要容易地多。</p>
+
+<p>根据我使用过的语法的情况，使用以下语句在数据库中替换iG的标签到Syntax的标签：</p>
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[bash]'</span>,<span class="string">'&amp;lt;pre lang="bash" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/bash]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[python]'</span>,<span class="string">'&amp;lt;pre lang="python" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/python]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[vim]'</span>,<span class="string">'&amp;lt;pre lang="vim" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/vim]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[java]'</span>,<span class="string">'&amp;lt;pre lang="java" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/java]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[lua]'</span>,<span class="string">'&amp;lt;pre lang="lua" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/lua]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[sql]'</span>,<span class="string">'&amp;lt;pre lang="sql" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/sql]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[plsql]'</span>,<span class="string">'&amp;lt;pre lang="plsql" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/plsql]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[php]'</span>,<span class="string">'&amp;lt;pre lang="php" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/php]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[cpp]'</span>,<span class="string">'&amp;lt;pre lang="cpp" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/cpp]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[inno]'</span>,<span class="string">'&amp;lt;pre lang="inno" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/inno]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[xml]'</span>,<span class="string">'&amp;lt;pre lang="xml" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/xml]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[html]'</span>,<span class="string">'&amp;lt;pre lang="html4strict" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/html]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[ini]'</span>,<span class="string">'&amp;lt;pre lang="ini" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/ini]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[pascal]'</span>,<span class="string">'&amp;lt;pre lang="pascal" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/pascal]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[javascript]'</span>,<span class="string">'&amp;lt;pre lang="javascript" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/javascript]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[reg]'</span>,<span class="string">'&amp;lt;pre lang="reg" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/reg]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[css]'</span>,<span class="string">'&amp;lt;pre lang="css" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'[/css]'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'&amp;lt;coolcode LANG="php"&amp;gt;'</span>,<span class="string">'&amp;lt;pre lang="php" line="1"&amp;gt;'</span>);</span><br><span class="line"><span class="keyword">update</span> wp_posts <span class="keyword">set</span> post_content=<span class="keyword">replace</span>(post_content,<span class="string">'&amp;lt;/coolcode&amp;gt;'</span>,<span class="string">'&amp;lt;/pre&amp;gt;'</span>);</span><br></pre></td></tr></table></figure>
+
+<p>即便转换到Syntax，也不能避免Vim中Markdown语法高亮的问题，只要文字中出现成对的方括号，仍然会出问题，正确的做法是对HTML标签中的内容不进行Markdown语法的著色。</p>
+
+<p>在转换和写这篇文章的过程中，发现WP-Syntax还存在一些问题，例如启用行号后部分表格不能充满页面宽度的问题，还有上面这些SQL语句，必须将其中的尖括号替换成HTML实体才能正常显示。看来虽然历经两三年的发展，WP-Syntax还是不很成熟。</p>
 
 <p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
 
@@ -909,70 +1004,6 @@ ga('send', 'pageview');
 <p>由于并非真正地去掉白边，所以只能算是个伪方法。</p>
 
 <p>Windows下的方法见<a href="../fullscreen-for-gvim-on-windows/">这里</a>。</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-batchcat-v03-released" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/batchcat-v03-released/"><strong>Batch Cat v0.3 Released</strong></a>
-      <small class="article-date-index">&nbsp; 2011-03-20</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/batchcat-v03-released/" class="article-date">
-  <time datetime="2011-03-19T16:00:00.000Z" itemprop="datePublished">2011-03-20</time>
-</a>-->
-      <!--
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/batchcat-v03-released/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a href="http://picasaweb.google.com/lh/photo/bqYPszwt0P7OI9snKxv3WA?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh3.ggpht.com/_ceUJ_lBTHzc/TIIMnE-09dI/AAAAAAAABdk/q_hDtyXJozo/s800/wp-batch-cat.png"></a></p>
-<h3>Change Log</h3>
-
-<blockquote><br><strong>2011-03-20 Sunday</strong><br><ol><br>    <li>Solve the compatibility <a href="http://wordpress.org/support/topic/plugin-batch-cat-doesnt-work-for-31" target="_blank" rel="noopener">problem</a> under Wordpress 3.1, thanks to <a href="http://coliq.wongkediri.com/batch-cat-wordpress-plugin-not-working-fixed.html" target="_blank" rel="noopener">wongkediri</a>.</li><br></ol><br></blockquote>
-
-<p>Check <a href="http://0x3f.org/?p=1603">the plugin’s page</a> for more information.</p>
 
       
     </div>

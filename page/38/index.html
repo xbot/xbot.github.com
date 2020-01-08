@@ -70,6 +70,112 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-syntax-checking-and-code-executing-in-vim" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/syntax-checking-and-code-executing-in-vim/"><strong>在Vim中检查语法和执行代码</strong></a>
+      <small class="article-date-index">&nbsp; 2010-04-17</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/syntax-checking-and-code-executing-in-vim/" class="article-date">
+  <time datetime="2010-04-16T16:00:00.000Z" itemprop="datePublished">2010-04-17</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/syntax-checking-and-code-executing-in-vim/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <div class="illustration_right">
+<a href="http://picasaweb.google.com/lh/photo/OXk7sdAO9gNHu0qkTgK1PA?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh3.ggpht.com/_ceUJ_lBTHzc/SaV494hGreI/AAAAAAAAAzY/xExf7CzGyv0/s800/the-mug-of-vi.jpg"></a>
+</div>
+
+<p>《<a href="http://www.pragprog.com/the-pragmatic-programmer" target="_blank" rel="noopener">The Pragmatic Programmer</a>》的确是本好书，虽然中文译名极为恶俗。为践行书中提到的<a href="http://en.wikipedia.org/wiki/Don't_repeat_yourself" target="_blank" rel="noopener">DRY原则</a>，我开始反思平时编码时总是重复出现的问题，其中之一就是很低级的语法错误，有时忘了语句最后的分号，有时忘了声明变量，凡此种种，不一而足。</p>
+
+<p>相对于IDE，我更喜欢Vim，这也是语法错误没有检查出来的原因。因此就产生了给Vim添加语法检查功能的需求。下面是检查PHP代码的vimrc内容：</p>
+
+<p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">" Check the syntax of a PHP file</span></span><br><span class="line"><span class="function"><span class="keyword">function</span>! <span class="title">CheckPHPSyntax</span><span class="params">()</span></span></span><br><span class="line">    <span class="keyword">if</span> &amp;<span class="keyword">filetype</span> != <span class="string">'php'</span></span><br><span class="line">        <span class="keyword">echohl</span> WarningMsg | <span class="keyword">echo</span> <span class="string">'This is not a PHP file !'</span> | <span class="keyword">echohl</span> None</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    <span class="keyword">endif</span></span><br><span class="line">    <span class="keyword">setlocal</span> makeprg=php\ -<span class="keyword">l</span>\ -n\ -d\ html_errors=off\ %</span><br><span class="line">    <span class="keyword">setlocal</span> errorformat=%<span class="keyword">m</span>\ in\ %<span class="keyword">f</span>\ <span class="keyword">on</span>\ <span class="built_in">line</span>\ %<span class="keyword">l</span></span><br><span class="line">    <span class="keyword">echohl</span> WarningMsg | <span class="keyword">echo</span> <span class="string">'Syntax checking output:'</span> | <span class="keyword">echohl</span> None</span><br><span class="line">    <span class="keyword">if</span> &amp;modified == <span class="number">1</span></span><br><span class="line">        <span class="keyword">silent</span> <span class="keyword">write</span></span><br><span class="line">    <span class="keyword">endif</span></span><br><span class="line">    <span class="keyword">silent</span> <span class="keyword">make</span></span><br><span class="line">    <span class="keyword">clist</span></span><br><span class="line"><span class="keyword">endfunction</span></span><br><span class="line"><span class="keyword">au</span> <span class="keyword">filetype</span> php <span class="keyword">map</span> <span class="symbol">&lt;F5&gt;</span> :<span class="keyword">call</span> CheckPHPSyntax()<span class="symbol">&lt;CR&gt;</span></span><br><span class="line"><span class="keyword">au</span> <span class="keyword">filetype</span> php <span class="keyword">imap</span> <span class="symbol">&lt;F5&gt;</span> <span class="symbol">&lt;ESC&gt;</span>:<span class="keyword">call</span> CheckPHPSyntax()<span class="symbol">&lt;CR&gt;</span></span><br></pre></td></tr></table></figure>
+</p>
+
+<p>以上脚本为Vim添加了一个检查PHP语法错误的函数和两个快捷键映射，此后可按F5键即时检查当前Buffer中的PHP当面的语法。和网上其它同类的函数相比，这个函数的优点在于改进了检查结果的显示，使用silent命令隐藏了所有不必要的输出。</p>
+
+<p>以下是检查Python代码语法错误的脚本：</p>
+
+<p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">" Check the syntax of a python file</span></span><br><span class="line"><span class="function"><span class="keyword">function</span>! <span class="title">CheckPythonSyntax</span><span class="params">()</span></span></span><br><span class="line">    <span class="keyword">if</span> &amp;<span class="keyword">filetype</span> != <span class="string">'python'</span></span><br><span class="line">        <span class="keyword">echohl</span> WarningMsg | <span class="keyword">echo</span> <span class="string">'This is not a Python file !'</span> | <span class="keyword">echohl</span> None</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    <span class="keyword">endif</span></span><br><span class="line">    <span class="keyword">setlocal</span> makeprg=<span class="keyword">python</span>\ -<span class="keyword">u</span>\ %</span><br><span class="line">    <span class="keyword">set</span> efm=%C\ %.%#,%A\ \ File\ \<span class="string">"%f\"</span>\\,\ <span class="built_in">line</span>\ %<span class="keyword">l</span>%.%#,%Z%[%^\ ]%\\@=%<span class="keyword">m</span></span><br><span class="line">    <span class="keyword">echohl</span> WarningMsg | <span class="keyword">echo</span> <span class="string">'Syntax checking output:'</span> | <span class="keyword">echohl</span> None</span><br><span class="line">    <span class="keyword">if</span> &amp;modified == <span class="number">1</span></span><br><span class="line">        <span class="keyword">silent</span> <span class="keyword">write</span></span><br><span class="line">    <span class="keyword">endif</span></span><br><span class="line">    exec <span class="string">"silent make -c \"import py_compile;py_compile.compile(r'"</span>.<span class="built_in">bufname</span>(<span class="string">"%"</span>).<span class="string">"')\""</span></span><br><span class="line">    <span class="keyword">clist</span></span><br><span class="line"><span class="keyword">endfunction</span></span><br><span class="line"><span class="keyword">au</span> <span class="keyword">filetype</span> <span class="keyword">python</span> <span class="keyword">map</span> <span class="symbol">&lt;F5&gt;</span> :<span class="keyword">call</span> CheckPythonSyntax()<span class="symbol">&lt;CR&gt;</span></span><br><span class="line"><span class="keyword">au</span> <span class="keyword">filetype</span> <span class="keyword">python</span> <span class="keyword">imap</span> <span class="symbol">&lt;F5&gt;</span> <span class="symbol">&lt;ESC&gt;</span>:<span class="keyword">call</span> CheckPythonSyntax()<span class="symbol">&lt;CR&gt;</span></span><br></pre></td></tr></table></figure>
+</p>
+
+<p>上面两部分的配置脚本中虽然都指定了使用F5检查代码语法，但由于使用了<strong>au filetype</strong>指定了相应的语言类型，因此没有冲突。</p>
+
+<p>和PHP相比，Python似乎更受垂青，因为除了上面和PHP一样的语法检查方式，它还有令人惊艳的<a href="http://www.vim.org/scripts/script.php?script_id=2441" target="_blank" rel="noopener">PyFlakes</a><a href="#footnote-pyflakes"> <sup><b>1</b></sup></a>。</p>
+
+<p>PyFlakes的意思是<strong>Make on the fly</strong>，与另一神器Emacs的Flymake遥相呼应。只需要举出PyFlakes的两三个特性，就足以说明这是怎样的一个尤物了：其一是实时和高效，PyFlakes会在输入代码的同时检查语法错误，而且用户丝毫感觉不到任何停顿（<em>对于游戏玩家或高清电影狂可能“卡”更好理解</em>）；其二是智能，它居然能检查出哪些导入的模块没有被使用，哪些被使用的模块没有被导入；其三，PyFlakes检查出语法错误后会使用红色波浪线标识出错误位置。它使Vim完成了一个华丽的转身。</p>
+
+<p>此外，由于PyFlakes是通过解析代码来检查语法错误，因此不必担心代码会被实际执行。</p>
+
+<p>需要说明的是，PyFlakes要求Vim在编译时启用了对Python的支持，这一点可以使用<strong>:ver</strong>命令查看，一般各Linux发行版自带的Vim都加入了这个特性，而Windows下的版本没有此特性的可能性较大，好在作者提供了<a href="http://symbolsystem.com/vim/" target="_blank" rel="noopener">加入Python特性的Vim的Windows编译版</a>。</p>
+
+<p>既然事已如此，不妨一不做、二不休，为Vim加上即时执行代码的功能。这个想法由来已久，出于和<a href="http://0x3f.org/?p=1433">寻找phpsh</a>同样的原因，我希望能在Vim中临时输入小块代码，然后即时执行并查看结果；或者即时执行正在编写的Python模块或程序。以下脚本实现了随手打开一个新的分割窗口并创建一个临时的脚本文件的功能：</p>
+
+<p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">" Open a temporary PHP file in a new window</span></span><br><span class="line"><span class="function"><span class="keyword">function</span>! <span class="title">PHPSandBox</span><span class="params">()</span></span></span><br><span class="line">    <span class="keyword">let</span> tmpfile = <span class="built_in">tempname</span>().<span class="string">'.php'</span></span><br><span class="line">    <span class="keyword">exe</span> <span class="string">'new '</span>.tmpfile</span><br><span class="line">    <span class="keyword">call</span> <span class="built_in">setline</span>(<span class="string">'.'</span>, <span class="string">'&lt;?php'</span>)</span><br><span class="line">    <span class="keyword">normal</span> <span class="keyword">o</span></span><br><span class="line">    <span class="keyword">normal</span> <span class="keyword">o</span></span><br><span class="line">    <span class="keyword">call</span> <span class="built_in">setline</span>(<span class="string">'.'</span>, <span class="string">'?&gt;'</span>)</span><br><span class="line">    <span class="keyword">normal</span> <span class="keyword">k</span></span><br><span class="line">    <span class="keyword">startinsert</span></span><br><span class="line"><span class="keyword">endfunction</span></span><br><span class="line"><span class="comment">" Open a temporary Python file in a new window</span></span><br><span class="line"><span class="function"><span class="keyword">function</span>! <span class="title">PySandBox</span><span class="params">()</span></span></span><br><span class="line">    <span class="keyword">let</span> tmpfile = <span class="built_in">tempname</span>().<span class="string">'.py'</span></span><br><span class="line">    <span class="keyword">exe</span> <span class="string">'new '</span>.tmpfile</span><br><span class="line">    <span class="keyword">call</span> <span class="built_in">setline</span>(<span class="string">'.'</span>, <span class="string">'#!/usr/bin/python'</span>)</span><br><span class="line">    <span class="keyword">normal</span> <span class="keyword">o</span></span><br><span class="line">    <span class="keyword">call</span> <span class="built_in">setline</span>(<span class="string">'.'</span>, <span class="string">'# -*- coding: utf-8 -*-'</span>)</span><br><span class="line">    <span class="keyword">normal</span> <span class="keyword">o</span></span><br><span class="line">    <span class="keyword">startinsert</span></span><br><span class="line"><span class="keyword">endfunction</span></span><br><span class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;leader&gt;</span>sbpy :<span class="keyword">call</span> PySandBox()<span class="symbol">&lt;CR&gt;</span></span><br><span class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;leader&gt;</span>sbph :<span class="keyword">call</span> PHPSandBox()<span class="symbol">&lt;CR&gt;</span></span><br></pre></td></tr></table></figure>
+</p>
+
+<p>下面的脚本则实现了即时执行当前Buffer中代码的功能：</p>
+
+<p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">" Run a PHP script</span></span><br><span class="line"><span class="function"><span class="keyword">function</span>! <span class="title">ExecutePHPScript</span><span class="params">()</span></span></span><br><span class="line">    <span class="keyword">if</span> &amp;<span class="keyword">filetype</span> != <span class="string">'php'</span></span><br><span class="line">        <span class="keyword">echohl</span> WarningMsg | <span class="keyword">echo</span> <span class="string">'This is not a PHP file !'</span> | <span class="keyword">echohl</span> None</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    <span class="keyword">endif</span></span><br><span class="line">    <span class="keyword">setlocal</span> makeprg=php\ -<span class="keyword">f</span>\ %</span><br><span class="line">    <span class="keyword">setlocal</span> errorformat=%<span class="keyword">m</span>\ in\ %<span class="keyword">f</span>\ <span class="keyword">on</span>\ <span class="built_in">line</span>\ %<span class="keyword">l</span></span><br><span class="line">    <span class="keyword">echohl</span> WarningMsg | <span class="keyword">echo</span> <span class="string">'Execution output:'</span> | <span class="keyword">echohl</span> None</span><br><span class="line">    <span class="keyword">if</span> &amp;modified == <span class="number">1</span></span><br><span class="line">        <span class="keyword">silent</span> <span class="keyword">write</span></span><br><span class="line">    <span class="keyword">endif</span></span><br><span class="line">    <span class="keyword">silent</span> <span class="keyword">make</span></span><br><span class="line">    <span class="keyword">clist</span></span><br><span class="line"><span class="keyword">endfunction</span></span><br><span class="line"><span class="keyword">au</span> <span class="keyword">filetype</span> php <span class="keyword">map</span> <span class="symbol">&lt;C-F5&gt;</span> :<span class="keyword">call</span> ExecutePHPScript()<span class="symbol">&lt;CR&gt;</span></span><br><span class="line"><span class="keyword">au</span> <span class="keyword">filetype</span> php <span class="keyword">imap</span> <span class="symbol">&lt;C-F5&gt;</span> <span class="symbol">&lt;ESC&gt;</span>:<span class="keyword">call</span> ExecutePHPScript()<span class="symbol">&lt;CR&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">" Run a python script</span></span><br><span class="line"><span class="function"><span class="keyword">function</span>! <span class="title">ExecutePythonScript</span><span class="params">()</span></span></span><br><span class="line">    <span class="keyword">if</span> &amp;<span class="keyword">filetype</span> != <span class="string">'python'</span></span><br><span class="line">        <span class="keyword">echohl</span> WarningMsg | <span class="keyword">echo</span> <span class="string">'This is not a Python file !'</span> | <span class="keyword">echohl</span> None</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    <span class="keyword">endif</span></span><br><span class="line">    <span class="keyword">setlocal</span> makeprg=<span class="keyword">python</span>\ -<span class="keyword">u</span>\ %</span><br><span class="line">    <span class="keyword">set</span> efm=%C\ %.%#,%A\ \ File\ \<span class="string">"%f\"</span>\\,\ <span class="built_in">line</span>\ %<span class="keyword">l</span>%.%#,%Z%[%^\ ]%\\@=%<span class="keyword">m</span></span><br><span class="line">    <span class="keyword">echohl</span> WarningMsg | <span class="keyword">echo</span> <span class="string">'Execution output:'</span> | <span class="keyword">echohl</span> None</span><br><span class="line">    <span class="keyword">if</span> &amp;modified == <span class="number">1</span></span><br><span class="line">        <span class="keyword">silent</span> <span class="keyword">write</span></span><br><span class="line">    <span class="keyword">endif</span></span><br><span class="line">    <span class="keyword">silent</span> <span class="keyword">make</span></span><br><span class="line">    <span class="keyword">clist</span></span><br><span class="line"><span class="keyword">endfunction</span></span><br><span class="line"><span class="keyword">au</span> <span class="keyword">filetype</span> <span class="keyword">python</span> <span class="keyword">map</span> <span class="symbol">&lt;C-F5&gt;</span> :<span class="keyword">call</span> ExecutePythonScript()<span class="symbol">&lt;CR&gt;</span></span><br><span class="line"><span class="keyword">au</span> <span class="keyword">filetype</span> <span class="keyword">python</span> <span class="keyword">imap</span> <span class="symbol">&lt;C-F5&gt;</span> <span class="symbol">&lt;ESC&gt;</span>:<span class="keyword">call</span> ExecutePythonScript()<span class="symbol">&lt;CR&gt;</span></span><br></pre></td></tr></table></figure>
+</p>
+
+<blockquote id="footnote-pyflakes">
+<p><sup><b>Foot Note 1 :</b></sup></p>
+<p>
+PyFlakes本身是个通用的工具，其作者提供了一个Vim的插件调用PyFlakes的功能，故此处所说的PyFlakes实指Vim的PyFlakes插件。
+</p>
+</blockquote>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-buuf-deuce-icon-theme" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -809,83 +915,6 @@ DB模块：pyodbc
 <p>3、将sitecustomize.py保存到python安装目录下的Lib\site-packages目录中；</p>
 
 <p>另外，在<a href="http://www.woodpecker.org.cn/diveintopython/xml_processing/unicode.html" target="_blank" rel="noopener">此处</a>发现了跟本问题相关的资料，辅助治疗，效果更佳。</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-switching-from-ums-to-kms" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/switching-from-ums-to-kms/"><strong>被迫弃UMS而用KMS</strong></a>
-      <small class="article-date-index">&nbsp; 2010-02-13</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/switching-from-ums-to-kms/" class="article-date">
-  <time datetime="2010-02-12T16:00:00.000Z" itemprop="datePublished">2010-02-13</time>
-</a>-->
-      <!--
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/switching-from-ums-to-kms/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>昨天更新了一下系统，今天开机就白屏了。于是先关掉Compiz，看了一下Archlinux的<a href="http://www.archlinux.org/news/484/" target="_blank" rel="noopener">新闻</a>，发现新的<strong>xf86-video-intel</strong>中已经移除了UMS，也就意味着只能使用KMS做3D加速了。</p>
-
-<p><a href="http://www.thinkwiki.org/wiki/Intel_Graphics_Media_Accelerator_950#User_mode_setting_.28UMS.29" target="_blank" rel="noopener">UMS</a>的全称是<strong>User Mode-Setting</strong>，是一种传统的图形界面初始化方案，即在X加载之后由它初始化图形界面。这种方案的弊端是虚拟终端不具备显示和处理图形的能力，同时虚拟终端和图形界面之间的切换显得缓慢并带有闪烁。</p>
-
-<p><a href="http://wiki.archlinux.org/index.php/KMS" target="_blank" rel="noopener">KMS</a>的全称是<strong>Kernel Mode-Setting</strong>，是新一代图形界面初始化方案，它将图形界面的初始化由X加载之后由X负责进行改为在内核初始化时由内核进行。KMS的好处不仅仅是解决了上面UMS的问题，同时也使得Linux具备了在启动时显示漂亮的开机图示的能力。另外，在3D加速性能和低功耗方面，KMS也较UMS更胜一筹。</p>
-
-<p>我的<a href="http://0x3f.org/?p=819">Thinkpad X200</a>使用的是Intel GMA 945的芯片组，而Archlinux的<a href="http://wiki.archlinux.org/index.php/Intel_(简体中文)#KMS_.28Kernel_Mode_Setting.29" target="_blank" rel="noopener">Wiki</a>上仍以915为例，所以尝试着做如下内容：</p>
-
-<p>一、去除/boot/grub/menu.lst中Kernel启动参数中的<a href="http://0x3f.org/?p=866">vga参数</a>；</p>
-
-<p>二、加入以下内容到/etc/modprobe.d/modprobe.conf：</p>
-
-<blockquote>
-  <p>options i945 modeset=1</p>
-</blockquote>
-
-<p>三、在/etc/rc.conf中的<strong>MODULES</strong>行加入<strong>intel_agp</strong>和<strong>i945</strong>；</p>
-
-<p>重启系统后，Compiz白屏问题解决，3D加速性能似乎有所上升。</p>
 
       
     </div>

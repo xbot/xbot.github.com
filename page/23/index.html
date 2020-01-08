@@ -70,6 +70,77 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-project-euler-14" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/project-euler-14/"><strong>Project Euler Problem 14 Solved</strong></a>
+      <small class="article-date-index">&nbsp; 2014-04-01</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/project-euler-14/" class="article-date">
+  <time datetime="2014-04-01T14:17:00.000Z" itemprop="datePublished">2014-04-01</time>
+</a>-->
+      <!--
+  <div class="article-category-index">
+    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/project-euler-14/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Longest-Collatz-sequence"><a href="#Longest-Collatz-sequence" class="headerlink" title="Longest Collatz sequence"></a>Longest Collatz sequence</h2><p>The following iterative sequence is defined for the set of positive integers:</p>
+<p>n → n/2 (n is even)<br>n → 3n + 1 (n is odd)</p>
+<p>Using the rule above and starting with 13, we generate the following sequence:</p>
+<p>13 → 40 → 20 → 10 → 5 → 16 → 8 → 4 → 2 → 1</p>
+<p>It can be seen that this sequence (starting at 13 and finishing at 1) contains 10 terms. Although it has not been proved yet (Collatz Problem), it is thought that all starting numbers finish at 1.</p>
+<p>Which starting number, under one million, produces the longest chain?</p>
+<p>NOTE: Once the chain starts the terms are allowed to go above one million.</p>
+<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><figure class="highlight go"><figcaption><span>p14.go</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">    <span class="string">"math"</span></span><br><span class="line">    <span class="string">"time"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">collatz</span><span class="params">(n <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> n == <span class="number">1</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> math.Mod(<span class="keyword">float64</span>(n), <span class="number">2</span>) == <span class="number">0</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> collatz(n/<span class="number">2</span>) + <span class="number">1</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> collatz(n*<span class="number">3</span>+<span class="number">1</span>) + <span class="number">1</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    start := time.Now()</span><br><span class="line"></span><br><span class="line">    i, iLen, count, max := <span class="number">1000000</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> i &gt; <span class="number">1</span> &#123;</span><br><span class="line">        iLen = collatz(i)</span><br><span class="line">        <span class="keyword">if</span> iLen &gt; count &#123;</span><br><span class="line">            count = iLen</span><br><span class="line">            max = i</span><br><span class="line">        &#125;</span><br><span class="line">        i--</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    end := time.Now()</span><br><span class="line">    fmt.Println(end.Sub(start), max, count)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>I’m the 104188th person to have solved this problem.</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-flamework-dependency-injection" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -689,70 +760,6 @@ ga('send', 'pageview');
       
         <img src="http://pic.yupoo.com/leninlee/DyJGJDhw/medish.jpg">
 <p>中国的历史教育培养了一群读了二十年书还分不清五胡十六国和五代十国的人，看看人家是怎么教历史的，提纲挈领比死记签了哪些条约有用多了。</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-after-reading-big-data-era" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/after-reading-big-data-era/"><strong>读完《大数据时代》</strong></a>
-      <small class="article-date-index">&nbsp; 2014-02-08</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/after-reading-big-data-era/" class="article-date">
-  <time datetime="2014-02-08T02:11:00.000Z" itemprop="datePublished">2014-02-08</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/青梅煮酒/">青梅煮酒</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/after-reading-big-data-era/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <img src="http://pic.yupoo.com/leninlee/DwnY4bqO/medish.jpg">
-<p>读完，我首先感到的不是大数据有多可爱，而是有多可怕。</p>
 
       
     </div>

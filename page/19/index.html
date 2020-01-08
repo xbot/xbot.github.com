@@ -70,6 +70,73 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-auto-remap-keyboard" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/auto-remap-keyboard/"><strong>自动重映射键盘</strong></a>
+      <small class="article-date-index">&nbsp; 2015-04-17</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/auto-remap-keyboard/" class="article-date">
+  <time datetime="2015-04-17T10:02:00.000Z" itemprop="datePublished">2015-04-17</time>
+</a>-->
+      <!--
+  <div class="article-category-index">
+    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/auto-remap-keyboard/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>每次键盘拔出再插入时，键盘映射都会失效，要重新执行映射，而且要对不同的键盘应用不同的映射方案。试过直接添加udev规则，即使指定X Display和Xauthority也不成功。所以用pyudev写个脚本（<a href="https://github.com/xbot/shell/blob/master/udev.py" target="_blank" rel="noopener">最新版本</a>）：</p>
+<figure class="highlight python"><figcaption><span>udev.py</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python2</span></span><br><span class="line"><span class="comment"># encoding: utf-8</span></span><br><span class="line"></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"><span class="string">File:        udev.py</span></span><br><span class="line"><span class="string">Description: udev monitor script.</span></span><br><span class="line"><span class="string">Author:      Donie Leigh</span></span><br><span class="line"><span class="string">Email:       donie.leigh at gmail.com</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> glib, os, time</span><br><span class="line"><span class="keyword">from</span> pyudev <span class="keyword">import</span> Context, Monitor</span><br><span class="line"></span><br><span class="line">PID_FILE = <span class="string">"/tmp/udev_monitor.pid"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">remap_pokerii</span><span class="params">(device)</span>:</span></span><br><span class="line">    <span class="string">""" Do keyboard remapping when PokerII is plugged in.</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="keyword">if</span> device.get(<span class="string">'ID_VENDOR_ID'</span>) == <span class="string">'0f39'</span> \</span><br><span class="line">            <span class="keyword">and</span> device.action == <span class="string">'add'</span>:</span><br><span class="line">        time.sleep(<span class="number">1</span>)</span><br><span class="line">        os.system(<span class="string">'setxkbmap'</span>)</span><br><span class="line">        os.system(<span class="string">'xmodmap ~/.Xmodmap'</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">remap_filco</span><span class="params">(device)</span>:</span></span><br><span class="line">    <span class="string">""" Do keyboard remapping when Filco is plugged in.</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="keyword">if</span> device.get(<span class="string">'ID_VENDOR_ID'</span>) == <span class="string">'04d9'</span> \</span><br><span class="line">            <span class="keyword">and</span> device.action == <span class="string">'add'</span>:</span><br><span class="line">        time.sleep(<span class="number">1</span>)</span><br><span class="line">        os.system(<span class="string">'setxkbmap'</span>)</span><br><span class="line">        os.system(<span class="string">'xmodmap ~/.Xmodmap'</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">is_pid_running</span><span class="params">(pid)</span>:</span></span><br><span class="line">    <span class="string">""" Check if the given pid is running.</span></span><br><span class="line"><span class="string">    :pid: int</span></span><br><span class="line"><span class="string">    :returns: bool</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        os.kill(pid, <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">except</span> OSError:</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">False</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">True</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">write_pid_or_die</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="string">""" Write the current pid into pid file or exists if there is already a instance running.</span></span><br><span class="line"><span class="string">    :returns: void</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="keyword">if</span> os.path.isfile(PID_FILE):</span><br><span class="line">        pid = int(open(PID_FILE).read())</span><br><span class="line">        <span class="keyword">if</span> is_pid_running(pid):</span><br><span class="line">            print(<span class="string">"Process &#123;0&#125; is still running."</span>.format(pid))</span><br><span class="line">            <span class="keyword">raise</span> SystemExit</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            os.remove(PID_FILE)</span><br><span class="line"></span><br><span class="line">    open(PID_FILE, <span class="string">'w'</span>).write(str(os.getpid()))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">from</span> pyudev.glib <span class="keyword">import</span> MonitorObserver</span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">device_event</span><span class="params">(observer, device)</span>:</span></span><br><span class="line">            remap_pokerii(device)</span><br><span class="line">            remap_filco(device)</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">from</span> pyudev.glib <span class="keyword">import</span> GUDevMonitorObserver <span class="keyword">as</span> MonitorObserver</span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">device_event</span><span class="params">(observer, action, device)</span>:</span></span><br><span class="line">            remap_pokerii(device)</span><br><span class="line">            remap_filco(device)</span><br><span class="line"></span><br><span class="line">    context = Context()</span><br><span class="line">    monitor = Monitor.from_netlink(context)</span><br><span class="line"></span><br><span class="line">    monitor.filter_by(subsystem=<span class="string">'usb'</span>)</span><br><span class="line">    observer = MonitorObserver(monitor)</span><br><span class="line"></span><br><span class="line">    observer.connect(<span class="string">'device-event'</span>, device_event)</span><br><span class="line">    monitor.start()</span><br><span class="line"></span><br><span class="line">    glib.MainLoop().run()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    write_pid_or_die()</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        main()</span><br><span class="line">    <span class="keyword">except</span> KeyboardInterrupt:</span><br><span class="line">        print(<span class="string">"Game over."</span>)</span><br></pre></td></tr></table></figure>
+<p>有个坑，监测到键盘插入事件后要等一秒再应用映射，否则不成功。</p>
+<p>这里只用了设备的Vendor ID，可以直接用lsusb看。看更多的设备属性的命令如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 监视设备变动</span></span><br><span class="line">udevadm monitor --environment --udev</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看设备属性</span></span><br><span class="line">udevadm info -a -n [device name]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看文件所属设备的属性</span></span><br><span class="line">udevadm info -a -p [file name]</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-monitor-home-with-raspberry-pi" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -685,72 +752,6 @@ ga('send', 'pageview');
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">svn <span class="built_in">log</span> --diff --internal-diff abc.php</span><br></pre></td></tr></table></figure>
 <p>vim的辅助函数：</p>
 <figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">" Show commit history of the current file under the given VCS in a new window</span></span><br><span class="line"><span class="function"><span class="keyword">function</span>! <span class="title">ShowCommitHistory</span><span class="params">(vcs)</span></span></span><br><span class="line">    <span class="comment">" Check parameter</span></span><br><span class="line">    <span class="keyword">if</span> <span class="variable">a:vcs</span> != <span class="string">'svn'</span> &amp;&amp; <span class="variable">a:vcs</span> != <span class="string">'git'</span></span><br><span class="line">        <span class="keyword">echoerr</span> <span class="string">'Unknow VCS: '</span>.<span class="variable">a:vcs</span></span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    <span class="keyword">endif</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">" Do the dirty work</span></span><br><span class="line">    <span class="keyword">let</span> fileName = <span class="built_in">expand</span>(<span class="string">'%'</span>)</span><br><span class="line">    <span class="keyword">if</span> !empty(fileName)</span><br><span class="line">        <span class="keyword">exe</span> <span class="string">'new'</span></span><br><span class="line">        <span class="keyword">if</span> <span class="variable">a:vcs</span> == <span class="string">'svn'</span></span><br><span class="line">            <span class="keyword">exe</span> <span class="string">'r !svn log --diff --internal-diff '</span>.fileName</span><br><span class="line">        <span class="keyword">elseif</span> <span class="variable">a:vcs</span> == <span class="string">'git'</span></span><br><span class="line">            <span class="keyword">exe</span> <span class="string">'r !git log -p '</span>.fileName</span><br><span class="line">        <span class="keyword">endif</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">echo</span> <span class="string">'File not found.'</span></span><br><span class="line">    <span class="keyword">endif</span></span><br><span class="line"><span class="keyword">endfunction</span></span><br><span class="line"><span class="keyword">nnoremap</span> <span class="symbol">&lt;leader&gt;</span>ssch :<span class="keyword">call</span> ShowCommitHistory(<span class="string">'svn'</span>)<span class="symbol">&lt;CR&gt;</span></span><br><span class="line"><span class="keyword">nnoremap</span> <span class="symbol">&lt;leader&gt;</span>gsch :<span class="keyword">call</span> ShowCommitHistory(<span class="string">'git'</span>)<span class="symbol">&lt;CR&gt;</span></span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-start-taking-note-in-online-markdown-editor" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/start-taking-note-in-online-markdown-editor/"><strong>开始用在线Markdown编辑器记笔记</strong></a>
-      <small class="article-date-index">&nbsp; 2014-11-20</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/start-taking-note-in-online-markdown-editor/" class="article-date">
-  <time datetime="2014-11-20T14:35:00.000Z" itemprop="datePublished">2014-11-20</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/start-taking-note-in-online-markdown-editor/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>开始用支持VIM模式的在线Markdown编辑器记笔记。既非鼠辈（<em>鼠标依赖症不治者</em>），始终忍受不了其它WYSIWYG（所见即所得）的在线笔记。</p>
-<p>大部分在线笔记最傻X的一点是，必须点一下编辑按钮才能开始写东西。支持VIM模式的笔记就不用说了，丝般顺滑，不是我大Vimer就不会懂个中骚柔。</p>
-<p>组织上一向后知后觉。智能手机刚开始的时候，组织上很不感冒，理由是屏幕易碎、电池难支<del>、冯唐易老、李广难封</del>。而今现在眼目下，一日不搞机，如隔三秋。在线Markdown编辑器出现也有段时间了，一直觉得这货无非就是给Markdown加了个可笑的准WYSIWYG，现在看来，真是做笔记的不二神器，罪过罪过。</p>
-<p>说说组织上跟Markdown的故事。很久很久以前，博客刚开始流行的时候，组织上开始写博客，和大部分人一样，注册个账号写公开日记，很快就忍受不了WYSIWYG编辑器失控的格式，于是开始手写HTML代码，很快就发现这货真TM反人类，从此恨乌及乌至今最讨厌的数据交换格式还是XML，于是自定几种格式或标记，用Java写了个解析工具，把文章源码翻译成HTML。突然有天发现这个星球上居然有种叫轻量型标记语言的东西，干的就是这么个事，只不过我的那些标记和解析工具又丑又烂而已。试了几种之后，最终选了Markdown，从此举案齐眉云云。</p>
 
       
     </div>

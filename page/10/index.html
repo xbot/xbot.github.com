@@ -70,6 +70,101 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-introduction-of-json-web-token" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/introduction-of-json-web-token/"><strong>JSON Web Token简介</strong></a>
+      <small class="article-date-index">&nbsp; 2017-04-23</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/introduction-of-json-web-token/" class="article-date">
+  <time datetime="2017-04-23T10:29:06.000Z" itemprop="datePublished">2017-04-23</time>
+</a>-->
+      <!--
+  <div class="article-category-index">
+    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/introduction-of-json-web-token/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="什么是JWT？"><a href="#什么是JWT？" class="headerlink" title="什么是JWT？"></a>什么是JWT？</h2><p>JSON Web Token（简称JWT）是一种token格式，通常用来解决身份认证的问题，和会话（session）作用相同，常用在RESTful API或者OAuth认证上。</p>
+<p>和session相比，JWT有以下优势：</p>
+<ul>
+<li>服务器端的开销低</li>
+<li>服务器端扩展方便</li>
+<li>不用专门处理CSRF</li>
+</ul>
+<p>由于session的实现方式需要在服务器端存储会话数据，所以当存在大量会话时，服务器端的存储压力会很大，并由此带来扩展上的复杂度（共享session）。而JWT可以把这些数据存储在token里，不需要服务器端存储，优势自然很明显。</p>
+<p>对于CSRF，由于session一般使用cookie实现，所以需要专门处理这个安全隐患。JWT借助HTTP请求的header传递，所以伪造成本更高。</p>
+<h3 id="JWT和Bearer-Token的关系"><a href="#JWT和Bearer-Token的关系" class="headerlink" title="JWT和Bearer Token的关系"></a>JWT和Bearer Token的关系</h3><p>JWT在使用的时候要在token前面加上字符串「bearer」再填到HTTP请求的header里，这个值就是「Bearer Token」。为什么要这么做？它和JWT是什么关系？</p>
+<p>简单地说，JWT是一种token格式，Bearer Token是一种鉴权方案。</p>
+<p>HTTP的header项「Authorization」是在HTTP 1.0引入的，它的值的格式是<code>类型+token</code>，支持多种鉴权方案，bearer只是其中的一种。bearer方案中使用的token是JWT格式，这就是它们之间的关系。</p>
+<h2 id="JWT的格式"><a href="#JWT的格式" class="headerlink" title="JWT的格式"></a>JWT的格式</h2><p>JWT是一个用英文点号连接起来的、分成三个部分的字符串：header、payload和signature。</p>
+<h3 id="header"><a href="#header" class="headerlink" title="header"></a>header</h3><p>header是个base64字符串，解密后是个JSON对象，包含一些元数据。例如：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  'typ': 'JWT',</span><br><span class="line">  'alg': 'HS256'</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>「typ」是格式，「alg」是加密方法。</p>
+<h3 id="payload"><a href="#payload" class="headerlink" title="payload"></a>payload</h3><p>payload也是个base64字符串，解密后也是个JSON对象，一般包含两种数据：JWT标准数据和自定义数据。</p>
+<p>JWT标准数据常见的有：</p>
+<ul>
+<li>iss：提供方。</li>
+<li>sub：主题，一般是用户ID。</li>
+<li>exp：过期时间。</li>
+<li>iat：创建时间。</li>
+<li>jti：token的唯一标识。</li>
+</ul>
+<p>此外，和session一样，可以把一些自定义的数据存储在payload里。但由于token存储在客户端，所以不应该在这里存储敏感数据。</p>
+<h3 id="signature"><a href="#signature" class="headerlink" title="signature"></a>signature</h3><p>signature也是个base64字符串，解密后是个使用header里描述的加密方法针对header和payload加密的字符串。目的是防止这两部分的数据被篡改。</p>
+<h2 id="JWT的使用原则"><a href="#JWT的使用原则" class="headerlink" title="JWT的使用原则"></a>JWT的使用原则</h2><ul>
+<li>不存放敏感信息</li>
+<li>保护好私钥</li>
+<li>结合https使用</li>
+</ul>
+<p>都是出于安全角度考虑。token存储在客户端，而且base64可以被解密，所以不能存储敏感数据。如果私钥泄漏，意味著签名可以被随意伪造。使用https可以更好的保护数据，防止中间人攻击。</p>
+<h2 id="JWT相关开发资源"><a href="#JWT相关开发资源" class="headerlink" title="JWT相关开发资源"></a>JWT相关开发资源</h2><p><a href="https://jwt.io/" target="_blank" rel="noopener">jwt.io</a>有各种语言的JWT开发资源。</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-get-the-inferior-class-get-the-throne" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -708,77 +803,6 @@ ga('send', 'pageview');
     <div class="article-entry" itemprop="articleBody">
       
         <p>导入<a href="http://www.abclite.cn/1995.html" target="_blank" rel="noopener">这里</a>提供的配置文件。</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-find-rss-with-workflow" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/find-rss-with-workflow/"><strong>自动探测RSS地址的workflow</strong></a>
-      <small class="article-date-index">&nbsp; 2017-03-24</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/find-rss-with-workflow/" class="article-date">
-  <time datetime="2017-03-24T13:09:13.000Z" itemprop="datePublished">2017-03-24</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/find-rss-with-workflow/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>RSS真是没落了，很多网站都没有明确输出Feed地址，每次想订阅都要浪费不少时间，所以写了这个<a href="https://workflow.is/workflows/7f02a38a6c21414a96a4f96600c94662" target="_blank" rel="noopener">Workflow</a>。</p>
-<ul>
-<li>列出页面中所有的Feed地址，点击后复制到剪贴板</li>
-<li>如果页面中的Feed地址是相对地址，自动转换为绝对地址</li>
-<li>如果页面中没有Feed地址，列出常见的几种地址，并侦测被点选的地址，侦测成功后自动复制到剪贴板</li>
-</ul>
-<hr>
-<img src="https://ww1.sinaimg.cn/large/006tNc79ly1fdy95stcokj30ih0wugnk.jpg" width="320">
-<img src="https://ww3.sinaimg.cn/large/006tNc79ly1fdy95w6sncj30ih0wumyy.jpg" width="320">
 
       
     </div>

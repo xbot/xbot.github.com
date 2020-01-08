@@ -70,6 +70,128 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-adjust-disk-partitions-in-archlinux" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/adjust-disk-partitions-in-archlinux/"><strong>调整Arch的磁盘分区</strong></a>
+      <small class="article-date-index">&nbsp; 2010-11-13</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/adjust-disk-partitions-in-archlinux/" class="article-date">
+  <time datetime="2010-11-12T16:00:00.000Z" itemprop="datePublished">2010-11-13</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/adjust-disk-partitions-in-archlinux/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p></p><h2>简述</h2><p></p>
+
+<p>目标：移除Windows 7，整块硬盘完全分配给Archlinux。</p>
+
+<p>原分区结构：</p>
+
+<p>
+<table class="art_tbl">
+<tr><th class="art_tbl_th">分区</th><th class="art_tbl_th">类型</th><th class="art_tbl_th">挂载</th><th class="art_tbl_th">文件系统</th><th class="art_tbl_th">容量</th></tr>
+<tr><td class="art_tbl_td">/dev/sda1</td><td class="art_tbl_td">主分区，启动分区</td><td class="art_tbl_td">Windows 7的安装分区</td><td class="art_tbl_td">ntfs</td><td class="art_tbl_td">30G</td></tr>
+<tr><td class="art_tbl_td">/dev/sda2</td><td class="art_tbl_td">扩展分区</td><td class="art_tbl_td">-</td><td class="art_tbl_td">-</td><td class="art_tbl_td">-</td></tr>
+<tr><td class="art_tbl_td">/dev/sda5</td><td class="art_tbl_td">逻辑分区</td><td class="art_tbl_td">Windows的D盘</td><td class="art_tbl_td">ntfs</td><td class="art_tbl_td">40G</td></tr>
+<tr><td class="art_tbl_td">/dev/sda3</td><td class="art_tbl_td">主分区</td><td class="art_tbl_td">/</td><td class="art_tbl_td">ext3</td><td class="art_tbl_td">78G</td></tr>
+<tr><td class="art_tbl_td">/dev/sda4</td><td class="art_tbl_td">交换分区</td><td class="art_tbl_td">swap</td><td class="art_tbl_td">-</td><td class="art_tbl_td">2G</td></tr>
+</table>
+</p>
+
+<p>调整后分区结构：</p>
+
+<p>
+<table class="art_tbl">
+<tr><th class="art_tbl_th">分区</th><th class="art_tbl_th">类型</th><th class="art_tbl_th">挂载</th><th class="art_tbl_th">文件系统</th><th class="art_tbl_th">容量</th></tr>
+<tr><td class="art_tbl_td">/dev/sda1</td><td class="art_tbl_td">主分区，启动分区</td><td class="art_tbl_td">/</td><td class="art_tbl_td">ext3</td><td class="art_tbl_td">30G</td></tr>
+<tr><td class="art_tbl_td">/dev/sda2</td><td class="art_tbl_td">主分区</td><td class="art_tbl_td">/home</td><td class="art_tbl_td">ext3</td><td class="art_tbl_td">120G</td></tr>
+<tr><td class="art_tbl_td">/dev/sda3</td><td class="art_tbl_td">交换分区</td><td class="art_tbl_td">swap</td><td class="art_tbl_td">-</td><td class="art_tbl_td">2G</td></tr>
+</table>
+</p>
+
+<p></p><h2>步骤</h2><p></p>
+
+<ol>
+  <li>Archlinux中重装GRUB，覆盖Windows 7的BCD：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo grub-install /dev/sda</span><br></pre></td></tr></table></figure></li>
+  <li>在GRUB启动菜单中加入将要复制到sda1分区中的Archlinux的启动项：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /boot/grub/menu.lst</span><br></pre></td></tr></table></figure><br><blockquote>
+# (2) Arch Linux
+title  Arch Linux
+root   (hd0,0)
+kernel /boot/vmlinuz26 root=/dev/sda1 resume=/dev/sda4 ro acpi_osi="Linux"
+initrd /boot/kernel26.img
+</blockquote></li>
+  <li><a href="http://0x3f.org/?p=1699">安装U盘启动的Puppy Linux</a></li>
+  <li>Puppy中格式化sda1分区：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkfs.ext3 /dev/sda1</span><br></pre></td></tr></table></figure></li>
+  <li>复制sda3上的Archlinux所有的文件到sda1：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 先点击桌面上sda1和sda3的盘符，使之被挂载到/mnt下</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> /mnt/sda3</span><br><span class="line">cp -a * /mnt/sda1</span><br></pre></td></tr></table></figure></li>
+  <li>修改sda1上的fstab：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /mnt/sda1/etc/fstab</span><br></pre></td></tr></table></figure><br><blockquote>
+# 修改必要的挂载点，如将根目录的挂载点由sda3改为sda1：
+/dev/sda1           /         ext3      defaults,noatime       0       1
+</blockquote></li>
+  <li>重启系统，并引导到新分区上的系统中</li>
+  <li>重新安装GRUB，使之引导sda1分区中的系统：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo grub-install /dev/sda</span><br></pre></td></tr></table></figure></li>
+  <li>重启并进入Puppy，使用gparted删除除sda1以外的所有分区，然后在空闲的空间上创建ext3格式的主分区sda2和交换分区sda3</li>
+  <li>移动sda1上home目录下的所有东西到sda2：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cp -a /mnt/sda1/home/* /mnt/sda2</span><br><span class="line">rm -rf /mnt/sda1/home/*</span><br></pre></td></tr></table></figure></li>
+  <li>修改sda1上的fstab和menu.lst：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /mnt/sda1/etc/fstab</span><br></pre></td></tr></table></figure><blockquote>
+# 将fstab中磁盘分区的挂载点配置为如下内容
+/dev/sda1        /          ext3      defaults,noatime         0        1
+/dev/sda2        /home      ext3      defaults,noatime         1        2
+/dev/sda3        swap       swap      defaults                 0        0
+</blockquote><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /mnt/boot/grub/menu.lst</span><br></pre></td></tr></table></figure><blockquote>
+# 将原来启动项中的sda3修改为sda1，由于配置过休眠，也将resume参数中的sda4改为sda3，即交换分区
+</blockquote>
+  </li><li>重启系统</li>
+</ol>
+
+<p></p><h2>后记</h2><p></p>
+
+<p>从<a href="http://0x3f.org/?tag=arch">Arch</a><a href="http://0x3f.org/?p=819">诞生</a>时只装XP，到<a href="http://0x3f.org/?p=836">装上Archlinux</a>后双系统并存，再到<a href="http://0x3f.org/?p=1180">尝试Win7</a>，两年的时间里，一直有很多原因让Windows像只寄生虫一样顽强地活著。最近硬盘空间越来越紧张，早前装的Win7也很长时间不用了，于是时隔三年之后，我又成了个纯粹的Archer。</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-howto-create-bootable-udisk-for-puppylinux" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -131,6 +253,80 @@ ga('send', 'pageview');
 <li><p>使用桌面上的<strong>Setup</strong>中的<strong>Puppy Universal Installer</strong>制作启动U盘。不过虽然这是官方推荐的制作工具，但我的杂牌U盘无论如何也不能引导系统，最后使用另一个备选的工具“<strong>BootFlash USB Installer</strong>”的<strong>USB-HDD</strong>模式制作成功。</p>
 </li>
 </ol>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
+      <article id="post-storage-space-analysing-tools" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/storage-space-analysing-tools/"><strong>目录与文件的存储空间占用分析工具</strong></a>
+      <small class="article-date-index">&nbsp; 2010-10-01</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/storage-space-analysing-tools/" class="article-date">
+  <time datetime="2010-09-30T16:00:00.000Z" itemprop="datePublished">2010-10-01</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/storage-space-analysing-tools/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3>du</h3>
+
+<p>du是命令行中用于查看目录和文件的空间占用情况的指令。</p>
+<p>常用示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">du -h /tmp/logs</span><br></pre></td></tr></table></figure>
+<h3>ncdu</h3>
+
+<p><a href="http://dev.yorhel.nl/ncdu" target="_blank" rel="noopener">ncdu</a>为du提供了一个基于NCurses的命令行用户界面，并能够按照多种条件对分析结果进行排序，它大大简化了du指令的使用。</p>
+<p><a href="http://picasaweb.google.com/lh/photo/xQINh1zrBdZcY27Evm9Cog?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh5.ggpht.com/_ceUJ_lBTHzc/TKWkJk8hkjI/AAAAAAAABfU/vTIJqHTxAX0/s400/disk_usage_analyzers-ncdu_01.png" height="250" width="400"></a></p>
+<h3>baobab</h3>
+
+<p><a href="http://www.marzocca.net/linux/baobab/index.html" target="_blank" rel="noopener">baobab</a>使用基于GTK的图形用户界面，突出特点是可以分析远程目录。</p>
+<p><a href="http://picasaweb.google.com/lh/photo/rGbtFe2Je23r1TB1MmX-tA?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh3.ggpht.com/_ceUJ_lBTHzc/TKWkJ1_yLJI/AAAAAAAABfY/pt_peEEU2f8/s400/disk_usage_analyzers-baobab_01.png" height="400" width="386"></a></p>
+<h3>参考</h3>
+
+<ol><br>    <li><a href="http://www.vpser.net/manage/ncdu.html" target="_blank" rel="noopener">磁盘目录占用空间计算排序工具 - ncdu</a></li><br></ol>
 
       
     </div>
@@ -218,80 +414,6 @@ ga('send', 'pageview');
 <h2> 补充说明 </h2>
 
 <ol><br><li>当前版本的Google App Engine SDK要求使用python 2.5，但如果只是用来上传应用程序到appspot，2.5以上版本的python也可以用，只是在上传时会报某些模块已不推荐使用。如果使用appcfg.py时报找不到2.5版本的python，可以强制使用已安装的新版本的python执行之，即：python appcfg.py update gtap</li><br></ol>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-storage-space-analysing-tools" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/storage-space-analysing-tools/"><strong>目录与文件的存储空间占用分析工具</strong></a>
-      <small class="article-date-index">&nbsp; 2010-10-01</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/storage-space-analysing-tools/" class="article-date">
-  <time datetime="2010-09-30T16:00:00.000Z" itemprop="datePublished">2010-10-01</time>
-</a>-->
-      <!--
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/storage-space-analysing-tools/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3>du</h3>
-
-<p>du是命令行中用于查看目录和文件的空间占用情况的指令。</p>
-<p>常用示例：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">du -h /tmp/logs</span><br></pre></td></tr></table></figure>
-<h3>ncdu</h3>
-
-<p><a href="http://dev.yorhel.nl/ncdu" target="_blank" rel="noopener">ncdu</a>为du提供了一个基于NCurses的命令行用户界面，并能够按照多种条件对分析结果进行排序，它大大简化了du指令的使用。</p>
-<p><a href="http://picasaweb.google.com/lh/photo/xQINh1zrBdZcY27Evm9Cog?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh5.ggpht.com/_ceUJ_lBTHzc/TKWkJk8hkjI/AAAAAAAABfU/vTIJqHTxAX0/s400/disk_usage_analyzers-ncdu_01.png" height="250" width="400"></a></p>
-<h3>baobab</h3>
-
-<p><a href="http://www.marzocca.net/linux/baobab/index.html" target="_blank" rel="noopener">baobab</a>使用基于GTK的图形用户界面，突出特点是可以分析远程目录。</p>
-<p><a href="http://picasaweb.google.com/lh/photo/rGbtFe2Je23r1TB1MmX-tA?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh3.ggpht.com/_ceUJ_lBTHzc/TKWkJ1_yLJI/AAAAAAAABfY/pt_peEEU2f8/s400/disk_usage_analyzers-baobab_01.png" height="400" width="386"></a></p>
-<h3>参考</h3>
-
-<ol><br>    <li><a href="http://www.vpser.net/manage/ncdu.html" target="_blank" rel="noopener">磁盘目录占用空间计算排序工具 - ncdu</a></li><br></ol>
 
       
     </div>
@@ -838,66 +960,6 @@ acturally been added ?</strong></p>
 <blockquote><br><strong>2010-12-12 Sunday</strong><br><ol><br>    <li>Add the ability to append the selected categories to posts</li><br>    <li>Add the ability to delete the selected categories from posts</li><br></ol><br></blockquote>
 
 <blockquote><br><b>2010-09-04 Saturday</b><br>Initial release.<br></blockquote>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-after-reading-wordpress-plug-in-development" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/after-reading-wordpress-plug-in-development/"><strong>读完《WordPress Plug-in Development》</strong></a>
-      <small class="article-date-index">&nbsp; 2010-08-29</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/after-reading-wordpress-plug-in-development/" class="article-date">
-  <time datetime="2010-08-28T16:00:00.000Z" itemprop="datePublished">2010-08-29</time>
-</a>-->
-      <!--
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/after-reading-wordpress-plug-in-development/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>花了两天时间读完了《WordPress Plug-in Development》，通过实例讲解，很细致，适合用来入门，当然，深度和广度都有限。</p>
-<p><a href="http://picasaweb.google.com/lh/photo/k7nT3M9jrDW1dPv-nzKJvQ?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh4.ggpht.com/_ceUJ_lBTHzc/THnN7TJZDlI/AAAAAAAABdI/OBmuprXqpX4/s400/wordpress-plugin-development.jpg"></a></p>
 
       
     </div>
