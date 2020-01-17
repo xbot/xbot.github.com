@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>用C4-PlantUML画软件架构图 - 晴耕雨讀</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="C4 Model是一种简洁有序的架构模型，四个“C”分别表示“Context”、“Container”、“Component”和“Code”，是由上而下逐步细化的四个层级。">
+<meta name="keywords" content="编程,最佳实践">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用C4-PlantUML画软件架构图">
+<meta property="og:url" content="http://0x3f.org/post/design-software-architecture-with-c4-plantuml/index.html">
+<meta property="og:site_name" content="晴耕雨讀">
+<meta property="og:description" content="C4 Model是一种简洁有序的架构模型，四个“C”分别表示“Context”、“Container”、“Component”和“Code”，是由上而下逐步细化的四个层级。">
+<meta property="og:locale" content="zh-TW">
+<meta property="og:image" content="https://www.plantuml.com/plantuml/svg/0/TLHBRzim3BxxLt2vD0NIP8UTTceUnbeiZo8F53qPYaB7GcJ9a-IcmR3_FigE4xjrSeh8Z-H7ygCVhMF6vQaClWd5PRx3t4X8dClipy70i6D_BroIRtEBXclbKBa-r-bWAJWpEpqNcA4SZ7yyl4Yct6Os7QJCEZHaYiOU_-7wcKz_1xcYm9GIW4iGOYsbFWgr1oaK0bCxQBY5iVHF0nK6gJcJyaGvAfBmENrmDns-BJRhQBruYIQBr_d5C5n5gz_XUln4uMVJw_FwAPg6lyBv90YSS19XTIBMAKo9X-KiGzW9jZSi9Pu6Hc8F8wOEa4aU12zeh5PTdbkdKpGzw9GM9WkGRsbyzdN8EOGA2JekUjiIgWT7cYjaLQIt0UDSvyhPVkS-24BgpcH6M8n6PDqnS-hoxvImpgPp3ty3e5_9lxij2KIsU1BusMTHw2xKIc11p2_0NjXPF-rtWKSGYffEcHDQ0TlglDY8C4sElM9bAJiWPEpazrRIlfA9mW_NPSwp6AvdjohwCUn8Py2PJNo6JmbI9kIrdV31ly5UcbZJF4NH8mrn9hZHLiSEmW-UCBL7m7f06q5ogvWMZPHiLlrlcTRAQOCMI8VL6ZaPu3pmbfbTkkpLPkOCKvPn3wCNEdwXL6gee5H5HdHpxu9xPfMWO5MQOELO77VgdZCOhFSKOnNg8hTgiBKgMyOFaOxZii28Nh0eNjVSmrqgbB14kkoB5cxpBDF6tQxoBmYMAACvYdsorQPs9b-qkR5eASB3bpLSAPdNiovi8Gpw353e6Uovrl1DXQoGBlYyTYymFz_F5Le6FBG72tzojCLgV9mN5qhC4gsmIZBvSc2tYpSeByj3g8kjqNrBsZRWf4KRDw2Rve9RKC6KdIXZGQnPl-chIjuNnatp8g_EH-gTliJ_0G00">
+<meta property="og:image" content="https://www.plantuml.com/plantuml/svg/0/bLN1Zjf84BtxAsh98KJo35ffJtiA0sXdae7nZfcTv6ILsmMqqkwskjiG5Es_RxMn0KEKP3dPHTMhrwzUjTyxZzRNfOf-argekg3QAjXuNxa_HoEBkzkrz9iwhnrPORGdxM-5AKVFKg0jp49IHMeq-UCcKQZzo_nnLABpP3cKJJWVfIPxMuK6Rw7MN5eo1FWDmSeePNPIhq5n4g0keFUtj8wV371hK4QWKdl6w6Z2TOFeSVpvwMMPBP-IRFhqkeZUje5ncgKVPyl9FTUteTU7vNtsEFjhjfX6aPTUCM271eN4jSMI6Lfuu3DRJHxkK7y9PDCzdw-CeeIiCteeQkTDIJQ6oV5fC8Ok36RLd2RdwXXsh2LKJI6g9WOeXAcrTuDtKNI0pkuuKA3T3yNlZ7L9OF0ElaN0loFVuOxo3AkAaryfXt5LAPwEbqOFEFG1jnX3Mjb0VlxF9CIcfEIMQJJKs05U2cYdsymXX8zzy-xWoPX9zZkxYh47AV-jw2R1DONkNTTKM5dv6CPwNIkq8PnOivK5EU1fVh_BYaqIgAEIVX_6B-f6I0TRYQ54Mk3pGcxDZZrvnQWqkLJKoZ5lNZfEapSnVC8IMOa-5pPWAJqLuEhSCPTsPh_2pLsHEn20WhPIq2MzQJuiq6EEZi8OsiV09ltx4NhltbZc5lOEBAsbynQvDKZDhYoRwSQmuUG2i6PN2Ki5Zq-YSd4m5Jd7MxFc5_BYzagc7CKNqWNh98DVauVlssPgECsUwdgw_KIV80a3S-j_ZzQUVVL3Ab6gp3K1XflTpFczNQk0lsJfPGFDEpANmXfdLXvcNyK6DJliKCcmPvWjWnCgO-eLxp1TxEsPjC62xQG51uwdE5COC3UrFuqvFgvh33mFxR0vxqdaw9dKsPLmMimNHoxqlbykavGJ-tc7DVfnJi_OJUgXNROWkTxavkmQEC1rIzuYDS7-sBk6wFPQnF0XVLgCpfkVj_nVbTaTPv-8dIpVHtacB1oih2cRMsTdUGdvJZ81kGMUtaswSmRCCpqkR9Goh0Ew2T46uqJamd5z3lswseKRzjW-dI-J5kXuc5xvbUywOKBzg5Nd4tyLEt7USob_g_u3">
+<meta property="og:image" content="https://www.plantuml.com/plantuml/svg/0/fLLDRnen4BtlhvXoQ45AmgMddaf8sYJA1mBIZnEQzGwBMt-iR2yKLVtl7Nk1NPAeYjHSuXsFPzwyzsm--e0kr5fbRwGHgYweTWfM8LJ-mt3eS7DMoh2gyzgJ4zO4Ck5CM3sSIe6kiFUIAbB3yVlJYK8J7kzkXnfz8CUXnTZgoffueeeDta5j-AZc08GLmT8gPJVIbA2a8K1JmD6sT9vN5hWrA2jGgItNsCE4vmsosz7tXyVvuklr_6fnU_dvylwYFyYo88FYz7qk519BXvhxExZcYPoX0ETeVaOeiosZrt0AeyarZAfAyPn1MfDbOvuU6QZh-mfFe3VZTAuxmPAwYJtU-e5hzCB9AgIfq9IrGXTt9iwkPK4UU9eqfTm3o7S0banIh8DAXcqSNzG-M4tEmrfYF2CTR2Y7tDaDYtBM6tIWwOZipkPI9L2nvJVKwAGvxiwKQnce05_ddhlRy1zeTDDlzw-WjHHq1EiYxnSvzx_0W3bwYbYcfB2f3FimpCIADCRTMR2ESKRNWQDI-k1IDYDasNHQdy0A_Ofdm9fncB0J08IZ8dwYyYU0Gf3tx9-IFoY8YAlHU77vA_HrxYDXZ7B9bg0dDkWWYNhPPI99SE10K0SFO6xhq3AKcjlQ15unVECnKTdYQ0bQd7DUWMxRnqfoqoVcwmtWTmRyTp1ntylI91EMXaqCiPBZ-qJ9PNTVnZ0blZs7S8oEudLhEFLHobY2ySVbYzhxXeF1ayxjKBtHRWcpMhF9jg-2SJ1XQwKDFp7iISzLB5TfU6PZHIG74fy1yIHgnxQCDEoMxMwIhd9nZdF2O_SVczf58xAB4YEcR4Gz0R72vgD2xpVM5Qrknp3OGaiKMD0_Z0IVKiOBe4RG70QcgD517seS2v4S4rlppTd9ts7WqTEUeRZVYjI5zoIfFPvkvvImWBUmuH0n6n7TpSNvk7EWKwkvEAbWV6FutR-QpoSpJlwJPQbuV2HtBjsdtSmUxWzvXwIEeLvCJ9dw5TNqAufz95FmRyLV">
+<meta property="og:image" content="https://www.plantuml.com/plantuml/svg/0/hLTRKzj667tthr3zKfWX-ALFVGe5JqdZWYSsa-cJPYslZ2QorYF9eKmdCvWqX6Rm9S6qf4qJx9IcqnOP9jI0FU0VKrtiVv5TIzR5jyW4FtZatVETtU_isU-JRqio4ELicWy4FkC4Xiyc8RKgondfor1816kpAKvUpIQo4XGP9CXGa6SPb0xTunWW9j4I1pEG3yr_SIlA0q5U-JOIIWD9XY8UekSn7d0256SpXFvpAYlWq3IceEHLIB68vz4Q9wGe7eCe82GfppGdIlW9KNXfYaSCuFbrp67lSN21G6Jkk-MLE1rVZj8Bo_UNCDeQcOlHiRlX-FpYrBGpUFzEV96EXByEBotWuO3CoJoarCOxRJSNKXj_wFkxeVPfLNjMqV_BgUU_aeVNTVtrZu5058eI4gOo8afc6PbE0m6ae3XZ1HlDeb7QckwXcAmaepGK7PYcLFNjipuOO1YKnUa8yWnbBjkReiFVopPBBzepcOGIbnB8P5kvQYiLxNmR9nJ6foLcH4w2z5UOEWd4zQar93v8G85PdQ62sjcXUlbAAnu7fwaV0XJ-nDRnqQKTT2z11X8g768cg9uVQQt7TXJvs2SnbM5eLkmQ9KdM-2bl_5CBugTlm4CWCIANmVdD2V92Tyj16zAfN1Y_AS7fuOm9m3om24i5Yp2w69sX8bdibw0zhXSEjUBROImB2SAJ139800dsfQBl7UjvHMli4gREVglpT4TjF7T6JRv7WQ4Y8J693zUMgArKjVpUM8dGZKk4RaWYv978dSedISHo0X0Ow1AfQ_2n8h4tBX9xGoAnNf5SgVWLwT7mouah78tBx4EEWHBPofMYlyfZyf7tqmNkGtepjt2qTPzjzrj1Wo9iRnadpVytSh7e2lc-kp9Kq1vjzmROVXb5QivYEkseP3wF9RKyOoiyYbOlrzJclgPKz8DpJAwNw_g_LvtTUhkoe-KhXbB1HPQC5qj6uTY6gPSlEzNVSM7NZq_npyxRWbvuDtO_0f8vTfqiM2nrjbwCbAxulBEHCzuSgQtAM3uPf0ZPmLFZw6eKcRbx4sCqJxN6doIJxa_xGNknezKksYSLxSdxTgwCluttpOzKBDnUHO_JdjGrvV4G2rcHfCT84YB8_9wnUM6yR6gNxkDpuwpyo0i3IQ7y5-vMFUfn0J0DE9xScqr5RTOz4TqRSm_oWntNsstQIglpYqAKMup7ep4SJO866p3o4UNkn-o4U3_y_Rvo6dpGT8_fipwq9P8BRCar3DoZTbuFV52xm7tK14r7l0tUqvlRjJFzPBDRf6FBIo6IhRM69yPqakMXFh2pXathRTlE6l7vQEYEQm4xmCsl7rGwV--Cs98JCL0VnwOo46TvNNzpsAvLJSSJbNEr4Ubv_87yIOWcbD1DY_n8Y2QM40sHmku5unAvle2Z29oJCpcijxk9E5mTPwBDsvt1K_jz1lUgdXbhthWH9-gfGgm_rx0JkiPDo_fn3JknQzWnhZ4Fpthlx1wUllspsbBqyeKvQ3ohwnivlxGJsOgzfYNOJx44UrrBtCOX-3_l1m00">
+<meta property="og:updated_time" content="2020-01-17T10:04:30.448Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="用C4-PlantUML画软件架构图">
+<meta name="twitter:description" content="C4 Model是一种简洁有序的架构模型，四个“C”分别表示“Context”、“Container”、“Component”和“Code”，是由上而下逐步细化的四个层级。">
+<meta name="twitter:image" content="https://www.plantuml.com/plantuml/svg/0/TLHBRzim3BxxLt2vD0NIP8UTTceUnbeiZo8F53qPYaB7GcJ9a-IcmR3_FigE4xjrSeh8Z-H7ygCVhMF6vQaClWd5PRx3t4X8dClipy70i6D_BroIRtEBXclbKBa-r-bWAJWpEpqNcA4SZ7yyl4Yct6Os7QJCEZHaYiOU_-7wcKz_1xcYm9GIW4iGOYsbFWgr1oaK0bCxQBY5iVHF0nK6gJcJyaGvAfBmENrmDns-BJRhQBruYIQBr_d5C5n5gz_XUln4uMVJw_FwAPg6lyBv90YSS19XTIBMAKo9X-KiGzW9jZSi9Pu6Hc8F8wOEa4aU12zeh5PTdbkdKpGzw9GM9WkGRsbyzdN8EOGA2JekUjiIgWT7cYjaLQIt0UDSvyhPVkS-24BgpcH6M8n6PDqnS-hoxvImpgPp3ty3e5_9lxij2KIsU1BusMTHw2xKIc11p2_0NjXPF-rtWKSGYffEcHDQ0TlglDY8C4sElM9bAJiWPEpazrRIlfA9mW_NPSwp6AvdjohwCUn8Py2PJNo6JmbI9kIrdV31ly5UcbZJF4NH8mrn9hZHLiSEmW-UCBL7m7f06q5ogvWMZPHiLlrlcTRAQOCMI8VL6ZaPu3pmbfbTkkpLPkOCKvPn3wCNEdwXL6gee5H5HdHpxu9xPfMWO5MQOELO77VgdZCOhFSKOnNg8hTgiBKgMyOFaOxZii28Nh0eNjVSmrqgbB14kkoB5cxpBDF6tQxoBmYMAACvYdsorQPs9b-qkR5eASB3bpLSAPdNiovi8Gpw353e6Uovrl1DXQoGBlYyTYymFz_F5Le6FBG72tzojCLgV9mN5qhC4gsmIZBvSc2tYpSeByj3g8kjqNrBsZRWf4KRDw2Rve9RKC6KdIXZGQnPl-chIjuNnatp8g_EH-gTliJ_0G00">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="/webfonts/ptserif/main.css" rel="stylesheet" type="text/css">
+  <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-93233020-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+</head>
+</html>
+<body>
+  <div id="container">
+    <!-- blair add baidu tongji start... @2017.10.03 -->
+<!-- blair add baidu tongji end ! @2017.10.03 -->
+
+<header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
+      <a id="logo" class="logo" href="/"></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/archives">目录</a>
+        
+          <a class="main-nav-link" href="/categories">分类</a>
+        
+          <a class="main-nav-link" href="/tags">标签</a>
+        
+          <a class="main-nav-link" href="https://t.me/s/blingings">不灵</a>
+        
+          <a class="main-nav-link" href="/about">关于</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div id="search-form-wrap">
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
+
+    <br>
+    <section id="main" class="outer"><article id="post-design-software-architecture-with-c4-plantuml" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      用C4-PlantUML画软件架构图
+      <small class="article-detail-date-index">&nbsp; 2020-01-17</small>
+    </h1>
+  
+
+
+        <div class="page-title"></div>
+        <br>
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/design-software-architecture-with-c4-plantuml/" class="article-date">
+  <time datetime="2020-01-17T09:29:24.000Z" itemprop="datePublished">2020-01-17</time>
+</a>-->
+      <!-- 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+--><!-- by blair 160724 -->
+      <!-- by blair
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/design-software-architecture-with-c4-plantuml/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="https://c4model.com" target="_blank" rel="noopener">C4 Model</a>是一种简洁有序的架构模型，四个“C”分别表示“Context”、“Container”、“Component”和“Code”，是由上而下逐步细化的四个层级。</p>
+<a id="more"></a>
+<p>Contex即上下文，它表示我们正在构架的软件系统和用户、其它系统之间的关系。例如：</p>
+<p><img src="https://www.plantuml.com/plantuml/svg/0/TLHBRzim3BxxLt2vD0NIP8UTTceUnbeiZo8F53qPYaB7GcJ9a-IcmR3_FigE4xjrSeh8Z-H7ygCVhMF6vQaClWd5PRx3t4X8dClipy70i6D_BroIRtEBXclbKBa-r-bWAJWpEpqNcA4SZ7yyl4Yct6Os7QJCEZHaYiOU_-7wcKz_1xcYm9GIW4iGOYsbFWgr1oaK0bCxQBY5iVHF0nK6gJcJyaGvAfBmENrmDns-BJRhQBruYIQBr_d5C5n5gz_XUln4uMVJw_FwAPg6lyBv90YSS19XTIBMAKo9X-KiGzW9jZSi9Pu6Hc8F8wOEa4aU12zeh5PTdbkdKpGzw9GM9WkGRsbyzdN8EOGA2JekUjiIgWT7cYjaLQIt0UDSvyhPVkS-24BgpcH6M8n6PDqnS-hoxvImpgPp3ty3e5_9lxij2KIsU1BusMTHw2xKIc11p2_0NjXPF-rtWKSGYffEcHDQ0TlglDY8C4sElM9bAJiWPEpazrRIlfA9mW_NPSwp6AvdjohwCUn8Py2PJNo6JmbI9kIrdV31ly5UcbZJF4NH8mrn9hZHLiSEmW-UCBL7m7f06q5ogvWMZPHiLlrlcTRAQOCMI8VL6ZaPu3pmbfbTkkpLPkOCKvPn3wCNEdwXL6gee5H5HdHpxu9xPfMWO5MQOELO77VgdZCOhFSKOnNg8hTgiBKgMyOFaOxZii28Nh0eNjVSmrqgbB14kkoB5cxpBDF6tQxoBmYMAACvYdsorQPs9b-qkR5eASB3bpLSAPdNiovi8Gpw353e6Uovrl1DXQoGBlYyTYymFz_F5Le6FBG72tzojCLgV9mN5qhC4gsmIZBvSc2tYpSeByj3g8kjqNrBsZRWf4KRDw2Rve9RKC6KdIXZGQnPl-chIjuNnatp8g_EH-gTliJ_0G00" alt="System Landscape diagram for Big Bank plc" title="System Landscape diagram for Big Bank plc"></p>
+<p>容器（Container）把关注点放在被架构的系统本身，显示组成系统的容器（例如：APP、Web端、API、微服务、数据库等）及彼此之间的关系。例如：</p>
+<p><img src="https://www.plantuml.com/plantuml/svg/0/bLN1Zjf84BtxAsh98KJo35ffJtiA0sXdae7nZfcTv6ILsmMqqkwskjiG5Es_RxMn0KEKP3dPHTMhrwzUjTyxZzRNfOf-argekg3QAjXuNxa_HoEBkzkrz9iwhnrPORGdxM-5AKVFKg0jp49IHMeq-UCcKQZzo_nnLABpP3cKJJWVfIPxMuK6Rw7MN5eo1FWDmSeePNPIhq5n4g0keFUtj8wV371hK4QWKdl6w6Z2TOFeSVpvwMMPBP-IRFhqkeZUje5ncgKVPyl9FTUteTU7vNtsEFjhjfX6aPTUCM271eN4jSMI6Lfuu3DRJHxkK7y9PDCzdw-CeeIiCteeQkTDIJQ6oV5fC8Ok36RLd2RdwXXsh2LKJI6g9WOeXAcrTuDtKNI0pkuuKA3T3yNlZ7L9OF0ElaN0loFVuOxo3AkAaryfXt5LAPwEbqOFEFG1jnX3Mjb0VlxF9CIcfEIMQJJKs05U2cYdsymXX8zzy-xWoPX9zZkxYh47AV-jw2R1DONkNTTKM5dv6CPwNIkq8PnOivK5EU1fVh_BYaqIgAEIVX_6B-f6I0TRYQ54Mk3pGcxDZZrvnQWqkLJKoZ5lNZfEapSnVC8IMOa-5pPWAJqLuEhSCPTsPh_2pLsHEn20WhPIq2MzQJuiq6EEZi8OsiV09ltx4NhltbZc5lOEBAsbynQvDKZDhYoRwSQmuUG2i6PN2Ki5Zq-YSd4m5Jd7MxFc5_BYzagc7CKNqWNh98DVauVlssPgECsUwdgw_KIV80a3S-j_ZzQUVVL3Ab6gp3K1XflTpFczNQk0lsJfPGFDEpANmXfdLXvcNyK6DJliKCcmPvWjWnCgO-eLxp1TxEsPjC62xQG51uwdE5COC3UrFuqvFgvh33mFxR0vxqdaw9dKsPLmMimNHoxqlbykavGJ-tc7DVfnJi_OJUgXNROWkTxavkmQEC1rIzuYDS7-sBk6wFPQnF0XVLgCpfkVj_nVbTaTPv-8dIpVHtacB1oih2cRMsTdUGdvJZ81kGMUtaswSmRCCpqkR9Goh0Ew2T46uqJamd5z3lswseKRzjW-dI-J5kXuc5xvbUywOKBzg5Nd4tyLEt7USob_g_u3" alt="Container diagram for Internet Banking System" title="Container diagram for Internet Banking System"></p>
+<p>组件（Component）把一个容器放大，拆分成不同的抽象逻辑，这一层级已经涉及代码层面的内容。例如：</p>
+<p><img src="https://www.plantuml.com/plantuml/svg/0/fLLDRnen4BtlhvXoQ45AmgMddaf8sYJA1mBIZnEQzGwBMt-iR2yKLVtl7Nk1NPAeYjHSuXsFPzwyzsm--e0kr5fbRwGHgYweTWfM8LJ-mt3eS7DMoh2gyzgJ4zO4Ck5CM3sSIe6kiFUIAbB3yVlJYK8J7kzkXnfz8CUXnTZgoffueeeDta5j-AZc08GLmT8gPJVIbA2a8K1JmD6sT9vN5hWrA2jGgItNsCE4vmsosz7tXyVvuklr_6fnU_dvylwYFyYo88FYz7qk519BXvhxExZcYPoX0ETeVaOeiosZrt0AeyarZAfAyPn1MfDbOvuU6QZh-mfFe3VZTAuxmPAwYJtU-e5hzCB9AgIfq9IrGXTt9iwkPK4UU9eqfTm3o7S0banIh8DAXcqSNzG-M4tEmrfYF2CTR2Y7tDaDYtBM6tIWwOZipkPI9L2nvJVKwAGvxiwKQnce05_ddhlRy1zeTDDlzw-WjHHq1EiYxnSvzx_0W3bwYbYcfB2f3FimpCIADCRTMR2ESKRNWQDI-k1IDYDasNHQdy0A_Ofdm9fncB0J08IZ8dwYyYU0Gf3tx9-IFoY8YAlHU77vA_HrxYDXZ7B9bg0dDkWWYNhPPI99SE10K0SFO6xhq3AKcjlQ15unVECnKTdYQ0bQd7DUWMxRnqfoqoVcwmtWTmRyTp1ntylI91EMXaqCiPBZ-qJ9PNTVnZ0blZs7S8oEudLhEFLHobY2ySVbYzhxXeF1ayxjKBtHRWcpMhF9jg-2SJ1XQwKDFp7iISzLB5TfU6PZHIG74fy1yIHgnxQCDEoMxMwIhd9nZdF2O_SVczf58xAB4YEcR4Gz0R72vgD2xpVM5Qrknp3OGaiKMD0_Z0IVKiOBe4RG70QcgD517seS2v4S4rlppTd9ts7WqTEUeRZVYjI5zoIfFPvkvvImWBUmuH0n6n7TpSNvk7EWKwkvEAbWV6FutR-QpoSpJlwJPQbuV2HtBjsdtSmUxWzvXwIEeLvCJ9dw5TNqAufz95FmRyLV" alt="Component diagram for Internet Banking System - API Application" title="Component diagram for Internet Banking System - API Application"></p>
+<p>而抽象逻辑内部代码之间的关系由Code这一层展示。</p>
+<p><a href="https://github.com/RicardoNiepel/C4-PlantUML" target="_blank" rel="noopener">C4-PlantUML</a>是为PlantUML封装的一套模板，用来画C4架构图既美观又方便。下面是我画的样子：</p>
+<p><img src="https://www.plantuml.com/plantuml/svg/0/hLTRKzj667tthr3zKfWX-ALFVGe5JqdZWYSsa-cJPYslZ2QorYF9eKmdCvWqX6Rm9S6qf4qJx9IcqnOP9jI0FU0VKrtiVv5TIzR5jyW4FtZatVETtU_isU-JRqio4ELicWy4FkC4Xiyc8RKgondfor1816kpAKvUpIQo4XGP9CXGa6SPb0xTunWW9j4I1pEG3yr_SIlA0q5U-JOIIWD9XY8UekSn7d0256SpXFvpAYlWq3IceEHLIB68vz4Q9wGe7eCe82GfppGdIlW9KNXfYaSCuFbrp67lSN21G6Jkk-MLE1rVZj8Bo_UNCDeQcOlHiRlX-FpYrBGpUFzEV96EXByEBotWuO3CoJoarCOxRJSNKXj_wFkxeVPfLNjMqV_BgUU_aeVNTVtrZu5058eI4gOo8afc6PbE0m6ae3XZ1HlDeb7QckwXcAmaepGK7PYcLFNjipuOO1YKnUa8yWnbBjkReiFVopPBBzepcOGIbnB8P5kvQYiLxNmR9nJ6foLcH4w2z5UOEWd4zQar93v8G85PdQ62sjcXUlbAAnu7fwaV0XJ-nDRnqQKTT2z11X8g768cg9uVQQt7TXJvs2SnbM5eLkmQ9KdM-2bl_5CBugTlm4CWCIANmVdD2V92Tyj16zAfN1Y_AS7fuOm9m3om24i5Yp2w69sX8bdibw0zhXSEjUBROImB2SAJ139800dsfQBl7UjvHMli4gREVglpT4TjF7T6JRv7WQ4Y8J693zUMgArKjVpUM8dGZKk4RaWYv978dSedISHo0X0Ow1AfQ_2n8h4tBX9xGoAnNf5SgVWLwT7mouah78tBx4EEWHBPofMYlyfZyf7tqmNkGtepjt2qTPzjzrj1Wo9iRnadpVytSh7e2lc-kp9Kq1vjzmROVXb5QivYEkseP3wF9RKyOoiyYbOlrzJclgPKz8DpJAwNw_g_LvtTUhkoe-KhXbB1HPQC5qj6uTY6gPSlEzNVSM7NZq_npyxRWbvuDtO_0f8vTfqiM2nrjbwCbAxulBEHCzuSgQtAM3uPf0ZPmLFZw6eKcRbx4sCqJxN6doIJxa_xGNknezKksYSLxSdxTgwCluttpOzKBDnUHO_JdjGrvV4G2rcHfCT84YB8_9wnUM6yR6gNxkDpuwpyo0i3IQ7y5-vMFUfn0J0DE9xScqr5RTOz4TqRSm_oWntNsstQIglpYqAKMup7ep4SJO866p3o4UNkn-o4U3_y_Rvo6dpGT8_fipwq9P8BRCar3DoZTbuFV52xm7tK14r7l0tUqvlRjJFzPBDRf6FBIo6IhRM69yPqakMXFh2pXathRTlE6l7vQEYEQm4xmCsl7rGwV--Cs98JCL0VnwOo46TvNNzpsAvLJSSJbNEr4Ubv_87yIOWcbD1DY_n8Y2QM40sHmku5unAvle2Z29oJCpcijxk9E5mTPwBDsvt1K_jz1lUgdXbhthWH9-gfGgm_rx0JkiPDo_fn3JknQzWnhZ4Fpthlx1wUllspsbBqyeKvQ3ohwnivlxGJsOgzfYNOJx44UrrBtCOX-3_l1m00" alt="产品 交易 财务流业务架构" title="产品 交易 财务流业务架构"></p>
+<p>和上面的例子相比，好像不太适合画较复杂的架构，布局不太好处理，另外连线太多容易重叠在一块傻傻分不清楚。</p>
+
+      
+     <!-- by blair add this if sentence at 20160725 -->
+      <br>
+      
+<!--
+<div id="bottom-donation-section">
+<span style="font-size: 1.0em; padding:0em 1em 0.5em 1em; margin: 0 auto;">
+  <strong style="vertical-align: top;">分享到:</strong>
+    <div class="j_handlclick"  style="background: url(/images/logos/share_facebook_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://www.facebook.com/sharer/sharer.php?u=" target="_blank">
+    </div>
+    <div class="j_handlclick"  style="background: url(/images/logos/share_weibo_icon.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://service.weibo.com/share/share.php?url" target="_blank">
+    </div>
+    <div class="j_handlclick"  style="background: url(/images/logos/share_wechat_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://api.addthis.com/oexchange/0.8/forward/wechat/offer?url=" target="_blank">
+    </div>
+    <div class="j_handlclick"  style="background: url(/images/logos/share_twitter_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://twitter.com/intent/tweet?url=" target="_blank">
+    </div>
+  <br>  
+  <br>  
+  &nbsp;&nbsp;如果您觉得这篇文章对您的学习很有帮助, 请您也分享它, 让它能再次帮助到更多的需要学习的人.
+您的<a href="/support/"><strong>支持</strong></a>将鼓励我继续创作 !
+  <br>  
+
+</span>
+</div>
+-->
+<div class="well">
+  <!--
+  原创文章，转载请注明： 转载自<a href="http://52binge.github.io"> Blair Chan's Blog</a>，作者：
+  <a href="/about">Blair Chan</a> <br>
+  -->
+  本文基于<a target="_blank" title="Creative Commons Attribution 4.0 international License" href="https://creativecommons.org/licenses/by-nc/4.0/">署名4.0国际许可协议</a>发布，转载请保留本文署名和文章链接。 如您有任何授权方面的协商，请联系我。
+</div>
+ <!-- by blair add 160724-->
+    
+    </div>
+    
+    
+      <footer class="article-footer">
+        <!-- <div class="well" style="width:100px; height:30px;"></div>  by blair-->
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+ <!-- by blair add 160724-->
+        <!--
+        <div style="width:100px; height:30px;"></div> by blair add 160724
+        -->
+        
+  <div class="article-tag">
+    <a class="article-tag-link" href="/tags/最佳实践/">最佳实践</a><span></span><a class="article-tag-link" href="/tags/编程/">编程</a>
+  </div>
+
+
+      </footer>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/post/input-date-and-time-with-rime/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">用鼠须管输入日期时间的方法&nbsp;<span>&gt;</span></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</section>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 晴耕雨讀&nbsp;
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/52binge/hexo-theme-blairos">blairos</a>
+    </div>
+  </div>
+</footer>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX"],
+    tex2jax: {
+      inlineMath: [ ['$','$'], ['\\(','\\)'] ],
+      displayMath: [ ['$$','$$']],
+      processEscapes: true
+    }
+  });
+</script>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML,http://myserver.com/MathJax/config/local/local.js">
+</script>
+
+    
+<script type="text/javascript"> <!-- add by blair 0724 type=text/javascript -->
+  var disqus_shortname = '0x3f';
+  
+  var disqus_url = 'http://0x3f.org/post/design-software-architecture-with-c4-plantuml/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="/js/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

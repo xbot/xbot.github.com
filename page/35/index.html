@@ -70,6 +70,77 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-upgraded-to-fcitx4" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/upgraded-to-fcitx4/"><strong>升级fcitx到4.0</strong></a>
+      <small class="article-date-index">&nbsp; 2010-11-20</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/upgraded-to-fcitx4/" class="article-date">
+  <time datetime="2010-11-19T16:00:00.000Z" itemprop="datePublished">2010-11-20</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/upgraded-to-fcitx4/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>虽然是个大版本，但4.0在实际功能上并没有太大的进步。新版本相对于3.x增加的主要特性是：</p>
+<ol><br>  <li>支持皮肤</li><br>  <li>图形界面的配置工具</li><br>  <li>增加系统托盘图标</li><br>  <li>托盘图标和输入条提供右键菜单，如皮肤切换、选择输入法等</li><br>  <li>放弃GBK编码，改用UTF-8编码</li><br>  <li>拼音支持多词库</li><br>  <li>一系列细节功能及Bug修复</li><br></ol>
+
+<p>最主要的特性只有前两个，可见fcitx 4.0只是这个项目涅槃后的一个新的起点，象征意义大于实际意义，尤其对于码表输入法用户来说是这样。三年前我就<a href="http://0x3f.org/?p=185">说过</a>，fcitx在用户造词上有个致命缺陷，就是对于多音字它总是使用字母表中声母靠前的编码，对于音码或者音形码输入法来说，这样造出来的词的编码经常会是错的，更糟糕的是用户还不容易自行修改词组编码。三年后的今天，新版本并没有解决这个问题。</p>
+<p>此外，需要注意的是，新版本对界面和易用性的改进也带来一些负面的影响，fcitx不再是当年以轻巧著称的那只小企鹅了，在我这里，它的内存占用达到了26M，所幸反应速度仍然很快。</p>
+<p>三年前，由于众所周知的原因，fcitx的路线图显得非常混乱，几个新版本都非常不稳定，所以我不再使用源中的版本，转而编译安装了新版本中相对稳定的黑色星期五版，不知不觉中三年过去了，想到一直用著这个版本就这么过来了，很感慨。要卸载编译安装的程序就得用源码重新configure一下再make uninstall，所幸还能在<a href="http://www.fcitx.org/download/fcitx-3.5-BlackFri.tar.bz2" target="_blank" rel="noopener">这里</a>找到这个版本。</p>
+<p>Archlinux下安装AUR中的fcitx-config时报如下错误：</p>
+<blockquote><br>ERROR: certificate common name “*.github.com” doesn’t match requested host name “github.com”.<br></blockquote>
+
+<p>需要修改/etc/makepkg.conf，使wget在下载源码时不做安全验证：</p>
+<blockquote><br># 增加–no-check-certificate参数<br>DLAGENTS=(‘ftp::/usr/bin/wget -c –passive-ftp -t 3 –waitretry=3’<br>          ‘http::/usr/bin/wget -c -t 3 –waitretry=3 –no-check-certificate’<br>          ‘https::/usr/bin/wget -c -t 3 –waitretry=3 –no-check-certificate’<br>          ‘rsync::/usr/bin/rsync -z’<br>          ‘scp::/usr/bin/scp -C’)<br></blockquote>
+
+<p>新版本的稳定性不如黑色星期五版，如果把简繁转换热键修改为ALT+J，使用时会导致fcitx崩溃。加之实际功能的改进不大，所以是否升级就无可无不可了。</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-adjust-disk-partitions-in-archlinux" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -872,94 +943,6 @@ acturally been added ?</strong></p>
         <p>QuickFix窗口只有打开和关闭的命令，而使用一个热键来切换打开状态可以减少热键资源的浪费，使用也更方便。</p>
 <p>从<a href="http://vim.wikia.com/wiki/Toggle_to_open_or_close_the_quickfix_window" target="_blank" rel="noopener">这里</a>找到使用自定义函数完成此功能的方法：使用一个全局变量记录QuickFix窗口的打开状态，从而判断是应该关闭还是打开。但其提供的函数存在状态同步的问题，假如在QuickFix窗口中使用“:q”退出窗口，此方法将不能正常工作。评论中给出了很好的解决方法，但其提供的代码有些小问题，修改之后如下：</p>
 <figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;leader&gt;</span><span class="keyword">co</span> :QFix<span class="symbol">&lt;CR&gt;</span></span><br><span class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;leader&gt;</span>ct :<span class="keyword">call</span> QFixToggle(<span class="number">1</span>)<span class="symbol">&lt;CR&gt;</span></span><br><span class="line">command! -bang -nargs=? QFix <span class="keyword">call</span> QFixToggle(<span class="symbol">&lt;bang&gt;</span><span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span>! <span class="title">QFixToggle</span><span class="params">(forced)</span></span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">exists</span>(<span class="string">"g:qfix_win"</span>) &amp;&amp; <span class="variable">a:forced</span> != <span class="number">0</span></span><br><span class="line">        <span class="keyword">cclose</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">exists</span>(<span class="string">"g:my_quickfix_win_height"</span>)</span><br><span class="line">            <span class="keyword">execute</span> <span class="string">"copen "</span>.<span class="variable">g:my_quickfix_win_height</span></span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">copen</span></span><br><span class="line">        <span class="keyword">endif</span></span><br><span class="line">    <span class="keyword">endif</span></span><br><span class="line"><span class="keyword">endfunction</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">augroup</span> QFixToggle</span><br><span class="line">    autocmd!</span><br><span class="line">    <span class="keyword">autocmd</span> BufWinEnter quickfix <span class="keyword">let</span> <span class="variable">g:qfix_win</span> = <span class="built_in">bufnr</span>(<span class="string">"$"</span>)</span><br><span class="line">    <span class="keyword">autocmd</span> BufWinLeave * <span class="keyword">if</span> <span class="built_in">exists</span>(<span class="string">"g:qfix_win"</span>) &amp;&amp; <span class="built_in">expand</span>(<span class="string">"&lt;abuf&gt;"</span>) == <span class="variable">g:qfix_win</span> | unlet! <span class="variable">g:qfix_win</span> | <span class="keyword">endif</span></span><br><span class="line"><span class="keyword">augroup</span> END</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-wp-batchcat" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/wp-batchcat/"><strong>WordPress Plugin: Batch Cat</strong></a>
-      <small class="article-date-index">&nbsp; 2010-09-04</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/wp-batchcat/" class="article-date">
-  <time datetime="2010-09-03T16:00:00.000Z" itemprop="datePublished">2010-09-04</time>
-</a>-->
-      <!--
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/wp-batchcat/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a href="http://picasaweb.google.com/lh/photo/bqYPszwt0P7OI9snKxv3WA?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh3.ggpht.com/_ceUJ_lBTHzc/TIIMnE-09dI/AAAAAAAABdk/q_hDtyXJozo/s800/wp-batch-cat.png"></a></p>
-<h3>Introduction</h3>
-
-<p>Batch Cat is intended to help users change categories of posts in bulk.</p>
-<p>The main features are:</p>
-<ol><br>    <li>Assign the selected categories to posts.</li><br>    <li>Append the selected categories to posts.</li><br>    <li>Delete the selected categories from posts.</li><br>    <li>Intuitionistic operating manners which come up with people’s common practice.</li><br>    <li>Configurable number of posts listed in one page.</li><br>    <li>Slimming but enough searching and sorting options.</li><br>    <li>More in the future.</li><br></ol>
-
-<h3>Screenshot</h3>
-
-<p><a href="http://picasaweb.google.com/lh/photo/HbcUjNJ5wuK_XtIUxw1GWw?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh3.ggpht.com/_ceUJ_lBTHzc/TIIK1-R9vDI/AAAAAAAABdc/18irrESzXok/s400/wordpress_plugin-batch_cat.png"></a></p>
-<h3>Installation &amp; Usage</h3>
-
-<p>As usual, upload the folder of Batch Cat to the wordpress plugin directory, activate it then.</p>
-<p>You can perform operations in the page which lies in <b>Tools-&gt;Batch Cat</b> in the admin panel.</p>
-<p>To alter settings of this plugin, go to <b>Settings-&gt;Batch Cat Settings</b>.</p>
-<h3>Download</h3>
-
-<p>Batch Cat is now hosted in the wordpress plugin repository:</p>
-<p><a href="http://wordpress.org/extend/plugins/batch-cat/" target="_blank" rel="noopener">http://wordpress.org/extend/plugins/batch-cat/</a></p>
-<h3>Wish List</h3>
-
-<ol><br><li>I18N</li><br><li>More search options</li><br><li>More information in the post list</li><br></ol>
-
-<h3>Change Log</h3>
-
-<blockquote><br><strong>2011-03-20 Sunday</strong><br><ol><br>    <li>Solve the compatibility <a href="http://wordpress.org/support/topic/plugin-batch-cat-doesnt-work-for-31" target="_blank" rel="noopener">problem</a> under Wordpress 3.1, thanks to <a href="http://coliq.wongkediri.com/batch-cat-wordpress-plugin-not-working-fixed.html" target="_blank" rel="noopener">wongkediri</a>.</li><br></ol><br></blockquote>
-
-<blockquote><br><strong>2010-12-12 Sunday</strong><br><ol><br>    <li>Add the ability to append the selected categories to posts</li><br>    <li>Add the ability to delete the selected categories from posts</li><br></ol><br></blockquote>
-
-<blockquote><br><b>2010-09-04 Saturday</b><br>Initial release.<br></blockquote>
 
       
     </div>

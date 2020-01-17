@@ -70,6 +70,137 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-chinese-problem-of-sqlalchemy-with-sqlserver" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/chinese-problem-of-sqlalchemy-with-sqlserver/"><strong>SQLAlchemy操作SQL Server的中文问题</strong></a>
+      <small class="article-date-index">&nbsp; 2010-02-24</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/chinese-problem-of-sqlalchemy-with-sqlserver/" class="article-date">
+  <time datetime="2010-02-23T16:00:00.000Z" itemprop="datePublished">2010-02-24</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/chinese-problem-of-sqlalchemy-with-sqlserver/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最初将脚本的文件编码和coding行都设定为UTF-8，在windows下执行时，中文无法保存，报编码错误。将上述两个编码改为GBK后，保存正常，但查询时报错。</p>
+
+<p>Traceback内容如下：</p>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">File &quot;test.py&quot;, line 36, in &lt;code&gt;&amp;lt;module&amp;gt;&lt;/code&gt;</span><br><span class="line">&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;for obj in session.query(User):</span><br><span class="line">File &quot;C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\orm\query.py&quot;, line 1411, in instances</span><br><span class="line">&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;rows = [process[0](row, None) for row in fetch]</span><br><span class="line">File &quot;C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\orm\mapper.py&quot;, line 1788, in _instance</span><br><span class="line">&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;populate_state(state, dict_, row, isnew, only_load_props)</span><br><span class="line">File &quot;C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\orm\mapper.py&quot;, line 1677, in populate_state</span><br><span class="line">&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;populator(state, dict_, row, isnew=isnew, **flags)</span><br><span class="line">File &quot;C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\orm\strategies.py&quot;, line 118, in new_execute</span><br><span class="line">&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;dict_[key] = row[col]</span><br><span class="line">File &quot;C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\engine\base.py&quot;, line 1634, in __getitem__</span><br><span class="line">&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;return self.__colfuncs[key][0](self.__row)</span><br><span class="line">File &quot;C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\engine\base.py&quot;, line 1716, in getcol</span><br><span class="line">&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;return processor(row[index])</span><br><span class="line">File &quot;C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\types.py&quot;, line 568, in process</span><br><span class="line">&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;return decoder(value)[0]</span><br><span class="line">File &quot;C:\Python26\lib\encodings\utf_8.py&quot;, line 16, in decode</span><br><span class="line">&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;return codecs.utf_8_decode(input, errors, True)</span><br><span class="line">UnicodeEncodeError: &apos;ascii&apos; codec can&apos;t encode characters in position 0-1: ordinal not in range(128)&lt;/p&gt;</span><br></pre></td></tr></table></figure>
+
+<p>环境为：</p>
+
+<p>OS：Windows XP简体中文版
+DB：SQL Server 2008 Express简体中文版
+DB模块：pyodbc
+脚本文件编码：GBK
+脚本coding行：GBK</p>
+
+<p>脚本内容：</p>
+
+<p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"><span class="comment"># -*- encoding: gbk -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> create_engine</span><br><span class="line"><span class="keyword">from</span> sqlalchemy.ext.declarative <span class="keyword">import</span> declarative_base</span><br><span class="line"><span class="keyword">from</span> sqlalchemy.orm <span class="keyword">import</span> sessionmaker</span><br><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> Column, Integer, String, Text, ForeignKey, Numeric, Unicode</span><br><span class="line"></span><br><span class="line">Base = declarative_base()</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">User</span><span class="params">(Base)</span>:</span></span><br><span class="line">    <span class="string">"""User class"""</span></span><br><span class="line"></span><br><span class="line">    __tablename__ = <span class="string">'users'</span></span><br><span class="line"></span><br><span class="line">    id = Column(Numeric(<span class="number">22</span>,<span class="number">0</span>), primary_key=<span class="keyword">True</span>)</span><br><span class="line">    name = Column(Unicode(<span class="number">128</span>), nullable=<span class="keyword">False</span>, unique=<span class="keyword">True</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, id, name)</span>:</span></span><br><span class="line">        self.id = id</span><br><span class="line">        self.name = name</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    db_engine = create_engine(<span class="string">'mssql://sa:password@localhost/mydatabase'</span>, echo=<span class="keyword">True</span>)</span><br><span class="line">    Session = sessionmaker(bind=db_engine)</span><br><span class="line">    session = Session()</span><br><span class="line"></span><br><span class="line">    Base.metadata.drop_all(db_engine)</span><br><span class="line">    Base.metadata.create_all(db_engine)</span><br><span class="line"></span><br><span class="line">    jim = User(<span class="number">1</span>, <span class="string">'中文'</span>)</span><br><span class="line">    session.add(jim)</span><br><span class="line">    session.commit()</span><br><span class="line"></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">    for obj in session.query(User):</span></span><br><span class="line"><span class="string">        print obj.name</span></span><br><span class="line"><span class="string">    '''</span></span><br></pre></td></tr></table></figure>
+</p>
+
+<p>上面的脚本执行后，数据得以正常保存，在数据库中的查询结果也正常，没有乱码。但是，当把从drop_all()到commit()行注释掉，取消for循环前后的多行字符串起止符后，即运行查询时，抛出上面的Traceback。</p>
+
+<p>Google了很长时间，没有找到有用的东西。CPyUG更没指望。</p>
+
+<p>回溯Traceback，打开sqlalchemy的types.py，UnicodeEncodeError的抛出点在String类的result_processor()方法：</p>
+
+<p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">result_processor</span><span class="params">(self, dialect, coltype)</span>:</span></span><br><span class="line">    wants_unicode = self.convert_unicode <span class="keyword">or</span> dialect.convert_unicode</span><br><span class="line">    needs_convert = wants_unicode <span class="keyword">and</span> \</span><br><span class="line">                    (<span class="keyword">not</span> dialect.returns_unicode_strings <span class="keyword">or</span> </span><br><span class="line">                    self.convert_unicode == <span class="string">'force'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> needs_convert:</span><br><span class="line">        <span class="comment"># note we *assume* that we do not have a unicode object</span></span><br><span class="line">        <span class="comment"># here, instead of an expensive isinstance() check.</span></span><br><span class="line">        decoder = codecs.getdecoder(dialect.encoding)</span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">process</span><span class="params">(value)</span>:</span></span><br><span class="line">            <span class="keyword">if</span> value <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</span><br><span class="line">                <span class="comment"># decoder returns a tuple: (value, len)</span></span><br><span class="line">                <span class="keyword">return</span> decoder(value)[<span class="number">0</span>]</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">return</span> value</span><br><span class="line">        <span class="keyword">return</span> process</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">None</span></span><br></pre></td></tr></table></figure>
+</p>
+
+<p>这个方法就是根据数据库方言dialect和字段类型coltype返回一个字符串的解码函数。若在if语句上面将needs_convert置为False，即不对该字段使用解码器，则再执行上面的脚本时，查询正常。</p>
+
+<p>由于前面create_engine()函数的encoding参数缺省为UTF-8，故dialect.encoding的值为“UTF-8”，故if语句中decoder实际引用的是codecs.utf_8_decode()。也就是说，result_processor()方法在实际执行过程中返回的是一个封装了utf_8_decode()函数的函数。即，UnicodeEncodeError是在对从数据库中查询出来的中文字符串进行UTF-8解码时抛出的。</p>
+
+<p>对传入process()函数的值作isinstance(value,unicode)判断，显示为True，表明从数据库中查询出来的中文本身就是unicode字节码，当对它再进行UTF-8解码时，就抛出了UnicodeEncodeError的错误。为验证以上判断，做如下实验：</p>
+
+<p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt;t = <span class="string">'中文'</span></span><br><span class="line">&gt;&gt;&gt;u = <span class="string">u'中文'</span></span><br><span class="line">&gt;&gt;&gt;isinstance(t, str)</span><br><span class="line"><span class="keyword">True</span></span><br><span class="line">&gt;&gt;&gt;isinstance(t, unicode)</span><br><span class="line"><span class="keyword">False</span></span><br><span class="line">&gt;&gt;&gt;isinstance(u, str)</span><br><span class="line"><span class="keyword">False</span></span><br><span class="line">&gt;&gt;&gt;isinstance(u, unicode)</span><br><span class="line"><span class="keyword">True</span></span><br><span class="line">&gt;&gt;&gt;x = t.decode(<span class="string">'utf-8'</span>)</span><br><span class="line">&gt;&gt;&gt;x</span><br><span class="line"><span class="string">u'\u4e2d\u6587'</span></span><br><span class="line">&gt;&gt;&gt;isinstance(x, unicode)</span><br><span class="line"><span class="keyword">True</span></span><br><span class="line">&gt;&gt;&gt;x == u</span><br><span class="line"><span class="keyword">True</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> codecs</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>dc = codecs.getdecoder(<span class="string">'utf-8'</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>dc(u)</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">"&lt;input&gt;"</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">  File <span class="string">"/usr/lib/python2.6/encodings/utf_8.py"</span>, line <span class="number">16</span>, <span class="keyword">in</span> decode</span><br><span class="line">    <span class="keyword">return</span> codecs.utf_8_decode(input, errors, <span class="keyword">True</span>)</span><br><span class="line">UnicodeEncodeError: <span class="string">'ascii'</span> codec can<span class="string">'t encode characters in position 0-1: ordinal not in range(128)</span></span><br></pre></td></tr></table></figure>
+</p>
+
+<p>得证。</p>
+
+<p>在Python中，字符串类型str和unicode类型是两种不同的数据类型，str类型的数据可以通过指定正确的编码来转换成unicode类型，对unicode类型的数据作重复的解码操作就会抛出类似上面的错误。</p>
+
+<p>实事上，若将name字段声明为String类，则保存和查询操作均无问题。但由于我需要sqlalchemy建表时将相应字段的类型设为nvarchar，故必须使用Unicode类声明该列。</p>
+
+<p>那有没有办法使result_processor()方法不返回一个对字段值作重复解码的函数呢？</p>
+
+<p>返回result_processor()方法，self.convert_unicode对于Unicode类是True，dialect.convert_unicode由create_engine()函数的convert_unicode参数控制，缺省为False，故needs_convert变量为True，无法更改；dialect.returns_unicode_strings是由sqlalchemy.engine模块default.py中的DefaultDialect类的_check_unicode_returns()方法返回的，该方法内容为：</p>
+
+<p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_check_unicode_returns</span><span class="params">(self, connection)</span>:</span></span><br><span class="line">    cursor = connection.connection.cursor()</span><br><span class="line">    cursor.execute(</span><br><span class="line">        str(</span><br><span class="line">            expression.select( </span><br><span class="line">            [expression.cast(</span><br><span class="line">                expression.literal_column(<span class="string">"'test unicode returns'"</span>),sqltypes.VARCHAR(<span class="number">60</span>))</span><br><span class="line">            ]).compile(dialect=self)</span><br><span class="line">        )</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    row = cursor.fetchone()</span><br><span class="line">    result = isinstance(row[<span class="number">0</span>], unicode)</span><br><span class="line">    cursor.close()</span><br><span class="line">    <span class="keyword">return</span> result</span><br></pre></td></tr></table></figure>
+</p>
+
+<p>此方法的功能为生成一条SQL语句，在数据库中执行后，判断返回的值是否为unicode类型。由于SQL Server是ASCII编码，故此方法返回False。因此，dialect.returns_unicode_strings的值为False。最终，needs_convert只能为True。我觉得这是sqlalchemy的一个Bug。</p>
+
+<p>在此条件下，目前尚未找到较好的解决办法，只能使用硬编码强制置result_processor()方法中的needs_convert变量为False。</p>
+
+<p><strong>2010-02-25 更新：</strong></p>
+
+<p>谢谢KL童鞋指出问题原因和解决办法，使问题得以完美解决。</p>
+
+<p>1、由于Python在载入site模块时会删除setdefaultencoding()函数，故不能以在脚本开头调用此函数的方式指定默认编码；sitecustomize.py是一个python会自动导入的模块，故应当使用这个文件指定默认编码；</p>
+
+<p>2、我这里需要使用utf-8作默认编码器，sitecustomize.py的内容如下：</p>
+
+<p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"><span class="comment"># -*- coding: gbk -*-</span></span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.setdefaultencoding(<span class="string">'utf-8'</span>)</span><br></pre></td></tr></table></figure>
+</p>
+
+<p>3、将sitecustomize.py保存到python安装目录下的Lib\site-packages目录中；</p>
+
+<p>另外，在<a href="http://www.woodpecker.org.cn/diveintopython/xml_processing/unicode.html" target="_blank" rel="noopener">此处</a>发现了跟本问题相关的资料，辅助治疗，效果更佳。</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-switching-from-ums-to-kms" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -127,68 +258,6 @@ ga('send', 'pageview');
 <p>三、在/etc/rc.conf中的<strong>MODULES</strong>行加入<strong>intel_agp</strong>和<strong>i945</strong>；</p>
 
 <p>重启系统后，Compiz白屏问题解决，3D加速性能似乎有所上升。</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-too-many-echoes-may-crash-php" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/too-many-echoes-may-crash-php/"><strong>PHP后台echo过多会导致进程崩溃</strong></a>
-      <small class="article-date-index">&nbsp; 2010-01-31</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/too-many-echoes-may-crash-php/" class="article-date">
-  <time datetime="2010-01-30T16:00:00.000Z" itemprop="datePublished">2010-01-31</time>
-</a>-->
-      <!--
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/too-many-echoes-may-crash-php/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>这是去年晚些时侯发现的一个问题。</p>
-<p>公司产品的后台定时任务应该是用独立的PHP进程驱动的。在做一个项目的时候，为了便于手工调试，我在定时任务中使用了大量的echo输出信息并在浏览器中手工执行此任务的脚本。</p>
-<p>手工执行通过，输出信息完全没有问题。但在实际运行的过程中，一个很诡异的事情发生了：即使我将实际处理数据的代码全部注释掉，只对原始数据做简单的查询，此定时任务仍然极其健壮地中途退出。最要命的是无论程序日志还是PHP的错误日志，都没有任何相关信息。直到后来我把所有echo输出都取消，问题才解决。</p>
-<p>事后模糊地记得很久以前似乎在哪本书上看到过在无输出设备的情况下echo过多数据会导致PHP进程崩溃的内容，但原因已想不起来了。</p>
 
       
     </div>
@@ -270,6 +339,68 @@ ga('send', 'pageview');
 <p>为方便起见，可将vboxnetflt模块加入到开机自动启动的模块列表中，每种发行版设置自启动模块的位置和方法不一样，在Archlinux下，是在<strong>/etc/rc.conf</strong>文件中的<strong>modules</strong>行中设置。</p>
 
 <p><em>参考文章：<a href="http://wiki.archlinux.org/index.php/VirtualBox" target="_blank" rel="noopener">Archlinux Wiki: VirtualBox</a></em></p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
+      <article id="post-too-many-echoes-may-crash-php" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/too-many-echoes-may-crash-php/"><strong>PHP后台echo过多会导致进程崩溃</strong></a>
+      <small class="article-date-index">&nbsp; 2010-01-31</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/too-many-echoes-may-crash-php/" class="article-date">
+  <time datetime="2010-01-30T16:00:00.000Z" itemprop="datePublished">2010-01-31</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/too-many-echoes-may-crash-php/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>这是去年晚些时侯发现的一个问题。</p>
+<p>公司产品的后台定时任务应该是用独立的PHP进程驱动的。在做一个项目的时候，为了便于手工调试，我在定时任务中使用了大量的echo输出信息并在浏览器中手工执行此任务的脚本。</p>
+<p>手工执行通过，输出信息完全没有问题。但在实际运行的过程中，一个很诡异的事情发生了：即使我将实际处理数据的代码全部注释掉，只对原始数据做简单的查询，此定时任务仍然极其健壮地中途退出。最要命的是无论程序日志还是PHP的错误日志，都没有任何相关信息。直到后来我把所有echo输出都取消，问题才解决。</p>
+<p>事后模糊地记得很久以前似乎在哪本书上看到过在无输出设备的情况下echo过多数据会导致PHP进程崩溃的内容，但原因已想不起来了。</p>
 
       
     </div>
@@ -791,88 +922,6 @@ urxvt的配置选项可以参考其官方网站上的说明，另外<a href="htt
 
 
 <p><a href="http://picasaweb.google.com/lh/photo/va8CeXPxRtCojlNw4qpmBQ" target="_blank" rel="noopener"><img src="http://lh5.ggpht.com/_ceUJ_lBTHzc/SSIt7sQQ5RI/AAAAAAAAAms/5sZPp1KBi_4/s400/project_euler_problem_010.png"></a></p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-project-euler-9" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/project-euler-9/"><strong>欧拉工程第九解</strong></a>
-      <small class="article-date-index">&nbsp; 2008-11-10</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/project-euler-9/" class="article-date">
-  <time datetime="2008-11-09T16:00:00.000Z" itemprop="datePublished">2008-11-10</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/project-euler-9/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <blockquote>
-<p>A Pythagorean triplet is a set of three natural numbers, <b><em>a</em></b> < <b><em>b</em></b> < <b><em>c</em></b>, for which,</p>
-
-<p><b><em>a</em></b><sup>2</sup> + <b><em>b</em></b><sup>2</sup> = <b><em>c</em></b><sup>2</sup></p>
-
-<p>For example, 3<sup>2</sup> + 4<sup>2</sup> = 9 + 16 = 25 = 5<sup>2</sup>.</p>
-
-<p>There exists exactly one Pythagorean triplet for which <b><em>a</em></b> + <b><em>b</em></b> + <b><em>c</em></b> = 1000.
-Find the product <b><em>abc</em></b>.
-</p></blockquote>
-
-
-<p>解：</p>
-
-<p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">flag = <span class="keyword">False</span></span><br><span class="line"><span class="keyword">for</span> a <span class="keyword">in</span> range(<span class="number">1</span>,<span class="number">1000</span>):</span><br><span class="line">    <span class="keyword">for</span> b <span class="keyword">in</span> range(<span class="number">1</span>,<span class="number">1000</span>):</span><br><span class="line">        <span class="keyword">if</span> a ** <span class="number">2</span> + b ** <span class="number">2</span> == (<span class="number">1000</span> - a - b) ** <span class="number">2</span>:</span><br><span class="line">            <span class="keyword">print</span> a,b,(<span class="number">1000</span> - a - b)</span><br><span class="line">            <span class="keyword">print</span> a * b * (<span class="number">1000</span> - a - b)</span><br><span class="line">            flag = <span class="keyword">True</span></span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">if</span> flag:</span><br><span class="line">        <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
-</p>
-
-
-<p><a href="http://picasaweb.google.com/lh/photo/klDX8mgZYS4EiKJ3qCQBKA" target="_blank" rel="noopener"><img src="http://lh5.ggpht.com/_ceUJ_lBTHzc/SRhQhDVQ9aI/AAAAAAAAAmM/gTI91RFIk4M/s400/project_euler_problem_009.png"></a></p>
 
       
     </div>

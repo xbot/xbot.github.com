@@ -70,7 +70,7 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
-      <article id="post-connect-to-sqlserver-using-freetds-on-linux" class="article article-type-post" itemscope="" itemprop="blogPost">
+      <article id="post-howto-enable-routing-and-auto-dialing-for-unicom-adsl-modem-1" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
     
@@ -78,8 +78,8 @@ ga('send', 'pageview');
         
   
     <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/connect-to-sqlserver-using-freetds-on-linux/"><strong>Linux下使用freetds连接SQL Server</strong></a>
-      <small class="article-date-index">&nbsp; 2010-06-20</small>
+      <a class="article-title-index" href="/post/howto-enable-routing-and-auto-dialing-for-unicom-adsl-modem-1/"><strong>网通ADSL猫开启路由和自动拨号功能的方法之一</strong></a>
+      <small class="article-date-index">&nbsp; 2010-07-04</small>
       <!--<a>
       <div = post.date  </div>
       </a>-->
@@ -92,15 +92,15 @@ ga('send', 'pageview');
       </header>
     
     <div class="article-meta">
-      <!--<a href="/post/connect-to-sqlserver-using-freetds-on-linux/" class="article-date">
-  <time datetime="2010-06-19T16:00:00.000Z" itemprop="datePublished">2010-06-20</time>
+      <!--<a href="/post/howto-enable-routing-and-auto-dialing-for-unicom-adsl-modem-1/" class="article-date">
+  <time datetime="2010-07-03T16:00:00.000Z" itemprop="datePublished">2010-07-04</time>
 </a>-->
       <!--
 -->
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/connect-to-sqlserver-using-freetds-on-linux/#disqus_thread" class="article-comment-link">Comments</a>
+          <a href="http://0x3f.org/post/howto-enable-routing-and-auto-dialing-for-unicom-adsl-modem-1/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -108,17 +108,24 @@ ga('send', 'pageview');
 	
     <div class="article-entry" itemprop="articleBody">
       
-        <p><a href="http://www.freetds.org" target="_blank" rel="noopener">freetds</a>是第三方、开源的数据库客户端和连接库，支持Sybase和Microsoft SQL Server，它最大的好处是允许非Windows平台的程序连接SQL Server。</p>
-<p>freetds的编译和安装命令如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">./configure --with-tdsver=8.0 --<span class="built_in">enable</span>-msdblib</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
-<p>configure的这两个参数是必不可少的，否则可能无法连接SQL Server。</p>
-<p>安装后修改<strong>freetds.conf</strong>（<em>一般应该在/usr/local/etc/freetds.conf</em>），添加如下内容：</p>
-<blockquote><br>[mysvr]<br>        host = 10.1.29.40<br>        port = 1433<br>        tds version = 8.0<br>        client charset = utf-8<br></blockquote>
+        <p>北京网通送的无线猫有的是华为HG522，有的是HG527，屏蔽了路由和PPPOE自动拨号功能，须使用超级用户登入才能使用这些功能。</p>
+<ol>
+<li>假设网关为默认的192.168.1.1，先使用普通用户登录，然后访问地址：</li>
+</ol>
+<blockquote><br><a href="http://192.168.1.1/downloadconfigfile.conf" target="_blank" rel="noopener">http://192.168.1.1/downloadconfigfile.conf</a><br></blockquote>
 
-<p>上述参数应根据实际情况修改。</p>
-<p>最后使用如下命令测试连接：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tsql -S mysvr -U sa -P 123456</span><br></pre></td></tr></table></figure>
-<p>给公司产品做Linux下的安装包，把开发环境放在了Cygwin中，非常享受在全屏、半透明的mintty下敲命令。今天发现在Cygwin下也是可以编译安装Linux下的程序的，只是效率非常低下。故上述内容对Cygwin环境同样成立。</p>
+<p>下载该文件并搜索<strong>username</strong>，找到超级用户的用户名和密码，如：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">X_ATP_UserInfoInstance</span> <span class="attr">InstanceID</span>=<span class="string">"1"</span> <span class="attr">Username</span>=<span class="string">"bjcnchgw"</span> <span class="attr">Userpassword</span>=<span class="string">"bjcnchgw27852654"</span> <span class="attr">Userlevel</span>=<span class="string">"2"</span> <span class="attr">Busy</span>=<span class="string">"0"</span> <span class="attr">LoginIP</span>=<span class="string">""</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>在如下地址使用超级用户登录：</li>
+</ol>
+<blockquote><br><a href="http://192.168.1.1/cnc.html" target="_blank" rel="noopener">http://192.168.1.1/cnc.html</a><br></blockquote>
+
+<ol start="3">
+<li>设置内容如下图：</li>
+</ol>
+<p><a href="http://picasaweb.google.com/lh/photo/MwzSxgWShGMJmYJdSQRw8w?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh6.ggpht.com/_ceUJ_lBTHzc/TDAy1kazOFI/AAAAAAAABa8/jRmlkSC4MaM/s400/32144754dc04625b375cf1d83f3587fc.media.812x604.png"></a></p>
+<p><em>终于不用再忍受公共网络了……</em></p>
 
       
     </div>
@@ -180,6 +187,75 @@ ga('send', 'pageview');
         <p>每cd到一个目录下就ls，这成了我的习惯。以下Bash函数和别名可以实现cd到一个目录下就自动执行ls命令：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">cdl</span></span>() &#123;</span><br><span class="line">    <span class="built_in">cd</span> <span class="string">"<span class="variable">$&#123;1&#125;</span>"</span>;</span><br><span class="line">    ls;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">alias</span> <span class="built_in">cd</span>=cdl</span><br></pre></td></tr></table></figure>
 <p>将上述内容添加到用户主目录中的.bashrc中即可。</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
+      <article id="post-connect-to-sqlserver-using-freetds-on-linux" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/connect-to-sqlserver-using-freetds-on-linux/"><strong>Linux下使用freetds连接SQL Server</strong></a>
+      <small class="article-date-index">&nbsp; 2010-06-20</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/connect-to-sqlserver-using-freetds-on-linux/" class="article-date">
+  <time datetime="2010-06-19T16:00:00.000Z" itemprop="datePublished">2010-06-20</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/connect-to-sqlserver-using-freetds-on-linux/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="http://www.freetds.org" target="_blank" rel="noopener">freetds</a>是第三方、开源的数据库客户端和连接库，支持Sybase和Microsoft SQL Server，它最大的好处是允许非Windows平台的程序连接SQL Server。</p>
+<p>freetds的编译和安装命令如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">./configure --with-tdsver=8.0 --<span class="built_in">enable</span>-msdblib</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+<p>configure的这两个参数是必不可少的，否则可能无法连接SQL Server。</p>
+<p>安装后修改<strong>freetds.conf</strong>（<em>一般应该在/usr/local/etc/freetds.conf</em>），添加如下内容：</p>
+<blockquote><br>[mysvr]<br>        host = 10.1.29.40<br>        port = 1433<br>        tds version = 8.0<br>        client charset = utf-8<br></blockquote>
+
+<p>上述参数应根据实际情况修改。</p>
+<p>最后使用如下命令测试连接：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tsql -S mysvr -U sa -P 123456</span><br></pre></td></tr></table></figure>
+<p>给公司产品做Linux下的安装包，把开发环境放在了Cygwin中，非常享受在全屏、半透明的mintty下敲命令。今天发现在Cygwin下也是可以编译安装Linux下的程序的，只是效率非常低下。故上述内容对Cygwin环境同样成立。</p>
 
       
     </div>
@@ -747,81 +823,6 @@ ga('send', 'pageview');
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[lenin@archer ~]$ openssl pkcs12 -export -in client.crt -inkey client.key -out client.pfx</span><br><span class="line">Enter pass phrase for client.key:        ← 输入上面创建的密码</span><br><span class="line">Enter Export Password:                   ← 输入一个新的密码，用作客户端证书的保护密码，在客户端安装证书时需要输入此密码</span><br><span class="line">Verifying - Enter Export Password:       ← 确认密码</span><br></pre></td></tr></table></figure>
 
 <p>11. 保存生成的文件备用，其中<strong>server.crt</strong>和<strong>server.key</strong>是配置单向SSL时需要使用的证书文件，<strong>client.crt</strong>是配置双向SSL时需要使用的证书文件，<strong>client.pfx</strong>是配置双向SSL时需要客户端安装的证书文件</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-phpjs" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/phpjs/"><strong>强大的工具函数库：php.js</strong></a>
-      <small class="article-date-index">&nbsp; 2010-04-24</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/phpjs/" class="article-date">
-  <time datetime="2010-04-23T16:00:00.000Z" itemprop="datePublished">2010-04-24</time>
-</a>-->
-      <!--
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/phpjs/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>PHP最大的特点在于它拥有一个丰富、灵活、强大的函数库，因此得以机动灵活成为软件开发语言中的轻骑兵。</p>
-
-<p><a href="http://phpjs.org/" target="_blank" rel="noopener">php.js</a>是一个用Javascript实现的函数库，它试图用Javascript最大程度地重写PHP的函数库。相对于JQuery、ExtJS这些Javascript库，php.js不并致力于为AJAX、DOM和界面开发提供一揽子解决方案，它只是将PHP函数的强大和简便带到前端开发中来，由于JQuery这样的库并不旨在提供完全的Javascript开发标准和手段，实际上，它弥补了这些高端的工具库与低端的Javascript开发之间的一个空白。</p>
-
-<p>对于熟悉PHP的人尤其是PHP程序员来说，使用php.js是几乎不需要切换思维方式的。</p>
-
-<p>这是使用php实现的日期格式校验函数：</p>
-
-<p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">IsValidDate</span><span class="params">($strDate, $strFormat=<span class="string">'Y-m-d'</span>)</span> </span>&#123;</span><br><span class="line">    $strDate = trim($strDate);</span><br><span class="line">    $unixTime = strtotime($strDate);</span><br><span class="line">    $strNewDate = date($strFormat, $unixTime);</span><br><span class="line">    <span class="keyword">return</span> $strDate == $strNewDate;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</p>
-
-<p>这是使用php.js实现的日期格式校验函数：</p>
-
-<p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">IsValidDate</span>(<span class="params">strDate, strFormat</span>) </span>&#123;</span><br><span class="line">    strDate = trim(strDate);</span><br><span class="line">    <span class="keyword">var</span> unixTime = strtotime(strDate);</span><br><span class="line">    <span class="keyword">var</span> strNewDate = date(strFormat, unixTime);</span><br><span class="line">    <span class="keyword">return</span> strDate == strNewDate;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</p>
 
       
     </div>

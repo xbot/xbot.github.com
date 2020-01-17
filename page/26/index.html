@@ -70,6 +70,73 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-get-position-in-qtablewidget-for-changed-cellwidgets" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/get-position-in-qtablewidget-for-changed-cellwidgets/"><strong>PySide: How to Get the Position of a Widget-Value-Changed Cell in QTableWidget</strong></a>
+      <small class="article-date-index">&nbsp; 2013-07-01</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/get-position-in-qtablewidget-for-changed-cellwidgets/" class="article-date">
+  <time datetime="2013-06-30T16:57:00.000Z" itemprop="datePublished">2013-07-01</time>
+</a>-->
+      <!--
+  <div class="article-category-index">
+    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/get-position-in-qtablewidget-for-changed-cellwidgets/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Assume we have created an instance of QTableWidget, in which cells are filled with widgets like QComboBox, QCheckBox, etc. When values are changed, we need to get the row and column indexes of the cells. But the QTableWidget.cellChanged() and QTableWidget.itemChanged() signals are only effective for cells containing QTableWidgetItem instances, for those in which widgets are filled in with QTableWidget.setCellWidget(), this doesn’t work.</p>
+<p>This problem nearly made me crazy last weekend. So how can I make it ?</p>
+<p>Here is the solution, by leveraging QSignalMapper, we can send other data to the slots instead of the default value. As the following code snippet shows, I put the row and column indexes into a string, then mapped it with the QComboBox.currentIndexChanged() slot. Notice that this slot has two generics, one accept an int type as the parameter and the other accept a string, so a <strong>QString</strong> key should be used to select the second generic.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">signalMapper = QtCore.QSignalMapper(self.ui)</span><br><span class="line">signalMapper.setMapping(comboWidget, <span class="string">'%d,%d'</span> % (rowIdx, colIdx))</span><br><span class="line">comboWidget.currentIndexChanged[<span class="string">'QString'</span>].connect(signalMapper.map)</span><br><span class="line">signalMapper.mapped[<span class="string">'QString'</span>].connect(self.__onCellWidgetChanged)</span><br></pre></td></tr></table></figure>
+<p>The only downside of this solution is, we should call QTableWidget.cellWidget() seperately to get the new value. Which I think it’s not to much trouble.</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-my-mouses-of-all-those-years" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -737,68 +804,6 @@ ga('send', 'pageview');
     
       <footer class="article-footer">
       </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-after-reading-hello-android" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/after-reading-hello-android/"><strong>读过Hello Android</strong></a>
-      <small class="article-date-index">&nbsp; 2013-02-21</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/after-reading-hello-android/" class="article-date">
-  <time datetime="2013-02-21T13:01:00.000Z" itemprop="datePublished">2013-02-21</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/青梅煮酒/">青梅煮酒</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/after-reading-hello-android/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>春节前花了一周时间读完了这本书。</p>
-<p>是本不错的Android入门教材，能让人快速地搭出开发环境，了解Android应用的运作机制，对于移动应用开发的初学者尤其有用。当然，这种书一般不会讲得很全面，更深的东西还是要看官方文档，只是Android的官方指南写得比较散，并且过于简单，不适合初学者。</p>
-<img src="http://pic.yupoo.com/leninlee/CEUw95b5/gewxz.jpg">
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
     
     -->
   </div>
