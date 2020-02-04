@@ -70,6 +70,86 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-problem-on-pppoe-connections-on-linux" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/problem-on-pppoe-connections-on-linux/"><strong>Linux下pppoe连接建立后仍不能上网的问题</strong></a>
+      <small class="article-date-index">&nbsp; 2010-07-10</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/problem-on-pppoe-connections-on-linux/" class="article-date">
+  <time datetime="2010-07-09T16:00:00.000Z" itemprop="datePublished">2010-07-10</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/problem-on-pppoe-connections-on-linux/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>问题描述</strong></p>
+<p>pppoe可以连接，ifconfig可以看到ppp0接口，一切正常，只是不能上网。</p>
+<p><strong>解决办法</strong></p>
+<p>使用如下命令查看路由表：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">route</span><br></pre></td></tr></table></figure>
+<p>正常情况下返回的结果中应该有如下内容：</p>
+<blockquote><br>default  *  0.0.0.0   U   0   0  0 ppp0<br></blockquote>
+
+<p>如果没有，可手工添加：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">route add default dev ppp0</span><br></pre></td></tr></table></figure>
+<p>如果可以上网，就成功了。</p>
+<p>使用如下脚本在pppoe连接成功时自动添加路由表项：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span> ifconfig ppp0  &gt; /dev/null 2&gt;&amp;1 ; <span class="keyword">then</span></span><br><span class="line">    route del default</span><br><span class="line">    route add default dev ppp0</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+<p>将上述内容保存成名为<strong>01-route.sh</strong>的文件，权限<strong>755</strong>，放到<strong>/etc/ppp/ip-up.d</strong>目录下。</p>
+<p>然后创建以下两个脚本：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span> ifconfig ppp0  &gt; /dev/null 2&gt;&amp;1 ; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">'PPPOE has already been switched on !'</span></span><br><span class="line">    <span class="built_in">exit</span> 0</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"> </span><br><span class="line">off</span><br><span class="line"> </span><br><span class="line">sudo pon</span><br><span class="line">sleep 5</span><br><span class="line">sudo /etc/ppp/ip-up</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span> ! ifconfig ppp0  &gt; /dev/null 2&gt;&amp;1 ; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">'PPPOE has already been switched off !'</span></span><br><span class="line">    <span class="built_in">exit</span> 0</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"> </span><br><span class="line">sudo poff</span><br><span class="line">sudo /etc/ppp/ip-down</span><br></pre></td></tr></table></figure>
+<p>分别命名为<strong>on</strong>和<strong>off</strong>并复制到环境变量PATH下，以后即可使用这两个脚本建立和注销pppoe连接。</p>
+<p><strong>原因分析</strong></p>
+<p>问题的原因是pppoe连接建立时，没有自动往路由表中添加相关路由项。</p>
+<p>一般情况下，如果使用的是<strong>ppp</strong>做pppoe连接，其配置文件中默认会开启<strong>defaultroute</strong>选项，该选项的作用就是在pppoe连接建立时自动添加路由表项，但在路由表中已经存在<strong>default</strong>项时，该操作将不会进行。</p>
+<p>一般有两种情况会使路由表中在pppoe连接建立前就存在default项。一种情况是网络接口配置中设置了route，如在archlinux下，就是rc.conf文件中的gateway项。如果使用的是静态地址，则需要做这种配置，但对于大多数使用DHCP动态分配IP地址的情况，这项配置则不需要。另一种情况就是ADSL Modem自带路由功能，在分配IP给计算机时也会自动添加一条路由表项。</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-howto-enable-routing-and-auto-dialing-for-unicom-adsl-modem-1" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -146,67 +226,6 @@ ga('send', 'pageview');
 
 
     
-      <article id="post-howto-do-auto-listing-after-changing-directory" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/howto-do-auto-listing-after-changing-directory/"><strong>cd到目录下后自动ls的方法</strong></a>
-      <small class="article-date-index">&nbsp; 2010-06-20</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/howto-do-auto-listing-after-changing-directory/" class="article-date">
-  <time datetime="2010-06-19T16:00:00.000Z" itemprop="datePublished">2010-06-20</time>
-</a>-->
-      <!--
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/howto-do-auto-listing-after-changing-directory/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>每cd到一个目录下就ls，这成了我的习惯。以下Bash函数和别名可以实现cd到一个目录下就自动执行ls命令：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">cdl</span></span>() &#123;</span><br><span class="line">    <span class="built_in">cd</span> <span class="string">"<span class="variable">$&#123;1&#125;</span>"</span>;</span><br><span class="line">    ls;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">alias</span> <span class="built_in">cd</span>=cdl</span><br></pre></td></tr></table></figure>
-<p>将上述内容添加到用户主目录中的.bashrc中即可。</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
       <article id="post-connect-to-sqlserver-using-freetds-on-linux" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -256,6 +275,67 @@ ga('send', 'pageview');
 <p>最后使用如下命令测试连接：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tsql -S mysvr -U sa -P 123456</span><br></pre></td></tr></table></figure>
 <p>给公司产品做Linux下的安装包，把开发环境放在了Cygwin中，非常享受在全屏、半透明的mintty下敲命令。今天发现在Cygwin下也是可以编译安装Linux下的程序的，只是效率非常低下。故上述内容对Cygwin环境同样成立。</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
+      <article id="post-howto-do-auto-listing-after-changing-directory" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/howto-do-auto-listing-after-changing-directory/"><strong>cd到目录下后自动ls的方法</strong></a>
+      <small class="article-date-index">&nbsp; 2010-06-20</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/howto-do-auto-listing-after-changing-directory/" class="article-date">
+  <time datetime="2010-06-19T16:00:00.000Z" itemprop="datePublished">2010-06-20</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/howto-do-auto-listing-after-changing-directory/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>每cd到一个目录下就ls，这成了我的习惯。以下Bash函数和别名可以实现cd到一个目录下就自动执行ls命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">cdl</span></span>() &#123;</span><br><span class="line">    <span class="built_in">cd</span> <span class="string">"<span class="variable">$&#123;1&#125;</span>"</span>;</span><br><span class="line">    ls;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">alias</span> <span class="built_in">cd</span>=cdl</span><br></pre></td></tr></table></figure>
+<p>将上述内容添加到用户主目录中的.bashrc中即可。</p>
 
       
     </div>
@@ -672,157 +752,6 @@ ga('send', 'pageview');
 </ol>
 
 <p>如果能在较短的时间内解决这些问题，我认为FreeArc还是很有前景的。</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-howto-create-ssl-certificates" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/howto-create-ssl-certificates/"><strong>SSL证书生成方法</strong></a>
-      <small class="article-date-index">&nbsp; 2010-05-03</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/howto-create-ssl-certificates/" class="article-date">
-  <time datetime="2010-05-02T16:00:00.000Z" itemprop="datePublished">2010-05-03</time>
-</a>-->
-      <!--
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/howto-create-ssl-certificates/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>一般情况下，如果能找到可用的证书，就可以直接使用，只不过会因证书的某些信息不正确或与部署证书的主机不匹配而导致浏览器提示证书无效，但这并不影响使用。</p>
-
-<p>需要手工生成证书的情况有：</p>
-
-<ol>
-<li>找不到可用的证书</li>
-<li>需要配置双向SSL，但缺少客户端证书</li>
-<li>需要对证书作特别的定制</li>
-</ol>
-
-<p>首先，无论是在Linux下还是在Windows下的Cygwin中，进行下面的操作前都须确认已安装OpenSSL软件包。</p>
-
-<p>1. 创建根证书密钥文件<strong>root.key</strong>：</p>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl genrsa -des3 -out root.key</span><br></pre></td></tr></table></figure>
-
-<p>输出内容为：</p>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[lenin@archer ~]$ openssl genrsa -des3 -out root.key</span><br><span class="line">Generating RSA private key, 512 bit long modulus</span><br><span class="line">.................++++++++++++</span><br><span class="line">..++++++++++++</span><br><span class="line">e is 65537 (0x10001)</span><br><span class="line">Enter pass phrase for root.key:                ← 输入一个新密码</span><br><span class="line">Verifying - Enter pass phrase for root.key:    ← 重新输入一遍密码</span><br></pre></td></tr></table></figure>
-
-<p>2. 创建根证书的申请文件<strong>root.req</strong>：</p>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl req -new -key root.key -out root.req</span><br></pre></td></tr></table></figure>
-
-<p>输出内容为：</p>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">[lenin@archer ~]$ openssl req -new -key root.key -out root.req</span><br><span class="line">Enter pass phrase for root.key:                                              ← 输入前面创建的密码</span><br><span class="line">You are about to be asked to enter information that will be incorporated</span><br><span class="line">into your certificate request.</span><br><span class="line">What you are about to enter is what is called a Distinguished Name or a DN.</span><br><span class="line">There are quite a few fields but you can leave some blank</span><br><span class="line">For some fields there will be a default value,</span><br><span class="line">If you enter &apos;.&apos;, the field will be left blank.</span><br><span class="line">-----</span><br><span class="line">Country Name (2 letter code) [AU]:CN                                         ← 国家代号，中国输入CN</span><br><span class="line">State or Province Name (full name) [Some-State]:BeiJing                      ← 省的全名，拼音</span><br><span class="line">Locality Name (eg, city) []:BeiJing                                          ← 市的全名，拼音</span><br><span class="line">Organization Name (eg, company) [Internet Widgits Pty Ltd]:MyCompany Corp.   ← 公司英文名</span><br><span class="line">Organizational Unit Name (eg, section) []:                                   ← 可以不输入</span><br><span class="line">Common Name (eg, YOUR name) []:                                              ← 此时不输入</span><br><span class="line">Email Address []:admin@mycompany.com                                         ← 电子邮箱，可随意填&lt;/p&gt;</span><br><span class="line"></span><br><span class="line">Please enter the following &apos;extra&apos; attributes</span><br><span class="line">to be sent with your certificate request</span><br><span class="line">A challenge password []:                                                     ← 可以不输入</span><br><span class="line">An optional company name []:                                                 ← 可以不输入&lt;/p&gt;</span><br></pre></td></tr></table></figure>
-
-<p>3. 创建一个自当前日期起为期十年的根证书<strong>root.crt</strong>：</p>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -req -days 3650 -sha1 -extensions v3_ca -signkey root.key -in root.req -out root.crt</span><br></pre></td></tr></table></figure>
-
-<p>输出内容为：</p>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[lenin@archer ~]$ openssl x509 -req -days 3650 -sha1 -extensions v3_ca -signkey root.key -in root.req -out root.crt</span><br><span class="line">Signature ok</span><br><span class="line">subject=/C=CN/ST=BeiJing/L=BeiJing/O=MyCompany Corp./emailAddress=admin@mycompany.com</span><br><span class="line">Getting Private key</span><br><span class="line">Enter pass phrase for root.key:    ← 输入前面创建的密码</span><br></pre></td></tr></table></figure>
-
-<p>4. 创建服务器证书密钥<strong>server.key</strong>：</p>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl genrsa -out server.key 2048</span><br></pre></td></tr></table></figure>
-
-<p>输出内容为：</p>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[lenin@archer ~]$ openssl genrsa -out server.key 2048</span><br><span class="line">Generating RSA private key, 2048 bit long modulus</span><br><span class="line">....+++</span><br><span class="line">..................................................+++</span><br><span class="line">e is 65537 (0x10001)</span><br></pre></td></tr></table></figure>
-
-<p>5.创建服务器证书的申请文件<strong>server.req</strong>：</p>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl req -new -key server.key -out server.req</span><br></pre></td></tr></table></figure>
-
-<p>输出内容为：</p>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">[lenin@archer ~]$ openssl req -new -key server.key -out server.req</span><br><span class="line">You are about to be asked to enter information that will be incorporated</span><br><span class="line">into your certificate request.</span><br><span class="line">What you are about to enter is what is called a Distinguished Name or a DN.</span><br><span class="line">There are quite a few fields but you can leave some blank</span><br><span class="line">For some fields there will be a default value,</span><br><span class="line">If you enter &apos;.&apos;, the field will be left blank.</span><br><span class="line">-----</span><br><span class="line">Country Name (2 letter code) [AU]:CN                                          ← 国家名称，中国输入CN</span><br><span class="line">State or Province Name (full name) [Some-State]:BeiJing                       ← 省名，拼音</span><br><span class="line">Locality Name (eg, city) []:BeiJing                                           ← 市名，拼音</span><br><span class="line">Organization Name (eg, company) [Internet Widgits Pty Ltd]:MyCompany Corp.    ← 公司英文名</span><br><span class="line">Organizational Unit Name (eg, section) []:                                    ← 可以不输入</span><br><span class="line">Common Name (eg, YOUR name) []:www.mycompany.com                              ← 服务器主机名，若填写不正确，浏览器会报告证书无效，但并不影响使用</span><br><span class="line">Email Address []:admin@mycompany.com                                          ← 电子邮箱，可随便填</span><br><span class="line"></span><br><span class="line">Please enter the following &apos;extra&apos; attributes</span><br><span class="line">to be sent with your certificate request</span><br><span class="line">A challenge password []:                                                      ← 可以不输入</span><br><span class="line">An optional company name []:                                                  ← 可以不输入</span><br></pre></td></tr></table></figure>
-
-<p>6. 创建自当前日期起有效期为期两年的服务器证书<strong>server.crt</strong>：</p>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -req -days 730 -sha1 -extensions v3_req -CA root.crt -CAkey root.key -CAserial root.srl -CAcreateserial -in server.req -out server.crt</span><br></pre></td></tr></table></figure>
-
-<p>输出内容为：</p>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[lenin@archer ~]$ openssl x509 -req -days 730 -sha1 -extensions v3_req -CA root.crt -CAkey root.key -CAserial root.srl -CAcreateserial -in server.req -out server.crt</span><br><span class="line">Signature ok</span><br><span class="line">subject=/C=CN/ST=BeiJing/L=BeiJing/O=MyCompany Corp./CN=www.mycompany.com/emailAddress=admin@mycompany.com</span><br><span class="line">Getting CA Private Key</span><br><span class="line">Enter pass phrase for root.key:    ← 输入前面创建的密码</span><br></pre></td></tr></table></figure>
-
-<p>7. 创建客户端证书密钥文件<strong>client.key</strong>：</p>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl genrsa -des3 -out client.key 2048</span><br></pre></td></tr></table></figure>
-
-<p>输出内容为：</p>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[lenin@archer ~]$ openssl genrsa -des3 -out client.key 2048</span><br><span class="line">Generating RSA private key, 2048 bit long modulus</span><br><span class="line">.........................................................................................+++</span><br><span class="line">......................................................................................................................+++</span><br><span class="line">e is 65537 (0x10001)</span><br><span class="line">Enter pass phrase for client.key:              ← 输入一个新密码</span><br><span class="line">Verifying - Enter pass phrase for client.key:  ← 重新输入一遍密码</span><br></pre></td></tr></table></figure>
-
-<p>8. 创建客户端证书的申请文件<strong>client.req</strong>：</p>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl req -new -key client.key -out client.req</span><br></pre></td></tr></table></figure>
-
-<p>输出内容为：</p>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">[lenin@archer ~]$ openssl genrsa -des3 -out client.key 2048</span><br><span class="line">Generating RSA private key, 2048 bit long modulus</span><br><span class="line">.........................................................................................+++</span><br><span class="line">......................................................................................................................+++</span><br><span class="line">e is 65537 (0x10001)</span><br><span class="line">Enter pass phrase for client.key:</span><br><span class="line">Verifying - Enter pass phrase for client.key:</span><br><span class="line">[lenin@archer ~]$ openssl req -new -key client.key -out client.req</span><br><span class="line">Enter pass phrase for client.key:                                              ← 输入上一步中创建的密码</span><br><span class="line">You are about to be asked to enter information that will be incorporated</span><br><span class="line">into your certificate request.</span><br><span class="line">What you are about to enter is what is called a Distinguished Name or a DN.</span><br><span class="line">There are quite a few fields but you can leave some blank</span><br><span class="line">For some fields there will be a default value,</span><br><span class="line">If you enter &apos;.&apos;, the field will be left blank.</span><br><span class="line">-----</span><br><span class="line">Country Name (2 letter code) [AU]:CN                                           ← 国家名称，中国输入CN</span><br><span class="line">State or Province Name (full name) [Some-State]:BeiJing                        ← 省名称，拼音</span><br><span class="line">Locality Name (eg, city) []:BeiJing                                            ← 市名称，拼音</span><br><span class="line">Organization Name (eg, company) [Internet Widgits Pty Ltd]:MyCompany Corp.     ← 公司英文名</span><br><span class="line">Organizational Unit Name (eg, section) []:                                     ← 可以不填</span><br><span class="line">Common Name (eg, YOUR name) []:Lenin                                           ← 自己的英文名，可以随便填</span><br><span class="line">Email Address []:admin@mycompany.com                                           ← 电子邮箱，可以随便填</span><br><span class="line"></span><br><span class="line">Please enter the following &apos;extra&apos; attributes</span><br><span class="line">to be sent with your certificate request</span><br><span class="line">A challenge password []:                                                       ← 可以不填</span><br><span class="line">An optional company name []:                                                   ← 可以不填</span><br></pre></td></tr></table></figure>
-
-<p>9. 创建一个自当前日期起有效期为两年的客户端证书<strong>client.crt</strong>：</p>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -req -days 730 -sha1 -extensions v3_req -CA root.crt -CAkey root.key -CAserial root.srl -CAcreateserial -in client.req -out client.crt</span><br></pre></td></tr></table></figure>
-
-<p>输出内容为：</p>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[lenin@archer ~]$ openssl x509 -req -days 730 -sha1 -extensions v3_req -CA root.crt -CAkey root.key -CAserial root.srl -CAcreateserial -in client.req -out client.crt</span><br><span class="line">Signature ok</span><br><span class="line">subject=/C=CN/ST=BeiJing/L=BeiJing/O=MyCompany Corp./CN=www.mycompany.com/emailAddress=admin@mycompany.com</span><br><span class="line">Getting CA Private Key</span><br><span class="line">Enter pass phrase for root.key:          ← 输入上面创建的密码</span><br></pre></td></tr></table></figure>
-
-<p>10. 将客户端证书文件<strong>client.crt</strong>和客户端证书密钥文件<strong>client.key</strong>合并成客户端证书安装包<strong>client.pfx</strong>：</p>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl pkcs12 -export -in client.crt -inkey client.key -out client.pfx</span><br></pre></td></tr></table></figure>
-
-<p>输出内容为：</p>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[lenin@archer ~]$ openssl pkcs12 -export -in client.crt -inkey client.key -out client.pfx</span><br><span class="line">Enter pass phrase for client.key:        ← 输入上面创建的密码</span><br><span class="line">Enter Export Password:                   ← 输入一个新的密码，用作客户端证书的保护密码，在客户端安装证书时需要输入此密码</span><br><span class="line">Verifying - Enter Export Password:       ← 确认密码</span><br></pre></td></tr></table></figure>
-
-<p>11. 保存生成的文件备用，其中<strong>server.crt</strong>和<strong>server.key</strong>是配置单向SSL时需要使用的证书文件，<strong>client.crt</strong>是配置双向SSL时需要使用的证书文件，<strong>client.pfx</strong>是配置双向SSL时需要客户端安装的证书文件</p>
 
       
     </div>

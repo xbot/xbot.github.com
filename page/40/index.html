@@ -70,6 +70,91 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-project-euler-10" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/project-euler-10/"><strong>欧拉工程第十解</strong></a>
+      <small class="article-date-index">&nbsp; 2008-11-18</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/project-euler-10/" class="article-date">
+  <time datetime="2008-11-17T16:00:00.000Z" itemprop="datePublished">2008-11-18</time>
+</a>-->
+      <!--
+  <div class="article-category-index">
+    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/project-euler-10/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote><p>The sum of the primes below 10 is 2 + 3 + 5 + 7 = 17.</p>
+
+<p>Find the sum of all the primes below two million.</p></blockquote>
+
+<p>题目越来越变态，开始好玩儿了。</p>
+
+<p><a href="http://0x3f.org/?p=753">第七解</a>里的算法在这里算是废了，一万个素数都算得那么费劲，两百万以下的素数有十几万个，不得不用筛选法了。</p>
+
+<p>普通的筛选效率也不行，当初就是因为这个原因才没用它。不过优化过的筛选法就很奇妙了，下面是Lua的实现：</p>
+
+<p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">require</span>(<span class="string">'math'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> limit = <span class="number">2000000</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> primes = &#123;&#125;</span><br><span class="line"><span class="keyword">for</span> i=<span class="number">1</span>,limit <span class="keyword">do</span></span><br><span class="line">    <span class="built_in">table</span>.<span class="built_in">insert</span>(primes,<span class="literal">true</span>)</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">primes[<span class="number">0</span>] = <span class="literal">false</span></span><br><span class="line">primes[<span class="number">1</span>] = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i=<span class="number">0</span>,<span class="built_in">math</span>.<span class="built_in">floor</span>(<span class="built_in">math</span>.<span class="built_in">sqrt</span>(limit)) <span class="keyword">do</span></span><br><span class="line">    <span class="keyword">if</span> primes[i] <span class="keyword">then</span></span><br><span class="line">        <span class="keyword">for</span> j=<span class="built_in">math</span>.<span class="built_in">pow</span>(i,<span class="number">2</span>),limit,i <span class="keyword">do</span></span><br><span class="line">            primes[j] = <span class="literal">false</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> sumVal = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> i,j <span class="keyword">in</span> <span class="built_in">ipairs</span>(primes) <span class="keyword">do</span></span><br><span class="line">    <span class="keyword">if</span> j <span class="keyword">then</span></span><br><span class="line">        sumVal = sumVal + i</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(sumVal)</span><br></pre></td></tr></table></figure>
+</p>
+
+
+<p>在我这里两秒半就出结果了，Python的表现也不错，四秒半出结果：</p>
+
+<p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> sqrt</span><br><span class="line"></span><br><span class="line">limit = <span class="number">2000000</span></span><br><span class="line">primes = [<span class="keyword">True</span> <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,limit)]</span><br><span class="line">primes[<span class="number">0</span>] = <span class="keyword">False</span></span><br><span class="line">primes[<span class="number">1</span>] = <span class="keyword">False</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>,int(sqrt(limit))+<span class="number">1</span>):</span><br><span class="line">    <span class="keyword">if</span> primes[i]:</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(i**<span class="number">2</span>,limit,i):</span><br><span class="line">            primes[j] = <span class="keyword">False</span></span><br><span class="line"></span><br><span class="line">sumVal = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(primes)):</span><br><span class="line">    <span class="keyword">if</span> primes[i]:</span><br><span class="line">        sumVal += i</span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> sumVal</span><br></pre></td></tr></table></figure>
+</p>
+
+
+<p><a href="http://picasaweb.google.com/lh/photo/va8CeXPxRtCojlNw4qpmBQ" target="_blank" rel="noopener"><img src="http://lh5.ggpht.com/_ceUJ_lBTHzc/SSIt7sQQ5RI/AAAAAAAAAms/5sZPp1KBi_4/s400/project_euler_problem_010.png"></a></p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-project-euler-9" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -812,110 +897,6 @@ Find the sum of all the even-valued terms in the sequence which do not exceed fo
 <div>
 	<a href="http://picasaweb.google.com/lh/photo/pqzQqPwZre4daUJCjDfoyA" target="_blank" rel="noopener"><img src="http://lh6.ggpht.com/lenin.lee/SOjhkRV8w6I/AAAAAAAAAbs/ZL7QKztQm4E/s400/project_euler_problem_1.png"></a>
 </div>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-let-rxvt-unicode-support-tags-and-links" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/let-rxvt-unicode-support-tags-and-links/"><strong>为rxvt-unicode开启标签和链接支持</strong></a>
-      <small class="article-date-index">&nbsp; 2008-03-20</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/let-rxvt-unicode-support-tags-and-links/" class="article-date">
-  <time datetime="2008-03-19T16:00:00.000Z" itemprop="datePublished">2008-03-20</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/let-rxvt-unicode-support-tags-and-links/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>写完<a href="http://0x3f.org/?p=376">urxvt-unicode快速上手</a>，本以为已将urxvt的用法一网打尽，不料AndyWxy网友又找到了两个新的功能：使urxvt启用标签和在urxvt中打开网页链接。</p>
-
-<p>标签功能很实用，一般为了达到复用终端窗口的目的会采用两种方式：一是配合screen使用，另一个就是启用标签。然而前者有一个缺点就是不直观，标签页恰好能弥补这个缺陷。urxvt不愧是个功能强大的终端工具，如果在编译时开启perl支持，则urxvt可启用多标签功能。用法如下：</p>
-
-<p>一是在启动的时候加入命令行参数：</p>
-
-<blockquote>
-  <p>urxvt -pe tabbed</p>
-</blockquote>
-
-<p>二是在配置文件“.Xresources”中添加如下配置信息：</p>
-
-<blockquote>
-  <p>URxvt.perl-ext-common: default,tabbed</p>
-</blockquote>
-
-<p>则默认情况下执行urxvt就会打开多标签功能。urxvt的标签支持使用鼠标操作，同时可以使用Ctrl+Shift+左右箭头来切换标签页，使用Ctrl+Shift+向下箭头开启新标签。</p>
-
-<p>另外一个功能就是可以通过在urxvt中的链接上点击鼠标左键来通过设定的浏览器打开之。首先在“.Xresources”文件中添加如下内容：</p>
-
-<blockquote>
-  <p>URxvt.urlLauncher: firefox
-  URxvt.matcher.button: 1</p>
-</blockquote>
-
-<p>然后使用如下命令打开urxvt：</p>
-
-<blockquote>
-  <p>urxvt -pe matcher</p>
-</blockquote>
-
-<p>即可。也可以在配置文件中添加上述内容之后再添加一行：</p>
-
-<blockquote>
-  <p>URxvt.perl-ext-common: matcher</p>
-</blockquote>
-
-<p>此后即默认开启在终端窗口中打开链接的功能。注意修改“.Xresources”文件后需要执行如下命令才能使修改后的配置文件生效：</p>
-
-<blockquote>
-  <p>xrdb ~/.Xresources</p>
-</blockquote>
 
       
     </div>

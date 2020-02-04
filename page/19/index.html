@@ -70,6 +70,121 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-array-implementation-in-php" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/array-implementation-in-php/"><strong>PHP数组的实现与操作</strong></a>
+      <small class="article-date-index">&nbsp; 2015-04-24</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/array-implementation-in-php/" class="article-date">
+  <time datetime="2015-04-24T04:09:00.000Z" itemprop="datePublished">2015-04-24</time>
+</a>-->
+      <!--
+  <div class="article-category-index">
+    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/array-implementation-in-php/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="存储结构"><a href="#存储结构" class="headerlink" title="存储结构"></a>存储结构</h2><p>和其它变量一样，PHP的数组也是一个zval。存储数据的哈希表存放在zval-&gt;value-&gt;ht中。</p>
+<h2 id="符号表操作"><a href="#符号表操作" class="headerlink" title="符号表操作"></a>符号表操作</h2><p>为实现可转换成整数的字符串键与整数键指向同一个元素，在哈希表操作的基础上封装了一层，对可转换成整数的字符串键转换成整数，然后调用zend_hash_index_*操作，否则调用zend_hash_*操作。这就是符号表操作。</p>
+<p>用ZEND_HANDLE_NUMERIC处理整数字符串键：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">int</span> <span class="title">zend_symtable_find</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    HashTable *ht, <span class="keyword">const</span> <span class="keyword">char</span> *arKey, uint nKeyLength, <span class="keyword">void</span> **pData</span></span></span><br><span class="line"><span class="function"><span class="params">)</span> </span>&#123;</span><br><span class="line">    ZEND_HANDLE_NUMERIC(arKey, nKeyLength, zend_hash_index_find(ht, idx, pData));</span><br><span class="line">    <span class="keyword">return</span> zend_hash_find(ht, arKey, nKeyLength, pData);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其它符号表操作函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">int</span> <span class="title">zend_symtable_exists</span><span class="params">(HashTable *ht, <span class="keyword">const</span> <span class="keyword">char</span> *arKey, uint nKeyLength)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">int</span> <span class="title">zend_symtable_del</span><span class="params">(HashTable *ht, <span class="keyword">const</span> <span class="keyword">char</span> *arKey, uint nKeyLength)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">int</span> <span class="title">zend_symtable_update</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    HashTable *ht, <span class="keyword">const</span> <span class="keyword">char</span> *arKey, uint nKeyLength, <span class="keyword">void</span> *pData, uint nDataSize, <span class="keyword">void</span> **pDest</span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">int</span> <span class="title">zend_symtable_update_current_key_ex</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    HashTable *ht, <span class="keyword">const</span> <span class="keyword">char</span> *arKey, uint nKeyLength, <span class="keyword">int</span> mode, HashPosition *pos</span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span>;</span><br></pre></td></tr></table></figure>
+<h2 id="数组操作"><a href="#数组操作" class="headerlink" title="数组操作"></a>数组操作</h2><h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 初始化数组</span></span><br><span class="line">zval *zv1;</span><br><span class="line">array_init(zv1);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 初始化数组并指定哈希表nTableSize的值</span></span><br><span class="line">array_init_size(zv1, <span class="number">100</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 在函数中返回数组：把返回值初始化为数组</span></span><br><span class="line">array_init(return_value);</span><br></pre></td></tr></table></figure>
+<h3 id="插入和更新"><a href="#插入和更新" class="headerlink" title="插入和更新"></a>插入和更新</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Insert at next index */</span></span><br><span class="line"><span class="keyword">int</span> add_next_index_*(zval *arg, ...);</span><br><span class="line"><span class="comment">/* Insert at specific index */</span></span><br><span class="line"><span class="keyword">int</span> add_index_*(zval *arg, ulong idx, ...);</span><br><span class="line"><span class="comment">/* Insert at specific key */</span></span><br><span class="line"><span class="keyword">int</span> add_assoc_*(zval *arg, <span class="keyword">const</span> <span class="keyword">char</span> *key, ...);</span><br><span class="line"><span class="comment">/* Insert at specific key of length key_len (for binary safety) */</span></span><br><span class="line"><span class="keyword">int</span> add_assoc_*_ex(zval *arg, <span class="keyword">const</span> <span class="keyword">char</span> *key, uint key_len, ...);</span><br></pre></td></tr></table></figure>
+<p>星号表示类型名，可用类型名如下：</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Additional arguments</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>null</td>
+<td>none</td>
+</tr>
+<tr>
+<td>bool</td>
+<td>int b</td>
+</tr>
+<tr>
+<td>long</td>
+<td>long n</td>
+</tr>
+<tr>
+<td>double</td>
+<td>double d</td>
+</tr>
+<tr>
+<td>string</td>
+<td>const char *str, int duplicate</td>
+</tr>
+<tr>
+<td>stringl</td>
+<td>const char *str, uint length, int duplicate</td>
+</tr>
+<tr>
+<td>resource</td>
+<td>int r</td>
+</tr>
+<tr>
+<td>zval</td>
+<td>zval *value</td>
+</tr>
+</tbody>
+</table>
+<h4 id="字符串长度的处理"><a href="#字符串长度的处理" class="headerlink" title="字符串长度的处理"></a>字符串长度的处理</h4><p>上述操作对字符串键和字符串值的长度的要求不同。_ex函数要求传入字符串键的长度，此长度包含NUL字节。_stringl函数要求传入字符串值的长度，此长度不包含NUL字节。</p>
+<h3 id="栗子"><a href="#栗子" class="headerlink" title="栗子"></a>栗子</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">PHP_FUNCTION(donie_get_arr)</span><br><span class="line">&#123;</span><br><span class="line">	array_init(return_value);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// add an integer to the given position</span></span><br><span class="line">	add_index_long(return_value, <span class="number">1</span>, <span class="number">2015</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// append a string to the array</span></span><br><span class="line">	add_next_index_string(return_value, <span class="string">"dummy string"</span>, <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// add a boolean value to the given key</span></span><br><span class="line">	add_assoc_bool(return_value, <span class="string">"rightOrWrong"</span>, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// take care of string lengths</span></span><br><span class="line">	add_assoc_stringl_ex(return_value, <span class="string">"keyStringL\0"</span>, <span class="keyword">sizeof</span>(<span class="string">"keyStringL\0"</span>)<span class="number">-1</span>, <span class="string">"valueEx\0"</span>, <span class="keyword">sizeof</span>(<span class="string">"valueEx\0"</span>), <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// store an object in the array</span></span><br><span class="line">	zval *obj;</span><br><span class="line">	MAKE_STD_ZVAL(obj);</span><br><span class="line">	object_init(obj);</span><br><span class="line">	add_next_index_zval(return_value, obj);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-hashtable-implementation-of-php" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -723,84 +838,6 @@ ga('send', 'pageview');
       
         <img src="http://pic.yupoo.com/leninlee/EfaDoeOo/medium.jpg">
 <p>能让我这个不喜欢读散文的人坚持读完的，是枕著一叶扁舟、听著潺潺流水、忖著多年后的自己——身在何方、心念何人、情系何物……</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-testing-with-phpunit-in-phalcon" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/testing-with-phpunit-in-phalcon/"><strong>Phalcon项目中PHPUnit的初始化</strong></a>
-      <small class="article-date-index">&nbsp; 2014-11-29</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/testing-with-phpunit-in-phalcon/" class="article-date">
-  <time datetime="2014-11-29T01:58:00.000Z" itemprop="datePublished">2014-11-29</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/testing-with-phpunit-in-phalcon/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>参考<a href="http://docs.phalconphp.com/zh/latest/reference/unit-testing.html" target="_blank" rel="noopener">官方文档</a>，稍作修改。</p>
-<p>在项目下创建目录unittests，进入目录执行：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">composer require phpunit/phpunit</span><br></pre></td></tr></table></figure>
-<p>创建tests目录并在其中创建文件Bootstrap.php：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">use</span> <span class="title">Phalcon</span>\<span class="title">DI</span>,</span><br><span class="line">    <span class="title">Phalcon</span>\<span class="title">DI</span>\<span class="title">FactoryDefault</span>;</span><br><span class="line"></span><br><span class="line">ini_set(<span class="string">'display_errors'</span>,<span class="number">1</span>);</span><br><span class="line">error_reporting(E_ALL);</span><br><span class="line"></span><br><span class="line">define(<span class="string">'ROOT_PATH'</span>, <span class="keyword">__DIR__</span>);</span><br><span class="line">define(<span class="string">'PROJECT_DIR'</span>, <span class="string">'/home/taoqi/workspace'</span>);</span><br><span class="line"></span><br><span class="line">set_include_path(</span><br><span class="line">    ROOT_PATH . PATH_SEPARATOR . get_include_path()</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">// required for phalcon/incubator</span></span><br><span class="line"><span class="keyword">include</span> <span class="keyword">__DIR__</span> . <span class="string">"/../vendor/autoload.php"</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 加载项目文件</span></span><br><span class="line">$config = <span class="keyword">require_once</span> PROJECT_DIR.<span class="string">'/web/config/config.php'</span>;</span><br><span class="line"><span class="keyword">require_once</span> PROJECT_DIR.<span class="string">'/web/config/loader.php'</span>;</span><br><span class="line">$loader-&gt;registerDirs(<span class="keyword">array</span>(</span><br><span class="line">    ROOT_PATH</span><br><span class="line">), <span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// $di = new FactoryDefault();</span></span><br><span class="line">DI::reset();</span><br><span class="line"></span><br><span class="line"><span class="comment">// add any needed services to the DI here</span></span><br><span class="line"><span class="keyword">require_once</span> PROJECT_DIR.<span class="string">'/web/config/services.php'</span>;</span><br><span class="line"></span><br><span class="line">DI::setDefault($di);</span><br></pre></td></tr></table></figure>
-<p>安装phalcon的phpunit辅助库：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">composer require phalcon/incubator</span><br></pre></td></tr></table></figure>
-<p>创建phpunit.xml：</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">phpunit</span> <span class="attr">bootstrap</span>=<span class="string">"./Bootstrap.php"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">backupGlobals</span>=<span class="string">"false"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">backupStaticAttributes</span>=<span class="string">"false"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">verbose</span>=<span class="string">"true"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">colors</span>=<span class="string">"false"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">convertErrorsToExceptions</span>=<span class="string">"true"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">convertNoticesToExceptions</span>=<span class="string">"true"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">convertWarningsToExceptions</span>=<span class="string">"true"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">processIsolation</span>=<span class="string">"false"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">stopOnFailure</span>=<span class="string">"false"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">syntaxCheck</span>=<span class="string">"true"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">testsuite</span> <span class="attr">name</span>=<span class="string">"Phalcon - Testsuite"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">directory</span>&gt;</span>./<span class="tag">&lt;/<span class="name">directory</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">testsuite</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">phpunit</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>创建单元测试基类UnitTestCase.php：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">use</span> <span class="title">Phalcon</span>\<span class="title">DI</span>,</span><br><span class="line">    \<span class="title">Phalcon</span>\<span class="title">Test</span>\<span class="title">UnitTestCase</span> <span class="title">as</span> <span class="title">PhalconTestCase</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">UnitTestCase</span> <span class="keyword">extends</span> <span class="title">PhalconTestCase</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@var</span> \Voice\Cache</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">protected</span> $_cache;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@var</span> \Phalcon\Config</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">protected</span> $_config;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@var</span> bool</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> $_loaded = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">setUp</span><span class="params">(Phalcon\DiInterface $di = NULL, Phalcon\Config $config = NULL)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Load any additional services that might be required during testing</span></span><br><span class="line">        $di = DI::getDefault();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// get any DI components here. If you have a config, be sure to pass it to the parent</span></span><br><span class="line">        <span class="keyword">parent</span>::setUp($di);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">$this</span>-&gt;_loaded = <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Check if the test case is setup properly</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> \PHPUnit_Framework_IncompleteTestError;</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!<span class="keyword">$this</span>-&gt;_loaded) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> \PHPUnit_Framework_IncompleteTestError(<span class="string">'Please run parent::setUp().'</span>);</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>创建单元测试类testsTestUnitTest.php：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">Test</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Class UnitTest</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UnitTests</span> <span class="keyword">extends</span> \<span class="title">UnitTestCase</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">testTestCase</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        $post = \Post::find(<span class="number">33</span>);</span><br><span class="line">        <span class="keyword">$this</span>-&gt;assertObjectHasAttribute(<span class="string">'title'</span>, $post, <span class="string">'where is title ?'</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在tests目录下建立phpunit的软连接并执行测试：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ln -sf ../vendor/bin/phpunit run</span><br><span class="line">./run</span><br></pre></td></tr></table></figure>
-<p><strong>另</strong>：发现个诡异的问题，如果Model中不覆盖getSource()方法，单元测试中会自动找用下划线分隔的表名，即假如Model名为FooBar，会去找foo_bar的表名，但正常执行程序时找的是foobar。在官方论坛问的<a href="http://forum.phalconphp.com/discussion/4078/whats-the-principle-when-phalcon-gets-the-table-name-of-a-model" target="_blank" rel="noopener">问题</a>还木有解决。phalcon坑挺多的。</p>
 
       
     </div>

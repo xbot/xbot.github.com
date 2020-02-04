@@ -70,6 +70,88 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-the-best-practice-of-searching-in-vim" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/the-best-practice-of-searching-in-vim/"><strong>Vim搜索的最佳实践</strong></a>
+      <small class="article-date-index">&nbsp; 2017-02-19</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/the-best-practice-of-searching-in-vim/" class="article-date">
+  <time datetime="2017-02-19T12:37:18.000Z" itemprop="datePublished">2017-02-19</time>
+</a>-->
+      <!--
+  <div class="article-category-index">
+    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/the-best-practice-of-searching-in-vim/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><ul>
+<li>使用PCRE正则表达式在当前目录下递归搜索</li>
+<li>将选定内容自动转换成正则表达式</li>
+<li>有较高的搜索速度</li>
+</ul>
+<h2 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h2><ul>
+<li><a href="https://github.com/wincent/ferret" target="_blank" rel="noopener">Ferret</a>：实现用PCRE正则表达式递归搜索</li>
+<li><a href="https://github.com/ggreer/the_silver_searcher" target="_blank" rel="noopener">The Silver Searcher</a>：搜索速度快</li>
+</ul>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">" 在当前缓冲区中查找与替换</span></span><br><span class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;leader&gt;</span>ff yiw/\&lt;<span class="symbol">&lt;C-R&gt;</span><span class="comment">"\&gt;\C</span></span><br><span class="line"><span class="keyword">vmap</span> <span class="symbol">&lt;leader&gt;</span>ff <span class="keyword">y</span>/<span class="symbol">&lt;C-R&gt;</span>=XEscapeRegex(@<span class="comment">")&lt;CR&gt;\C</span></span><br><span class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;leader&gt;</span>rr yi<span class="variable">w:</span>%s/\&lt;<span class="symbol">&lt;C-R&gt;</span><span class="comment">"\&gt;\C//g&lt;LEFT&gt;&lt;LEFT&gt;</span></span><br><span class="line"><span class="keyword">vmap</span> <span class="symbol">&lt;leader&gt;</span>rr <span class="keyword">y</span>:%s/<span class="symbol">&lt;C-R&gt;</span>=XEscapeRegex(@<span class="comment">")&lt;CR&gt;\C//g&lt;LEFT&gt;&lt;LEFT&gt;</span></span><br><span class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;leader&gt;</span>rl yi<span class="variable">w:s</span>/\&lt;<span class="symbol">&lt;C-R&gt;</span><span class="comment">"\&gt;\C//g&lt;LEFT&gt;&lt;LEFT&gt;</span></span><br><span class="line"><span class="keyword">vmap</span> <span class="symbol">&lt;leader&gt;</span>rl <span class="keyword">y</span>:s/<span class="symbol">&lt;C-R&gt;</span>=XEscapeRegex(@<span class="comment">")&lt;CR&gt;\C//g&lt;LEFT&gt;&lt;LEFT&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">" 在当前目录下递归搜索和替换</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">g:FerretExecutable</span>=<span class="string">'ag'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;leader&gt;</span>ak <span class="symbol">&lt;Plug&gt;</span>(FerretAck)</span><br><span class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;leader&gt;</span>lak <span class="symbol">&lt;Plug&gt;</span>(FerretLack)</span><br><span class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;leader&gt;</span>aw <span class="symbol">&lt;Plug&gt;</span>(FerretAckWord)</span><br><span class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;leader&gt;</span><span class="keyword">as</span> <span class="symbol">&lt;Plug&gt;</span>(FerretAcks)</span><br><span class="line"><span class="keyword">vmap</span> <span class="symbol">&lt;leader&gt;</span>ak <span class="keyword">y</span>:Ack <span class="symbol">&lt;C-R&gt;</span>=XEscapeRegex(@<span class="comment">", 2)&lt;CR&gt;</span></span><br><span class="line"><span class="keyword">vmap</span> <span class="symbol">&lt;leader&gt;</span>lak <span class="keyword">y</span>:Lack <span class="symbol">&lt;C-R&gt;</span>=XEscapeRegex(@<span class="comment">", 2)&lt;CR&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">nnoremap</span> <span class="symbol">&lt;leader&gt;</span><span class="keyword">a</span> :<span class="keyword">set</span> operatorfunc=GrepOperator<span class="symbol">&lt;CR&gt;</span>g@</span><br><span class="line"><span class="keyword">vnoremap</span> <span class="symbol">&lt;leader&gt;</span><span class="keyword">a</span> :<span class="symbol">&lt;c-u&gt;</span><span class="keyword">call</span> GrepOperator(<span class="built_in">visualmode</span>())<span class="symbol">&lt;CR&gt;</span></span><br><span class="line"><span class="function"><span class="keyword">function</span>! <span class="title">GrepOperator</span><span class="params">(type)</span>"&#123;&#123;&#123;</span></span><br><span class="line">    <span class="keyword">if</span> <span class="variable">a:type</span> ==# <span class="string">'v'</span></span><br><span class="line">        normal! `&lt;v`&gt;<span class="keyword">y</span></span><br><span class="line">    <span class="keyword">elseif</span> <span class="variable">a:type</span> ==# <span class="string">'char'</span></span><br><span class="line">        normal! `[v`]<span class="keyword">y</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    <span class="keyword">endif</span></span><br><span class="line"></span><br><span class="line">    exec <span class="string">"Ack "</span>.XEscapeRegex(@@, <span class="number">2</span>)</span><br><span class="line">    <span class="string">" exec "</span>Grep <span class="comment">".XEscapeRegex(@@, 2)</span></span><br><span class="line"><span class="keyword">endfunction</span><span class="comment">"&#125;&#125;&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">" 转义正则表达式特殊字符，以便在正则表达式中使用</span></span><br><span class="line"><span class="comment">" a:1   是否转义为vimgrep的pattern格式，1，2</span></span><br><span class="line"><span class="comment">" a:2   是否用shellescape()转义，1是转义，2是转义并去掉两侧单引号</span></span><br><span class="line"><span class="function"><span class="keyword">function</span>! <span class="title">XEscapeRegex</span><span class="params">(str, ...)</span>"&#123;&#123;&#123;</span></span><br><span class="line">    <span class="keyword">let</span> pattern = <span class="variable">a:str</span></span><br><span class="line">    <span class="keyword">let</span> pattern = <span class="built_in">escape</span>(pattern, <span class="string">'/\.*$^~[]"'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="variable">a:0</span> &amp;&amp; <span class="variable">a:1</span></span><br><span class="line">        <span class="keyword">let</span> pattern = <span class="built_in">escape</span>(pattern, <span class="string">'()+?'</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="variable">a:1</span> == <span class="number">2</span></span><br><span class="line">            <span class="keyword">let</span> pattern = <span class="built_in">escape</span>(pattern, <span class="string">'\'</span>)</span><br><span class="line">        <span class="keyword">endif</span></span><br><span class="line">    <span class="keyword">endif</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="variable">a:0</span> &gt; <span class="number">1</span> &amp;&amp; <span class="variable">a:2</span></span><br><span class="line">        <span class="keyword">let</span> pattern = <span class="built_in">shellescape</span>(pattern)</span><br><span class="line">        <span class="keyword">if</span> <span class="variable">a:2</span> == <span class="number">2</span></span><br><span class="line">            <span class="keyword">let</span> pattern = pattern[<span class="number">1</span>:-<span class="number">2</span>]</span><br><span class="line">        <span class="keyword">endif</span></span><br><span class="line">    <span class="keyword">endif</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> whitespacePattern = <span class="variable">a:0</span> &amp;&amp; <span class="variable">a:1</span> ? <span class="string">'\\s\+'</span> : <span class="string">'\\s\\+'</span></span><br><span class="line">    <span class="keyword">let</span> pattern = <span class="keyword">substitute</span>(pattern, <span class="string">'\s\+'</span>, whitespacePattern, <span class="string">'g'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> pattern</span><br><span class="line"><span class="keyword">endfunction</span><span class="comment">"&#125;&#125;&#125;</span></span><br></pre></td></tr></table></figure>
+<h3 id="Ferret"><a href="#Ferret" class="headerlink" title="Ferret"></a>Ferret</h3><p>Ferret是我用过的vim搜索扩展里最接近理想的一个，最大的优点是不用引号包裹搜索内容，且较大程度地支持PCRE正则表达式。</p>
+<p>EasyGrep的缺点是正则表达式必须是shellescape()过的，手写不方便，也不直观。Ferret在底层做了shellescape()，所以比EasyGrep简单一些。不过Ferret对反斜杠的处理仍然不直观，例如搜索<code>App\Link</code>，正则表达式是<code>App\\Link</code>，而Ferret里只能用<code>App\\\\Link</code>。原因是从输入到执行，存在著三层转义：Vim命令行、Shell、grep/ag。所以对于EasyGrep，要搜索一个<code>\</code>，必须输入<code>\\\\\\\\</code>。对于Ferret，由于底层做了shellescape()，只需要两层转义，即<code>\\\\</code>。当然这样也不方便，所以我用自定义函数XEscapeRegex()对选择的内容做这个事，不过最完美的方法当然是Ferret自己支持，或者自己再封装一下Ferret的命令，这样输入的正则表达式可读性就正常了。</p>
+<h3 id="The-Silver-Searcher"><a href="#The-Silver-Searcher" class="headerlink" title="The Silver Searcher"></a>The Silver Searcher</h3><p>ag是我用过的搜索工具里对速度和功能兼顾得最好的。</p>
+<h3 id="搜索运算符"><a href="#搜索运算符" class="headerlink" title="搜索运算符"></a>搜索运算符</h3><p>GrepOperator是从<a href="http://learnvimscriptthehardway.stevelosh.com/" target="_blank" rel="noopener">Learn Vimscript the Hard Way</a>里扒出来的，可以实现自动搜索指定范围的内容：</p>
+<ul>
+<li><code>&lt;leader&gt;aiw</code>：搜索光标下的词</li>
+<li><code>&lt;leader&gt;a$</code>：搜索从光标到行末的内容</li>
+<li><code>&lt;leader&gt;at;</code>：搜索从光标到下一个分号的内容</li>
+</ul>
+<h3 id="转换选定内容到正则表达式"><a href="#转换选定内容到正则表达式" class="headerlink" title="转换选定内容到正则表达式"></a>转换选定内容到正则表达式</h3><p>XEscapeRegex()根据参数转换字符串到不同格式的正则表达式。主要用途为转换成给搜索当前缓冲区的Vim格式的正则，或给Ferret使用的PCRE格式。</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-the-experience-of-bose-qc35" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -704,73 +786,6 @@ ga('send', 'pageview');
 <p>实际情况是OpenResty的运行用户没有音频文件所在目录的权限。</p>
 <h3 id="编译的ffmpeg转换PCM到MP3时报错"><a href="#编译的ffmpeg转换PCM到MP3时报错" class="headerlink" title="编译的ffmpeg转换PCM到MP3时报错"></a>编译的ffmpeg转换PCM到MP3时报错</h3><p>silk-v3-decoder自己的decoder只是把silk转换成PCM，然后调用ffmpeg转换成mp3。系统中的ffmpeg是自己编译的，在这一步报错，大意是mp3的encoder不存在。</p>
 <p>原因是ffmpeg编译时默认不激活mp3编码器（猜测）或者没安装libmp3lame-dev，需要安装这个开发库并给configure指定参数「–enable-libmp3lame」。</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-two-plant-identification-apps" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/two-plant-identification-apps/"><strong>微软识花和形色</strong></a>
-      <small class="article-date-index">&nbsp; 2016-12-28</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/two-plant-identification-apps/" class="article-date">
-  <time datetime="2016-12-28T04:12:00.000Z" itemprop="datePublished">2016-12-28</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/青梅煮酒/">青梅煮酒</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/two-plant-identification-apps/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>由于微软的名气，「微软识花」刚推出的时候就众所周知。很好用的App，我成功地用它识别出了母上的长春花：</p>
-<p><img src="https://ws3.sinaimg.cn/large/006tNbRwly1fwvwwr9lsgj30zk0qodhw.jpg" alt=""></p>
-<p>不过我养的主要是观叶植物，只能识别花对我来说意义不大。直到最近发现了「形色」。识别率还不错，对特征不明显的植物容易误报，比如我的空凤就被识别成了吊兰……</p>
-<p><img src="https://ws1.sinaimg.cn/large/006tNbRwly1fwvwwu1rsdj31kw1kw1kx.jpg" alt=""></p>
-<p>这就是「微软识花」狡猾的地方。</p>
 
       
     </div>

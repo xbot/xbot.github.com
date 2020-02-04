@@ -70,6 +70,79 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-manual-dependency-injection-with-laravel" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/manual-dependency-injection-with-laravel/"><strong>解决Laravel的Facade在被Mock时不自动注入依赖的一种方法</strong></a>
+      <small class="article-date-index">&nbsp; 2018-01-30</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/manual-dependency-injection-with-laravel/" class="article-date">
+  <time datetime="2018-01-30T07:41:16.000Z" itemprop="datePublished">2018-01-30</time>
+</a>-->
+      <!--
+  <div class="article-category-index">
+    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/manual-dependency-injection-with-laravel/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>由于集成了Mockery，Laravel的Facade对单元测试非常友好，只需要一行代码就能实现mocking。</p>
+<p>例如，测试目标方法中调用了订单工具类的一个方法，在使用依赖注入的方式时，需要用三行代码实现对这个方法的mocking：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$fakeOrderTool = m::mock(\App\Tool\Order::class);</span><br><span class="line">$fakeOrderTool-&gt;shouldReceive(<span class="string">'getById'</span>)-&gt;once()-&gt;with($id)-&gt;andReturn($fakeOrder);</span><br><span class="line"><span class="keyword">$this</span>-&gt;app-&gt;instance(\App\Tool\Order::class, $fakeOrderTool);</span><br></pre></td></tr></table></figure>
+<p>而用Facade是这样的：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">OrderFacade::shouldReceive(<span class="string">'getById'</span>)-&gt;once()-&gt;with($id)-&gt;andReturn($fakeOrder);</span><br></pre></td></tr></table></figure>
+<p>当测试目标方法也属于订单工具类时，需要部分mock这个类，所以还要加上一行：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">OrderFacade::makePartial();</span><br></pre></td></tr></table></figure>
+<p>但如果订单工具类的构造方法里有需要注入的依赖关系，这里并不会被执行。所以我在工具类基类里封装了一个方法，用反射机制实现手工注入依赖关系：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 注入依赖，用于单元测试</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span>  void</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span>  donieli</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span>   5</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 5</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">injectDependencies</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $reflector = <span class="keyword">new</span> \ReflectionClass(get_class(<span class="keyword">$this</span>));</span><br><span class="line">    $params    = $reflector-&gt;getConstructor()-&gt;getParameters();</span><br><span class="line">    $args      = [];</span><br><span class="line">    <span class="keyword">foreach</span> ($params <span class="keyword">as</span> $param) &#123;</span><br><span class="line">        $paramClass = $param-&gt;getClass();</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">empty</span>($paramClass)) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> \<span class="keyword">Exception</span>(<span class="string">'Dependency named '</span>.$param-&gt;getName().<span class="string">' cannot be injected.'</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        $instance  = app()-&gt;make($paramClass-&gt;getName());</span><br><span class="line">        $args[] = $instance;</span><br><span class="line">    &#125;</span><br><span class="line">    call_user_func_array([<span class="keyword">$this</span>, <span class="string">'__construct'</span>], $args);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后就可以这样处理：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">OrderFacade::shouldReceive(<span class="string">'getById'</span>)-&gt;with($id)-&gt;once()-&gt;andReturn($fakeOrder);</span><br><span class="line">OrderFacade::makePartial();</span><br><span class="line">OrderFacade::injectDependencies();</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-migrate-vultr-from-singapore-to-los-angeles" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -685,70 +758,6 @@ ga('send', 'pageview');
 <p>单手握持是ko系列的主要卖点，实际使用体验当然很好。为握持设计的宽边框加上实体翻页键非常方便。虽然因为加大屏幕和增加续航导致194g的重量远远超过1代的131g，但还是比kpw轻了10g，而且主要重量集中在单手握持的一边，杠杆效应很小。配合重力感应，随时换手可以有效缓解疲劳。当然，作为长时间单手握持的阅读设备，重量自然越轻越好，这一点上，ko还有很大优化的空间。</p>
 <p>此外，新ko的做工远远好于kpw，没有了廉价感。12颗背光灯使得背光的均匀度比kpw强了很多，几乎不会有kpw上明显的光影。性能上是现在kindle全系列里最高的，翻页时虽然还会看到闪屏，但比以前已经快了很多。自动亮度调节算是个聊胜于无的功能吧。至于防水和有声书，我没有这方面的需求。</p>
 <p>如果说缺点的话，还是续航。虽然相对于1代本体，续航已经达到可用的水平，但是对于被其它产品线惯坏的我们来说，新ko电量的消耗还是快了点。我没有精确的对比，但是能明显地感觉到比kpw掉得快不少。</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-how-to-clean-a-phone" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/how-to-clean-a-phone/"><strong>清洁手机的最佳实践</strong></a>
-      <small class="article-date-index">&nbsp; 2017-12-03</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/how-to-clean-a-phone/" class="article-date">
-  <time datetime="2017-12-03T14:51:42.000Z" itemprop="datePublished">2017-12-03</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/青梅煮酒/">青梅煮酒</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/how-to-clean-a-phone/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>以前的做法是先用湿巾清理，再用纸巾擦干。后来屏幕的触感逐渐不如开始时顺滑，也更容易沾指纹和灰尘，而且不容易清除。估计应该是湿巾的酒精会腐蚀屏幕的涂层，纸巾粗糙的表面也会造成磨损。</p>
-<p>现在先用软毛刷扫除灰尘，然后用3M魔布擦拭。效果应该会更好。</p>
 
       
     </div>

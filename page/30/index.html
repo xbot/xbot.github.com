@@ -70,6 +70,103 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-ultrablog-v300-released" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/ultrablog-v300-released/"><strong>UltraBlog.vim v3.0释出：全文检索与事件驱动</strong></a>
+      <small class="article-date-index">&nbsp; 2011-07-25</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/ultrablog-v300-released/" class="article-date">
+  <time datetime="2011-07-24T16:00:00.000Z" itemprop="datePublished">2011-07-25</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/ultrablog-v300-released/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>用了一周的业余时间，昨天我释出了<a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>的3.0版。新版本主要加入了全文检索的功能，并引入事件驱动的模式。</p>
+
+<p>全文检索是我蓄谋已久的功能，一个不能搜索的博客客户端的管理功能是大打折扣的。得益于SQLite数据库和SQLAlchemy框架，全文检索的实现是很简单的，新增加的<code>:UBFind</code>命令将在所有文章和页面的标题与内容中查询，并将搜索结果显示在一个可分页的列表中。这个命令支持任意多个关键词，各关键词之间遵循与的关系。此外，检索结果中，所有的关键词将被自动标记为高亮。</p>
+
+<p>事件驱动模式的引入是我悍然将版本号跳跃到3.x的主要原因。</p>
+
+<p>在前几个版本中，我实现了对多窗口的支持，它使得用户可以在新窗口中打开列表中的文章。但UltraBlog.vim最初开发的时候并没有考虑到多窗口的问题，所有命令都只针对当前窗口进行操作。这就有了缓冲区内容同步的问题，假如在一个新的缓冲区中打开了和另一个缓冲区相同的文章，则一个缓冲区内容的改变不会同步到另外一个中，这多少是有些隐患的。</p>
+
+<p>最直接的做法是在所有可能改变缓冲区内容的功能中加入对其它缓冲区的处理，但这样做有不少问题：</p>
+
+<ul>
+<li>代码耦合度太高，违反K.I.S.S原则，不利于今后的开发和维护</li>
+<li>函数体过长，我讨厌难看的代码</li>
+<li>代码冗余，重复劳动</li>
+</ul>
+
+<p>事件驱动模式可以很好的解决以上问题，一个函数只干一件事，做完后一个事件抛出去，至于连带著要做什么，谁监听这个事件谁去处理，代码的耦合度很低，复用度很高，易于维护和阅读。</p>
+
+<p>UltraBlog.vim引入事件驱动模式处理缓冲区同步的问题。不同的操作抛出不同的事件，所有的事件继承自父类<strong>UBEvent</strong>：</p>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UBEvent</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, srcObj)</span>:</span></span><br><span class="line">        self.srcObj = srcObj</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UBDebugEvent</span><span class="params">(UBEvent)</span>:</span> <span class="keyword">pass</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UBTmplDelEvent</span><span class="params">(UBEvent)</span>:</span> <span class="keyword">pass</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UBTmplSaveEvent</span><span class="params">(UBEvent)</span>:</span> <span class="keyword">pass</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UBLocalPostDelEvent</span><span class="params">(UBEvent)</span>:</span> <span class="keyword">pass</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UBRemotePostDelEvent</span><span class="params">(UBEvent)</span>:</span> <span class="keyword">pass</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UBPostSendEvent</span><span class="params">(UBEvent)</span>:</span> <span class="keyword">pass</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UBPostSaveEvent</span><span class="params">(UBEvent)</span>:</span> <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+
+<p>一个可能改变缓冲区内容的操作执行完后，创建一个特定的事件并将其加入到事件队列中。事件队列类中存放两个列表，一是事件队列，二是事件监听器列表；提供三个方法，分别用来注册事件监听器、对事件执行入队列操作和处理队列中所有事件：</p>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UBEventQueue</span>:</span></span><br><span class="line">    queue = []</span><br><span class="line">    listeners = []</span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">fireEvent</span><span class="params">(cls, evt)</span>:</span></span><br><span class="line">        cls.queue.append(evt)</span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">processEvents</span><span class="params">(cls)</span>:</span></span><br><span class="line">        <span class="keyword">for</span> evt <span class="keyword">in</span> cls.queue:</span><br><span class="line">            <span class="keyword">for</span> listener <span class="keyword">in</span> cls.listeners:</span><br><span class="line">                <span class="keyword">if</span> listener.isTarget(evt):</span><br><span class="line">                    cls.queue.remove(evt)</span><br><span class="line">                    listener.processEvent(evt)</span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">registerListener</span><span class="params">(cls, lsnr)</span>:</span></span><br><span class="line">        cls.listeners.append(lsnr)</span><br></pre></td></tr></table></figure>
+
+<p>事件队列对事件的处理是通过事件监听器进行的，每个事件监听器要实现两个功能：识别监听对象和处理监听对象。所有具体事件的监听类都是<strong>UBListener</strong>的子类：</p>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UBListener</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="string">''' Parent class of all listeners</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    eventType = <span class="keyword">None</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">isTarget</span><span class="params">(cls, evt)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> isinstance(evt, cls.eventType)</span><br><span class="line"></span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">processEvent</span><span class="params">(evt)</span>:</span> <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UBPostSaveListener</span><span class="params">(UBListener)</span>:</span></span><br><span class="line">    <span class="string">''' Listener for saving posts/pages</span></span><br><span class="line"><span class="string">    1. Refresh the current view if it is an edit/list view of this post</span></span><br><span class="line"><span class="string">    2. Mark all edit/list views of posts/pages outdated</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    eventType = UBPostSaveEvent</span><br><span class="line"></span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">processEvent</span><span class="params">(evt)</span>:</span></span><br><span class="line">        <span class="keyword">for</span> nr <span class="keyword">in</span> ub_get_buffers([<span class="string">'post_edit'</span>,<span class="string">'page_edit'</span>]):</span><br><span class="line">            <span class="keyword">if</span> evt.srcObj==ub_get_meta(<span class="string">'id'</span>, nr):</span><br><span class="line">                <span class="keyword">if</span> nr==ub_get_bufnr(<span class="string">'%'</span>):</span><br><span class="line">                    ub_refresh_current_view()</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    ub_set_view_outdated(nr)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> nr <span class="keyword">in</span> ub_get_buffers([<span class="string">'post_list'</span>,<span class="string">'page_list'</span>,<span class="string">'search_result_list'</span>]):</span><br><span class="line">            <span class="keyword">if</span> nr == ub_get_bufnr(<span class="string">'%'</span>):</span><br><span class="line">                ub_refresh_current_view()</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                ub_set_view_outdated(nr)</span><br></pre></td></tr></table></figure>
+
+<p>事件监听器遍历所有满足处理条件的缓冲区，对当前缓冲区，立即刷新，其余的标记为已过期。同时利用Vim自身的事件驱动特性，在进入已过期的缓冲区时，再更新之，也就是传说中的懒加载模式：</p>
+
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">au</span> BufEnter * <span class="keyword">py</span> __ub_on_buffer_enter()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@__ub_exception_handler</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">__ub_on_buffer_enter</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="string">''' Triggered by BufEnter event, check if the buffer is outdated</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    <span class="keyword">if</span> ub_is_view_outdated(<span class="string">'%'</span>):</span><br><span class="line">        ub_refresh_current_view()</span><br><span class="line">        ub_set_view_outdated(<span class="string">'%'</span>, <span class="keyword">False</span>)</span><br></pre></td></tr></table></figure>
+
+<p>此外，随著代码量的增加，原来把全部代码都放在一个文件中的做法不再适用，尤其是以<a href="http://en.wikipedia.org/wiki/Here_document" target="_blank" rel="noopener">Here Document</a>形式存放在vim脚本文件中的Python代码不能被ctags识别，所以按类别分别存放到<strong>$VIMRUNTIME/plugin/ultrablog/</strong>下的几个Python源文件中。</p>
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-got-aoc-e2343f" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -915,116 +1012,6 @@ ga('send', 'pageview');
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * 我是一个测试函数</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> int 我是整型形参</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> string 我是字符串形参</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> array 我是返回值</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span><span class="params">($bar1, $bar2)</span> </span>&#123;...&#125;</span><br></pre></td></tr></table></figure>
 
 <p>实际效果为打开的预览窗口将完全显示并只显示以上内容。</p>
-
-<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-use-ack-as-an-alternative-to-grep" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/use-ack-as-an-alternative-to-grep/"><strong>ack: grep的同类替代品</strong></a>
-      <small class="article-date-index">&nbsp; 2011-05-09</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/use-ack-as-an-alternative-to-grep/" class="article-date">
-  <time datetime="2011-05-08T16:00:00.000Z" itemprop="datePublished">2011-05-09</time>
-</a>-->
-      <!--
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/use-ack-as-an-alternative-to-grep/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a href="http://betterthangrep.com" target="_blank" rel="noopener">ack</a>是一个perl脚本，是grep的一个可选替换。</p>
-
-<p>有以下优势：</p>
-
-<ul>
-<li>为程序员设计，使用方便，输入较少
-<ul>
-<li>默认递归搜索</li>
-<li>缺省提供多种文件类型供选，文件类型对应的后缀名可修改</li>
-</ul></li>
-<li>使用perl的正则表达式，而grep只支持其一个子集</li>
-<li>搜索结果高亮输出</li>
-</ul>
-
-<p>很多人以讹传讹，使人容易对ack的搜索速度产生误解。ack的官方宣传中说比grep快，其前提是ack可方便地针对部分后缀的文件进行搜索，而grep默认对所有文件搜索。ack的官方文档中明确指出，在对大量文件进行搜索时，grep的速度还是最快的。</p>
-
-<h2>~/.ackrc</h2>
-
-<p>使用此配置文件存储ack的常用选项。</p>
-
-<blockquote>
-  <p>-i
-  --type-add
-  php=.lib</p>
-</blockquote>
-
-<p>如上所示，该文件中每一行应该是ack命令行参数中用空格分隔的一个部分。</p>
-
-<h2>例子</h2>
-
-<p>如果搜索的关键词是正则表达式，在Linux下必须将其用双引号包围起来。</p>
-
-<p>如：</p>
-
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ack <span class="string">"gbldb\s*="</span></span><br></pre></td></tr></table></figure>
-
-<h2>Windows下的安装</h2>
-
-<ul>
-<li>安装<a href="http://strawberryperl.com" target="_blank" rel="noopener">strawberryperl</a></li>
-<li>保存<a href="http://betterthangrep.com/ack-standalone" target="_blank" rel="noopener">ack.pl</a>到<em>C:\bin</em></li>
-<li>创建批处理文件<em>C:\bin\ack.bat</em>：<figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">@<span class="built_in">echo</span> off</span><br><span class="line">perl.exe c:/bin/ack.pl %*</span><br></pre></td></tr></table></figure></li>
-<li>将<em>C:\bin</em>加入环境变量<strong>%PATH%</strong></li>
-</ul>
-
-<h2>资源</h2>
-
-<ul>
-<li><a href="http://www.vim.org/scripts/script.php?script_id=2572" target="_blank" rel="noopener">ack.vim</a>: Vim使用ack的辅助扩展</li>
-</ul>
 
 <p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
 

@@ -70,6 +70,98 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-define-massive-constants-using-apc" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/define-massive-constants-using-apc/"><strong>PHP大量常量应集中使用APC定义</strong></a>
+      <small class="article-date-index">&nbsp; 2012-04-24</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/define-massive-constants-using-apc/" class="article-date">
+  <time datetime="2012-04-23T16:00:00.000Z" itemprop="datePublished">2012-04-24</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/define-massive-constants-using-apc/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>用xdebug跟踪程序性能时，发现一个定义了约七百个常量的文件，include_once()时消耗约六十毫秒的时间。事实上define()的效率比较低，如果需要定义大量常量，使用APC扩展提供的apc_define_constants()效果会好得多。</p>
+
+<p>下面是对这个文件改造前后效率跟踪结果的对比：</p>
+
+<table>
+    <tr>
+        <th></th>
+        <th>define()方案（ms）</th>
+        <th>apc_define_constants()方案（ms）</th>
+    </tr>
+    <tr>
+        <td>启动Web服务和PHP，第一次运行</td>
+        <td>58</td>
+        <td>4</td>
+    </tr>
+    <tr>
+        <td>不重启Web服务和PHP，第二次运行</td>
+        <td>65</td>
+        <td>1</td>
+    </tr>
+    <tr>
+        <td>不重启Web服务和PHP，第三次运行</td>
+        <td>66</td>
+        <td>1</td>
+    </tr>
+</table>
+
+<p>由此可见，apc_define_constants()不但在初次调用时效能就超过define()，而且由于APC自身的缓存功能，在后续调用时效率会有进一步的提高，而define()基本没有变化。</p>
+
+<p>以下是apc_define_constants()的代码示例：</p>
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span>(!apc_load_constants(<span class="string">'my_constants'</span>)) &#123;</span><br><span class="line">    $constants = <span class="keyword">array</span>(</span><br><span class="line">        <span class="string">'ONE'</span>   =&gt; <span class="number">1</span>,</span><br><span class="line">        <span class="string">'TWO'</span>   =&gt; <span class="number">2</span>,</span><br><span class="line">        <span class="string">'THREE'</span> =&gt; <span class="number">3</span>,</span><br><span class="line">    );</span><br><span class="line">    apc_define_constants(<span class="string">'my_constants'</span>, $constants);</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-fsockopen-fails-connecting-localhost" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -748,77 +840,6 @@ ga('send', 'pageview');
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">blueman-applet &amp;</span><br><span class="line">sleep 5</span><br><span class="line">sudo rfkill block bluetooth</span><br></pre></td></tr></table></figure>
 
 <p>当然，还要取消自动启动程序列表中原来的Blueman。</p>
-
-<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-enable-the-new-domain-name-0x3f-org" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/enable-the-new-domain-name-0x3f-org/"><strong>启用新域名0x3f.org</strong></a>
-      <small class="article-date-index">&nbsp; 2012-01-09</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/enable-the-new-domain-name-0x3f-org/" class="article-date">
-  <time datetime="2012-01-08T16:00:00.000Z" itemprop="datePublished">2012-01-09</time>
-</a>-->
-      <!--
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/enable-the-new-domain-name-0x3f-org/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>元旦假期第三天，还是把域名给换了。</p>
-
-<p>原因主要是.it太贵，年费十几刀，而.org只有它的一半。另外，原来的sinolog.it有点儿长，也显老气，想换个更个性、更短的。</p>
-
-<p>可惜中意的0xff有主了，只好退而求0x3f。0x3f在ASCII里面代表问号，象征“<strong>保持好奇心</strong>”。</p>
-
-<p>按照<a href="http://0x3f.org/?p=1356">上次</a>的<a href="http://0x3f.org/?p=1359">经验</a>，对著数据库一通改，加上这两年四处沾花惹草，很多网站上的相关信息都得跟著改，长此以往，以后连域名都换不起了。</p>
-
-<p>好在RSS订阅早已经换成了FeedBurner烧录，只是对于直接用原域名订阅的需要改一下订阅地址了。</p>
-
-<p>用了几年国家域名，现在也用上国际域名了……</p>
 
 <p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
 

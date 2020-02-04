@@ -70,6 +70,77 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-project-euler-23" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/project-euler-23/"><strong>Project Euler Problem 23 Solved</strong></a>
+      <small class="article-date-index">&nbsp; 2014-04-25</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/project-euler-23/" class="article-date">
+  <time datetime="2014-04-25T15:56:00.000Z" itemprop="datePublished">2014-04-25</time>
+</a>-->
+      <!--
+  <div class="article-category-index">
+    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/project-euler-23/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Non-abundant-sums"><a href="#Non-abundant-sums" class="headerlink" title="Non-abundant sums"></a>Non-abundant sums</h2><p>A perfect number is a number for which the sum of its proper divisors is exactly equal to the number. For example, the sum of the proper divisors of 28 would be 1 + 2 + 4 + 7 + 14 = 28, which means that 28 is a perfect number.</p>
+<p>A number n is called deficient if the sum of its proper divisors is less than n and it is called abundant if this sum exceeds n.</p>
+<p>As 12 is the smallest abundant number, 1 + 2 + 3 + 4 + 6 = 16, the smallest number that can be written as the sum of two abundant numbers is 24. By mathematical analysis, it can be shown that all integers greater than 28123 can be written as the sum of two abundant numbers. However, this upper limit cannot be reduced any further by analysis even though it is known that the greatest number that cannot be expressed as the sum of two abundant numbers is less than this limit.</p>
+<p>Find the sum of all the positive integers which cannot be written as the sum of two abundant numbers.</p>
+<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><p>Using sets instead of lists greatly improves performance in Python:</p>
+<figure class="highlight python"><figcaption><span>p23.py</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum_proper_factors</span><span class="params">(n)</span>:</span></span><br><span class="line">    (result, sqrt) = (<span class="number">1</span>, n ** <span class="number">0.5</span>)</span><br><span class="line"></span><br><span class="line">    (start, step) = n % <span class="number">2</span> == <span class="number">1</span> <span class="keyword">and</span> (<span class="number">3</span>, <span class="number">2</span>) <span class="keyword">or</span> (<span class="number">2</span>, <span class="number">1</span>)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(start, int(sqrt) + <span class="number">1</span>, step):</span><br><span class="line">        <span class="keyword">if</span> n % i == <span class="number">0</span>:</span><br><span class="line">            result += i + n / i</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> sqrt == int(sqrt):</span><br><span class="line">        result -= sqrt</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    (result, limit, abundants) = (<span class="number">0</span>, <span class="number">28124</span>, set())</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> n <span class="keyword">in</span> range(<span class="number">1</span>, limit):</span><br><span class="line">        <span class="keyword">if</span> sum_proper_factors(n) &gt; n:</span><br><span class="line">            abundants.add(n)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> any(n - a <span class="keyword">in</span> abundants <span class="keyword">for</span> a <span class="keyword">in</span> abundants):</span><br><span class="line">            result += n</span><br><span class="line"></span><br><span class="line">    <span class="keyword">print</span> result</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    <span class="keyword">import</span> time</span><br><span class="line">    startTime = time.time()</span><br><span class="line">    main()</span><br><span class="line">    <span class="keyword">print</span> time.time() - startTime</span><br></pre></td></tr></table></figure>
+<p>Simulate sets using maps in Go:</p>
+<figure class="highlight go"><figcaption><span>p23.go</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"math"</span></span><br><span class="line">	<span class="string">"time"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">sum_proper_factors</span><span class="params">(n <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	result, sqrt := <span class="number">1</span>, math.Sqrt(<span class="keyword">float64</span>(n))</span><br><span class="line"></span><br><span class="line">	start, step := <span class="number">2</span>, <span class="number">1</span></span><br><span class="line">	<span class="keyword">if</span> n%<span class="number">2</span> == <span class="number">1</span> &#123;</span><br><span class="line">		start, step = <span class="number">3</span>, <span class="number">2</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> i := start; i &lt;= <span class="keyword">int</span>(sqrt); i += step &#123;</span><br><span class="line">		<span class="keyword">if</span> n%i == <span class="number">0</span> &#123;</span><br><span class="line">			result += i + n/i</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> sqrt == <span class="keyword">float64</span>(<span class="keyword">int</span>(sqrt)) &#123;</span><br><span class="line">		result -= <span class="keyword">int</span>(sqrt)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> result</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	result, limit, abundants, startTime := <span class="number">0</span>, <span class="number">28124</span>, <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">int</span>]<span class="keyword">bool</span>), time.Now()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> n := <span class="number">1</span>; n &lt; limit; n++ &#123;</span><br><span class="line">		<span class="keyword">if</span> sum_proper_factors(n) &gt; n &#123;</span><br><span class="line">			abundants[n] = <span class="literal">true</span></span><br><span class="line">		&#125;</span><br><span class="line">		isSumOfTwoAbundants := <span class="literal">false</span></span><br><span class="line">		<span class="keyword">for</span> k := <span class="keyword">range</span> abundants &#123;</span><br><span class="line">			<span class="keyword">if</span> abundants[n-k] == <span class="literal">true</span> &#123;</span><br><span class="line">				isSumOfTwoAbundants = <span class="literal">true</span></span><br><span class="line">				<span class="keyword">break</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> !isSumOfTwoAbundants &#123;</span><br><span class="line">			result += n</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	fmt.Println(result, time.Now().Sub(startTime))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>I’m the 49489th person to have solved this problem.</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-ultrablog-v361-released" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -701,73 +772,6 @@ ga('send', 'pageview');
 <p><strong>NOTE</strong>: Do not count spaces or hyphens. For example, 342 (three hundred and forty-two) contains 23 letters and 115 (one hundred and fifteen) contains 20 letters. The use of “and” when writing out numbers is in compliance with British usage.</p>
 <h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><figure class="highlight python"><figcaption><span>p17.py</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">translate_number</span><span class="params">(num)</span>:</span></span><br><span class="line">    words = &#123;</span><br><span class="line">        <span class="number">0</span>: <span class="string">''</span>,</span><br><span class="line">        <span class="number">1</span>: <span class="string">'one'</span>,</span><br><span class="line">        <span class="number">2</span>: <span class="string">'two'</span>,</span><br><span class="line">        <span class="number">3</span>: <span class="string">'three'</span>,</span><br><span class="line">        <span class="number">4</span>: <span class="string">'four'</span>,</span><br><span class="line">        <span class="number">5</span>: <span class="string">'five'</span>,</span><br><span class="line">        <span class="number">6</span>: <span class="string">'six'</span>,</span><br><span class="line">        <span class="number">7</span>: <span class="string">'seven'</span>,</span><br><span class="line">        <span class="number">8</span>: <span class="string">'eight'</span>,</span><br><span class="line">        <span class="number">9</span>: <span class="string">'nine'</span>,</span><br><span class="line">        <span class="number">10</span>: <span class="string">'ten'</span>,</span><br><span class="line">        <span class="number">11</span>: <span class="string">'eleven'</span>,</span><br><span class="line">        <span class="number">12</span>: <span class="string">'twelve'</span>,</span><br><span class="line">        <span class="number">13</span>: <span class="string">'thirteen'</span>,</span><br><span class="line">        <span class="number">14</span>: <span class="string">'fourteen'</span>,</span><br><span class="line">        <span class="number">15</span>: <span class="string">'fifteen'</span>,</span><br><span class="line">        <span class="number">16</span>: <span class="string">'sixteen'</span>,</span><br><span class="line">        <span class="number">17</span>: <span class="string">'seventeen'</span>,</span><br><span class="line">        <span class="number">18</span>: <span class="string">'eighteen'</span>,</span><br><span class="line">        <span class="number">19</span>: <span class="string">'nineteen'</span>,</span><br><span class="line">        <span class="number">20</span>: <span class="string">'twenty'</span>,</span><br><span class="line">        <span class="number">30</span>: <span class="string">'thirty'</span>,</span><br><span class="line">        <span class="number">40</span>: <span class="string">'forty'</span>,</span><br><span class="line">        <span class="number">50</span>: <span class="string">'fifty'</span>,</span><br><span class="line">        <span class="number">60</span>: <span class="string">'sixty'</span>,</span><br><span class="line">        <span class="number">70</span>: <span class="string">'seventy'</span>,</span><br><span class="line">        <span class="number">80</span>: <span class="string">'eighty'</span>,</span><br><span class="line">        <span class="number">90</span>: <span class="string">'ninety'</span>,</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    english = <span class="string">''</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> num / <span class="number">1000</span> &gt; <span class="number">0</span>:</span><br><span class="line">        english += translate_number(num / <span class="number">1000</span>) + <span class="string">' thousand'</span></span><br><span class="line">        tmp = translate_number(num % <span class="number">1000</span>)</span><br><span class="line">        english += ((tmp.strip() == <span class="string">''</span> <span class="keyword">or</span> tmp.find(<span class="string">'hundred'</span>) &gt; <span class="number">-1</span>)</span><br><span class="line">                    <span class="keyword">and</span> <span class="string">' '</span> <span class="keyword">or</span> <span class="string">' and '</span>) + tmp</span><br><span class="line">    <span class="keyword">elif</span> num / <span class="number">100</span> &gt; <span class="number">0</span>:</span><br><span class="line">        english += translate_number(num / <span class="number">100</span>) + <span class="string">' hundred'</span></span><br><span class="line">        tmp = translate_number(num % <span class="number">100</span>)</span><br><span class="line">        <span class="keyword">if</span> tmp.strip() != <span class="string">''</span>:</span><br><span class="line">            english += <span class="string">' and '</span> + tmp</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">if</span> words.has_key(num):</span><br><span class="line">            english += words[num]</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            english += words[num / <span class="number">10</span> * <span class="number">10</span>] + <span class="string">'-'</span> + words[num % <span class="number">10</span>]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> english</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">1001</span>):</span><br><span class="line">        count += len(translate_number(i).replace(<span class="string">' '</span>, <span class="string">''</span>).replace(<span class="string">'-'</span>,</span><br><span class="line">                     <span class="string">''</span>))</span><br><span class="line">    <span class="keyword">print</span> count</span><br></pre></td></tr></table></figure>
 <p>I’m the 71762nd person to have solved this problem.</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-project-euler-16" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/project-euler-16/"><strong>Project Euler Problem 16 Solved</strong></a>
-      <small class="article-date-index">&nbsp; 2014-04-08</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/project-euler-16/" class="article-date">
-  <time datetime="2014-04-08T13:57:00.000Z" itemprop="datePublished">2014-04-08</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/project-euler-16/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="Power-digit-sum"><a href="#Power-digit-sum" class="headerlink" title="Power digit sum"></a>Power digit sum</h2><p>2^15 = 32768 and the sum of its digits is 3 + 2 + 7 + 6 + 8 = 26.</p>
-<p>What is the sum of the digits of the number 2^1000?</p>
-<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><figure class="highlight python"><figcaption><span>p16.py</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> math</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    str = format(math.pow(<span class="number">2</span>, <span class="number">1000</span>), <span class="string">'f'</span>)</span><br><span class="line">    sum = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> c <span class="keyword">in</span> str[:str.index(<span class="string">'.'</span>)]:</span><br><span class="line">        sum += int(c)</span><br><span class="line">    <span class="keyword">print</span> sum</span><br></pre></td></tr></table></figure>
-<figure class="highlight go"><figcaption><span>p16.go</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">    <span class="string">"math/big"</span></span><br><span class="line">    <span class="string">"strconv"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    num, base := big.NewInt(<span class="number">1</span>), big.NewInt(<span class="number">2</span>)</span><br><span class="line">    <span class="keyword">for</span> power := <span class="number">0</span>; power &lt; <span class="number">1000</span>; power++ &#123;</span><br><span class="line">        num.Mul(num, base)</span><br><span class="line">    &#125;</span><br><span class="line">    result := <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(num.String()); i++ &#123;</span><br><span class="line">        bit, _ := strconv.Atoi(num.String()[i : i+<span class="number">1</span>])</span><br><span class="line">        result += bit</span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Println(num.String(), result)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>I’m the 109044th person to have solved this problem.</p>
 
       
     </div>

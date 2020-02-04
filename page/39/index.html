@@ -70,6 +70,101 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-neocomplcache-vim" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/neocomplcache-vim/"><strong>Vim的终极自动补全插件：NeoComplCache</strong></a>
+      <small class="article-date-index">&nbsp; 2010-02-27</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/neocomplcache-vim/" class="article-date">
+  <time datetime="2010-02-26T16:00:00.000Z" itemprop="datePublished">2010-02-27</time>
+</a>-->
+      <!--
+  <div class="article-category-index">
+    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/neocomplcache-vim/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <img src="http://lh3.ggpht.com/_ceUJ_lBTHzc/SaV494hGreI/AAAAAAAAAzY/xExf7CzGyv0/s800/the-mug-of-vi.jpg">
+<p>关于自动补全，最初用的是<a href="http://www.vim.org/scripts/script.php?script_id=1643" target="_blank" rel="noopener">SuperTab</a>，那个时候Vim的自动补全插件寥寥无几，也就SuperTab比较有名。不过实际使用过程中这个插件给我的体验不是很好，原因是补全的准确度不高。</p>
+
+<p>后来出了一个新插件，<a href="http://www.vim.org/scripts/script.php?script_id=1879" target="_blank" rel="noopener">AutoComplPop</a>，功能和使用都很简单。但是很快我就又用回SuperTab，原因是AutoComplPop在输入的同时实时地查询匹配的关键词，导致输入极不流畅，效率很低。</p>
+
+<p>一直就这么凑合着用着SuperTab，随着这个插件版本的更新，旧功能不断地完善，新功能也接二连三地引入，SuperTab在匹配关键词的准确度上有了一些改善，但是新的问题又出现了。SuperTab后来加入一个新功能，对于程序源文件，可以在其引入的文件以及API文件中匹配关键词。比如假设我当前正在编辑a.php，在a.php中有<strong>include ‘b.php’;</strong>这样的语句，当我输入<strong>array</strong>并按下Tab键时，SuperTab不但会在当前文件中查询所有匹配项，还会到b.php中查询，如果配置过vim、指定一个包含了php的API的文件，则SuperTab还会自动从这个文件中查询匹配项。按理说这个功能的理念很好，但问题就在于SuperTab做的是实时查询，如果源文件中包含的文件较多，各个文件又较大，问题就显而易见了。我不得不在写程序时小心地使用Tab键，否则有时就会出现按一下Tab键然后等着Vim在那狂搜的情况。</p>
+
+<p>前两天发现了<a href="http://www.vim.org/scripts/script.php?script_id=2620" target="_blank" rel="noopener">NeoComplCache</a>，光看名字就让我有点儿兴奋，一般使用缓存的速度都很快。这个插件会在Vim打开文件的时候对上下文作一个索引，并把索引结果保存到缓存中。同时，文件更改的内容会在保存的时候被索引。此外，NeoComplCache支持多种关键词索引模式，例如它会判断当前路径下的文件或目录的名字是否匹配补全条件，也可以从缓存的程序语言API中匹配补全条件。到此为止，它就解决了SuperTab和AutoComplPop共同的效率问题，并具备它们各自的长处。看了一遍文档，发现这个插件的功能比较细致，大概有以下一些特点：</p>
+
+<p>1、使用缓存，自动补全时效率高；<br>2、生成的关键词列表准确；<br>3、支持下划线分割的关键词，如apple_boy_cat，就可以只输入a_b_c，然后补全；<br>4、支持驼峰格式匹配关键词，如AppleBoyCat，就可以只输入ABC，然后补全；<br>5、既可以像AutoComplPop那样在Vim中输入的同时自动弹出补全列表，又可以自定义快捷键手动触发；<br>6、支持从文件名和目录名中匹配补全条件；<br>7、对于程序源文件，支持从语言API中匹配补全条件；</p>
+
+<p>NeoComplCache的缺点是文档不全，虽然从只言片语中发现它还支持Snippet，但从文档中没有找到足够的有用信息。加之一直用<a href="http://www.vim.org/scripts/script.php?script_id=2540" target="_blank" rel="noopener">SnipMate</a>感觉不错，所以目前还是用它来实现snippet功能。</p>
+
+<p>这就有个搭配问题：虽然NeoComplCache不存在补全时的效率问题，但我仍然打算只在需要补全时才用快捷键触发此功能，最主要的原因是我既希望用Tab键触发SnipMate的代码块补全功能，又希望修SuperTab那样用Tab选择补全列表中的选项。也就是要达到只用Tab键就可以完成打开自动补全列表、补全列表选项选择和SnipMate代码块替换的效果。但是，如果将Tab映射到触发自动补全，则补全列表选择和SnipMate均无法使用Tab，反之亦然。</p>
+
+<p>所以我想如果能让NeoComplCache、SuperTab、SnipMate和谐共存，那问题就解决了，几经摸索，终于找到了办法：</p>
+
+<p>1、设置NeoComplCache不自动弹出补全列表，即在vimrc中加入：</p>
+
+<blockquote><br>  <p>let g:NeoComplCache_DisableAutoComplete = 1</p><br></blockquote>
+
+<p>2、由于NeoComplCache在手工模式下使用快捷键组合<code>&lt;C-X&gt;&lt;C-U&gt;</code>打开补全列表，故设置SuperTab的默认补全操作为<code>&lt;C-X&gt;&lt;C-U&gt;</code>，即在vimrc中加入：</p>
+
+<blockquote><br>  <p>let g:SuperTabDefaultCompletionType = ‘<code>&lt;C-X&gt;&lt;C-U&gt;</code>‘</p><br></blockquote>
+
+<p>这样，NeoComplCache只负责补全关键词缓存的生成，SuperTab控制Tab键的行为并在需要触发补全操作时打开补全列表、进而在列表中的选项间移动焦点，而当光标前的关键词是snippet时，SnipMate会被优先调用并完成代码块的替换。</p>
+
+<p>就在写这篇文章的时候，我突然觉得NeoComplCache自动弹出补全列表+SnipMate的方式也挺好，只是这样就不能用Tab键选择列表中的选项了。</p>
+
+<h3 id="相关阅读："><a href="#相关阅读：" class="headerlink" title="相关阅读："></a>相关阅读：</h3><ul>
+<li><a href="/post/replace-youcompleteme-with-neocomplete/">用neocomplete换掉了YouCompleteMe</a></li>
+<li><a href="/post/make-youcompleteme-ultisnips-compatible/">How to Make YouCompleteMe Compatible with UltiSnips</a></li>
+</ul>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-chinese-problem-of-sqlalchemy-with-sqlserver" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -278,68 +373,6 @@ DB模块：pyodbc
 
 
     
-      <article id="post-too-many-echoes-may-crash-php" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/too-many-echoes-may-crash-php/"><strong>PHP后台echo过多会导致进程崩溃</strong></a>
-      <small class="article-date-index">&nbsp; 2010-01-31</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/too-many-echoes-may-crash-php/" class="article-date">
-  <time datetime="2010-01-30T16:00:00.000Z" itemprop="datePublished">2010-01-31</time>
-</a>-->
-      <!--
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/too-many-echoes-may-crash-php/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>这是去年晚些时侯发现的一个问题。</p>
-<p>公司产品的后台定时任务应该是用独立的PHP进程驱动的。在做一个项目的时候，为了便于手工调试，我在定时任务中使用了大量的echo输出信息并在浏览器中手工执行此任务的脚本。</p>
-<p>手工执行通过，输出信息完全没有问题。但在实际运行的过程中，一个很诡异的事情发生了：即使我将实际处理数据的代码全部注释掉，只对原始数据做简单的查询，此定时任务仍然极其健壮地中途退出。最要命的是无论程序日志还是PHP的错误日志，都没有任何相关信息。直到后来我把所有echo输出都取消，问题才解决。</p>
-<p>事后模糊地记得很久以前似乎在哪本书上看到过在无输出设备的情况下echo过多数据会导致PHP进程崩溃的内容，但原因已想不起来了。</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
       <article id="post-virtualbox-host-interface" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -401,6 +434,68 @@ DB模块：pyodbc
 <p>为方便起见，可将vboxnetflt模块加入到开机自动启动的模块列表中，每种发行版设置自启动模块的位置和方法不一样，在Archlinux下，是在<strong>/etc/rc.conf</strong>文件中的<strong>modules</strong>行中设置。</p>
 
 <p><em>参考文章：<a href="http://wiki.archlinux.org/index.php/VirtualBox" target="_blank" rel="noopener">Archlinux Wiki: VirtualBox</a></em></p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
+      <article id="post-too-many-echoes-may-crash-php" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/too-many-echoes-may-crash-php/"><strong>PHP后台echo过多会导致进程崩溃</strong></a>
+      <small class="article-date-index">&nbsp; 2010-01-31</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/too-many-echoes-may-crash-php/" class="article-date">
+  <time datetime="2010-01-30T16:00:00.000Z" itemprop="datePublished">2010-01-31</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/too-many-echoes-may-crash-php/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>这是去年晚些时侯发现的一个问题。</p>
+<p>公司产品的后台定时任务应该是用独立的PHP进程驱动的。在做一个项目的时候，为了便于手工调试，我在定时任务中使用了大量的echo输出信息并在浏览器中手工执行此任务的脚本。</p>
+<p>手工执行通过，输出信息完全没有问题。但在实际运行的过程中，一个很诡异的事情发生了：即使我将实际处理数据的代码全部注释掉，只对原始数据做简单的查询，此定时任务仍然极其健壮地中途退出。最要命的是无论程序日志还是PHP的错误日志，都没有任何相关信息。直到后来我把所有echo输出都取消，问题才解决。</p>
+<p>事后模糊地记得很久以前似乎在哪本书上看到过在无输出设备的情况下echo过多数据会导致PHP进程崩溃的内容，但原因已想不起来了。</p>
 
       
     </div>
@@ -837,91 +932,6 @@ urxvt的配置选项可以参考其官方网站上的说明，另外<a href="htt
 </ol>
 
 
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-project-euler-10" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/project-euler-10/"><strong>欧拉工程第十解</strong></a>
-      <small class="article-date-index">&nbsp; 2008-11-18</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/project-euler-10/" class="article-date">
-  <time datetime="2008-11-17T16:00:00.000Z" itemprop="datePublished">2008-11-18</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/project-euler-10/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <blockquote><p>The sum of the primes below 10 is 2 + 3 + 5 + 7 = 17.</p>
-
-<p>Find the sum of all the primes below two million.</p></blockquote>
-
-<p>题目越来越变态，开始好玩儿了。</p>
-
-<p><a href="http://0x3f.org/?p=753">第七解</a>里的算法在这里算是废了，一万个素数都算得那么费劲，两百万以下的素数有十几万个，不得不用筛选法了。</p>
-
-<p>普通的筛选效率也不行，当初就是因为这个原因才没用它。不过优化过的筛选法就很奇妙了，下面是Lua的实现：</p>
-
-<p>
-<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">require</span>(<span class="string">'math'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> limit = <span class="number">2000000</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> primes = &#123;&#125;</span><br><span class="line"><span class="keyword">for</span> i=<span class="number">1</span>,limit <span class="keyword">do</span></span><br><span class="line">    <span class="built_in">table</span>.<span class="built_in">insert</span>(primes,<span class="literal">true</span>)</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">primes[<span class="number">0</span>] = <span class="literal">false</span></span><br><span class="line">primes[<span class="number">1</span>] = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i=<span class="number">0</span>,<span class="built_in">math</span>.<span class="built_in">floor</span>(<span class="built_in">math</span>.<span class="built_in">sqrt</span>(limit)) <span class="keyword">do</span></span><br><span class="line">    <span class="keyword">if</span> primes[i] <span class="keyword">then</span></span><br><span class="line">        <span class="keyword">for</span> j=<span class="built_in">math</span>.<span class="built_in">pow</span>(i,<span class="number">2</span>),limit,i <span class="keyword">do</span></span><br><span class="line">            primes[j] = <span class="literal">false</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> sumVal = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> i,j <span class="keyword">in</span> <span class="built_in">ipairs</span>(primes) <span class="keyword">do</span></span><br><span class="line">    <span class="keyword">if</span> j <span class="keyword">then</span></span><br><span class="line">        sumVal = sumVal + i</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(sumVal)</span><br></pre></td></tr></table></figure>
-</p>
-
-
-<p>在我这里两秒半就出结果了，Python的表现也不错，四秒半出结果：</p>
-
-<p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> math <span class="keyword">import</span> sqrt</span><br><span class="line"></span><br><span class="line">limit = <span class="number">2000000</span></span><br><span class="line">primes = [<span class="keyword">True</span> <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,limit)]</span><br><span class="line">primes[<span class="number">0</span>] = <span class="keyword">False</span></span><br><span class="line">primes[<span class="number">1</span>] = <span class="keyword">False</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>,int(sqrt(limit))+<span class="number">1</span>):</span><br><span class="line">    <span class="keyword">if</span> primes[i]:</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(i**<span class="number">2</span>,limit,i):</span><br><span class="line">            primes[j] = <span class="keyword">False</span></span><br><span class="line"></span><br><span class="line">sumVal = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(primes)):</span><br><span class="line">    <span class="keyword">if</span> primes[i]:</span><br><span class="line">        sumVal += i</span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> sumVal</span><br></pre></td></tr></table></figure>
-</p>
-
-
-<p><a href="http://picasaweb.google.com/lh/photo/va8CeXPxRtCojlNw4qpmBQ" target="_blank" rel="noopener"><img src="http://lh5.ggpht.com/_ceUJ_lBTHzc/SSIt7sQQ5RI/AAAAAAAAAms/5sZPp1KBi_4/s400/project_euler_problem_010.png"></a></p>
 
       
     </div>
