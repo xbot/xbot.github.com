@@ -70,6 +70,81 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-convert-silk-to-mp3-with-openresty" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/convert-silk-to-mp3-with-openresty/"><strong>用OpenResty自动转换silk到MP3</strong></a>
+      <small class="article-date-index">&nbsp; 2017-01-25</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/convert-silk-to-mp3-with-openresty/" class="article-date">
+  <time datetime="2017-01-25T10:59:00.000Z" itemprop="datePublished">2017-01-25</time>
+</a>-->
+      <!--
+  <div class="article-category-index">
+    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/convert-silk-to-mp3-with-openresty/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>PHP没有原生的转换silk格式音频到mp3的方案，所以考虑用NGINX+Lua调用命令行工具实现。</p>
+<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>当访问以「.silk.mp3」为后缀的文件时，查找对应的mp3文件，存在则返回，否则，如果对应的silk文件存在，调用命令行工具转换文件格式，然后内部重定向到新生成的mp3。</p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><ul>
+<li><a href="https://openresty.org/cn/download.html" target="_blank" rel="noopener">OpenResty</a></li>
+<li><a href="https://github.com/kn007/silk-v3-decoder" target="_blank" rel="noopener">silk-v3-decoder</a></li>
+<li><a href="https://ffmpeg.org" target="_blank" rel="noopener">ffmpeg</a></li>
+</ul>
+<h2 id="NGINX配置"><a href="#NGINX配置" class="headerlink" title="NGINX配置"></a>NGINX配置</h2><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">location</span> <span class="regexp">~* /.*\.silk\.mp3$</span> &#123;</span><br><span class="line">    <span class="attribute">content_by_lua_file</span> <span class="string">"/opt/script/silk2mp3.lua"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Lua脚本"><a href="#Lua脚本" class="headerlink" title="Lua脚本"></a>Lua脚本</h2><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">file_exists</span><span class="params">(name)</span></span></span><br><span class="line">    <span class="keyword">local</span> f=<span class="built_in">io</span>.<span class="built_in">open</span>(name,<span class="string">"r"</span>)</span><br><span class="line">    <span class="keyword">if</span> f~=<span class="literal">nil</span> <span class="keyword">then</span> <span class="built_in">io</span>.<span class="built_in">close</span>(f) <span class="keyword">return</span> <span class="literal">true</span> <span class="keyword">else</span> <span class="keyword">return</span> <span class="literal">false</span> <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> resource     = ngx.var.request_filename;</span><br><span class="line"><span class="keyword">local</span> realResource = resource:<span class="built_in">sub</span>(<span class="number">1</span>, #resource - <span class="number">9</span>)..<span class="string">".mp3"</span>;</span><br><span class="line"><span class="keyword">local</span> realURI      = ngx.var.uri:<span class="built_in">sub</span>(<span class="number">1</span>, #ngx.var.uri - <span class="number">9</span>)..<span class="string">".mp3"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> file_exists(realResource) <span class="keyword">then</span></span><br><span class="line">    <span class="keyword">return</span> ngx.exec(realURI);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> silk = resource:<span class="built_in">sub</span>(<span class="number">1</span>, #resource - <span class="number">4</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> file_exists(silk) <span class="keyword">then</span></span><br><span class="line">    <span class="keyword">return</span> ngx.<span class="built_in">exit</span>(<span class="number">404</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">os</span>.<span class="built_in">execute</span>(<span class="string">"/bin/sh /opt/silk-v3-decoder/converter.sh \""</span>..silk..<span class="string">"\" mp3 &gt; /dev/null 2&gt;&amp;1"</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> file_exists(realResource) <span class="keyword">then</span></span><br><span class="line">    <span class="keyword">return</span> ngx.exec(realURI);</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="keyword">return</span> ngx.<span class="built_in">exit</span>(<span class="number">404</span>)</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<h2 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h2><h3 id="OpenResty调用命令转换失败，而手工可以"><a href="#OpenResty调用命令转换失败，而手工可以" class="headerlink" title="OpenResty调用命令转换失败，而手工可以"></a>OpenResty调用命令转换失败，而手工可以</h3><p>silk-v3-decoder的converter.sh把所有错误信息都屏蔽了，需要修改脚本查看。</p>
+<p>实际情况是OpenResty的运行用户没有音频文件所在目录的权限。</p>
+<h3 id="编译的ffmpeg转换PCM到MP3时报错"><a href="#编译的ffmpeg转换PCM到MP3时报错" class="headerlink" title="编译的ffmpeg转换PCM到MP3时报错"></a>编译的ffmpeg转换PCM到MP3时报错</h3><p>silk-v3-decoder自己的decoder只是把silk转换成PCM，然后调用ffmpeg转换成mp3。系统中的ffmpeg是自己编译的，在这一步报错，大意是mp3的encoder不存在。</p>
+<p>原因是ffmpeg编译时默认不激活mp3编码器（猜测）或者没安装libmp3lame-dev，需要安装这个开发库并给configure指定参数「–enable-libmp3lame」。</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-two-plant-identification-apps" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -729,70 +804,6 @@ ga('send', 'pageview');
 </blockquote>
 <p>所以，一种语言的对象的实例以二进制形式直接传递给另一种语言是无法识别的，因此需要把对象数据用文本描述之后再行传递。</p>
 <p>此外，相对于XML等其它格式，JSON有可读性上的优势，如果是对象，二进制的数据哪来的可读性？</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-show-session-name-in-vim-window-title" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/show-session-name-in-vim-window-title/"><strong>在Vim窗口标题中显示会话名</strong></a>
-      <small class="article-date-index">&nbsp; 2016-10-23</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/show-session-name-in-vim-window-title/" class="article-date">
-  <time datetime="2016-10-23T03:52:00.000Z" itemprop="datePublished">2016-10-23</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/show-session-name-in-vim-window-title/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>同时处理多个项目时，在窗口标题中显示会话名，方便区分，需用<a href="https://github.com/xolox/vim-session" target="_blank" rel="noopener">session</a>管理会话。</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">" custom the window title</span></span><br><span class="line">fun! MyTitleString()</span><br><span class="line">    <span class="keyword">let</span> sessionName = xolox#session#find_current_session()</span><br><span class="line">    <span class="keyword">let</span> sessionStr = <span class="string">''</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(sessionName)&gt;<span class="number">0</span></span><br><span class="line">        <span class="keyword">let</span> sessionStr = <span class="string">' ['</span>.sessionName.<span class="string">'] '</span></span><br><span class="line">    <span class="keyword">endif</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">'VIM'</span>.sessionStr.<span class="string">': %-25.55F %a%r%m'</span></span><br><span class="line">endfun</span><br><span class="line"><span class="keyword">au</span> BufEnter * <span class="keyword">let</span> &amp;titlestring=MyTitleString()</span><br><span class="line"><span class="keyword">set</span> titlelen=<span class="number">70</span></span><br></pre></td></tr></table></figure>
 
       
     </div>

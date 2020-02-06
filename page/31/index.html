@@ -70,6 +70,77 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-humanize-preview-window-in-vim" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/humanize-preview-window-in-vim/"><strong>人性化Vim的预览窗口</strong></a>
+      <small class="article-date-index">&nbsp; 2011-05-29</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/humanize-preview-window-in-vim/" class="article-date">
+  <time datetime="2011-05-28T16:00:00.000Z" itemprop="datePublished">2011-05-29</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/humanize-preview-window-in-vim/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Vim的预览窗口由<code>:ptag</code>等命令触发，可用于预览函数定义。但在缺省情况下，预览窗口的高度是固定的，对于注释信息较多的函数，往往不能完全显示注释，而对于注释较少的函数，又会有多余的行浪费屏幕空间。</p>
+
+<p>下面的函数用于解决这个问题：</p>
+
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">" 调用:ptag命令预览光标所在&lt;word&gt;的定义</span></span><br><span class="line"><span class="comment">" 对类C语言风格的函数/方法定义和注释有效，对其余情况仍沿用:ptag的原有效果</span></span><br><span class="line"><span class="function"><span class="keyword">function</span>! <span class="title">PTagIt</span><span class="params">()</span></span></span><br><span class="line">    exec <span class="string">"ptag "</span>.<span class="built_in">expand</span>(<span class="string">"&lt;cword&gt;"</span>)</span><br><span class="line">    <span class="keyword">let</span> cwin = <span class="built_in">winnr</span>()</span><br><span class="line">    silent! <span class="keyword">wincmd</span> <span class="keyword">P</span></span><br><span class="line">    <span class="keyword">let</span> lnr = <span class="built_in">line</span>(<span class="string">'.'</span>)</span><br><span class="line">    <span class="keyword">if</span> lnr &lt; <span class="number">3</span></span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    <span class="keyword">endif</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">foldlevel</span>(<span class="string">'.'</span>)&gt;<span class="number">0</span></span><br><span class="line">        <span class="keyword">normal</span> zo</span><br><span class="line">    <span class="keyword">endif</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> chead = <span class="number">0</span></span><br><span class="line">    <span class="keyword">let</span> linestr = <span class="built_in">getline</span>(lnr-<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">if</span> linestr =~ <span class="string">'^\s*\*/'</span></span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">ptr</span> = lnr-<span class="number">2</span></span><br><span class="line">        <span class="keyword">while</span> <span class="keyword">ptr</span>&gt;<span class="number">0</span></span><br><span class="line">            <span class="keyword">let</span> linestr = <span class="built_in">getline</span>(<span class="keyword">ptr</span>)</span><br><span class="line">            <span class="keyword">if</span> linestr =~ <span class="string">'^\s*/\*'</span></span><br><span class="line">                <span class="keyword">let</span> chead = <span class="keyword">ptr</span></span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            <span class="keyword">endif</span></span><br><span class="line">            <span class="keyword">let</span> <span class="keyword">ptr</span> = <span class="keyword">ptr</span>-<span class="number">1</span></span><br><span class="line">        <span class="keyword">endwhile</span></span><br><span class="line">    <span class="keyword">endif</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> chead&gt;<span class="number">0</span></span><br><span class="line">        exec <span class="string">'resize '</span>.(lnr-chead+<span class="number">1</span>)</span><br><span class="line">        exec <span class="string">'normal '</span>.chead.<span class="string">"z\&lt;CR&gt;"</span></span><br><span class="line">        exec <span class="string">'normal '</span>.lnr.<span class="string">'G'</span></span><br><span class="line">    <span class="keyword">endif</span></span><br><span class="line"></span><br><span class="line">    exec cwin.<span class="string">'wincmd w'</span>  </span><br><span class="line"><span class="keyword">endfunction</span></span><br><span class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;leader&gt;</span><span class="keyword">pp</span> :<span class="keyword">call</span> PTagIt()<span class="symbol">&lt;CR&gt;</span></span><br><span class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;leader&gt;</span><span class="keyword">pc</span> :<span class="keyword">pclose</span><span class="symbol">&lt;CR&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>例如对于如下的函数定义：</p>
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * 我是一个测试函数</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> int 我是整型形参</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> string 我是字符串形参</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> array 我是返回值</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span><span class="params">($bar1, $bar2)</span> </span>&#123;...&#125;</span><br></pre></td></tr></table></figure>
+
+<p>实际效果为打开的预览窗口将完全显示并只显示以上内容。</p>
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-use-ack-as-an-alternative-to-grep" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -770,69 +841,6 @@ ga('send', 'pageview');
         <p>如果说<a href="http://skiesofazel.deviantart.com/art/Orta-184118297" target="_blank" rel="noopener">Orta</a>最大的特点，就是凸凹有致。它的主要组件都突出了这个特点，加上对细节的表现很细致，整个主题给人以很舒服的感觉。</p>
 
 <p><a href="https://picasaweb.google.com/lh/photo/wwLFAQ5QZ1dR1UrhYYdxZA?feat=embedwebsite" target="_blank" rel="noopener"><img src="https://lh3.googleusercontent.com/_ceUJ_lBTHzc/TZk3aLmNBTI/AAAAAAAABno/dOle8elWvtA/s800/2011-04-04.11%3A20%3A09.Gtk%2B%202.0%20Change%20Theme.01.png" height="474" width="413"></a></p>
-
-<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-gtk-theme-soothe" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/gtk-theme-soothe/"><strong>Soothe: 柔和细致的GTK主题</strong></a>
-      <small class="article-date-index">&nbsp; 2011-04-02</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/gtk-theme-soothe/" class="article-date">
-  <time datetime="2011-04-01T16:00:00.000Z" itemprop="datePublished">2011-04-02</time>
-</a>-->
-      <!--
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/gtk-theme-soothe/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a href="http://lassekongo83.deviantart.com/art/Soothe-199342656" target="_blank" rel="noopener">Soothe</a>给人的感觉是细致而且柔和，不易于产生视觉疲劳，这正对我的胃口。更完美的是，它支持虚线焦点框，对于喜欢使用键盘的Rox-filer重症患者来说很重要。</p>
-
-<p><a href="https://picasaweb.google.com/lh/photo/MvcanM-ssxnIsXgEMvfmaA?feat=embedwebsite" target="_blank" rel="noopener"><img src="https://lh6.googleusercontent.com/_ceUJ_lBTHzc/TZk3aFUwttI/AAAAAAAABnk/ncEW0uYbqJM/s800/2011-04-04.11%3A17%3A30.Gtk%2B%202.0%20Change%20Theme.01.png" height="474" width="411"></a></p>
 
 <p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
 

@@ -70,6 +70,95 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-the-best-practice-of-logging-in-api-programming" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/the-best-practice-of-logging-in-api-programming/"><strong>接口编程中记录日志的最佳实践</strong></a>
+      <small class="article-date-index">&nbsp; 2017-04-25</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/the-best-practice-of-logging-in-api-programming/" class="article-date">
+  <time datetime="2017-04-25T07:50:41.000Z" itemprop="datePublished">2017-04-25</time>
+</a>-->
+      <!--
+  <div class="article-category-index">
+    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/the-best-practice-of-logging-in-api-programming/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="解决什么问题"><a href="#解决什么问题" class="headerlink" title="解决什么问题"></a>解决什么问题</h2><ul>
+<li>快速定位日志</li>
+<li>降低记录成本</li>
+<li>提高代码可读性</li>
+</ul>
+<p>日志框架是项目开始阶段应该最先搭建好的内容之一，有助于极大地节约以后解决问题的时间和成本。但这也是最让我头疼的问题之一，因为记日志不光包括用什么记、怎么记，也包括记什么内容，这恰恰是最容易被忽略的问题。</p>
+<p>一条好的日志需要做到能让问题的跟踪者快速定位它在程序中的位置且包含关键数据。工作中不乏这样的团队成员，在移交接口问题的时候没有主动提供关键信息的意识，所谓关键信息，是指像问题发生的环境、接口名、传递的实参和返回结果这样的内容，使得面向契约编程本来是很好的开发模式，却得不到最好的应用。这时我们可以从自己接口的日志中得到一些弥补。</p>
+<p>但是日志的记录不应该占用很大的代码量，一来降低了代码的可读性，二来会耗费太多的时间精力。</p>
+<p>本文目的在于讨论一种日志记录的最佳实践方式，使得可以兼顾以上这些问题。</p>
+<h2 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h2><p>这里针对Laravel实现一个日志工具类，实现以下功能：</p>
+<ul>
+<li>兼容Laravel自己的日志系统</li>
+<li>自动记录关键的业务数据</li>
+<li>自动记录日志所属的接口名</li>
+<li>自动记录接口的实参</li>
+<li>记录接口的返回值</li>
+<li>生成简洁规范的日志内容</li>
+</ul>
+<p>代码：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">Ox3f</span>\<span class="title">LaravelUtils</span>\<span class="title">Log</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Support</span>\<span class="title">Facades</span>\<span class="title">Log</span> <span class="title">as</span> <span class="title">LaravelLog</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Support</span>\<span class="title">Facades</span>\<span class="title">Auth</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Support</span>\<span class="title">Facades</span>\<span class="title">Request</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Class Log</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> donie</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Log</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> $instance;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> $id;              <span class="comment">// Identity of the log, username by default.</span></span><br><span class="line">    <span class="keyword">private</span> $referer;         <span class="comment">// Request path for RESTful APIs, method name for ordinary class methods.</span></span><br><span class="line">    <span class="keyword">private</span> $isHttp;          <span class="comment">// True for RESTful APIs, otherwise, false.</span></span><br><span class="line">    <span class="keyword">private</span> $callStackParsed; <span class="comment">// Whether call stack has been parsed.</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        $user = Auth::user();</span><br><span class="line">        <span class="keyword">$this</span>-&gt;id = !<span class="keyword">empty</span>($user-&gt;name) ? $user-&gt;name : <span class="string">'anonymous'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">__clone</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">function</span> <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (!<span class="keyword">self</span>::$instance) &#123;</span><br><span class="line">            <span class="keyword">self</span>::$instance = <span class="keyword">new</span> <span class="keyword">self</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">self</span>::$instance;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Parse the call stack</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> void</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">parseCallStack</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        $traceInfo = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT|DEBUG_BACKTRACE_IGNORE_ARGS, <span class="number">5</span>);</span><br><span class="line">        <span class="keyword">$this</span>-&gt;referer = <span class="string">''</span>;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;isHttp = <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">foreach</span> ($traceInfo <span class="keyword">as</span> $callInfo) &#123;</span><br><span class="line">            <span class="keyword">if</span> ($callInfo[<span class="string">'class'</span>] != <span class="keyword">__CLASS__</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (preg_match(<span class="string">'/Controller$/'</span>, $callInfo[<span class="string">'class'</span>])) &#123;</span><br><span class="line">                    <span class="keyword">$this</span>-&gt;referer = Request::path();</span><br><span class="line">                    <span class="keyword">$this</span>-&gt;isHttp = <span class="keyword">true</span>;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">$this</span>-&gt;referer = $callInfo[<span class="string">'class'</span>].$callInfo[<span class="string">'type'</span>].$callInfo[<span class="string">'function'</span>];</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;callStackParsed = <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Wrapper of the laravel log facade</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> void</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">function</span> <span class="title">__callStatic</span><span class="params">($name, $args)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (!<span class="keyword">self</span>::getInstance()-&gt;callStackParsed)</span><br><span class="line">            <span class="keyword">self</span>::getInstance()-&gt;parseCallStack();</span><br><span class="line"></span><br><span class="line">        $id      = <span class="keyword">self</span>::getInstance()-&gt;id;</span><br><span class="line">        $referer = <span class="keyword">self</span>::getInstance()-&gt;referer;</span><br><span class="line">        $msg     = !<span class="keyword">empty</span>($args) ? $args[<span class="number">0</span>] : <span class="string">''</span>;</span><br><span class="line">        LaravelLog::$name(<span class="string">"&#123;$id&#125; | &#123;$referer&#125; | &#123;$msg&#125;"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">self</span>::getInstance()-&gt;callStackParsed = <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Save parameters of the request or arguments of the method to log at debug level</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> mixed $args Empty for HTTP calls, needed for ordinary class methods</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> void</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">function</span> <span class="title">saveInput</span><span class="params">($args=null)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">self</span>::getInstance()-&gt;parseCallStack();</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">self</span>::getInstance()-&gt;isHttp) $args = Request::except(<span class="string">'_url'</span>);</span><br><span class="line">        <span class="keyword">self</span>::debug(<span class="string">'Input:'</span>.json_encode($args));</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Save the output to log at debug level</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> mixed $result Result to be saved</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> void</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">function</span> <span class="title">saveOutput</span><span class="params">($result)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">self</span>::getInstance()-&gt;parseCallStack();</span><br><span class="line">        <span class="keyword">self</span>::debug(<span class="string">'Output:'</span>.json_encode($result));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这是一个单例类，核心在于<code>parseCallStack()</code>方法，通过<code>debug_backtrace()</code>函数获取日志所在的接口，对于REST接口，得到HTTP请求的路径，对于接口类的方法，得到包含类名的接口名。此外，日志中还会记录当前的用户名，方便定位和复现问题。</p>
+<p><code>saveInput()</code>和<code>saveOutput()</code>是在此基础上封装的两个高级方法，用于记录接口的输入和输出，对于界定问题是否出在自己的接口或复现问题都有很重要的作用。对于REST接口，<code>saveInput()</code>可以自动获取请求中的参数，而对于接口类的方法，出于性能和内存占用考虑，没有允许<code>debug_backtrace()</code>返回参数信息，需要用户手动指定要记录的数据。</p>
+<h3 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h3><h4 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">composer require xbot/laravel-utils</span><br></pre></td></tr></table></figure>
+<h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> <span class="title">Ox3f</span>\<span class="title">LaravelUtils</span>\<span class="title">Log</span>\<span class="title">Log</span>;</span><br><span class="line"></span><br><span class="line">Log::saveInput();                   <span class="comment">// REST接口中自动保存请求数据</span></span><br><span class="line">Log::saveInput(func_get_args());    <span class="comment">// 接口类的方法中保存实参</span></span><br><span class="line">Log::error(<span class="string">'This is an error.'</span>);    <span class="comment">// 记录一条错误日志</span></span><br><span class="line">Log::saveOutput($result);           <span class="comment">// 保存接口返回值</span></span><br></pre></td></tr></table></figure>
+<h4 id="日志示例"><a href="#日志示例" class="headerlink" title="日志示例"></a>日志示例</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[2017-04-25 06:46:11] local.DEBUG: donie | users/groups/33 | Input:&#123;&quot;check&quot;:&quot;1&quot;&#125;</span><br><span class="line">[2017-04-25 06:46:11] local.ERROR: donie | users/groups/33 | This is an error.</span><br></pre></td></tr></table></figure>
+<h2 id="待讨论的问题"><a href="#待讨论的问题" class="headerlink" title="待讨论的问题"></a>待讨论的问题</h2><p>最佳实践需要持续改进，以下问题有待讨论：</p>
+<h3 id="关键业务数据中是否应该包含Request-ID？"><a href="#关键业务数据中是否应该包含Request-ID？" class="headerlink" title="关键业务数据中是否应该包含Request ID？"></a>关键业务数据中是否应该包含Request ID？</h3><p>是否有必要对每次请求生成一个ID？这样可以很简单地过滤出一次请求中所有的日志。</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-google-bbr-is-awesome" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -737,73 +826,6 @@ ga('send', 'pageview');
 <p>第一种情况，虽然在iOS里安装并信任了mitmproxy的伪证书、safari里也是可以正常访问https链接的，但在workflow里仍然不认。</p>
 <p>第二种情况，wireshark支持两种解密TLS包的方式：一是使用https服务的私钥，二是用浏览器输出的「SSLKEYLOGFILE」。这里需要用第二种。但是这种方式只对本机发送的请求有效，而且在实际操作中还发现有时候本机也解密不了。</p>
 <p>最后只能采用临时方案，把https链接改成http，然后用mitmproxy抓取，虽然请求是失败的，但是可以拿到请求本身的数据。</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-sakura-in-yuyuantan-park" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/sakura-in-yuyuantan-park/"><strong>玉渊潭的樱花</strong></a>
-      <small class="article-date-index">&nbsp; 2017-04-04</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/sakura-in-yuyuantan-park/" class="article-date">
-  <time datetime="2017-04-04T02:23:43.000Z" itemprop="datePublished">2017-04-04</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/行见/">行见</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/sakura-in-yuyuantan-park/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <img src="https://ww4.sinaimg.cn/large/006tNbRwly1feafquavwvj30wu0ih7ip.jpg">
-<p>终于还是去了。</p>
-<p>十年，不喜闹市，或宅，或远方。</p>
-<p>期望本不高，故无惊亦无喜。</p>
-<p>有一小片集中的地方还是不错的，风来，落英缤纷。</p>
 
       
     </div>

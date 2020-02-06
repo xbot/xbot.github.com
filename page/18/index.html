@@ -70,6 +70,132 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-stream-operations-of-php" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/stream-operations-of-php/"><strong>PHP流的操作</strong></a>
+      <small class="article-date-index">&nbsp; 2015-06-01</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/stream-operations-of-php/" class="article-date">
+  <time datetime="2015-06-01T07:33:00.000Z" itemprop="datePublished">2015-06-01</time>
+</a>-->
+      <!--
+  <div class="article-category-index">
+    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/stream-operations-of-php/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* reimplement fopen using stream */</span></span><br><span class="line">ZEND_FUNCTION(donie_stream_fopen)</span><br><span class="line">&#123;</span><br><span class="line">	php_stream *stream;</span><br><span class="line">	<span class="keyword">char</span> *path, *mode;</span><br><span class="line">	<span class="keyword">int</span> path_len, mode_len;</span><br><span class="line">	<span class="keyword">int</span> options = ENFORCE_SAFE_MODE|REPORT_ERRORS;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, <span class="string">"ss"</span>, &amp;path, &amp;path_len, &amp;mode, &amp;mode_len) == FAILURE)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	stream = php_stream_open_wrapper(path, mode, options, <span class="literal">NULL</span>);</span><br><span class="line">	<span class="keyword">if</span> (!stream)</span><br><span class="line">	&#123;</span><br><span class="line">		RETURN_FALSE;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	php_stream_to_zval(stream, return_value);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>php_stream_open_wrapper()是对文件类型资源创建流的方法，此外还有基于socket的流、目录流和特殊流三种。php_stream_to_zval()用于把流实例转换成zval结构。</p>
+<h2 id="创建文件类型的流"><a href="#创建文件类型的流" class="headerlink" title="创建文件类型的流"></a>创建文件类型的流</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> php_stream_open_wrapper(path, mode, options, opened)	_php_stream_open_wrapper_ex((path), (mode), (options), (opened), NULL STREAMS_CC TSRMLS_CC)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> php_stream_open_wrapper_ex(path, mode, options, opened, context)	_php_stream_open_wrapper_ex((path), (mode), (options), (opened), (context) STREAMS_CC TSRMLS_CC)</span></span><br></pre></td></tr></table></figure>
+<p>参数path是文件名或URL，mode是模式字符串，options是选项组合。php_stream_open_wrapper_ex()允许指定一个流的上下文。</p>
+<p>options包含以下选项：</p>
+<ul>
+<li>USE_PATH：应用ini中的include_path到相对路径。内建的fopen()的第三个参数置True时使用此选项。</li>
+<li>STREAM_USE_URL：只有远程URL才允许打开，%%file://, php://, compress.zlib://%%这样的本地URL会报错。</li>
+<li>ENFORCE_SAFE_MODE：只有设置了此选项且ini中的safe_mode开启时，才会使safe_mode生效，不设置此选项，则不论ini中是否开启都不会生效。</li>
+<li>REPORT_ERRORS：若开启流出错，生成错误信息。</li>
+<li>STREAM_MUST_SEEK：不是所有流都允许seek，若置此选项，且流不允许seek，则包装器不会开启流。</li>
+<li>STREAM_WILL_CAST：置此参数将要求流可被转换成posix或stdio类型的文件描述符，若流不可转换，可在IO开始前失败。</li>
+<li>STREAM_ONLY_GET_HEADERS：http包装器使用此参数，只获取资源的元数据，不获取内容。</li>
+<li>STREAM_DISABLE_OPEN_BASEDIR：当ini中的open_basedir开启时，置此参数跳过open_basedir检查。</li>
+<li>STREAM_OPEN_PERSISTENT：要求流和相关资源都创建为持久数据。</li>
+<li>IGNORE_PATH：不从include_path中搜索。</li>
+<li>IGNORE_URL：只有本地文件才可以被打开。</li>
+</ul>
+<h2 id="创建传输类型的流"><a href="#创建传输类型的流" class="headerlink" title="创建传输类型的流"></a>创建传输类型的流</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php_stream *_php_stream_xport_create(<span class="keyword">const</span> <span class="keyword">char</span> *name, <span class="keyword">size_t</span> namelen, <span class="keyword">int</span> options, <span class="keyword">int</span> flags, <span class="keyword">const</span> <span class="keyword">char</span> *persistent_id, struct timeval *timeout, php_stream_context *context, <span class="keyword">char</span> **error_string, <span class="keyword">int</span> *error_code)</span><br></pre></td></tr></table></figure>
+<p>参数：</p>
+<ul>
+<li>name：URL。</li>
+<li>options：参数，与php_stream_open_wrapper()的相同。</li>
+<li>flags：STREAM_XPORT_CLIENT或STREAM_XPORT_SERVER与其它STREAM_XPORT_*常量的组合。</li>
+<li>persistent_id：键值，置此参数将使流在多次请求间持久存在。</li>
+<li>timeout：置NULL将使用ini中设置的值。</li>
+<li>errstr：用于向外传递错误信息，初始应置为NULL，若有错误信息传出，调用方有责任释放错误信息占用的内存。</li>
+<li>errcode：错误码。</li>
+</ul>
+<p>flags：</p>
+<ul>
+<li>STREAM_XPORT_CLIENT：工作为客户端，向远程发起连接。</li>
+<li>STREAM_XPORT_SERVER：工作为服务器，接受连接。</li>
+<li>STREAM_XPORT_CONNECT：传输建立的同时发起对远程的连接，否则，需手动调用php_stream_xport_connect()。</li>
+<li>STREAM_XPORT_CONNECT_ASYNC：发起异步远程连接。</li>
+<li>STREAM_XPORT_BIND：将传输流绑定到本地资源. 用在服务端传输流时,这将使得accept连接的传输流准备端口, 路径或特定的端点标识符等信息。</li>
+<li>STREAM_XPORT_LISTEN：%%Listen for inbound connections on the bound transport endpoint. This is typically used with stream-based transports such as tcp://, ssl://, and unix://%%.</li>
+</ul>
+<h2 id="创建目录类型的流"><a href="#创建目录类型的流" class="headerlink" title="创建目录类型的流"></a>创建目录类型的流</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">php_stream <span class="title">php_stream_opendir</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">int</span> options, php_stream_context *context)</span></span></span><br></pre></td></tr></table></figure>
+<h2 id="创建特殊类型的流"><a href="#创建特殊类型的流" class="headerlink" title="创建特殊类型的流"></a>创建特殊类型的流</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">php_stream *<span class="title">php_stream_fopen_tmpfile</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function">php_stream *<span class="title">php_stream_fopen_temporary_file</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *dir, <span class="keyword">const</span> <span class="keyword">char</span> *pfx, <span class="keyword">char</span> **opened_path)</span></span>;</span><br><span class="line"><span class="function">php_stream *<span class="title">php_stream_fopen_from_fd</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">char</span> *mode, <span class="keyword">const</span> <span class="keyword">char</span> *persistent_id)</span></span>;</span><br><span class="line"><span class="function">php_stream *<span class="title">php_stream_fopen_from_file</span><span class="params">(FILE *file, <span class="keyword">const</span> <span class="keyword">char</span> *mode)</span></span>;</span><br><span class="line"><span class="function">php_stream *<span class="title">php_stream_fopen_from_pipe</span><span class="params">(FILE *file, <span class="keyword">const</span> <span class="keyword">char</span> *mode)</span></span>;</span><br></pre></td></tr></table></figure>
+<h2 id="读流"><a href="#读流" class="headerlink" title="读流"></a>读流</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 读一个字符</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">php_stream_getc</span><span class="params">(php_stream *stream)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 读取指定数量的字符</span></span><br><span class="line"><span class="keyword">size_t</span> php_stream_read(php_stream *stream, <span class="keyword">char</span> *buf, <span class="keyword">size_t</span> count);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 读取直到行末、或流末、或最多maxlen个字符</span></span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">php_stream_get_line</span><span class="params">(php_stream *stream, <span class="keyword">char</span> *buf, <span class="keyword">size_t</span> maxlen, <span class="keyword">size_t</span> *returned_len)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">php_stream_gets</span><span class="params">(php_stream *stream, <span class="keyword">char</span> *buf, <span class="keyword">size_t</span> maxlen)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 与php_stream_get_line相同，可指定截止标记</span></span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">php_stream_get_record</span><span class="params">(php_stream *stream, <span class="keyword">size_t</span> maxlen, <span class="keyword">size_t</span> *returned_len, <span class="keyword">char</span> *delim, <span class="keyword">size_t</span> delim_len TSRMLS_DC)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 读取一个目录项</span></span><br><span class="line"><span class="function">php_stream_dirent *<span class="title">php_stream_readdir</span><span class="params">(php_stream *dirstream, php_stream_dirent *entry)</span></span>;</span><br></pre></td></tr></table></figure>
+<h2 id="写流"><a href="#写流" class="headerlink" title="写流"></a>写流</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 写非阻塞流可能写入的数据比传入的短；_string要求传入的字符串以NULL结尾</span></span><br><span class="line"><span class="keyword">size_t</span> php_stream_write(php_stream *stream, <span class="keyword">char</span> *buf, <span class="keyword">size_t</span> count);</span><br><span class="line"><span class="keyword">size_t</span> php_stream_write_string(php_stream *stream, <span class="keyword">char</span> *stf);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">php_stream_putc</span><span class="params">(php_stream *stream, <span class="keyword">int</span> c)</span></span>;</span><br><span class="line"><span class="comment">// 与_string不同的是会自动追加一个换行符到字符串末尾</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">php_stream_puts</span><span class="params">(php_string *stream, <span class="keyword">char</span> *buf)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">size_t</span> php_stream_printf(php_stream *stream TSRMLS_DC, <span class="keyword">const</span> <span class="keyword">char</span> *format, ...);</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">php_stream_flush</span><span class="params">(php_stream *stream)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>在关闭流的时候，flush会被自动调用，并且大部分无过滤的流因无内部缓冲而不需flush，所以单独flush一般是不需要的。</p>
+<h2 id="寻址"><a href="#寻址" class="headerlink" title="寻址"></a>寻址</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">php_stream_seek</span><span class="params">(php_stream *stream, <span class="keyword">off_t</span> offset, <span class="keyword">int</span> whence)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">php_stream_rewind</span><span class="params">(php_stream *stream)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">php_stream_rewinddir</span><span class="params">(php_stream *dirstream)</span></span>;</span><br><span class="line"><span class="keyword">off_t</span> php_stream_tell(php_stream *stream);</span><br></pre></td></tr></table></figure>
+<p>offset是相对于whence的位移量，whence包含：</p>
+<ul>
+<li>SEEK_SET：文件开头。置offet为负值被认为是个错误并导致不可预料的行为。offset超出文件范围会导致一个错误，或文件被增大。</li>
+<li>SEEK_CUR：当前位置。</li>
+<li>SEEK_END：文件末尾。offset一般为负，正值的行为因流的实现而异。</li>
+</ul>
+<h2 id="获取额外信息"><a href="#获取额外信息" class="headerlink" title="获取额外信息"></a>获取额外信息</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">php_stream_stat</span><span class="params">(php_stream *stream, php_stream_statbuf *ssb)</span></span>;</span><br></pre></td></tr></table></figure>
+<h2 id="关闭流"><a href="#关闭流" class="headerlink" title="关闭流"></a>关闭流</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> php_stream_close(stream) php_stream_free((stream), PHP_STREAM_FREE_CLOSE)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> php_stream_pclose(stream) php_stream_free((stream), PHP_STREAM_FREE_CLOSE_PERSISTENT)</span></span><br></pre></td></tr></table></figure>
+<p>包含以下选项：</p>
+<ul>
+<li>PHP_STREAM_FREE_CALL_DTOR：销毁流时调用php_stream-&gt;ops-&gt;close</li>
+<li>PHP_STREAM_FREE_RELEASE_STREAM：销毁流时调用php_stream_wrapper-&gt;ops-&gt;stream_close</li>
+<li>PHP_STREAM_FREE_PRESERVE_HANDLE：php_stream-&gt;ops-&gt;close不销毁句柄</li>
+<li>PHP_STREAM_FREE_RSRC_DTOR：用于流内部资源列表垃圾回收</li>
+<li>PHP_STREAM_FREE_PERSISTENT：用于持久流，所有操作的结果在多次请求间持久有效</li>
+<li>PHP_STREAM_FREE_CLOSE：CALL_DTOR和RELEASE_STREAM的组合，用于非持久流的常规选项</li>
+<li>PHP_STREAM_FREE_CLOSE_CASTED：CLOSE和PRESERVE_HANDLE的组合</li>
+<li>PHP_STREAM_FREE_CLOSE_PERSISTENT：CLOSE和PERSISTENT的组合，用于持久流的常规选项</li>
+</ul>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-hound-of-transformers-4" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -812,79 +938,6 @@ ga('send', 'pageview');
 <h4 id="继承类"><a href="#继承类" class="headerlink" title="继承类"></a>继承类</h4><p>用zend_register_internal_class_ex()。</p>
 <h4 id="声明接口"><a href="#声明接口" class="headerlink" title="声明接口"></a>声明接口</h4><p>和声明类一样，先声明一组抽象方法，然后用zend_register_internal_interface()注册。</p>
 <h4 id="实现接口"><a href="#实现接口" class="headerlink" title="实现接口"></a>实现接口</h4><p>用zend_class_implements()。</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-transformers-grim-lock" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/transformers-grim-lock/"><strong>变形金刚：俺钢锁才是老大</strong></a>
-      <small class="article-date-index">&nbsp; 2015-04-26</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/transformers-grim-lock/" class="article-date">
-  <time datetime="2015-04-26T12:55:00.000Z" itemprop="datePublished">2015-04-26</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/青梅煮酒/">青梅煮酒</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/transformers-grim-lock/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>变形金刚是工业艺术的巅峰之作。不仅仅是怀旧和补童年。<strong>理工宅两大图腾，恐龙和机器人。从没有一个东西像汽车人恐龙部队一样，把这两样完美地融为一体。</strong></p>
-<p>孩之宝的东西很多时候不尽如人意，价格又太贵。有一些第三方的仿品，不乏精品。像威将的这个钢锁，是孩之宝V级的放大版，几乎与L级等身，头部和大腿根部是合金部件，很有质感。有美版和黑暗两个涂装，结合放大后的形象，黑暗涂装更显霸气。</p>
-<img src="http://pic.yupoo.com/leninlee/EBG8vXei/medish.jpg">
-<p>美版L级人形。整体精致，但是太瘦，两条腿细得跟小儿麻痺似的，盈盈一掬的小蛮腰，这是要走长腿欧巴路线啊。这个比例，如果放大一号效果会更好，不过钢锁老大比其它L级大一号不是理所当然的么。最讨厌的是电镀，又俗又易脱落。</p>
-<img src="http://pic.yupoo.com/leninlee/EBG8wf4l/medish.jpg">
-<p>美版L级龙形。非常失败。身体比例失调，趴耳朵，塌脊梁，短尾巴。不忍直视。</p>
-<img src="http://pic.yupoo.com/leninlee/EBG8wIB3/medish.jpg">
-<p>祖国版V级人形。V级钢锁是不以人形见长的，不过放大后观感尚可。</p>
-<img src="http://pic.yupoo.com/leninlee/EBG8x7KX/medish.jpg">
-<p>祖国版V级龙形。V级钢锁的龙形完爆L级，体形霸气，立耳，隆背，翘尾。孩版V级最大的遗憾就是体形太小，祖国版龙形堪称完美。</p>
-<p>不知道是不是我中奖了，祖国版人形的大腿根部虽然是球齿关节，但是球齿无效，关节比较松，容易劈叉。不过这个做工、用料，只要几十软妹币，相对几倍价格的孩版来说，威将良心之作啊。</p>
 
       
     </div>

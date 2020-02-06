@@ -70,6 +70,90 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-flamework-view-rendering" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/flamework-view-rendering/"><strong>PHP框架实战（四）：View的模板与渲染</strong></a>
+      <small class="article-date-index">&nbsp; 2013-12-30</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/flamework-view-rendering/" class="article-date">
+  <time datetime="2013-12-30T13:05:00.000Z" itemprop="datePublished">2013-12-30</time>
+</a>-->
+      <!--
+  <div class="article-category-index">
+    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/flamework-view-rendering/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><p>实现MVC模型的<strong>V</strong>iew层，Controller的Action中应可以将从Model层获取的数据填充到View模板中，并将渲染结果返回给访问者。本文并不志在实现一个完备的模板框架，相应的需求可借助Smarty这样现有的实现。</p>
+<h2 id="获取代码"><a href="#获取代码" class="headerlink" title="获取代码"></a>获取代码</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout v0.4</span><br></pre></td></tr></table></figure>
+<h2 id="设计与实现"><a href="#设计与实现" class="headerlink" title="设计与实现"></a>设计与实现</h2><p>View的模板是最好实现的，因为PHP本身就是一个模板语言，所以这里实现的模板主要是指几条约定：</p>
+<ol>
+<li>模板文件本身是一个普通PHP文件，文件名后缀是“.php”；</li>
+</ol>
+<ul>
+<li>模板文件应存储在项目指定的模板基础目录中；</li>
+<li>模板名称指模板文件相对于项目的模板基础目录的路径，并且去掉文件后缀；</li>
+<li>模板本身的实际效果等同于在Controller的Action中执行的代码，故可以调用Controller的所有方法以及Flame对象的方法等内容；</li>
+<li>所有要填充到模板中的数据以键值对的形式存储在一个关联数组中，并传递给渲染模板的方法，在模板中使用与键名相同的变量调用数据；</li>
+</ul>
+<p><strong>View的渲染方法</strong></p>
+<p>添加Controller::render()方法：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Render the view template with data</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> string $view View template relative path to base path of the templates</span></span><br><span class="line"><span class="comment">     *                     For example, 'post/list' point to file /srv/http/mysite/protected/view/post/list.php</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> array $data Associative array in which data is stored as key-value pairs</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> void</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@since</span> 1.0</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">render</span><span class="params">($view, $data)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        extract($data, EXTR_PREFIX_SAME, <span class="string">'tpl_'</span>);</span><br><span class="line">        $viewFile = Flame::app()-&gt;getViewPath().DIRECTORY_SEPARATOR.$view.<span class="string">'.php'</span>;</span><br><span class="line">        <span class="keyword">if</span> (is_readable($viewFile)) &#123;</span><br><span class="line">            <span class="keyword">require</span>($viewFile);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> FlameException(<span class="string">"View template $view does not exist or cannot be readable."</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>$view是模板名称，$data是要填充到模板中的数据。</p>
+<h2 id="验证Demo"><a href="#验证Demo" class="headerlink" title="验证Demo"></a>验证Demo</h2><p>在Demo项目的protected下新增文件“view/post/list.php”，并创建不存在的这两个上级目录“view”和“post”。内容如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">"Content-type"</span> <span class="attr">content</span>=<span class="string">"text/html; charset=utf-8"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">title</span>&gt;</span>Post<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">h1</span>&gt;</span><span class="php"><span class="meta">&lt;?php</span> <span class="keyword">echo</span> $name; <span class="meta">?&gt;</span></span><span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">p</span>&gt;</span><span class="php"><span class="meta">&lt;?php</span> <span class="keyword">echo</span> $age; <span class="meta">?&gt;</span></span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>将DefaultController::index()方法修改为：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;render(<span class="string">'post/list'</span>, <span class="keyword">array</span>(</span><br><span class="line">            <span class="string">'name'</span> =&gt; <span class="string">'leigh'</span>,</span><br><span class="line">            <span class="string">'age'</span> =&gt; <span class="number">23</span>,</span><br><span class="line">        ));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>访问Demo项目，页面将显示预期的内容和样式。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>PHP本身的特点使得View这一层很容易实现。不过，随著富客户端的流行，MVC模型的View这一层正在被逐渐弱化，现在主流的开发方式是前端通过AJAX与服务器端交换数据，而不是把数据填充到模板中再返回给客户端。</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-flamework-controller-and-filter" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -769,77 +853,6 @@ ga('send', 'pageview');
 <p>接合API和Reference Guide发现，每个Source中的可拖拽项目在Source中都要有一个对应的对象，这个对象至少包括两个属性：“data”和“type”。在<a href="http://dojotoolkit.org/reference-guide/1.9/dojo/dnd.html" target="_blank" rel="noopener">Reference Guide</a>中，对这两个属性有详细说明，简言之，data是向Target传递的数据，type是被Target用来判断拖拽个体是否属于接受范围的依据。</p>
 <p>当Source实例被创建时，已经存在于ItemListWidget中的ItemWidget实例会被自动创建对应的上述对象，但之后加入的不会。解决的办法是调用Source.setItem()方法为每一个新加入的ItemWidget关联相应的对象，或在ItemWidget中添加一个构造参数，用于指定Source，并在postCreate()方法中为当前ItemWidget实例关联相应的对象:</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">define([</span><br><span class="line">    <span class="string">"dojo/_base/declare"</span>,</span><br><span class="line">    <span class="string">"dijit/_WidgetBase"</span>,</span><br><span class="line">], <span class="function"><span class="keyword">function</span>(<span class="params">declare, _WidgetBase</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> declare(<span class="string">"ItemWidget"</span>, [_WidgetBase], &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 本Widget实例所属的Source实例</span></span><br><span class="line">        dndSrc: <span class="literal">null</span>,</span><br><span class="line">        </span><br><span class="line">        postCreate: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.inherited(<span class="built_in">arguments</span>);</span><br><span class="line">            <span class="comment">// 不需要传递数据时，可忽略data参数</span></span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">this</span>.dndSrc !== <span class="literal">null</span>)</span><br><span class="line">                <span class="keyword">this</span>.dndSrc.setItem(<span class="keyword">this</span>.id, &#123;<span class="attr">type</span>:[<span class="string">"text"</span>]&#125;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-take-sakura-as-my-primary-terminal" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/take-sakura-as-my-primary-terminal/"><strong>Take Sakura as My Primary Terminal</strong></a>
-      <small class="article-date-index">&nbsp; 2013-07-07</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/take-sakura-as-my-primary-terminal/" class="article-date">
-  <time datetime="2013-07-07T04:07:00.000Z" itemprop="datePublished">2013-07-07</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/take-sakura-as-my-primary-terminal/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>It’s a long time since I came across rxvt-unicode. </p>
-<p>About seven years ago, when I switched from Windows XP to Ubuntu mainly for performance issues, I never be bored with searching for everything with a higher speed. To me, gnome-terminal is too much slow as a terminal being frequently opened and closed. Then, rxvt-unicode came through.</p>
-<p>At first glance, rxvt-unicode was so ugly that I put it behind without the slightest bit of hesitation. Not until I once saw a screenshot did I realize this ugly thing can actually be pretty like that. So I started to take it as my primary terminal since then, for it was the fastest terminal I can find at that time.</p>
-<p>Time flies, rxvt-unicode has proved to be a very good friend within these years, only until yesterday. I descided to change my Zsh theme to agnoster, which is a very pretty and git-friendly theme. Although I did everything according to the official manual, the right and left arrow signs were still displayed as boxes, then I tried almost all the methods I could find from Google, it still didn’t work.</p>
-<p>So I reluctantly descided to part from rxvt-unicode. A number of terminals came out through these years, some of them also show a good performance, like sakura, terminator, etc. Now I take sakura as my primary terminal, it runs as fast as rxvt-unicode while working normally with agnoster or powerline.</p>
-<p>Here is the final effect:</p>
-<img src="http://pic.yupoo.com/leninlee/CZy402Q6/fc4i1.png" width="500">
-<p><strong>Update (2013-07-07 23:34:53):</strong></p>
-<p>Thanks to Star Brilliant, he mentioned LilyTerm in his comment. I discovered that it is even faster than Sakura while supplying plenty of functions, so now I descide to switch to LilyTerm.</p>
 
       
     </div>

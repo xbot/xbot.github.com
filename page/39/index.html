@@ -70,6 +70,113 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-supernatural-phenomenon-of-controlling-external-processes-in-python" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/supernatural-phenomenon-of-controlling-external-processes-in-python/"><strong>Python控制外部进程的灵异事件</strong></a>
+      <small class="article-date-index">&nbsp; 2010-03-08</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/supernatural-phenomenon-of-controlling-external-processes-in-python/" class="article-date">
+  <time datetime="2010-03-07T16:00:00.000Z" itemprop="datePublished">2010-03-08</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/supernatural-phenomenon-of-controlling-external-processes-in-python/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>春节前的一段时间，重新拾起近一年没动过的<a href="http://0x3f.org/?tag=foreverfantasy">ForeverFantasy</a>。</p>
+
+<p>虽然一年内没什么更新，但是我却一直都在用，基本上只限于将用Vim写好的<a href="http://en.wikipedia.org/wiki/Markdown" target="_blank" rel="noopener">Markdown</a>格式的文档转换成HTML。</p>
+
+<p>重写了相当一部分代码，较大程度地改变了界面布局，突然发现经过一年的沉淀，对<a href="http://en.wikipedia.org/wiki/WxPython" target="_blank" rel="noopener">wxPython</a>的理解增进了不少，开发起来比起去年这个时候清楚了很多。</p>
+
+<p><a href="http://picasaweb.google.com/lh/photo/bNRGQr0g6aLuqDUm8EQ6mg?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh6.ggpht.com/_ceUJ_lBTHzc/S5UYPQmTAzI/AAAAAAAABUc/znMRxXuE8dE/s400/2010-03-08.23%3A27%3A03.%E5%B7%A5%E4%BD%9C%E5%8C%BA%201.01.png"></a></p>
+
+<p>这些天来一直坚持着每天或多或少的做一些，如果说有什么主要的进展的话，那就是界面的重构，以及昨天实现了调用Vim编辑文档并回收文档内容的功能。</p>
+
+<p>ForeverFantasy和Vim协同的一个最大的问题就是如何判断Vim已经退出。Python调用外部程序的方法有很多，比如传统的<a href="http://docs.python.org/library/commands.html" target="_blank" rel="noopener">commands</a>模块、<a href="http://docs.python.org/library/os.html" target="_blank" rel="noopener">os</a>.system()等，<a href="http://docs.python.org/library/subprocess.html" target="_blank" rel="noopener">subprocess</a>是致力于替代这些旧有的方式的一个模块，它的一个特点是可以在启动一个外部程序作为子进程后还能监控这个进程的运行状态。这为ForeverFantasy在Vim退出后回收文档内容提供了更简捷的途径。</p>
+
+<p>下面的代码可以说明如何使用subprocess运行外部程序并监控运行状态：</p>
+
+<p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> subprocess</span><br><span class="line">process = subprocess.Popen(<span class="string">'gvim'</span>, shell=<span class="keyword">True</span>)</span><br><span class="line">status = process.poll()</span><br><span class="line"><span class="keyword">if</span> <span class="number">0</span> == status:</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'The external program exited.'</span></span><br><span class="line"><span class="keyword">if</span> status <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'The external program is still running.'</span></span><br></pre></td></tr></table></figure>
+</p>
+
+<p>理论上，可以拿实例process的poll()方法监视进程的运行状态，而且这一点在Windows上也确实可以做到，但是到了Linux下，诡异的事出现了，即使刚刚打开gvim，poll()方法也会马上返回一个0，同时process.pid的值总是和实际在运行的那个gvim进程的pid的值差3，而且在虚拟终端中输入gvim命令也不会阻塞终端，就像别的命令加上“<strong>&amp;</strong>”符号的效果一样。尝试用<a href="http://en.wikipedia.org/wiki/Strace" target="_blank" rel="noopener">strace</a>跟踪gvim的运行，试图找到问题原因，无果。我猜想可能/usr/bin/gvim是一个跳板，它启动后会启动一个新的gvim进程。总之，这个方法在Linux下是行不通的。</p>
+
+<p>因此我觉得只能另寻出路了，既然不能监控gvim进程，那就监控gvim进程所编辑的文件，只要这个文件不被任何进程占用，就可以判定gvim已退出。这一点，在Linux下易如反掌，不用说，<a href="http://en.wikipedia.org/wiki/Lsof" target="_blank" rel="noopener">lsof</a>当仁不让。</p>
+
+<p>用<strong>commands.getstatusoutput('lsof file.txt')</strong>测试发现，如果文件file.txt被某进程占用，则返回的状态值为0，反之，返回256。</p>
+
+<p>最终，我在程序中使用了两种判断方式，在Windows平台使用subprocess跟踪gvim.exe进程，而在Linux及Unix平台使用lsof检查文档占用情况。</p>
+
+<p>剩下的就是进行这个判断的时间问题了。</p>
+
+<p>很显然，如果在子进程被启动后马上使用while循环不停的检查，一来必须使用多线程，二来系统资源占用也会很高。这时就需要利用wxPython的事件机制了，当ForeverFantasy启动Gvim时，主窗口失去焦点，而当Gvim退出时，ForeverFantasy又会获得焦点，只要能在ForeverFantasy窗口获得焦点时做一次检查即可。不过，在选择最合适的事件的问题上，又是一波三折。</p>
+
+<p>在wxPython的<a href="http://www.wxpython.org/docs/api/frames.html" target="_blank" rel="noopener">API</a>文档中没有找到<a href="http://wiki.wxpython.org/ListOfEvents" target="_blank" rel="noopener">事件列表</a>，倒是在<a href="http://wiki.wxpython.org" target="_blank" rel="noopener">Wiki</a>中找到了。顾名思义，觉得wx.EVT_SET_FOCUS比较靠谱，但试用失败，看API中关于FocusEvent的说明，这个事件适用于窗口控件；然后又试了wx.EVT_CHILD_FOCUS，只有在窗口包含的控件中有获得焦点的情况才会触发；最后才发现<strong>wx.EVT_ACTIVATE</strong>，这个事件会在窗口失去焦点和获得焦点时各触发一次，使用GetActive()方法可以判断是获得焦点还是失去焦点。</p>
+
+<p>完成与Vim的协同使ForeverFantasy在我手上由原来单纯的格式转换工具进化为基本可用的文档编辑器，就算是<strong>Milestone 2</strong>吧。</p>
+
+<p>此外，还有一些小的经验：</p>
+
+<p>1. 调用非环境变量下的程序，即命令中必须带程序所在的路径时，应当将程序所在目录的完整路径以自然字符串的形式传递给subprocess.Popen类的构造方法的cwd参数，即如下所示：</p>
+
+<p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">process = subprocess.Popen(<span class="string">'gvim.exe'</span>, cwd=<span class="string">r'C:\program files\vim\vim72'</span>, shell=<span class="keyword">True</span>)</span><br></pre></td></tr></table></figure>
+</p>
+
+<p>这样可以有效避免路径中的空格和特殊字符对命令执行的影响。</p>
+
+<p>2. Vim编辑一个文档时，实际操作的是一个临时文件，而不是原文件，这个临时文件与原文件同路径，名称为在原文件名的基础上，前面加一个句点，后面加后缀“.swp”。应该用lsof监控这个临时文件，才可以判断出编辑该文档的Vim进程的运行状态。由于对于不存在的文件使用lsof命令的返回值也是256，故可以同时判断临时文件和原文件的占用情况，这样就为对其它编辑器的支持奠定了基础。</p>
+
+<p><strong>2010-03-10 Wednesday 22:52:13 更新</strong></p>
+
+<p>感谢KL童鞋和依云童鞋指教，果然加上<strong>-f</strong>参数就可以了。</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-neocomplcache-vim" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -373,6 +480,68 @@ DB模块：pyodbc
 
 
     
+      <article id="post-too-many-echoes-may-crash-php" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/too-many-echoes-may-crash-php/"><strong>PHP后台echo过多会导致进程崩溃</strong></a>
+      <small class="article-date-index">&nbsp; 2010-01-31</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/too-many-echoes-may-crash-php/" class="article-date">
+  <time datetime="2010-01-30T16:00:00.000Z" itemprop="datePublished">2010-01-31</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/too-many-echoes-may-crash-php/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>这是去年晚些时侯发现的一个问题。</p>
+<p>公司产品的后台定时任务应该是用独立的PHP进程驱动的。在做一个项目的时候，为了便于手工调试，我在定时任务中使用了大量的echo输出信息并在浏览器中手工执行此任务的脚本。</p>
+<p>手工执行通过，输出信息完全没有问题。但在实际运行的过程中，一个很诡异的事情发生了：即使我将实际处理数据的代码全部注释掉，只对原始数据做简单的查询，此定时任务仍然极其健壮地中途退出。最要命的是无论程序日志还是PHP的错误日志，都没有任何相关信息。直到后来我把所有echo输出都取消，问题才解决。</p>
+<p>事后模糊地记得很久以前似乎在哪本书上看到过在无输出设备的情况下echo过多数据会导致PHP进程崩溃的内容，但原因已想不起来了。</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-virtualbox-host-interface" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -434,68 +603,6 @@ DB模块：pyodbc
 <p>为方便起见，可将vboxnetflt模块加入到开机自动启动的模块列表中，每种发行版设置自启动模块的位置和方法不一样，在Archlinux下，是在<strong>/etc/rc.conf</strong>文件中的<strong>modules</strong>行中设置。</p>
 
 <p><em>参考文章：<a href="http://wiki.archlinux.org/index.php/VirtualBox" target="_blank" rel="noopener">Archlinux Wiki: VirtualBox</a></em></p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-too-many-echoes-may-crash-php" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/too-many-echoes-may-crash-php/"><strong>PHP后台echo过多会导致进程崩溃</strong></a>
-      <small class="article-date-index">&nbsp; 2010-01-31</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/too-many-echoes-may-crash-php/" class="article-date">
-  <time datetime="2010-01-30T16:00:00.000Z" itemprop="datePublished">2010-01-31</time>
-</a>-->
-      <!--
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/too-many-echoes-may-crash-php/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>这是去年晚些时侯发现的一个问题。</p>
-<p>公司产品的后台定时任务应该是用独立的PHP进程驱动的。在做一个项目的时候，为了便于手工调试，我在定时任务中使用了大量的echo输出信息并在浏览器中手工执行此任务的脚本。</p>
-<p>手工执行通过，输出信息完全没有问题。但在实际运行的过程中，一个很诡异的事情发生了：即使我将实际处理数据的代码全部注释掉，只对原始数据做简单的查询，此定时任务仍然极其健壮地中途退出。最要命的是无论程序日志还是PHP的错误日志，都没有任何相关信息。直到后来我把所有echo输出都取消，问题才解决。</p>
-<p>事后模糊地记得很久以前似乎在哪本书上看到过在无输出设备的情况下echo过多数据会导致PHP进程崩溃的内容，但原因已想不起来了。</p>
 
       
     </div>
@@ -841,97 +948,6 @@ DB模块：pyodbc
 <p>在查阅“man urxvt”的时候，发现urxvt的man pages里的内容真是异常丰富，大部分功能都讲解得言简意赅。以往还抱怨这个东西在网上连个健全的文档都找不到，原来全在这儿呢，真不知道以往无数次地man的时候为什么没有注意到这些，难道man了rxvt了？</p>
 
 <p><em>PS：这样实现urxvt的真半透明后，貌似xcompmgr实现的阴影在urxvt身上就消失了，求解中……</em></p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-rxvt-unicode-256color-is-perfect" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/rxvt-unicode-256color-is-perfect/"><strong>完美的终端模拟器：rxvt-unicode</strong></a>
-      <small class="article-date-index">&nbsp; 2009-02-08</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/rxvt-unicode-256color-is-perfect/" class="article-date">
-  <time datetime="2009-02-07T16:00:00.000Z" itemprop="datePublished">2009-02-08</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/rxvt-unicode-256color-is-perfect/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a href="http://en.wikipedia.org/wiki/Rxvt-unicode" target="_blank" rel="noopener">urxvt</a>（<a href="http://www.rxvt.org/" target="_blank" rel="noopener">rxvt</a>的unicode版本，支持多国语言，<a href="http://software.schmorp.de/pkg/rxvt-unicode.html" target="_blank" rel="noopener">官方网站</a>）。</p>
-
-<p>具有以下特性：</p>
-<ol>
-	<li>支持真半透明</li>
-	<li>支持Unicode编码，支持多国语言</li>
-	<li>支持英文和非英文字符使用不同的字体</li>
-	<li>支持CS模式，节省系统资源</li>
-	<li>轻量，速度快</li>
-	<li>支持Perl扩展功能</li>
-</ol>
-
-<p>但是urxvt有一个很影响情绪的缺陷，就是字符的间距过大，看起来很不舒服。不过已有补丁用来解决这个问题，例如Archlinux用户可以安装<a href="http://aur.archlinux.org/packages.php?ID=32488" target="_blank" rel="noopener">rxvt-unicode-chinese</a>：</p>
-
-<p><a href="http://picasaweb.google.com/lh/photo/6B48rqC08p3C7paP_Y651w?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh5.ggpht.com/_ceUJ_lBTHzc/SY71tgK4J0I/AAAAAAAAAw4/3Vf4HbPZfS4/s400/rxvt-unicode-256color.png"></a></p>
-
-urxvt的配置选项可以参考其官方网站上的说明，另外<a href="http://pastebin.com/WzT6pTKA" target="_blank" rel="noopener">这里</a>有一份详细的配置文件。
-
-<strong>更新日志：</strong>
-
-<strong>2011-01-15</strong>
-<ol>
-	<li>修改文章标题</li>
-	<li>重写文章内容</li>
-	<li>由于原来的rxvt-unicode-256color包已不存在，更换为rxvt-unicode-chinese</li>
-	<li>补充一份配置文件</li>
-</ol>
-
-
 
       
     </div>
