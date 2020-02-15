@@ -170,4 +170,21 @@ protected function mockSingleton($class, callable $handler = null): void
     $ref->setAccessible(true);
     $ref->setValue(null, $mockedObj);
 }
+
+/**
+  * 触发对象的private或protected方法
+  *
+  * @param  object $object 对象实例
+  * @param  string $methodName 方法名
+ * @param  array $parameters 参数数组
+  *
+  * @return mixed 被触发方法的返回值
+  */
+protected function invokeMethod(&$object, $methodName, array $parameters = [])
+{
+    $reflection = new \ReflectionClass(get_class($object));
+    $method = $reflection->getMethod($methodName);
+    $method->setAccessible(true);
+    return $method->invokeArgs($object, $parameters);
+}
 ```
