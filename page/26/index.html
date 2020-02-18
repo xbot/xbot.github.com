@@ -70,6 +70,80 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-dojo-dnd-cannot-read-property-type-of-undefined" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/dojo-dnd-cannot-read-property-type-of-undefined/"><strong>Dojo DnD: Cannot read property &#39;type&#39; of undefined</strong></a>
+      <small class="article-date-index">&nbsp; 2013-07-11</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/dojo-dnd-cannot-read-property-type-of-undefined/" class="article-date">
+  <time datetime="2013-07-11T14:44:00.000Z" itemprop="datePublished">2013-07-11</time>
+</a>-->
+      <!--
+  <div class="article-category-index">
+    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/dojo-dnd-cannot-read-property-type-of-undefined/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>场景如下：</p>
+<p>假设有两个Widget：ItemListWidget和ItemWidget，后者要被创建多份并追加到前者内部，同时ItemListWidget要作为dojo/dnd/Source，每个ItemWidget作为一个单元可被拖拽到另外一个dojo/dnd/Target容器中。</p>
+<p>问题是，当Source被创建后，再添加到ItemListWidget的ItemWidget实例在被拖拽时会报如下错误：</p>
+<blockquote>
+<p>Uncaught TypeError: Cannot read property ‘type’ of undefined</p>
+</blockquote>
+<p>在Chrome开发工具中点开这个错误，显示以下内容：</p>
+<img src="http://pic.yupoo.com/leninlee/D0dD4euT/cULuA.png">
+<p>从方法的注释或API中可以看到，checkAcceptance()是用来判断当前拖拽对象是否在这个target接受的范围之内，接受规则用Source和Target的构造参数中的“accept”定义。在这个方法里通过Source.getItem()方法拿到的对象是null，上述错误就是从这儿报出来的。</p>
+<p>接合API和Reference Guide发现，每个Source中的可拖拽项目在Source中都要有一个对应的对象，这个对象至少包括两个属性：“data”和“type”。在<a href="http://dojotoolkit.org/reference-guide/1.9/dojo/dnd.html" target="_blank" rel="noopener">Reference Guide</a>中，对这两个属性有详细说明，简言之，data是向Target传递的数据，type是被Target用来判断拖拽个体是否属于接受范围的依据。</p>
+<p>当Source实例被创建时，已经存在于ItemListWidget中的ItemWidget实例会被自动创建对应的上述对象，但之后加入的不会。解决的办法是调用Source.setItem()方法为每一个新加入的ItemWidget关联相应的对象，或在ItemWidget中添加一个构造参数，用于指定Source，并在postCreate()方法中为当前ItemWidget实例关联相应的对象:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">define([</span><br><span class="line">    <span class="string">"dojo/_base/declare"</span>,</span><br><span class="line">    <span class="string">"dijit/_WidgetBase"</span>,</span><br><span class="line">], <span class="function"><span class="keyword">function</span>(<span class="params">declare, _WidgetBase</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> declare(<span class="string">"ItemWidget"</span>, [_WidgetBase], &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 本Widget实例所属的Source实例</span></span><br><span class="line">        dndSrc: <span class="literal">null</span>,</span><br><span class="line">        </span><br><span class="line">        postCreate: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.inherited(<span class="built_in">arguments</span>);</span><br><span class="line">            <span class="comment">// 不需要传递数据时，可忽略data参数</span></span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">this</span>.dndSrc !== <span class="literal">null</span>)</span><br><span class="line">                <span class="keyword">this</span>.dndSrc.setItem(<span class="keyword">this</span>.id, &#123;<span class="attr">type</span>:[<span class="string">"text"</span>]&#125;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-take-sakura-as-my-primary-terminal" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -104,7 +178,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/take-sakura-as-my-primary-terminal/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/take-sakura-as-my-primary-terminal/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -175,7 +249,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/after-reading-wukongs-biography/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/after-reading-wukongs-biography/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -240,7 +314,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/get-position-in-qtablewidget-for-changed-cellwidgets/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/get-position-in-qtablewidget-for-changed-cellwidgets/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -307,7 +381,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/my-mouses-of-all-those-years/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/my-mouses-of-all-those-years/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -377,7 +451,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/after-reading-ten-years-of-traveling/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/after-reading-ten-years-of-traveling/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -443,7 +517,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/make-youcompleteme-ultisnips-compatible/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/make-youcompleteme-ultisnips-compatible/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -523,7 +597,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/vundle-vs-pathogen/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/vundle-vs-pathogen/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -590,7 +664,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/riding-to-ancient-west-peking-path/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/riding-to-ancient-west-peking-path/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -661,7 +735,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/fix-ms-office-mime-types-in-rox-filer/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/fix-ms-office-mime-types-in-rox-filer/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -702,80 +776,8 @@ ga('send', 'pageview');
 
 
     
-      <article id="post-tour-to-leshan-and-emei" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/tour-to-leshan-and-emei/"><strong>乐山大佛与十面普贤</strong></a>
-      <small class="article-date-index">&nbsp; 2013-05-16</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/tour-to-leshan-and-emei/" class="article-date">
-  <time datetime="2013-05-16T14:04:00.000Z" itemprop="datePublished">2013-05-16</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/行见/">行见</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/tour-to-leshan-and-emei/#disqus_thread" class="article-comment-link">Комментарии</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>12年8月，去乐山、峨嵋玩儿了两天。</p>
-<p>乐山大佛真的很大：</p>
-<img src="http://pic.yupoo.com/leninlee/CRHkdf2T/medium.jpg">
-<p>据说佛爷头上的便便越多，表示智慧越大、级别越高：</p>
-<img src="http://pic.yupoo.com/leninlee/CRHkdm6f/medium.jpg">
-<p>峨嵋金顶的十面普贤菩萨，美轮美奂，从没有见过这样一尊佛像，能让人在看第一眼的时候就感受到震撼：</p>
-<img src="http://pic.yupoo.com/leninlee/CRHkdPGq/medium.jpg">
-<p>云开日出时的十面普贤，那一瞬间，场面无以言表，极为震撼人心：</p>
-<img src="http://pic.yupoo.com/leninlee/CRHkexyO/medium.jpg">
-<p>刚到乐山时看到路边的条幅，才恍然想起这是祖师爷的老家，没时间拜谒，罪过罪过。这次旅行最大的收获就是看到了云开日出时的十面普贤，是我迄今见过的最摄人心魄的景观。</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
       <nav id="page-nav">
-        <a class="extend prev" rel="prev" href="/page/25/">&laquo; Назад</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/24/">24</a><a class="page-number" href="/page/25/">25</a><span class="page-number current">26</span><a class="page-number" href="/page/27/">27</a><a class="page-number" href="/page/28/">28</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/27/">Далее &raquo;</a>
+        <a class="extend prev" rel="prev" href="/page/25/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/24/">24</a><a class="page-number" href="/page/25/">25</a><span class="page-number current">26</span><a class="page-number" href="/page/27/">27</a><a class="page-number" href="/page/28/">28</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/27/">Next &raquo;</a>
       </nav>
     
 

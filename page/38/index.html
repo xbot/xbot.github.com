@@ -70,6 +70,91 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-howto-execute-sql-scripts-in-inno-setup" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/howto-execute-sql-scripts-in-inno-setup/"><strong>Inno Setup执行SQL脚本的方法</strong></a>
+      <small class="article-date-index">&nbsp; 2010-05-17</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/howto-execute-sql-scripts-in-inno-setup/" class="article-date">
+  <time datetime="2010-05-16T16:00:00.000Z" itemprop="datePublished">2010-05-17</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/howto-execute-sql-scripts-in-inno-setup/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>作为和<a href="http://zh.wikipedia.org/zh-cn/Nullsoft%E8%85%B3%E6%9C%AC%E5%AE%89%E8%A3%9D%E7%B3%BB%E7%B5%B1" target="_blank" rel="noopener">NSIS</a>并立的、两个最流行的免费Windows应用程序安装包制作工具之一，<a href="http://en.wikipedia.org/wiki/Inno_Setup" target="_blank" rel="noopener">Inno</a>在学习难度上相对要低一些，非常适合对一些简单的桌面程序打包。但对于较复杂的安装过程，或者Web应用程序来说，我个人觉得不是Inno的强项。当然，既然Inno内嵌了<a href="http://zh.wikipedia.org/zh-cn/Pascal" target="_blank" rel="noopener">Pascal</a>语言用以扩展功能，理论上不是不可以应付复杂的安装过程，但实现起来要复杂一些。</p>
+
+<p>比如对于在安装过程中连接数据库并执行SQL脚本这样的需求，使用<a href="http://en.wikipedia.org/wiki/InstallShield" target="_blank" rel="noopener">InstallShield</a>应该会简单地多，而Inno却不支持直接操作数据库，并且相关的资料说明少之又少，还不如NSIS丰富，以至于我踏破铁鞋无觅处，最终却在NSIS的资料中找到了思路。</p>
+
+<p>主要的思路是，在安装过程中，调用数据库客户端连接数据库并执行SQL脚本，然后将执行结果或错误信息输出到文件中，最后通过分析这个文件来判断命令执行的结果。但是，既然是调用特定的客户端，那么对不同数据库的操作自然就有所区别，具体情况如下所述。</p>
+
+<p>首先在打包脚本的<strong>[Files]</strong>段将必需的文件包含进来：</p>
+
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[Files]</span></span><br><span class="line">Source: "D:\Development\MyDemoApp\code\*"; DestDir: "&#123;app&#125;"; Flags: ignoreversion recursesubdirs createallsubdirs</span><br><span class="line">Source: "D:\Development\MyDemoApp\sqlcmd.exe"; Flags: dontcopy</span><br><span class="line">Source: "D:\Development\MyDemoApp\sqlcmd.rll"; Flags: dontcopy</span><br><span class="line">Source: "D:\Development\MyDemoApp\mysql.exe"; Flags: dontcopy</span><br><span class="line">Source: "D:\Development\MyDemoApp\script_mssql.sql"; Flags: dontcopy</span><br><span class="line">Source: "D:\Development\MyDemoApp\script_mysql.sql"; Flags: dontcopy</span><br><span class="line">Source: "D:\Development\MyDemoApp\script_oracle.sql"; Flags: dontcopy</span><br></pre></td></tr></table></figure>
+
+<p>在SQL Server中执行脚本的代码片断：</p>
+
+<figure class="highlight pascal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">ExecScriptInMSSQL</span><span class="params">(DBHost, DBLogin, DBPass, DBName: <span class="keyword">String</span>)</span>:</span> Boolean;</span><br><span class="line"><span class="keyword">var</span></span><br><span class="line">    ConnectExe: <span class="keyword">String</span>;</span><br><span class="line">    ConnectParam: <span class="keyword">String</span>;</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">    <span class="comment">&#123;解压临时文件&#125;</span></span><br><span class="line">    ExtractTemporaryFile(<span class="string">'sqlcmd.exe'</span>);</span><br><span class="line">    ExtractTemporaryFile(<span class="string">'sqlcmd.rll'</span>);</span><br><span class="line">    ExtractTemporaryFile(<span class="string">'script_mssql.sql'</span>);</span><br><span class="line">    <span class="comment">&#123;构造数据库连接字符串&#125;</span></span><br><span class="line">    ConnectExe := ExpandConstant(<span class="string">'&#123;tmp&#125;'</span>) + <span class="string">'\sqlcmd.exe'</span>;</span><br><span class="line">    ConnectParam := <span class="string">' -S '</span> + DBHost</span><br><span class="line">        + <span class="string">' -U '</span> + DBLogin</span><br><span class="line">        + <span class="string">' -P '</span> + DBPass</span><br><span class="line">        + <span class="string">' -d '</span> + DBName</span><br><span class="line">        + <span class="string">' -i script_mssql.sql -o '</span></span><br><span class="line">        + ExpandConstant(<span class="string">'&#123;tmp&#125;'</span>) + <span class="string">'\dbstatus.txt'</span>;</span><br><span class="line">    <span class="comment">&#123;建立数据库连接并执行脚本&#125;</span></span><br><span class="line">    <span class="keyword">if</span> Exec(ConnectExe, ConnectParam, <span class="string">''</span>, SW_HIDE, ewWaitUntilTerminated, ResultCode) <span class="keyword">then</span> <span class="keyword">begin</span></span><br><span class="line">        Result := ResultCode = <span class="number">0</span>;</span><br><span class="line">        LoadStringFromFile(ExpandConstant(<span class="string">'&#123;tmp&#125;'</span>) + <span class="string">'\dbstatus.txt'</span>, StatusString);</span><br><span class="line">        <span class="keyword">if</span> StatusString &lt;&gt; <span class="string">''</span> <span class="keyword">then</span> <span class="keyword">begin</span></span><br><span class="line">            MsgBox(StatusString, mbError, MB_OK);</span><br><span class="line">            Result := False;</span><br><span class="line">        <span class="keyword">end</span> <span class="keyword">else</span> <span class="keyword">begin</span></span><br><span class="line">            Result := True;</span><br><span class="line">        <span class="keyword">end</span>;</span><br><span class="line">    <span class="keyword">end</span> <span class="keyword">else</span> <span class="keyword">begin</span></span><br><span class="line">        MsgBox(<span class="string">'Database update failed:'</span><span class="string">#10#10</span> + SysErrorMessage(ResultCode), mbError, MB_OK);</span><br><span class="line">        Result := False;</span><br><span class="line">    <span class="keyword">end</span>;</span><br><span class="line"><span class="keyword">end</span>;</span><br></pre></td></tr></table></figure>
+
+<p>在MySQL中执行脚本的代码片断：</p>
+
+<figure class="highlight pascal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">ExecScriptInMYSQL</span><span class="params">(DBHost, DBLogin, DBPass, DBName: <span class="keyword">String</span>)</span>:</span> Boolean;</span><br><span class="line"><span class="keyword">var</span></span><br><span class="line">    ConnectExe: <span class="keyword">String</span>;</span><br><span class="line">    ConnectParam: <span class="keyword">String</span>;</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">    <span class="comment">&#123;解压临时文件&#125;</span></span><br><span class="line">    ExtractTemporaryFile(<span class="string">'mysql.exe'</span>);</span><br><span class="line">    ExtractTemporaryFile(<span class="string">'script_mysql.sql'</span>);</span><br><span class="line">    <span class="comment">&#123;构造数据库连接字符串&#125;</span></span><br><span class="line">    ConnectExe := ExpandConstant(<span class="string">'cmd'</span>);</span><br><span class="line">    ConnectParam := <span class="string">' /c "'</span> + ExpandConstant(<span class="string">'&#123;tmp&#125;'</span>) + <span class="string">'\mysql.exe'</span></span><br><span class="line">        + <span class="string">' -h'</span> + DBHost</span><br><span class="line">        + <span class="string">' -u'</span> + DBLogin</span><br><span class="line">        + <span class="string">' -p'</span> + DBPass</span><br><span class="line">        + <span class="string">' -D'</span> + DBName</span><br><span class="line">        + <span class="string">' -e "source '</span> + ExpandConstant(<span class="string">'&#123;tmp&#125;'</span>) + <span class="string">'\script_mysql.sql"" &gt; '</span> + ExpandConstant(<span class="string">'&#123;tmp&#125;'</span>) + <span class="string">'\dbstatus.txt 2&gt;&amp;1'</span>;</span><br><span class="line">    <span class="comment">&#123;建立数据库连接并执行脚本&#125;</span></span><br><span class="line">    <span class="keyword">if</span> Exec(ConnectExe, ConnectParam, <span class="string">''</span>, SW_HIDE, ewWaitUntilTerminated, ResultCode) <span class="keyword">then</span> <span class="keyword">begin</span></span><br><span class="line">        Result := ResultCode = <span class="number">0</span>;</span><br><span class="line">        LoadStringFromFile(ExpandConstant(<span class="string">'&#123;tmp&#125;'</span>) + <span class="string">'\dbstatus.txt'</span>, StatusString);</span><br><span class="line">        <span class="keyword">if</span> StatusString &lt;&gt; <span class="string">''</span> <span class="keyword">then</span> <span class="keyword">begin</span></span><br><span class="line">            MsgBox(StatusString, mbError, MB_OK);</span><br><span class="line">            Result := False;</span><br><span class="line">        <span class="keyword">end</span> <span class="keyword">else</span> <span class="keyword">begin</span></span><br><span class="line">            Result := True;</span><br><span class="line">        <span class="keyword">end</span>;</span><br><span class="line">    <span class="keyword">end</span> <span class="keyword">else</span> <span class="keyword">begin</span></span><br><span class="line">        MsgBox(<span class="string">'Database update failed:'</span><span class="string">#10#10</span> + SysErrorMessage(ResultCode), mbError, MB_OK);</span><br><span class="line">        Result := False;</span><br><span class="line">    <span class="keyword">end</span>;</span><br><span class="line"><span class="keyword">end</span>;</span><br></pre></td></tr></table></figure>
+
+<p>由于mysql.exe没有输出结果到文件的参数，故需要使用cmd.exe来运行mysql.exe以便将其输出重定向到文件dbstatus.txt中。此外，在命令的最后加上参数<strong>2&gt;&amp;1</strong>，将标准错误输出设备也重定向到文件上，否则命令执行的错误信息不会输出到文件中。</p>
+
+<p>在Oracle中执行脚本的代码片断：</p>
+
+<figure class="highlight pascal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">ExecScriptInORACLE</span><span class="params">(ClientPath, DBInstance, DBLogin, DBPass: <span class="keyword">String</span>)</span>:</span> Boolean;</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">    <span class="comment">&#123;解压临时文件&#125;</span></span><br><span class="line">    ExtractTemporaryFile(<span class="string">'script_oracle.sql'</span>);</span><br><span class="line">    <span class="comment">&#123;连接数据库并执行脚本&#125;</span></span><br><span class="line">    <span class="keyword">if</span> Exec(ExpandConstant(<span class="string">'cmd'</span>), <span class="string">' /c "'</span> + ClientPath + <span class="string">' -L -S '</span> + DBLogin</span><br><span class="line">        + <span class="string">'/'</span> + DBPass</span><br><span class="line">        + <span class="string">'@'</span> + DBInstance</span><br><span class="line">        + <span class="string">' @'</span> + ExpandConstant(<span class="string">'&#123;tmp&#125;'</span>) + <span class="string">'\script_oracle.sql &gt; '</span> + ExpandConstant(<span class="string">'&#123;tmp&#125;'</span>) + <span class="string">'\dbstatus.txt 2&gt;&amp;1'</span>,</span><br><span class="line">        <span class="string">''</span>,</span><br><span class="line">        SW_HIDE, ewWaitUntilTerminated, ResultCode)</span><br><span class="line">    <span class="keyword">then</span> <span class="keyword">begin</span></span><br><span class="line">        Result := ResultCode = <span class="number">0</span>;</span><br><span class="line">        LoadStringFromFile(ExpandConstant(<span class="string">'&#123;tmp&#125;'</span>) + <span class="string">'\dbstatus.txt'</span>, StatusString);</span><br><span class="line">        <span class="keyword">if</span> Pos(<span class="string">'holytail'</span>, StatusString) &lt;&gt; <span class="number">0</span> <span class="keyword">then</span> <span class="keyword">begin</span></span><br><span class="line">            <span class="comment">&#123;若输出信息中有“holytail”的子串，则表示脚本成功执行&#125;</span></span><br><span class="line">            <span class="comment">&#123;若执行有误，提示用户打开日志文件&#125;</span></span><br><span class="line">            <span class="keyword">if</span> Pos(<span class="string">'ORA-'</span>, StatusString) &lt;&gt; <span class="number">0</span> <span class="keyword">then</span> <span class="keyword">begin</span></span><br><span class="line">                <span class="comment">&#123;提示用户脚本执行出错&#125;</span></span><br><span class="line">                <span class="keyword">if</span> MsgBox(<span class="string">'数据库更新出错，是否打开日志文件？'</span>, mbConfirmation, MB_YESNO) = IDYES <span class="keyword">then</span> <span class="keyword">begin</span></span><br><span class="line">                    <span class="comment">&#123;打开日志&#125;</span></span><br><span class="line">                    <span class="keyword">if</span> <span class="keyword">not</span> ShellExec(<span class="string">''</span>, ExpandConstant(<span class="string">'&#123;tmp&#125;'</span>) + <span class="string">'\dbstatus.txt'</span>, <span class="string">''</span>, <span class="string">''</span>, SW_SHOW, ewNoWait, ErrorCode) <span class="keyword">then</span> <span class="keyword">begin</span></span><br><span class="line">                        MsgBox(<span class="string">'日志文件打开错误！'</span>, mbError, MB_OK);</span><br><span class="line">                    <span class="keyword">end</span>;</span><br><span class="line">                <span class="keyword">end</span>;</span><br><span class="line">                Result := False;</span><br><span class="line">            <span class="comment">&#123;若执行无误，返回True&#125;</span></span><br><span class="line">            <span class="keyword">end</span> <span class="keyword">else</span> <span class="keyword">begin</span></span><br><span class="line">                Result := True;</span><br><span class="line">            <span class="keyword">end</span>;</span><br><span class="line">        <span class="keyword">end</span> <span class="keyword">else</span> <span class="keyword">if</span> StatusString &lt;&gt; <span class="string">''</span> <span class="keyword">then</span> <span class="keyword">begin</span></span><br><span class="line">            MsgBox(StatusString, mbError, MB_OK);</span><br><span class="line">            Result := False;</span><br><span class="line">        <span class="keyword">end</span> <span class="keyword">else</span> <span class="keyword">begin</span></span><br><span class="line">            Result := True;</span><br><span class="line">        <span class="keyword">end</span>;</span><br><span class="line">    <span class="keyword">end</span> <span class="keyword">else</span> <span class="keyword">begin</span></span><br><span class="line">        MsgBox(<span class="string">'Database update failed:'</span><span class="string">#10#10</span> + SysErrorMessage(ResultCode), mbError, MB_OK);</span><br><span class="line">        Result := False;</span><br><span class="line">    <span class="keyword">end</span>;</span><br><span class="line"><span class="keyword">end</span>;</span><br></pre></td></tr></table></figure>
+
+<p>Oracle的客户端太大，不能集成到安装包中，应使用一个<strong>TInputFileWizardPage</strong>由用户选择sqlplus.exe的安装位置。同时，由于sqlplus.exe也没有输出结果到文件的参数，也须使用cmd.exe来运行它并重定向输出到文件。此外，由于sqlplus.exe执行脚本时无论成功还是失败，都会输出信息，故无法像使用sqlcmd.exe和mysql.exe那样简单地判断脚本是否执行成功，需要在脚本的最后通过select语句输出一个特殊的字符串到文件中，然后通过判断dbstatus.txt中是否存在该字符串来判断脚本的执行情况；且由于sqlplus.exe执行完脚本后不会自动退出，还要在脚本最后加上exit语句；故<strong>script_oracle.sql</strong>的最后必须是如下内容：</p>
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="string">'holytail'</span> <span class="keyword">FROM</span> dual;</span><br><span class="line">exit;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-freearc" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -100,7 +185,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/freearc/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/freearc/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -178,7 +263,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/howto-create-ssl-certificates/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/howto-create-ssl-certificates/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -329,7 +414,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/phpjs/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/phpjs/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -404,7 +489,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/syntax-checking-and-code-executing-in-vim/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/syntax-checking-and-code-executing-in-vim/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -510,7 +595,7 @@ PyFlakes本身是个通用的工具，其作者提供了一个Vim的插件调用
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/buuf-deuce-icon-theme/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/buuf-deuce-icon-theme/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -570,7 +655,7 @@ PyFlakes本身是个通用的工具，其作者提供了一个Vim的插件调用
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/problem-about-icon-theme-on-gnome230/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/problem-about-icon-theme-on-gnome230/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -647,7 +732,7 @@ PyFlakes本身是个通用的工具，其作者提供了一个Vim的插件调用
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/phpsh/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/phpsh/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -714,7 +799,7 @@ PyFlakes本身是个通用的工具，其作者提供了一个Vim的插件调用
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/cx-freeze/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/cx-freeze/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -803,7 +888,7 @@ PyFlakes本身是个通用的工具，其作者提供了一个Vim的插件调用
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/starting-tea-ceremony/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/starting-tea-ceremony/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -833,81 +918,8 @@ PyFlakes本身是个通用的工具，其作者提供了一个Vim的插件调用
 
 
     
-      <article id="post-counting-days-between-dates-in-sqlserver" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/counting-days-between-dates-in-sqlserver/"><strong>SQL Server的自定义函数：统计两日期之间工作日的数量</strong></a>
-      <small class="article-date-index">&nbsp; 2010-03-13</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/counting-days-between-dates-in-sqlserver/" class="article-date">
-  <time datetime="2010-03-12T16:00:00.000Z" itemprop="datePublished">2010-03-13</time>
-</a>-->
-      <!--
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/counting-days-between-dates-in-sqlserver/#disqus_thread" class="article-comment-link">Комментарии</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>前段时间工作中遇到的一个需求，要求计算两个日期之间工作日的数量，即排除期间所有的周六和周日之后的天数。</p>
-
-<p>在网上找到一个自定义函数，原函数有些小问题，例如如果传入的截止日期如果有时间且足够大，则计算结果可能出错，修正后代码如下：</p>
-
-<p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">--函数：类似datediff，不统计期间所有的周六和周日</span></span><br><span class="line">if exists (<span class="keyword">select</span> * <span class="keyword">from</span> dbo.sysobjects <span class="keyword">where</span> <span class="keyword">id</span>=object_id(N<span class="string">'[dbo].[f_WorkDay]'</span>) <span class="keyword">and</span> xtype <span class="keyword">in</span> (N<span class="string">'FN'</span>,N<span class="string">'IF'</span>,N<span class="string">'TF'</span>)) </span><br><span class="line"><span class="keyword">drop</span> <span class="keyword">function</span> [dbo].[f_WorkDay] </span><br><span class="line"><span class="keyword">GO</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">FUNCTION</span> f_WorkDay(</span><br><span class="line">@dt_begin   datetime,</span><br><span class="line">@dt_end     datetime </span><br><span class="line">)<span class="keyword">RETURNS</span> <span class="built_in">int</span> </span><br><span class="line"><span class="keyword">AS</span> </span><br><span class="line"><span class="keyword">BEGIN</span> </span><br><span class="line">    <span class="keyword">DECLARE</span> @workday <span class="built_in">int</span>,@i <span class="built_in">int</span>,@bz <span class="built_in">bit</span>,@dt datetime </span><br><span class="line"></span><br><span class="line">    <span class="keyword">set</span> @dt_begin = <span class="keyword">convert</span>(datetime, <span class="keyword">convert</span>(<span class="keyword">nvarchar</span>(<span class="number">32</span>), @dt_begin, <span class="number">23</span>))</span><br><span class="line">    <span class="keyword">set</span> @dt_end = <span class="keyword">convert</span>(datetime, <span class="keyword">convert</span>(<span class="keyword">nvarchar</span>(<span class="number">32</span>), @dt_end, <span class="number">23</span>))    </span><br><span class="line"></span><br><span class="line">    <span class="keyword">IF</span> @dt_begin&gt;@dt_end </span><br><span class="line">        <span class="keyword">SELECT</span> @bz=<span class="number">1</span>,@dt=@dt_begin,@dt_begin=@dt_end,@dt_end=@dt </span><br><span class="line">    <span class="keyword">ELSE</span> </span><br><span class="line">        <span class="keyword">SET</span> @bz=<span class="number">0</span> </span><br><span class="line"></span><br><span class="line">    <span class="keyword">SELECT</span> @i=<span class="keyword">DATEDIFF</span>(<span class="keyword">Day</span>,@dt_begin,@dt_end),@workday=@i/<span class="number">7</span>*<span class="number">5</span>,@dt_begin=<span class="keyword">DATEADD</span>(<span class="keyword">Day</span>,@i/<span class="number">7</span>*<span class="number">7</span>,@dt_begin) </span><br><span class="line"></span><br><span class="line">    <span class="keyword">WHILE</span> @dt_begin&lt;@dt_end </span><br><span class="line">    <span class="keyword">BEGIN</span> </span><br><span class="line">        <span class="keyword">SELECT</span> @workday=<span class="keyword">CASE</span> <span class="keyword">WHEN</span> (@@DATEFIRST+<span class="keyword">DATEPART</span>(<span class="keyword">Weekday</span>,@dt_begin)<span class="number">-1</span>)%<span class="number">7</span> <span class="keyword">BETWEEN</span> <span class="number">1</span> <span class="keyword">AND</span> <span class="number">5</span> <span class="keyword">THEN</span> @workday+<span class="number">1</span> <span class="keyword">ELSE</span> @workday <span class="keyword">END</span>,@dt_begin=@dt_begin+<span class="number">1</span> </span><br><span class="line">    <span class="keyword">END</span> </span><br><span class="line"></span><br><span class="line">    <span class="keyword">RETURN</span>(<span class="keyword">CASE</span> <span class="keyword">WHEN</span> @bz=<span class="number">1</span> <span class="keyword">THEN</span> -@workday <span class="keyword">ELSE</span> @workday <span class="keyword">END</span>) </span><br><span class="line"><span class="keyword">END</span> </span><br><span class="line"><span class="keyword">GO</span></span><br></pre></td></tr></table></figure>
-</p>
-
-<p>此函数的原理是，使用datediff计算两日期之间的差值A，然后取A与7的商，即计算期间内有几个整周。然后使用这个商与5相乘，得到所有整周内的工作日天数B。接着，使用A除以7再乘以7得到C，这就约去了A中最后不到一个整周的天数。再在起始日期的基础上加上C，得到一个新的起始日期，然后从这个新的起始日期开始遍历至截止日期的每一天，每增加一天，判断若此日期是工作日，则在C的基础上累加一。判断一个日期（假设使用@dt_begin表示）是否是工作日的方法是：<strong>(@@datefirst+datepart(Weekday, @dt_begin)-1)%7</strong>的值在1和5之间。</p>
-
-<p>此外还有一个需求是计算两个日期之间排除最后一个周六周日后的天数，仿照上面的函数实现了一个新函数，现在想来，有点儿把问题复杂化了，完全可以直接从后往前推的。</p>
-
-<p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">--函数：类似datediff，不统计截止日期@dt_end前最近一次的周六和周日，若dt_end是周日，则不统计其前面的那个周六。</span></span><br><span class="line">if exists (<span class="keyword">select</span> * <span class="keyword">from</span> dbo.sysobjects <span class="keyword">where</span> <span class="keyword">id</span>=object_id(N<span class="string">'[dbo].[f_WorkDayOnce]'</span>) <span class="keyword">and</span> xtype <span class="keyword">in</span> (N<span class="string">'FN'</span>,N<span class="string">'IF'</span>,N<span class="string">'TF'</span>)) </span><br><span class="line"><span class="keyword">drop</span> <span class="keyword">function</span> [dbo].[f_WorkDayOnce]</span><br><span class="line"><span class="keyword">GO</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">FUNCTION</span> f_WorkDayOnce(</span><br><span class="line">@dt_begin   datetime,</span><br><span class="line">@dt_end     datetime </span><br><span class="line">)<span class="keyword">RETURNS</span> <span class="built_in">int</span> </span><br><span class="line"><span class="keyword">AS</span> </span><br><span class="line"><span class="keyword">BEGIN</span> </span><br><span class="line">    <span class="keyword">DECLARE</span> @day_count <span class="built_in">int</span>,@<span class="keyword">weekday</span> <span class="built_in">int</span>,@weekend_dropped <span class="built_in">int</span>,@i <span class="built_in">int</span>,@bz <span class="built_in">bit</span>,@dt datetime </span><br><span class="line"></span><br><span class="line">    <span class="keyword">set</span> @dt_begin = <span class="keyword">convert</span>(datetime, <span class="keyword">convert</span>(<span class="keyword">nvarchar</span>(<span class="number">32</span>), @dt_begin, <span class="number">23</span>))</span><br><span class="line">    <span class="keyword">set</span> @dt_end = <span class="keyword">convert</span>(datetime, <span class="keyword">convert</span>(<span class="keyword">nvarchar</span>(<span class="number">32</span>), @dt_end, <span class="number">23</span>))    </span><br><span class="line"></span><br><span class="line">    <span class="keyword">IF</span> @dt_begin&gt;@dt_end </span><br><span class="line">        <span class="keyword">SELECT</span> @bz=<span class="number">1</span>,@dt=@dt_begin,@dt_begin=@dt_end,@dt_end=@dt </span><br><span class="line">    <span class="keyword">ELSE</span> </span><br><span class="line">        <span class="keyword">SET</span> @bz=<span class="number">0</span> </span><br><span class="line"></span><br><span class="line">    <span class="keyword">SELECT</span> @i=<span class="keyword">DATEDIFF</span>(<span class="keyword">Day</span>,@dt_begin,@dt_end),@<span class="keyword">weekday</span>=(@@datefirst+<span class="keyword">datepart</span>(<span class="keyword">weekday</span>,@dt_end)<span class="number">-1</span>)%<span class="number">7</span>,@day_count=@i,@weekend_dropped=<span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> @i=<span class="number">0</span></span><br><span class="line">        <span class="keyword">set</span> @day_count=<span class="number">0</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    <span class="keyword">begin</span></span><br><span class="line">        <span class="keyword">if</span> @<span class="keyword">weekday</span>=<span class="number">0</span></span><br><span class="line">            <span class="keyword">set</span> @day_count=@i<span class="number">-1</span></span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">begin</span></span><br><span class="line">            <span class="keyword">while</span> @dt_begin&lt;@dt_end <span class="keyword">and</span> @weekend_dropped&lt;<span class="number">2</span></span><br><span class="line">            <span class="keyword">begin</span></span><br><span class="line">                <span class="keyword">select</span> @weekend_dropped=@weekend_dropped+(<span class="keyword">case</span> <span class="keyword">when</span> (@@datefirst+<span class="keyword">datepart</span>(<span class="keyword">weekday</span>,@dt_begin)<span class="number">-1</span>)%<span class="number">7</span> <span class="keyword">between</span> <span class="number">1</span> <span class="keyword">and</span> <span class="number">5</span> <span class="keyword">then</span> <span class="number">0</span> <span class="keyword">else</span> <span class="number">1</span> <span class="keyword">end</span>),@dt_begin=@dt_begin+<span class="number">1</span></span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">            <span class="keyword">select</span> @day_count=@day_count-@weekend_dropped</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">RETURN</span>(<span class="keyword">CASE</span> <span class="keyword">WHEN</span> @bz=<span class="number">1</span> <span class="keyword">THEN</span> -@day_count <span class="keyword">ELSE</span> @day_count <span class="keyword">END</span>) </span><br><span class="line"><span class="keyword">END</span> </span><br><span class="line"><span class="keyword">GO</span></span><br></pre></td></tr></table></figure>
-</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
       <nav id="page-nav">
-        <a class="extend prev" rel="prev" href="/page/37/">&laquo; Назад</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/36/">36</a><a class="page-number" href="/page/37/">37</a><span class="page-number current">38</span><a class="page-number" href="/page/39/">39</a><a class="page-number" href="/page/40/">40</a><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/39/">Далее &raquo;</a>
+        <a class="extend prev" rel="prev" href="/page/37/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/36/">36</a><a class="page-number" href="/page/37/">37</a><span class="page-number current">38</span><a class="page-number" href="/page/39/">39</a><a class="page-number" href="/page/40/">40</a><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/39/">Next &raquo;</a>
       </nav>
     
 

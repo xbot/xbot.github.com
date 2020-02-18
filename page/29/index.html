@@ -70,6 +70,83 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-nginx-405-not-allowed" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/nginx-405-not-allowed/"><strong>NGINX: 405 Not Allowed</strong></a>
+      <small class="article-date-index">&nbsp; 2012-02-19</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/nginx-405-not-allowed/" class="article-date">
+  <time datetime="2012-02-18T16:00:00.000Z" itemprop="datePublished">2012-02-19</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/nginx-405-not-allowed/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>NGINX不允许向静态文件提交POST方式的请求，否则报405错误。测试方法为，使用curl向服务器上的静态文件提交POST请求：</p>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -d 1=1 http://localhost/version.txt</span><br></pre></td></tr></table></figure>
+
+得到以下结果：
+
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span><span class="tag">&lt;<span class="name">title</span>&gt;</span>405 Not Allowed<span class="tag">&lt;/<span class="name">title</span>&gt;</span><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">bgcolor</span>=<span class="string">"white"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">center</span>&gt;</span><span class="tag">&lt;<span class="name">h1</span>&gt;</span>405 Not Allowed<span class="tag">&lt;/<span class="name">h1</span>&gt;</span><span class="tag">&lt;/<span class="name">center</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">hr</span>&gt;</span><span class="tag">&lt;<span class="name">center</span>&gt;</span>nginx/1.0.11<span class="tag">&lt;/<span class="name">center</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>网上传抄的添加以下配置的解决办法不可用：</p>
+
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">error_page</span> <span class="number">405</span> =<span class="number">200</span> @<span class="number">405</span>;</span><br><span class="line"><span class="attribute">location</span> @<span class="number">405</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="attribute">root</span> /srv/http;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>一种不完美但可用的方法为：</p>
+
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">upstream</span> static_backend &#123;</span><br><span class="line">    <span class="attribute">server</span> localhost:<span class="number">80</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line"></span><br><span class="line">    <span class="attribute">error_page</span> <span class="number">405</span> =<span class="number">200</span> @<span class="number">405</span>;</span><br><span class="line">    <span class="attribute">location</span> @<span class="number">405</span> &#123;</span><br><span class="line">        <span class="attribute">root</span> /srv/http;</span><br><span class="line">        <span class="attribute">proxy_method</span> GET;</span><br><span class="line">        <span class="attribute">proxy_pass</span> http://static_backend;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>即转换静态文件接收的POST请求到GET方式。</p>
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-how-to-disable-bluetooth-after-login-to-xfce" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -100,7 +177,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/how-to-disable-bluetooth-after-login-to-xfce/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/how-to-disable-bluetooth-after-login-to-xfce/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -173,7 +250,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/enable-the-new-domain-name-0x3f-org/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/enable-the-new-domain-name-0x3f-org/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -244,7 +321,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/after-reading-three-body/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/after-reading-three-body/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -309,7 +386,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/after-reading-hacking-vim72/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/after-reading-hacking-vim72/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -372,7 +449,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/highlighting-paired-html-tags-using-matchtag-vim/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/highlighting-paired-html-tags-using-matchtag-vim/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -435,7 +512,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/after-reading-pro-git/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/after-reading-pro-git/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -500,7 +577,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/yyets-torrents-download-script/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/yyets-torrents-download-script/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -598,7 +675,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/ultrablog-v310-released/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/ultrablog-v310-released/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -684,7 +761,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/double-commander/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/double-commander/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -767,86 +844,8 @@ ga('send', 'pageview');
 
 
     
-      <article id="post-enable-code-snippet-highlighting-for-ultrablog-vim-templates" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/enable-code-snippet-highlighting-for-ultrablog-vim-templates/"><strong>Enable Code Snippet Highlighting For UltraBlog.vim Templates</strong></a>
-      <small class="article-date-index">&nbsp; 2011-08-27</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/enable-code-snippet-highlighting-for-ultrablog-vim-templates/" class="article-date">
-  <time datetime="2011-08-26T16:00:00.000Z" itemprop="datePublished">2011-08-27</time>
-</a>-->
-      <!--
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/enable-code-snippet-highlighting-for-ultrablog-vim-templates/#disqus_thread" class="article-comment-link">Комментарии</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Templates make it possible for users previewing posts in custom formats in <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>. However, there is more you can do with our highly customizable templates. This article discusses how to highlight code snippets in posts by the use of some third-party open-source tools.</p>
-
-<p>Before setting out to work, let me introduce the tools we are about to use:</p>
-
-<ul>
-<li><a href="http://softwaremaniacs.org/soft/highlight/en/" target="_blank" rel="noopener">highlight.js</a>: A javascript library which highlights code blocks in web pages automatically.</li>
-<li><a href="http://jquery.com/" target="_blank" rel="noopener">jquery</a>: The famous RIA development javascript library.</li>
-</ul>
-
-<p>Download the upper two libraries and put them under any folder accessible to your webbrowser, in my case, it is <strong>/home/lenin/.vim/bundle/ultrablog/vendor/</strong>.</p>
-
-<p>Then open UltraBlog.vim and edit the template you are using, put the following lines in the <code>&lt;head&gt;...&lt;/head&gt;</code> area:</p>
-
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">href</span>=<span class="string">"/home/lenin/.vim/bundle/ultrablog/vendor/highlight/styles/default.css"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"/home/lenin/.vim/bundle/ultrablog/vendor/highlight/highlight.pack.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"/home/lenin/.vim/bundle/ultrablog/vendor/jquery.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="javascript">$(<span class="built_in">document</span>).ready(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span></span><br><span class="line"><span class="javascript">    $(<span class="string">'pre'</span>).each(<span class="function"><span class="keyword">function</span>(<span class="params">i, e</span>)</span>&#123;</span></span><br><span class="line"><span class="javascript">        <span class="keyword">if</span>(<span class="keyword">typeof</span> e.lang != <span class="string">'undefined'</span>)</span></span><br><span class="line"><span class="undefined">            e.className = e.lang;</span></span><br><span class="line"><span class="javascript">        hljs.highlightBlock(e, <span class="string">'    '</span>);</span></span><br><span class="line"><span class="undefined">    &#125;);</span></span><br><span class="line"><span class="undefined">&#125;);</span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>If you are using the default template UltraBlog.vim supplies, change <strong>.title</strong> to <strong>.postTitle</strong> in the pre-defined <code>&lt;style&gt;...&lt;/style&gt;</code> area, and change the class name of the div element in the <code>&lt;body&gt;...&lt;/body&gt;</code> area from <strong>title</strong> to <strong>postTitle</strong>, that is because this class name is also used by highlight.js.</p>
-
-<p>An important point, the jquery selector I used in the code snippet above selects every <code>&lt;pre&gt;...&lt;/pre&gt;</code> element and copies the value of its attribute <strong>lang</strong> to <strong>class</strong>. This is specified for the wordpress plugin <a href="http://wordpress.org/extend/plugins/wp-syntax/" target="_blank" rel="noopener">wp-syntax</a> I use. If you use another syntax highlighting tool which uses different markup for code blocks, you should modify the code above to make highlight.js find code blocks correctly.</p>
-
-<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
       <nav id="page-nav">
-        <a class="extend prev" rel="prev" href="/page/28/">&laquo; Назад</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/27/">27</a><a class="page-number" href="/page/28/">28</a><span class="page-number current">29</span><a class="page-number" href="/page/30/">30</a><a class="page-number" href="/page/31/">31</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/30/">Далее &raquo;</a>
+        <a class="extend prev" rel="prev" href="/page/28/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/27/">27</a><a class="page-number" href="/page/28/">28</a><span class="page-number current">29</span><a class="page-number" href="/page/30/">30</a><a class="page-number" href="/page/31/">31</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/30/">Next &raquo;</a>
       </nav>
     
 

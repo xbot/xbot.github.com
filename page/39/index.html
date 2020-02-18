@@ -70,6 +70,79 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-counting-days-between-dates-in-sqlserver" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/counting-days-between-dates-in-sqlserver/"><strong>SQL Server的自定义函数：统计两日期之间工作日的数量</strong></a>
+      <small class="article-date-index">&nbsp; 2010-03-13</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/counting-days-between-dates-in-sqlserver/" class="article-date">
+  <time datetime="2010-03-12T16:00:00.000Z" itemprop="datePublished">2010-03-13</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/counting-days-between-dates-in-sqlserver/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>前段时间工作中遇到的一个需求，要求计算两个日期之间工作日的数量，即排除期间所有的周六和周日之后的天数。</p>
+
+<p>在网上找到一个自定义函数，原函数有些小问题，例如如果传入的截止日期如果有时间且足够大，则计算结果可能出错，修正后代码如下：</p>
+
+<p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">--函数：类似datediff，不统计期间所有的周六和周日</span></span><br><span class="line">if exists (<span class="keyword">select</span> * <span class="keyword">from</span> dbo.sysobjects <span class="keyword">where</span> <span class="keyword">id</span>=object_id(N<span class="string">'[dbo].[f_WorkDay]'</span>) <span class="keyword">and</span> xtype <span class="keyword">in</span> (N<span class="string">'FN'</span>,N<span class="string">'IF'</span>,N<span class="string">'TF'</span>)) </span><br><span class="line"><span class="keyword">drop</span> <span class="keyword">function</span> [dbo].[f_WorkDay] </span><br><span class="line"><span class="keyword">GO</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">FUNCTION</span> f_WorkDay(</span><br><span class="line">@dt_begin   datetime,</span><br><span class="line">@dt_end     datetime </span><br><span class="line">)<span class="keyword">RETURNS</span> <span class="built_in">int</span> </span><br><span class="line"><span class="keyword">AS</span> </span><br><span class="line"><span class="keyword">BEGIN</span> </span><br><span class="line">    <span class="keyword">DECLARE</span> @workday <span class="built_in">int</span>,@i <span class="built_in">int</span>,@bz <span class="built_in">bit</span>,@dt datetime </span><br><span class="line"></span><br><span class="line">    <span class="keyword">set</span> @dt_begin = <span class="keyword">convert</span>(datetime, <span class="keyword">convert</span>(<span class="keyword">nvarchar</span>(<span class="number">32</span>), @dt_begin, <span class="number">23</span>))</span><br><span class="line">    <span class="keyword">set</span> @dt_end = <span class="keyword">convert</span>(datetime, <span class="keyword">convert</span>(<span class="keyword">nvarchar</span>(<span class="number">32</span>), @dt_end, <span class="number">23</span>))    </span><br><span class="line"></span><br><span class="line">    <span class="keyword">IF</span> @dt_begin&gt;@dt_end </span><br><span class="line">        <span class="keyword">SELECT</span> @bz=<span class="number">1</span>,@dt=@dt_begin,@dt_begin=@dt_end,@dt_end=@dt </span><br><span class="line">    <span class="keyword">ELSE</span> </span><br><span class="line">        <span class="keyword">SET</span> @bz=<span class="number">0</span> </span><br><span class="line"></span><br><span class="line">    <span class="keyword">SELECT</span> @i=<span class="keyword">DATEDIFF</span>(<span class="keyword">Day</span>,@dt_begin,@dt_end),@workday=@i/<span class="number">7</span>*<span class="number">5</span>,@dt_begin=<span class="keyword">DATEADD</span>(<span class="keyword">Day</span>,@i/<span class="number">7</span>*<span class="number">7</span>,@dt_begin) </span><br><span class="line"></span><br><span class="line">    <span class="keyword">WHILE</span> @dt_begin&lt;@dt_end </span><br><span class="line">    <span class="keyword">BEGIN</span> </span><br><span class="line">        <span class="keyword">SELECT</span> @workday=<span class="keyword">CASE</span> <span class="keyword">WHEN</span> (@@DATEFIRST+<span class="keyword">DATEPART</span>(<span class="keyword">Weekday</span>,@dt_begin)<span class="number">-1</span>)%<span class="number">7</span> <span class="keyword">BETWEEN</span> <span class="number">1</span> <span class="keyword">AND</span> <span class="number">5</span> <span class="keyword">THEN</span> @workday+<span class="number">1</span> <span class="keyword">ELSE</span> @workday <span class="keyword">END</span>,@dt_begin=@dt_begin+<span class="number">1</span> </span><br><span class="line">    <span class="keyword">END</span> </span><br><span class="line"></span><br><span class="line">    <span class="keyword">RETURN</span>(<span class="keyword">CASE</span> <span class="keyword">WHEN</span> @bz=<span class="number">1</span> <span class="keyword">THEN</span> -@workday <span class="keyword">ELSE</span> @workday <span class="keyword">END</span>) </span><br><span class="line"><span class="keyword">END</span> </span><br><span class="line"><span class="keyword">GO</span></span><br></pre></td></tr></table></figure>
+</p>
+
+<p>此函数的原理是，使用datediff计算两日期之间的差值A，然后取A与7的商，即计算期间内有几个整周。然后使用这个商与5相乘，得到所有整周内的工作日天数B。接着，使用A除以7再乘以7得到C，这就约去了A中最后不到一个整周的天数。再在起始日期的基础上加上C，得到一个新的起始日期，然后从这个新的起始日期开始遍历至截止日期的每一天，每增加一天，判断若此日期是工作日，则在C的基础上累加一。判断一个日期（假设使用@dt_begin表示）是否是工作日的方法是：<strong>(@@datefirst+datepart(Weekday, @dt_begin)-1)%7</strong>的值在1和5之间。</p>
+
+<p>此外还有一个需求是计算两个日期之间排除最后一个周六周日后的天数，仿照上面的函数实现了一个新函数，现在想来，有点儿把问题复杂化了，完全可以直接从后往前推的。</p>
+
+<p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">--函数：类似datediff，不统计截止日期@dt_end前最近一次的周六和周日，若dt_end是周日，则不统计其前面的那个周六。</span></span><br><span class="line">if exists (<span class="keyword">select</span> * <span class="keyword">from</span> dbo.sysobjects <span class="keyword">where</span> <span class="keyword">id</span>=object_id(N<span class="string">'[dbo].[f_WorkDayOnce]'</span>) <span class="keyword">and</span> xtype <span class="keyword">in</span> (N<span class="string">'FN'</span>,N<span class="string">'IF'</span>,N<span class="string">'TF'</span>)) </span><br><span class="line"><span class="keyword">drop</span> <span class="keyword">function</span> [dbo].[f_WorkDayOnce]</span><br><span class="line"><span class="keyword">GO</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">FUNCTION</span> f_WorkDayOnce(</span><br><span class="line">@dt_begin   datetime,</span><br><span class="line">@dt_end     datetime </span><br><span class="line">)<span class="keyword">RETURNS</span> <span class="built_in">int</span> </span><br><span class="line"><span class="keyword">AS</span> </span><br><span class="line"><span class="keyword">BEGIN</span> </span><br><span class="line">    <span class="keyword">DECLARE</span> @day_count <span class="built_in">int</span>,@<span class="keyword">weekday</span> <span class="built_in">int</span>,@weekend_dropped <span class="built_in">int</span>,@i <span class="built_in">int</span>,@bz <span class="built_in">bit</span>,@dt datetime </span><br><span class="line"></span><br><span class="line">    <span class="keyword">set</span> @dt_begin = <span class="keyword">convert</span>(datetime, <span class="keyword">convert</span>(<span class="keyword">nvarchar</span>(<span class="number">32</span>), @dt_begin, <span class="number">23</span>))</span><br><span class="line">    <span class="keyword">set</span> @dt_end = <span class="keyword">convert</span>(datetime, <span class="keyword">convert</span>(<span class="keyword">nvarchar</span>(<span class="number">32</span>), @dt_end, <span class="number">23</span>))    </span><br><span class="line"></span><br><span class="line">    <span class="keyword">IF</span> @dt_begin&gt;@dt_end </span><br><span class="line">        <span class="keyword">SELECT</span> @bz=<span class="number">1</span>,@dt=@dt_begin,@dt_begin=@dt_end,@dt_end=@dt </span><br><span class="line">    <span class="keyword">ELSE</span> </span><br><span class="line">        <span class="keyword">SET</span> @bz=<span class="number">0</span> </span><br><span class="line"></span><br><span class="line">    <span class="keyword">SELECT</span> @i=<span class="keyword">DATEDIFF</span>(<span class="keyword">Day</span>,@dt_begin,@dt_end),@<span class="keyword">weekday</span>=(@@datefirst+<span class="keyword">datepart</span>(<span class="keyword">weekday</span>,@dt_end)<span class="number">-1</span>)%<span class="number">7</span>,@day_count=@i,@weekend_dropped=<span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> @i=<span class="number">0</span></span><br><span class="line">        <span class="keyword">set</span> @day_count=<span class="number">0</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    <span class="keyword">begin</span></span><br><span class="line">        <span class="keyword">if</span> @<span class="keyword">weekday</span>=<span class="number">0</span></span><br><span class="line">            <span class="keyword">set</span> @day_count=@i<span class="number">-1</span></span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">begin</span></span><br><span class="line">            <span class="keyword">while</span> @dt_begin&lt;@dt_end <span class="keyword">and</span> @weekend_dropped&lt;<span class="number">2</span></span><br><span class="line">            <span class="keyword">begin</span></span><br><span class="line">                <span class="keyword">select</span> @weekend_dropped=@weekend_dropped+(<span class="keyword">case</span> <span class="keyword">when</span> (@@datefirst+<span class="keyword">datepart</span>(<span class="keyword">weekday</span>,@dt_begin)<span class="number">-1</span>)%<span class="number">7</span> <span class="keyword">between</span> <span class="number">1</span> <span class="keyword">and</span> <span class="number">5</span> <span class="keyword">then</span> <span class="number">0</span> <span class="keyword">else</span> <span class="number">1</span> <span class="keyword">end</span>),@dt_begin=@dt_begin+<span class="number">1</span></span><br><span class="line">            <span class="keyword">end</span></span><br><span class="line">            <span class="keyword">select</span> @day_count=@day_count-@weekend_dropped</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">RETURN</span>(<span class="keyword">CASE</span> <span class="keyword">WHEN</span> @bz=<span class="number">1</span> <span class="keyword">THEN</span> -@day_count <span class="keyword">ELSE</span> @day_count <span class="keyword">END</span>) </span><br><span class="line"><span class="keyword">END</span> </span><br><span class="line"><span class="keyword">GO</span></span><br></pre></td></tr></table></figure>
+</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-supernatural-phenomenon-of-controlling-external-processes-in-python" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -100,7 +173,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/supernatural-phenomenon-of-controlling-external-processes-in-python/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/supernatural-phenomenon-of-controlling-external-processes-in-python/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -211,7 +284,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/neocomplcache-vim/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/neocomplcache-vim/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -302,7 +375,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/chinese-problem-of-sqlalchemy-with-sqlserver/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/chinese-problem-of-sqlalchemy-with-sqlserver/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -433,7 +506,7 @@ DB模块：pyodbc
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/switching-from-ums-to-kms/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/switching-from-ums-to-kms/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -510,7 +583,7 @@ DB模块：pyodbc
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/too-many-echoes-may-crash-php/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/too-many-echoes-may-crash-php/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -572,7 +645,7 @@ DB模块：pyodbc
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/virtualbox-host-interface/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/virtualbox-host-interface/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -657,7 +730,7 @@ DB模块：pyodbc
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/cube-is-back/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/cube-is-back/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -729,7 +802,7 @@ DB模块：pyodbc
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/fullscreen-for-gvim-on-windows/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/fullscreen-for-gvim-on-windows/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -800,7 +873,7 @@ DB模块：pyodbc
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/project-euler-11/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/project-euler-11/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -866,110 +939,8 @@ DB模块：pyodbc
 
 
     
-      <article id="post-true-transparent-of-rxvt-unicode" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/true-transparent-of-rxvt-unicode/"><strong>rxvt-unicode的真透明</strong></a>
-      <small class="article-date-index">&nbsp; 2009-02-28</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/true-transparent-of-rxvt-unicode/" class="article-date">
-  <time datetime="2009-02-27T16:00:00.000Z" itemprop="datePublished">2009-02-28</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/true-transparent-of-rxvt-unicode/#disqus_thread" class="article-comment-link">Комментарии</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <div class="illustration_right">
-<a href="http://picasaweb.google.com/lh/photo/J2FyvgBhXopEgPlX9whJ3w?feat=embedwebsite" target="_blank" rel="noopener"><img src="http://lh5.ggpht.com/_ceUJ_lBTHzc/Saghr1cRaoI/AAAAAAAAA0o/fye5JZl3Pxc/s288/2009-02-28-012206_1280x800_scrot.png"></a>
-</div>
-
-<p>nacre同学说，urxvt是可以实现真透明的。起初我以为是要用<a href="http://www.forchheimer.se/transset-df/" target="_blank" rel="noopener">transset-df</a>来实现，但这个东西一般需要手动操作，不具有太大的实用性，而且会把整个窗口透明化。不过后来发现真的不需要用它来画蛇添足，有<a href="http://wiki.archlinux.org/index.php/Xcompmgr" target="_blank" rel="noopener">xcompmgr</a>足矣。</p>
-
-<p>因为我用<a href="http://en.wikipedia.org/wiki/Openbox" target="_blank" rel="noopener">openbox</a>，要实现窗口的阴影和动画效果，xcompmgr是必须的，我把它设成了开机自启动。比起xcompmgr默认的参数值，下面这条定制的命令实现了简洁的阴影和合理的渐隐渐显时间，因此提供了一个各方面都比较均衡、合理的桌面体验：</p>
-
-<blockquote>
-  <p>xcompmgr -Ss -n -Cc -fF -I-10 -O-10 -D1 -t-3 -l-4 -r4</p>
-</blockquote>
-
-<p>然后在.Xresources中添加以下两行：</p>
-
-<blockquote>
-  <p>URxvt.depth:32
-  URxvt.background:rgba:0000/0000/0000/dddd</p>
-</blockquote>
-
-<p>最后当然要执行一下：</p>
-
-<blockquote>
-  <p>xrdb ~/.Xresources</p>
-</blockquote>
-
-<p>此后直接启动urxvt即可。</p>
-
-<p>这里面最有意思的就是background项的配置，它有两种形式，一种是：</p>
-
-<blockquote>
-  <p>URxvt.background:[80]black</p>
-</blockquote>
-
-<p>还有一种就是前面提到的形式。</p>
-
-<p>第一种形式中，中括号里的数字表示半透明度对应的百分比，括号外是颜色名称；第二种形式提供了比第一种更多的色彩选择，四组数字都是十六进制数，前三组是RGB颜色值，最后一组是半透明度，数值越大，透明度越低。</p>
-
-<p>在查阅“man urxvt”的时候，发现urxvt的man pages里的内容真是异常丰富，大部分功能都讲解得言简意赅。以往还抱怨这个东西在网上连个健全的文档都找不到，原来全在这儿呢，真不知道以往无数次地man的时候为什么没有注意到这些，难道man了rxvt了？</p>
-
-<p><em>PS：这样实现urxvt的真半透明后，貌似xcompmgr实现的阴影在urxvt身上就消失了，求解中……</em></p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
       <nav id="page-nav">
-        <a class="extend prev" rel="prev" href="/page/38/">&laquo; Назад</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/37/">37</a><a class="page-number" href="/page/38/">38</a><span class="page-number current">39</span><a class="page-number" href="/page/40/">40</a><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/40/">Далее &raquo;</a>
+        <a class="extend prev" rel="prev" href="/page/38/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/37/">37</a><a class="page-number" href="/page/38/">38</a><span class="page-number current">39</span><a class="page-number" href="/page/40/">40</a><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/40/">Next &raquo;</a>
       </nav>
     
 

@@ -70,6 +70,75 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-fulltext-searching-in-mysql" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/fulltext-searching-in-mysql/"><strong>用MySQL的全文检索实现相关性排序</strong></a>
+      <small class="article-date-index">&nbsp; 2017-06-19</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/fulltext-searching-in-mysql/" class="article-date">
+  <time datetime="2017-06-19T15:10:41.000Z" itemprop="datePublished">2017-06-19</time>
+</a>-->
+      <!--
+  <div class="article-category-index">
+    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/fulltext-searching-in-mysql/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>实现根据文章的关键词搜索出相关的文章，并按相关性排序。</p>
+<p>数据库版本是5.6.x，还不能像5.7那样支持中文的全文检索，所以另外创建一列保存关键词的编码。方法为base64转码并去掉「%」符号：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 转换关键词到全文检索的格式</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span>   mixed $keywords 关键词数组或英文逗号分隔的字符串</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span>  string</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">encode_keywords</span><span class="params">($keywords)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $encoder = <span class="function"><span class="keyword">function</span> <span class="params">($keyword)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> str_replace(<span class="string">'%'</span>, <span class="string">''</span>, urlencode(trim($keyword)));</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">if</span> (!is_array($keywords)) &#123;</span><br><span class="line">        $keywords = explode(<span class="string">','</span>, $keywords);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> implode(<span class="string">' '</span>, array_map($encoder, $keywords));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对该列创建全文检索的索引：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> FULLTEXT <span class="keyword">INDEX</span> idx_post_keywords <span class="keyword">ON</span> posts (keywords_ft);</span><br></pre></td></tr></table></figure>
+<p>查询语句：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">    <span class="keyword">id</span>,</span><br><span class="line">    title,</span><br><span class="line">    keywords,</span><br><span class="line">    (<span class="keyword">MATCH</span> (keywords_ft) AGAINST (<span class="string">'E697B6E5B09A E5A8B1E4B990E59C88'</span> <span class="keyword">IN</span> <span class="keyword">NATURAL</span> <span class="keyword">LANGUAGE</span> <span class="keyword">MODE</span>)) <span class="keyword">AS</span> <span class="string">`score`</span></span><br><span class="line"><span class="keyword">FROM</span></span><br><span class="line">    posts</span><br><span class="line"><span class="keyword">WHERE</span></span><br><span class="line">    <span class="keyword">MATCH</span> (keywords_ft) AGAINST (<span class="string">'E697B6E5B09A E5A8B1E4B990E59C88'</span> <span class="keyword">IN</span> <span class="keyword">NATURAL</span> <span class="keyword">LANGUAGE</span> <span class="keyword">MODE</span>)</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> score <span class="keyword">DESC</span></span><br><span class="line"><span class="keyword">LIMIT</span> <span class="number">10</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-copyq" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -104,7 +173,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/copyq/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/copyq/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -180,7 +249,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/solve-the-auto-breaking-problem-of-huawei-e5573s/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/solve-the-auto-breaking-problem-of-huawei-e5573s/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -241,7 +310,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/improve-productivity-with-tmux-control-mode/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/improve-productivity-with-tmux-control-mode/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -305,7 +374,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/switch-hosts-with-switchhosts/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/switch-hosts-with-switchhosts/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -369,7 +438,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/how-to-customize-gvim8-tab-style/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/how-to-customize-gvim8-tab-style/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -436,7 +505,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/the-best-practice-of-checking-in/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/the-best-practice-of-checking-in/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -507,7 +576,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/check-changes-of-webpage-by-comparing-screenshots/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/check-changes-of-webpage-by-comparing-screenshots/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -576,7 +645,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/how-to-count-code-coverage-of-phpunit/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/how-to-count-code-coverage-of-phpunit/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -651,7 +720,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/mock-php-built-in-functions-using-dependency-injection/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/mock-php-built-in-functions-using-dependency-injection/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -689,77 +758,8 @@ ga('send', 'pageview');
 
 
     
-      <article id="post-mock-php-built-in-functions-using-namespace" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/mock-php-built-in-functions-using-namespace/"><strong>利用命名空间Mock PHP的内建函数</strong></a>
-      <small class="article-date-index">&nbsp; 2017-04-30</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/mock-php-built-in-functions-using-namespace/" class="article-date">
-  <time datetime="2017-04-30T01:06:17.000Z" itemprop="datePublished">2017-04-30</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/mock-php-built-in-functions-using-namespace/#disqus_thread" class="article-comment-link">Комментарии</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="简述"><a href="#简述" class="headerlink" title="简述"></a>简述</h2><p>Mock PHP的内建函数一般有两种方法：命名空间法和依赖注入法。</p>
-<p>命名空间法是利用PHP优先使用同命名空间内函数的特性，在测试对象的命名空间内重载内建函数来实现。前提是内建函数在被调用时没有使用命名空间，例如：<code>\debug_backtrace()</code>是不能使用本方法的。</p>
-<p>上篇文章<a href="/post/the-best-practice-of-logging-in-api-programming/">《接口编程中记录日志的最佳实践》</a>中实现的日志类中，核心部分调用了<code>debug_backtrace()</code>函数获取方法调用堆栈。下面讨论下如何利用命名空间法实现对此函数的mock。</p>
-<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>先看代码：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">Ox3f</span>\<span class="title">LaravelUtils</span>\<span class="title">Log</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">PHPUnit</span>\<span class="title">Framework</span>\<span class="title">TestCase</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Support</span>\<span class="title">Facades</span>\<span class="title">Auth</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Support</span>\<span class="title">Facades</span>\<span class="title">Request</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Support</span>\<span class="title">Facades</span>\<span class="title">Log</span> <span class="title">as</span> <span class="title">LaravelLog</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Ox3f</span>\<span class="title">LaravelUtils</span>\<span class="title">Log</span>\<span class="title">Log</span>;</span><br><span class="line"></span><br><span class="line">$calledInController = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">debug_backtrace</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">global</span> $calledInController;</span><br><span class="line">    <span class="keyword">if</span> ($calledInController) &#123;</span><br><span class="line">        <span class="keyword">return</span> json_decode(<span class="string">'[&#123;"file":"\/Users\/xbot\/Sites\/sample-project\/vendor\/xbot\/laravel-utils\/src\/Log\/Log.php","line":85,"function":"parseCallStack","class":"Ox3f\\\LaravelUtils\\\Log\\\Log","object":&#123;&#125;,"type":"-&gt;"&#125;,&#123;"file":"\/Users\/xbot\/Sites\/sample-project\/app\/Api\/V1\/Controllers\/WorkController.php","line":29,"function":"saveInput","class":"Ox3f\\\LaravelUtils\\\Log\\\Log","type":"::"&#125;,&#123;"function":"save","class":"App\\\Api\\\V1\\\Controllers\\\WorkController","object":&#123;&#125;,"type":"-&gt;"&#125;,&#123;"file":"\/Users\/xbot\/Sites\/sample-project\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Controller.php","line":55,"function":"call_user_func_array"&#125;,&#123;"file":"\/Users\/xbot\/Sites\/sample-project\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/ControllerDispatcher.php","line":44,"function":"callAction","class":"Illuminate\\\Routing\\\Controller","object":&#123;&#125;,"type":"-&gt;"&#125;]'</span>, <span class="keyword">true</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> json_decode(<span class="string">'[&#123;"file":"\/Users\/xbot\/Sites\/sample-project\/vendor\/xbot\/laravel-utils\/src\/Log\/Log.php","line":85,"function":"parseCallStack","class":"Ox3f\\\LaravelUtils\\\Log\\\Log","object":&#123;&#125;,"type":"-&gt;"&#125;,&#123;"file":"\/Users\/xbot\/Sites\/sample-project\/app\/Notation.php","line":21,"function":"saveInput","class":"Ox3f\\\LaravelUtils\\\Log\\\Log","type":"::"&#125;,&#123;"file":"\/Users\/xbot\/Sites\/sample-project\/app\/Api\/V1\/Controllers\/NotationController.php","line":32,"function":"incrNo","class":"App\\\Notation","type":"::"&#125;,&#123;"function":"save","class":"App\\\Api\\\V1\\\Controllers\\\NotationController","object":&#123;&#125;,"type":"-&gt;"&#125;,&#123;"file":"\/Users\/xbot\/Sites\/sample-project\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Controller.php","line":55,"function":"call_user_func_array"&#125;]'</span>, <span class="keyword">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LogTest</span> <span class="keyword">extends</span> <span class="title">TestCase</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">setUp</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        Auth::shouldReceive(<span class="string">'user'</span>)</span><br><span class="line">            -&gt;once()</span><br><span class="line">            -&gt;andReturn((object)[<span class="string">'name'</span> =&gt; <span class="string">'jim'</span>,]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@covers</span> Ox3f\LaravelUtils\Log\Log::saveInput</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@covers</span> Ox3f\LaravelUtils\Log\Log::saveOutput</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@covers</span> Ox3f\LaravelUtils\Log\Log::parseCallStack</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@covers</span> Ox3f\LaravelUtils\Log\Log::getInstance</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@covers</span> Ox3f\LaravelUtils\Log\Log::__construct</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@covers</span> Ox3f\LaravelUtils\Log\Log::__callStatic</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">testAll</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">global</span> $calledInController;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// test being called in a plain method</span></span><br><span class="line">        $calledInController = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line">        LaravelLog::shouldReceive(<span class="string">'debug'</span>)</span><br><span class="line">            -&gt;once()</span><br><span class="line">            -&gt;with(<span class="string">'jim | App\Notation::incrNo | Input:1'</span>);</span><br><span class="line"></span><br><span class="line">        Log::saveInput(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">        LaravelLog::shouldReceive(<span class="string">'debug'</span>)</span><br><span class="line">            -&gt;once()</span><br><span class="line">            -&gt;with(<span class="string">'jim | App\Notation::incrNo | Output:2'</span>);</span><br><span class="line"></span><br><span class="line">        Log::saveOutput(<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// test being called in a controller action</span></span><br><span class="line">        $calledInController = <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line">        Request::shouldReceive(<span class="string">'path'</span>)</span><br><span class="line">            -&gt;once()</span><br><span class="line">            -&gt;andReturn(<span class="string">'api/user'</span>);</span><br><span class="line">        Request::shouldReceive(<span class="string">'except'</span>)</span><br><span class="line">            -&gt;once()</span><br><span class="line">            -&gt;with(<span class="string">'_url'</span>)</span><br><span class="line">            -&gt;andReturn([<span class="string">'id'</span> =&gt; <span class="number">18</span>,]);</span><br><span class="line">        LaravelLog::shouldReceive(<span class="string">'debug'</span>)</span><br><span class="line">            -&gt;once()</span><br><span class="line">            -&gt;with(<span class="string">'jim | api/user | Input:&#123;"id":18&#125;'</span>);</span><br><span class="line"></span><br><span class="line">        Log::saveInput();</span><br><span class="line"></span><br><span class="line">        Request::shouldReceive(<span class="string">'path'</span>)</span><br><span class="line">            -&gt;once()</span><br><span class="line">            -&gt;andReturn(<span class="string">'api/user'</span>);</span><br><span class="line">        LaravelLog::shouldReceive(<span class="string">'debug'</span>)</span><br><span class="line">            -&gt;once()</span><br><span class="line">            -&gt;with(<span class="string">'jim | api/user | Output:2'</span>);</span><br><span class="line"></span><br><span class="line">        Log::saveOutput(<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">        Request::shouldReceive(<span class="string">'path'</span>)</span><br><span class="line">            -&gt;once()</span><br><span class="line">            -&gt;andReturn(<span class="string">'api/user'</span>);</span><br><span class="line">        LaravelLog::shouldReceive(<span class="string">'error'</span>)</span><br><span class="line">            -&gt;once()</span><br><span class="line">            -&gt;with(<span class="string">'jim | api/user | this is an error'</span>);</span><br><span class="line">            </span><br><span class="line">        Log::error(<span class="string">'this is an error'</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">$this</span>-&gt;assertEquals(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>最重要的是第一行，这里把测试类的命名空间设置得和测试对象一致，这样在下面重载的<code>debug_backtrace()</code>函数就会在测试对象中被优先使用。</p>
-<p>在重载的函数中，通过全局变量<code>$calledInController</code>选择输出事先捕获的真实数据，从而mock出符合我们需要的函数。</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
       <nav id="page-nav">
-        <a class="extend prev" rel="prev" href="/page/8/">&laquo; Назад</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/10/">Далее &raquo;</a>
+        <a class="extend prev" rel="prev" href="/page/8/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/10/">Next &raquo;</a>
       </nav>
     
 

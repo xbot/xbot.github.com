@@ -70,6 +70,73 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-php-implementation-of-runtime-mixin" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/php-implementation-of-runtime-mixin/"><strong>运行时可装卸的Mixin的PHP实现</strong></a>
+      <small class="article-date-index">&nbsp; 2014-12-04</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/php-implementation-of-runtime-mixin/" class="article-date">
+  <time datetime="2014-12-04T03:52:00.000Z" itemprop="datePublished">2014-12-04</time>
+</a>-->
+      <!--
+  <div class="article-category-index">
+    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/php-implementation-of-runtime-mixin/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>PHP的Trait可以实现加载时（load time）的混入（mixin）。作为元编程的一部分，运行时（run time）的混入拥有更大的灵活性。下面利用PHP的魔术方法实现运行时的混入。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 支持混入的类</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Component</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 所有混入的实例</span></span><br><span class="line">    <span class="keyword">private</span> $_behaviors = [];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 魔术方法</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> string $name 方法名</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> array $arguments 参数数组</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> mixed</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> MethodNotFoundException</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__call</span><span class="params">($name, $arguments)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">foreach</span> (<span class="keyword">$this</span>-&gt;_behaviors <span class="keyword">as</span> $behavior) &#123;</span><br><span class="line">            <span class="keyword">if</span> (method_exists($behavior, $name)) &#123;</span><br><span class="line">                <span class="keyword">return</span> call_user_func_array([$behavior, $name], $arguments);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> MethodNotFoundException(get_class(<span class="keyword">$this</span>), $name);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 魔术方法，从混入对象实例中取属性值</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> string $attrName 属性名</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> mixed</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> AttrNotFoundException</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__get</span><span class="params">($attrName)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">foreach</span> (<span class="keyword">$this</span>-&gt;_behaviors <span class="keyword">as</span> $behavior) &#123;</span><br><span class="line">            <span class="keyword">if</span> (property_exists($behavior, $attrName)) &#123;</span><br><span class="line">                <span class="keyword">return</span> $behavior-&gt;$attrName;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> AttributeNotFoundException(get_class(<span class="keyword">$this</span>), $attrName);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 附加混入对象实例</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> object $behavior 混入对象实例</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> string $name 混入对象实例名称</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> void</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">attachBehavior</span><span class="params">($behavior, $name=<span class="string">''</span>)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">empty</span>($name))</span><br><span class="line">            <span class="keyword">$this</span>-&gt;_behaviors[] = $behavior;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">$this</span>-&gt;_behaviors[$name] = $behavior;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 卸载混入对象实例</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> string $name 混入对象实例名称</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> void</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">detachBehavior</span><span class="params">($name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">unset</span>(<span class="keyword">$this</span>-&gt;_behaviors[$name]);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 混入类</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Behavior</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 将本实例混入指定对象</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> object $object 支持混入的实例</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> string $name 目标对象存储本混入对象实例的键值</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> void</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> BehaviorNotAttachableException</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">mixin</span><span class="params">($object, $name=<span class="string">''</span>)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (method_exists($object, <span class="string">'attachBehavior'</span>)) &#123;</span><br><span class="line">            <span class="keyword">return</span> call_user_func_array([$object, <span class="string">'attachBehavior'</span>], [<span class="keyword">$this</span>, $name]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> BehaviorNotAttachableException(get_class($object));</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用示例：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">include_once</span> <span class="string">'component.php'</span>;</span><br><span class="line"><span class="keyword">include_once</span> <span class="string">'behavior.php'</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestBehavior</span> <span class="keyword">extends</span> <span class="title">Behavior</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">test</span><span class="params">($what)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"say $what"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$c = <span class="keyword">new</span> Component();</span><br><span class="line">$b = <span class="keyword">new</span> TestBehavior();</span><br><span class="line"></span><br><span class="line">$c-&gt;attachBehavior($b, <span class="string">'test'</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">'&lt;pre&gt;'</span>; var_dump($c); <span class="keyword">echo</span> <span class="string">'&lt;/pre&gt;'</span>;</span><br><span class="line"></span><br><span class="line">$c-&gt;detachBehavior(<span class="string">'test'</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">'&lt;pre&gt;'</span>; var_dump($c); <span class="keyword">echo</span> <span class="string">'&lt;/pre&gt;'</span>;</span><br><span class="line"></span><br><span class="line">$b-&gt;mixin($c, <span class="string">'test'</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">'&lt;pre&gt;'</span>; var_dump($c); <span class="keyword">echo</span> <span class="string">'&lt;/pre&gt;'</span>;</span><br><span class="line"></span><br><span class="line">$c-&gt;detachBehavior(<span class="string">'test'</span>);</span><br><span class="line">$b-&gt;mixin($c);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">'&lt;pre&gt;'</span>; var_dump($c); <span class="keyword">echo</span> <span class="string">'&lt;/pre&gt;'</span>;</span><br><span class="line"></span><br><span class="line">$c-&gt;test(<span class="string">'hello world'</span>);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-after-reading-sketches-of-the-travel-to-hunan" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -104,7 +171,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/after-reading-sketches-of-the-travel-to-hunan/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/after-reading-sketches-of-the-travel-to-hunan/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -168,7 +235,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/testing-with-phpunit-in-phalcon/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/testing-with-phpunit-in-phalcon/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -246,7 +313,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/leverage-code-time-machine/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/leverage-code-time-machine/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -317,7 +384,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/start-taking-note-in-online-markdown-editor/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/start-taking-note-in-online-markdown-editor/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -383,7 +450,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/force-commenting-html-in-php-files-in-vim/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/force-commenting-html-in-php-files-in-vim/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -448,7 +515,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/how-to-auto-complete-newly-installed-command-in-zsh/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/how-to-auto-complete-newly-installed-command-in-zsh/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -515,7 +582,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/how-to-take-over-php-fatal-error-handling/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/how-to-take-over-php-fatal-error-handling/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -587,7 +654,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/after-reading-hackers-and-painters/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/after-reading-hackers-and-painters/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -651,7 +718,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/after-reading-mongodb-the-definitive-guide/#disqus_thread" class="article-comment-link">Комментарии</a>
+          <a href="http://0x3f.org/post/after-reading-mongodb-the-definitive-guide/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -682,72 +749,8 @@ ga('send', 'pageview');
 
 
     
-      <article id="post-after-reading-a-song-of-ice-and-fire-v1" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/after-reading-a-song-of-ice-and-fire-v1/"><strong>读完《冰与火之歌》卷一</strong></a>
-      <small class="article-date-index">&nbsp; 2014-10-26</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/after-reading-a-song-of-ice-and-fire-v1/" class="article-date">
-  <time datetime="2014-10-26T01:56:00.000Z" itemprop="datePublished">2014-10-26</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/青梅煮酒/">青梅煮酒</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/after-reading-a-song-of-ice-and-fire-v1/#disqus_thread" class="article-comment-link">Комментарии</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <img src="http://pic.yupoo.com/leninlee/E9VUK2P1/medish.jpg">
-<p>读了一部分，还是不怎么喜欢西方中世纪文化，最后改看电视剧，拍得也很一般。</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
       <nav id="page-nav">
-        <a class="extend prev" rel="prev" href="/page/19/">&laquo; Назад</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="page-number" href="/page/19/">19</a><span class="page-number current">20</span><a class="page-number" href="/page/21/">21</a><a class="page-number" href="/page/22/">22</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/21/">Далее &raquo;</a>
+        <a class="extend prev" rel="prev" href="/page/19/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="page-number" href="/page/19/">19</a><span class="page-number current">20</span><a class="page-number" href="/page/21/">21</a><a class="page-number" href="/page/22/">22</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/21/">Next &raquo;</a>
       </nav>
     
 
