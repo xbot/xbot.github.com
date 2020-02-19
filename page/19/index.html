@@ -70,6 +70,128 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-object-implementation-in-php" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/object-implementation-in-php/"><strong>PHP对象的实现和操作</strong></a>
+      <small class="article-date-index">&nbsp; 2015-04-29</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/object-implementation-in-php/" class="article-date">
+  <time datetime="2015-04-29T15:00:00.000Z" itemprop="datePublished">2015-04-29</time>
+</a>-->
+      <!--
+  <div class="article-category-index">
+    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/object-implementation-in-php/#disqus_thread" class="article-comment-link">评论</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Object的存储结构"><a href="#Object的存储结构" class="headerlink" title="Object的存储结构"></a>Object的存储结构</h2><p>对象实例用zval存储。zval-&gt;type == IS_OBJECT，zval-&gt;value-&gt;obj存储zend_object_value类型的结构体变量。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">zend_object_value</span> &#123;</span></span><br><span class="line">    zend_object_handle handle;</span><br><span class="line">    <span class="keyword">const</span> zend_object_handlers *handlers;</span><br><span class="line">&#125; zend_object_value;</span><br></pre></td></tr></table></figure>
+<p>zend_object_handle是一个unsigned int，是对象的ID。zend_object_handlers存储对象所有的行为。</p>
+<h2 id="Object的实例化过程"><a href="#Object的实例化过程" class="headerlink" title="Object的实例化过程"></a>Object的实例化过程</h2><p>Object的初始化用以下几个宏函数：</p>
+<ul>
+<li>object_init(zval *arg)</li>
+<li>object_init_ex(zval *arg, zend_class_entry *class_type)</li>
+<li>object_and_properties_init(zval *arg, zend_class_entry *class_type, HashTable *properties)</li>
+</ul>
+<p>底层都是调用_object_and_properties_init(zval *arg, zend_class_entry *class_type, HashTable *properties)实现。这个函数做以下几件事：</p>
+<ul>
+<li>检查类是否可实例化（例如接口、抽象类等不允许初始化）</li>
+<li>处理类常量</li>
+<li>检查类是否存在自定义实例化逻辑<ul>
+<li>若存在，调用自定义实例化逻辑</li>
+<li>若不存在，调用缺省的函数zend_objects_new(zend_object **object, zend_class_entry *class_type)</li>
+</ul>
+</li>
+<li>把实例化的zend_object类型的数据存入zval中</li>
+</ul>
+<p>zend_objects_new()做这些事：</p>
+<ul>
+<li>分配一个zend_object类型的内存空间</li>
+<li>初始化zend_object类型数据</li>
+<li>把zend_object类型数据存入对象仓库（Objects Store）<ul>
+<li>zend_objects_store_put(void *object, zend_objects_store_dtor_t dtor, zend_objects_free_object_storage_t free_storage, zend_objects_store_clone_t clone）</li>
+</ul>
+</li>
+</ul>
+<h2 id="zend-object的存储结构"><a href="#zend-object的存储结构" class="headerlink" title="zend_object的存储结构"></a>zend_object的存储结构</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">zend_object</span> &#123;</span></span><br><span class="line">    zend_class_entry *ce;</span><br><span class="line">    HashTable *properties;</span><br><span class="line">    zval **properties_table;</span><br><span class="line">    HashTable *guards; <span class="comment">/* protects from __get/__set ... recursion */</span></span><br><span class="line">&#125; zend_object;</span><br></pre></td></tr></table></figure>
+<p>ce是类的定义。properties_table存储类里预定义的属性。properties存储非预定义属性。</p>
+<p>guards存储属性名到zend_guard结构的映射关系。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">zend_guard</span> &#123;</span></span><br><span class="line">    zend_bool in_get;</span><br><span class="line">    zend_bool in_set;</span><br><span class="line">    zend_bool in_unset;</span><br><span class="line">    zend_bool in_isset;</span><br><span class="line">    zend_bool dummy; <span class="comment">/* sizeof(zend_guard) must not be equal to sizeof(void*) */</span></span><br><span class="line">&#125; zend_guard;</span><br></pre></td></tr></table></figure>
+<p>此结构用于在操作属性时，防止递归调用。例如给对象一个新属性赋值时，__set()函数理论上会递归调用自己，所以此结构用于判断该属性是否已在__set()中。</p>
+<h2 id="属性的存储结构"><a href="#属性的存储结构" class="headerlink" title="属性的存储结构"></a>属性的存储结构</h2><p>在zend_object的存储结构里，哈希表properties存储类的非预定义属性的名称和值。</p>
+<p>对于预定义的属性，由于PHP的哈希表的存储开销很大，所以把属性信息（即下面的zend_property_info结构体）存储在zend_class_entry里，对象里用C的数组存储所有预定义属性的zval的指针，并把偏移量记录在属性信息里，这就是properties_table。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">zend_property_info</span> &#123;</span></span><br><span class="line">    zend_uint flags;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *name;</span><br><span class="line">    <span class="keyword">int</span> name_length;</span><br><span class="line">    ulong h;                 <span class="comment">/* hash of name */</span></span><br><span class="line">    <span class="keyword">int</span> offset;              <span class="comment">/* storage offset */</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *doc_comment;</span><br><span class="line">    <span class="keyword">int</span> doc_comment_len;</span><br><span class="line">    zend_class_entry *ce;    <span class="comment">/* CE of declaring class */</span></span><br><span class="line">&#125; zend_property_info;</span><br></pre></td></tr></table></figure>
+<h3 id="属性名的编码"><a href="#属性名的编码" class="headerlink" title="属性名的编码"></a>属性名的编码</h3><p>在类的继承关系中，同名不同类型（public，private等）的属性各自单独存储，所以属性名在底层是经过编码的，规则如下：</p>
+<blockquote>
+<p>class Foo { private $prop;   } =&gt; “\0Foo\0prop”<br>class Bar { private $prop;   } =&gt; “\0Bar\0prop”<br>class Rab { protected $prop; } =&gt; “\0*\0prop”<br>class Oof { public $prop;    } =&gt; “prop”  </p>
+</blockquote>
+<p>大部分情况下，对属性操作的API自动处理属性名的编码。只有当需要直接访问property_info-&gt;name或zobj-&gt;properties时才需要自行处理，此时使用zend_(un)mangle_property_name()函数。</p>
+<h2 id="Objects-Store的存储结构"><a href="#Objects-Store的存储结构" class="headerlink" title="Objects Store的存储结构"></a>Objects Store的存储结构</h2><p>对象仓库是一个可变数组，存储多个zend_object_store_bucket结构。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">zend_objects_store</span> &#123;</span></span><br><span class="line">    zend_object_store_bucket *object_buckets;</span><br><span class="line">    zend_uint top;</span><br><span class="line">    zend_uint size;</span><br><span class="line">    <span class="keyword">int</span> free_list_head;</span><br><span class="line">&#125; zend_objects_store;</span><br></pre></td></tr></table></figure>
+<p>size是对象仓库的容量。top是下一个可用的对象句柄，对象句柄从1开始，以保证所有句柄都为真。对象仓库通过每个Bucket的free_list结构维护一个可用的Bucket链表，free_list_head记录链表的头部。</p>
+<h3 id="zend-object-store-bucket的存储结构"><a href="#zend-object-store-bucket的存储结构" class="headerlink" title="zend_object_store_bucket的存储结构"></a>zend_object_store_bucket的存储结构</h3><p>每个对象的信息存储在一个bucket里。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">zend_object_store_bucket</span> &#123;</span></span><br><span class="line">    zend_bool destructor_called;</span><br><span class="line">    zend_bool valid;</span><br><span class="line">    <span class="keyword">union</span> _store_bucket &#123;</span><br><span class="line">        <span class="class"><span class="keyword">struct</span> _<span class="title">store_object</span> &#123;</span></span><br><span class="line">            <span class="keyword">void</span> *object;</span><br><span class="line">            <span class="keyword">zend_objects_store_dtor_t</span> dtor;</span><br><span class="line">            <span class="keyword">zend_objects_free_object_storage_t</span> free_storage;</span><br><span class="line">            <span class="keyword">zend_objects_store_clone_t</span> clone;</span><br><span class="line">            <span class="keyword">const</span> zend_object_handlers *handlers;</span><br><span class="line">            zend_uint refcount;</span><br><span class="line">            gc_root_buffer *buffered;</span><br><span class="line">        &#125; obj;</span><br><span class="line">        <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">            <span class="keyword">int</span> next;</span><br><span class="line">        &#125; free_list;</span><br><span class="line">    &#125; bucket;</span><br><span class="line">&#125; zend_object_store_bucket;</span><br></pre></td></tr></table></figure>
+<p>桶被占用的时候，valid为1，否则为0。</p>
+<p>对象被销毁时，dtor被调用后，destructor_called被置为1，防止在被free时重复调用dtor，具体见<strong>Object的二阶销毁逻辑</strong>。</p>
+<p>_store_object里存储对象的主要信息。zend_objects_store_put()传入的zend_object结构体存储在object里。dtor和free_storage见<strong>Object的二阶销毁逻辑</strong>。clone是对象的克隆函数。handlers存储对象的一系列操作函数，缺省为std_object_handlers。refcount是对象的引用计数。buffered是垃圾回收需要用到的数据。</p>
+<p>free_list记录对象仓库中可用的Bucket链表中下一个可用的Bucket。</p>
+<h3 id="Object-Store的操作"><a href="#Object-Store的操作" class="headerlink" title="Object Store的操作"></a>Object Store的操作</h3><ul>
+<li>zend_objects_store_put()：注册对象到仓库</li>
+<li>zend_object_store_get_object_by_handle()：通过对象句柄取对象</li>
+<li>zend_object_store_get_object()：通过zval取对象，返回void*</li>
+<li>zend_objects_get_address()：和zend_object_store_get_object()一样，但返回zend_object*</li>
+</ul>
+<h2 id="Object的二阶销毁逻辑"><a href="#Object的二阶销毁逻辑" class="headerlink" title="Object的二阶销毁逻辑"></a>Object的二阶销毁逻辑</h2><p>对象的销毁分两个步骤，一是对象的析构，一是内存的释放。前者调用对象的dtor，后者调用free_storage。一般先析构，再释放内存，但两者可各自分开执行。</p>
+<p>dtor中可以执行用户空间的PHP代码，主要是PHP类的__destruct()。PHP脚本执行完成后销毁对象并结束进程（executor shutdown），在这个过程进行到一半的时候执行用户空间代码可能会出问题，所以这么区别主要是为了在进程结束过程中不会调用用户空间代码。</p>
+<p>此外，dtor并不是必须执行的，如果一个对象的dtor调用的用户空间代码里执行了die()，后续对象的dtor不会被执行。所以大部分情况下，开发者可以自定义free_storage函数，而使用缺省的zend_objects_destroy_object作为dtor。</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-class-interface-implementation-in-php" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -104,7 +226,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/class-interface-implementation-in-php/#disqus_thread" class="article-comment-link">Comments</a>
+          <a href="http://0x3f.org/post/class-interface-implementation-in-php/#disqus_thread" class="article-comment-link">评论</a>
         </div>
       
       -->
@@ -184,7 +306,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/transformers-grim-lock/#disqus_thread" class="article-comment-link">Comments</a>
+          <a href="http://0x3f.org/post/transformers-grim-lock/#disqus_thread" class="article-comment-link">评论</a>
         </div>
       
       -->
@@ -257,7 +379,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/array-implementation-in-php/#disqus_thread" class="article-comment-link">Comments</a>
+          <a href="http://0x3f.org/post/array-implementation-in-php/#disqus_thread" class="article-comment-link">评论</a>
         </div>
       
       -->
@@ -372,7 +494,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/hashtable-implementation-of-php/#disqus_thread" class="article-comment-link">Comments</a>
+          <a href="http://0x3f.org/post/hashtable-implementation-of-php/#disqus_thread" class="article-comment-link">评论</a>
         </div>
       
       -->
@@ -492,7 +614,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/auto-remap-keyboard/#disqus_thread" class="article-comment-link">Comments</a>
+          <a href="http://0x3f.org/post/auto-remap-keyboard/#disqus_thread" class="article-comment-link">评论</a>
         </div>
       
       -->
@@ -559,7 +681,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/monitor-home-with-raspberry-pi/#disqus_thread" class="article-comment-link">Comments</a>
+          <a href="http://0x3f.org/post/monitor-home-with-raspberry-pi/#disqus_thread" class="article-comment-link">评论</a>
         </div>
       
       -->
@@ -630,7 +752,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/make-nas-with-raspberry-pi/#disqus_thread" class="article-comment-link">Comments</a>
+          <a href="http://0x3f.org/post/make-nas-with-raspberry-pi/#disqus_thread" class="article-comment-link">评论</a>
         </div>
       
       -->
@@ -698,7 +820,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/adjust-disk-partitions-again/#disqus_thread" class="article-comment-link">Comments</a>
+          <a href="http://0x3f.org/post/adjust-disk-partitions-again/#disqus_thread" class="article-comment-link">评论</a>
         </div>
       
       -->
@@ -766,7 +888,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/books-i-read-these-days/#disqus_thread" class="article-comment-link">Comments</a>
+          <a href="http://0x3f.org/post/books-i-read-these-days/#disqus_thread" class="article-comment-link">评论</a>
         </div>
       
       -->
@@ -802,86 +924,8 @@ ga('send', 'pageview');
 
 
     
-      <article id="post-remote-downloading-with-raspberry-pi" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/remote-downloading-with-raspberry-pi/"><strong>用树苺派实现远程下载</strong></a>
-      <small class="article-date-index">&nbsp; 2015-03-28</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/remote-downloading-with-raspberry-pi/" class="article-date">
-  <time datetime="2015-03-28T11:14:00.000Z" itemprop="datePublished">2015-03-28</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/remote-downloading-with-raspberry-pi/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>远程用树苺派利用空闲时间下载大文件，需要百度云、aria2和VPS。因为网络运营商给的IP不是真的公网IP，而且免费的动态域名服务不稳定，所以用VPS把树苺派上的端口转发到外网。</p>
-<h2 id="树苺派"><a href="#树苺派" class="headerlink" title="树苺派"></a>树苺派</h2><p>在树苺派上部署aria2下载服务，并发布到VPS。</p>
-<p>安装aria2，创建以下配置文件，修改/media/sda1为实际下载目录：</p>
-<figure class="highlight ini"><figcaption><span>/etc/aria2/aria2.conf</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">dir</span>=/media/sda1</span><br><span class="line"><span class="attr">file-allocation</span>=prealloc</span><br><span class="line"><span class="attr">continue</span>=<span class="literal">true</span></span><br><span class="line"><span class="attr">log-level</span>=info</span><br><span class="line"><span class="comment">#log-level=debug</span></span><br><span class="line"><span class="attr">max-connection-per-server</span>=<span class="number">10</span></span><br><span class="line"><span class="attr">summary-interval</span>=<span class="number">120</span></span><br><span class="line"><span class="attr">daemon</span>=<span class="literal">true</span></span><br><span class="line"><span class="attr">enable-rpc</span>=<span class="literal">true</span></span><br><span class="line"><span class="attr">rpc-listen-port</span>=<span class="number">6800</span></span><br><span class="line"><span class="attr">rpc-listen-all</span>=<span class="literal">true</span></span><br><span class="line"><span class="attr">max-concurrent-downloads</span>=<span class="number">3</span></span><br><span class="line"><span class="attr">save-session</span>=/etc/aria2/save-session.list</span><br><span class="line"><span class="attr">input-file</span>=/etc/aria2/save-session.list</span><br><span class="line"><span class="attr">log</span>=/media/sda1/aria.log</span><br><span class="line"><span class="attr">disable-ipv6</span>=<span class="literal">true</span></span><br><span class="line"><span class="attr">disk-cache</span>=<span class="number">25</span>M</span><br><span class="line"><span class="attr">timeout</span>=<span class="number">600</span></span><br><span class="line"><span class="attr">retry-wait</span>=<span class="number">30</span></span><br><span class="line"><span class="attr">max-tries</span>=<span class="number">0</span></span><br><span class="line"><span class="attr">user-agent</span>=netdisk;<span class="number">4.4</span>.<span class="number">0.6</span>;PC;PC-Windows;<span class="number">6.2</span>.<span class="number">9200</span>;WindowsBaiduYunGuanJia</span><br></pre></td></tr></table></figure>
-<p>我的树苺派用Archlinux，创建systemd的服务配置文件：</p>
-<figure class="highlight ini"><figcaption><span>/etc/systemd/system/aria2c.service</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[Unit]</span></span><br><span class="line"><span class="attr">Description</span>=aria2c -- file download manager</span><br><span class="line"><span class="attr">After</span>=network.target</span><br><span class="line"> </span><br><span class="line"><span class="section">[Service]</span></span><br><span class="line"><span class="attr">Type</span>=forking</span><br><span class="line"><span class="attr">User</span>=%i</span><br><span class="line"><span class="attr">WorkingDirectory</span>=%h</span><br><span class="line"><span class="attr">Environment</span>=VAR=/var/%i</span><br><span class="line"><span class="attr">ExecStart</span>=/usr/bin/aria2c --daemon --enable-rpc --rpc-listen-all --rpc-allow-origin-all -c -D --conf-path=/etc/aria2/aria2.conf</span><br><span class="line"> </span><br><span class="line"><span class="section">[Install]</span></span><br><span class="line"><span class="attr">WantedBy</span>=multi-user.target</span><br></pre></td></tr></table></figure>
-<p>激活并启动aria2服务。</p>
-<p>在NGINX的WWW目录下安装aria2的Web界面：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/binux/yaaw.git</span><br></pre></td></tr></table></figure>
-<p>发布本地服务到VPS：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 发布NGINX</span></span><br><span class="line">autossh -M 5122 -R 80:localhost:80 myvps.com</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 发布aria2</span></span><br><span class="line">autossh -M 5124 -R 6800:localhost:6800 myvps.com</span><br></pre></td></tr></table></figure>
-<p>autossh用于保持SSH连接，需要VPS上启动TCP Echo服务。</p>
-<h2 id="VPS"><a href="#VPS" class="headerlink" title="VPS"></a>VPS</h2><p>在VPS上启用TCP Echo服务，安装xinetd并修改配置文件：</p>
-<figure class="highlight lua"><figcaption><span>/etc/xinet.d/echo-stream</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">service echo</span><br><span class="line">&#123;</span><br><span class="line">        disable         = no</span><br><span class="line">        id              = echo-stream</span><br><span class="line">        <span class="built_in">type</span>            = INTERNAL</span><br><span class="line">        wait            = no</span><br><span class="line">        socket_type     = stream</span><br><span class="line">        user                    = root</span><br><span class="line">        server                  = /usr/bin/cat</span><br><span class="line">        log_on_failure          += USERID</span><br><span class="line">        flags                   = REUSE</span><br><span class="line">        only_from               = <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="远程主机"><a href="#远程主机" class="headerlink" title="远程主机"></a>远程主机</h2><p>在远程主机上配置浏览器的代理规则，对<strong><a href="http://localhost/yaaw" target="_blank" rel="noopener">http://localhost/yaaw</a></strong>和<strong><a href="http://localhost:6800/jsonrpc" target="_blank" rel="noopener">http://localhost:6800/jsonrpc</a></strong>两个URL使用VPS上的VPN或Shadowsocks代理。</p>
-<p>安装<a href="https://chrome.google.com/webstore/detail/baiduexporter/mjaenbjdjmgolhoafkohbhhbaiedbkno?utm_source=chrome-app-launcher-info-dialog" target="_blank" rel="noopener">Chrome扩展</a>，然后到百度云盘里设置aria2的RPC地址为“<strong><a href="http://localhost:6800/jsonrpc" target="_blank" rel="noopener">http://localhost:6800/jsonrpc</a></strong>”即可。</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
       <nav id="page-nav">
-        <a class="extend prev" rel="prev" href="/page/18/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><a class="page-number" href="/page/18/">18</a><span class="page-number current">19</span><a class="page-number" href="/page/20/">20</a><a class="page-number" href="/page/21/">21</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/20/">Next &raquo;</a>
+        <a class="extend prev" rel="prev" href="/page/18/">&laquo; 上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><a class="page-number" href="/page/18/">18</a><span class="page-number current">19</span><a class="page-number" href="/page/20/">20</a><a class="page-number" href="/page/21/">21</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/20/">下一页 &raquo;</a>
       </nav>
     
 

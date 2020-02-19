@@ -70,6 +70,84 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-remote-downloading-with-raspberry-pi" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/remote-downloading-with-raspberry-pi/"><strong>用树苺派实现远程下载</strong></a>
+      <small class="article-date-index">&nbsp; 2015-03-28</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/remote-downloading-with-raspberry-pi/" class="article-date">
+  <time datetime="2015-03-28T11:14:00.000Z" itemprop="datePublished">2015-03-28</time>
+</a>-->
+      <!--
+  <div class="article-category-index">
+    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/remote-downloading-with-raspberry-pi/#disqus_thread" class="article-comment-link">评论</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>远程用树苺派利用空闲时间下载大文件，需要百度云、aria2和VPS。因为网络运营商给的IP不是真的公网IP，而且免费的动态域名服务不稳定，所以用VPS把树苺派上的端口转发到外网。</p>
+<h2 id="树苺派"><a href="#树苺派" class="headerlink" title="树苺派"></a>树苺派</h2><p>在树苺派上部署aria2下载服务，并发布到VPS。</p>
+<p>安装aria2，创建以下配置文件，修改/media/sda1为实际下载目录：</p>
+<figure class="highlight ini"><figcaption><span>/etc/aria2/aria2.conf</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">dir</span>=/media/sda1</span><br><span class="line"><span class="attr">file-allocation</span>=prealloc</span><br><span class="line"><span class="attr">continue</span>=<span class="literal">true</span></span><br><span class="line"><span class="attr">log-level</span>=info</span><br><span class="line"><span class="comment">#log-level=debug</span></span><br><span class="line"><span class="attr">max-connection-per-server</span>=<span class="number">10</span></span><br><span class="line"><span class="attr">summary-interval</span>=<span class="number">120</span></span><br><span class="line"><span class="attr">daemon</span>=<span class="literal">true</span></span><br><span class="line"><span class="attr">enable-rpc</span>=<span class="literal">true</span></span><br><span class="line"><span class="attr">rpc-listen-port</span>=<span class="number">6800</span></span><br><span class="line"><span class="attr">rpc-listen-all</span>=<span class="literal">true</span></span><br><span class="line"><span class="attr">max-concurrent-downloads</span>=<span class="number">3</span></span><br><span class="line"><span class="attr">save-session</span>=/etc/aria2/save-session.list</span><br><span class="line"><span class="attr">input-file</span>=/etc/aria2/save-session.list</span><br><span class="line"><span class="attr">log</span>=/media/sda1/aria.log</span><br><span class="line"><span class="attr">disable-ipv6</span>=<span class="literal">true</span></span><br><span class="line"><span class="attr">disk-cache</span>=<span class="number">25</span>M</span><br><span class="line"><span class="attr">timeout</span>=<span class="number">600</span></span><br><span class="line"><span class="attr">retry-wait</span>=<span class="number">30</span></span><br><span class="line"><span class="attr">max-tries</span>=<span class="number">0</span></span><br><span class="line"><span class="attr">user-agent</span>=netdisk;<span class="number">4.4</span>.<span class="number">0.6</span>;PC;PC-Windows;<span class="number">6.2</span>.<span class="number">9200</span>;WindowsBaiduYunGuanJia</span><br></pre></td></tr></table></figure>
+<p>我的树苺派用Archlinux，创建systemd的服务配置文件：</p>
+<figure class="highlight ini"><figcaption><span>/etc/systemd/system/aria2c.service</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[Unit]</span></span><br><span class="line"><span class="attr">Description</span>=aria2c -- file download manager</span><br><span class="line"><span class="attr">After</span>=network.target</span><br><span class="line"> </span><br><span class="line"><span class="section">[Service]</span></span><br><span class="line"><span class="attr">Type</span>=forking</span><br><span class="line"><span class="attr">User</span>=%i</span><br><span class="line"><span class="attr">WorkingDirectory</span>=%h</span><br><span class="line"><span class="attr">Environment</span>=VAR=/var/%i</span><br><span class="line"><span class="attr">ExecStart</span>=/usr/bin/aria2c --daemon --enable-rpc --rpc-listen-all --rpc-allow-origin-all -c -D --conf-path=/etc/aria2/aria2.conf</span><br><span class="line"> </span><br><span class="line"><span class="section">[Install]</span></span><br><span class="line"><span class="attr">WantedBy</span>=multi-user.target</span><br></pre></td></tr></table></figure>
+<p>激活并启动aria2服务。</p>
+<p>在NGINX的WWW目录下安装aria2的Web界面：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/binux/yaaw.git</span><br></pre></td></tr></table></figure>
+<p>发布本地服务到VPS：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 发布NGINX</span></span><br><span class="line">autossh -M 5122 -R 80:localhost:80 myvps.com</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 发布aria2</span></span><br><span class="line">autossh -M 5124 -R 6800:localhost:6800 myvps.com</span><br></pre></td></tr></table></figure>
+<p>autossh用于保持SSH连接，需要VPS上启动TCP Echo服务。</p>
+<h2 id="VPS"><a href="#VPS" class="headerlink" title="VPS"></a>VPS</h2><p>在VPS上启用TCP Echo服务，安装xinetd并修改配置文件：</p>
+<figure class="highlight lua"><figcaption><span>/etc/xinet.d/echo-stream</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">service echo</span><br><span class="line">&#123;</span><br><span class="line">        disable         = no</span><br><span class="line">        id              = echo-stream</span><br><span class="line">        <span class="built_in">type</span>            = INTERNAL</span><br><span class="line">        wait            = no</span><br><span class="line">        socket_type     = stream</span><br><span class="line">        user                    = root</span><br><span class="line">        server                  = /usr/bin/cat</span><br><span class="line">        log_on_failure          += USERID</span><br><span class="line">        flags                   = REUSE</span><br><span class="line">        only_from               = <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="远程主机"><a href="#远程主机" class="headerlink" title="远程主机"></a>远程主机</h2><p>在远程主机上配置浏览器的代理规则，对<strong><a href="http://localhost/yaaw" target="_blank" rel="noopener">http://localhost/yaaw</a></strong>和<strong><a href="http://localhost:6800/jsonrpc" target="_blank" rel="noopener">http://localhost:6800/jsonrpc</a></strong>两个URL使用VPS上的VPN或Shadowsocks代理。</p>
+<p>安装<a href="https://chrome.google.com/webstore/detail/baiduexporter/mjaenbjdjmgolhoafkohbhhbaiedbkno?utm_source=chrome-app-launcher-info-dialog" target="_blank" rel="noopener">Chrome扩展</a>，然后到百度云盘里设置aria2的RPC地址为“<strong><a href="http://localhost:6800/jsonrpc" target="_blank" rel="noopener">http://localhost:6800/jsonrpc</a></strong>”即可。</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-php-implementation-of-runtime-mixin" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -104,7 +182,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/php-implementation-of-runtime-mixin/#disqus_thread" class="article-comment-link">Comments</a>
+          <a href="http://0x3f.org/post/php-implementation-of-runtime-mixin/#disqus_thread" class="article-comment-link">评论</a>
         </div>
       
       -->
@@ -171,7 +249,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/after-reading-sketches-of-the-travel-to-hunan/#disqus_thread" class="article-comment-link">Comments</a>
+          <a href="http://0x3f.org/post/after-reading-sketches-of-the-travel-to-hunan/#disqus_thread" class="article-comment-link">评论</a>
         </div>
       
       -->
@@ -235,7 +313,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/testing-with-phpunit-in-phalcon/#disqus_thread" class="article-comment-link">Comments</a>
+          <a href="http://0x3f.org/post/testing-with-phpunit-in-phalcon/#disqus_thread" class="article-comment-link">评论</a>
         </div>
       
       -->
@@ -313,7 +391,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/leverage-code-time-machine/#disqus_thread" class="article-comment-link">Comments</a>
+          <a href="http://0x3f.org/post/leverage-code-time-machine/#disqus_thread" class="article-comment-link">评论</a>
         </div>
       
       -->
@@ -384,7 +462,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/start-taking-note-in-online-markdown-editor/#disqus_thread" class="article-comment-link">Comments</a>
+          <a href="http://0x3f.org/post/start-taking-note-in-online-markdown-editor/#disqus_thread" class="article-comment-link">评论</a>
         </div>
       
       -->
@@ -450,7 +528,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/force-commenting-html-in-php-files-in-vim/#disqus_thread" class="article-comment-link">Comments</a>
+          <a href="http://0x3f.org/post/force-commenting-html-in-php-files-in-vim/#disqus_thread" class="article-comment-link">评论</a>
         </div>
       
       -->
@@ -515,7 +593,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/how-to-auto-complete-newly-installed-command-in-zsh/#disqus_thread" class="article-comment-link">Comments</a>
+          <a href="http://0x3f.org/post/how-to-auto-complete-newly-installed-command-in-zsh/#disqus_thread" class="article-comment-link">评论</a>
         </div>
       
       -->
@@ -582,7 +660,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/how-to-take-over-php-fatal-error-handling/#disqus_thread" class="article-comment-link">Comments</a>
+          <a href="http://0x3f.org/post/how-to-take-over-php-fatal-error-handling/#disqus_thread" class="article-comment-link">评论</a>
         </div>
       
       -->
@@ -654,7 +732,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/after-reading-hackers-and-painters/#disqus_thread" class="article-comment-link">Comments</a>
+          <a href="http://0x3f.org/post/after-reading-hackers-and-painters/#disqus_thread" class="article-comment-link">评论</a>
         </div>
       
       -->
@@ -684,73 +762,8 @@ ga('send', 'pageview');
 
 
     
-      <article id="post-after-reading-mongodb-the-definitive-guide" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/after-reading-mongodb-the-definitive-guide/"><strong>读完《MongoDB权威指南》第二版</strong></a>
-      <small class="article-date-index">&nbsp; 2014-10-26</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/after-reading-mongodb-the-definitive-guide/" class="article-date">
-  <time datetime="2014-10-26T02:01:00.000Z" itemprop="datePublished">2014-10-26</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/青梅煮酒/">青梅煮酒</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/after-reading-mongodb-the-definitive-guide/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <img src="http://pic.yupoo.com/leninlee/E9VWUjut/medish.jpg">
-<p>第二版比第一版补充了很多内容，介绍得很详细，是学习mongodb的好书。</p>
-<p>但是翻译版有很多印刷错误，个别译句也有问题。</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
       <nav id="page-nav">
-        <a class="extend prev" rel="prev" href="/page/19/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="page-number" href="/page/19/">19</a><span class="page-number current">20</span><a class="page-number" href="/page/21/">21</a><a class="page-number" href="/page/22/">22</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/21/">Next &raquo;</a>
+        <a class="extend prev" rel="prev" href="/page/19/">&laquo; 上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="page-number" href="/page/19/">19</a><span class="page-number current">20</span><a class="page-number" href="/page/21/">21</a><a class="page-number" href="/page/22/">22</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/21/">下一页 &raquo;</a>
       </nav>
     
 

@@ -70,6 +70,81 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-fix-ms-office-mime-types-in-rox-filer" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/fix-ms-office-mime-types-in-rox-filer/"><strong>解决ROX-Filer文件类型识别问题</strong></a>
+      <small class="article-date-index">&nbsp; 2013-05-17</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/fix-ms-office-mime-types-in-rox-filer/" class="article-date">
+  <time datetime="2013-05-17T04:52:00.000Z" itemprop="datePublished">2013-05-17</time>
+</a>-->
+      <!--
+  <div class="article-category-index">
+    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/fix-ms-office-mime-types-in-rox-filer/#disqus_thread" class="article-comment-link">评论</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>默认情况下，ROX-Filer会将“*.docx”、“*.xlsx”、“*.pptx”文档识别为zip压缩包。由于ROX中与文件关联的行为实际上都是和文档类型挂钩的，所以对这些文档的操作会遇到很大麻烦，而且没有变通方法。</p>
+<p>实际上，Linux对文件类型的识别比Windows灵活。Windows只能通过文件名的后缀判断文件类型，随便创建一个文本文件，然后将后缀“.txt”改成“.exe”，Win就会傻乎乎地认为这是个二进制的可执行程序。这种做法很傻，而且很不安全，试想，如果将一个病毒程序的后缀改成“.jpg”，就可以骗过大多数用户，然后通过某种手段执行它，后果会怎样？更傻的是，XP以上版本默认是隐藏后缀的，那攻击者连改后缀都可以省了。颤抖吧，神一样的Win！</p>
+<p>Linux不但可以通过后缀识别文件类型，更重要的，还可以通过文件开头的几个字节实现这一点，这就比前一种方式精确、安全很多。当然，Linux还支持更多的文件类型识别方法。</p>
+<p>前面说过，在ROX-Filer下，所有行为都绑定到文件类型上，也就是MIME Types，ROX通过这种方式实现了将可灵活自由定制的文件操作与自身解耦，从而在确保自身稳定的同时实现对高度灵活的自由定制的支持，这是一个很值得学习的实现方式。因此，既然文件的后缀没有问题，ROX仍将它们识别为ZIP格式，原因是什么？显然，最大的嫌疑集中在第二种识别方式上。</p>
+<p>一个公开的秘密是，Office文档本身其实就是一个ZIP压缩包，里面包含了描述文档的XML、多媒体文件等成分，只不过MS贱贱地把压缩包的后缀改成了docx之类的东东，加上Windows只能通过后缀识别文件类型，所以很多人不知道这一点。了解了这个，问题的原因就跃然纸上了，既然都是ZIP压缩包，那第二种文件类型识别方式也就区分不出Office文件类型与ZIP压缩包了。</p>
+<p>能号出病因，就有方子治病。</p>
+<p>既然ROX使用多种文件类型识别方式，那必然有一个优先级的关系，否则就会乱套。打开ROX的MIME Editor：</p>
+<img src="http://pic.yupoo.com/leninlee/CRNkfq0g/medium.jpg">
+<p>找到MIME类型“application/zip”：</p>
+<img src="http://pic.yupoo.com/leninlee/CRNkgaEK/medium.jpg">
+<p>打开zip的属性对话框：</p>
+<img src="http://pic.yupoo.com/leninlee/CRNkfOsQ/medium.jpg">
+<p>可以看到“Contents matching”这一块里，通过检查文件头部的几个字节是否为“PK\003\004”来判断，并且此项判断标准的优先级是40。下面所要做的，就是找到相应文件类型，添加一项条件相同的“Contents matching”，并把优先级设得大于40。</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-tour-to-leshan-and-emei" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -104,7 +179,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/tour-to-leshan-and-emei/#disqus_thread" class="article-comment-link">Comments</a>
+          <a href="http://0x3f.org/post/tour-to-leshan-and-emei/#disqus_thread" class="article-comment-link">评论</a>
         </div>
       
       -->
@@ -176,7 +251,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/nightly-climbing-baiwang-mountain/#disqus_thread" class="article-comment-link">Comments</a>
+          <a href="http://0x3f.org/post/nightly-climbing-baiwang-mountain/#disqus_thread" class="article-comment-link">评论</a>
         </div>
       
       -->
@@ -242,7 +317,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/tour-to-hengshan-and-yungang/#disqus_thread" class="article-comment-link">Comments</a>
+          <a href="http://0x3f.org/post/tour-to-hengshan-and-yungang/#disqus_thread" class="article-comment-link">评论</a>
         </div>
       
       -->
@@ -351,7 +426,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/after-reading-hello-android/#disqus_thread" class="article-comment-link">Comments</a>
+          <a href="http://0x3f.org/post/after-reading-hello-android/#disqus_thread" class="article-comment-link">评论</a>
         </div>
       
       -->
@@ -413,7 +488,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/dualhead-watchdog-v1-released/#disqus_thread" class="article-comment-link">Comments</a>
+          <a href="http://0x3f.org/post/dualhead-watchdog-v1-released/#disqus_thread" class="article-comment-link">评论</a>
         </div>
       
       -->
@@ -511,7 +586,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/migrate-blog-to-octopress/#disqus_thread" class="article-comment-link">Comments</a>
+          <a href="http://0x3f.org/post/migrate-blog-to-octopress/#disqus_thread" class="article-comment-link">评论</a>
         </div>
       
       -->
@@ -589,7 +664,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/after-reading-zk-ajax-without-the-javascript-framework/#disqus_thread" class="article-comment-link">Comments</a>
+          <a href="http://0x3f.org/post/after-reading-zk-ajax-without-the-javascript-framework/#disqus_thread" class="article-comment-link">评论</a>
         </div>
       
       -->
@@ -654,7 +729,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/how-to-write-service-scripts-for-redhat-distros/#disqus_thread" class="article-comment-link">Comments</a>
+          <a href="http://0x3f.org/post/how-to-write-service-scripts-for-redhat-distros/#disqus_thread" class="article-comment-link">评论</a>
         </div>
       
       -->
@@ -750,7 +825,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/after-reading-three-body-long-live-the-king-of-terrors/#disqus_thread" class="article-comment-link">Comments</a>
+          <a href="http://0x3f.org/post/after-reading-three-body-long-live-the-king-of-terrors/#disqus_thread" class="article-comment-link">评论</a>
         </div>
       
       -->
@@ -782,70 +857,8 @@ ga('send', 'pageview');
 
 
     
-      <article id="post-after-reading-three-body-the-dark-forests" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/after-reading-three-body-the-dark-forests/"><strong>读完《三体——黑暗森林》</strong></a>
-      <small class="article-date-index">&nbsp; 2012-05-01</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/after-reading-three-body-the-dark-forests/" class="article-date">
-  <time datetime="2012-04-30T16:00:00.000Z" itemprop="datePublished">2012-05-01</time>
-</a>-->
-      <!--
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/after-reading-three-body-the-dark-forests/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>凌晨三点，读完了《三体》的第二部。</p>
-<p>咒语，这个东西的确很有意思。第二部比第一部好看，故事情节上完全展开，成功地制造了悬念。如果一部小说，删掉很多文字仍不影响故事情节，那这部分就是多余的，可惜在这部书里这是个很大的问题，所以直到最后三分之一才真正出彩。</p>
-<p><a href="https://picasaweb.google.com/lh/photo/tt1qOjDU6_6tnnQgdfYtw9MTjNZETYmyPJy0liipFm0?feat=embedwebsite" target="_blank" rel="noopener"><img src="https://lh5.googleusercontent.com/-OcSgdVvYZD8/T57gVJYqtyI/AAAAAAAAB4E/C6tOtnZPX28/s800/s4700425.jpg" height="426" width="312"></a></p>
-<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
       <nav id="page-nav">
-        <a class="extend prev" rel="prev" href="/page/26/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="page-number" href="/page/26/">26</a><span class="page-number current">27</span><a class="page-number" href="/page/28/">28</a><a class="page-number" href="/page/29/">29</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/28/">Next &raquo;</a>
+        <a class="extend prev" rel="prev" href="/page/26/">&laquo; 上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="page-number" href="/page/26/">26</a><span class="page-number current">27</span><a class="page-number" href="/page/28/">28</a><a class="page-number" href="/page/29/">29</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/28/">下一页 &raquo;</a>
       </nav>
     
 
