@@ -70,6 +70,91 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-resource-implementation-in-php" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/resource-implementation-in-php/"><strong>PHP资源的实现和操作</strong></a>
+      <small class="article-date-index">&nbsp; 2015-05-05</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/resource-implementation-in-php/" class="article-date">
+  <time datetime="2015-05-05T10:53:00.000Z" itemprop="datePublished">2015-05-05</time>
+</a>-->
+      <!--
+  <div class="article-category-index">
+    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/resource-implementation-in-php/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="存储结构"><a href="#存储结构" class="headerlink" title="存储结构"></a>存储结构</h2><p>资源变量也是一个zval结构，zval-&gt;type == IS_RESOURCE，zval-&gt;value-&gt;lval存储一个整数，此整数为资源数据在存储资源的哈希表中的索引。</p>
+<p>资源数据的结构为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">zend_rsrc_list_entry</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">void</span> *ptr;</span><br><span class="line">    <span class="keyword">int</span> type;</span><br><span class="line">    <span class="keyword">int</span> refcount;</span><br><span class="line">&#125;zend_rsrc_list_entry;</span><br></pre></td></tr></table></figure>
+<h3 id="常规资源与持久资源"><a href="#常规资源与持久资源" class="headerlink" title="常规资源与持久资源"></a>常规资源与持久资源</h3><p>有两个存储资源数据的哈希表。EG(regular_list)存储常规资源，EG(persistent_list)存储持久资源。</p>
+<p>常规资源对应的变量在作用域结束后会被内核回收，对应的资源数据也会被销毁。持久资源可以保持并被多次请求使用。持久资源的自动析构发生在PHP进程退出时。</p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>重新实现基本的文件句柄和相关操作。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 资源名称</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PHP_DONIE_RES_NAME_FILE <span class="meta-string">"Donie's File Descriptor"</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 资源类型</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> le_donie_file_descriptor;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> le_donie_file_descriptor_persist;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 资源析构函数</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">php_donie_file_descriptor_dtor</span><span class="params">(zend_rsrc_list_entry *rsrc TSRMLS_CC)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	FILE *fp = (FILE*)rsrc-&gt;ptr;</span><br><span class="line">	fclose(fp);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 在扩展的MINIT方法里创建资源类型</span></span><br><span class="line">PHP_MINIT_FUNCTION(donie)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">/* create a new resource type */</span></span><br><span class="line">	le_donie_file_descriptor = zend_register_list_destructors_ex(</span><br><span class="line">		php_donie_file_descriptor_dtor, <span class="literal">NULL</span>, PHP_DONIE_RES_NAME_FILE, module_number</span><br><span class="line">	);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* create a persistent resource type */</span></span><br><span class="line">	le_donie_file_descriptor_persist = zend_register_list_destructors_ex(</span><br><span class="line">		<span class="literal">NULL</span>, php_donie_file_descriptor_dtor, PHP_DONIE_RES_NAME_FILE, module_number</span><br><span class="line">	);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> SUCCESS;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 文件打开操作</span></span><br><span class="line">PHP_FUNCTION(donie_fopen)</span><br><span class="line">&#123;</span><br><span class="line">	FILE *fp;</span><br><span class="line">	<span class="keyword">char</span> *filename, *mode;</span><br><span class="line">	<span class="keyword">int</span> filename_len, mode_len;</span><br><span class="line">	zend_bool persist = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">char</span> *hash_key;</span><br><span class="line">	<span class="keyword">int</span> hash_key_len;</span><br><span class="line">	list_entry *persist_file;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, <span class="string">"ss|b"</span>, &amp;filename, &amp;filename_len, &amp;mode, &amp;mode_len, &amp;persist) == FAILURE)</span><br><span class="line">	&#123;</span><br><span class="line">		RETURN_NULL();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> (!filename_len || !mode_len)</span><br><span class="line">	&#123;</span><br><span class="line">		php_error_docref(<span class="literal">NULL</span> TSRMLS_CC, E_WARNING, <span class="string">"Invalid file name or mode."</span>);</span><br><span class="line">		RETURN_FALSE;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* reuse persistent resource if exists */</span></span><br><span class="line">	hash_key_len = spprintf(&amp;hash_key, <span class="number">0</span>, <span class="string">"php_donie_file_descriptor:%s-%s"</span>, filename, mode);</span><br><span class="line">	<span class="keyword">if</span> (zend_hash_find(&amp;EG(persistent_list), hash_key, hash_key_len+<span class="number">1</span>, (<span class="keyword">void</span> **)&amp;persist_file) == SUCCESS)</span><br><span class="line">	&#123;</span><br><span class="line">		ZEND_REGISTER_RESOURCE(return_value, persist_file-&gt;ptr, le_donie_file_descriptor_persist);</span><br><span class="line">		efree(hash_key);</span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	fp = fopen(filename, mode);</span><br><span class="line">	<span class="keyword">if</span> (!fp)</span><br><span class="line">	&#123;</span><br><span class="line">		php_error_docref(<span class="literal">NULL</span> TSRMLS_CC, E_WARNING, <span class="string">"Failed opening %s with mode %s."</span>, filename, mode);</span><br><span class="line">		RETURN_FALSE;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* this is the key point for registering resources */</span></span><br><span class="line">	<span class="keyword">if</span> (persist)</span><br><span class="line">	&#123;</span><br><span class="line">		ZEND_REGISTER_RESOURCE(return_value, fp, le_donie_file_descriptor_persist);</span><br><span class="line">		list_entry le;</span><br><span class="line">		le.type = le_donie_file_descriptor_persist;</span><br><span class="line">		le.ptr = fp;</span><br><span class="line">		zend_hash_update(&amp;EG(persistent_list), hash_key, hash_key_len+<span class="number">1</span>, (<span class="keyword">void</span>*)&amp;le, <span class="keyword">sizeof</span>(list_entry), <span class="literal">NULL</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		ZEND_REGISTER_RESOURCE(return_value, fp, le_donie_file_descriptor);</span><br><span class="line">	&#125;</span><br><span class="line">	efree(hash_key);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 文件写操作</span></span><br><span class="line">PHP_FUNCTION(donie_fwrite)</span><br><span class="line">&#123;</span><br><span class="line">	FILE *fp;</span><br><span class="line">	zval *file_resource;</span><br><span class="line">	<span class="keyword">char</span> *data;</span><br><span class="line">	<span class="keyword">int</span> data_len;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, <span class="string">"rs"</span>, &amp;file_resource, &amp;data, &amp;data_len) == FAILURE)</span><br><span class="line">	&#123;</span><br><span class="line">		RETURN_NULL();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	ZEND_FETCH_RESOURCE2(fp, FILE*, &amp;file_resource, <span class="number">-1</span>, PHP_DONIE_RES_NAME_FILE, le_donie_file_descriptor, le_donie_file_descriptor_persist);</span><br><span class="line">	RETURN_LONG(fwrite(data, <span class="number">1</span>, data_len, fp));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 文件关闭操作</span></span><br><span class="line">PHP_FUNCTION(donie_fclose)</span><br><span class="line">&#123;</span><br><span class="line">	FILE *fp;</span><br><span class="line">	zval *file_resource;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, <span class="string">"r"</span>, &amp;file_resource) == FAILURE)</span><br><span class="line">	&#123;</span><br><span class="line">		RETURN_NULL();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	ZEND_FETCH_RESOURCE2(fp, FILE*, &amp;file_resource, <span class="number">-1</span>, PHP_DONIE_RES_NAME_FILE, le_donie_file_descriptor, le_donie_file_descriptor_persist);</span><br><span class="line">	zend_hash_index_del(&amp;EG(regular_list), Z_RESVAL_P(file_resource));</span><br><span class="line">	RETURN_TRUE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="创建新资源类型"><a href="#创建新资源类型" class="headerlink" title="创建新资源类型"></a>创建新资源类型</h3><p>zend_register_list_destructors_ex()创建新资源类型，并注册该资源类型的析构函数、资源名称。第一个参数是常规资源的析构函数，第二个是持久资源的析构函数，此处创建的是常规资源类型，故第二个参数不指定。</p>
+<h3 id="注册资源"><a href="#注册资源" class="headerlink" title="注册资源"></a>注册资源</h3><p>宏函数ZEND_REGISTER_RESOURCE()注册新生成的资源到EG(regular_list)，并保存资源的索引到zval-&gt;value-&gt;lval中。</p>
+<h3 id="双重引用计数"><a href="#双重引用计数" class="headerlink" title="双重引用计数"></a>双重引用计数</h3><p>资源变量zval中存在一个引用计数，资源数据zend_rsrc_list_entry中也存在一个。前者遵循与其它变量一致的计数原则，后者取决于资源数据被几个资源变量zval引用。</p>
+<p>例如对于以下场景：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$a = donie_fopen(<span class="string">'/tmp/donie.txt'</span>, <span class="string">'r'</span>);</span><br><span class="line">$b = $a;</span><br><span class="line">$c = &amp;$a;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>a赋值给b时，zval的引用计数加一。a的引用赋值给c时，发生zval的拆分，b获得新的zval，引用计数是1，a和c共用一个zval，引用计数是2。此时，资源数据的引用计数加一。</p>
+<h3 id="获取资源"><a href="#获取资源" class="headerlink" title="获取资源"></a>获取资源</h3><p>ZEND_FETCH_RESOURCE()根据资源变量zval取出资源数据的ptr并验证资源类型。ZEND_FETCH_RESOURCE2()可以同时指定两个资源类型，任一类型匹配成功都可以。</p>
+<h3 id="销毁资源"><a href="#销毁资源" class="headerlink" title="销毁资源"></a>销毁资源</h3><p>根据上述二重计数原则，只有当资源数据的引用计数为0时，资源的析构函数才会被调用，而销毁资源变量不一定能销毁资源，所以需要手工强制销毁资源。</p>
+<p>zend_hash_index_del()从EG(regular_list)中删除资源时，该资源类型注册的dtor会被自动调用，从而析构资源。</p>
+<h3 id="持久资源"><a href="#持久资源" class="headerlink" title="持久资源"></a>持久资源</h3><h4 id="存储"><a href="#存储" class="headerlink" title="存储"></a>存储</h4><p>EG(persistent_list)是个用字符串索引的哈希表。需要自行定义键的命名规则，做到全局唯一。</p>
+<h4 id="创建持久资源类型"><a href="#创建持久资源类型" class="headerlink" title="创建持久资源类型"></a>创建持久资源类型</h4><p>zend_register_list_destructors_ex()注册资源类型时，将析构函数指定为第二个参数，第一个参数为NULL。析构持久资源时，会自动调用该函数。</p>
+<h4 id="注册持久资源"><a href="#注册持久资源" class="headerlink" title="注册持久资源"></a>注册持久资源</h4><p>EG(persistent_list)中的资源数据并不被直接使用，对资源的操作仍然使用EG(regular_list)。故在注册持久资源时，两个哈希表中都需要保存一份。</p>
+<p>往EG(persistent_list)中存资源数据：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span> *hash_key;</span><br><span class="line"><span class="keyword">int</span> hash_key_len;</span><br><span class="line">zend_rsrc_list_entry le;</span><br><span class="line">le.type = le_donie_file_descriptor_persist;</span><br><span class="line">le.ptr = fp;</span><br><span class="line">hash_key_len = spprintf(&amp;hash_key, <span class="number">0</span>, <span class="string">"php_donie_file_descriptor:%s-%s"</span>, filename, mode);</span><br><span class="line">zend_hash_update(&amp;EG(persistent_list), hash_key, hash_key_len+<span class="number">1</span>, (<span class="keyword">void</span>*)&amp;le, <span class="keyword">sizeof</span>(list_entry), <span class="literal">NULL</span>);</span><br></pre></td></tr></table></figure>
+<h4 id="获取持久资源"><a href="#获取持久资源" class="headerlink" title="获取持久资源"></a>获取持久资源</h4><p>对持久资源的常规操作和操作常规资源一样，仍使用EG(regular_list)，因为变量zval中存储的是EG(regular_list)中的索引。所以需要先在EG(persistent_list)中查询，若资源存在，先注册到EG(regular_list)中，再进行后续操作。</p>
+<h4 id="手动析构持久资源"><a href="#手动析构持久资源" class="headerlink" title="手动析构持久资源"></a>手动析构持久资源</h4><p>用zend_hash_del()从EG(persistent_list)中删除资源数据即可自动触发析构函数。</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-object-implementation-in-php" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -104,7 +189,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/object-implementation-in-php/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/object-implementation-in-php/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -226,7 +311,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/class-interface-implementation-in-php/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/class-interface-implementation-in-php/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -306,7 +391,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/transformers-grim-lock/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/transformers-grim-lock/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -379,7 +464,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/array-implementation-in-php/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/array-implementation-in-php/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -494,7 +579,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/hashtable-implementation-of-php/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/hashtable-implementation-of-php/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -614,7 +699,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/auto-remap-keyboard/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/auto-remap-keyboard/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -681,7 +766,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/monitor-home-with-raspberry-pi/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/monitor-home-with-raspberry-pi/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -752,7 +837,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/make-nas-with-raspberry-pi/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/make-nas-with-raspberry-pi/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -820,7 +905,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/adjust-disk-partitions-again/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/adjust-disk-partitions-again/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -854,78 +939,8 @@ ga('send', 'pageview');
 
 
     
-      <article id="post-books-i-read-these-days" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/books-i-read-these-days/"><strong>这段时间读的几本书</strong></a>
-      <small class="article-date-index">&nbsp; 2015-03-29</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/books-i-read-these-days/" class="article-date">
-  <time datetime="2015-03-29T08:00:00.000Z" itemprop="datePublished">2015-03-29</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/青梅煮酒/">青梅煮酒</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/books-i-read-these-days/#disqus_thread" class="article-comment-link">评论</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <img src="http://pic.yupoo.com/leninlee/ExoJe1q2/medish.jpg">
-<p>每个危楼听雨的暮年都有过软红十丈的青春。文字凄艳，明清小品里的上乘之作。后两记文风模仿前文，意境远逊，应是伪作，可以不读。</p>
-<img src="http://pic.yupoo.com/leninlee/ExoJbmLN/medish.jpg">
-<p>上部是政治史，下部是文化史。文化史部分很好，涨知识，应该买本经常翻翻。</p>
-<img src="http://pic.yupoo.com/leninlee/ExoJdozU/medish.jpg">
-<p>大部分是讲稿，内容不系统，不适合入门。畅销书不可信啊。</p>
-<img src="http://pic.yupoo.com/leninlee/ExoJdmOb/medish.jpg">
-<p>科普书，不知道豆瓣上那么高的评分哪儿来的。</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
       <nav id="page-nav">
-        <a class="extend prev" rel="prev" href="/page/18/">&laquo; 上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><a class="page-number" href="/page/18/">18</a><span class="page-number current">19</span><a class="page-number" href="/page/20/">20</a><a class="page-number" href="/page/21/">21</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/20/">下一页 &raquo;</a>
+        <a class="extend prev" rel="prev" href="/page/18/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><a class="page-number" href="/page/18/">18</a><span class="page-number current">19</span><a class="page-number" href="/page/20/">20</a><a class="page-number" href="/page/21/">21</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/20/">Next &raquo;</a>
       </nav>
     
 

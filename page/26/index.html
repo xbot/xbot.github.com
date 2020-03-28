@@ -70,6 +70,78 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-practical-drag-and-drop-implementation-with-dojo" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/practical-drag-and-drop-implementation-with-dojo/"><strong>用Dojo实现拖放操作的最佳实践</strong></a>
+      <small class="article-date-index">&nbsp; 2013-11-05</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/practical-drag-and-drop-implementation-with-dojo/" class="article-date">
+  <time datetime="2013-11-05T08:58:00.000Z" itemprop="datePublished">2013-11-05</time>
+</a>-->
+      <!--
+  <div class="article-category-index">
+    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/practical-drag-and-drop-implementation-with-dojo/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>网上关于Dojo实现拖放操作的资料都讲得很浅，所以我在研究这个东西的时候在一些细节上费了不少功夫，例如创建自定义样式的拖拽物件、将光标置于拖拽开始时的位置等等。这些细节一般在实现个性化的拖放操作时都要涉及，但几乎找不到任何直接的资料，所以本文斗胆宣称是当前Dojo拖放的最佳实践。</p>
+<h2 id="创建自定义样式的拖拽物件"><a href="#创建自定义样式的拖拽物件" class="headerlink" title="创建自定义样式的拖拽物件"></a>创建自定义样式的拖拽物件</h2><p>Dojo缺省的拖拽物件样式很丑，通过覆盖官方文档里列出的几个CSS的class可以有限地调整部分样式，如果需要更多个性化，就需要使用自定义的物件模板。</p>
+<p>通过重载Source对象的creator方法可以实现这一点。这个方法会在创建拖拽物件的时候被调用，如果hint参数的值为“avatar”就表示将被创建的是被拖拽物件，此时可以使用预先定义好的模板avatarTmpl创建物件的node。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">this</span>.dndSrc = <span class="keyword">new</span> Source(<span class="keyword">this</span>.itemList.domNode, &#123;</span><br><span class="line">    copyOnly:<span class="literal">true</span>,</span><br><span class="line">    selfAccept:<span class="literal">true</span>,</span><br><span class="line">    creator: <span class="function"><span class="keyword">function</span>(<span class="params">item, hint</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> n;</span><br><span class="line">        <span class="keyword">if</span> (hint == <span class="string">'avatar'</span>) &#123;</span><br><span class="line">            n = domConstruct.toDom(lang.replace(avatarTmpl, item));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> &#123;<span class="attr">node</span>:n, <span class="attr">data</span>:item, <span class="attr">type</span>:[<span class="string">'text'</span>]&#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h2 id="置光标位置于拖拽起始处"><a href="#置光标位置于拖拽起始处" class="headerlink" title="置光标位置于拖拽起始处"></a>置光标位置于拖拽起始处</h2><p>在拖拽开始后，Dojo默认将光标置于被拖拽物件的左上角，而一般把光标置于拖拽开始时相对于物件的位置处显得比较自然。</p>
+<p>实现方式是先记录拖拽开始时光标的位置，然后设置dojo.dnd.Manager的两个位移属性。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">on(<span class="keyword">this</span>.domNode, <span class="string">'mousedown'</span>, lang.hitch(<span class="keyword">this</span>, <span class="keyword">this</span>._setDndOffset))</span><br><span class="line"></span><br><span class="line">_setDndOffset: <span class="function"><span class="keyword">function</span>(<span class="params">evt</span>)</span>&#123;</span><br><span class="line">    <span class="comment">// summary: 鼠标按下时将光标相对于组件的位移设置为dojo.dnd.Manager的位移</span></span><br><span class="line">    <span class="comment">//          即使光标在拖动开始后位于拖动开始时的位置</span></span><br><span class="line">    <span class="keyword">var</span> cPos = Functions.getCursorPosition(evt);</span><br><span class="line">    <span class="keyword">var</span> nPos = domGeometry.position(<span class="keyword">this</span>.domNode);</span><br><span class="line">    Manager.manager().OFFSET_X = nPos.x - cPos.x;</span><br><span class="line">    Manager.manager().OFFSET_Y = nPos.y - cPos.y;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<h2 id="使鼠标事件穿透被拖拽物件"><a href="#使鼠标事件穿透被拖拽物件" class="headerlink" title="使鼠标事件穿透被拖拽物件"></a>使鼠标事件穿透被拖拽物件</h2><p>将光标置于物件开始被拖拽时的位置后，物件本身会挡住mouseover事件，导致Target不能获知物件被拖拽到自己上方，以致能拖不能放。</p>
+<p>解决方法是通过CSS使鼠标事件穿透被拖拽物件。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">.dojoDndAvatar &#123;</span><br><span class="line">    pointer-events: none; <span class="comment">/*Chrome, FF下使鼠标事件穿透*/</span></span><br><span class="line">    background:transparent; <span class="comment">/*IE下使鼠标事件穿透*/</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-typeerror-access-denied" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -104,7 +176,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/typeerror-access-denied/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/typeerror-access-denied/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -172,7 +244,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/dojo-dnd-cannot-read-property-type-of-undefined/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/dojo-dnd-cannot-read-property-type-of-undefined/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -246,7 +318,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/take-sakura-as-my-primary-terminal/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/take-sakura-as-my-primary-terminal/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -317,7 +389,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/after-reading-wukongs-biography/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/after-reading-wukongs-biography/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -382,7 +454,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/get-position-in-qtablewidget-for-changed-cellwidgets/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/get-position-in-qtablewidget-for-changed-cellwidgets/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -449,7 +521,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/my-mouses-of-all-those-years/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/my-mouses-of-all-those-years/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -519,7 +591,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/after-reading-ten-years-of-traveling/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/after-reading-ten-years-of-traveling/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -585,7 +657,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/make-youcompleteme-ultisnips-compatible/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/make-youcompleteme-ultisnips-compatible/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -665,7 +737,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/vundle-vs-pathogen/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/vundle-vs-pathogen/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -698,79 +770,8 @@ ga('send', 'pageview');
 
 
     
-      <article id="post-riding-to-ancient-west-peking-path" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/riding-to-ancient-west-peking-path/"><strong>骑行京西古道</strong></a>
-      <small class="article-date-index">&nbsp; 2013-05-18</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/riding-to-ancient-west-peking-path/" class="article-date">
-  <time datetime="2013-05-18T14:09:00.000Z" itemprop="datePublished">2013-05-18</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/行见/">行见</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/riding-to-ancient-west-peking-path/#disqus_thread" class="article-comment-link">评论</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>13年5月，骑行京西古道。</p>
-<p>从水峪嘴下去，进京西古道风景区，通过牛角岭关城，到落坡马志远故居，然后经韭园桥沿永定河谷至担礼大桥进入G109。</p>
-<p>京西古道风景区收20￥，里面有博物馆、军事酒吧、古道和牛角岭关城。博物馆其实就是个村史展馆，很小，没什么内容，就一间屋子，一览无余。古道是乱石砌成的，非常不平，推车上去很累，好在只有一千米长：</p>
-<img src="http://pic.yupoo.com/leninlee/CS026ew0/medium.jpg">
-<p>牛角岭关城，看著像个砖窑，地上的石头沟沟坎坎：</p>
-<img src="http://pic.yupoo.com/leninlee/CS024QNx/medium.jpg">
-<p>马志远故居，看著像重建的，刻意营造成“小桥流水人家”的样子，里面就一四合院，收费10￥，没进去。附近有一山泉，想老马也算过了一把农妇山泉有点儿田的瘾，夫复何求。</p>
-<img src="http://pic.yupoo.com/leninlee/CS024f86/medium.jpg">
-<p>永定河谷一线的景色非常好，可惜没有拍照。</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
       <nav id="page-nav">
-        <a class="extend prev" rel="prev" href="/page/25/">&laquo; 上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/24/">24</a><a class="page-number" href="/page/25/">25</a><span class="page-number current">26</span><a class="page-number" href="/page/27/">27</a><a class="page-number" href="/page/28/">28</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/27/">下一页 &raquo;</a>
+        <a class="extend prev" rel="prev" href="/page/25/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/24/">24</a><a class="page-number" href="/page/25/">25</a><span class="page-number current">26</span><a class="page-number" href="/page/27/">27</a><a class="page-number" href="/page/28/">28</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/27/">Next &raquo;</a>
       </nav>
     
 

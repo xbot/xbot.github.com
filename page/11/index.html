@@ -70,6 +70,82 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-implement-airplay-with-raspberry-pi" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/implement-airplay-with-raspberry-pi/"><strong>用Raspberry Pi实现音频Airplay</strong></a>
+      <small class="article-date-index">&nbsp; 2017-04-17</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/implement-airplay-with-raspberry-pi/" class="article-date">
+  <time datetime="2017-04-17T02:19:51.000Z" itemprop="datePublished">2017-04-17</time>
+</a>-->
+      <!--
+  <div class="article-category-index">
+    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/implement-airplay-with-raspberry-pi/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <img src="http://ww1.sinaimg.cn/large/006tKfTcly1fepi05fa8ej31kw1kwx6q.jpg" width="600">
+<p>用树莓派做音频airplay效果不错，老书架音箱又可以用起来了。</p>
+<p>实现方式是shairplay-sync，利用HDMI转VGA线上的3.5mm音频输出孔，因为我的树莓派2B的3.5mm音视频输出口没有合适的转接头。</p>
+<p>我用的是Arch Linux ARM，需要手动开启HDMI输出。修改<code>/boot/config.txt</code>：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">hdmi_force_hotplug</span>=<span class="number">1</span></span><br><span class="line"><span class="attr">hdmi_drive</span>=<span class="number">2</span></span><br><span class="line"><span class="attr">config_hdmi_boost</span>=<span class="number">4</span></span><br><span class="line"><span class="attr">dtparam</span>=audio=<span class="literal">on</span></span><br></pre></td></tr></table></figure>
+<p>重启后，用alsamixer把树莓派音量调整到最大值。</p>
+<p>AUR里没有针对ARM的shairplay-sync，需要手动编译：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/mikebrady/shairport-sync.git</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成configure</span></span><br><span class="line">autoreconf -i -f</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 针对systemd编译</span></span><br><span class="line"></span><br><span class="line">./configure --sysconfdir=/etc --with-alsa --with-avahi --with-ssl=openssl --with-metadata --with-soxr --with-systemd</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># END</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 如果shairport-sync用户不存在，新增用户和用户组</span></span><br><span class="line"></span><br><span class="line">getent group shairport-sync &amp;&gt;/dev/null || sudo groupadd -r shairport-sync &gt;/dev/null</span><br><span class="line"></span><br><span class="line">getent passwd shairport-sync &amp;&gt; /dev/null || sudo useradd -r -M -g shairport-sync -s /usr/bin/nologin -G audio shairport-sync &gt;/dev/null</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># END</span></span><br></pre></td></tr></table></figure>
+<p>airplay默认的服务名和树莓派的hostname一致，可以到<code>/etc/shairport-sync.conf</code>里修改：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">general = &#123;</span><br><span class="line">    name = &quot;pi&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="FAQ"><a href="#FAQ" class="headerlink" title="FAQ"></a>FAQ</h2><h3 id="ALSA-lib-confmisc-c-767-parse-card-cannot-find-card-‘0’"><a href="#ALSA-lib-confmisc-c-767-parse-card-cannot-find-card-‘0’" class="headerlink" title="ALSA lib confmisc.c:767:(parse_card) cannot find card ‘0’"></a>ALSA lib confmisc.c:767:(parse_card) cannot find card ‘0’</h3><p>树莓派没声音，尝试用mpg123播放mp3时报这个错。解决办法是在<code>/boot/config.txt</code>里增加<code>dtparam=audio=on</code>。</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-the-best-practice-of-writing-api-documents" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -104,7 +180,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/the-best-practice-of-writing-api-documents/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/the-best-practice-of-writing-api-documents/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -210,7 +286,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/a-failed-attempt-to-capture-workflow-requests/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/a-failed-attempt-to-capture-workflow-requests/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -277,7 +353,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/sakura-in-yuyuantan-park/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/sakura-in-yuyuantan-park/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -344,7 +420,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/send-to-kindle-with-workflow/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/send-to-kindle-with-workflow/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -413,7 +489,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/how-to-play-youku-under-shadowrocket/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/how-to-play-youku-under-shadowrocket/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -476,7 +552,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/find-rss-with-workflow/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/find-rss-with-workflow/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -547,7 +623,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/auto-login-mas-with-keyboard-maestro/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/auto-login-mas-with-keyboard-maestro/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -610,7 +686,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/the-best-practice-of-switching-input-methods-in-macos/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/the-best-practice-of-switching-input-methods-in-macos/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -688,7 +764,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/auto-switch-keyboard-layouts-in-macos/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/auto-switch-keyboard-layouts-in-macos/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -727,73 +803,8 @@ ga('send', 'pageview');
 
 
     
-      <article id="post-try-biluochun-2017" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/try-biluochun-2017/"><strong>尝新，明前碧螺春</strong></a>
-      <small class="article-date-index">&nbsp; 2017-03-19</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/try-biluochun-2017/" class="article-date">
-  <time datetime="2017-03-19T10:19:40.000Z" itemprop="datePublished">2017-03-19</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/行见/">行见</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/try-biluochun-2017/#disqus_thread" class="article-comment-link">评论</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <img src="https://ww2.sinaimg.cn/large/006tNc79ly1fdsbari7pij30sg0sgk0d.jpg" width="640">
-<p>近年明前都要试一种新茶，今年是碧螺春。</p>
-<p>不觉得有什么特别的地方，就是不耐泡。</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
       <nav id="page-nav">
-        <a class="extend prev" rel="prev" href="/page/10/">&laquo; 上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/">12</a><a class="page-number" href="/page/13/">13</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/12/">下一页 &raquo;</a>
+        <a class="extend prev" rel="prev" href="/page/10/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/">12</a><a class="page-number" href="/page/13/">13</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/12/">Next &raquo;</a>
       </nav>
     
 

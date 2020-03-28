@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>用 SSH 命令调试 Git 的连接问题 - 晴耕雨讀</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="昨天执行git pull的时候发现会一直卡在那儿，排除了各种可能，而且 Github 上的项目也是可以正常拉取的，说明跟网络、代理等关系应该不大，git 命令本身也工作正常。 问题集中在公司的项目上，所有项目都无法拉取代码。起先怀疑是公司自建的 Gitlab 出了问题，但是其他人那里又是正常的，甚至跟我同一局域网的电脑上也是正常的。 也就是说问题应该出在我自己的电脑上。考虑到前两天还能正常使用，之">
+<meta name="keywords" content="Git,Mac,Gitlab">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用 SSH 命令调试 Git 的连接问题">
+<meta property="og:url" content="http://0x3f.org/post/debug-git-connection-with-ssh/index.html">
+<meta property="og:site_name" content="晴耕雨讀">
+<meta property="og:description" content="昨天执行git pull的时候发现会一直卡在那儿，排除了各种可能，而且 Github 上的项目也是可以正常拉取的，说明跟网络、代理等关系应该不大，git 命令本身也工作正常。 问题集中在公司的项目上，所有项目都无法拉取代码。起先怀疑是公司自建的 Gitlab 出了问题，但是其他人那里又是正常的，甚至跟我同一局域网的电脑上也是正常的。 也就是说问题应该出在我自己的电脑上。考虑到前两天还能正常使用，之">
+<meta property="og:locale" content="zh-TW">
+<meta property="og:updated_time" content="2020-03-28T15:58:47.614Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="用 SSH 命令调试 Git 的连接问题">
+<meta name="twitter:description" content="昨天执行git pull的时候发现会一直卡在那儿，排除了各种可能，而且 Github 上的项目也是可以正常拉取的，说明跟网络、代理等关系应该不大，git 命令本身也工作正常。 问题集中在公司的项目上，所有项目都无法拉取代码。起先怀疑是公司自建的 Gitlab 出了问题，但是其他人那里又是正常的，甚至跟我同一局域网的电脑上也是正常的。 也就是说问题应该出在我自己的电脑上。考虑到前两天还能正常使用，之">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="/webfonts/ptserif/main.css" rel="stylesheet" type="text/css">
+  <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-93233020-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+</head>
+</html>
+<body>
+  <div id="container">
+    <!-- blair add baidu tongji start... @2017.10.03 -->
+<!-- blair add baidu tongji end ! @2017.10.03 -->
+
+<header id="header">
+  <div id="header-outer" class="outer">
+    <div id="header-inner" class="inner">
+      <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
+      <a id="logo" class="logo" href="/"></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/archives">目录</a>
+        
+          <a class="main-nav-link" href="/categories">分类</a>
+        
+          <a class="main-nav-link" href="/tags">标签</a>
+        
+          <a class="main-nav-link" href="https://t.me/s/blingings">不灵</a>
+        
+          <a class="main-nav-link" href="/about">关于</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        <div id="search-form-wrap">
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
+
+    <br>
+    <section id="main" class="outer"><article id="post-debug-git-connection-with-ssh" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      用 SSH 命令调试 Git 的连接问题
+      <small class="article-detail-date-index">&nbsp; 2020-03-28</small>
+    </h1>
+  
+
+
+        <div class="page-title"></div>
+        <br>
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/debug-git-connection-with-ssh/" class="article-date">
+  <time datetime="2020-03-28T15:17:45.000Z" itemprop="datePublished">2020-03-28</time>
+</a>-->
+      <!-- 
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+--><!-- by blair 160724 -->
+      <!-- by blair
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/debug-git-connection-with-ssh/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>昨天执行<code>git pull</code>的时候发现会一直卡在那儿，排除了各种可能，而且 Github 上的项目也是可以正常拉取的，说明跟网络、代理等关系应该不大，git 命令本身也工作正常。</p>
+<p>问题集中在公司的项目上，所有项目都无法拉取代码。起先怀疑是公司自建的 Gitlab 出了问题，但是其他人那里又是正常的，甚至跟我同一局域网的电脑上也是正常的。</p>
+<p>也就是说问题应该出在我自己的电脑上。考虑到前两天还能正常使用，之后唯一一件相关的事就是升级 macOS 到 10.15.4 了。</p>
+<p>然而用 Homebrew 重新安装 git 等相关的几个包也没能解决问题，于是用<code>ssh -T -v git@gitlab.xxx.com -p 8848</code>调试，输出如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">donie@Donies  ~  ssh -T -v git@gitlab.xxx.com -p 8848                                                                      -- INSERT --</span><br><span class="line">OpenSSH_8.1p1, LibreSSL 2.7.3</span><br><span class="line">debug1: Reading configuration data /Users/donie/.ssh/config</span><br><span class="line">debug1: /Users/donie/.ssh/config line 9: Applying options for gitlab.xxx.com</span><br><span class="line">debug1: Reading configuration data /etc/ssh/ssh_config</span><br><span class="line">debug1: /etc/ssh/ssh_config line 47: Applying options for *</span><br><span class="line">debug1: Connecting to gitlab.xxx.com port 8848.</span><br></pre></td></tr></table></figure>
+<p>卡在了“Connecting to gitlab.xxx.com port 8848”这一步，但是<code>telnet gitlab.xxx.com 8848</code>却是通的。</p>
+<p>问题陷入僵局。</p>
+<p>Google的过程中偶然注意到别人正常的调试信息中这一步的输出是有 IP 地址的，如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">debug1: Connecting to gitlab.xxx.com [xxx.xxx.xxx.xxx] port 8848.</span><br></pre></td></tr></table></figure>
+<p>首先怀疑应该是主机名映射出了问题，但是无论是修改 Hosts 还是在 ~/.ssh/config 中指定都还是不行，ping 主机名也能正常解析出 IP 地址。</p>
+<p>问题陷入绝境。</p>
+<p>绝望之际，突然想到会不会是 SSH 自身出了问题呢？<code>which ssh</code>发现是系统自带的，所以装上 Homebrew 的版本试了一下，竟然好了！</p>
+<p>bugOS !!!</p>
+
+      
+     <!-- by blair add this if sentence at 20160725 -->
+      <br>
+      
+<!--
+<div id="bottom-donation-section">
+<span style="font-size: 1.0em; padding:0em 1em 0.5em 1em; margin: 0 auto;">
+  <strong style="vertical-align: top;">分享到:</strong>
+    <div class="j_handlclick"  style="background: url(/images/logos/share_facebook_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://www.facebook.com/sharer/sharer.php?u=" target="_blank">
+    </div>
+    <div class="j_handlclick"  style="background: url(/images/logos/share_weibo_icon.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://service.weibo.com/share/share.php?url" target="_blank">
+    </div>
+    <div class="j_handlclick"  style="background: url(/images/logos/share_wechat_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://api.addthis.com/oexchange/0.8/forward/wechat/offer?url=" target="_blank">
+    </div>
+    <div class="j_handlclick"  style="background: url(/images/logos/share_twitter_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://twitter.com/intent/tweet?url=" target="_blank">
+    </div>
+  <br>  
+  <br>  
+  &nbsp;&nbsp;如果您觉得这篇文章对您的学习很有帮助, 请您也分享它, 让它能再次帮助到更多的需要学习的人.
+您的<a href="/support/"><strong>支持</strong></a>将鼓励我继续创作 !
+  <br>  
+
+</span>
+</div>
+-->
+<div class="well">
+  <!--
+  原创文章，转载请注明： 转载自<a href="http://52binge.github.io"> Blair Chan's Blog</a>，作者：
+  <a href="/about">Blair Chan</a> <br>
+  -->
+  本文基于<a target="_blank" title="Creative Commons Attribution 4.0 international License" href="https://creativecommons.org/licenses/by-nc/4.0/">署名4.0国际许可协议</a>发布，转载请保留本文署名和文章链接。 如您有任何授权方面的协商，请联系我。
+</div>
+ <!-- by blair add 160724-->
+    
+    </div>
+    
+    
+      <footer class="article-footer">
+        <!-- <div class="well" style="width:100px; height:30px;"></div>  by blair-->
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+ <!-- by blair add 160724-->
+        <!--
+        <div style="width:100px; height:30px;"></div> by blair add 160724
+        -->
+        
+  <div class="article-tag">
+    <a class="article-tag-link" href="/tags/git/">Git</a><span></span><a class="article-tag-link" href="/tags/gitlab/">Gitlab</a><span></span><a class="article-tag-link" href="/tags/mac/">Mac</a>
+  </div>
+
+
+      </footer>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/post/auto-switch-input-method-while-changing-vim-mode/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">改变Vim模式时自动切换输入法的方法&nbsp;<span>&gt;</span></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</section>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 晴耕雨讀&nbsp;
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/52binge/hexo-theme-blairos">blairos</a>
+    </div>
+  </div>
+</footer>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX"],
+    tex2jax: {
+      inlineMath: [ ['$','$'], ['\\(','\\)'] ],
+      displayMath: [ ['$$','$$']],
+      processEscapes: true
+    }
+  });
+</script>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML,http://myserver.com/MathJax/config/local/local.js">
+</script>
+
+    
+<script type="text/javascript"> <!-- add by blair 0724 type=text/javascript -->
+  var disqus_shortname = '0x3f';
+  
+  var disqus_url = 'http://0x3f.org/post/debug-git-connection-with-ssh/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="/js/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>

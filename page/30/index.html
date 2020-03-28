@@ -70,6 +70,92 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-ultrablog-v310-released" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/ultrablog-v310-released/"><strong>UltraBlog.vim v3.1释出：代码重构与MacVim支持</strong></a>
+      <small class="article-date-index">&nbsp; 2011-11-05</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/ultrablog-v310-released/" class="article-date">
+  <time datetime="2011-11-04T16:00:00.000Z" itemprop="datePublished">2011-11-05</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/ultrablog-v310-released/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>距离上一个版本的释出已经有三个月了，这次新版并没有增加多少功能性的内容，主要是代码的重构和对在MacVim下稳定性的改进。</p>
+
+<p>对依赖关系检查的不细致导致了一些麻烦，抛出的错误信息有时与实际原因相距甚远。由于开始时是以实现功能为主，所以都是直接用函数实现的，之后修修补补，代码冗余而且维护麻烦。于是著手重构主要功能的源码，面向对象，把所有检查逻辑放到父类中去实现，子类只关注自身逻辑，最后新版减少了二百多行的代码量。</p>
+
+<p>在重构的过程中偶然发现，在MacVim中，程序抛出任何异常，即便是有捕获逻辑，也会导致编辑器崩溃。在<a href="http://stackoverflow.com/questions/5574702/how-to-print-to-stderr-in-python" target="_blank" rel="noopener">这里</a>简略地提到：</p>
+
+<blockquote>
+  <p>the failure was actual a crash, through some strange combination of threading, matplotlib pyplot backend, and ssh X11 forwarding, sys.stderr had somehow been assigned to something which python complained wasn't a file-like object</p>
+</blockquote>
+
+<p>于是将所有标准输出与标准错误输出语句换成另一种形式：</p>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 原形式</span></span><br><span class="line">sys.stdout.write(<span class="string">'xxx'</span>)</span><br><span class="line">sys.stderr.write(<span class="string">'xxx'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 新形式</span></span><br><span class="line"><span class="keyword">print</span> &gt;&gt; sys.stdout, <span class="string">'xxx'</span></span><br><span class="line"><span class="keyword">print</span> &gt;&gt; sys.stderr, <span class="string">'xxx'</span></span><br></pre></td></tr></table></figure>
+
+<p>以上是新版主要变更的内容，此外，也顺便解决了开发过程中发现的个别Bug和做了其它一些改动：</p>
+
+<ul>
+<li>Change:  The key "xmlrpc" of the settings list is dropped, a new one with the name "url" is added, you should set its value to the blog url.</li>
+<li>Change:  Source code refactorings.</li>
+<li>Change:  Solve the crash problem existing in MacVim only.</li>
+<li>Change:  <strong>:UBConv</strong> can be used in any buffer.</li>
+<li>Change:  <strong>:UBThis</strong> now has a third parameter, which enables convertions between syntaxes.</li>
+<li>Bugfix:  The second parameter of <strong>:UBThis</strong> cannot take effect.</li>
+</ul>
+
+<p>这也是将源码从Google Code迁移到GitHub后发布的第一个新版本，更详细的信息请移步<a href="http://0x3f.org/?p=1894">插件主页</a>或GitHub上的<a href="https://github.com/xbot/UltraBlog.vim" target="_blank" rel="noopener">代码仓库</a>。</p>
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-double-commander" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -100,7 +186,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/double-commander/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/double-commander/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -213,7 +299,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/enable-code-snippet-highlighting-for-ultrablog-vim-templates/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/enable-code-snippet-highlighting-for-ultrablog-vim-templates/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -291,7 +377,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/dualhead-display-on-linux/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/dualhead-display-on-linux/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -422,7 +508,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/ultrablog-v300-released/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/ultrablog-v300-released/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -519,7 +605,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/got-aoc-e2343f/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/got-aoc-e2343f/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -586,7 +672,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/manage-ssh-connections-using-pac-manager/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/manage-ssh-connections-using-pac-manager/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -806,7 +892,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/comparison-of-efficiency-for-apc-file-memcached/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/comparison-of-efficiency-for-apc-file-memcached/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -929,7 +1015,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/how-to-hide-dialog-in-installshield/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/how-to-hide-dialog-in-installshield/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -1004,7 +1090,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/after-reading-extjs-in-action/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/after-reading-extjs-in-action/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -1037,96 +1123,8 @@ ga('send', 'pageview');
 
 
     
-      <article id="post-ultrablog-v230-released" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/ultrablog-v230-released/"><strong>UltraBlog.vim v2.3.0 Released With Templates</strong></a>
-      <small class="article-date-index">&nbsp; 2011-06-13</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/ultrablog-v230-released/" class="article-date">
-  <time datetime="2011-06-12T16:00:00.000Z" itemprop="datePublished">2011-06-13</time>
-</a>-->
-      <!--
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/ultrablog-v230-released/#disqus_thread" class="article-comment-link">评论</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>I released the new version 2.3.0 of <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a> last week. The main improvement in this version is that templates are introduced in.</p>
-
-<p>Templates are simply HTML strings, they are used to preview posts/pages in the browser locally. This feature is a reparation for the remote previewing, due to the limit of the API, users cannot send a post to Wordpress as draft and preview it without affecting the post status if the post has been published. With templates, they do not have to send drafts to blogs to preview the final effect, but preview drafts directly in the browser in a pre-defined style. Templates can be created as many as users like and their looks can be customized with CSS, HTML and Javascript.</p>
-
-<p>The following illustrations show the content and final effect of the default template:</p>
-
-<p>
-<div style="display:table;">
-    <span style="display:table-cell;"><a href="https://picasaweb.google.com/lh/photo/bixn15q6ujUIQmamJDm7lQ?feat=embedwebsite" target="_blank" rel="noopener"><img src="https://lh4.googleusercontent.com/-RCCNuSJbvsc/TfX_QuWobsI/AAAAAAAABuY/2eeov12lzX0/s288/ultrablog_default_template.png" title="The Content of The Default Template" height="180" width="288"></a></span>
-    <span style="display:table-cell;width:10px;"></span>
-    <span style="display:table-cell;"><a href="https://picasaweb.google.com/lh/photo/B0fBmAnyW2IAYDFcWb2e7Q?feat=embedwebsite" target="_blank" rel="noopener"><img src="https://lh6.googleusercontent.com/-d0B7UEfZEYs/TfYEEJobpfI/AAAAAAAABug/OVYAB-imXlE/s288/ultrablog_template_effect.png" title="The Final Effect of The Default Template" height="180" width="288"></a></span>
-</div>
-</p>
-
-<p>Templates should be formatted as valid Python template strings, that is, use the following avaliable placeholders and escape any literal '%' with another '%':</p>
-
-<blockquote>
-  <p>%(title)s <br>
-     The title of the current post/page.</p>
-  
-  <p>%(content)s <br>
-     The content of the current post/page.</p>
-  
-  <p>%% <br>
-     A literal '%'.</p>
-</blockquote>
-
-<p>Users can take the default template whose name is 'default' as an example for writing their own templates. The default template can be changed to another one by setting the name of that template to the option <strong>ub_default_template</strong>.</p>
-
-<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
       <nav id="page-nav">
-        <a class="extend prev" rel="prev" href="/page/29/">&laquo; 上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/28/">28</a><a class="page-number" href="/page/29/">29</a><span class="page-number current">30</span><a class="page-number" href="/page/31/">31</a><a class="page-number" href="/page/32/">32</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/31/">下一页 &raquo;</a>
+        <a class="extend prev" rel="prev" href="/page/29/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/28/">28</a><a class="page-number" href="/page/29/">29</a><span class="page-number current">30</span><a class="page-number" href="/page/31/">31</a><a class="page-number" href="/page/32/">32</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/31/">Next &raquo;</a>
       </nav>
     
 

@@ -70,6 +70,89 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-the-focus-issue-of-pygtk-cellrenderer" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/the-focus-issue-of-pygtk-cellrenderer/"><strong>关于PyGTK.CellRenderer的回调方法中聚焦异常的问题</strong></a>
+      <small class="article-date-index">&nbsp; 2012-03-25</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/the-focus-issue-of-pygtk-cellrenderer/" class="article-date">
+  <time datetime="2012-03-24T16:00:00.000Z" itemprop="datePublished">2012-03-25</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/the-focus-issue-of-pygtk-cellrenderer/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>遇到这样一个问题：</p>
+
+<p>在pygtk.TreeView中，需要在一个Cell的值被修改后做一个校验，如果不合法，则重新聚焦该Cell并选中其中的内容。</p>
+
+<p>示意代码如下：</p>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># pygtk.CellRenderer的edited事件的回调方法</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">onCellEdited</span><span class="params">(self, cell, path, newText, userData)</span>:</span></span><br><span class="line">    store,colNum = userData</span><br><span class="line">    <span class="comment"># 使用事件驱动的设计理念，创建一个自定义的事件</span></span><br><span class="line">    evt = ServerTypeChangedEvent(self, cell, usrData)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 事件入队列</span></span><br><span class="line">    EventQueue.fireEvent(evt)</span><br><span class="line">    <span class="comment"># 处理事件队列，如果截获异常，提示并重新聚焦Cell</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        EventQueue.processEvents()</span><br><span class="line">    <span class="keyword">except</span> Exception,e:</span><br><span class="line">        self.alert(e.message)</span><br><span class="line">        col = self.treeView.get_column(colNum<span class="number">-1</span>)</span><br><span class="line">        <span class="comment"># 聚焦Cell，并选中Cell中的内容</span></span><br><span class="line">        self.treeView.set_cursor_on_cell(path, col, cell, <span class="keyword">True</span>)</span><br></pre></td></tr></table></figure>
+
+<p>关键的代码在最后一行，通过调用TreeView的set_cursor_on_cell方法聚焦Cell并选中其内容。但就是这一步出了问题，报如下警告：</p>
+
+<blockquote>
+  <p>GtkWarning: _gtk_tree_view_column_start_editing: assertion `tree_column->editable_widget == NULL' failed</p>
+</blockquote>
+
+<p>此后整个TreeView的行为表现不正常，表现为可直接修改其它Cell的内容，且原Cell一直处于聚焦状态。</p>
+
+<p>此问题的原因是：edited事件在Cell的输入控件被销毁前就发出了，这时在事件的回调方法中重新聚焦该Cell就导致了这个问题（<em>详见<a href="http://www.gtkforums.com/viewtopic.php?t=4619" target="_blank" rel="noopener">这里</a></em>）。</p>
+
+<p>解决方法是借助glib.idle_add函数，在PyGTK空闲的时候再调用set_cursor_on_cell方法，由于此时原控件已被销毁，所以不会有问题。</p>
+
+<p>修改后的代码如下：</p>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">onCellEdited</span><span class="params">(self, cell, path, newText, userData)</span>:</span></span><br><span class="line">    store,colNum = userData</span><br><span class="line">    evt = ServerTypeChangedEvent(self, cell, usrData)</span><br><span class="line"></span><br><span class="line">    EventQueue.fireEvent(evt)</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        EventQueue.processEvents()</span><br><span class="line">    <span class="keyword">except</span> Exception,e:</span><br><span class="line">        self.alert(e.message)</span><br><span class="line">        col = self.treeView.get_column(colNum<span class="number">-1</span>)</span><br><span class="line">        <span class="comment">#self.treeView.set_cursor_on_cell(path, col, cell, True)</span></span><br><span class="line">        <span class="keyword">import</span> glib</span><br><span class="line">        glib.idle_add(self.treeView.set_cursor_on_cell, path, col, cell, <span class="keyword">True</span>)</span><br></pre></td></tr></table></figure>
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-bye-mac" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -100,7 +183,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/bye-mac/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/bye-mac/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -183,7 +266,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/nginx-405-not-allowed/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/nginx-405-not-allowed/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -260,7 +343,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/how-to-disable-bluetooth-after-login-to-xfce/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/how-to-disable-bluetooth-after-login-to-xfce/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -333,7 +416,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/enable-the-new-domain-name-0x3f-org/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/enable-the-new-domain-name-0x3f-org/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -404,7 +487,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/after-reading-three-body/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/after-reading-three-body/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -469,7 +552,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/after-reading-hacking-vim72/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/after-reading-hacking-vim72/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -532,7 +615,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/highlighting-paired-html-tags-using-matchtag-vim/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/highlighting-paired-html-tags-using-matchtag-vim/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -543,6 +626,71 @@ ga('send', 'pageview');
         <p>两年前我曾在<a href="http://vim.1045645.n5.nabble.com/How-can-Vim-highlight-the-matching-tag-when-I-put-the-cursor-on-the-other-one-in-a-pair-of-tags-td1177554.html" target="_blank" rel="noopener">Vim邮件列表</a>里问怎样高亮配对的HTML标签，但没能解决。今天意外收到一封邮件，Linqq童鞋在<a href="http://stackoverflow.com/questions/8168320/can-vim-highlight-matching-html-tags-like-notepad" target="_blank" rel="noopener">StackOverflow</a>上问了同样的问题，有人就写了这个<a href="http://www.vim.org/scripts/script.php?script_id=3818" target="_blank" rel="noopener">插件</a>。</p>
 
 <p><a href="https://picasaweb.google.com/lh/photo/wGB584-nLWrQRHCQ7qgADdMTjNZETYmyPJy0liipFm0?feat=embedwebsite" target="_blank" rel="noopener"><img src="https://lh3.googleusercontent.com/-ojoHK5ST944/Ts0QmwHOCXI/AAAAAAAAB1Q/ye0ko4Ob-gc/s800/2011-11-23.22%25253A40%25253A58.%2525E6%252593%2525B7%2525E5%25258F%252596%2525E9%252581%2525B8%2525E5%25258F%252596%2525E5%25258D%252580%2525E5%25259F%25259F.01.png" height="103" width="268"></a></p>
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
+      <article id="post-after-reading-pro-git" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/after-reading-pro-git/"><strong>读完《Pro Git》</strong></a>
+      <small class="article-date-index">&nbsp; 2011-11-14</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/after-reading-pro-git/" class="article-date">
+  <time datetime="2011-11-13T16:00:00.000Z" itemprop="datePublished">2011-11-14</time>
+</a>-->
+      <!--
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/after-reading-pro-git/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>花了大约一周的时间，周日晚上读完<a href="http://progit.org" target="_blank" rel="noopener">《Pro Git》</a>的最后几页。</p>
+
+<p>高效、安全的分布式和强大的分枝合并是Git的杀手级特性，这本书在语言上浅显易懂、简明扼要，在章节安排上循序渐进，在内容讲解上有较深入的挖掘，当属眼下Git方面最好的教材。此外，这本书的中译水平也很高，必要的地方还有译注，能看出译者不是外行。</p>
+
+<p><a href="https://picasaweb.google.com/lh/photo/RuILnzirn3HwuJzk5Wp2Zw?feat=embedwebsite" target="_blank" rel="noopener"><img src="https://lh4.googleusercontent.com/-JaRvkCJzpFE/Tr_4ifkfXMI/AAAAAAAAB0w/K_4h24C2fis/s800/A9781430218333-3d_6.png" height="350" width="277"></a></p>
 
 <p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
 
@@ -595,7 +743,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/yyets-torrents-download-script/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/yyets-torrents-download-script/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -663,159 +811,8 @@ ga('send', 'pageview');
 
 
     
-      <article id="post-after-reading-pro-git" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/after-reading-pro-git/"><strong>读完《Pro Git》</strong></a>
-      <small class="article-date-index">&nbsp; 2011-11-14</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/after-reading-pro-git/" class="article-date">
-  <time datetime="2011-11-13T16:00:00.000Z" itemprop="datePublished">2011-11-14</time>
-</a>-->
-      <!--
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/after-reading-pro-git/#disqus_thread" class="article-comment-link">评论</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>花了大约一周的时间，周日晚上读完<a href="http://progit.org" target="_blank" rel="noopener">《Pro Git》</a>的最后几页。</p>
-
-<p>高效、安全的分布式和强大的分枝合并是Git的杀手级特性，这本书在语言上浅显易懂、简明扼要，在章节安排上循序渐进，在内容讲解上有较深入的挖掘，当属眼下Git方面最好的教材。此外，这本书的中译水平也很高，必要的地方还有译注，能看出译者不是外行。</p>
-
-<p><a href="https://picasaweb.google.com/lh/photo/RuILnzirn3HwuJzk5Wp2Zw?feat=embedwebsite" target="_blank" rel="noopener"><img src="https://lh4.googleusercontent.com/-JaRvkCJzpFE/Tr_4ifkfXMI/AAAAAAAAB0w/K_4h24C2fis/s800/A9781430218333-3d_6.png" height="350" width="277"></a></p>
-
-<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-ultrablog-v310-released" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/ultrablog-v310-released/"><strong>UltraBlog.vim v3.1释出：代码重构与MacVim支持</strong></a>
-      <small class="article-date-index">&nbsp; 2011-11-05</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/ultrablog-v310-released/" class="article-date">
-  <time datetime="2011-11-04T16:00:00.000Z" itemprop="datePublished">2011-11-05</time>
-</a>-->
-      <!--
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/ultrablog-v310-released/#disqus_thread" class="article-comment-link">评论</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>距离上一个版本的释出已经有三个月了，这次新版并没有增加多少功能性的内容，主要是代码的重构和对在MacVim下稳定性的改进。</p>
-
-<p>对依赖关系检查的不细致导致了一些麻烦，抛出的错误信息有时与实际原因相距甚远。由于开始时是以实现功能为主，所以都是直接用函数实现的，之后修修补补，代码冗余而且维护麻烦。于是著手重构主要功能的源码，面向对象，把所有检查逻辑放到父类中去实现，子类只关注自身逻辑，最后新版减少了二百多行的代码量。</p>
-
-<p>在重构的过程中偶然发现，在MacVim中，程序抛出任何异常，即便是有捕获逻辑，也会导致编辑器崩溃。在<a href="http://stackoverflow.com/questions/5574702/how-to-print-to-stderr-in-python" target="_blank" rel="noopener">这里</a>简略地提到：</p>
-
-<blockquote>
-  <p>the failure was actual a crash, through some strange combination of threading, matplotlib pyplot backend, and ssh X11 forwarding, sys.stderr had somehow been assigned to something which python complained wasn't a file-like object</p>
-</blockquote>
-
-<p>于是将所有标准输出与标准错误输出语句换成另一种形式：</p>
-
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 原形式</span></span><br><span class="line">sys.stdout.write(<span class="string">'xxx'</span>)</span><br><span class="line">sys.stderr.write(<span class="string">'xxx'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 新形式</span></span><br><span class="line"><span class="keyword">print</span> &gt;&gt; sys.stdout, <span class="string">'xxx'</span></span><br><span class="line"><span class="keyword">print</span> &gt;&gt; sys.stderr, <span class="string">'xxx'</span></span><br></pre></td></tr></table></figure>
-
-<p>以上是新版主要变更的内容，此外，也顺便解决了开发过程中发现的个别Bug和做了其它一些改动：</p>
-
-<ul>
-<li>Change:  The key "xmlrpc" of the settings list is dropped, a new one with the name "url" is added, you should set its value to the blog url.</li>
-<li>Change:  Source code refactorings.</li>
-<li>Change:  Solve the crash problem existing in MacVim only.</li>
-<li>Change:  <strong>:UBConv</strong> can be used in any buffer.</li>
-<li>Change:  <strong>:UBThis</strong> now has a third parameter, which enables convertions between syntaxes.</li>
-<li>Bugfix:  The second parameter of <strong>:UBThis</strong> cannot take effect.</li>
-</ul>
-
-<p>这也是将源码从Google Code迁移到GitHub后发布的第一个新版本，更详细的信息请移步<a href="http://0x3f.org/?p=1894">插件主页</a>或GitHub上的<a href="https://github.com/xbot/UltraBlog.vim" target="_blank" rel="noopener">代码仓库</a>。</p>
-
-<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
       <nav id="page-nav">
-        <a class="extend prev" rel="prev" href="/page/28/">&laquo; 上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/27/">27</a><a class="page-number" href="/page/28/">28</a><span class="page-number current">29</span><a class="page-number" href="/page/30/">30</a><a class="page-number" href="/page/31/">31</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/30/">下一页 &raquo;</a>
+        <a class="extend prev" rel="prev" href="/page/28/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/27/">27</a><a class="page-number" href="/page/28/">28</a><span class="page-number current">29</span><a class="page-number" href="/page/30/">30</a><a class="page-number" href="/page/31/">31</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/30/">Next &raquo;</a>
       </nav>
     
 

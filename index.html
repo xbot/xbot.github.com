@@ -70,6 +70,81 @@ ga('send', 'pageview');
 
     <br>
     <section id="main" class="outer">
+      <article id="post-debug-git-connection-with-ssh" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <myh11 itemprop="name">
+      <a class="article-title-index" href="/post/debug-git-connection-with-ssh/"><strong>用 SSH 命令调试 Git 的连接问题</strong></a>
+      <small class="article-date-index">&nbsp; 2020-03-28</small>
+      <!--<a>
+      <div = post.date  </div>
+      </a>-->
+      <br>
+      <br> <!-- blair add -->
+    </myh11>
+  
+
+
+      </header>
+    
+    <div class="article-meta">
+      <!--<a href="/post/debug-git-connection-with-ssh/" class="article-date">
+  <time datetime="2020-03-28T15:17:45.000Z" itemprop="datePublished">2020-03-28</time>
+</a>-->
+      <!--
+  <div class="article-category-index">
+    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
+  </div>
+
+-->
+      <!--
+      
+        <div class="article-comment-link-wrap">
+          <a href="http://0x3f.org/post/debug-git-connection-with-ssh/#disqus_thread" class="article-comment-link">Comments</a>
+        </div>
+      
+      -->
+    </div>
+	
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>昨天执行<code>git pull</code>的时候发现会一直卡在那儿，排除了各种可能，而且 Github 上的项目也是可以正常拉取的，说明跟网络、代理等关系应该不大，git 命令本身也工作正常。</p>
+<p>问题集中在公司的项目上，所有项目都无法拉取代码。起先怀疑是公司自建的 Gitlab 出了问题，但是其他人那里又是正常的，甚至跟我同一局域网的电脑上也是正常的。</p>
+<p>也就是说问题应该出在我自己的电脑上。考虑到前两天还能正常使用，之后唯一一件相关的事就是升级 macOS 到 10.15.4 了。</p>
+<p>然而用 Homebrew 重新安装 git 等相关的几个包也没能解决问题，于是用<code>ssh -T -v git@gitlab.xxx.com -p 8848</code>调试，输出如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">donie@Donies  ~  ssh -T -v git@gitlab.xxx.com -p 8848                                                                      -- INSERT --</span><br><span class="line">OpenSSH_8.1p1, LibreSSL 2.7.3</span><br><span class="line">debug1: Reading configuration data /Users/donie/.ssh/config</span><br><span class="line">debug1: /Users/donie/.ssh/config line 9: Applying options for gitlab.xxx.com</span><br><span class="line">debug1: Reading configuration data /etc/ssh/ssh_config</span><br><span class="line">debug1: /etc/ssh/ssh_config line 47: Applying options for *</span><br><span class="line">debug1: Connecting to gitlab.xxx.com port 8848.</span><br></pre></td></tr></table></figure>
+<p>卡在了“Connecting to gitlab.xxx.com port 8848”这一步，但是<code>telnet gitlab.xxx.com 8848</code>却是通的。</p>
+<p>问题陷入僵局。</p>
+<p>Google的过程中偶然注意到别人正常的调试信息中这一步的输出是有 IP 地址的，如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">debug1: Connecting to gitlab.xxx.com [xxx.xxx.xxx.xxx] port 8848.</span><br></pre></td></tr></table></figure>
+<p>首先怀疑应该是主机名映射出了问题，但是无论是修改 Hosts 还是在 ~/.ssh/config 中指定都还是不行，ping 主机名也能正常解析出 IP 地址。</p>
+<p>问题陷入绝境。</p>
+<p>绝望之际，突然想到会不会是 SSH 自身出了问题呢？<code>which ssh</code>发现是系统自带的，所以装上 Homebrew 的版本试了一下，竟然好了！</p>
+<p>bugOS !!!</p>
+
+      
+    </div>
+	
+    <!--
+	
+    -->
+    <!--
+    
+      <footer class="article-footer">
+      </footer>
+    
+    -->
+  </div>
+  
+</article>
+
+
+
+    
       <article id="post-auto-switch-input-method-while-changing-vim-mode" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-inner">
     
@@ -104,7 +179,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/auto-switch-input-method-while-changing-vim-mode/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/auto-switch-input-method-while-changing-vim-mode/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -170,7 +245,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/quickly-create-phpunit-test-cases-with-vscode/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/quickly-create-phpunit-test-cases-with-vscode/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -238,7 +313,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/take-github-as-image-hosting-service/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/take-github-as-image-hosting-service/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -306,7 +381,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/lumen-facade-doesnot-support-pass-by-reference-param/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/lumen-facade-doesnot-support-pass-by-reference-param/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -373,7 +448,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/design-software-architecture-with-c4-plantuml/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/design-software-architecture-with-c4-plantuml/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -440,7 +515,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/input-date-and-time-with-rime/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/input-date-and-time-with-rime/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -507,7 +582,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/plantuml-erd/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/plantuml-erd/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -576,7 +651,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/the-expirence-of-airpods-pro/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/the-expirence-of-airpods-pro/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -645,7 +720,7 @@ ga('send', 'pageview');
       <!--
       
         <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/mocking-objects-made-by-laravel-container-with-parameters/#disqus_thread" class="article-comment-link">评论</a>
+          <a href="http://0x3f.org/post/mocking-objects-made-by-laravel-container-with-parameters/#disqus_thread" class="article-comment-link">Comments</a>
         </div>
       
       -->
@@ -680,77 +755,8 @@ ga('send', 'pageview');
 
 
     
-      <article id="post-use-unit-test-as-an-efficiency-tool" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/use-unit-test-as-an-efficiency-tool/"><strong>利用单元测试为开发提效</strong></a>
-      <small class="article-date-index">&nbsp; 2019-08-13</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/use-unit-test-as-an-efficiency-tool/" class="article-date">
-  <time datetime="2019-08-13T08:38:02.000Z" itemprop="datePublished">2019-08-13</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/use-unit-test-as-an-efficiency-tool/#disqus_thread" class="article-comment-link">评论</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>单元测试可以方便地伪造和回滚测试数据，这个特性决定了它其实是一个效率工具。</p>
-<p>例如在开发退款单、发票的时候，由于这种后置的功能依赖订单、支付、库存等前置的数据，因此需要频繁地创建这些测试数据，这就导致开发的效率极低，有时甚至需要切换多个系统做诸如增加库存、下单、支付等操作。虽然在开发环境可以通过直接修改数据使之恢复可被测试的状态，但仍然存在效率很低、遗留垃圾数据和存在隐患等问题。</p>
-<p>单元测试可以完美地解决这些问题。</p>
-         
-          <p class="article-more-link">
-            <a href="/post/use-unit-test-as-an-efficiency-tool/">继续看...</a>
-          </p> 
-        
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
       <nav id="page-nav">
-        <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/2/">下一页 &raquo;</a>
+        <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
       </nav>
     
 
