@@ -13,5 +13,5 @@ tags:
 
 Laravel的DB facade完整的mock实例是这样的：
 
-{% gist d0ace9c1ebdb161adf229c9a9c62f2bf %}
+{{< gist xbot d0ace9c1ebdb161adf229c9a9c62f2bf >}}
 
