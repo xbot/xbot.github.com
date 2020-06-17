@@ -17,7 +17,7 @@ tags:
 
 安装Motion，修改几项必要的配置：
 
-{% codeblock lang:ini /etc/motion/motion.conf %}
+```ini /etc/motion/motion.conf
 # 照片和视频存储路径
 target_dir = /media/sda1/cam
 
@@ -32,13 +32,13 @@ on_event_end "rm /tmp/invasion_detected"
 
 # 监测到移动物体并在保存第一张照片时，发送提醒到电脑和手机
 on_picture_save [ -f /tmp/invasion_detected ] && [ `cat /tmp/invasion_detected` -gt 0 ] && echo 0 > /tmp/invasion_detected && proxychains /root/SmartHome/script/alert.py -f %f
-{% endcodeblock %}
+```
 
 ## 用Lsyncd同步到VPS
 
 安装lsyncd并配置：
 
-{% codeblock lang:lua /etc/lsyncd.conf %}
+```lua /etc/lsyncd.conf
 settings{
     pidfile = "/var/log/lsyncd/lsyncd.pid",
     logfile = "/var/log/lsyncd/lsyncd.log",
@@ -59,15 +59,15 @@ sync{
         _extra = {"--bwlimit=50000"},
     }
 }
-{% endcodeblock %}
+```
 
 ## 用PushBullet通知电脑和手机
 
 Python有几个封装好PushBullet API的模块，pushbullet.py在被Motion执行的时候报IOError，pushybullet的文件上传有问题，所以程序里用yapbl。
 
-{% codeblock lang:bash %}
+```bash
 git clone https://github.com/xbot/SmartHome.git
-{% endcodeblock %}
+```
 
 修改alert.py，填上自己的PushBullet API Key。
 

@@ -14,12 +14,12 @@ tags:
 
 对象实例用zval存储。zval->type == IS_OBJECT，zval->value->obj存储zend_object_value类型的结构体变量。
 
-{% codeblock lang:c %}
+```c
 typedef struct _zend_object_value {
     zend_object_handle handle;
     const zend_object_handlers *handlers;
 } zend_object_value;
-{% endcodeblock %}
+```
 
 zend_object_handle是一个unsigned int，是对象的ID。zend_object_handlers存储对象所有的行为。
 
@@ -49,20 +49,20 @@ zend_objects_new()做这些事：
 
 ## zend_object的存储结构
 
-{% codeblock lang:c %}
+```c
 typedef struct _zend_object {
     zend_class_entry *ce;
     HashTable *properties;
     zval **properties_table;
     HashTable *guards; /* protects from __get/__set ... recursion */
 } zend_object;
-{% endcodeblock %}
+```
 
 ce是类的定义。properties_table存储类里预定义的属性。properties存储非预定义属性。
 
 guards存储属性名到zend_guard结构的映射关系。
 
-{% codeblock lang:c %}
+```c
 typedef struct _zend_guard {
     zend_bool in_get;
     zend_bool in_set;
@@ -70,7 +70,7 @@ typedef struct _zend_guard {
     zend_bool in_isset;
     zend_bool dummy; /* sizeof(zend_guard) must not be equal to sizeof(void*) */
 } zend_guard;
-{% endcodeblock %}
+```
 
 此结构用于在操作属性时，防止递归调用。例如给对象一个新属性赋值时，\_\_set()函数理论上会递归调用自己，所以此结构用于判断该属性是否已在\_\_set()中。
 
@@ -80,7 +80,7 @@ typedef struct _zend_guard {
 
 对于预定义的属性，由于PHP的哈希表的存储开销很大，所以把属性信息（即下面的zend_property_info结构体）存储在zend_class_entry里，对象里用C的数组存储所有预定义属性的zval的指针，并把偏移量记录在属性信息里，这就是properties_table。
 
-{% codeblock lang:c %}
+```c
 typedef struct _zend_property_info {
     zend_uint flags;
     const char *name;
@@ -91,7 +91,7 @@ typedef struct _zend_property_info {
     int doc_comment_len;
     zend_class_entry *ce;    /* CE of declaring class */
 } zend_property_info;
-{% endcodeblock %}
+```
 
 ### 属性名的编码
 
@@ -108,14 +108,14 @@ typedef struct _zend_property_info {
 
 对象仓库是一个可变数组，存储多个zend_object_store_bucket结构。
 
-{% codeblock lang:c %}
+```c
 typedef struct _zend_objects_store {
     zend_object_store_bucket *object_buckets;
     zend_uint top;
     zend_uint size;
     int free_list_head;
 } zend_objects_store;
-{% endcodeblock %}
+```
 
 size是对象仓库的容量。top是下一个可用的对象句柄，对象句柄从1开始，以保证所有句柄都为真。对象仓库通过每个Bucket的free_list结构维护一个可用的Bucket链表，free_list_head记录链表的头部。
 
@@ -123,7 +123,7 @@ size是对象仓库的容量。top是下一个可用的对象句柄，对象句�
 
 每个对象的信息存储在一个bucket里。
 
-{% codeblock lang:c %}
+```c
 typedef struct _zend_object_store_bucket {
     zend_bool destructor_called;
     zend_bool valid;
@@ -142,7 +142,7 @@ typedef struct _zend_object_store_bucket {
         } free_list;
     } bucket;
 } zend_object_store_bucket;
-{% endcodeblock %}
+```
 
 桶被占用的时候，valid为1，否则为0。
 

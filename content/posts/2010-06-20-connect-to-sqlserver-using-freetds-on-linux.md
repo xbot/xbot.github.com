@@ -21,11 +21,11 @@ meta:
 
 freetds的编译和安装命令如下：
 
-{% codeblock lang:bash %}
+```bash
 ./configure --with-tdsver=8.0 --enable-msdblib
 make
 make install
-{% endcodeblock %}
+```
 
 configure的这两个参数是必不可少的，否则可能无法连接SQL Server。
 
@@ -43,8 +43,8 @@ configure的这两个参数是必不可少的，否则可能无法连接SQL Serv
 
 最后使用如下命令测试连接：
 
-{% codeblock lang:bash %}
+```bash
 tsql -S mysvr -U sa -P 123456
-{% endcodeblock %}
+```
 
 给公司产品做Linux下的安装包，把开发环境放在了Cygwin中，非常享受在全屏、半透明的mintty下敲命令。今天发现在Cygwin下也是可以编译安装Linux下的程序的，只是效率非常低下。故上述内容对Cygwin环境同样成立。

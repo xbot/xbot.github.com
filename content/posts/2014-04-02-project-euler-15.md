@@ -24,7 +24,7 @@ How many such routes are there through a 20×20 grid?
 Solution
 --------
 
-{% codeblock lang:python p15.py %}
+```python
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
@@ -40,6 +40,6 @@ if __name__ == '__main__':
         steps -= 1
 
     print a / b
-{% endcodeblock %}
+```
 
 I'm the 86747th person to have solved this problem.

@@ -28,13 +28,13 @@ meta:
 
 <p>1. 创建根证书密钥文件<strong>root.key</strong>：</p>
 
-{% codeblock %}
+```
 openssl genrsa -des3 -out root.key
-{% endcodeblock %}
+```
 
 <p>输出内容为：</p>
 
-{% codeblock %}
+```
 [lenin@archer ~]$ openssl genrsa -des3 -out root.key
 Generating RSA private key, 512 bit long modulus
 .................++++++++++++
@@ -42,17 +42,17 @@ Generating RSA private key, 512 bit long modulus
 e is 65537 (0x10001)
 Enter pass phrase for root.key:                ← 输入一个新密码
 Verifying - Enter pass phrase for root.key:    ← 重新输入一遍密码
-{% endcodeblock %}
+```
 
 <p>2. 创建根证书的申请文件<strong>root.req</strong>：</p>
 
-{% codeblock %}
+```
 openssl req -new -key root.key -out root.req
-{% endcodeblock %}
+```
 
 <p>输出内容为：</p>
 
-{% codeblock %}
+```
 [lenin@archer ~]$ openssl req -new -key root.key -out root.req
 Enter pass phrase for root.key:                                              ← 输入前面创建的密码
 You are about to be asked to enter information that will be incorporated
@@ -74,49 +74,49 @@ Please enter the following 'extra' attributes
 to be sent with your certificate request
 A challenge password []:                                                     ← 可以不输入
 An optional company name []:                                                 ← 可以不输入</p>
-{% endcodeblock %}
+```
 
 <p>3. 创建一个自当前日期起为期十年的根证书<strong>root.crt</strong>：</p>
 
-{% codeblock %}
+```
 openssl x509 -req -days 3650 -sha1 -extensions v3_ca -signkey root.key -in root.req -out root.crt
-{% endcodeblock %}
+```
 
 <p>输出内容为：</p>
 
-{% codeblock %}
+```
 [lenin@archer ~]$ openssl x509 -req -days 3650 -sha1 -extensions v3_ca -signkey root.key -in root.req -out root.crt
 Signature ok
 subject=/C=CN/ST=BeiJing/L=BeiJing/O=MyCompany Corp./emailAddress=admin@mycompany.com
 Getting Private key
 Enter pass phrase for root.key:    ← 输入前面创建的密码
-{% endcodeblock %}
+```
 
 <p>4. 创建服务器证书密钥<strong>server.key</strong>：</p>
 
-{% codeblock %}
+```
 openssl genrsa -out server.key 2048
-{% endcodeblock %}
+```
 
 <p>输出内容为：</p>
 
-{% codeblock %}
+```
 [lenin@archer ~]$ openssl genrsa -out server.key 2048
 Generating RSA private key, 2048 bit long modulus
 ....+++
 ..................................................+++
 e is 65537 (0x10001)
-{% endcodeblock %}
+```
 
 <p>5.创建服务器证书的申请文件<strong>server.req</strong>：</p>
 
-{% codeblock %}
+```
 openssl req -new -key server.key -out server.req
-{% endcodeblock %}
+```
 
 <p>输出内容为：</p>
 
-{% codeblock %}
+```
 [lenin@archer ~]$ openssl req -new -key server.key -out server.req
 You are about to be asked to enter information that will be incorporated
 into your certificate request.
@@ -137,33 +137,33 @@ Please enter the following 'extra' attributes
 to be sent with your certificate request
 A challenge password []:                                                      ← 可以不输入
 An optional company name []:                                                  ← 可以不输入
-{% endcodeblock %}
+```
 
 <p>6. 创建自当前日期起有效期为期两年的服务器证书<strong>server.crt</strong>：</p>
 
-{% codeblock %}
+```
 openssl x509 -req -days 730 -sha1 -extensions v3_req -CA root.crt -CAkey root.key -CAserial root.srl -CAcreateserial -in server.req -out server.crt
-{% endcodeblock %}
+```
 
 <p>输出内容为：</p>
 
-{% codeblock %}
+```
 [lenin@archer ~]$ openssl x509 -req -days 730 -sha1 -extensions v3_req -CA root.crt -CAkey root.key -CAserial root.srl -CAcreateserial -in server.req -out server.crt
 Signature ok
 subject=/C=CN/ST=BeiJing/L=BeiJing/O=MyCompany Corp./CN=www.mycompany.com/emailAddress=admin@mycompany.com
 Getting CA Private Key
 Enter pass phrase for root.key:    ← 输入前面创建的密码
-{% endcodeblock %}
+```
 
 <p>7. 创建客户端证书密钥文件<strong>client.key</strong>：</p>
 
-{% codeblock %}
+```
 openssl genrsa -des3 -out client.key 2048
-{% endcodeblock %}
+```
 
 <p>输出内容为：</p>
 
-{% codeblock %}
+```
 [lenin@archer ~]$ openssl genrsa -des3 -out client.key 2048
 Generating RSA private key, 2048 bit long modulus
 .........................................................................................+++
@@ -171,17 +171,17 @@ Generating RSA private key, 2048 bit long modulus
 e is 65537 (0x10001)
 Enter pass phrase for client.key:              ← 输入一个新密码
 Verifying - Enter pass phrase for client.key:  ← 重新输入一遍密码
-{% endcodeblock %}
+```
 
 <p>8. 创建客户端证书的申请文件<strong>client.req</strong>：</p>
 
-{% codeblock %}
+```
 openssl req -new -key client.key -out client.req
-{% endcodeblock %}
+```
 
 <p>输出内容为：</p>
 
-{% codeblock %}
+```
 [lenin@archer ~]$ openssl genrsa -des3 -out client.key 2048
 Generating RSA private key, 2048 bit long modulus
 .........................................................................................+++
@@ -210,37 +210,37 @@ Please enter the following 'extra' attributes
 to be sent with your certificate request
 A challenge password []:                                                       ← 可以不填
 An optional company name []:                                                   ← 可以不填
-{% endcodeblock %}
+```
 
 <p>9. 创建一个自当前日期起有效期为两年的客户端证书<strong>client.crt</strong>：</p>
 
-{% codeblock %}
+```
 openssl x509 -req -days 730 -sha1 -extensions v3_req -CA root.crt -CAkey root.key -CAserial root.srl -CAcreateserial -in client.req -out client.crt
-{% endcodeblock %}
+```
 
 <p>输出内容为：</p>
 
-{% codeblock %}
+```
 [lenin@archer ~]$ openssl x509 -req -days 730 -sha1 -extensions v3_req -CA root.crt -CAkey root.key -CAserial root.srl -CAcreateserial -in client.req -out client.crt
 Signature ok
 subject=/C=CN/ST=BeiJing/L=BeiJing/O=MyCompany Corp./CN=www.mycompany.com/emailAddress=admin@mycompany.com
 Getting CA Private Key
 Enter pass phrase for root.key:          ← 输入上面创建的密码
-{% endcodeblock %}
+```
 
 <p>10. 将客户端证书文件<strong>client.crt</strong>和客户端证书密钥文件<strong>client.key</strong>合并成客户端证书安装包<strong>client.pfx</strong>：</p>
 
-{% codeblock %}
+```
 openssl pkcs12 -export -in client.crt -inkey client.key -out client.pfx
-{% endcodeblock %}
+```
 
 <p>输出内容为：</p>
 
-{% codeblock %}
+```
 [lenin@archer ~]$ openssl pkcs12 -export -in client.crt -inkey client.key -out client.pfx
 Enter pass phrase for client.key:        ← 输入上面创建的密码
 Enter Export Password:                   ← 输入一个新的密码，用作客户端证书的保护密码，在客户端安装证书时需要输入此密码
 Verifying - Enter Export Password:       ← 确认密码
-{% endcodeblock %}
+```
 
 <p>11. 保存生成的文件备用，其中<strong>server.crt</strong>和<strong>server.key</strong>是配置单向SSL时需要使用的证书文件，<strong>client.crt</strong>是配置双向SSL时需要使用的证书文件，<strong>client.pfx</strong>是配置双向SSL时需要客户端安装的证书文件</p>

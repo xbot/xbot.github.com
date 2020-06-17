@@ -20,9 +20,9 @@ tags:
 获取代码
 --------
 
-{% codeblock lang:bash %}
+```bash
 git checkout v0.1
-{% endcodeblock %}
+```
 
 设计与实现
 ----------
@@ -35,29 +35,29 @@ WebApplication是应用的抽象层，实现应用的入口和其它应用级（
 
 **程序入口**
 
-{% codeblock lang:php %}
+```php
 <?php
 // ...
 Flame::createApplication($config)->run();
 ?>
-{% endcodeblock %}
+```
 
 此处传入的$config是应用配置文件的路径，该配置文件内容格式如下：
 
-{% codeblock lang:php %}
+```php
 <?php
 return array(
     'opt1' => 'val1',
     // ...
 );
 ?>
-{% endcodeblock %}
+```
 
 在文件中直接return一个关联数组的好处是，加载该文件时，include()函数的返回值就是该数组，代码更简洁，效率比解析其它格式配置文件高。
 
 **类的自动加载**
 
-{% codeblock lang:php %}
+```php
 <?php
 // ...
 class Flame {
@@ -84,7 +84,7 @@ class Flame {
 
 spl_autoload_register(__NAMESPACE__.'\\Flame::autoload');
 ?>
-{% endcodeblock %}
+```
 
 通过函数spl_autoload_register()注册Flame::autoload()方法。当用到一个类时，PHP会先检查该类是否已加载，如果没有，就把包括命名空间在内的完整的类名传递给autoload()，最终完成类的加载。
 
@@ -95,7 +95,7 @@ spl_autoload_register(__NAMESPACE__.'\\Flame::autoload');
 
 整个Demo程序的index.php只需包含以下代码即可：
 
-{% codeblock lang:php %}
+```php
 <?php
 require_once '../flamework/Flame.php';
 use org\x3f\flamework\Flame as Flame;
@@ -104,7 +104,7 @@ $_config = 'protected/config.php';
 
 Flame::createApplication($_config)->run();
 ?>
-{% endcodeblock %}
+```
 
 总结
 ----

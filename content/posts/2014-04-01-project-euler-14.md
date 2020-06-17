@@ -32,7 +32,7 @@ NOTE: Once the chain starts the terms are allowed to go above one million.
 Solution
 --------
 
-{% codeblock lang:go p14.go %}
+```go
 package main
 
 import (
@@ -68,6 +68,6 @@ func main() {
     end := time.Now()
     fmt.Println(end.Sub(start), max, count)
 }
-{% endcodeblock %}
+```
 
 I'm the 104188th person to have solved this problem.

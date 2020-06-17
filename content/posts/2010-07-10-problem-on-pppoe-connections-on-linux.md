@@ -24,9 +24,9 @@ pppoe可以连接，ifconfig可以看到ppp0接口，一切正常，只是不能
 
 使用如下命令查看路由表：
 
-{% codeblock lang:bash %}
+```bash
 route
-{% endcodeblock %}
+```
 
 正常情况下返回的结果中应该有如下内容：
 
@@ -36,28 +36,28 @@ default  *  0.0.0.0   U   0   0  0 ppp0
 
 如果没有，可手工添加：
 
-{% codeblock lang:bash %}
+```bash
 route add default dev ppp0
-{% endcodeblock %}
+```
 
 如果可以上网，就成功了。
 
 使用如下脚本在pppoe连接成功时自动添加路由表项：
 
-{% codeblock lang:bash %}
+```bash
 #!/bin/sh
  
 if ifconfig ppp0  > /dev/null 2>&1 ; then
     route del default
     route add default dev ppp0
 fi
-{% endcodeblock %}
+```
 
 将上述内容保存成名为<strong>01-route.sh</strong>的文件，权限<strong>755</strong>，放到<strong>/etc/ppp/ip-up.d</strong>目录下。
 
 然后创建以下两个脚本：
 
-{% codeblock lang:bash %}
+```bash
 #!/bin/bash
  
 if ifconfig ppp0  > /dev/null 2>&1 ; then
@@ -70,9 +70,9 @@ off
 sudo pon
 sleep 5
 sudo /etc/ppp/ip-up
-{% endcodeblock %}
+```
 
-{% codeblock lang:bash %}
+```bash
 #!/bin/bash
  
 if ! ifconfig ppp0  > /dev/null 2>&1 ; then
@@ -82,7 +82,7 @@ fi
  
 sudo poff
 sudo /etc/ppp/ip-down
-{% endcodeblock %}
+```
 
 分别命名为<strong>on</strong>和<strong>off</strong>并复制到环境变量PATH下，以后即可使用这两个脚本建立和注销pppoe连接。
 

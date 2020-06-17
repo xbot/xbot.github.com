@@ -19,7 +19,7 @@ meta:
 <p>在网上找到一个自定义函数，原函数有些小问题，例如如果传入的截止日期如果有时间且足够大，则计算结果可能出错，修正后代码如下：</p>
 
 <p>
-{% codeblock lang:sql %}
+```sql
 --函数：类似datediff，不统计期间所有的周六和周日
 if exists (select * from dbo.sysobjects where id=object_id(N'[dbo].[f_WorkDay]') and xtype in (N'FN',N'IF',N'TF')) 
 drop function [dbo].[f_WorkDay] 
@@ -51,7 +51,7 @@ BEGIN
     RETURN(CASE WHEN @bz=1 THEN -@workday ELSE @workday END) 
 END 
 GO
-{% endcodeblock %}
+```
 </p>
 
 <p>此函数的原理是，使用datediff计算两日期之间的差值A，然后取A与7的商，即计算期间内有几个整周。然后使用这个商与5相乘，得到所有整周内的工作日天数B。接着，使用A除以7再乘以7得到C，这就约去了A中最后不到一个整周的天数。再在起始日期的基础上加上C，得到一个新的起始日期，然后从这个新的起始日期开始遍历至截止日期的每一天，每增加一天，判断若此日期是工作日，则在C的基础上累加一。判断一个日期（假设使用@dt_begin表示）是否是工作日的方法是：<strong>(@@datefirst+datepart(Weekday, @dt_begin)-1)%7</strong>的值在1和5之间。</p>
@@ -59,7 +59,7 @@ GO
 <p>此外还有一个需求是计算两个日期之间排除最后一个周六周日后的天数，仿照上面的函数实现了一个新函数，现在想来，有点儿把问题复杂化了，完全可以直接从后往前推的。</p>
 
 <p>
-{% codeblock lang:sql %}
+```sql
 --函数：类似datediff，不统计截止日期@dt_end前最近一次的周六和周日，若dt_end是周日，则不统计其前面的那个周六。
 if exists (select * from dbo.sysobjects where id=object_id(N'[dbo].[f_WorkDayOnce]') and xtype in (N'FN',N'IF',N'TF')) 
 drop function [dbo].[f_WorkDayOnce]
@@ -102,5 +102,5 @@ BEGIN
     RETURN(CASE WHEN @bz=1 THEN -@day_count ELSE @day_count END) 
 END 
 GO
-{% endcodeblock %}
+```
 </p>

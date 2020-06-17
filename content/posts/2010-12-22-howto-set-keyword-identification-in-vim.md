@@ -21,9 +21,9 @@ meta:
 
 Vim使用选项iskeyword设定关键词的匹配规则，使用如下命令查看当前文件类型的关键词规则：
 
-{% codeblock lang:vim %}
+```vim
 set iskeyword
-{% endcodeblock %}
+```
 
 我这里查看PHP文件的规则结果如下：
 
@@ -33,6 +33,6 @@ iskeyword=@,48-57,_,192-255,$,(
 
 不明白为什么缺省设置中会有左括弧，在vimrc中加入如下配置取消之：
 
-{% codeblock lang:vim %}
+```vim
 au FileType php set iskeyword-=(
-{% endcodeblock %}
+```

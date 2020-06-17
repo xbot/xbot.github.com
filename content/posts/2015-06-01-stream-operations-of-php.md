@@ -12,7 +12,7 @@ tags:
 
 ## 实现
 
-{% codeblock lang:c %}
+```c
 /* reimplement fopen using stream */
 ZEND_FUNCTION(donie_stream_fopen)
 {
@@ -34,16 +34,16 @@ ZEND_FUNCTION(donie_stream_fopen)
 
 	php_stream_to_zval(stream, return_value);
 }
-{% endcodeblock %}
+```
 
 php_stream_open_wrapper()是对文件类型资源创建流的方法，此外还有基于socket的流、目录流和特殊流三种。php_stream_to_zval()用于把流实例转换成zval结构。
 
 ## 创建文件类型的流
 
-{% codeblock lang:c %}
+```c
 #define php_stream_open_wrapper(path, mode, options, opened)	_php_stream_open_wrapper_ex((path), (mode), (options), (opened), NULL STREAMS_CC TSRMLS_CC)
 #define php_stream_open_wrapper_ex(path, mode, options, opened, context)	_php_stream_open_wrapper_ex((path), (mode), (options), (opened), (context) STREAMS_CC TSRMLS_CC)
-{% endcodeblock %}
+```
 
 参数path是文件名或URL，mode是模式字符串，options是选项组合。php_stream_open_wrapper_ex()允许指定一个流的上下文。
 
@@ -63,9 +63,9 @@ options包含以下选项：
 
 ## 创建传输类型的流
 
-{% codeblock lang:c %}
+```c
 php_stream *_php_stream_xport_create(const char *name, size_t namelen, int options, int flags, const char *persistent_id, struct timeval *timeout, php_stream_context *context, char **error_string, int *error_code)
-{% endcodeblock %}
+```
 
 参数：
 
@@ -88,24 +88,24 @@ flags：
 
 ## 创建目录类型的流
 
-{% codeblock lang:c %}
+```c
 php_stream php_stream_opendir(const char *path, int options, php_stream_context *context)
-{% endcodeblock %}
+```
 
 
 ## 创建特殊类型的流
 
-{% codeblock lang:c %}
+```c
 php_stream *php_stream_fopen_tmpfile(void);
 php_stream *php_stream_fopen_temporary_file(const char *dir, const char *pfx, char **opened_path);
 php_stream *php_stream_fopen_from_fd(int fd, const char *mode, const char *persistent_id);
 php_stream *php_stream_fopen_from_file(FILE *file, const char *mode);
 php_stream *php_stream_fopen_from_pipe(FILE *file, const char *mode);
-{% endcodeblock %}
+```
 
 ## 读流
 
-{% codeblock lang:c %}
+```c
 // 读一个字符
 int php_stream_getc(php_stream *stream);
 
@@ -121,11 +121,11 @@ char *php_stream_get_record(php_stream *stream, size_t maxlen, size_t *retu
 
 // 读取一个目录项
 php_stream_dirent *php_stream_readdir(php_stream *dirstream, php_stream_dirent *entry);
-{% endcodeblock %}
+```
 
 ## 写流
 
-{% codeblock lang:c %}
+```c
 // 写非阻塞流可能写入的数据比传入的短；_string要求传入的字符串以NULL结尾
 size_t php_stream_write(php_stream *stream, char *buf, size_t count);
 size_t php_stream_write_string(php_stream *stream, char *stf);
@@ -135,22 +135,22 @@ int php_stream_putc(php_stream *stream, int c);
 int php_stream_puts(php_string *stream, char *buf);
 
 size_t php_stream_printf(php_stream *stream TSRMLS_DC, const char *format, ...);
-{% endcodeblock %}
+```
 
-{% codeblock lang:c %}
+```c
 int php_stream_flush(php_stream *stream);
-{% endcodeblock %}
+```
 
 在关闭流的时候，flush会被自动调用，并且大部分无过滤的流因无内部缓冲而不需flush，所以单独flush一般是不需要的。
 
 ## 寻址
 
-{% codeblock lang:c %}
+```c
 int php_stream_seek(php_stream *stream, off_t offset, int whence);
 int php_stream_rewind(php_stream *stream);
 int php_stream_rewinddir(php_stream *dirstream);
 off_t php_stream_tell(php_stream *stream);
-{% endcodeblock %}
+```
 
 offset是相对于whence的位移量，whence包含：
 
@@ -160,16 +160,16 @@ offset是相对于whence的位移量，whence包含：
 
 ## 获取额外信息
 
-{% codeblock lang:c %}
+```c
 int php_stream_stat(php_stream *stream, php_stream_statbuf *ssb);
-{% endcodeblock %}
+```
 
 ## 关闭流
 
-{% codeblock lang:c %}
+```c
 #define php_stream_close(stream) php_stream_free((stream), PHP_STREAM_FREE_CLOSE)
 #define php_stream_pclose(stream) php_stream_free((stream), PHP_STREAM_FREE_CLOSE_PERSISTENT)
-{% endcodeblock %}
+```
 
 包含以下选项：
 

@@ -19,7 +19,7 @@ meta:
 
 于是我对如何更好地实现分页打印产生了兴趣，Google了一下，整理了一个Demo：
 
-{% codeblock lang:html %}
+```html
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
@@ -53,6 +53,6 @@ meta:
         </div>
     </body>
 </html>
-{% endcodeblock %}
+```
 
 这个方法的好处是支持以低耦合的方式分页打印，同时支持只打印页面上指定的部分内容；缺点是由于使用了ActiveX，故只支持IE浏览器。

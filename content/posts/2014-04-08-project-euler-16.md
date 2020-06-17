@@ -22,7 +22,7 @@ What is the sum of the digits of the number 2^1000?
 Solution
 --------
 
-{% codeblock lang:python p16.py %}
+```python
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
@@ -34,9 +34,9 @@ if __name__ == '__main__':
     for c in str[:str.index('.')]:
         sum += int(c)
     print sum
-{% endcodeblock %}
+```
 
-{% codeblock lang:go p16.go %}
+```go
 package main
 
 import (
@@ -57,6 +57,6 @@ func main() {
     }
     fmt.Println(num.String(), result)
 }
-{% endcodeblock %}
+```
 
 I'm the 109044th person to have solved this problem.

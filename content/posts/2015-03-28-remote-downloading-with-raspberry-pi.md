@@ -19,7 +19,7 @@ tags:
 
 安装aria2，创建以下配置文件，修改/media/sda1为实际下载目录：
 
-{% codeblock lang:ini /etc/aria2/aria2.conf %}
+```ini /etc/aria2/aria2.conf
 dir=/media/sda1
 file-allocation=prealloc
 continue=true
@@ -41,11 +41,11 @@ timeout=600
 retry-wait=30
 max-tries=0
 user-agent=netdisk;4.4.0.6;PC;PC-Windows;6.2.9200;WindowsBaiduYunGuanJia
-{% endcodeblock %}
+```
 
 我的树苺派用Archlinux，创建systemd的服务配置文件：
 
-{% codeblock lang:ini /etc/systemd/system/aria2c.service %}
+```ini /etc/systemd/system/aria2c.service
 [Unit]
 Description=aria2c -- file download manager
 After=network.target
@@ -59,25 +59,25 @@ ExecStart=/usr/bin/aria2c --daemon --enable-rpc --rpc-listen-all --rpc-allow-ori
  
 [Install]
 WantedBy=multi-user.target
-{% endcodeblock %}
+```
 
 激活并启动aria2服务。
 
 在NGINX的WWW目录下安装aria2的Web界面：
 
-{% codeblock lang:bash %}
+```bash
 git clone https://github.com/binux/yaaw.git
-{% endcodeblock %}
+```
 
 发布本地服务到VPS：
 
-{% codeblock lang:bash %}
+```bash
 # 发布NGINX
 autossh -M 5122 -R 80:localhost:80 myvps.com
  
 # 发布aria2
 autossh -M 5124 -R 6800:localhost:6800 myvps.com
-{% endcodeblock %}
+```
 
 autossh用于保持SSH连接，需要VPS上启动TCP Echo服务。
 
@@ -85,7 +85,7 @@ autossh用于保持SSH连接，需要VPS上启动TCP Echo服务。
 
 在VPS上启用TCP Echo服务，安装xinetd并修改配置文件：
 
-{% codeblock lang:lua /etc/xinet.d/echo-stream %}
+```lua /etc/xinet.d/echo-stream
 service echo
 {
         disable         = no
@@ -99,7 +99,7 @@ service echo
         flags                   = REUSE
         only_from               = 127.0.0.1
 }
-{% endcodeblock %}
+```
 
 ## 远程主机
 

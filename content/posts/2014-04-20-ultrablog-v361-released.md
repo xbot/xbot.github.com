@@ -18,7 +18,7 @@ tags:
 
 增加了一个功能，在文章编辑视图的元数据中分类那行，使用热键\<C-X\>\<C-U\>自动完成文章的分类。在配置数组**ub_blog**中增加键值对“categories”，默认使用这一项的值实现自动完成，如下：
 
-{% codeblock lang:vim %}
+```vim
 let ub_blog = {'login_name':'admin',
             \'password':'pass2011',
             \'url':'http://www.sample.com/',
@@ -26,7 +26,7 @@ let ub_blog = {'login_name':'admin',
             \'db':'$VIM/UltraBlog.db',
             \'categories': 'News|Computer|Image'
             \}
-{% endcodeblock %}
+```
 
 如果这一项不存在，将从博客中拉取分类数据。
 

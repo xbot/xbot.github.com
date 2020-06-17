@@ -20,16 +20,16 @@ tags:
 获取代码
 --------
 
-{% codeblock lang:bash %}
+```bash
 git checkout v0.2
-{% endcodeblock %}
+```
 
 设计与实现
 ----------
 
 使用set_error_handler()和set_exception_handler()两个函数注册错误和异常的处理方法，并在两个处理方法中先调用用户自定义的错误和异常处理逻辑，如果自定义逻辑不存在或者返回false，继续调用框架缺省的处理逻辑，输出错误信息到页面。
 
-{% codeblock lang:php %}
+```php
 <?php
 class WebApplication {
     // ...
@@ -174,13 +174,13 @@ class WebApplication {
     // ...
 }
 ?>
-{% endcodeblock %}
+```
 
 “handleError()”和“handleException()”中先调用了“restore_error_handler()”和“restore_exception_handler()”，用于防止递归处理。
 
 开发者可以在配置数组中指定自定义的错误和异常处理逻辑：
 
-{% codeblock lang:php %}
+```php
 <?php
 return array(
     // ...
@@ -191,7 +191,7 @@ return array(
     'errorHandler' => array('MyClass', 'handleError'),
 );
 ?>
-{% endcodeblock %}
+```
 
 “errorHandler”和“exceptionHandler”的值必须是一个callable类型，在这个callable结束时，如果不希望后续逻辑（_例如框架自己的错误、异常处理逻辑_）继续处理，就返回true，此时程序将会终止执行并退出。
 

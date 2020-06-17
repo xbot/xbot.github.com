@@ -22,13 +22,13 @@ meta:
 
 解决办法是在grub的启动菜单中，给内核加上参数<strong>acpi_osi=“Linux”</strong>，如： 
 
-{% codeblock lang:bash %}
+```bash
 # (0) Arch Linux
 title  Arch Linux
 root   (hd0,2)
 kernel /boot/vmlinuz26 root=/dev/sda3 resume=/dev/sda4 ro acpi_osi="Linux"
 initrd /boot/kernel26.img
-{% endcodeblock %}
+```
 
 从查到的资料看，<strong>acpi_osi</strong>参数是用来指定操作系统接口的，据说有些硬件都只针对Windows做了测试或优化，对于这些硬件，如果将内核的操作系统接口指定为Linux，则有可能会出问题。所以内核从2.6.23版本开始，此参数的默认值被改成了“<strong>!Linux</strong>”，以保证更广泛的兼容性和稳定性。
 

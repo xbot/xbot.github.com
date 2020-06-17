@@ -12,7 +12,7 @@ tags:
 
 ## 结构
 
-{% codeblock lang:c %}
+```c
 // 哈希表结构
 typedef struct _hashtable {
     uint nTableSize;
@@ -44,7 +44,7 @@ typedef struct bucket {
     struct bucket *pLast;
     char *arKey;
 } Bucket;
-{% endcodeblock %}
+```
 
 ### 哈希冲突处理
 
@@ -68,7 +68,7 @@ nTableMask = nTableSize - 1
 
 ## 初始化与销毁
 
-{% codeblock lang:c %}
+```c
 // init hashtable
 HashTable *myht;
 ALLOC_HASHTABLE(myht);
@@ -82,7 +82,7 @@ if (zend_hash_init(myht, 100, NULL, NULL, 0) == FAILURE)
 zend_hash_destroy(myht);
 FREE_HASHTABLE(myht);
 return SUCCESS;
-{% endcodeblock %}
+```
 
 ### 初始化哈希表
 
@@ -108,7 +108,7 @@ FREE_HASHTABLE宏其实就是efree()。
 
 ## 操作数字键
 
-{% codeblock lang:c %}
+```c
 // add a string with an integer key 2 to myht
 zval *zv1;
 MAKE_STD_ZVAL(zv1);
@@ -165,11 +165,11 @@ else
 {
     php_printf("The value indexed by %ld is deleted.\n", idx);
 }
-{% endcodeblock %}
+```
 
 ## 操作字符串键
 
-{% codeblock lang:c %}
+```c
 // add an integer indexed by a string key, using zend_hash_update()
 zval *zv3;
 MAKE_STD_ZVAL(zv3);
@@ -224,7 +224,7 @@ else
 {
 	php_printf("The value indexed by %s failed to be deleted.\n", key1);
 }
-{% endcodeblock %}
+```
 
 ### 键的长度
 
@@ -236,7 +236,7 @@ else
 
 对应的，有一组名带“quick”的函数。
 
-{% codeblock lang:c %}
+```c
 // quick operations leveraging a one-time hashed value
 zval *zv5;
 MAKE_STD_ZVAL(zv5);
@@ -246,11 +246,11 @@ ulong h;
 h = zend_get_hash_value("motto", sizeof("motto"));
 zend_hash_quick_update(myht, "motto", sizeof("motto"), h, &zv5, sizeof(zval *), NULL);
 php_printf("The value indexed by motto is updated with the quick operation.\n");
-{% endcodeblock %}
+```
 
 ## 遍历
 
-{% codeblock lang:c %}
+```c
 static int hashtable_traverse_callback(void *pDest TSRMLS_DC, int num_args, va_list args, zend_hash_key *hash_key)
 {
 	zval **zv = (zval **) pDest;
@@ -272,13 +272,13 @@ static int hashtable_traverse_callback(void *pDest TSRMLS_DC, int num_args, va_l
 
 // traverse the hash table.
 zend_hash_apply_with_arguments(myht, hashtable_traverse_callback, 1, "nonsense");
-{% endcodeblock %}
+```
 
 ### 三个函数
 
 遍历哈希表的三个函数：
 
-{% codeblock lang:c %}
+```c
 void zend_hash_apply(HashTable *ht, apply_func_t apply_func TSRMLS_DC);
 void zend_hash_apply_with_argument(
     HashTable *ht, apply_func_arg_t apply_func, void *argument TSRMLS_DC
@@ -286,27 +286,27 @@ void zend_hash_apply_with_argument(
 void zend_hash_apply_with_arguments(
     HashTable *ht TSRMLS_DC, apply_func_args_t apply_func, int num_args, ...
 );
-{% endcodeblock %}
+```
 
 三个函数接受的回调函数的类型：
 
-{% codeblock lang:c %}
+```c
 typedef int (*apply_func_t)(void *pDest TSRMLS_DC);
 typedef int (*apply_func_arg_t)(void *pDest, void *argument TSRMLS_DC);
 typedef int (*apply_func_args_t)(
     void *pDest TSRMLS_DC, int num_args, va_list args, zend_hash_key *hash_key
 );
-{% endcodeblock %}
+```
 
 zend_hash_key的定义为：
 
-{% codeblock lang:c %}
+```c
 typedef struct _zend_hash_key {
     const char *arKey;
     uint nKeyLength;
     ulong h;
 } zend_hash_key;
-{% endcodeblock %}
+```
 
 nKeyLength为0表示索引是整数，值为h；否则是字符串，值为arKey。
 
@@ -319,7 +319,7 @@ nKeyLength为0表示索引是整数，值为h；否则是字符串，值为arKey
 
 ## 枚举
 
-{% codeblock lang:c %}
+```c
 // iterating the hash table
 php_printf("Begin iterating the hash table:\n");
 HashPosition pos;
@@ -340,7 +340,7 @@ for (zend_hash_internal_pointer_reset_ex(myht, &pos);
 			break;
 	}
 }
-{% endcodeblock %}
+```
 
 ### 三个函数
 
@@ -350,17 +350,17 @@ for (zend_hash_internal_pointer_reset_ex(myht, &pos);
 
 PHP 5.5以上版本新增函数，直接取键值到zval：
 
-{% codeblock lang:c %}
+```c
 zval *key;
 MAKE_STD_ZVAL(key);
 zend_hash_get_current_key_zval_ex(myht, key, &pos);
-{% endcodeblock %}
+```
 
 ## 复制与合并
 
-{% codeblock lang:c %}
+```c
 zend_hash_copy(ht_target, ht_source, (copy_ctor_func_t) zval_add_ref, NULL, sizeof(zval *));
-{% endcodeblock %}
+```
 
 zval_add_ref是适用于zval的回调函数，直接引用原数据。
 
@@ -368,37 +368,37 @@ zval_add_ref是适用于zval的回调函数，直接引用原数据。
 
 函数zend_hash_merge_ex()可指定一个回调函数，用于过滤要合并的元素：
 
-{% codeblock lang:c %}
+```c
 zend_hash_merge_ex(
     Z_ARRVAL_P(return_value), Z_ARRVAL_P(array2), (copy_ctor_func_t) zval_add_ref,
     sizeof(zval *), (merge_checker_func_t) merge_greater, NULL
 );
-{% endcodeblock %}
+```
 
 回调函数的格式为：
 
-{% codeblock lang:c %}
+```c
 typedef zend_bool (*merge_checker_func_t)(
     HashTable *target_ht, void *source_data, zend_hash_key *hash_key, void *pParam
 );
-{% endcodeblock %}
+```
 
 ## 比较、排序和极值
 
 比较函数：
 
-{% codeblock lang:c %}
+```c
 int zend_hash_compare(
     HashTable *ht1, HashTable *ht2, compare_func_t compar, zend_bool ordered TSRMLS_DC
 );
 
 // 回调函数：
 typedef int (*compare_func_t)(const void *left, const void *right TSRMLS_DC);
-{% endcodeblock %}
+```
 
 排序函数：
 
-{% codeblock lang:c %}
+```c
 int zend_hash_sort(HashTable *ht, sort_func_t sort_func, compare_func_t compar, int renumber TSRMLS_DC);
 
 // 回调函数
@@ -406,14 +406,14 @@ typedef void (*sort_func_t)(
     void *buckets, size_t num_of_buckets, register size_t size_of_bucket,
     compare_func_t compare_func TSRMLS_DC
 );
-{% endcodeblock %}
+```
 
 极值函数：
 
-{% codeblock lang:c %}
+```c
 int zend_hash_minmax(
     const HashTable *ht, compare_func_t compar, int flag, void **pData TSRMLS_DC
 );
-{% endcodeblock %}
+```
 
 flag=0，极小值写入pData；flag=1，极大值写入pData。

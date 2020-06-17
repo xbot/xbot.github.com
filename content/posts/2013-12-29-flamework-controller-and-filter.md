@@ -22,9 +22,9 @@ tags:
 
 项目目录结构做了调整，framework目录存放Flamework框架源码，demo目录存放示例项目。
 
-{% codeblock lang:bash %}
+```bash
 git checkout v0.3
-{% endcodeblock %}
+```
 
 设计与实现
 ----------
@@ -37,7 +37,7 @@ git checkout v0.3
 
 **r**表示Route，斜杠前面的**post**表示Controller的名称，后面的**save**表示Action的名称。对HTTP请求的各种处理逻辑封装在新对象HttpRequest中：
 
-{% codeblock lang:php %}
+```php
 <?php
 namespace org\x3f\flamework\base;
 use org\x3f\flamework\Flame as Flame;
@@ -157,13 +157,13 @@ class HttpRequest
 }
 
 ?>
-{% endcodeblock %}
+```
 
 考虑到HttpRequest可能在多个地方被调用，所以用单例模式实现。
 
 WebApplication中添加如下内容：
 
-{% codeblock lang:php %}
+```php
 <?php
 class WebApplication {
 
@@ -222,13 +222,13 @@ class WebApplication {
 
 }
 ?>
-{% endcodeblock %}
+```
 
 程序应指定一个缺省的Controller，覆盖$defaultController属性即可，默认为“default”。Controller的类名应在名称后面加“Controller”字样的后缀。由于需要包含命名空间的完整类名来动态实例化Controller，故Controller的源码中都应在最后返回其命名空间（_return \_\_NAMESPACE\_\_;_）。
 
 增加Controller类，作为所有Controller的父类：
 
-{% codeblock lang:php %}
+```php
 <?php
 namespace org\x3f\flamework\base;
 use org\x3f\flamework\exceptions\HttpException;
@@ -311,7 +311,7 @@ class Controller
     
 }
 ?>
-{% endcodeblock %}
+```
 
 Controller::process()是入口方法，它会通过反射机制实现HTTP参数与Action参数的绑定，并指定Action。
 
@@ -319,7 +319,7 @@ Controller::process()是入口方法，它会通过反射机制实现HTTP参数�
 
 Filter中实现before()和after()方法，Filter链通过对Filter按顺序递归调用，实现所有Filter::before()方法在切面之前顺序执行，并且所有Filter::after()方法在切面之后逆序执行。
 
-{% codeblock lang:php %}
+```php
 <?php
 namespace org\x3f\flamework\base;
 
@@ -368,9 +368,9 @@ class Filter
     }
 }
 ?>
-{% endcodeblock %}
+```
 
-{% codeblock lang:php %}
+```php
 <?php
 namespace org\x3f\flamework\base;
 
@@ -450,11 +450,11 @@ class FilterChain
     
 }
 ?>
-{% endcodeblock %}
+```
 
 对FilterChain和Filter的使用方法在前面的WebApplication::run()和Controller::process()中均有包含。Controller级的Filter在配置文件中设置，内容如下：
 
-{% codeblock lang:php %}
+```php
 <?php
 return array(
     
@@ -469,11 +469,11 @@ return array(
     ),
 );
 ?>
-{% endcodeblock %}
+```
 
 Action级的Filter在Controller里覆盖$filters属性：
 
-{% codeblock lang:php %}
+```php
 <?php
     // ...
 
@@ -483,7 +483,7 @@ Action级的Filter在Controller里覆盖$filters属性：
 
     // ...
 ?>
-{% endcodeblock %}
+```
 
 Action级别的Filter通过$filters数组中的正则表达式选择适用的Action。
 

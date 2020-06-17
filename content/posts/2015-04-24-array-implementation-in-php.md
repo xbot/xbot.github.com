@@ -20,18 +20,18 @@ tags:
 
 用ZEND_HANDLE_NUMERIC处理整数字符串键：
 
-{% codeblock lang:c %}
+```c
 static inline int zend_symtable_find(
     HashTable *ht, const char *arKey, uint nKeyLength, void **pData
 ) {
     ZEND_HANDLE_NUMERIC(arKey, nKeyLength, zend_hash_index_find(ht, idx, pData));
     return zend_hash_find(ht, arKey, nKeyLength, pData);
 }
-{% endcodeblock %}
+```
 
 其它符号表操作函数：
 
-{% codeblock lang:c %}
+```c
 static inline int zend_symtable_exists(HashTable *ht, const char *arKey, uint nKeyLength);
 static inline int zend_symtable_del(HashTable *ht, const char *arKey, uint nKeyLength);
 static inline int zend_symtable_update(
@@ -40,13 +40,13 @@ static inline int zend_symtable_update(
 static inline int zend_symtable_update_current_key_ex(
     HashTable *ht, const char *arKey, uint nKeyLength, int mode, HashPosition *pos
 );
-{% endcodeblock %}
+```
 
 ## 数组操作
 
 ### 初始化
 
-{% codeblock lang:c %}
+```c
 // 初始化数组
 zval *zv1;
 array_init(zv1);
@@ -56,11 +56,11 @@ array_init_size(zv1, 100);
 
 // 在函数中返回数组：把返回值初始化为数组
 array_init(return_value);
-{% endcodeblock %}
+```
 
 ### 插入和更新
 
-{% codeblock lang:c %}
+```c
 /* Insert at next index */
 int add_next_index_*(zval *arg, ...);
 /* Insert at specific index */
@@ -69,7 +69,7 @@ int add_index_*(zval *arg, ulong idx, ...);
 int add_assoc_*(zval *arg, const char *key, ...);
 /* Insert at specific key of length key_len (for binary safety) */
 int add_assoc_*_ex(zval *arg, const char *key, uint key_len, ...);
-{% endcodeblock %}
+```
 
 星号表示类型名，可用类型名如下：
 
@@ -90,7 +90,7 @@ int add_assoc_*_ex(zval *arg, const char *key, uint key_len, ...);
 
 ### 栗子
 
-{% codeblock lang:c %}
+```c
 PHP_FUNCTION(donie_get_arr)
 {
 	array_init(return_value);
@@ -113,4 +113,4 @@ PHP_FUNCTION(donie_get_arr)
 	object_init(obj);
 	add_next_index_zval(return_value, obj);
 }
-{% endcodeblock %}
+```

@@ -71,7 +71,7 @@ ftp>
 
 4. 在下载到本地的board.conf中查找<strong>right</strong>，后跟<strong>0</strong>表示超级用户，若为<strong>1</strong>则表示普通用户，如下所示：
 
-{% codeblock lang:xml %}
+```xml
 <row id="0">
     <item>"right", "0"</item>
     <item>"username", "bjcnchgw"</item>
@@ -83,7 +83,7 @@ ftp>
     <item>"username", "user"</item>
     <item>"password", "mypasswd"</item>
 </row>
-{% endcodeblock %}
+```
 
 5. 在如下页面使用超级用户登录：
 

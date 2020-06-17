@@ -21,7 +21,7 @@ meta:
 <h2>正则表达式</h2>
 <p>我一直觉得原来的全文检索有一个遗憾，虽然可以通过多个关键词实现较为精确的查询，但还是不如正则表达式灵活和精确。</p>
 <p>这是个蓄谋已久的需求，但直到真正做起来，才发现很多有意思的东西。虽然SQLite3提供支持正则表达式查询的<strong>“REGEX”</strong>关键词，但并没有实际实现这个功能，而是需要写程序实现并在数据库接口中注册这个函数：</p>
-{% codeblock lang:python %}
+```python
 import sqlite3
 
 conn = sqlite3.connect('/tmp/your-database-file.db')
@@ -40,10 +40,10 @@ row = cur.fetchone()
 print row
 
 conn.close()
-{% endcodeblock %}
+```
 
 <p>在SQLAlchemy中具体的实现方式是：</p>
-{% codeblock lang:python %}
+```python
 # 注册函数
 dbe = sqlalchemy.create_engine("sqlite:///tmp/your-database-file.db")
 conn = dbe.connect()
@@ -53,22 +53,22 @@ conn.connection.create_function('REGEXP', 2, regexp_search)
 tbl = Post.__table__
 cond_1 = tbl.c.title.op('regexp')(r'\babc\b')
 cond_2 = tbl.c.content.op('regexp')(r'\babc\b')
-{% endcodeblock %}
+```
 
 <p>和普通的全文检索一样，正则表达式的全文检索也支持使用多个表达式作为查询条件，多个条件之间是与的关系。现在可以这样查询所有包含“UltraBlog.vim”但不把推广代码算在内的文章了：</p>
-{% codeblock lang:vim %}
+```vim
 :UBRegexSearch [^\[]UltraBlog\.vim[^\]]
-{% endcodeblock %}
+```
 
 <h2>批量替换</h2>
 <p>在我换过新域名后，我就觉得这个功能很有必要了：</p>
-{% codeblock lang:vim %}
+```vim
 :UBReplace https://sinolog.it https://0x3f.org
-{% endcodeblock %}
+```
 
 <p>包含第一个参数内容并被替换的文章数目会显示在Vim的命令输出缓冲区中。</p>
 <p>有了前面实现全文检索支持正则表达式的尝试，再实现支持正则表达式的批量替换就容易多了：</p>
-{% codeblock lang:python %}
+```python
 # 转换字符串成raw格式的函数
 def raw(text):
     """Returns a raw string representation of text"""
@@ -90,12 +90,12 @@ conn.connection.create_function('regex_replace', 3, regex_replace)
 # 在SQL语句中使用这个函数
 sql_replace = "update post set title=regex_replace(title,:needle,:replacement),content=regex_replace(content,:needle,:replacement)"
 conn.execute(sql_replace, {'needle':r'\babc\b', 'replacement':'xyz'})
-{% endcodeblock %}
+```
 
 <p>最终，这个命令是这样的：</p>
-{% codeblock lang:vim %}
+```vim
 :UBRegexReplace \babc\b xyz
-{% endcodeblock %}
+```
 
 <p>实现批量替换容易，但要解决由此引出的一个问题就费周折了，就是批量替换过文章内容后怎样和博客同步的问题，现在我还没有好的想法，留作以后实现。</p>
 <h2>调试模式</h2>

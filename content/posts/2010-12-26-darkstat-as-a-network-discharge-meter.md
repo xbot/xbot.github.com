@@ -38,15 +38,15 @@ meta:
 
 darkstat启动时需要手工指定监视的网络接口，因此需要用根权限启动：
 
-{% codeblock lang:bash %}
+```bash
 sudo darkstat -i eth0
-{% endcodeblock %}
+```
 
 darkstat默认使用<strong>667</strong>端口提供Web访问，可以用<strong>-p</strong>参数指定端口：
 
-{% codeblock lang:bash %}
+```bash
 sudo darkstat -i eth0 -p 8080
-{% endcodeblock %}
+```
 
 darkstat的Web用户界面分为Graph、Hosts和Host三部分。Graph是缺省主页，用于显示最近一分钟、一小时、一天和一个月的流量统计直方图，将光标置于任何一个直方条上可查看对应时刻的流量指标：
 

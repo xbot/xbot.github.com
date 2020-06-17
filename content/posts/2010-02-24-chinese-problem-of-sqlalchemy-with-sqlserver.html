@@ -19,7 +19,7 @@ meta:
 
 <p>Traceback内容如下：</p>
 
-{% codeblock %}
+```
 Traceback (most recent call last):
 File "test.py", line 36, in <code>&lt;module&gt;</code>
 &nbsp;&nbsp;&nbsp;&nbsp;for obj in session.query(User):
@@ -40,7 +40,7 @@ File "C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\typ
 File "C:\Python26\lib\encodings\utf_8.py", line 16, in decode
 &nbsp;&nbsp;&nbsp;&nbsp;return codecs.utf_8_decode(input, errors, True)
 UnicodeEncodeError: 'ascii' codec can't encode characters in position 0-1: ordinal not in range(128)</p>
-{% endcodeblock %}
+```
 
 <p>环境为：</p>
 
@@ -53,7 +53,7 @@ DB模块：pyodbc
 <p>脚本内容：</p>
 
 <p>
-{% codeblock lang:python %}
+```python
 #!/usr/bin/python
 # -*- encoding: gbk -*-
 
@@ -92,7 +92,7 @@ if __name__ == '__main__':
     for obj in session.query(User):
         print obj.name
     '''
-{% endcodeblock %}
+```
 </p>
 
 <p>上面的脚本执行后，数据得以正常保存，在数据库中的查询结果也正常，没有乱码。但是，当把从drop_all()到commit()行注释掉，取消for循环前后的多行字符串起止符后，即运行查询时，抛出上面的Traceback。</p>
@@ -102,7 +102,7 @@ if __name__ == '__main__':
 <p>回溯Traceback，打开sqlalchemy的types.py，UnicodeEncodeError的抛出点在String类的result_processor()方法：</p>
 
 <p>
-{% codeblock lang:python %}
+```python
 def result_processor(self, dialect, coltype):
     wants_unicode = self.convert_unicode or dialect.convert_unicode
     needs_convert = wants_unicode and \
@@ -122,7 +122,7 @@ def result_processor(self, dialect, coltype):
         return process
     else:
         return None
-{% endcodeblock %}
+```
 </p>
 
 <p>这个方法就是根据数据库方言dialect和字段类型coltype返回一个字符串的解码函数。若在if语句上面将needs_convert置为False，即不对该字段使用解码器，则再执行上面的脚本时，查询正常。</p>
@@ -132,7 +132,7 @@ def result_processor(self, dialect, coltype):
 <p>对传入process()函数的值作isinstance(value,unicode)判断，显示为True，表明从数据库中查询出来的中文本身就是unicode字节码，当对它再进行UTF-8解码时，就抛出了UnicodeEncodeError的错误。为验证以上判断，做如下实验：</p>
 
 <p>
-{% codeblock lang:python %}
+```python
 >>>t = '中文'
 >>>u = u'中文'
 >>>isinstance(t, str)
@@ -158,7 +158,7 @@ Traceback (most recent call last):
   File "/usr/lib/python2.6/encodings/utf_8.py", line 16, in decode
     return codecs.utf_8_decode(input, errors, True)
 UnicodeEncodeError: 'ascii' codec can't encode characters in position 0-1: ordinal not in range(128)
-{% endcodeblock %}
+```
 </p>
 
 <p>得证。</p>
@@ -172,7 +172,7 @@ UnicodeEncodeError: 'ascii' codec can't encode characters in position 0-1: ordin
 <p>返回result_processor()方法，self.convert_unicode对于Unicode类是True，dialect.convert_unicode由create_engine()函数的convert_unicode参数控制，缺省为False，故needs_convert变量为True，无法更改；dialect.returns_unicode_strings是由sqlalchemy.engine模块default.py中的DefaultDialect类的_check_unicode_returns()方法返回的，该方法内容为：</p>
 
 <p>
-{% codeblock lang:python %}
+```python
 def _check_unicode_returns(self, connection):
     cursor = connection.connection.cursor()
     cursor.execute(
@@ -188,7 +188,7 @@ def _check_unicode_returns(self, connection):
     result = isinstance(row[0], unicode)
     cursor.close()
     return result
-{% endcodeblock %}
+```
 </p>
 
 <p>此方法的功能为生成一条SQL语句，在数据库中执行后，判断返回的值是否为unicode类型。由于SQL Server是ASCII编码，故此方法返回False。因此，dialect.returns_unicode_strings的值为False。最终，needs_convert只能为True。我觉得这是sqlalchemy的一个Bug。</p>
@@ -204,12 +204,12 @@ def _check_unicode_returns(self, connection):
 <p>2、我这里需要使用utf-8作默认编码器，sitecustomize.py的内容如下：</p>
 
 <p>
-{% codeblock lang:python %}
+```python
 #!/usr/bin/python
 # -*- coding: gbk -*-
 import sys
 sys.setdefaultencoding('utf-8')
-{% endcodeblock %}
+```
 </p>
 
 <p>3、将sitecustomize.py保存到python安装目录下的Lib\site-packages目录中；</p>

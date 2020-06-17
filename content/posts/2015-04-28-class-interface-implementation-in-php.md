@@ -14,7 +14,7 @@ tags:
 
 类的注册是在扩展的MINIT方法里。
 
-{% codeblock lang:c %}
+```c
 /*
  * this pointer should be put into the header file,
  * so other modules can access this class.
@@ -134,7 +134,7 @@ PHP_MINIT_FUNCTION(donie)
 
 	return SUCCESS;
 }
-{% endcodeblock %}
+```
 
 #### 方法修饰符
 

@@ -16,14 +16,14 @@ tags:
 
 资源数据的结构为：
 
-{% codeblock lang:c %}
+```c
 typedef struct _zend_rsrc_list_entry
 {
     void *ptr;
     int type;
     int refcount;
 }zend_rsrc_list_entry;
-{% endcodeblock %}
+```
 
 ### 常规资源与持久资源
 
@@ -35,7 +35,7 @@ typedef struct _zend_rsrc_list_entry
 
 重新实现基本的文件句柄和相关操作。
 
-{% codeblock lang:c %}
+```c
 // 资源名称
 #define PHP_DONIE_RES_NAME_FILE "Donie's File Descriptor"
 
@@ -151,7 +151,7 @@ PHP_FUNCTION(donie_fclose)
 	zend_hash_index_del(&EG(regular_list), Z_RESVAL_P(file_resource));
 	RETURN_TRUE;
 }
-{% endcodeblock %}
+```
 
 ### 创建新资源类型
 
@@ -167,13 +167,13 @@ zend_register_list_destructors_ex()创建新资源类型，并注册该资源类
 
 例如对于以下场景：
 
-{% codeblock lang:php %}
+```php
 <?php
 $a = donie_fopen('/tmp/donie.txt', 'r');
 $b = $a;
 $c = &$a;
 ?>
-{% endcodeblock %}
+```
 
 a赋值给b时，zval的引用计数加一。a的引用赋值给c时，发生zval的拆分，b获得新的zval，引用计数是1，a和c共用一个zval，引用计数是2。此时，资源数据的引用计数加一。
 
@@ -202,7 +202,7 @@ EG(persistent_list)中的资源数据并不被直接使用，对资源的操作�
 
 往EG(persistent_list)中存资源数据：
 
-{% codeblock lang:c %}
+```c
 char *hash_key;
 int hash_key_len;
 zend_rsrc_list_entry le;
@@ -210,7 +210,7 @@ le.type = le_donie_file_descriptor_persist;
 le.ptr = fp;
 hash_key_len = spprintf(&hash_key, 0, "php_donie_file_descriptor:%s-%s", filename, mode);
 zend_hash_update(&EG(persistent_list), hash_key, hash_key_len+1, (void*)&le, sizeof(list_entry), NULL);
-{% endcodeblock %}
+```
 
 #### 获取持久资源
 

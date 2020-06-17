@@ -12,14 +12,14 @@ tags:
 
 ## 扩展内部的全局变量
 
-{% codeblock lang:c php_donie.h %}
+```c php_donie.h
 ZEND_BEGIN_MODULE_GLOBALS(donie)
 	unsigned long global_long;
 	char *global_string;
 ZEND_END_MODULE_GLOBALS(donie)
-{% endcodeblock %}
+```
 
-{% codeblock lang:c donie.c %}
+```c
 ZEND_DECLARE_MODULE_GLOBALS(donie);
 
 static void php_donie_init_globals(zend_donie_globals *donie_globals)
@@ -53,7 +53,7 @@ ZEND_FUNCTION(donie_test_ext_globals)
 {
 	php_printf("%s", DONIE_G(global_string));
 }
-{% endcodeblock %}
+```
 
 ### 声明
 
@@ -75,7 +75,7 @@ DONIE\_G在扩展的头文件里，生成扩展框架时默认就有。
 
 ## 用户空间的超级全局变量
 
-{% codeblock lang:c %}
+```c
 static zend_bool php_donie_autoglobal_callback(const char *name, uint name_len TSRMLS_DC)
 {
 	zval *donie_val;
@@ -93,7 +93,7 @@ PHP_MINIT_FUNCTION(donie)
 
 	return SUCCESS;
 }
-{% endcodeblock %}
+```
 
 zend\_register\_auto\_global()注册了$\_DONIE这样一个全局变量。在代码的编译时，如果PHP内核发现代码中没有使用这个全局变量，不会进行初始化；若有使用，会调用php\_donie\_autoglobal\_callback进行初始化。PHP4中没有php\_donie\_autoglobal\_callback这个参数。
 

@@ -12,7 +12,7 @@ tags:
 
 假设U盘对应/dev/sdb1、OSX安装包是osx.dmg。整个过程就是提取出一系列文件，然后复制到U盘里。
 
-{% codeblock lang:bash %}
+```bash
 # 格式化U盘为hfs+文件系统
 sudo mkfs.hfsplus -v EICaptianInstall /dev/sdb1
  
@@ -36,6 +36,6 @@ sudo cp -r base/* usb/
 sudo rm usb/System/Installation/Packages
 sudo cp -r esd/Packages usb/System/Installation/
 sudo cp esd/BaseSystem.* usb/
-{% endcodeblock %}
+```
 
 注意dmg2img的参数-p表示提取dmg的第几个分区，似乎不同的OSX版本提取哪个分区也不一样，判断方法就是先执行`dmg2img osx.dmg`，看哪个分区提取得最慢就选哪个。

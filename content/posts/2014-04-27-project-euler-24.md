@@ -25,7 +25,7 @@ What is the millionth lexicographic permutation of the digits 0, 1, 2, 3, 4, 5, 
 Solution
 --------
 
-{% codeblock lang:python p24.py %}
+```python
 #!/usr/bin/python2
 # -*- coding: utf-8 -*-
 
@@ -50,9 +50,9 @@ if __name__ == '__main__':
     startTime = time.time()
     perm = get_perm([d for d in range(10)], 1000000)
     print perm, '%sms' % ((time.time() - startTime) * 1000)
-{% endcodeblock %}
+```
 
-{% codeblock lang:php p24.php %}
+```php
 <?php
 function factorial($n) {
     $result = 1;
@@ -81,9 +81,9 @@ $perm = get_perm($digits, 1000000);
 $costs = (microtime(true) - $startTime) * 1000;
 echo "$perm ${costs}ms\n";
 ?>
-{% endcodeblock %}
+```
 
-{% codeblock lang:go p24.go %}
+```go
 package main
 
 import (
@@ -121,7 +121,7 @@ func main() {
 	perm := get_perm(digits, 1000000)
 	fmt.Println(perm, time.Now().Sub(startTime))
 }
-{% endcodeblock %}
+```
 
 I'm the 57181st person to have solved this problem.
 

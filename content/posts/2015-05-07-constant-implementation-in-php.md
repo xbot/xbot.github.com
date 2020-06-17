@@ -16,7 +16,7 @@ tags:
 
 常量的结构定义为：
 
-{% codeblock lang:c %}
+```c
 typedef struct _zend_constant {
 	zval value;
 	int flags;
@@ -24,7 +24,7 @@ typedef struct _zend_constant {
 	uint name_len;
 	int module_number;
 } zend_constant;
-{% endcodeblock %}
+```
 
 value是常量的值，是一个zval。name是常量名。module\_number是模块被加载时，PHP内核在MINIT和RINIT方法的原型里默认传递的一个值，作为模块清理时的线索，在注册常量的接口里直接传递即可。
 

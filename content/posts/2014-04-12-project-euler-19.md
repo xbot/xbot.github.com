@@ -31,7 +31,7 @@ How many Sundays fell on the first of the month during the twentieth century (1 
 Solution
 --------
 
-{% codeblock lang:python p19.py %}
+```python
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
@@ -64,9 +64,9 @@ def main():
 
 if __name__ == '__main__':
     main()
-{% endcodeblock %}
+```
 
-{% codeblock lang:go p19.go %}
+```go
 package main
 
 import (
@@ -116,6 +116,6 @@ func main() {
     }
     fmt.Println(count)
 }
-{% endcodeblock %}
+```
 
 I'm the 65183rd person to have solved this problem.

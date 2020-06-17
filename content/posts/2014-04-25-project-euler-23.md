@@ -28,7 +28,7 @@ Solution
 
 Using sets instead of lists greatly improves performance in Python:
 
-{% codeblock %}
+```python
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
@@ -64,11 +64,11 @@ if __name__ == '__main__':
     startTime = time.time()
     main()
     print time.time() - startTime
-{% endcodeblock %}
+```
 
 Simulate sets using maps in Go:
 
-{% codeblock lang:go p23.go %}
+```go
 package main
 
 import (
@@ -118,6 +118,6 @@ func main() {
 
 	fmt.Println(result, time.Now().Sub(startTime))
 }
-{% endcodeblock %}
+```
 
 I'm the 49489th person to have solved this problem.

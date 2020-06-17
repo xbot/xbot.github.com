@@ -25,9 +25,9 @@ http://192.168.1.1/downloadconfigfile.conf
 
 下载该文件并搜索<strong>username</strong>，找到超级用户的用户名和密码，如：
 
-{% codeblock lang:xml %}
+```xml
 <X_ATP_UserInfoInstance InstanceID="1" Username="bjcnchgw" Userpassword="bjcnchgw27852654" Userlevel="2" Busy="0" LoginIP=""/>
-{% endcodeblock %}
+```
 
 2. 在如下地址使用超级用户登录：
 

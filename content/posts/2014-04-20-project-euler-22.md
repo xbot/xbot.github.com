@@ -27,7 +27,7 @@ Solution
 
 Pretty code snippets are easily to be implemented in Python as always:
 
-{% codeblock lang:python p22.py %}
+```python
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
@@ -38,11 +38,11 @@ if __name__ == '__main__':
 
     print sum(map(lambda name: sum([ord(c) - 64 for c in name]) \
               * (names.index(name) + 1), names))
-{% endcodeblock %}
+```
 
 Easy as Python, ugly as shit, here is the PHP implementation:
 
-{% codeblock lang:php p22.php %}
+```php
 <?php
 $names = explode(',', str_replace('"', '', file_get_contents('names.txt')));
 sort($names, SORT_STRING);
@@ -52,9 +52,9 @@ $cal_alpha_value = function($name, $i) {
 };
 echo array_sum(array_map($cal_alpha_value, $names, range(1, count($names))));
 ?>
-{% endcodeblock %}
+```
 
-{% codeblock lang:go p22.go %}
+```go
 package main
 
 import (
@@ -89,6 +89,6 @@ func main() {
 
 	fmt.Println(val)
 }
-{% endcodeblock %}
+```
 
 I'm the 65646th person to have solved this problem.

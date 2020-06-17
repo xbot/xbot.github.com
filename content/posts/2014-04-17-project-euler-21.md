@@ -25,7 +25,7 @@ Evaluate the sum of all the amicable numbers under 10000.
 Solution
 --------
 
-{% codeblock lang:python p21.py %}
+```python
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
@@ -59,9 +59,9 @@ if __name__ == '__main__':
     startTime = time.time()
     main()
     print time.time() - startTime
-{% endcodeblock %}
+```
 
-{% codeblock lang:go p21.go %}
+```go
 package main
 
 import (
@@ -104,6 +104,6 @@ func main() {
 
 	fmt.Println(result, time.Now().Sub(startTime))
 }
-{% endcodeblock %}
+```
 
 I'm the 70186th person to have solved this problem.

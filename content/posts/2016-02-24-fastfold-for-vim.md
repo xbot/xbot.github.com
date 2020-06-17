@@ -18,7 +18,7 @@ tags:
 
 [FastFold](https://github.com/Konfekt/FastFold)是遵循上面所说的方法解决这些问题的插件，不过默认会在所有与折叠相关的时机更新折叠，会导致相关的操作变慢，例如zc和zo时都会有明显的卡顿。鉴于其它时机对折叠的更新已经足够及时，可以通过配置取消受在到明显影响的时机更新折叠：
 
-{% codeblock lang:vim %}
+```vim
 " FastFold只在za/zA/zx/zX时更新折叠信息
 let g:fastfold_fold_command_suffixes =  ['x','X','a','A']
-{% endcodeblock %}
+```

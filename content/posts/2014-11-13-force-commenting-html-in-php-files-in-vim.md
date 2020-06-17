@@ -13,7 +13,7 @@ tags:
 
 对PHP页面模板中的HTML做注释，NERDCommenter是根据文件类型处理的，所以必须临时转换文件类型：
 
-{% codeblock lang:vim %}
+```vim
 " 强制使用HTML的注释
 function! ForceHTMLComment(mode, type) range
     set ft=html
@@ -34,6 +34,6 @@ au FileType php nmap <buffer> <leader>fhcs :call ForceHTMLComment("n", "Sexy")<C
 au FileType php vmap <buffer> <leader>fhcs :call ForceHTMLComment("x", "Sexy")<CR>
 au FileType php nmap <buffer> <leader>fhcu :call ForceHTMLComment("n", "Uncomment")<CR>
 au FileType php vmap <buffer> <leader>fhcu :call ForceHTMLComment("x", "Uncomment")<CR>
-{% endcodeblock %}
+```
 
 有日子没写vimscript了，手都生了。

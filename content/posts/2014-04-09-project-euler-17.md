@@ -24,7 +24,7 @@ If all the numbers from 1 to 1000 (one thousand) inclusive were written out in w
 Solution
 --------
 
-{% codeblock lang:python p17.py %}
+```python
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
@@ -88,6 +88,6 @@ if __name__ == '__main__':
         count += len(translate_number(i).replace(' ', '').replace('-',
                      ''))
     print count
-{% endcodeblock %}
+```
 
 I'm the 71762nd person to have solved this problem.

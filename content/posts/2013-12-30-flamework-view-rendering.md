@@ -20,9 +20,9 @@ tags:
 获取代码
 --------
 
-{% codeblock lang:bash %}
+```bash
 git checkout v0.4
-{% endcodeblock %}
+```
 
 设计与实现
 ----------
@@ -39,7 +39,7 @@ View的模板是最好实现的，因为PHP本身就是一个模板语言，所�
 
 添加Controller::render()方法：
 
-{% codeblock lang:php %}
+```php
 <?php
 
     // ...
@@ -66,7 +66,7 @@ View的模板是最好实现的，因为PHP本身就是一个模板语言，所�
     // ...
 
 ?>
-{% endcodeblock %}
+```
 
 $view是模板名称，$data是要填充到模板中的数据。
 
@@ -75,7 +75,7 @@ $view是模板名称，$data是要填充到模板中的数据。
 
 在Demo项目的protected下新增文件“view/post/list.php”，并创建不存在的这两个上级目录“view”和“post”。内容如下：
 
-{% codeblock lang:html %}
+```html
 <html>
     <head>
         <meta http-equiv="Content-type" content="text/html; charset=utf-8">
@@ -86,11 +86,11 @@ $view是模板名称，$data是要填充到模板中的数据。
         <p><?php echo $age; ?></p>
     </body>
 </html>
-{% endcodeblock %}
+```
 
 将DefaultController::index()方法修改为：
 
-{% codeblock lang:php %}
+```php
 <?php
     
     // ...
@@ -106,7 +106,7 @@ $view是模板名称，$data是要填充到模板中的数据。
     // ...
 
 ?>
-{% endcodeblock %}
+```
 
 访问Demo项目，页面将显示预期的内容和样式。
 

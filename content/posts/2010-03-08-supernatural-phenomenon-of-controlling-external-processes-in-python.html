@@ -35,7 +35,7 @@ meta:
 <p>下面的代码可以说明如何使用subprocess运行外部程序并监控运行状态：</p>
 
 <p>
-{% codeblock lang:python %}
+```python
 import subprocess
 process = subprocess.Popen('gvim', shell=True)
 status = process.poll()
@@ -43,7 +43,7 @@ if 0 == status:
     print 'The external program exited.'
 if status is None:
     print 'The external program is still running.'
-{% endcodeblock %}
+```
 </p>
 
 <p>理论上，可以拿实例process的poll()方法监视进程的运行状态，而且这一点在Windows上也确实可以做到，但是到了Linux下，诡异的事出现了，即使刚刚打开gvim，poll()方法也会马上返回一个0，同时process.pid的值总是和实际在运行的那个gvim进程的pid的值差3，而且在虚拟终端中输入gvim命令也不会阻塞终端，就像别的命令加上“<strong>&amp;</strong>”符号的效果一样。尝试用<a href="http://en.wikipedia.org/wiki/Strace">strace</a>跟踪gvim的运行，试图找到问题原因，无果。我猜想可能/usr/bin/gvim是一个跳板，它启动后会启动一个新的gvim进程。总之，这个方法在Linux下是行不通的。</p>
@@ -67,9 +67,9 @@ if status is None:
 <p>1. 调用非环境变量下的程序，即命令中必须带程序所在的路径时，应当将程序所在目录的完整路径以自然字符串的形式传递给subprocess.Popen类的构造方法的cwd参数，即如下所示：</p>
 
 <p>
-{% codeblock lang:python %}
+```python
 process = subprocess.Popen('gvim.exe', cwd=r'C:\program files\vim\vim72', shell=True)
-{% endcodeblock %}
+```
 </p>
 
 <p>这样可以有效避免路径中的空格和特殊字符对命令执行的影响。</p>

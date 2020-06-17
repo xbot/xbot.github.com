@@ -230,7 +230,7 @@ sudo gedit /etc/fonts/fonts.conf
 
 在里面加入下面的内容： 
 
-{% codeblock lang:html %}
+```html
 <alias> 
 <family>Segoe UI</family> 
 <prefer> 
@@ -244,7 +244,7 @@ sudo gedit /etc/fonts/fonts.conf
 <family>FZHei-B01S</family> 
 </prefer> 
 </alias> 
-{% endcodeblock %}
+```
 
 在“系统”－“首选项”－“字体”里选择：应用程序字体－方正黑体－10；窗口标题－微软雅黑粗体－10；其余都是微软雅黑－10即可。如果是LCD显示器，为了更好的显示效果，建议在字体渲染里面选择“次象素平滑”。并安装类似于windows下面的cleartype的显示优化程序,执行 
 
@@ -522,7 +522,7 @@ sudo update-alternatives --config java
 
 执行后会出现类似如下的画面: 
 
-{% codeblock %}
+```
 There are 4 alternatives which provide `java'. 
 Selection Alternative 
 ----------------------------------------------- 
@@ -531,7 +531,7 @@ Selection Alternative
 3 /usr/bin/gij-wrapper-4.0 
 4 /usr/lib/jvm/java-1.5.0-sun/jre/bin/java 
 Press enter to keep the default[*], or type selection number: 
-{% endcodeblock %}
+```
 
 输入 有包含 "sun" 的行的前面的数字。如上面显示，则输入 4，然后回车确定。 
 
@@ -545,7 +545,7 @@ sudo gedit /usr/share/applications/LumaQQ.desktop
 
 在新增的文件内加入下面这几行 
 
-{% codeblock lang:ini %}
+```ini
 [Desktop Entry] 
 Name=LumaQQ 
 Comment=QQ Client 
@@ -554,7 +554,7 @@ Icon=/opt/LumaQQ/QQ.png
 Terminal=false 
 Type=Application 
 Categories=Application;Network; 
-{% endcodeblock %}
+```
 
 保存编辑过的文件,到(应用程序 -> Internat -> LumaQQ)执行之。 
 

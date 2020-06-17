@@ -27,8 +27,8 @@ $TERM too long - sorry.
 
 最终还是设了个别名：
 
-{% codeblock lang:bash %}
+```bash
 # vi ~/.bashrc
 
 alias screenx='export TERM=screen-256color && screen'
-{% endcodeblock %}
+```

@@ -22,7 +22,7 @@ tags:
 
 ###常用命令
 
-{% codeblock lang:bash %}
+```bash
 # 启动MySQL
 service mysqld start
 
@@ -43,7 +43,7 @@ chkconfig --level 345 mysqld on
 
 # 取消MySQL服务开机自动运行
 chkconfig --level 345 mysqld off
-{% endcodeblock %}
+```
 
 ###运行级别
 
@@ -65,7 +65,7 @@ chkconfig --level 345 mysqld off
 
 ###示例
 
-{% codeblock lang:bash %}
+```bash
 #!/bin/bash
 
 # chkconfig: 345 99 12
@@ -92,7 +92,7 @@ case "$1" in
 esac
 
 exit 0
-{% endcodeblock %}
+```
 
 ###解释
 
@@ -102,21 +102,21 @@ exit 0
 
 红帽系发行版使用chkconfig命令设置服务自动在哪个运行级别被自动执行。要使服务脚本支持chkconfig命令，需要加入注释行：
 
-{% codeblock lang:bash %}
+```bash
 # chkconfig: 345 99 12
-{% endcodeblock %}
+```
 
 其中，**345**表示缺省的运行级别，使用如下命令添加服务时：
 
-{% codeblock lang:bash %}
+```bash
 chkconfig --add sample
-{% endcodeblock %}
+```
 
 将和使用如下命令一个效果：
 
-{% codeblock lang:bash %}
+```bash
 chkconfig --level 345 sample on
-{% endcodeblock %}
+```
 
 **99**表示启动序号，例如若希望服务B在服务A启动后启动，且服务A的启动序号是98，则服务B的启动序号应设为大于98的一个整数。
 

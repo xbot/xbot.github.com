@@ -14,21 +14,21 @@ tags:
 
 上下文包含流的选项和流的参数两部分内容。
 
-{% codeblock lang:c %}
+```c
 php_stream_context *php_stream_context_alloc(void);
-{% endcodeblock %}
+```
 
 流的选项是一系列键值对。
 
-{% codeblock lang:c %}
+```c
 int php_stream_context_set_option(php_stream_context *context, const char *wrappername, const char *optionname, zval *optionvalue);
 
 int php_stream_context_get_option(php_stream_context *context, const char *wrappername, const char *optionname, zval ***optionvalue);
-{% endcodeblock %}
+```
 
 流的参数目前只实现对流的事件的回调，php_stream_context->notifier存储如下结构：
 
-{% codeblock lang:c %}
+```c
 typedef struct {
     php_stream_notification_func func;
     void (*dtor)(php_stream_notifier *notifier);
@@ -36,17 +36,17 @@ typedef struct {
     int mask;
     size_t progress, progress_max;
 } php_stream_notifier;
-{% endcodeblock %}
+```
 
 回调函数的原型为：
 
-{% codeblock lang:c %}
+```c
 typedef void (*php_stream_notification_func)(php_stream_context *context,
 		int notifycode, int severity,
 		char *xmsg, int xcode,
 		size_t bytes_sofar, size_t bytes_max,
 		void * ptr TSRMLS_DC);
-{% endcodeblock %}
+```
 
 notifycode包含如下：
 
@@ -74,7 +74,7 @@ php_stream_notifier->mask如果被赋值severity，其它severity的事件将不
 
 ## 过滤器的实现和应用
 
-{% codeblock lang:c %}
+```c
 #include "ext/standard/php_string.h"
 
 typedef struct {
@@ -157,7 +157,7 @@ PHP_MSHUTDOWN_FUNCTION(donie)
 
 	return SUCCESS;
 }
-{% endcodeblock %}
+```
 
 ### 注册和注销
 
@@ -177,7 +177,7 @@ PHP_MSHUTDOWN_FUNCTION(donie)
 
 php_stream_bucket_make_writeable()将一个bucket从链表中移除，如果必要，复制其内部缓冲数据，以获得对内容的写权限。此外，对bucket的相关操作还有：
 
-{% codeblock lang:c %}
+```c
 php_stream_bucket *php_stream_bucket_new(php_stream *stream, char *buf, size_t buflen, int own_buf, int buf_persistent TSRMLS_DC);
 
 int php_stream_bucket_split(php_stream_bucket *in, php_stream_bucket **left, php_stream_bucket **right, size_t length TSRMLS_DC);
@@ -189,6 +189,6 @@ void php_stream_bucket_prepend(php_stream_bucket_brigade *brigade, php_stream_
 void php_stream_bucket_append(php_stream_bucket_brigade *brigade, php_stream_bucket *bucket TSRMLS_DC);
 
 void php_stream_bucket_unlink(php_stream_bucket *bucket TSRMLS_DC);
-{% endcodeblock %}
+```
 
 若过滤器已准备好输出的数据，返回PSFS_PASS_ON；若还需要更多数据才能结束过滤操作，返回PSFS_FEED_ME；若遇到严重问题，返回PSFS_ERR_FATAL。

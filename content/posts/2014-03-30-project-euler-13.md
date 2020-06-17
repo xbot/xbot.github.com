@@ -120,7 +120,7 @@ Work out the first ten digits of the sum of the following one-hundred 50-digit n
 Solution
 ---------
 
-{% codeblock lang:go p13.go %}
+```go
 package main
 
 import (
@@ -150,6 +150,6 @@ func main() {
     }
     fmt.Println(sum.String()[:10])
 }
-{% endcodeblock %}
+```
 
 I'm the 106168th person to have solved this problem.

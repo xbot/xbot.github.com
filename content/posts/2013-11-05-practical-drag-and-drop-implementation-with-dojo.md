@@ -19,7 +19,7 @@ Dojo缺省的拖拽物件样式很丑，通过覆盖官方文档里列出的几�
 
 通过重载Source对象的creator方法可以实现这一点。这个方法会在创建拖拽物件的时候被调用，如果hint参数的值为“avatar”就表示将被创建的是被拖拽物件，此时可以使用预先定义好的模板avatarTmpl创建物件的node。
 
-{% codeblock lang:javascript %}
+```javascript
 this.dndSrc = new Source(this.itemList.domNode, {
     copyOnly:true,
     selfAccept:true,
@@ -31,7 +31,7 @@ this.dndSrc = new Source(this.itemList.domNode, {
         return {node:n, data:item, type:['text']};
     }
 });
-{% endcodeblock %}
+```
 
 置光标位置于拖拽起始处
 ----------------------
@@ -40,7 +40,7 @@ this.dndSrc = new Source(this.itemList.domNode, {
 
 实现方式是先记录拖拽开始时光标的位置，然后设置dojo.dnd.Manager的两个位移属性。
 
-{% codeblock lang:javascript %}
+```javascript
 on(this.domNode, 'mousedown', lang.hitch(this, this._setDndOffset))
 
 _setDndOffset: function(evt){
@@ -51,7 +51,7 @@ _setDndOffset: function(evt){
     Manager.manager().OFFSET_X = nPos.x - cPos.x;
     Manager.manager().OFFSET_Y = nPos.y - cPos.y;
 },
-{% endcodeblock %}
+```
 
 使鼠标事件穿透被拖拽物件
 ------------------------
@@ -60,9 +60,9 @@ _setDndOffset: function(evt){
 
 解决方法是通过CSS使鼠标事件穿透被拖拽物件。
 
-{% codeblock lang:javascript %}
+```javascript
 .dojoDndAvatar {
     pointer-events: none; /*Chrome, FF下使鼠标事件穿透*/
     background:transparent; /*IE下使鼠标事件穿透*/
 }
-{% endcodeblock %}
+```

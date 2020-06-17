@@ -16,7 +16,7 @@ lsyncd全称“Live Syncing Daemon”，是Linux下的文件自动同步工具�
 
 然后就是在源机器上创建配置文件，lsyncd的配置文件是个lua脚本：
 
-{% codeblock lang:lua lsyncd.conf %}
+```lua
 settings{
     pidfile = "/var/log/lsyncd/lsyncd.pid",
     logfile = "/var/log/lsyncd/lsyncd.log",
@@ -37,10 +37,10 @@ sync{
         _extra = {"--bwlimit=50000"},
     }
 }
-{% endcodeblock %}
+```
 
 然后启动lsyncd：
 
-{% codeblock lang:bash %}
+```bash
 sudo lsyncd /etc/lsyncd.conf
-{% endcodeblock %}
+```

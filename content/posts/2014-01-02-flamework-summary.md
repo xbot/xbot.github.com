@@ -26,7 +26,7 @@ PHP本身有很多问题，协议不统一、函数命名混乱、命名空间�
 
 下面只使用两个函数和五条约定实现一个微框架：
 
-{% codeblock lang:php %}
+```php
 <?php
 /**
  * 路由定义与应用
@@ -84,11 +84,11 @@ function render($view, $params=array())
     }
 }
 ?>
-{% endcodeblock %}
+```
 
 on()身兼两用，一是定义路由规则和对应的响应逻辑，一是对指定URI应用路由规则。render()的作用是渲染视图模板。用法如下：
 
-{% codeblock lang:php %}
+```php
 <?php
 include 'micro.php';
 
@@ -102,7 +102,7 @@ on('/mail/send/:address/:title', function($address, $title){
 
 on($_SERVER['REQUEST_URI']);
 ?>
-{% endcodeblock %}
+```
 
 约定如下：
 

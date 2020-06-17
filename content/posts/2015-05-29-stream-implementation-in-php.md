@@ -22,7 +22,7 @@ PHP的流的实现较Java简单，后者可以通过嵌套实现更灵活的应�
 
 ### 存储结构
 
-{% codeblock lang:c %}
+```c
 struct _php_stream  {
 	php_stream_ops *ops;
 	void *abstract;			/* convenience pointer for abstraction */
@@ -74,13 +74,13 @@ typedef struct _php_stream_ops  {
 	int (*stat)(php_stream *stream, php_stream_statbuf *ssb TSRMLS_DC);
 	int (*set_option)(php_stream *stream, int option, int value, void *ptrparam TSRMLS_DC);
 } php_stream_ops;
-{% endcodeblock %}
+```
 
 php_stream结构体最重要的成员是ops和abstract。ops包含了流实例的所有操作逻辑，特别地，php_stream_ops->close在php_stream结构被回收前提供了回收与该流实例相关的资源的机会。abstract用来存储一个自定义结构的数据，在流的操作逻辑里可以方便的访问。
 
 ### 实现
 
-{% codeblock lang:c %}
+```c
 #define PHP_DONIESTREAM_STREAMTYPE "doniestream"
 
 static size_t php_doniestream_write(php_stream *stream, const char *buf, size_t count TSRMLS_DC)
@@ -119,7 +119,7 @@ static php_stream_ops php_doniestream_ops = {
 	NULL, /* stat */
 	NULL, /* set_option */
 };
-{% endcodeblock %}
+```
 
 主要是流的操作逻辑的实现，最后构建的php_stream_ops结构用于后面流包装器中初始化流实例时赋给php_stream->ops。
 
@@ -129,7 +129,7 @@ Wrapper是对某一协议的封装，主要包含对该类型的流的一系列�
 
 ### 存储结构
 
-{% codeblock lang:c %}
+```c
 struct _php_stream_wrapper	{
 	php_stream_wrapper_ops *wops;	/* operations the wrapper can perform */
 	void *abstract;			/* context for the wrapper */
@@ -158,13 +158,13 @@ typedef struct _php_stream_wrapper_ops {
 	/* Metadata handling */
 	int (*stream_metadata)(php_stream_wrapper *wrapper, const char *url, int options, void *value, php_stream_context *context TSRMLS_DC);
 } php_stream_wrapper_ops;
-{% endcodeblock %}
+```
 
 php_stream_wrapper中最重要的是ops成员，它包含了所有该类型的流的操作逻辑的实现。其中最重要的是stream_opener和stream_closer，前者是流的实例化逻辑，后者是流的析构逻辑。特别的，stream_closer主要是用来销毁php_stream结构，而php_stream_ops->close是用来回收所有和该流实例相关的资源。
 
 ### 实现
 
-{% codeblock lang:c %}
+```c
 #define PHP_DONIESTREAM_WRAPPER "donie"
 typedef struct _donie_stream_data {
 	off_t position;
@@ -242,7 +242,7 @@ PHP_MSHUTDOWN_FUNCTION(donie)
 
 	return SUCCESS;
 }
-{% endcodeblock %}
+```
 
 PHP_DONIESTREAM_WRAPPER定义了协议名“donie”，所有对格式为“donie://XXX”地址的操作将由这个流实现。
 

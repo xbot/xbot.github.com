@@ -18,15 +18,15 @@ meta:
 
 解决方法是修改<strong><em>wp-includes/plugable.php</em></strong>中的<strong><em>wp_set_auth_cookie()</em></strong>函数，将下面这行：
 
-{% codeblock lang:php %}
+```php
 setcookie($auth_cookie_name, $auth_cookie, $expire, ADMIN_COOKIE_PATH, COOKIE_DOMAIN, $secure, true);
-{% endcodeblock %}
+```
 
 改成：
 
-{% codeblock lang:php %}
+```php
 setcookie($auth_cookie_name, $auth_cookie, $expire, SITECOOKIEPATH, COOKIE_DOMAIN, $secure, true);
-{% endcodeblock %}
+```
 
 这一行在这个函数中有两处，是根据php的版本决定执行哪一块，所以应该根据自己的情况修改，或者干脆两处都修改。
 

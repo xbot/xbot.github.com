@@ -18,7 +18,7 @@ tags:
 
 创建脚本，并赋可执行权限：
 
-{% codeblock lang:bash ~/.i3/myi3status.sh %}
+```bash ~/.i3/myi3status.sh
 #!/bin/sh
 # shell script to prepend i3status with more stuff
 
@@ -40,20 +40,20 @@ do
     # # if not output_format = i3bar in i3status.conf
     # echo "$stock_info | $line" || exit 1
 done
-{% endcodeblock %}
+```
 
 如果i3status.conf中启用了JSON格式输出（支持颜色），应启用上面脚本中第一块的代码，否则使用后面的。启动JSON格式输出的内容具体如下：
 
-{% codeblock lang:javascript ~/.i3status.conf %}
+```javascript ~/.i3status.conf
 general {
     colors = true
     output_format = i3bar
 }
-{% endcodeblock %}
+```
 
 在i3wm的配置文件中用以上脚本替换i3status：
 
-{% codeblock lang:javascript ~/.i3/config %}
+```javascript ~/.i3/config
 bar {
 
     # ...
@@ -64,11 +64,11 @@ bar {
     # ...
 
 }
-{% endcodeblock %}
+```
 
 在和上面脚本同路径下创建脚本：
 
-{% codeblock lang:php ~/.i3/stock.php %}
+```php ~/.i3/stock.php
 #!/bin/env php
 <?php
 class PinYin
@@ -217,11 +217,11 @@ foreach ($lines as $line) {
     }
 }
 echo implode('; ', $result);
-{% endcodeblock %}
+```
 
 脚本从~/.stocks中读取股票代码：
 
-{% codeblock lang:javascript ~/.stocks %}
+```javascript ~/.stocks
 sh601985
 sz002024
-{% endcodeblock %}
+```

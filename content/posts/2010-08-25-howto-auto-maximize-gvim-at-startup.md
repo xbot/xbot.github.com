@@ -20,7 +20,7 @@ meta:
 
 下面的方法是在vim中通过调用wmctrl实现最大化的方法：
 
-{% codeblock lang:vim %}
+```vim
 if has('win32')
     au GUIEnter * simalt ~x
 else
@@ -30,6 +30,6 @@ endif
 function! MaximizeWindow()
     silent !wmctrl -r :ACTIVE: -b add,maximized_vert,maximized_horz
 endfunction
-{% endcodeblock %}
+```
 
 当然也可以通过配置窗口管理器规则实现自动最大化，但上面的方法更灵活。

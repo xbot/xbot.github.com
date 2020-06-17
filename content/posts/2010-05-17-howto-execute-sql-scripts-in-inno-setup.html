@@ -25,7 +25,7 @@ meta:
 
 <p>首先在打包脚本的<strong>[Files]</strong>段将必需的文件包含进来：</p>
 
-{% codeblock lang:ini %}
+```ini
 [Files]
 Source: "D:\Development\MyDemoApp\code\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "D:\Development\MyDemoApp\sqlcmd.exe"; Flags: dontcopy
@@ -34,11 +34,11 @@ Source: "D:\Development\MyDemoApp\mysql.exe"; Flags: dontcopy
 Source: "D:\Development\MyDemoApp\script_mssql.sql"; Flags: dontcopy
 Source: "D:\Development\MyDemoApp\script_mysql.sql"; Flags: dontcopy
 Source: "D:\Development\MyDemoApp\script_oracle.sql"; Flags: dontcopy
-{% endcodeblock %}
+```
 
 <p>在SQL Server中执行脚本的代码片断：</p>
 
-{% codeblock lang:pascal %}
+```pascal
 function ExecScriptInMSSQL(DBHost, DBLogin, DBPass, DBName: String): Boolean;
 var
     ConnectExe: String;
@@ -71,11 +71,11 @@ begin
         Result := False;
     end;
 end;
-{% endcodeblock %}
+```
 
 <p>在MySQL中执行脚本的代码片断：</p>
 
-{% codeblock lang:pascal %}
+```pascal
 function ExecScriptInMYSQL(DBHost, DBLogin, DBPass, DBName: String): Boolean;
 var
     ConnectExe: String;
@@ -107,13 +107,13 @@ begin
         Result := False;
     end;
 end;
-{% endcodeblock %}
+```
 
 <p>由于mysql.exe没有输出结果到文件的参数，故需要使用cmd.exe来运行mysql.exe以便将其输出重定向到文件dbstatus.txt中。此外，在命令的最后加上参数<strong>2&gt;&amp;1</strong>，将标准错误输出设备也重定向到文件上，否则命令执行的错误信息不会输出到文件中。</p>
 
 <p>在Oracle中执行脚本的代码片断：</p>
 
-{% codeblock lang:pascal %}
+```pascal
 function ExecScriptInORACLE(ClientPath, DBInstance, DBLogin, DBPass: String): Boolean;
 begin
     {解压临时文件}
@@ -155,11 +155,11 @@ begin
         Result := False;
     end;
 end;
-{% endcodeblock %}
+```
 
 <p>Oracle的客户端太大，不能集成到安装包中，应使用一个<strong>TInputFileWizardPage</strong>由用户选择sqlplus.exe的安装位置。同时，由于sqlplus.exe也没有输出结果到文件的参数，也须使用cmd.exe来运行它并重定向输出到文件。此外，由于sqlplus.exe执行脚本时无论成功还是失败，都会输出信息，故无法像使用sqlcmd.exe和mysql.exe那样简单地判断脚本是否执行成功，需要在脚本的最后通过select语句输出一个特殊的字符串到文件中，然后通过判断dbstatus.txt中是否存在该字符串来判断脚本的执行情况；且由于sqlplus.exe执行完脚本后不会自动退出，还要在脚本最后加上exit语句；故<strong>script_oracle.sql</strong>的最后必须是如下内容：</p>
 
-{% codeblock lang:sql %}
+```sql
 SELECT 'holytail' FROM dual;
 exit;
-{% endcodeblock %}
+```

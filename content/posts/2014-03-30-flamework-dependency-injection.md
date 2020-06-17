@@ -19,7 +19,7 @@ tags:
 
 以数据库连接为例，当一个组件用到数据库时，最简单粗暴的办法是在使用前创建连接：
 
-{% codeblock lang:php %}
+```php
 <?php
 class Component {
     public function doSth() {
@@ -31,11 +31,11 @@ class Component {
     }
 }
 ?>
-{% endcodeblock %}
+```
 
 这样做的缺点是代码一旦执行，Component行为将不可更改，有时我们需要在程序执行的过程中决定其行为。很直接地，可以想到给Component添加一个Setter方法：
 
-{% codeblock lang:php %}
+```php
 <?php
 class Component {
     private $__db;
@@ -55,7 +55,7 @@ class Component {
     }
 }
 ?>
-{% endcodeblock %}
+```
 
 这样就把Component和数据库连接解耦了。这时又有一个问题，怎样管理数据库连接？最简单粗暴的办法是在每次使用前创建，如果在程序中多处需要改变数据库连接，这就把代码写死了。
 
@@ -70,7 +70,7 @@ class Component {
 
 用单例模式实现，以键值对的形式注册依赖。同时支持以变量和callable的形式注入，前者用以注册简单类型或已实例化的依赖，后者可以用匿名函数的方式更灵活地管理依赖。同时，注入依赖时可以指定该依赖是否为单例模式，如果是，callable类型的依赖将会在第一次被调用后保持下来。此外，使用__call()魔术方法实现直接以getter方法的方式获取依赖。
 
-{% codeblock lang:php %}
+```php
 <?php
 namespace org\x3f\flamework\base;
 use org\x3f\flamework\exceptions\FlameException;
@@ -179,12 +179,12 @@ class DI
     
 } // END class DI
 ?>
-{% endcodeblock %}
+```
 
 使用
 ----
 
-{% codeblock lang:php %}
+```php
 <?php
 $di = DI::getInstance();
 
@@ -217,7 +217,7 @@ echo $di->get('foo');
 // 以getter的形式获取依赖
 echo $di->getFoo();
 ?>
-{% endcodeblock %}
+```
 
 总结
 ----

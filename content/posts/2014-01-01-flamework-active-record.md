@@ -43,7 +43,7 @@ ActiveRecord是Ruby on Rails提出的一个概念，其实就是ORM的一种实�
 
 首先实现数据库的接口，提供数据库连接、查询、执行SQL语句、事务管理等基本功能。这里使用PDO实现：
 
-{% codeblock lang:php %}
+```php
 <?php
 namespace org\x3f\flamework\base;
 
@@ -178,11 +178,11 @@ class DBConnection
     
 }
 ?>
-{% endcodeblock %}
+```
 
 然后实现ActiveRecord类：
 
-{% codeblock lang:php %}
+```php
 <?php
 namespace org\x3f\flamework\base;
 use org\x3f\flamework\Flame;
@@ -415,7 +415,7 @@ abstract class ActiveRecord
     
 }
 ?>
-{% endcodeblock %}
+```
 
 约定，所有子类都必须覆盖和实现getModel()、getTableName()、getPrimaryKey()这三个方法。getModel()返回不包含具体数据的ActiveRecord实例，用于执行对象类型范畴的操作，例如查询符合特定条件的对象。在包含具体数据的ActiveRecord实例中执行针对该具体对象的操作，例如保存和删除。
 
@@ -428,7 +428,7 @@ ActiveRecord的使用
 
 在Demo项目中实现一个对象，继承ActiveRecord：
 
-{% codeblock lang:php %}
+```php
 <?php
 namespace org\x3f\flamedemo\model;
 use org\x3f\flamework\base\ActiveRecord;
@@ -452,11 +452,11 @@ class Post extends ActiveRecord
     
 }
 ?>
-{% endcodeblock %}
+```
 
 用法如下：
 
-{% codeblock lang:php %}
+```php
 <?php
 // 根据ID查询对象
 $p = Post::getModel()->findByPk(1);
@@ -475,7 +475,7 @@ $p->setIsNew(false);
 $p->id = 3;
 $p->delete();
 ?>
-{% endcodeblock %}
+```
 
 总结
 ----

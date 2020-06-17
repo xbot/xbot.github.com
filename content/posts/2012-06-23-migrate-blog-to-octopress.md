@@ -30,22 +30,22 @@ tags:
 
 Archlinux很激进，早已把Python的缺省版本进化到了3.x，octopress会用到2.x，结果在生成全站的时候，会报如下错误：
 
-{% codeblock %}
+```
   File "<string>", line 1
     import sys; print sys.executable
                         ^
 SyntaxError: invalid syntax
-{% endcodeblock %}
+```
 
 在[这里](http://blog.dayanjia.com/2012/04/fix-rubypython-bug-in-arch-linux/)找到解决方法。在octopress的plugins目录里创建文件：
 
-{% codeblock lang:ruby %}
+```ruby
 require 'pygments'
 
 if !!RUBY_PLATFORM['linux']
     RubyPython.configure :python_exe => '/usr/bin/python2'
 end
-{% endcodeblock %}
+```
 
 ###不足
 

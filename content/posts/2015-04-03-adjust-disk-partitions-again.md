@@ -15,7 +15,7 @@ tags:
 
 把主目录的内容完整复制到移动硬盘：
 
-{% codeblock lang:bash %}
+```bash
 # 挂载主目录
 mkdir /mnt/oldhome
 mount -t ext4 /dev/sda2 /mnt/oldhome
@@ -29,11 +29,11 @@ cp -a /mnt/oldhome /mnt/bakdisk/
 
 # 取消挂载主目录
 umount /mnt/oldhome
-{% endcodeblock %}
+```
 
 用gparted删除主目录分区，合并到根分区。然后恢复主目录：
 
-{% codeblock lang:bash %}
+```bash
 # 挂载根分区
 mkdir /mnt/newroot
 mount -t ext4 /dev/sda1 /mnt/newroot
@@ -47,4 +47,4 @@ vim /mnt/newroot/etc/fstab
 # 取消挂载
 umount /mnt/bakdisk
 umount /mnt/newroot
-{% endcodeblock %}
+```

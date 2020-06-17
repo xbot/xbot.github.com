@@ -14,9 +14,9 @@ tags:
 
 在PHP源码目录下的ext目录下执行：
 
-{% codeblock lang:c %}
+```c
 ./ext_skel --extname=foobar
-{% endcodeblock %}
+```
 
 修改foobar/config.m4，移除以下三行前的dnl：
 
@@ -28,24 +28,24 @@ tags:
 
 在foobar目录下执行以下命令，生成configure脚本：
 
-{% codeblock lang:bash %}
+```bash
 /usr/bin/phpize
-{% endcodeblock %}
+```
 
 执行configure：
 
-{% codeblock lang:bash %}
+```bash
 ./configure --with-php-config=/usr/bin/php-config
-{% endcodeblock %}
+```
 
 编译安装：
 
-{% codeblock lang:bash %}
+```bash
 sudo make install
-{% endcodeblock %}
+```
 
 修改php.ini，启用扩展：
 
-{% codeblock lang:ini %}
+```ini
 extension=foobar.so
-{% endcodeblock %}
+```

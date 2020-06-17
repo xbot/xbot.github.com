@@ -19,16 +19,16 @@ Vim认为一个文本文件的每一行都应该由一换行符结束，即使�
 
 要在保存文件时不在最后一行添加换行符，最常见、最简单的方法就是：
 
-{% codeblock lang:vim %}
+```vim
 :set binary
 :set noendofline
-{% endcodeblock %}
+```
 
 但是这样做有一个问题，就是会把DOS格式的文件自动转换成UNIX格式，WinSlave们肯定不希望这么做。
 
 因此，可在vimrc中加入如下内容：
 
-{% codeblock lang:vim %}
+```vim
 " Save the current buffer as a file with no EOF sign.
 function! SaveAsNOEOF(filename)
     let a=getline(1,line('$')-1)
@@ -45,7 +45,7 @@ function! SaveNOEOF()
 endfunction
 command! -complete=file -nargs=0 SaveNOEOF :call SaveNOEOF()
 command! -complete=file -nargs=1 SaveAsNOEOF :call SaveAsNOEOF(<q-args>)
-{% endcodeblock %}
+```
 
 然后就可以使用SaveNOEOF和SaveAsNOEOF两条命令去保存没有EOF的文件了。
 

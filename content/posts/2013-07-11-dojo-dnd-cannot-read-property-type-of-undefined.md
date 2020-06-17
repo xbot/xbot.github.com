@@ -28,7 +28,7 @@ tags:
 
 当Source实例被创建时，已经存在于ItemListWidget中的ItemWidget实例会被自动创建对应的上述对象，但之后加入的不会。解决的办法是调用Source.setItem()方法为每一个新加入的ItemWidget关联相应的对象，或在ItemWidget中添加一个构造参数，用于指定Source，并在postCreate()方法中为当前ItemWidget实例关联相应的对象:
 
-{% codeblock lang:javascript %}
+```javascript
 define([
     "dojo/_base/declare",
     "dijit/_WidgetBase",
@@ -46,4 +46,4 @@ define([
         }
     });
 });
-{% endcodeblock %}
+```

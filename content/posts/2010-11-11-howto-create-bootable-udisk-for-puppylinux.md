@@ -21,22 +21,22 @@ Puppy本身封装得很好，对软硬件环境的要求不高，完全可以安
 
 1. 挂载Puppy的ISO镜像到一个目录：
 
-{% codeblock lang:bash %}
+```bash
 sudo mount -o loop puppy.iso /media/puppy
-{% endcodeblock %}
+```
 
 2. 复制镜像中的所有文件到根目录下的puppy目录：
 
-{% codeblock lang:bash %}
+```bash
 sudo mkdir /puppy
 sudo cp -a /media/puppy/* /puppy
-{% endcodeblock %}
+```
 
 3. 修改GRUB的引导文件，加入Puppy的引导项：
 
-{% codeblock lang:bash %}
+```bash
 sudo vi /boot/grub/menu.lst
-{% endcodeblock %}
+```
 
 <blockquote>
 # (2) Puppy

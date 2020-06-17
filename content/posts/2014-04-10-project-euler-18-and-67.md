@@ -47,7 +47,7 @@ Find the maximum total from top to bottom of the triangle below:
 Solution
 --------
 
-{% codeblock lang:python p18.py %}
+```python
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
@@ -75,7 +75,7 @@ def main():
 
 if __name__ == '__main__':
     main()
-{% endcodeblock %}
+```
 
 I'm the 70471st person to have solved this problem.
 
@@ -98,7 +98,7 @@ Find the maximum total from top to bottom in [triangle.txt](http://projecteuler.
 Solution
 --------
 
-{% codeblock lang:go p67.go %}
+```go
 package main
 
 import (
@@ -153,6 +153,6 @@ func main() {
     sort.Sort(sort.Reverse(sort.IntSlice(matrix[len(matrix)-1])))
     fmt.Println(matrix[len(matrix)-1][0])
 }
-{% endcodeblock %}
+```
 
 I'm the 50650th person to have solved this problem.

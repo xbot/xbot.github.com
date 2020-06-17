@@ -46,12 +46,12 @@ meta:
 <p><h2>步骤</h2></p>
 
 <ol>
-  <li>Archlinux中重装GRUB，覆盖Windows 7的BCD：<br>{% codeblock lang:bash %}
+```bash
 sudo grub-install /dev/sda
-{% endcodeblock %}</li>
-  <li>在GRUB启动菜单中加入将要复制到sda1分区中的Archlinux的启动项：<br>{% codeblock lang:bash %}
+```
+```bash
 sudo vi /boot/grub/menu.lst
-{% endcodeblock %}<br><blockquote>
+```
 # (2) Arch Linux
 title  Arch Linux
 root   (hd0,0)
@@ -59,40 +59,40 @@ kernel /boot/vmlinuz26 root=/dev/sda1 resume=/dev/sda4 ro acpi_osi="Linux"
 initrd /boot/kernel26.img
 </blockquote></li>
   <li><a href="http://0x3f.org/?p=1699">安装U盘启动的Puppy Linux</a></li>
-  <li>Puppy中格式化sda1分区：<br>{% codeblock lang:bash %}
+```bash
 mkfs.ext3 /dev/sda1
-{% endcodeblock %}</li>
-  <li>复制sda3上的Archlinux所有的文件到sda1：<br>{% codeblock lang:bash %}
+```
+```bash
 # 先点击桌面上sda1和sda3的盘符，使之被挂载到/mnt下
 
 cd /mnt/sda3
 cp -a * /mnt/sda1
-{% endcodeblock %}</li>
-  <li>修改sda1上的fstab：{% codeblock lang:bash %}
+```
+```bash
 vi /mnt/sda1/etc/fstab
-{% endcodeblock %}<br><blockquote>
+```
 # 修改必要的挂载点，如将根目录的挂载点由sda3改为sda1：
 /dev/sda1           /         ext3      defaults,noatime       0       1
 </blockquote></li>
   <li>重启系统，并引导到新分区上的系统中</li>
-  <li>重新安装GRUB，使之引导sda1分区中的系统：<br>{% codeblock lang:bash %}
+```bash
 sudo grub-install /dev/sda
-{% endcodeblock %}</li>
+```
   <li>重启并进入Puppy，使用gparted删除除sda1以外的所有分区，然后在空闲的空间上创建ext3格式的主分区sda2和交换分区sda3</li>
-  <li>移动sda1上home目录下的所有东西到sda2：<br>{% codeblock lang:bash %}
+```bash
 cp -a /mnt/sda1/home/* /mnt/sda2
 rm -rf /mnt/sda1/home/*
-{% endcodeblock %}</li>
-  <li>修改sda1上的fstab和menu.lst：<br>{% codeblock lang:bash %}
+```
+```bash
 vi /mnt/sda1/etc/fstab
-{% endcodeblock %}<blockquote>
+```
 # 将fstab中磁盘分区的挂载点配置为如下内容
 /dev/sda1        /          ext3      defaults,noatime         0        1
 /dev/sda2        /home      ext3      defaults,noatime         1        2
 /dev/sda3        swap       swap      defaults                 0        0
-</blockquote>{% codeblock lang:bash %}
+```bash
 vi /mnt/boot/grub/menu.lst
-{% endcodeblock %}<blockquote>
+```
 # 将原来启动项中的sda3修改为sda1，由于配置过休眠，也将resume参数中的sda4改为sda3，即交换分区
 </blockquote>
   <li>重启系统</li>

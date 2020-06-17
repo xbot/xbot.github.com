@@ -18,7 +18,7 @@ Archlinux官方wiki已经介绍得很明白了：<a href="http://wiki.archlinux.
 
 使用后效果明显，CPU温度有所下降，下面是cpufrequtils在<a href="http://0x3f.org/?tag=arch">Arch</a>上的工作情况： 
 
-{% codeblock %}
+```
 [lenin@archer ~]$ cpufreq-info 
 cpufrequtils 007: cpufreq-info (C) Dominik Brodowski 2004-2009
 Report errors and bugs to cpufreq@vger.kernel.org, please.
@@ -46,4 +46,4 @@ analyzing CPU 1:
                   The governor "performance" may decide which speed to use
                   within this range.
   current CPU frequency is 1.60 GHz.
-{% endcodeblock %}
+```

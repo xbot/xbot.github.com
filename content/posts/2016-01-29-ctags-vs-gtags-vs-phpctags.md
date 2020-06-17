@@ -18,7 +18,7 @@ tags:
 
 安装后需要手工拷贝gtags.vim和gtags-cscope.vim到vim的plugin目录，然后配置如下：
 
-{% codeblock lang:vim %}
+```vim
 let Gtags_Close_When_Single = 1
 let Gtags_Auto_Update = 0
 let g:cscope_silent = 1
@@ -26,7 +26,7 @@ au FileType php,python,c,cpp,javascript,go map <C-]> :Gtags<CR><CR>
 au FileType php,python,c,cpp,javascript,go map <C-[> :Gtags -r<CR><CR>
 nnoremap <leader><C-]> :execute 'Unite gtags/def:'.expand('<cword>')<CR>
 nnoremap <leader><C-[> :execute 'Unite gtags/ref:'.expand('<cword>')<CR>
-{% endcodeblock %}
+```
 
 其它选项参见前面两个文件里的注释。
 

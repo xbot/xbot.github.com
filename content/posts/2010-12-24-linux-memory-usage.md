@@ -27,6 +27,6 @@ Swap:  2096476k total,        0k used,  2096476k free,  1613592k cached
 
 所以，Linux运行一段时间后，通常看起来空闲内存都很小，其实是因为很大一部分被用作“已缓存”区域，这部分内存会在内存资源紧张时被自动释放，也可以通过如下命令手工释放：
 
-{% codeblock lang:bash %}
+```bash
 echo 1 > /proc/sys/vm/drop_caches
-{% endcodeblock %}
+```

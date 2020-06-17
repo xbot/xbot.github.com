@@ -16,8 +16,8 @@ Zsh默认开启了对PATH变量的缓存，这是导致新安装的程序无法�
 
 方法如下，在.zshrc中增加一行：
 
-{% codeblock lang:bash %}
+```bash
 zstyle ':completion:*' rehash true
-{% endcodeblock %}
+```
 
 也可以在必要的时间手工执行命令**rehash**，也是个临时解决方法。

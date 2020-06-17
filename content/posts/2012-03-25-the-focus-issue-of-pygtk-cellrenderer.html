@@ -20,7 +20,7 @@ meta:
 
 <p>示意代码如下：</p>
 
-{% codeblock lang:python %}
+```python
 # pygtk.CellRenderer的edited事件的回调方法
 def onCellEdited(self, cell, path, newText, userData):
     store,colNum = userData
@@ -37,7 +37,7 @@ def onCellEdited(self, cell, path, newText, userData):
         col = self.treeView.get_column(colNum-1)
         # 聚焦Cell，并选中Cell中的内容
         self.treeView.set_cursor_on_cell(path, col, cell, True)
-{% endcodeblock %}
+```
 
 <p>关键的代码在最后一行，通过调用TreeView的set_cursor_on_cell方法聚焦Cell并选中其内容。但就是这一步出了问题，报如下警告：</p>
 
@@ -53,7 +53,7 @@ def onCellEdited(self, cell, path, newText, userData):
 
 <p>修改后的代码如下：</p>
 
-{% codeblock lang:python %}
+```python
 def onCellEdited(self, cell, path, newText, userData):
     store,colNum = userData
     evt = ServerTypeChangedEvent(self, cell, usrData)
@@ -67,6 +67,6 @@ def onCellEdited(self, cell, path, newText, userData):
         #self.treeView.set_cursor_on_cell(path, col, cell, True)
         import glib
         glib.idle_add(self.treeView.set_cursor_on_cell, path, col, cell, True)
-{% endcodeblock %}
+```
 
 <p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>

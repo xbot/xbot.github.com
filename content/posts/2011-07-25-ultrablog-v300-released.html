@@ -36,7 +36,7 @@ meta:
 
 <p>UltraBlog.vim引入事件驱动模式处理缓冲区同步的问题。不同的操作抛出不同的事件，所有的事件继承自父类<strong>UBEvent</strong>：</p>
 
-{% codeblock lang:python %}
+```python
 class UBEvent:
     def __init__(self, srcObj):
         self.srcObj = srcObj
@@ -48,11 +48,11 @@ class UBLocalPostDelEvent(UBEvent): pass
 class UBRemotePostDelEvent(UBEvent): pass
 class UBPostSendEvent(UBEvent): pass
 class UBPostSaveEvent(UBEvent): pass
-{% endcodeblock %}
+```
 
 <p>一个可能改变缓冲区内容的操作执行完后，创建一个特定的事件并将其加入到事件队列中。事件队列类中存放两个列表，一是事件队列，二是事件监听器列表；提供三个方法，分别用来注册事件监听器、对事件执行入队列操作和处理队列中所有事件：</p>
 
-{% codeblock lang:python %}
+```python
 class UBEventQueue:
     queue = []
     listeners = []
@@ -72,11 +72,11 @@ class UBEventQueue:
     @classmethod
     def registerListener(cls, lsnr):
         cls.listeners.append(lsnr)
-{% endcodeblock %}
+```
 
 <p>事件队列对事件的处理是通过事件监听器进行的，每个事件监听器要实现两个功能：识别监听对象和处理监听对象。所有具体事件的监听类都是<strong>UBListener</strong>的子类：</p>
 
-{% codeblock lang:python %}
+```python
 class UBListener():
     ''' Parent class of all listeners
     '''
@@ -110,15 +110,15 @@ class UBPostSaveListener(UBListener):
                 ub_refresh_current_view()
             else:
                 ub_set_view_outdated(nr)
-{% endcodeblock %}
+```
 
 <p>事件监听器遍历所有满足处理条件的缓冲区，对当前缓冲区，立即刷新，其余的标记为已过期。同时利用Vim自身的事件驱动特性，在进入已过期的缓冲区时，再更新之，也就是传说中的懒加载模式：</p>
 
-{% codeblock lang:vim %}
+```vim
 au BufEnter * py __ub_on_buffer_enter()
-{% endcodeblock %}
+```
 
-{% codeblock lang:python %}
+```python
 @__ub_exception_handler
 def __ub_on_buffer_enter():
     ''' Triggered by BufEnter event, check if the buffer is outdated
@@ -126,7 +126,7 @@ def __ub_on_buffer_enter():
     if ub_is_view_outdated('%'):
         ub_refresh_current_view()
         ub_set_view_outdated('%', False)
-{% endcodeblock %}
+```
 
 <p>此外，随著代码量的增加，原来把全部代码都放在一个文件中的做法不再适用，尤其是以<a href="http://en.wikipedia.org/wiki/Here_document">Here Document</a>形式存放在vim脚本文件中的Python代码不能被ctags识别，所以按类别分别存放到<strong>$VIMRUNTIME/plugin/ultrablog/</strong>下的几个Python源文件中。</p>
 

@@ -35,7 +35,7 @@ What is the value of the first triangle number to have over five hundred divisor
 Solution
 --------
 
-{% codeblock lang:go p12.go %}
+```go
 package main
 
 import (
@@ -72,6 +72,6 @@ func main() {
     }
     fmt.Println(n*(n+1)/2, count)
 }
-{% endcodeblock %}
+```
 
 I'm the 99509th person to have solved this problem.

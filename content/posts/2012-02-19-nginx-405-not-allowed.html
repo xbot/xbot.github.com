@@ -16,13 +16,13 @@ meta:
 ---
 <p>NGINX不允许向静态文件提交POST方式的请求，否则报405错误。测试方法为，使用curl向服务器上的静态文件提交POST请求：</p>
 
-{% codeblock lang:bash %}
+```bash
 curl -d 1=1 http://localhost/version.txt
-{% endcodeblock %}
+```
 
 得到以下结果：
 
-{% codeblock lang:html %}
+```html
 <html>
 <head><title>405 Not Allowed</title></head>
 <body bgcolor="white">
@@ -30,21 +30,21 @@ curl -d 1=1 http://localhost/version.txt
 <hr><center>nginx/1.0.11</center>
 </body>
 </html>
-{% endcodeblock %}
+```
 
 <p>网上传抄的添加以下配置的解决办法不可用：</p>
 
-{% codeblock lang:nginx %}
+```nginx
 error_page 405 =200 @405;
 location @405
 {
     root /srv/http;
 }
-{% endcodeblock %}
+```
 
 <p>一种不完美但可用的方法为：</p>
 
-{% codeblock lang:nginx %}
+```nginx
 upstream static_backend {
     server localhost:80;
 }
@@ -61,7 +61,7 @@ server {
         proxy_pass http://static_backend;
     }
 }
-{% endcodeblock %}
+```
 
 <p>即转换静态文件接收的POST请求到GET方式。</p>
 

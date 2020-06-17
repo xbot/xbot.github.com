@@ -66,7 +66,7 @@ https://github.com/xbot/UltraBlog.vim
 
 Install UltraBlog.vim to your plugin folder and put the following lines in your vimrc file:
 
-{% codeblock lang:vim %}
+```vim
 let ub_blog = {'login_name':'admin',
             \'password':'pass2011',
             \'url':'http://www.sample.com',
@@ -132,7 +132,7 @@ let ub_tmpl_img_url="markdown###![$(file)s][]\n[$(file)s]:%(url)s"
 
 " Set the default template to use when previewing posts/pages locally
 let ub_default_template="default"
-{% endcodeblock %}
+```
 
 Change values of the upper options to yours. Restart Vim and a database file will be created in the path you specified above.
 
@@ -146,9 +146,9 @@ UltraBlog.vim makes life easier while writing or updating blogs. It stores posts
 
 By default, UltraBlog.vim is in client mode. You can set it to use editor mode by adding the fallowing line to the vimrc file:
 
-{% codeblock lang:vim %}
+```vim
 let ub_editor_mode = 1
-{% endcodeblock %}
+```
 
 <h4>Items</h4>
 

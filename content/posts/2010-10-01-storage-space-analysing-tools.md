@@ -20,9 +20,9 @@ du是命令行中用于查看目录和文件的空间占用情况的指令。
 
 常用示例：
 
-{% codeblock lang:bash %}
+```bash
 du -h /tmp/logs
-{% endcodeblock %}
+```
 
 <h3>ncdu</h3>
 

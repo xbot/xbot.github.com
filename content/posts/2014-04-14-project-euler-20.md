@@ -25,7 +25,7 @@ Find the sum of the digits in the number 100!
 Solution
 --------
 
-{% codeblock lang:python p20.py %}
+```python
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
@@ -34,9 +34,9 @@ if __name__ == '__main__':
     for i in range(2, 101):
         product *= i
     print sum([int(x) for x in str(product)])
-{% endcodeblock %}
+```
 
-{% codeblock lang:go p20.go %}
+```go
 package main
 
 import (
@@ -57,6 +57,6 @@ func main() {
     }
     fmt.Println(sum)
 }
-{% endcodeblock %}
+```
 
 I'm the 100089th person to have solved this problem.

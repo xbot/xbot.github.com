@@ -43,9 +43,9 @@ https://twitter.com/apps/
 
 最后安装<a href="http://code.google.com/intl/zh-CN/appengine/downloads.html">App Engine SDK</a>，使用其中的<b>appcfg.py</b>上传gtap文件夹：
 
-{% codeblock lang:bash %}
+```bash
 appcfg.py update gtap
-{% endcodeblock %}
+```
 
 在浏览器中（此时应使用可以翻墙的代理）访问在appspot上创建的应用程序的URL地址（如：http://xxx.appspot.com ），在打开的页面中点击<b>Sign in with Twitter</b>，然后在跳转到的页面中点击<b>Allow</b>按钮。在跳转到的页面上修改API的密码（据说有些客户端要求API的密码与Twitter的密码一致）。
 

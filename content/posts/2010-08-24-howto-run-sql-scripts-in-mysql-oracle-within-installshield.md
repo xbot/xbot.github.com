@@ -27,7 +27,7 @@ InstallShield已经内建了对MySQL和Oracle的支持。但是这个功能是�
 
 <h2>MySQL</h2><br>
 
-{% codeblock %}
+```
 function InstallMySQLComponent(szComponent)
     NUMBER nResult;
     STRING szServer,szDB,szUser,szPassword,sCMD,sOPT,sResult1,sResult2,svLine,sMsg,sPath;
@@ -76,11 +76,11 @@ begin
         abort;
     endif;
 end;
-{% endcodeblock %}
+```
 
 <h2>Oracle</h2><br>
 
-{% codeblock %}
+```
 function InstallOracleComponent(szComponent)  
     NUMBER nResult,nvFileHandle,nIndex,nvCount;
     STRING sMsg,szServer,szDB,szUser,szPassword,sCMD,sOPT,sInstance,sTmp,svLine;
@@ -128,7 +128,7 @@ begin
         abort;
     endif;
 end;
-{% endcodeblock %}
+```
 
 <h2>总结</h2>
 

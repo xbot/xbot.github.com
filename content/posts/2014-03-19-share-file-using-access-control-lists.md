@@ -20,16 +20,16 @@ ACL包含两个命令：getfacl和setfacl，前者用来查看目录或文件的
 
 首先，把维基目录的所有者改成http，并设置目录权限为770：
 
-{% codeblock lang:bash %}
+```bash
 chown -R http:http ~/Dropbox/wiki
 chmod -R 770 ~/Dropbox/wiki
-{% endcodeblock %}
+```
 
 这时Web Server还是不能访问维基目录，使用getfacl查看用户主目录的ACL：
 
-{% codeblock lang:bash %}
+```bash
 getfacl ~
-{% endcodeblock %}
+```
 
 显示结果如下：
 
@@ -45,9 +45,9 @@ other::---
 
 显然，要给http用户访问该目录的权限：
 
-{% codeblock lang:bash %}
+```bash
 setfacl -m u:http:x ~
-{% endcodeblock %}
+```
 
 再查看ACL，发现增加了一条：
 

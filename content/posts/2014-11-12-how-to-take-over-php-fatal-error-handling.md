@@ -21,7 +21,7 @@ Yii 2.0引入了一项新特性，可以接管PHP的致命错误。在此之前�
 
 代码如下：
 
-{% codeblock lang:php %}
+```php
 <?php
 
 // ...
@@ -39,4 +39,4 @@ register_shutdown_function(function(){
 // ...
 
 ?>
-{% endcodeblock %}
+```

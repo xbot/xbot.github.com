@@ -24,7 +24,7 @@ meta:
 
 唯一可能需要注意的依赖是PHP，必须安装后才能使用。
 
-{% codeblock lang:bash %}
+```bash
 #!/bin/bash
 
 print_help_msg () {
@@ -92,6 +92,6 @@ done
 
 echo 'done !'
 exit 0
-{% endcodeblock %}
+```
 
 另外，使用VLC执行播放列表效果灰常不错，视频之间衔接平滑流畅。
