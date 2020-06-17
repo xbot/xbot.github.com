@@ -11,7 +11,7 @@ tags:
 
 [C4 Model](https://c4model.com)是一种简洁有序的架构模型，四个“C”分别表示“Context”、“Container”、“Component”和“Code”，是由上而下逐步细化的四个层级。
 
-<!-- more -->
+<!--more-->
 
 Contex即上下文，它表示我们正在构架的软件系统和用户、其它系统之间的关系。例如：
 

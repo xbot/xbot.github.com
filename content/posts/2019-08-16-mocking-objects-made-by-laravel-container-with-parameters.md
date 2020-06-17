@@ -18,7 +18,7 @@ $api = app()->makeWith(Api::class, ['config' => $config]);
 
 但是在执行单元测试时发现，虽然测试代码中已经mock了这个类且注入到容器，但在被测单元中取到的还是原类的实例。
 
-<!-- more -->
+<!--more-->
 
 实际上，测试代码中在将mock的实例注入容器时使用的是instance()方法：
 

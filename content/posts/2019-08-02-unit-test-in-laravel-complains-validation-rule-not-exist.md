@@ -16,7 +16,7 @@ tags:
 BadMethodCallException: Method [validateIdList] does not exist.
 ```
 
-<!-- more -->
+<!--more-->
 
 `id_list`是一个自定义的校验规则，通过`Illuminate\Support\Facades\Validator::extend()`在`AppServiceProvider::boot()`中注册。由于存在一个和该规则配套的、通过`Illuminate\Support\Facades\Request::macro()`注册的扩展方法`getIDs()`，故通过`Illuminate\Support\Facades\Request::hasMacro()`判断当该方法不存在时才注册，并把这个校验规则的注册逻辑也放到了这个判断里。
 
