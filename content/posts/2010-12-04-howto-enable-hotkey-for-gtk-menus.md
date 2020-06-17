@@ -1,0 +1,34 @@
+---
+layout: post
+title: 开启自定义GTK程序菜单快捷键的方法
+date: 2010-12-04 00:00:00
+tags:
+- GNOME
+- Linux
+- XFCE
+- 快捷键
+- 计算机
+- 配置
+status: publish
+published: true
+comments: true
+meta:
+  _edit_last: '1'
+  views: '842'
+  _wp_old_slug: ''
+---
+基于GTK的程序菜单本身支持通过在焦点所在的菜单项上按下组合键来定义该菜单项的快捷键，但默认并不开启。
+
+一般来说，对于支持X的会话管理的桌面环境，可以通过修改相应的设置来开启这个功能：
+<ol>
+	<li>GNOME中该设置项所在的路径是：主选单 > 桌面 > 偏好设定 > 选单及功具列 > 可编辑选单捷径键</li>
+	<li>XFCE中该设置项所在的路径是：主选单 > 设置 > 外观 > 设置 > 开启可编辑快捷键</li>
+</ol>
+
+对于不支持会话管理的桌面环境，可在~/.gtkrc-2.0中添加如下配置内容：
+
+<blockquote>
+gtk-can-change-accels = 1
+</blockquote>
+
+
