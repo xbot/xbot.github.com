@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 搭建自己的Twitter API
+slug: howto setup twitter api of your own
 date: 2010-10-01 00:00:00
 tags:
 - GFW

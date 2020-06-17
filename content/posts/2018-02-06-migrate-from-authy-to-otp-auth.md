@@ -1,5 +1,6 @@
 ---
 title: 用OTP Auth替换了Authy
+slug: migrate from authy to otp auth
 date: 2018-02-06 22:53:40
 categories:
 - 计算机

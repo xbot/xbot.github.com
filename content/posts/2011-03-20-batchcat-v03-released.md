@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Batch Cat v0.3 Released
+slug: batchcat v03 released
 date: 2011-03-20 00:00:00
 tags:
 - Plugin

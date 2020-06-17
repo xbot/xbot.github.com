@@ -1,6 +1,7 @@
 ---
 layout: post
 title: ! 'UltraBlog.vim: Ultimate Vim Blogging Plugin'
+slug: ultrablog as an ultimate vim blogging plugin
 date: 2011-04-02 00:00:00
 comments: true
 categories:

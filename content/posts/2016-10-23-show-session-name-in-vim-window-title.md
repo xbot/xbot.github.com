@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "在Vim窗口标题中显示会话名"
+slug: show session name in vim window title
 date: 2016-10-23 11:52:00
 comments: true
 categories:

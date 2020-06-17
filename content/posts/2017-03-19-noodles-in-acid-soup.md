@@ -1,5 +1,6 @@
 ---
 title: 一碗酸汤面
+slug: noodles in acid soup
 date: 2017-03-19 18:12:36
 categories:
 - 行见

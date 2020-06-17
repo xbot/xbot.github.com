@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "PHP流的上下文和过滤器的实现"
+slug: contexts and filters implementation of php
 date: 2015-06-15 19:15:00
 comments: true
 categories:

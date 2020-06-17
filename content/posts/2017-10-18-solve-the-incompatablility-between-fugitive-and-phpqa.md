@@ -1,5 +1,6 @@
 ---
 title: 解决phpqa和fugitive不兼容的问题
+slug: solve the incompatablility between fugitive and phpqa
 date: 2017-10-18 11:05:12
 categories:
 - 计算机

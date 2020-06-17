@@ -1,6 +1,7 @@
 ---
 layout: post
 title: ! 'darkstat: 网络流量监测工具'
+slug: darkstat as a network discharge meter
 date: 2010-12-26 00:00:00
 tags:
 - Linux

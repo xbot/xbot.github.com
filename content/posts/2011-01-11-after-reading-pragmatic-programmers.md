@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 读完《程序员修炼之道》
+slug: after reading pragmatic programmers
 date: 2011-01-11 00:00:00
 tags:
 - 日志

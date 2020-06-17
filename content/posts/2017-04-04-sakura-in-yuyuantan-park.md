@@ -1,5 +1,6 @@
 ---
 title: 玉渊潭的樱花
+slug: sakura in yuyuantan park
 date: 2017-04-04 10:23:43
 categories:
 - 行见

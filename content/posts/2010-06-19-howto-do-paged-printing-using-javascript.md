@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 用JavaScript实现分页打印
+slug: howto do paged printing using javascript
 date: 2010-06-19 00:00:00
 tags:
 - HTML

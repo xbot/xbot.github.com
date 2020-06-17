@@ -1,5 +1,6 @@
 ---
 title: 解决Laravel中makeWith()无法取到被mock的实例的问题
+slug: mocking objects made by laravel container with parameters
 date: 2019-08-16 10:55:40
 categories:
 - 计算机

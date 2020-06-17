@@ -1,5 +1,6 @@
 ---
 title: 配置鼠须管的特殊符号输入
+slug: input punctuations with rime
 date: 2018-10-13 11:59:50
 categories:
 - 计算机

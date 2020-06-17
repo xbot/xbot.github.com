@@ -1,6 +1,7 @@
 ---
 layout: post
 title: ! 'WordPress Plugin: Batch Cat'
+slug: wp batchcat
 date: 2010-09-04 00:00:00
 tags:
 - Plugin

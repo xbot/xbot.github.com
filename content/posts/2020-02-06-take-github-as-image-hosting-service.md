@@ -1,5 +1,6 @@
 ---
 title: 用Github当图床
+slug: take github as image hosting service
 date: 2020-02-06 22:00:00
 categories:
 - 青梅煮酒

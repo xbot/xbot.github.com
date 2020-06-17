@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "探访纳兰家庙"
+slug: a visit to the family temple of nalans
 date: 2014-03-07 18:25:00
 comments: true
 categories:

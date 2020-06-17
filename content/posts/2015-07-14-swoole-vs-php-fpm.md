@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Swoole与PHP-FPM性能对比"
+slug: swoole vs php fpm
 date: 2015-07-14 16:40:00
 comments: true
 categories:

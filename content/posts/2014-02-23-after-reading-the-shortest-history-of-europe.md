@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "读完《你一定爱读的极简欧洲史》"
+slug: after reading the shortest history of europe
 date: 2014-02-23 20:57:00
 comments: true
 categories:

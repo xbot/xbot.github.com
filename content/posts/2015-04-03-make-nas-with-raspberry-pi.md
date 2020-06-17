@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "用树苺派搭NAS"
+slug: make nas with raspberry pi
 date: 2015-04-03 15:13:00
 comments: true
 categories:

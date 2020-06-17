@@ -1,5 +1,6 @@
 ---
 title: Vim最好的PHP语法高亮插件
+slug: the best php syntax file of vim
 date: 2017-11-28 15:55:59
 categories:
 - 计算机

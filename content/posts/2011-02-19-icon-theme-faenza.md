@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 精美的图标主题：Faenza
+slug: icon theme faenza
 date: 2011-02-19 00:00:00
 tags:
 - GTK+

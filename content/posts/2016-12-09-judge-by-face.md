@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "哪个时代都看脸"
+slug: judge by face
 date: 2016-12-09 21:39:00
 comments: true
 categories:

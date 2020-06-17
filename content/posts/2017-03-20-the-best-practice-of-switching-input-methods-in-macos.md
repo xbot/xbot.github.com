@@ -1,5 +1,6 @@
 ---
 title: MacOS中切换输入法的最佳实践
+slug: the best practice of switching input methods in macos
 date: 2017-03-20 14:25:00
 categories:
 - 计算机

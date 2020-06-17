@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "解决ROX-Filer文件类型识别问题"
+slug: fix ms office mime types in rox filer
 date: 2013-05-17 12:52:00
 comments: true
 categories:

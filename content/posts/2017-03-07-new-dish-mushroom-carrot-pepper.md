@@ -1,5 +1,6 @@
 ---
 title: 胡萝卜炒杏鲍菇
+slug: new dish mushroom carrot pepper
 date: 2017-03-07 21:10:05
 categories:
 - 行见

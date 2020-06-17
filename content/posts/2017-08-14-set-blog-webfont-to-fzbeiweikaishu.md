@@ -1,5 +1,6 @@
 ---
 title: 把博客字体改成了方正北魏楷书
+slug: set blog webfont to fzbeiweikaishu
 date: 2017-08-14 16:05:30
 categories:
 - 计算机

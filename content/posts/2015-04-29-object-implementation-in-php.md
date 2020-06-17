@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "PHP对象的实现和操作"
+slug: object implementation in php
 date: 2015-04-29 23:00:00
 comments: true
 categories:

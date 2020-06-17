@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 开始玩儿茶道
+slug: starting tea ceremony
 date: 2010-03-20 00:00:00
 tags:
 - 生活

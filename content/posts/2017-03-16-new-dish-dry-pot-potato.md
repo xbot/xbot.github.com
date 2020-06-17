@@ -1,5 +1,6 @@
 ---
 title: 干锅土豆片
+slug: new dish dry pot potato
 date: 2017-03-16 11:11:59
 categories:
 - 行见

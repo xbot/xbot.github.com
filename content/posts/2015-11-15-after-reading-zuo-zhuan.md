@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "读完《春秋左传注》"
+slug: after reading zuo zhuan
 date: 2015-11-15 18:24:00
 comments: true
 categories:

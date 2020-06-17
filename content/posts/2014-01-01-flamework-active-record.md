@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "PHP框架实战（五）：ORM与ActiveRecord"
+slug: flamework active record
 date: 2014-01-01 20:45:00
 comments: true
 categories:

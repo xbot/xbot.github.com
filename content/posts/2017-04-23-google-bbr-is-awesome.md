@@ -1,5 +1,6 @@
 ---
 title: Google BBR和锐速在Vultr上的对比
+slug: google bbr is awesome
 date: 2017-04-23 23:48:21
 categories:
 - 计算机

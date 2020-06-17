@@ -1,5 +1,6 @@
 ---
 title: 清洁手机的最佳实践
+slug: how to clean a phone
 date: 2017-12-03 22:51:42
 categories:
 - 青梅煮酒

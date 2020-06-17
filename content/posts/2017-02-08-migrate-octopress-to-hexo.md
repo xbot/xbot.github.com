@@ -1,5 +1,6 @@
 ---
 title: 从Octopress迁移到Hexo
+slug: migrate octopress to hexo
 date: 2017-02-08 20:24:16
 tags:
 - octopress

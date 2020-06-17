@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "关于李陵的更多细节"
+slug: more about li ling
 date: 2016-12-22 19:41:00
 comments: true
 categories:

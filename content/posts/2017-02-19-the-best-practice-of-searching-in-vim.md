@@ -1,5 +1,6 @@
 ---
 title: Vim搜索的最佳实践
+slug: the best practice of searching in vim
 date: 2017-02-19 20:37:18
 categories:
 - 计算机

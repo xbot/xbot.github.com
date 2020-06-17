@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Linux下pppoe连接建立后仍不能上网的问题
+slug: problem on pppoe connections on linux
 date: 2010-07-10 00:00:00
 tags:
 - ADSL

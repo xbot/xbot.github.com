@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "骑行京西古道"
+slug: riding to ancient west peking path
 date: 2013-05-18 22:09:00
 comments: true
 categories:

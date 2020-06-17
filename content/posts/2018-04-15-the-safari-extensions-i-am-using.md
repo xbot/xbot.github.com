@@ -1,5 +1,6 @@
 ---
 title: 我在用的Safari扩展
+slug: the safari extensions i am using
 date: 2018-04-15 22:29:10
 categories:
 - 计算机

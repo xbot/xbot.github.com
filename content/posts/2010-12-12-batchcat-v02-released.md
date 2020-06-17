@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Batch Cat v0.2 Released
+slug: batchcat v02 released
 date: 2010-12-12 00:00:00
 tags:
 - Plugin

@@ -1,5 +1,6 @@
 ---
 title: 用SwitchHosts!切换主机映射方案
+slug: switch hosts with switchhosts
 date: 2017-06-11 09:57:54
 categories:
 - 计算机

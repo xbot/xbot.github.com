@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "读完《城南旧事》"
+slug: after reading my memories of old beijing
 date: 2014-10-26 09:40:00
 comments: true
 categories:

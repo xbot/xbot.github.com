@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "改用Bear记笔记"
+slug: switch to bear
 date: 2016-11-14 23:32:00
 comments: true
 categories:

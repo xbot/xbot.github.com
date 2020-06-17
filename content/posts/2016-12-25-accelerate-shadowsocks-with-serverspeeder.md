@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "用锐速加速Shadowsocks"
+slug: accelerate shadowsocks with serverspeeder
 date: 2016-12-25 15:39:00
 comments: true
 categories:

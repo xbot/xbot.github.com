@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "变形金刚：原大祖国合金版平头OP"
+slug: transformers optimus prime
 date: 2015-05-09 21:26:00
 comments: true
 categories:

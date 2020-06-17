@@ -1,6 +1,7 @@
 ---
 layout: post
 title: InstallShield在MySQL和Oracle中执行SQL脚本的方法
+slug: howto run sql scripts in mysql oracle within installshield
 date: 2010-08-24 00:00:00
 tags:
 - InstallShield

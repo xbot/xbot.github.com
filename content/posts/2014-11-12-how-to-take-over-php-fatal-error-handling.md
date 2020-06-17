@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "接管PHP致命错误的方法"
+slug: how to take over php fatal error handling
 date: 2014-11-12 00:47:00
 comments: true
 categories:

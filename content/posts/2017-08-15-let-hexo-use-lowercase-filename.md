@@ -1,5 +1,6 @@
 ---
 title: 让hexo使用小写文件名
+slug: let hexo use lowercase filename
 date: 2017-08-15 13:25:50
 categories:
 - 计算机

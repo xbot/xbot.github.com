@@ -1,5 +1,6 @@
 ---
 title: 从Vultr新加坡迁移到洛杉矶
+slug: migrate vultr from singapore to los angeles
 date: 2018-01-28 14:15:57
 categories:
 - 计算机

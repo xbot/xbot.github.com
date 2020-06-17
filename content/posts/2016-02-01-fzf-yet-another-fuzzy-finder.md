@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "FZF: 又一个文件模糊查询工具"
+slug: fzf yet another fuzzy finder
 date: 2016-02-01 11:42:00
 comments: true
 categories:

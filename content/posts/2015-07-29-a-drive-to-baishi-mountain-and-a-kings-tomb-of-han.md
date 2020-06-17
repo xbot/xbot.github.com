@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "自驾白石山、满城汉墓（201507）"
+slug: a drive to baishi mountain and a kings tomb of han
 date: 2015-07-29 20:15:00
 comments: true
 categories:

@@ -1,5 +1,6 @@
 ---
 title: 鼠须管实现简繁转换的方法
+slug: switch cn tw in rime
 date: 2017-03-11 23:42:11
 categories:
 - 计算机

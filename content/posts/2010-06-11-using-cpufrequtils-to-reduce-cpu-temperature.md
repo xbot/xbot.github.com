@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 低碳生活：使用 cpufrequtils降低CPU温度
+slug: using cpufrequtils to reduce cpu temperature
 date: 2010-06-11 00:00:00
 tags:
 - Archlinux

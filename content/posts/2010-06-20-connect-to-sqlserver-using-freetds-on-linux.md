@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Linux下使用freetds连接SQL Server
+slug: connect to sqlserver using freetds on linux
 date: 2010-06-20 00:00:00
 tags:
 - cygwin

@@ -1,5 +1,6 @@
 ---
 title: 用vim-laravel简化laravel下的开发
+slug: speed up artisan with vim laravel
 date: 2017-08-11 15:05:30
 categories:
 - 计算机

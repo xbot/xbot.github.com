@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "读完《边城》"
+slug: after reading border town
 date: 2014-10-26 09:32:00
 comments: true
 categories:

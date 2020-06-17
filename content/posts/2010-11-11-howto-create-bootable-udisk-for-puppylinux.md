@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 制作Puppy Linux的启动U盘
+slug: howto create bootable udisk for puppylinux
 date: 2010-11-11 00:00:00
 tags:
 - Linux

@@ -1,5 +1,6 @@
 ---
 title: Git Reset、Revert和Checkout的区别
+slug: differences among reset checkout revert of git
 date: 2017-02-09 19:27:47
 tags:
 - git

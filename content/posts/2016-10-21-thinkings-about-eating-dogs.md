@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "时人食狗亦与羊豕同"
+slug: thinkings about eating dogs
 date: 2016-10-21 13:21:00
 comments: true
 categories:

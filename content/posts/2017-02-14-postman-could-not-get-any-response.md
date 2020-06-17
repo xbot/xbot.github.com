@@ -1,5 +1,6 @@
 ---
 title: "Postman: Could Not Get Any Response"
+slug: postman could not get any response
 date: 2017-02-14 14:37:54
 tags:
 - restful

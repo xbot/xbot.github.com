@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "读完《湘行散记》"
+slug: after reading sketches of the travel to hunan
 date: 2014-11-29 20:17:00
 comments: true
 categories:

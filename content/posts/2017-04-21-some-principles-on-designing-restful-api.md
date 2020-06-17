@@ -1,5 +1,6 @@
 ---
 title: 设计RESTful API的几个原则
+slug: some principles on designing restful api
 date: 2017-04-21 10:07:29
 categories:
 - 计算机

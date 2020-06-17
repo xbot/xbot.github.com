@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "PHP框架实战（六）：依赖注入"
+slug: flamework dependency injection
 date: 2014-03-30 10:00:00
 comments: true
 categories:

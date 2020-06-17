@@ -1,5 +1,6 @@
 ---
 title: 手机锁屏后自动断开WiFi的解决办法
+slug: solve the auto breaking problem of huawei e5573s
 date: 2017-06-17 23:13:33
 categories:
 - 计算机

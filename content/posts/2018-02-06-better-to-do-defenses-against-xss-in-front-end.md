@@ -1,5 +1,6 @@
 ---
 title: 对XSS的防御更适合放在前端
+slug: better to do defenses against xss in front end
 date: 2018-02-06 15:13:17
 categories:
 - 计算机

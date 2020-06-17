@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "BiuBiu: A Chrome Extension Blocking AJAX Requests"
+slug: chrome extension biubiu
 date: 2015-12-31 14:19:00
 comments: true
 categories:

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "PHP类和接口的实现"
+slug: class interface implementation in php
 date: 2015-04-28 18:38:00
 comments: true
 categories:

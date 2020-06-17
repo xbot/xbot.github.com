@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "迁移到octopress"
+slug: migrate blog to octopress
 date: 2012-06-23 23:13:00
 comments: true
 categories:

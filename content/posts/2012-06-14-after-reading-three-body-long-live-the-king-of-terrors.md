@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "读完《三体——死神永生》"
+slug: after reading three body long live the king of terrors
 date: 2012-06-14 22:20:00
 comments: true
 categories:

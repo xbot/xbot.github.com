@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "读完《资治通鉴》"
+slug: after reading tong jian
 date: 2014-01-28 20:53:00
 comments: true
 categories:

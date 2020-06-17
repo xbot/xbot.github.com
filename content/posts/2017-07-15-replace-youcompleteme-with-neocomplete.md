@@ -1,5 +1,6 @@
 ---
 title: 用neocomplete换掉了YouCompleteMe
+slug: replace youcompleteme with neocomplete
 date: 2017-07-15 10:29:48
 categories:
 - 计算机

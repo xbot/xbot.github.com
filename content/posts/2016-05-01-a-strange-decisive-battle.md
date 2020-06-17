@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "奇怪的决战"
+slug: a strange decisive battle
 date: 2016-05-01 10:59:00
 comments: true
 categories:

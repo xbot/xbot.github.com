@@ -1,5 +1,6 @@
 ---
 title: "WebSocket: Connection Header Value Must Contain Upgrade"
+slug: websocket connection header value must contain upgrade
 date: 2017-02-11 21:52:30
 categories:
 - 计算机

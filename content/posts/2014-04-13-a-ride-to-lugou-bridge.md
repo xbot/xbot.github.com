@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "骑行卢沟桥"
+slug: a ride to lugou bridge
 date: 2014-04-13 19:55:00
 comments: true
 categories:

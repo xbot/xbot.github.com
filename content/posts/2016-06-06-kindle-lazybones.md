@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Kindle Lazybones: Control Kindle From Your Phone"
+slug: kindle lazybones
 date: 2016-06-06 10:33:00
 comments: true
 categories:

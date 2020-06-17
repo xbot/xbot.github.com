@@ -1,6 +1,7 @@
 ---
 layout: post
 title: screen曰：$TERM too long - sorry.
+slug: screen is sorry for term being too long
 date: 2010-12-01 00:00:00
 tags:
 - BASH

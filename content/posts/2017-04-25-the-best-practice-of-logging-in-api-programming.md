@@ -1,5 +1,6 @@
 ---
 title: 接口编程中记录日志的最佳实践
+slug: the best practice of logging in api programming
 date: 2017-04-25 15:50:41
 categories:
 - 计算机

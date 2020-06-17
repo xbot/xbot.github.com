@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "运行时可装卸的Mixin的PHP实现"
+slug: php implementation of runtime mixin
 date: 2014-12-04 11:52:00
 comments: true
 categories:

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: PHP后台echo过多会导致进程崩溃
+slug: too many echoes may crash php
 date: 2010-01-31 00:00:00
 tags:
 - bug

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "读完《大数据时代》"
+slug: after reading big data era
 date: 2014-02-08 10:11:00
 comments: true
 categories:

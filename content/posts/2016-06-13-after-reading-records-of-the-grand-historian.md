@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "读完《史记》"
+slug: after reading records of the grand historian
 date: 2016-06-13 15:52:00
 comments: true
 categories:

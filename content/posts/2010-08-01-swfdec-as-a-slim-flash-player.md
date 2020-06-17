@@ -1,6 +1,7 @@
 ---
 layout: post
 title: swfdec：简单好用的Flash播放器
+slug: swfdec as a slim flash player
 date: 2010-08-01 00:00:00
 tags:
 - flash

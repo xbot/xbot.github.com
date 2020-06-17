@@ -1,5 +1,6 @@
 ---
 title: 沙发椅，让阅读更有趣
+slug: my new sofa chair
 date: 2017-03-18 22:48:35
 categories:
 - 青梅煮酒

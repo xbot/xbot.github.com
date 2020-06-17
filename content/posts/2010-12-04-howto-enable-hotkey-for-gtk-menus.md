@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 开启自定义GTK程序菜单快捷键的方法
+slug: howto enable hotkey for gtk menus
 date: 2010-12-04 00:00:00
 tags:
 - GNOME

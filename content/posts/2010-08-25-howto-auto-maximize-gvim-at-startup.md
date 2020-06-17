@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 启动GVim时自动最大化窗口的方法
+slug: howto auto maximize gvim at startup
 date: 2010-08-25 00:00:00
 tags:
 - Vim

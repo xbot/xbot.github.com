@@ -1,5 +1,6 @@
 ---
 title: 技术团队的两个最佳实践
+slug: the best practices of developing
 date: 2017-02-24 13:27:57
 categories:
 - 青梅煮酒

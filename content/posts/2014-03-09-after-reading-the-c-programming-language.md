@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "读完《The C Programming Language》"
+slug: after reading the c programming language
 date: 2014-03-09 22:47:00
 comments: true
 categories:

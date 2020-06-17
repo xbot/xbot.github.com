@@ -2,6 +2,7 @@
 published: false
 layout: post
 title: "为什么魅族押宝Ubuntu Touch"
+slug: from about shipping ubuntu by meizu
 date: 2014-02-27 20:59:00
 comments: true
 categories:

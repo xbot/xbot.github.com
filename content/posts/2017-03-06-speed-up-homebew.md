@@ -1,5 +1,6 @@
 ---
 title: 加速Homebrew
+slug: speed up homebew
 date: 2017-03-06 23:14:02
 categories:
 - 计算机

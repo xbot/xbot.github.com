@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 升级到wordpress3.0
+slug: after upgrading to wordpress30
 date: 2010-06-19 00:00:00
 tags:
 - wiki

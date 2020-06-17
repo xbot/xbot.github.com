@@ -1,6 +1,7 @@
 ---
 layout: post
 title: virtio可能导致windows蓝屏
+slug: virto may breakdown windows
 date: 2010-12-04 00:00:00
 tags:
 - kvm

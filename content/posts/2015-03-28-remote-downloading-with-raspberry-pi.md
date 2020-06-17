@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "用树苺派实现远程下载"
+slug: remote downloading with raspberry pi
 date: 2015-03-28 19:14:00
 comments: true
 categories:

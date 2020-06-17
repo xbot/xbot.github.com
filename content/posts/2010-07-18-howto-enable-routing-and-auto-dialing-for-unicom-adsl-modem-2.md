@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 网通ADSL猫开启路由和自动拨号功能的方法之二
+slug: howto enable routing and auto dialing for unicom adsl modem 2
 date: 2010-07-18 00:00:00
 tags:
 - ADSL

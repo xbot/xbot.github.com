@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Anti Artificial Spam v0.2 Released
+slug: anti artificial spam v02 released
 date: 2011-02-24 00:00:00
 tags:
 - Plugin

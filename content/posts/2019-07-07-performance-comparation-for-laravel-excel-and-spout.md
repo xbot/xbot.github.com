@@ -1,5 +1,6 @@
 ---
 title: 对比Laravel Excel和Spout的读写性能
+slug: performance comparation for laravel excel and spout
 date: 2019-07-07 20:23:26
 categories:
 - 计算机

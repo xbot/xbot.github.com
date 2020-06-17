@@ -1,5 +1,6 @@
 ---
 title: 一碗阳春面
+slug: noodles in a simple sauce
 date: 2017-03-18 20:49:07
 categories:
 - 行见

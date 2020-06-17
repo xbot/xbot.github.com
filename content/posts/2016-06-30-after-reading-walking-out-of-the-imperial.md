@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "读完《走出帝制》"
+slug: after reading walking out of the imperial
 date: 2016-06-30 16:19:00
 comments: true
 categories:

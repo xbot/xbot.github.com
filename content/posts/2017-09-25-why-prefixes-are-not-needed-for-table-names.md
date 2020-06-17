@@ -1,5 +1,6 @@
 ---
 title: 为什么不应该给表名加前缀
+slug: why prefixes are not needed for table names
 date: 2017-09-25 14:12:41
 categories:
 - 计算机

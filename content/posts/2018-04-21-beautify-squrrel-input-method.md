@@ -1,5 +1,6 @@
 ---
 title: 鼠须管的美化
+slug: beautify squrrel input method
 date: 2018-04-21 20:52:42
 categories:
 - 计算机

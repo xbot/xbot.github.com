@@ -1,6 +1,7 @@
 ---
 layout: post
 title: WinMerge：开源的差异比较工具
+slug: winmerge as a free diff tool
 date: 2010-11-29 00:00:00
 tags:
 - Windows

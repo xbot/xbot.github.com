@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "再次调整磁盘分区"
+slug: adjust disk partitions again
 date: 2015-04-03 14:44:00
 comments: true
 categories:

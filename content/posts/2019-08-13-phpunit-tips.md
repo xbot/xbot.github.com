@@ -1,5 +1,6 @@
 ---
 title: PHP单元测试的技巧
+slug: phpunit tips
 date: 2019-08-13 14:21:48
 categories:
 - 计算机

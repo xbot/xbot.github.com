@@ -1,5 +1,6 @@
 ---
 title: 面向单元测试编程
+slug: unit test oriented programming
 date: 2019-08-13 16:35:15
 categories:
 - 计算机

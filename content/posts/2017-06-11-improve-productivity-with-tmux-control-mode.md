@@ -1,5 +1,6 @@
 ---
 title: 用Tmux的控制模式提高生产力
+slug: improve productivity with tmux control mode
 date: 2017-06-11 10:40:06
 categories:
 - 计算机

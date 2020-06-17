@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "读完《国史大纲》"
+slug: after reading outline history
 date: 2014-07-16 21:27:00
 comments: true
 categories:

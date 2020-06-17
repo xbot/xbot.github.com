@@ -1,5 +1,6 @@
 ---
 title: Laravel单元测试错误：1205 Lock wait timeout exceeded
+slug: 1205 lock wait timeout exceeded
 date: 2017-12-22 15:47:32
 categories:
 - 计算机

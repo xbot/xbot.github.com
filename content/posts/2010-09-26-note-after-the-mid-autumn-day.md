@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 中秋后记
+slug: note after the mid autumn day
 date: 2010-09-26 00:00:00
 tags:
 - Chrome

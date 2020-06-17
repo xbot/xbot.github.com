@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "乐山大佛与十面普贤"
+slug: tour to leshan and emei
 date: 2013-05-16 22:04:00
 comments: true
 categories:

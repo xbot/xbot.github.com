@@ -1,5 +1,6 @@
 ---
 title: Shadowrocket下优酷无法播放的解决办法
+slug: how to play youku under shadowrocket
 date: 2017-03-26 00:03:10
 categories:
 - 计算机

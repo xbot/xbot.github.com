@@ -1,5 +1,6 @@
 ---
 title: 十公里租房补贴是个天才的福利制度
+slug: rent subsides within 10km is wise
 date: 2018-02-06 11:12:23
 categories:
 - 青梅煮酒

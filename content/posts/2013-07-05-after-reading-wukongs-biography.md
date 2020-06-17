@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "读完《悟空传》"
+slug: after reading wukongs biography
 date: 2013-07-05 23:12:00
 comments: true
 categories:

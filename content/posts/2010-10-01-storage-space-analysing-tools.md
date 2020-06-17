@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 目录与文件的存储空间占用分析工具
+slug: storage space analysing tools
 date: 2010-10-01 00:00:00
 tags:
 - Linux

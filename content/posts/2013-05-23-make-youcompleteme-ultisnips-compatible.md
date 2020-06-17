@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "How to Make YouCompleteMe Compatible with UltiSnips"
+slug: make youcompleteme ultisnips compatible
 date: 2013-05-23 11:26:00
 comments: true
 categories:

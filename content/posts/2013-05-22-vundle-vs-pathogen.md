@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Vundle vs Pathogen"
+slug: vundle vs pathogen
 date: 2013-05-22 21:33:00
 comments: true
 categories:

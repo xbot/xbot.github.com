@@ -1,5 +1,6 @@
 ---
 title: iPhone X官方硅胶保护壳使用感受
+slug: iphone x silicone case
 date: 2017-11-26 12:50:13
 categories:
 - 青梅煮酒

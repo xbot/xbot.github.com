@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "小确幸，用Vim编辑当前命令行"
+slug: edit command with vim
 date: 2016-12-26 11:58:00
 comments: true
 categories:

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "李陵是作死的"
+slug: no zuo no die
 date: 2016-12-01 20:47:00
 comments: true
 categories:

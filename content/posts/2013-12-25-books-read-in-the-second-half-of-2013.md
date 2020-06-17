@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "这半年读过的几本书"
+slug: books read in the second half of 2013
 date: 2013-12-25 23:10:00
 comments: true
 categories:

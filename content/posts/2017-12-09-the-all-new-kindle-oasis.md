@@ -1,5 +1,6 @@
 ---
 title: 全新Kindle Oasis使用感受
+slug: the all new kindle oasis
 date: 2017-12-09 14:03:08
 categories:
 - 青梅煮酒

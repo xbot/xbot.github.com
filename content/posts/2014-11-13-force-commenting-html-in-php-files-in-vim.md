@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Vim强制在PHP中使用HTML注释的方法"
+slug: force commenting html in php files in vim
 date: 2014-11-13 21:45:00
 comments: true
 categories:

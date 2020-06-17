@@ -1,5 +1,6 @@
 ---
 title: 用NGINX实现WSS
+slug: implement wss with nginx
 date: 2017-02-14 13:35:41
 tags:
 - nginx

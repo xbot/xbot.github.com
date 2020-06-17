@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "ctags vs gtags vs phpctags"
+slug: ctags vs gtags vs phpctags
 date: 2016-01-29 17:55:00
 comments: true
 categories:

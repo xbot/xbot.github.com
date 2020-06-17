@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "用OpenResty自动转换silk到MP3"
+slug: convert silk to mp3 with openresty
 date: 2017-01-25 18:59:00
 comments: true
 categories:

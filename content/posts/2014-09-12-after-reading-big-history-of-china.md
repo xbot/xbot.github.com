@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "读完《中国大历史》"
+slug: after reading big history of china
 date: 2014-09-12 23:07:00
 comments: true
 categories:

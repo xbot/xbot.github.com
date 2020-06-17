@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "用树苺派做家庭监控"
+slug: monitor home with raspberry pi
 date: 2015-04-07 10:56:00
 comments: true
 categories:

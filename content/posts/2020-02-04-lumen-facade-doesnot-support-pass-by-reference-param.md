@@ -1,5 +1,6 @@
 ---
 title: 关于Lumen的Facade不支持引用传递的看法
+slug: lumen facade doesnot support pass by reference param
 date: 2020-02-04 17:40:34
 categories:
 - 计算机

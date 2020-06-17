@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "自动重映射键盘"
+slug: auto remap keyboard
 date: 2015-04-17 18:02:00
 comments: true
 categories:

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "使用lsyncd同步文件"
+slug: live syncing daemon
 date: 2014-06-18 14:03:00
 comments: true
 categories:

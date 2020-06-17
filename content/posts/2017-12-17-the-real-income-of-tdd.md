@@ -1,5 +1,6 @@
 ---
 title: 测试驱动开发的实际收益
+slug: the real income of tdd
 date: 2017-12-17 14:20:02
 categories:
 - 计算机

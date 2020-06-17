@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "读过Hello Android"
+slug: after reading hello android
 date: 2013-02-21 21:01:00
 comments: true
 categories:

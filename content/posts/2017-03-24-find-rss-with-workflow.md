@@ -1,5 +1,6 @@
 ---
 title: 自动探测RSS地址的workflow
+slug: find rss with workflow
 date: 2017-03-24 21:09:13
 categories:
 - 计算机

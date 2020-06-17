@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Calibre排版的最佳实践"
+slug: best practices of calibre on formatting
 date: 2017-01-27 18:15:00
 comments: true
 categories:

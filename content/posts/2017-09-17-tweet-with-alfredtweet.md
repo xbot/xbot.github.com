@@ -1,5 +1,6 @@
 ---
 title: 用AlfredTweet发推
+slug: tweet with alfredtweet
 date: 2017-09-17 09:26:41
 categories:
 - 计算机

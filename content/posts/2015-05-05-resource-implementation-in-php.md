@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "PHP资源的实现和操作"
+slug: resource implementation in php
 date: 2015-05-05 18:53:00
 comments: true
 categories:

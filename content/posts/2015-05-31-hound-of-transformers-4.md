@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "变形金刚：祖国合金放大版探长"
+slug: hound of transformers 4
 date: 2015-05-31 17:39:00
 comments: true
 categories:

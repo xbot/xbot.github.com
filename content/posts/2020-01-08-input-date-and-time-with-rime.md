@@ -1,5 +1,6 @@
 ---
 title: 用鼠须管输入日期时间的方法
+slug: input date and time with rime
 date: 2020-01-08 13:52:49
 categories:
 - 计算机

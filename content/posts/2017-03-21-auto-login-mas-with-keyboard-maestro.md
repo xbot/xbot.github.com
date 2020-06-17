@@ -1,5 +1,6 @@
 ---
 title: 用Keyboard Maestro自动登录MAS
+slug: auto login mas with keyboard maestro
 date: 2017-03-21 22:51:32
 categories:
 - 计算机

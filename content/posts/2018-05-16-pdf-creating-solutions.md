@@ -1,5 +1,6 @@
 ---
 title: 生成PDF的方案调研
+slug: pdf creating solutions
 date: 2018-05-16 15:41:36
 categories:
 - 计算机

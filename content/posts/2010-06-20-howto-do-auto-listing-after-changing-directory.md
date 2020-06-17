@@ -1,6 +1,7 @@
 ---
 layout: post
 title: cd到目录下后自动ls的方法
+slug: howto do auto listing after changing directory
 date: 2010-06-20 00:00:00
 tags:
 - BASH

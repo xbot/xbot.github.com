@@ -1,5 +1,6 @@
 ---
 title: 用vim-workspace换掉了session.vim
+slug: replace session vim with vim workspace
 date: 2017-07-19 17:47:30
 categories:
 - 计算机

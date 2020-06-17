@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "ZSH下新安装的程序无法自动补全的解决方法"
+slug: how to auto complete newly installed command in zsh
 date: 2014-11-12 22:15:00
 comments: true
 categories:

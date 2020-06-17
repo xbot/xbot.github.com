@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "CtrlP vs Unite vs Command-T vs FuzzyFinder"
+slug: ctrlp vs unite vs command t vs fuzzyfinder
 date: 2016-01-27 16:16:00
 comments: true
 categories:

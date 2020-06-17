@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "开始用在线Markdown编辑器记笔记"
+slug: start taking note in online markdown editor
 date: 2014-11-20 22:35:00
 comments: true
 categories:

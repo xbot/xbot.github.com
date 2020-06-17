@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Buuf-Deuce：搞怪的图标主题
+slug: buuf deuce icon theme
 date: 2010-04-10 00:00:00
 tags:
 - GNOME

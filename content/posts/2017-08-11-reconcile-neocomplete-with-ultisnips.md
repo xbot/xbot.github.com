@@ -1,5 +1,6 @@
 ---
 title: 使neocomplete和ultisnips共用tab键的方法
+slug: reconcile neocomplete with ultisnips
 date: 2017-08-11 14:43:14
 categories:
 - 计算机

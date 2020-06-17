@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "PHP框架实战（二）：错误和异常的自动处理"
+slug: flamework error auto handling
 date: 2013-12-28 13:40:00
 comments: true
 categories:

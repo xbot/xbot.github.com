@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "IE中使用IFrame上传文件报错——TypeError:拒绝访问"
+slug: typeerror access denied
 date: 2013-08-03 01:03:00
 comments: true
 categories:

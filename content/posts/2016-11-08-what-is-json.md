@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "JSON是对象还是字符串？"
+slug: what is json
 date: 2016-11-08 10:46:00
 comments: true
 categories:

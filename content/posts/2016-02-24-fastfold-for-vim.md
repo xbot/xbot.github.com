@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "FastFold：Vim折叠功能的救赎"
+slug: fastfold for vim
 date: 2016-02-24 11:06:00
 comments: true
 categories:

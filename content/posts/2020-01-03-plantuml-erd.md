@@ -1,5 +1,6 @@
 ---
 title: 用PlantUML实现ERD
+slug: plantuml erd
 date: 2020-01-03 17:01:41
 categories:
 - 计算机

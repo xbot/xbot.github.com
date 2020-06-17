@@ -1,6 +1,7 @@
 ---
 layout: post
 title: ! 'Dumperor: Multi-Database Dumping Toolkit'
+slug: dumperor as a multidb dumping tool
 date: 2010-09-23 00:00:00
 tags:
 - Database

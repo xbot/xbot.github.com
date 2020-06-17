@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "微软识花和形色"
+slug: two plant identification apps
 date: 2016-12-28 12:12:00
 comments: true
 categories:

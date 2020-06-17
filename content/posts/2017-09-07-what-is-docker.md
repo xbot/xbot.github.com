@@ -1,5 +1,6 @@
 ---
 title: 什么是docker
+slug: what is docker
 date: 2017-09-07 15:31:11
 categories:
 - 计算机

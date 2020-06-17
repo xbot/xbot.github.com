@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Project Euler Problem 22 Solved"
+slug: project euler 22
 date: 2014-04-20 08:03:00
 comments: true
 categories:

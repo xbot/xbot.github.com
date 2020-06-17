@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Project Euler Problem 13 Solved"
+slug: project euler 13
 date: 2014-03-30 09:50:00
 comments: true
 categories:

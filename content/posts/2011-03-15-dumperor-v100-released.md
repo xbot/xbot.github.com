@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Dumperor v1.0.0 Released
+slug: dumperor v100 released
 date: 2011-03-15 00:00:00
 tags:
 - Database

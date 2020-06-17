@@ -1,5 +1,6 @@
 ---
 title: 用vim-php-namespace管理PHP的命名空间
+slug: manage php namespaces with vim php namespace
 date: 2017-08-11 14:56:12
 categories:
 - 计算机

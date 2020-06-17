@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 使Thinkpad的静音按钮能被识别的方法
+slug: howto make thinkpad mute button detected on linux
 date: 2010-08-09 00:00:00
 tags:
 - Archlinux

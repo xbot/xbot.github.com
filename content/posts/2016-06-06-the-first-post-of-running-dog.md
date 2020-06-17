@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "两司马门下走狗创刊号"
+slug: the first post of running dog
 date: 2016-06-06 16:22:00
 comments: true
 categories:

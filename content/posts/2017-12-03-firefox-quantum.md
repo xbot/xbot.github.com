@@ -1,5 +1,6 @@
 ---
 title: Firefox Quantum：狐狸的反击
+slug: firefox quantum
 date: 2017-12-03 21:53:18
 categories:
 - 计算机

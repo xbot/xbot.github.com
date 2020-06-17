@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Archlinux安装过程中的几个坑"
+slug: pits of archlinux
 date: 2016-10-17 13:14:00
 comments: true
 categories:

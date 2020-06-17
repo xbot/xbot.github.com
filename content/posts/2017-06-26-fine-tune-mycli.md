@@ -1,5 +1,6 @@
 ---
 title: 调校mycli
+slug: fine tune mycli
 date: 2017-06-26 18:05:31
 categories:
 - 计算机

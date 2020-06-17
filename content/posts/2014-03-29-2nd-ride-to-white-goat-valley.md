@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "二骑白羊沟"
+slug: 2nd ride to white goat valley
 date: 2014-03-29 20:16:00
 comments: true
 categories:

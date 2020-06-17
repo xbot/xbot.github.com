@@ -1,5 +1,6 @@
 ---
 title: 我叫王战斗
+slug: i am wang zhandou
 date: 2018-07-01 16:46:32
 categories:
 - 青梅煮酒

@@ -1,5 +1,6 @@
 ---
 title: 读完《汉书》
+slug: after reading han shu
 date: 2017-09-10 23:34:19
 categories:
 - 青梅煮酒

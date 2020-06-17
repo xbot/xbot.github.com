@@ -1,5 +1,6 @@
 ---
 title: Git的衍合
+slug: git rebase
 date: 2017-02-22 18:44:37
 categories:
 - 计算机

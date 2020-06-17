@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "PHP框架实战：Flamework"
+slug: flamework
 date: 2013-12-26 20:24:00
 comments: true
 categories:

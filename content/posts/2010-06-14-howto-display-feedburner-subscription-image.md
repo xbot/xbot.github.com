@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 中转feedburner订阅数图标
+slug: howto display feedburner subscription image
 date: 2010-06-14 00:00:00
 category: 计算机
 tags:

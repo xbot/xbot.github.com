@@ -1,5 +1,6 @@
 ---
 title: GraphQL：RESTful之外的接口实现方案
+slug: graphql vs restful
 date: 2017-08-01 17:36:27
 categories:
 - 计算机

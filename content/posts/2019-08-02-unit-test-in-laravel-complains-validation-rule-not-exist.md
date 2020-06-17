@@ -1,5 +1,6 @@
 ---
 title: Lumen单元测试提示自定义校验规则不存在的问题
+slug: unit test in laravel complains validation rule not exist
 date: 2019-08-02 15:12:17
 categories:
 - 计算机

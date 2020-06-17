@@ -1,5 +1,6 @@
 ---
 title: PHPUnit代码覆盖率的统计方法
+slug: how to count code coverage of phpunit
 date: 2017-04-30 14:20:41
 categories:
 - 计算机

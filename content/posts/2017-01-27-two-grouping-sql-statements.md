@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "两条分组的SQL语句"
+slug: two grouping sql statements
 date: 2017-01-27 17:51:00
 comments: true
 categories:

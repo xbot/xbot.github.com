@@ -1,5 +1,6 @@
 ---
 title: 读完《谈美》
+slug: after reading tan mei
 date: 2017-10-29 09:21:58
 categories:
 - 青梅煮酒

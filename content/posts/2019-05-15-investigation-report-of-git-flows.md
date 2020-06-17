@@ -1,5 +1,6 @@
 ---
 title: Git工作流调研报告
+slug: investigation report of git flows
 categories:
 - 计算机
 tags:

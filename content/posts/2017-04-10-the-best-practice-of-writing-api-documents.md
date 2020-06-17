@@ -1,5 +1,6 @@
 ---
 title: 编写接口文档的最佳实践
+slug: the best practice of writing api documents
 date: 2017-04-10 16:36:27
 categories:
 - 计算机

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "PHP框架实战（一）：框架入口与类的自动加载"
+slug: flamework entry
 date: 2013-12-28 01:56:00
 comments: true
 categories:

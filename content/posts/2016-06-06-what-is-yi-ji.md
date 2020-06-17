@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "「食其」是什么？"
+slug: what is yi ji
 date: 2016-06-06 16:48:00
 comments: true
 categories:

@@ -1,5 +1,6 @@
 ---
 title: 用 SSH 命令调试 Git 的连接问题
+slug: debug git connection with ssh
 date: 2020-03-28 23:17:45
 categories:
 - 计算机

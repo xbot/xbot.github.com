@@ -1,5 +1,6 @@
 ---
 title: Mock Laravel的DB Facade的方法
+slug: how to mock the db facade of laravel
 date: 2017-08-14 15:51:41
 categories:
 - 计算机

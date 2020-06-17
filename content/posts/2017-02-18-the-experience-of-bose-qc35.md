@@ -1,5 +1,6 @@
 ---
 title: Bose QC35，这安静有毒
+slug: the experience of bose qc35
 date: 2017-02-18 20:23:28
 categories:
 - 青梅煮酒

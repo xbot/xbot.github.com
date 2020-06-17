@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Vim中设置关键词识别规则的方法
+slug: howto set keyword identification in vim
 date: 2010-12-22 00:00:00
 tags:
 - PHP

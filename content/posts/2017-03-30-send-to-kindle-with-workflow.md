@@ -1,5 +1,6 @@
 ---
 title: 迄今最好的发送网页到Kindle的workflow
+slug: send to kindle with workflow
 date: 2017-03-30 11:12:02
 categories:
 - 计算机

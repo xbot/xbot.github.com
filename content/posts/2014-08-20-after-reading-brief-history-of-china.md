@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "读完《中国史纲》"
+slug: after reading brief history of china
 date: 2014-08-20 22:30:00
 comments: true
 categories:

@@ -1,5 +1,6 @@
 ---
 title: 电影《疾速追杀》
+slug: movie john wick
 date: 2017-11-26 10:09:34
 categories:
 - 青梅煮酒

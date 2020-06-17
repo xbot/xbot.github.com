@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "用Dojo实现拖放操作的最佳实践"
+slug: practical drag and drop implementation with dojo
 date: 2013-11-05 16:58:00
 comments: true
 categories:

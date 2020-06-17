@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Kindle Paperwhite 1代与3代白色版对比"
+slug: compare kindle paperwhite v1 and v3 white
 date: 2016-06-13 16:01:00
 comments: true
 categories:

@@ -1,5 +1,6 @@
 ---
 title: 在Vim中格式化Javascript、HTML和CSS
+slug: vim js beautify
 date: 2017-02-21 14:58:08
 categories:
 - 计算机

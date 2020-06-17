@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "怎样为红帽系Linux发行版写系统服务脚本"
+slug: how to write service scripts for redhat distros
 date: 2012-06-19 00:14:00
 comments: true
 categories:

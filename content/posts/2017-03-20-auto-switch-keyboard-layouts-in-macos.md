@@ -1,5 +1,6 @@
 ---
 title: MacOS下自动切换Karabiner Elements配置
+slug: auto switch keyboard layouts in macos
 date: 2017-03-20 13:14:18
 categories:
 - 计算机

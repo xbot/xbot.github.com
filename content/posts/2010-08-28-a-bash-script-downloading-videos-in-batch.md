@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 批量下载视频的BASH脚本
+slug: a bash script downloading videos in batch
 date: 2010-08-28 00:00:00
 tags:
 - BASH

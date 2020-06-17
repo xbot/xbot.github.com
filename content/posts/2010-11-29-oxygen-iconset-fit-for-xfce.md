@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Oxygen Refit：适用于xfce的Oxygen图标集
+slug: oxygen iconset fit for xfce
 date: 2010-11-29 00:00:00
 tags:
 - Archlinux

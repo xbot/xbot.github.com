@@ -1,5 +1,6 @@
 ---
 title: 通过比较截图检查网页变化
+slug: check changes of webpage by comparing screenshots
 date: 2017-04-30 17:21:52
 categories:
 - 计算机

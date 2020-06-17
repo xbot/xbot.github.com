@@ -1,5 +1,6 @@
 ---
 title: 用vim-plug换掉了vim-addon-manager
+slug: replaced vam with vim plug
 date: 2017-07-31 22:44:16
 categories:
 - 计算机

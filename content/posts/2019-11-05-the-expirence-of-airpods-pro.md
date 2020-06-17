@@ -1,5 +1,6 @@
 ---
 title: AirPods Pro的使用感受
+slug: the expirence of airpods pro
 tags:
   - 最佳实践
   - 数码

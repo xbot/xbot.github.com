@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "变形金刚：KO电镀嘴炮OP"
+slug: transformers optimus prime ko edition
 date: 2015-06-22 20:35:00
 comments: true
 categories:

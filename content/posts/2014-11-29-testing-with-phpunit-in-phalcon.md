@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Phalcon项目中PHPUnit的初始化"
+slug: testing with phpunit in phalcon
 date: 2014-11-29 09:58:00
 comments: true
 categories:

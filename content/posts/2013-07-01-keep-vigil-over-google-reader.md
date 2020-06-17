@@ -2,6 +2,7 @@
 published: false
 layout: post
 title: "为Google Reader守夜"
+slug: keep vigil over google reader
 date: 2013-07-02 01:00:00
 comments: true
 categories:

@@ -1,5 +1,6 @@
 ---
 title: 利用goyo.vim专注写作
+slug: distraction free writing in vim
 date: 2017-07-29 16:48:45
 categories:
 - 计算机

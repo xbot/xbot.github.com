@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 使用热键切换Vim的QuickFix窗口打开状态
+slug: howto toggle quickfix in vim using hotkeys
 date: 2010-09-10 00:00:00
 tags:
 - Vim

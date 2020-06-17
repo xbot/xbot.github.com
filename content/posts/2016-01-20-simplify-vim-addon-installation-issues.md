@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "简化Vim Addons Manager安装扩展的操作"
+slug: simplify vim addon installation issues
 date: 2016-01-20 18:05:00
 comments: true
 categories:

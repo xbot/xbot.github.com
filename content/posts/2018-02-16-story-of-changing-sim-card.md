@@ -1,5 +1,6 @@
 ---
 title: 异地补卡下的北京中年
+slug: story of changing sim card
 date: 2018-02-16 17:24:59
 categories:
 - 青梅煮酒

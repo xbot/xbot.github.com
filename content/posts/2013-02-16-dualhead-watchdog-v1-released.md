@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "DualHead Watchdog v1.0 Released"
+slug: dualhead watchdog v1 released
 date: 2013-02-16 08:56:00
 comments: true
 categories:

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "使用gn操作增强Vim的搜索"
+slug: enhance search with gn in vim
 date: 2015-06-14 21:16:00
 comments: true
 categories:

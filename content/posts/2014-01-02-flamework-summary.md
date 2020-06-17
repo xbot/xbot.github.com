@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "PHP框架实战（∝）：烈焰之终章"
+slug: flamework summary
 date: 2014-01-02 15:15:00
 comments: true
 categories:

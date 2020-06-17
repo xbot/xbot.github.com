@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "使用存取控制表在Linux用户间共享文件"
+slug: share file using access control lists
 date: 2014-03-19 22:38:00
 comments: true
 categories:

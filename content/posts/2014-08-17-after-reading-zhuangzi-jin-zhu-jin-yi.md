@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "读完《庄子今注今译》"
+slug: after reading zhuangzi jin zhu jin yi
 date: 2014-08-17 18:36:00
 comments: true
 categories:

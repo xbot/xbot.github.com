@@ -1,5 +1,6 @@
 ---
 title: 一次对Workflow不完全成功的抓包过程
+slug: a failed attempt to capture workflow requests
 date: 2017-04-04 20:19:52
 categories:
 - 计算机

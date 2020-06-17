@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 黄粱一梦
+slug: a fools paradise
 tags:
 - 戏曲
 - 文化

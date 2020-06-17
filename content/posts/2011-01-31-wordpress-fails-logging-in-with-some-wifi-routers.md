@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 部分无线路由导致Wordpress无法登录
+slug: wordpress fails logging in with some wifi routers
 date: 2011-01-31 00:00:00
 tags:
 - WordPress

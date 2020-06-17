@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Hope GTK：平静、柔和、细腻的主题
+slug: gtk theme hope
 date: 2010-12-04 00:00:00
 tags:
 - GTK+

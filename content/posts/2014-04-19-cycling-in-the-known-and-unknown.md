@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "骑行的已知和未知"
+slug: cycling in the known and unknown
 date: 2014-04-19 21:44:00
 comments: true
 categories:

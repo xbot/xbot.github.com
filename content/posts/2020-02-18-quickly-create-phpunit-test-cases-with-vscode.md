@@ -1,5 +1,6 @@
 ---
 title: 在VS Code中快速创建PHPUnit测试类的方法
+slug: quickly create phpunit test cases with vscode
 date: 2020-02-18 22:49:45
 categories:
 - 计算机

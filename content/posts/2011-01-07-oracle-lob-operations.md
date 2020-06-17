@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Oracle中对LOB字段的操作方法
+slug: oracle lob operations
 date: 2011-01-07 00:00:00
 tags:
 - oracle

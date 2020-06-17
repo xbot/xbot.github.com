@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "PHP框架实战（四）：View的模板与渲染"
+slug: flamework view rendering
 date: 2013-12-30 21:05:00
 comments: true
 categories:

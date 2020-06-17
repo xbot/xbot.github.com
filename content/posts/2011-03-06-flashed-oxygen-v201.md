@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 刷了Oxygen v2.0.1
+slug: flashed oxygen v201
 date: 2011-03-06 00:00:00
 tags:
 - Android

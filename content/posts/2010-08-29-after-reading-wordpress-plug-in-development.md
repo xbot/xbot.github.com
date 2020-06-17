@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 读完《WordPress Plug-in Development》
+slug: after reading wordpress plug in development
 date: 2010-08-29 00:00:00
 tags:
 - Plugin

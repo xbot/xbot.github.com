@@ -1,5 +1,6 @@
 ---
 title: 基于Laravel的项目的单元测试规范
+slug: unit testing standard for laravel based projects
 categories:
 - 计算机
 tags:

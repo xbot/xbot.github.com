@@ -1,5 +1,6 @@
 ---
 title: 解决Laravel的Facade在被Mock时不自动注入依赖的一种方法
+slug: manual dependency injection with laravel
 date: 2018-01-30 15:41:16
 categories:
 - 计算机

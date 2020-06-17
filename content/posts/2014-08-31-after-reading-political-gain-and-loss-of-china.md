@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "读完《中国历代政治得失》"
+slug: after reading political gain and loss of china
 date: 2014-08-31 23:19:00
 comments: true
 categories:

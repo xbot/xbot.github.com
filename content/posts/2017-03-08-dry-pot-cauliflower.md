@@ -1,5 +1,6 @@
 ---
 title: 干锅菜花
+slug: dry pot cauliflower
 date: 2017-03-08 20:55:54
 categories:
 - 行见

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Vim保存文件时移除尾行换行符的方法
+slug: howto remove eof in vim
 date: 2010-12-05 00:00:00
 tags:
 - Vim

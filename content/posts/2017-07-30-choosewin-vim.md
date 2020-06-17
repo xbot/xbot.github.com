@@ -1,5 +1,6 @@
 ---
 title: 用choosewin.vim切换窗口
+slug: choosewin vim
 date: 2017-07-30 20:48:46
 categories:
 - 计算机

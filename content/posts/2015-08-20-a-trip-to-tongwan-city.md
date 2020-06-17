@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "寻找失落的匈奴（201409）"
+slug: a trip to tongwan city
 date: 2015-08-20 23:07:00
 comments: true
 categories:

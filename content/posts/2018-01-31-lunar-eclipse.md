@@ -1,5 +1,6 @@
 ---
 title: 癸丑望，月有食之
+slug: lunar eclipse
 date: 2018-01-31 23:54:41
 categories:
 - 青梅煮酒

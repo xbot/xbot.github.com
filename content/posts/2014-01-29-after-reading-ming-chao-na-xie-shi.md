@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "读完《明朝那些事儿》"
+slug: after reading ming chao na xie shi
 date: 2014-01-29 12:14:00
 comments: true
 categories:

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "自驾鸡鸣驿、草沿天路（201507）"
+slug: a drive to jimingyi and caoyantianlu
 date: 2015-08-12 21:05:00
 comments: true
 categories:

@@ -1,5 +1,6 @@
 ---
 title: 网站签到的最佳实践
+slug: the best practice of checking in
 date: 2017-05-24 11:42:52
 categories:
 - 计算机

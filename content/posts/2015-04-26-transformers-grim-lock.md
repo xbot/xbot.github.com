@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "变形金刚：俺钢锁才是老大"
+slug: transformers grim lock
 date: 2015-04-26 20:55:00
 comments: true
 categories:

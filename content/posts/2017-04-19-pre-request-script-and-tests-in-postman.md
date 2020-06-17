@@ -1,5 +1,6 @@
 ---
 title: Postman的Pre-request Script和Tests
+slug: pre request script and tests in postman
 date: 2017-04-19 17:05:55
 categories:
 - 计算机

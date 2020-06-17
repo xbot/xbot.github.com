@@ -1,5 +1,6 @@
 ---
 title: 用C4-PlantUML画软件架构图
+slug: design software architecture with c4 plantuml
 date: 2020-01-17 17:29:24
 categories:
 - 计算机

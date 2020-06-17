@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "UltraBlog.vim v3.6.1: 文章分类自动补全"
+slug: ultrablog v361 released
 date: 2014-04-20 22:50:00
 comments: true
 categories:

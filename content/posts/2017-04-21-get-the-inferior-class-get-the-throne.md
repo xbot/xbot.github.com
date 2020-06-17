@@ -1,5 +1,6 @@
 ---
 title: 得草根者得天下
+slug: get the inferior class get the throne
 date: 2017-04-21 11:05:50
 categories:
 - 青梅煮酒

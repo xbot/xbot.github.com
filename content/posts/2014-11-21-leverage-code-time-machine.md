@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "用好代码时光机"
+slug: leverage code time machine
 date: 2014-11-21 23:19:00
 comments: true
 categories:

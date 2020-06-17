@@ -1,5 +1,6 @@
 ---
 title: '用ALE替换了Syntastic'
+slug: replace syntastic with ale
 date: 2018-12-12 20:42:10
 categories:
 - 计算机

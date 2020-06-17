@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Linux下做Mac OSX安装U盘的步骤"
+slug: create mac bootable usb stick on linux
 date: 2016-03-08 12:22:00
 comments: true
 categories:

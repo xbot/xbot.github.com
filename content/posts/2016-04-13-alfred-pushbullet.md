@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Alfred-pushbullet: Push a text to your phone"
+slug: alfred pushbullet
 date: 2016-04-13 17:30:00
 comments: true
 categories:

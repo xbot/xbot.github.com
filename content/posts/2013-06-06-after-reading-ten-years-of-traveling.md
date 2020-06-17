@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "读完《背包十年》"
+slug: after reading ten years of traveling
 date: 2013-06-06 22:12:00
 comments: true
 categories:

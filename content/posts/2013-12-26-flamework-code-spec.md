@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "PHP框架实战（零）：代码规范"
+slug: flamework code spec
 date: 2013-12-26 22:07:00
 comments: true
 categories:

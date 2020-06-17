@@ -1,6 +1,7 @@
 ---
 layout: post
 title: TTL线在Linux下的用法
+slug: usage of ttl wire on linux
 date: 2010-07-18 00:00:00
 tags:
 - 内核

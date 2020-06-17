@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "PHP哈希表的实现与操作"
+slug: hashtable implementation of php
 date: 2015-04-23 15:56:00
 comments: true
 categories:

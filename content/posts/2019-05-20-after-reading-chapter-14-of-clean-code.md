@@ -1,5 +1,6 @@
 ---
 title: 《Clean Code》第十四章读后
+slug: after reading chapter 14 of clean code
 date: 2019-05-20 23:48:41
 categories:
 - 青梅煮酒

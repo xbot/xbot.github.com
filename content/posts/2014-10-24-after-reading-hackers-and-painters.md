@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "读完《黑客与画家》"
+slug: after reading hackers and painters
 date: 2014-10-26 10:06:00
 comments: true
 categories:

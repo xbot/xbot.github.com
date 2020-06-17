@@ -1,6 +1,7 @@
 ---
 layout: post
 title: UBUNTU 6.10 Edgy Eft 入门全程导用
+slug: ubuntu 610 tutorial
 date: 2007-04-08 00:00:00
 categories:
 - 计算机

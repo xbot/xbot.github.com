@@ -1,5 +1,6 @@
 ---
 title: 搭好了SSR
+slug: ready for ssr
 date: 2017-10-18 15:34:33
 categories:
 - 计算机

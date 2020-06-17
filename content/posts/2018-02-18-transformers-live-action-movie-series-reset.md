@@ -1,5 +1,6 @@
 ---
 title: 变形金刚真人电影系列被重置
+slug: transformers live action movie series reset
 date: 2018-02-18 11:51:13
 categories:
 - 青梅煮酒

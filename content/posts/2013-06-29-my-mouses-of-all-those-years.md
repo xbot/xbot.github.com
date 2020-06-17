@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "那些年我用过的鼠标"
+slug: my mouses of all those years
 date: 2013-06-29 19:53:00
 comments: true
 categories:

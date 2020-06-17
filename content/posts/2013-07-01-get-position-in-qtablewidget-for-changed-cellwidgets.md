@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "PySide: How to Get the Position of a Widget-Value-Changed Cell in QTableWidget"
+slug: get position in qtablewidget for changed cellwidgets
 date: 2013-07-01 00:57:00
 comments: true
 categories:

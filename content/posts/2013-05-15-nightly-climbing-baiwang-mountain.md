@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "夜爬百望山"
+slug: nightly climbing baiwang mountain
 date: 2013-05-15 22:51:00
 comments: true
 categories:

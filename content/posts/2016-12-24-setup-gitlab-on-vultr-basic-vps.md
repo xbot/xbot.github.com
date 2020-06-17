@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Vultr基配可以部署Gitlab"
+slug: setup gitlab on vultr basic vps
 date: 2016-12-24 17:18:00
 comments: true
 categories:

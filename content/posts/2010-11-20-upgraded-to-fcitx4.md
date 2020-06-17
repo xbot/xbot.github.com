@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 升级fcitx到4.0
+slug: upgraded to fcitx4
 date: 2010-11-20 00:00:00
 tags:
 - Archlinux

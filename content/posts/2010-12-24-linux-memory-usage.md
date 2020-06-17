@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Linux的内存使用机制
+slug: linux memory usage
 date: 2010-12-24 00:00:00
 tags:
 - BASH

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "读完《MongoDB权威指南》第二版"
+slug: after reading mongodb the definitive guide
 date: 2014-10-26 10:01:00
 comments: true
 categories:

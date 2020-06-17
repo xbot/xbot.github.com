@@ -1,5 +1,6 @@
 ---
 title: 密码管理的最佳实践
+slug: the best practice of password management
 date: 2017-12-27 17:26:17
 categories:
 - 计算机

@@ -1,5 +1,6 @@
 ---
 title: 利用单元测试为开发提效
+slug: use unit test as an efficiency tool
 date: 2019-08-13 16:38:02
 categories:
 - 计算机

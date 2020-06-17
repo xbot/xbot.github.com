@@ -1,5 +1,6 @@
 ---
 title: 用vim-test简化单元测试的编写
+slug: make writing unit tests easier with vim test
 date: 2017-08-14 16:43:59
 categories:
 - 计算机

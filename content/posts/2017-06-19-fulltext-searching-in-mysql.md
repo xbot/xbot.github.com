@@ -1,5 +1,6 @@
 ---
 title: 用MySQL的全文检索实现相关性排序
+slug: fulltext searching in mysql
 date: 2017-06-19 23:10:41
 categories:
 - 计算机

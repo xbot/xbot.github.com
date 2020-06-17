@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "西山徒步——大觉寺至凤凰岭南线"
+slug: a walk through the west mountain
 date: 2014-03-15 19:56:00
 comments: true
 categories:

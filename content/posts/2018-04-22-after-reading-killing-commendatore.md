@@ -1,5 +1,6 @@
 ---
 title: 少不读村上
+slug: after reading killing commendatore
 date: 2018-04-22 13:55:00
 categories:
 - 青梅煮酒

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 初入Kindle DX Graphite
+slug: got kindle dxg
 date: 2011-02-20 00:00:00
 tags:
 - kindle
