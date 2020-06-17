@@ -18,7 +18,7 @@ tags:
 
 <!-- more -->
 
-# 方案一：文件模板
+## 方案一：文件模板
 
 通过VS Code的插件[Template](https://marketplace.visualstudio.com/items?itemName=yongwoo.template)，可以实现把事先准备好的一个测试类文件模板复制到工程目录下。
 
@@ -45,7 +45,7 @@ class AnyTest extends TransactionalTestCase
 
 Template有个很大的短板，目前的版本还不支持全局模板，每个工程下都维护一套模板还是很烦琐的。
 
-# 方案二：代码片断
+## 方案二：代码片断
 
 代码片断（以下统称Snippet）可能是VS Code做得最烂的一个功能，我曾无数次泪流满面地回想起有Vim和UltiSnips相伴的美好时光。
 
