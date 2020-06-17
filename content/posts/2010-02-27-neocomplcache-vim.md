@@ -12,7 +12,7 @@ published: true
 comments: true
 ---
 
-{% img http://lh3.ggpht.com/_ceUJ_lBTHzc/SaV494hGreI/AAAAAAAAAzY/xExf7CzGyv0/s800/the-mug-of-vi.jpg %}
+![](http://lh3.ggpht.com/_ceUJ_lBTHzc/SaV494hGreI/AAAAAAAAAzY/xExf7CzGyv0/s800/the-mug-of-vi.jpg)
 
 <p>关于自动补全，最初用的是<a href="http://www.vim.org/scripts/script.php?script_id=1643">SuperTab</a>，那个时候Vim的自动补全插件寥寥无几，也就SuperTab比较有名。不过实际使用过程中这个插件给我的体验不是很好，原因是补全的准确度不高。</p>
 

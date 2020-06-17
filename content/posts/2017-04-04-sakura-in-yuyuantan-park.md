@@ -9,7 +9,7 @@ tags:
 - 随笔
 ---
 
-{% img https://ww4.sinaimg.cn/large/006tNbRwly1feafquavwvj30wu0ih7ip.jpg %}
+![](https://ww4.sinaimg.cn/large/006tNbRwly1feafquavwvj30wu0ih7ip.jpg)
 
 终于还是去了。
 

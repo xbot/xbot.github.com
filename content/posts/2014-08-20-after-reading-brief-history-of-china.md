@@ -11,7 +11,7 @@ tags:
 - 国史
 ---
 
-{% img http://pic.yupoo.com/leninlee/DZOYRqbR/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/DZOYRqbR/medish.jpg)
 
 自序中对治史的方法论让我受益匪浅，本书语气平和、娓娓道来，像讲故事一样讲历史，但又严谨、广博、不肤浅，风格和其它史书大不一样，我一直理想中的史书就是这样，不要给历史背太重的包袱，不要带著一定要学点什么的目的读历史。 
 

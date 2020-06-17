@@ -15,16 +15,16 @@ tags:
 
 记录数据：
 
-{% img http://pic.yupoo.com/leninlee/DBVrawlL/medish.jpg %}
-{% img http://pic.yupoo.com/leninlee/DBVraDFN/medish.jpg %}
-{% img http://pic.yupoo.com/leninlee/DBVqWKLy/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/DBVrawlL/medish.jpg)
+![](http://pic.yupoo.com/leninlee/DBVraDFN/medish.jpg)
+![](http://pic.yupoo.com/leninlee/DBVqWKLy/medish.jpg)
 
 山上的公路很好，在这里骑行挺好的，只是不知道从哪上来：
 
-{% img http://pic.yupoo.com/leninlee/DBVrlHDT/medish.jpg %}
-{% img http://pic.yupoo.com/leninlee/DBVr8MUb/medish.jpg %}
-{% img http://pic.yupoo.com/leninlee/DBVr9DBD/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/DBVrlHDT/medish.jpg)
+![](http://pic.yupoo.com/leninlee/DBVr8MUb/medish.jpg)
+![](http://pic.yupoo.com/leninlee/DBVr9DBD/medish.jpg)
 
 在山上接了壶泉水，陆羽《茶经·煮》里说：“其水，用山水上，江水中，井水下”，上水烹茶，不言其中：
 
-{% img http://pic.yupoo.com/leninlee/DBVrbnSf/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/DBVrbnSf/medish.jpg)

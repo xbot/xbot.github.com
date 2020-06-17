@@ -25,14 +25,14 @@ Linux不但可以通过后缀识别文件类型，更重要的，还可以通过
 
 既然ROX使用多种文件类型识别方式，那必然有一个优先级的关系，否则就会乱套。打开ROX的MIME Editor：
 
-{% img http://pic.yupoo.com/leninlee/CRNkfq0g/medium.jpg %}
+![](http://pic.yupoo.com/leninlee/CRNkfq0g/medium.jpg)
 
 找到MIME类型“application/zip”：
 
-{% img http://pic.yupoo.com/leninlee/CRNkgaEK/medium.jpg %}
+![](http://pic.yupoo.com/leninlee/CRNkgaEK/medium.jpg)
 
 打开zip的属性对话框：
 
-{% img http://pic.yupoo.com/leninlee/CRNkfOsQ/medium.jpg %}
+![](http://pic.yupoo.com/leninlee/CRNkfOsQ/medium.jpg)
 
 可以看到“Contents matching”这一块里，通过检查文件头部的几个字节是否为“PK\003\004”来判断，并且此项判断标准的优先级是40。下面所要做的，就是找到相应文件类型，添加一项条件相同的“Contents matching”，并把优先级设得大于40。

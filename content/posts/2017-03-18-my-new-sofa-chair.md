@@ -9,7 +9,7 @@ tags:
 - 家具
 ---
 
-{% img https://ww2.sinaimg.cn/large/006tNc79ly1fdrdpa2eu2j30sg0sg7cu.jpg 640 %}
+![](https://ww2.sinaimg.cn/large/006tNc79ly1fdrdpa2eu2j30sg0sg7cu.jpg)
 
 心水沙发椅很久了，终于拔草。
 

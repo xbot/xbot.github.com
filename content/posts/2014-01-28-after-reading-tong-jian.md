@@ -11,7 +11,7 @@ tags:
 - 电子书
 ---
 
-{% img http://pic.yupoo.com/leninlee/DuMqtc1v/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/DuMqtc1v/medish.jpg)
 
 一部书，二百九十四卷，三百万字，一千三百六十二年，从中华书局20册胡三省注本，到Kindle DXG，再到Kindle Paperwhite，读了四年。
 

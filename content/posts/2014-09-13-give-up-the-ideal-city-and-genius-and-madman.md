@@ -10,10 +10,10 @@ tags:
 - 小说
 ---
 
-{% img http://pic.yupoo.com/leninlee/E9VPP5J0/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/E9VPP5J0/medish.jpg)
 
 现在不喜欢这种书了。
 
-{% img http://pic.yupoo.com/leninlee/E9VOUOtx/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/E9VOUOtx/medish.jpg)
 
 内心不够强大，再看下去我就疯了。

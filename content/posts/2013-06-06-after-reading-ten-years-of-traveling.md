@@ -13,6 +13,6 @@ tags:
 
 这是本游记，主要讲的是作者十年旅行的见闻和心路历程，从自然平实的词句中可以看出作者心态很平和，能体会这种心态，已经很好。
 
-{% img http://pic.yupoo.com/leninlee/CUTfChw6/medium.jpg %}
+![](http://pic.yupoo.com/leninlee/CUTfChw6/medium.jpg)
 
 **PS: 有点淡淡的忧桑，今天，我高考十年……**

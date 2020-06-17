@@ -8,7 +8,7 @@ tags:
 - 生活
 ---
 
-{% img https://ww2.sinaimg.cn/large/006tNbRwly1fdra76g0i1j30sg0sgjy4.jpg 640 %}
+![](https://ww2.sinaimg.cn/large/006tNbRwly1fdra76g0i1j30sg0sgjy4.jpg)
 
 想吃点清淡的。
 

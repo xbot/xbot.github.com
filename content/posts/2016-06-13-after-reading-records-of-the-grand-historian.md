@@ -10,7 +10,7 @@ tags:
 - 历史
 ---
 
-{% img /image/20160613001.jpg %}
+![](/image/20160613001.jpg)
 
 之前读通鉴，用了四年，这次用了七个月。终于是名正言顺的两司马门下走狗了，哦耶。
 
@@ -32,4 +32,4 @@ tags:
 
 *本文最早发布在公众号：__两司马门下走狗__*
 
-{% img /asset/qrcode_zougou.jpg %}
+![](/asset/qrcode_zougou.jpg)

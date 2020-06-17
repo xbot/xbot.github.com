@@ -13,16 +13,16 @@ tags:
 
 交作业：
 
-{% img http://pic.yupoo.com/leninlee/DDU0q8d7/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/DDU0q8d7/medish.jpg)
 
-{% img http://pic.yupoo.com/leninlee/DDU0sey9/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/DDU0sey9/medish.jpg)
 
-{% img http://pic.yupoo.com/leninlee/DDU0s9ak/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/DDU0s9ak/medish.jpg)
 
 这次一口气上了魔鬼六连弯，弯口溪水别样清啊：
 
-{% img http://pic.yupoo.com/leninlee/DDU0s3cm/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/DDU0s3cm/medish.jpg)
 
 小蓝月湖，命名权是我的：
 
-{% img http://pic.yupoo.com/leninlee/DDU2DREG/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/DDU2DREG/medish.jpg)

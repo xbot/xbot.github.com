@@ -17,7 +17,7 @@ tags:
 D1：北京到白石山，爬山，到满城住宿。  
 D2：看满城汉墓，回京。
 
-{% img http://pic.yupoo.com/leninlee/EPZaPbLj/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZaPbLj/medish.jpg)
 
 ## D1 白石山
 
@@ -31,55 +31,55 @@ D2：看满城汉墓，回京。
 
 山里大部分路口都是局部路标，带张完整的路线图还是有必要的。
 
-{% img http://pic.yupoo.com/leninlee/EPZaP9T6/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZaP9T6/medish.jpg)
 
 我对所有以“传说”开头介绍的东西不感冒，总之这个塑像是环线的起点和终点。
 
-{% img http://pic.yupoo.com/leninlee/EPZaPQq7/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZaPQq7/medish.jpg)
 
 一开始就走下坡，沿着峡壁的栈道下到飞狐峡，这一线主要是峡谷半山的栈道，是全环线最好的一段，我喜欢峡谷。
 
-{% img http://pic.yupoo.com/leninlee/EPZaQQZj/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZaQQZj/medish.jpg)
 
 飞狐峡走的人少，多数时间太阳不直晒，风吹着，凉快。
 
-{% img http://pic.yupoo.com/leninlee/EPZaRttP/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZaRttP/medish.jpg)
 
 我喜欢峡谷。
 
-{% img http://pic.yupoo.com/leninlee/EPZaRYSZ/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZaRYSZ/medish.jpg)
 
 每个山谷都应该有一条河，可惜。
 
-{% img http://pic.yupoo.com/leninlee/EPZaSCeW/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZaSCeW/medish.jpg)
 
 逆风如解意，容易莫摧残。
 
-{% img http://pic.yupoo.com/leninlee/EPZaT6Td/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZaT6Td/medish.jpg)
 
 仙人晒靴。不喜欢这种附会的东西。
 
-{% img http://pic.yupoo.com/leninlee/EPZaTCqU/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZaTCqU/medish.jpg)
 
 太行之神。这货跟神有一毛钱关系么。
 
-{% img http://pic.yupoo.com/leninlee/EPZaULWh/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZaULWh/medish.jpg)
 
 好吧，这才是重点，玻璃栈道。一点儿都不吓银，而且很短，而且收费，看我的斯卡帕美不美。
 
-{% img http://pic.yupoo.com/leninlee/EPZaV9pl/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZaV9pl/medish.jpg)
 
 回望走过的栈道，敢问路在何方。
 
-{% img http://pic.yupoo.com/leninlee/EPZaVIyf/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZaVIyf/medish.jpg)
 
 过了玻璃栈道就是双雄石，好内涵的名字，剩下的路已经不多了，而且都是平路。
 
-{% img http://pic.yupoo.com/leninlee/EPZaW6zQ/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZaW6zQ/medish.jpg)
 
 猪八戒背媳妇儿。虽然附会，确实比较像，就是这媳妇儿砢碜了点儿。
 
-{% img http://pic.yupoo.com/leninlee/EPZaWrFX/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZaWrFX/medish.jpg)
 
 走一圈环线用了4个小时。刚下山，到停车场，毫无征兆的一场暴雨，这酸爽，山里的天气真是孩子脸。
 
@@ -95,99 +95,99 @@ D2：看满城汉墓，回京。
 
 景区大门，我喜欢人少的地方。头一天在同程上订好的园区门票、窦绾墓、刘胜墓的联票，比现买便宜十块，一个景点分段收费，旅游业非常黑。
 
-{% img http://pic.yupoo.com/leninlee/EPZaXBGL/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZaXBGL/medish.jpg)
 
 石像生和翁仲应该不是汉墓的原物。
 
-{% img http://pic.yupoo.com/leninlee/EPZaYlwl/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZaYlwl/medish.jpg)
 
-{% img http://pic.yupoo.com/leninlee/EPZaZDpx/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZaZDpx/medish.jpg)
 
 有索道，不过山不高，没必要。
 
-{% img http://pic.yupoo.com/leninlee/EPZaZRzF/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZaZRzF/medish.jpg)
 
 夫人窦绾墓在靖王墓北一百多米处，容积比靖王墓大，大概是靖王死在先，窦绾墓多施工了几年。
 
 墓门用砖砌墙，然后注入熔铁封死。倒这样的斗确实不容易。
 
-{% img http://pic.yupoo.com/leninlee/EPZb03TW/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZb03TW/medish.jpg)
 
 窦绾墓平面图。仿宫殿式布局，两个耳室一存车马，一存饮食。中室是客厅。侧室是带浴室的主卧。
 
-{% img http://pic.yupoo.com/leninlee/EPZb1g5N/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZb1g5N/medish.jpg)
 
 墓道里非常凉快，和外面完全两个世界。两千年前的人，先用火灼烧石壁，再用水激，最后用铁器凿掉碎石，这样的工艺也算是巧夺天工了。
 
-{% img http://pic.yupoo.com/leninlee/EPZb0yci/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZb0yci/medish.jpg)
 
-{% img http://pic.yupoo.com/leninlee/EPZb1xhm/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZb1xhm/medish.jpg)
 
 南耳室是车库。
 
-{% img http://pic.yupoo.com/leninlee/EPZb1hLc/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZb1hLc/medish.jpg)
 
 北耳室存放饮食。
 
-{% img http://pic.yupoo.com/leninlee/EPZb1D6u/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZb1D6u/medish.jpg)
 
 中室灰常大。
 
-{% img http://pic.yupoo.com/leninlee/EPZb2wJB/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZb2wJB/medish.jpg)
 
 渗水井和室内排水沟相连，组成很完善的排水系统。
 
-{% img http://pic.yupoo.com/leninlee/EPZb2QMD/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZb2QMD/medish.jpg)
 
 金缕玉衣，仿品。
 
-{% img http://pic.yupoo.com/leninlee/EPZb2Xv0/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZb2Xv0/medish.jpg)
 
 侧室，窦绾的金缕玉衣和传说中的长信宫灯原本停放在这里。
 
-{% img http://pic.yupoo.com/leninlee/EPZb4Cio/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZb4Cio/medish.jpg)
 
-{% img http://pic.yupoo.com/leninlee/EPZb3VxW/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZb3VxW/medish.jpg)
 
-{% img http://pic.yupoo.com/leninlee/EPZb5bS7/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZb5bS7/medish.jpg)
 
 靖王墓的容积虽然比窦绾墓小，不过规制似乎更大。中室有木瓦结构的建筑，卧室在中室正后方，卧室后甚至有回廊。
 
-{% img http://pic.yupoo.com/leninlee/EPZb5kuE/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZb5kuE/medish.jpg)
 
-{% img http://pic.yupoo.com/leninlee/EPZb5mdJ/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZb5mdJ/medish.jpg)
 
 中室内的木瓦建筑，象征宴会厅。
 
-{% img http://pic.yupoo.com/leninlee/EPZb6jdy/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZb6jdy/medish.jpg)
 
 南耳室，车库。
 
-{% img http://pic.yupoo.com/leninlee/EPZb6jdy/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZb6jdy/medish.jpg)
 
 北耳室，仓库。
 
-{% img http://pic.yupoo.com/leninlee/EPZb72EZ/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZb72EZ/medish.jpg)
 
 中室，宴会厅。
 
-{% img http://pic.yupoo.com/leninlee/EPZb76pe/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZb76pe/medish.jpg)
 
 后室回廊。
 
-{% img http://pic.yupoo.com/leninlee/EPZb7LbK/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZb7LbK/medish.jpg)
 
 后室，刘胜的金缕玉衣和传说中的错金博山炉原本停放在这里。
 
-{% img http://pic.yupoo.com/leninlee/EPZb86WF/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZb86WF/medish.jpg)
 
-{% img http://pic.yupoo.com/leninlee/EPZb9vvc/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZb9vvc/medish.jpg)
 
-{% img http://pic.yupoo.com/leninlee/EPZbafBF/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZbafBF/medish.jpg)
 
-{% img http://pic.yupoo.com/leninlee/EPZbaC0C/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZbaC0C/medish.jpg)
 
-{% img http://pic.yupoo.com/leninlee/EPZbb7dQ/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EPZbb7dQ/medish.jpg)
 
 ## 费用
 

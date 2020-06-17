@@ -13,11 +13,11 @@ tags:
 
 照例，先交作业：
 
-{% img http://pic.yupoo.com/leninlee/DH6LbtQT/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/DH6LbtQT/medish.jpg)
 
-{% img http://pic.yupoo.com/leninlee/DH6KVk28/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/DH6KVk28/medish.jpg)
 
-{% img http://pic.yupoo.com/leninlee/DH6KUt7T/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/DH6KUt7T/medish.jpg)
 
 走香山路是因为不想重复上周的老路，但是很快就体会到了不长记性的后果，这条路似乎从来没有不堵过，天气这么差都挡不住这么多人，植物园门口一坨一坨的，我一直觉得香山之难看、植物园之无聊可著北京城都是数一数二的，要不说文人可恶呢，忽悠了多少人！
 

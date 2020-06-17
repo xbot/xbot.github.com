@@ -8,7 +8,7 @@ tags:
 - 生活
 ---
 
-{% img https://ww1.sinaimg.cn/large/006tNbRwly1fdfq6e4b0qj30sg0sg11s.jpg 640 %}
+![](https://ww1.sinaimg.cn/large/006tNbRwly1fdfq6e4b0qj30sg0sg11s.jpg)
 
 去年学的。
 

@@ -14,7 +14,7 @@ tags:
 
 效果如图：
 
-{% img http://pic.yupoo.com/leninlee/EIOXvoh8/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EIOXvoh8/medish.jpg)
 
 创建脚本，并赋可执行权限：
 

@@ -24,8 +24,8 @@ Karabiner Elements会监听配置文件`~/.config/karabiner/karabiner.json`，�
 
 键盘插入事件：
 
-{% img https://ww3.sinaimg.cn/large/006tNc79ly1fdt8iy3ydmj30cq0b6q3z.jpg %}
+![](https://ww3.sinaimg.cn/large/006tNc79ly1fdt8iy3ydmj30cq0b6q3z.jpg)
 
 键盘拔出事件：
 
-{% img https://ww2.sinaimg.cn/large/006tNc79ly1fdt8jz1aspj30cn0b1my6.jpg %}
+![](https://ww2.sinaimg.cn/large/006tNc79ly1fdt8jz1aspj30cn0b1my6.jpg)

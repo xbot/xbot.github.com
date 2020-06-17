@@ -11,7 +11,7 @@ tags:
 - 历史
 ---
 
-{% img http://pic.yupoo.com/leninlee/F6y8YsUg/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/F6y8YsUg/medish.jpg)
 
 读这本书，用了一年时间。前面读《通鉴》，用了四年，平均一年五本书的节奏，读尽相斫书的伟大理想不知道这辈子能不能实现了。汉以后的书都好读，也不一定。
 

@@ -8,7 +8,7 @@ tags:
 - 生活
 ---
 
-{% img https://ww4.sinaimg.cn/large/006tNc79ly1fdsballmi5j30sg0sgdnh.jpg 640 %}
+![](https://ww4.sinaimg.cn/large/006tNc79ly1fdsballmi5j30sg0sgdnh.jpg)
 
 继续清淡。
 

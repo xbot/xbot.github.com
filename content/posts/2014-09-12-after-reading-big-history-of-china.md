@@ -10,6 +10,6 @@ tags:
 - 历史
 ---
 
-{% img http://pic.yupoo.com/leninlee/E3k8bFJc/medium.jpg %}
+![](http://pic.yupoo.com/leninlee/E3k8bFJc/medium.jpg)
 
 偏学术，比较抽象，不如《万历十五年》好看。

@@ -20,7 +20,7 @@ tags:
 
 在Chrome开发工具中点开这个错误，显示以下内容：
 
-{% img http://pic.yupoo.com/leninlee/D0dD4euT/cULuA.png %}
+![](http://pic.yupoo.com/leninlee/D0dD4euT/cULuA.png)
 
 从方法的注释或API中可以看到，checkAcceptance()是用来判断当前拖拽对象是否在这个target接受的范围之内，接受规则用Source和Target的构造参数中的“accept”定义。在这个方法里通过Source.getItem()方法拿到的对象是null，上述错误就是从这儿报出来的。
 

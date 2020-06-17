@@ -8,7 +8,7 @@ tags:
 - 最佳实践
 ---
 
-{% img http://ww1.sinaimg.cn/large/006tKfTcly1fepi05fa8ej31kw1kwx6q.jpg 600 %}
+![](http://ww1.sinaimg.cn/large/006tKfTcly1fepi05fa8ej31kw1kwx6q.jpg)
 
 用树莓派做音频airplay效果不错，老书架音箱又可以用起来了。
 

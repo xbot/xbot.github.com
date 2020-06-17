@@ -7,7 +7,7 @@ categories:
 - 计算机
 tags:
 - 编程
-- euler
+- 欧拉工程
 ---
 
 1000-digit Fibonacci number

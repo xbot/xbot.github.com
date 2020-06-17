@@ -13,7 +13,7 @@ tags:
 - MongoDB
 ---
 
-{% img http://pic.yupoo.com/leninlee/E9VWUjut/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/E9VWUjut/medish.jpg)
 
 第二版比第一版补充了很多内容，介绍得很详细，是学习mongodb的好书。
 

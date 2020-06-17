@@ -25,7 +25,7 @@ So I reluctantly descided to part from rxvt-unicode. A number of terminals came 
 
 Here is the final effect:
 
-{% img http://pic.yupoo.com/leninlee/CZy402Q6/fc4i1.png 500 %}
+![](http://pic.yupoo.com/leninlee/CZy402Q6/fc4i1.png)
 
 **Update (2013-07-07 23:34:53):**
 

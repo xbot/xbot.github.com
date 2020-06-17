@@ -12,7 +12,7 @@ tags:
 
 一开始我不太喜欢电影版变形金刚，因为太像人就缺少科技感，我至今都认为G1是不可逾越的经典。不过变4的这款V级平头OP确实是个经典的模具，一个好的变形金刚玩具应有标准几乎都符合。
 
-{% img http://pic.yupoo.com/leninlee/EDFWGrQR/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EDFWGrQR/medish.jpg)
 
 人形身材匀称、没有冗余部件，关键是无背包，很少有能做到这一点的模具，几乎所有大黄蜂最大的败笔都是有个巨大的背包。涂装鲜艳、视觉效果强烈，作为一个Prime，搞得满身火焰纹、花里胡哨的真的好么？
 
@@ -24,11 +24,11 @@ tags:
 
 头雕不够精细，眼睛是可以透光的。
 
-{% img http://pic.yupoo.com/leninlee/EDFU2oxD/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EDFU2oxD/medish.jpg)
 
 车形也是个亮点。我一直不喜欢电影版里那种狗头车，太张扬，反而G1里那种平头车更显内敛，才有大哥气质。
 
-{% img http://pic.yupoo.com/leninlee/EDFU1X5C/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EDFU1X5C/medish.jpg)
 
 做工和用料很不错。我不是孩控，做工和价格都很重要，祖国版用料很扎实，而且有合金部件，做工也不弱于孩版，再加上这白菜价，孩版就呵呵哒了。
 

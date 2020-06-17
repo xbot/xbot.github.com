@@ -12,7 +12,7 @@ tags:
 
 嘴炮OP这个模具应该是电影系列十年来最好的模具，经典到一再复刻和改模，和原色双刀、DA28一起都属同模或改模版本。相比之下，这款模具在涂装上胜过同模其它版本，电镀件和银柒使人形、车形在色彩上对比鲜明，和银色飞翼搭配很自然。
 
-{% img http://pic.yupoo.com/leninlee/EKm5Xn5y/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EKm5Xn5y/medish.jpg)
 
 人形正面比例协调，领袖级的大小更显霸气。腰部和小腿部的两对轮子太累赘，腰部的轮子完全可以设计成收纳到腰里。
 
@@ -24,21 +24,21 @@ tags:
 
 踝关节可以左右摆动，所以脚的接地性没有问题，不过全身最大的两块电镀件居然踩在脚底板当鞋垫，真是无语了。
 
-{% img http://pic.yupoo.com/leninlee/EKmcV5LK/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EKmcV5LK/medish.jpg)
 
 这款模具之所以叫嘴炮OP，就是因为有嘴有炮。一般OP的模具的头雕都是带口罩的，而这款是露嘴的。其实我更喜欢带口罩的形象，机器人要嘴没什么用，尤其像大黄蜂那种嗪奶头的嘴，见一次吐一次。
 
 头雕很精细，细节的刻画和涂装都很到位，只是这长了鳃的OP是要配合天火马甲搞个海陆空三栖么。
 
-{% img http://pic.yupoo.com/leninlee/EKmdnv02/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EKmdnv02/medish.jpg)
 
 背包不算大，不过还是过于突兀，尤其是这交叉的造型个人觉得很难看。
 
-{% img http://pic.yupoo.com/leninlee/EKmd8JC8/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EKmd8JC8/medish.jpg)
 
 炮是由两个油箱组合变形而成，虽然炮形比较奇葩，但是构思确实很新颖。
 
-{% img http://pic.yupoo.com/leninlee/EKm4Xluq/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EKm4Xluq/medish.jpg)
 
 受G1动画的影响，我觉得朴实无华的平头卡车更能显现OP的威严，电影版的狗头卡车多少有点浮夸。不过从还原电影的角度来说，这款模具的载具形态还是很不错的。尤其是两部分电镀件，遮光板和进气面板，非常闪亮。白色描边的火焰纹的刻画也很到位。
 

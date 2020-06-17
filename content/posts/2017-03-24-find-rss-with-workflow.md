@@ -17,5 +17,5 @@ RSS真是没落了，很多网站都没有明确输出Feed地址，每次想订�
 
 ---
 
-{% img https://ww1.sinaimg.cn/large/006tNc79ly1fdy95stcokj30ih0wugnk.jpg 320 %}
-{% img https://ww3.sinaimg.cn/large/006tNc79ly1fdy95w6sncj30ih0wumyy.jpg 320 %}
+![](https://ww1.sinaimg.cn/large/006tNc79ly1fdy95stcokj30ih0wugnk.jpg)
+![](https://ww3.sinaimg.cn/large/006tNc79ly1fdy95w6sncj30ih0wumyy.jpg)

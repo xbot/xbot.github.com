@@ -8,7 +8,7 @@ tags:
 - 生活
 ---
 
-{% img https://ww2.sinaimg.cn/large/006tNbRwly1fdekxg6n3nj30sg0sgn60.jpg 640 %}
+![](https://ww2.sinaimg.cn/large/006tNbRwly1fdekxg6n3nj30sg0sgn60.jpg)
 
 去年学的，今天忘买蒜了，也挺好吃的。
 

@@ -19,25 +19,25 @@ tags:
 
 不知道为什么，记录到了北安河就结束了，最后十公里木有了。
 
-{% img http://pic.yupoo.com/leninlee/DGaYw0Qi/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/DGaYw0Qi/medish.jpg)
 
-{% img http://pic.yupoo.com/leninlee/DGaZP1XR/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/DGaZP1XR/medish.jpg)
 
-{% img http://pic.yupoo.com/leninlee/DGbqdTkZ/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/DGbqdTkZ/medish.jpg)
 
 在网上见有人说从桥西进去不查门票，遂先过永定河，从西边进去，路上捡了个迷路的小盆友，说刚刚用手机导航直接上了高速！聊 后得知是北科大的学生，曾国藩的老乡，骑了辆不知道什么牌子的旧车，怯生生的，不禁遥想老夫当年，去矽谷吃顿七块钱的土豆牛肉饭都美得不行不行的。
 
 骑到桥西入口，一个大妈模样的头从售票处小窗口里伸出来：“二十！”，要不说我没有大妈缘呢，走到哪都被拦，去年苦逼哈哈地推到七王坟，大妈说封山防火，片板不得入山。老老实实地买了票，才见著真神，爱个国容易么。桥是金章宗的时候建的，乾隆五十多年重修。桥下就是永定河，左宗棠任直隶总督时在此治水，旧称无定河，不过不是“可怜无定河边骨，犹是春闺梦里人”里的那条。
 
-{% img http://pic.yupoo.com/leninlee/DGbmWZvZ/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/DGbmWZvZ/medish.jpg)
 
 请小盆友拍了张孤王的戎装照：
 
-{% img http://pic.yupoo.com/leninlee/DGbmX91K/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/DGbmX91K/medish.jpg)
 
 果然每个狮子都不一样，小学课本不余欺也：
 
-{% img http://pic.yupoo.com/leninlee/DGbmYClu/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/DGbmYClu/medish.jpg)
 
 卢沟晓月，所谓的燕京八景之一，我一般不尿这种虚无缥缈、滥竽充数的东西，鲁迅在《再论雷峰塔的倒掉》里说：
 
@@ -45,19 +45,19 @@ tags:
 
 我虽然不喜欢鲁迅，因为此人文风过于惼狭和左倾，虽然老先生一再声明不针对所有国人，但还是随处可见断章取义、不懂装懂的人扯大旗作虎皮，动辄就中国人的劣根性怎么怎么样。但在这一点上我跟老先生意见一致，就某些小县城都有所谓“七台八景”，台好歹还有个土堆，景就开始胡扯了。
 
-{% img http://pic.yupoo.com/leninlee/DGbmY2fr/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/DGbmY2fr/medish.jpg)
 
 摆一堆仿明清的大炮干什么，跟七七世变不搭调，更容易联想到两甲子前的那场战争，此日漫挥天下泪，有公足庄海军威。
 
-{% img http://pic.yupoo.com/leninlee/DGcan9YW/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/DGcan9YW/medish.jpg)
 
 小盆友的高中历史是体育老师教的，居然不知道宛平城。这座长宽只有几百米的小城是崇祯为抵御闯贼建的桥头堡。不要门票。
 
-{% img http://pic.yupoo.com/leninlee/DGbmXnSE/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/DGbmXnSE/medish.jpg)
 
 这么小的一座城居然还有瓮城：
 
-{% img http://pic.yupoo.com/leninlee/DGbmZQTg/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/DGbmZQTg/medish.jpg)
 
 城里有个抗日纪念馆，免费参观，因为没处存车，没有进去，不过受党国栽培多年，用脚趾头也能想到里面都是什么，不去也罢。城里没啥可吃的，小盆友说要回校再吃饭，我心说您是直接奔学院路了，我还有几十公里路要绕，不补充热量怎么行，请小盆友吃了顿热干面。这兄弟明显没有方向感，好容易才让他找著北，在手机上找好回学院路的路线，最后送出东门，然后告诉他怎么走之后，老夫才起驾回宫。
 

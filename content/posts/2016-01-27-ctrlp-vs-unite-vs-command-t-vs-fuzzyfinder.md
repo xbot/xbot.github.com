@@ -17,7 +17,7 @@ Sublime在文件打开速度上的表现很惊艳，Vim有几个扩展可以实�
 
 虽然每个扩展都或多或少地实现了一些功能，我个人用得最多的也就文件、Tag、Buffer Tag的模糊查找这三个，像MRU、buffer之类的查找不觉得有多大用处，所以提高工作效率的工具一定是在热度环节有很好表现，其余偏门功能可以交给插件实现，在这点上CtrlP和Unite做得很好。所以下面针对最常用的这三个功能做下对比，更多功能的对比见下表：
 
-{% img http://pic.yupoo.com/leninlee/FhDLWLYr/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/FhDLWLYr/medish.jpg)
 
 文件模糊查找
 ------------

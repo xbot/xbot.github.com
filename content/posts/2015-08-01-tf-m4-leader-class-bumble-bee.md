@@ -14,25 +14,25 @@ tags:
 
 电影4的L级BB是3的同模异涂，但是阉割了武器背包，也就是说，这货没有声光效果！虽然3的背包很鸡肋，但是本著先看有没有，再看好不好的原则，4的玩具再一次见证了大缩水时代，我不敢想下一代会做成什么样。多么怀念那个连D级玩具都远超现在L级的时代。
 
-{% img http://pic.yupoo.com/leninlee/ER427t8F/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/ER427t8F/medish.jpg)
 
 虽然电影2的U级和战刃是公认最经典的BB模具，退而求其次，3的模具也不错。人形很有层次感和曲线感。涂装较3有改进的地方，黑色部件的引入增强了色彩对比，比3的非灰即黄要好很多；最大的亮点是脸和触角的银柒涂装，3的灰脸看著像骷髅头，很恐怖。不过退步和进步一样明显，首先面具改成了V形描边，远不如之前的面部横描好看，现在一点都不想把面具拉下来了；此外，脚尖没有涂色也是个败笔。
 
-{% img http://pic.yupoo.com/leninlee/ER428In6/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/ER428In6/medish.jpg)
 
 头雕的细节刻画不错，还是BB一贯的嗪奶嘴的骷髅头，面具的涂装也很差，银柒涂装是唯一能挽回点儿颜面的地方。
 
-{% img http://pic.yupoo.com/leninlee/ER428Z3G/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/ER428Z3G/medish.jpg)
 
-{% img http://pic.yupoo.com/leninlee/ER429Aqn/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/ER429Aqn/medish.jpg)
 
 手臂采用非对称设计，右手手炮，左手是个半假手，只有大拇指可动，什么都握不住，只是个摆设，看看当年电影2的D级的战刃，完全不能比啊。
 
-{% img http://pic.yupoo.com/leninlee/ER428D01/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/ER428D01/medish.jpg)
 
 脚的设计很漂亮，不过虽然看起来支撑面很大，但由于踝关节不可左右摆动，导致接地性不好。
 
-{% img http://pic.yupoo.com/leninlee/ER429gLn/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/ER429gLn/medish.jpg)
 
 所有BB模具都不能解决的大背包，现在似乎已经成为BB的特征了，好吧，即便接受这一点，这一整块棺材板好意思跟战刃的两级背板比么？
 
@@ -46,4 +46,4 @@ tags:
 
 最后放一张3的武装爆甲照，缅怀BB入宫前的峥嵘岁月。
 
-{% img http://pic.yupoo.com/leninlee/ER44HJDK/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/ER44HJDK/medish.jpg)

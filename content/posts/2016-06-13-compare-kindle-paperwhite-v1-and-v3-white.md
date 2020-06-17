@@ -10,7 +10,7 @@ tags:
 - 读书
 ---
 
-{% img /image/20160613002.jpg %}
+![](/image/20160613002.jpg)
 
 如果说2代相对于1代的改进微乎其微，3代在屏幕和配置上的升级是效果显著的。
 
@@ -26,4 +26,4 @@ tags:
 
 *本文最早发布在公众号：__两司马门下走狗__*
 
-{% img /asset/qrcode_zougou.jpg %}
+![](/asset/qrcode_zougou.jpg)

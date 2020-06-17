@@ -8,7 +8,7 @@ tags:
 - 生活
 ---
 
-{% img https://ww1.sinaimg.cn/large/006tNbRwly1fdoid7q73mj30sg0sgwnf.jpg 640 %}
+![](https://ww1.sinaimg.cn/large/006tNbRwly1fdoid7q73mj30sg0sgwnf.jpg)
 
 没有平底锅和夹子是硬伤啊。
 

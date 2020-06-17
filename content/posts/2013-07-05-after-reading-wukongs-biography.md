@@ -14,4 +14,4 @@ tags:
 
 这是本适合少年读、青年悟、中年回味的书，很遗憾没有在我最好的几年里读过它。到了没有激情和理想的年龄，已经不能耐著性子读这种需要花时间和动脑子的书，这次在Kindle PaperWhite上匆匆翻完，我知道可能需要很多年去慢慢的品。
 
-{% img http://pic.yupoo.com/leninlee/CZj8ATdH/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/CZj8ATdH/medish.jpg)

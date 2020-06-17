@@ -28,7 +28,7 @@ Solution
 
 Using sets instead of lists greatly improves performance in Python:
 
-{% codeblock lang:python p23.py %}
+{% codeblock %}
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 

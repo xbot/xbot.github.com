@@ -16,7 +16,7 @@ tags:
 
 虽然祖国版整体而言是很好的东东，不过厂家的品控做得很不好，我玩儿过几个实体才挑到合适的，有的车头背部塑料板开盒就是烂的，有的轮轱个别没有涂银柒，比较普遍的现象是大枪插不进背部凹槽，还有个别关节比较松。所以买祖国版还是蛮拼人品的。
 
-{% img http://pic.yupoo.com/leninlee/EGZsq1TR/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EGZsq1TR/medish.jpg)
 
 人形体格匀称，没有背包，除了门板手外，没有累赘部件，虽然门板可以卸掉，但并没有地方收纳。
 
@@ -30,11 +30,11 @@ tags:
 
 一般比较用心的模具都会在可玩性上加一个噱头，比如平头OP的枪是可以发射子弹的。探长的噱头就是组合武器，拼装后的大枪还是很霸气的，只是一只手举不起来，必须双手托枪。武器的收纳方面做得很好，无论是人形还是载具形态，都可以完美收纳所有武器。
 
-{% img http://pic.yupoo.com/leninlee/EGZrLORA/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EGZrLORA/medish.jpg)
 
 拆开挂满身，不愧是个武器库。
 
-{% img http://pic.yupoo.com/leninlee/EGZrLe2y/medish.jpg %}
+![](http://pic.yupoo.com/leninlee/EGZrLe2y/medish.jpg)
 
 车形的原型是奥什科什防务军用战术装甲车，也非常帅。有两个轮子不能著地，不过整体滚动性不错。
 

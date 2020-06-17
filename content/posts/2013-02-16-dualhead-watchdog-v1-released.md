@@ -18,7 +18,7 @@ For example, I use i3wm in my daily life and I use dual-head display, my laptop 
 
 More than that, users can make this app do everything when display settings are changed. At the moment, there will be a 'monitors-changed' and a 'size-changed' event, users can specify which event to listen to for each command.
 
-{% img http://pic.yupoo.com/leninlee/CE7yNP6h/medium.jpg %}
+![](http://pic.yupoo.com/leninlee/CE7yNP6h/medium.jpg)
 
 Features
 --------

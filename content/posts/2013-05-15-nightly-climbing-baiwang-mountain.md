@@ -13,6 +13,6 @@ tags:
 
 站在望京楼上俯瞰夜色中的帝都：
 
-{% img http://pic.yupoo.com/leninlee/CRxZLvnf/medium.jpg %}
+![](http://pic.yupoo.com/leninlee/CRxZLvnf/medium.jpg)
 
 活动强度很低，适合下班后锻炼一下。百望山很矮，但是叉路很多，有的爬了。
