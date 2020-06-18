@@ -3,7 +3,7 @@ title: "博主本紀"
 date: 2013-05-12 20:46:00
 ---
 <span style="display:none">
-{% img right http://pic.yupoo.com/leninlee/CRoI5EyI/small.jpg %}
+http://pic.yupoo.com/leninlee/CRoI5EyI/small.jpg
 </span>
 
 博主者，故陳國人也，起於閭左，姓名不可考。
