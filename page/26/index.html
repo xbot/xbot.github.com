@@ -1,828 +1,172 @@
 <!DOCTYPE html>
-<html>
-<head><meta name="generator" content="Hexo 3.8.0">
-  <meta charset="utf-8">
-  
-  <title>晴耕雨讀</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="晴耕雨讀">
-<meta property="og:url" content="http://0x3f.org/page/26/index.html">
-<meta property="og:site_name" content="晴耕雨讀">
-<meta property="og:locale" content="zh-TW">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="晴耕雨讀">
-  
-  
-    <link rel="icon" href="/favicon.png">
-  
-  <link href="/webfonts/ptserif/main.css" rel="stylesheet" type="text/css">
-  <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="/css/style.css">
-  
-<!-- Google Analytics -->
-<script type="text/javascript">
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-ga('create', 'UA-93233020-1', 'auto');
-ga('send', 'pageview');
-
-</script>
-<!-- End Google Analytics -->
-
-
-</head>
-</html>
-<body>
-  <div id="container">
-    <!-- blair add baidu tongji start... @2017.10.03 -->
-<!-- blair add baidu tongji end ! @2017.10.03 -->
-
-<header id="header">
-  <div id="header-outer" class="outer">
-    <div id="header-inner" class="inner">
-      <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
-      <a id="logo" class="logo" href="/"></a>
-      <nav id="main-nav">
-        
-          <a class="main-nav-link" href="/archives">目录</a>
-        
-          <a class="main-nav-link" href="/categories">分类</a>
-        
-          <a class="main-nav-link" href="/tags">标签</a>
-        
-          <a class="main-nav-link" href="https://t.me/s/blingings">不灵</a>
-        
-          <a class="main-nav-link" href="/about">关于</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        <div id="search-form-wrap">
-          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
-        </div>
-      </nav>
-    </div>
-  </div>
-</header>
-
-    <br>
-    <section id="main" class="outer">
-      <article id="post-practical-drag-and-drop-implementation-with-dojo" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/practical-drag-and-drop-implementation-with-dojo/"><strong>用Dojo实现拖放操作的最佳实践</strong></a>
-      <small class="article-date-index">&nbsp; 2013-11-05</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/practical-drag-and-drop-implementation-with-dojo/" class="article-date">
-  <time datetime="2013-11-05T08:58:00.000Z" itemprop="datePublished">2013-11-05</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/practical-drag-and-drop-implementation-with-dojo/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>网上关于Dojo实现拖放操作的资料都讲得很浅，所以我在研究这个东西的时候在一些细节上费了不少功夫，例如创建自定义样式的拖拽物件、将光标置于拖拽开始时的位置等等。这些细节一般在实现个性化的拖放操作时都要涉及，但几乎找不到任何直接的资料，所以本文斗胆宣称是当前Dojo拖放的最佳实践。</p>
-<h2 id="创建自定义样式的拖拽物件"><a href="#创建自定义样式的拖拽物件" class="headerlink" title="创建自定义样式的拖拽物件"></a>创建自定义样式的拖拽物件</h2><p>Dojo缺省的拖拽物件样式很丑，通过覆盖官方文档里列出的几个CSS的class可以有限地调整部分样式，如果需要更多个性化，就需要使用自定义的物件模板。</p>
-<p>通过重载Source对象的creator方法可以实现这一点。这个方法会在创建拖拽物件的时候被调用，如果hint参数的值为“avatar”就表示将被创建的是被拖拽物件，此时可以使用预先定义好的模板avatarTmpl创建物件的node。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">this</span>.dndSrc = <span class="keyword">new</span> Source(<span class="keyword">this</span>.itemList.domNode, &#123;</span><br><span class="line">    copyOnly:<span class="literal">true</span>,</span><br><span class="line">    selfAccept:<span class="literal">true</span>,</span><br><span class="line">    creator: <span class="function"><span class="keyword">function</span>(<span class="params">item, hint</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> n;</span><br><span class="line">        <span class="keyword">if</span> (hint == <span class="string">'avatar'</span>) &#123;</span><br><span class="line">            n = domConstruct.toDom(lang.replace(avatarTmpl, item));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> &#123;<span class="attr">node</span>:n, <span class="attr">data</span>:item, <span class="attr">type</span>:[<span class="string">'text'</span>]&#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<h2 id="置光标位置于拖拽起始处"><a href="#置光标位置于拖拽起始处" class="headerlink" title="置光标位置于拖拽起始处"></a>置光标位置于拖拽起始处</h2><p>在拖拽开始后，Dojo默认将光标置于被拖拽物件的左上角，而一般把光标置于拖拽开始时相对于物件的位置处显得比较自然。</p>
-<p>实现方式是先记录拖拽开始时光标的位置，然后设置dojo.dnd.Manager的两个位移属性。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">on(<span class="keyword">this</span>.domNode, <span class="string">'mousedown'</span>, lang.hitch(<span class="keyword">this</span>, <span class="keyword">this</span>._setDndOffset))</span><br><span class="line"></span><br><span class="line">_setDndOffset: <span class="function"><span class="keyword">function</span>(<span class="params">evt</span>)</span>&#123;</span><br><span class="line">    <span class="comment">// summary: 鼠标按下时将光标相对于组件的位移设置为dojo.dnd.Manager的位移</span></span><br><span class="line">    <span class="comment">//          即使光标在拖动开始后位于拖动开始时的位置</span></span><br><span class="line">    <span class="keyword">var</span> cPos = Functions.getCursorPosition(evt);</span><br><span class="line">    <span class="keyword">var</span> nPos = domGeometry.position(<span class="keyword">this</span>.domNode);</span><br><span class="line">    Manager.manager().OFFSET_X = nPos.x - cPos.x;</span><br><span class="line">    Manager.manager().OFFSET_Y = nPos.y - cPos.y;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
-<h2 id="使鼠标事件穿透被拖拽物件"><a href="#使鼠标事件穿透被拖拽物件" class="headerlink" title="使鼠标事件穿透被拖拽物件"></a>使鼠标事件穿透被拖拽物件</h2><p>将光标置于物件开始被拖拽时的位置后，物件本身会挡住mouseover事件，导致Target不能获知物件被拖拽到自己上方，以致能拖不能放。</p>
-<p>解决方法是通过CSS使鼠标事件穿透被拖拽物件。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">.dojoDndAvatar &#123;</span><br><span class="line">    pointer-events: none; <span class="comment">/*Chrome, FF下使鼠标事件穿透*/</span></span><br><span class="line">    background:transparent; <span class="comment">/*IE下使鼠标事件穿透*/</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-typeerror-access-denied" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/typeerror-access-denied/"><strong>IE中使用IFrame上传文件报错——TypeError:拒绝访问</strong></a>
-      <small class="article-date-index">&nbsp; 2013-08-03</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/typeerror-access-denied/" class="article-date">
-  <time datetime="2013-08-02T17:03:00.000Z" itemprop="datePublished">2013-08-03</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/typeerror-access-denied/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>场景为：</p>
-<p>点击一个图标，打开文件选择对话框，选择好文件后即时上传。</p>
-<p>之前的实现方式是在一个隐藏表单中放一个file类型的input元素，通过调用input.click()打开对话框，同时监听input.onchange，最后通过dojo/request/iframe上传文件。</p>
-<p>这个实现方式在Chrome和Firefox里都没问题，但是在IE里报错：“<strong>TypeError:拒绝访问</strong>”。原因是IE要求必须通过点击file类型的input的按钮打开选择对话框，否则就报这个错误。</p>
-<p>解决办法是修改input元素的样式，或者直接用dojox.form.Uploader替代。</p>
-<p><em>因为这个破问题又血战到半夜，只支持IE9+的世界你们好吗，还支持IE7+的屌丝伤不起……不起……起……啊。<strong>IE不死，吾难未已！！！</strong></em></p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-dojo-dnd-cannot-read-property-type-of-undefined" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/dojo-dnd-cannot-read-property-type-of-undefined/"><strong>Dojo DnD: Cannot read property &#39;type&#39; of undefined</strong></a>
-      <small class="article-date-index">&nbsp; 2013-07-11</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/dojo-dnd-cannot-read-property-type-of-undefined/" class="article-date">
-  <time datetime="2013-07-11T14:44:00.000Z" itemprop="datePublished">2013-07-11</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/dojo-dnd-cannot-read-property-type-of-undefined/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>场景如下：</p>
-<p>假设有两个Widget：ItemListWidget和ItemWidget，后者要被创建多份并追加到前者内部，同时ItemListWidget要作为dojo/dnd/Source，每个ItemWidget作为一个单元可被拖拽到另外一个dojo/dnd/Target容器中。</p>
-<p>问题是，当Source被创建后，再添加到ItemListWidget的ItemWidget实例在被拖拽时会报如下错误：</p>
-<blockquote>
-<p>Uncaught TypeError: Cannot read property ‘type’ of undefined</p>
-</blockquote>
-<p>在Chrome开发工具中点开这个错误，显示以下内容：</p>
-<img src="http://pic.yupoo.com/leninlee/D0dD4euT/cULuA.png">
-<p>从方法的注释或API中可以看到，checkAcceptance()是用来判断当前拖拽对象是否在这个target接受的范围之内，接受规则用Source和Target的构造参数中的“accept”定义。在这个方法里通过Source.getItem()方法拿到的对象是null，上述错误就是从这儿报出来的。</p>
-<p>接合API和Reference Guide发现，每个Source中的可拖拽项目在Source中都要有一个对应的对象，这个对象至少包括两个属性：“data”和“type”。在<a href="http://dojotoolkit.org/reference-guide/1.9/dojo/dnd.html" target="_blank" rel="noopener">Reference Guide</a>中，对这两个属性有详细说明，简言之，data是向Target传递的数据，type是被Target用来判断拖拽个体是否属于接受范围的依据。</p>
-<p>当Source实例被创建时，已经存在于ItemListWidget中的ItemWidget实例会被自动创建对应的上述对象，但之后加入的不会。解决的办法是调用Source.setItem()方法为每一个新加入的ItemWidget关联相应的对象，或在ItemWidget中添加一个构造参数，用于指定Source，并在postCreate()方法中为当前ItemWidget实例关联相应的对象:</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">define([</span><br><span class="line">    <span class="string">"dojo/_base/declare"</span>,</span><br><span class="line">    <span class="string">"dijit/_WidgetBase"</span>,</span><br><span class="line">], <span class="function"><span class="keyword">function</span>(<span class="params">declare, _WidgetBase</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> declare(<span class="string">"ItemWidget"</span>, [_WidgetBase], &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 本Widget实例所属的Source实例</span></span><br><span class="line">        dndSrc: <span class="literal">null</span>,</span><br><span class="line">        </span><br><span class="line">        postCreate: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.inherited(<span class="built_in">arguments</span>);</span><br><span class="line">            <span class="comment">// 不需要传递数据时，可忽略data参数</span></span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">this</span>.dndSrc !== <span class="literal">null</span>)</span><br><span class="line">                <span class="keyword">this</span>.dndSrc.setItem(<span class="keyword">this</span>.id, &#123;<span class="attr">type</span>:[<span class="string">"text"</span>]&#125;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-take-sakura-as-my-primary-terminal" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/take-sakura-as-my-primary-terminal/"><strong>Take Sakura as My Primary Terminal</strong></a>
-      <small class="article-date-index">&nbsp; 2013-07-07</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/take-sakura-as-my-primary-terminal/" class="article-date">
-  <time datetime="2013-07-07T04:07:00.000Z" itemprop="datePublished">2013-07-07</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/take-sakura-as-my-primary-terminal/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>It’s a long time since I came across rxvt-unicode. </p>
-<p>About seven years ago, when I switched from Windows XP to Ubuntu mainly for performance issues, I never be bored with searching for everything with a higher speed. To me, gnome-terminal is too much slow as a terminal being frequently opened and closed. Then, rxvt-unicode came through.</p>
-<p>At first glance, rxvt-unicode was so ugly that I put it behind without the slightest bit of hesitation. Not until I once saw a screenshot did I realize this ugly thing can actually be pretty like that. So I started to take it as my primary terminal since then, for it was the fastest terminal I can find at that time.</p>
-<p>Time flies, rxvt-unicode has proved to be a very good friend within these years, only until yesterday. I descided to change my Zsh theme to agnoster, which is a very pretty and git-friendly theme. Although I did everything according to the official manual, the right and left arrow signs were still displayed as boxes, then I tried almost all the methods I could find from Google, it still didn’t work.</p>
-<p>So I reluctantly descided to part from rxvt-unicode. A number of terminals came out through these years, some of them also show a good performance, like sakura, terminator, etc. Now I take sakura as my primary terminal, it runs as fast as rxvt-unicode while working normally with agnoster or powerline.</p>
-<p>Here is the final effect:</p>
-<img src="http://pic.yupoo.com/leninlee/CZy402Q6/fc4i1.png" width="500">
-<p><strong>Update (2013-07-07 23:34:53):</strong></p>
-<p>Thanks to Star Brilliant, he mentioned LilyTerm in his comment. I discovered that it is even faster than Sakura while supplying plenty of functions, so now I descide to switch to LilyTerm.</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-after-reading-wukongs-biography" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/after-reading-wukongs-biography/"><strong>读完《悟空传》</strong></a>
-      <small class="article-date-index">&nbsp; 2013-07-05</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/after-reading-wukongs-biography/" class="article-date">
-  <time datetime="2013-07-05T15:12:00.000Z" itemprop="datePublished">2013-07-05</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/青梅煮酒/">青梅煮酒</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/after-reading-wukongs-biography/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>我要这天，再遮不住我眼；要这地，再埋不了我心；要这众生，都明白我意；要那诸佛，都烟消云散！</strong></p>
-<p>这是本适合少年读、青年悟、中年回味的书，很遗憾没有在我最好的几年里读过它。到了没有激情和理想的年龄，已经不能耐著性子读这种需要花时间和动脑子的书，这次在Kindle PaperWhite上匆匆翻完，我知道可能需要很多年去慢慢的品。</p>
-<img src="http://pic.yupoo.com/leninlee/CZj8ATdH/medish.jpg">
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-get-position-in-qtablewidget-for-changed-cellwidgets" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/get-position-in-qtablewidget-for-changed-cellwidgets/"><strong>PySide: How to Get the Position of a Widget-Value-Changed Cell in QTableWidget</strong></a>
-      <small class="article-date-index">&nbsp; 2013-07-01</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/get-position-in-qtablewidget-for-changed-cellwidgets/" class="article-date">
-  <time datetime="2013-06-30T16:57:00.000Z" itemprop="datePublished">2013-07-01</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/get-position-in-qtablewidget-for-changed-cellwidgets/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Assume we have created an instance of QTableWidget, in which cells are filled with widgets like QComboBox, QCheckBox, etc. When values are changed, we need to get the row and column indexes of the cells. But the QTableWidget.cellChanged() and QTableWidget.itemChanged() signals are only effective for cells containing QTableWidgetItem instances, for those in which widgets are filled in with QTableWidget.setCellWidget(), this doesn’t work.</p>
-<p>This problem nearly made me crazy last weekend. So how can I make it ?</p>
-<p>Here is the solution, by leveraging QSignalMapper, we can send other data to the slots instead of the default value. As the following code snippet shows, I put the row and column indexes into a string, then mapped it with the QComboBox.currentIndexChanged() slot. Notice that this slot has two generics, one accept an int type as the parameter and the other accept a string, so a <strong>QString</strong> key should be used to select the second generic.</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">signalMapper = QtCore.QSignalMapper(self.ui)</span><br><span class="line">signalMapper.setMapping(comboWidget, <span class="string">'%d,%d'</span> % (rowIdx, colIdx))</span><br><span class="line">comboWidget.currentIndexChanged[<span class="string">'QString'</span>].connect(signalMapper.map)</span><br><span class="line">signalMapper.mapped[<span class="string">'QString'</span>].connect(self.__onCellWidgetChanged)</span><br></pre></td></tr></table></figure>
-<p>The only downside of this solution is, we should call QTableWidget.cellWidget() seperately to get the new value. Which I think it’s not to much trouble.</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-my-mouses-of-all-those-years" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/my-mouses-of-all-those-years/"><strong>那些年我用过的鼠标</strong></a>
-      <small class="article-date-index">&nbsp; 2013-06-29</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/my-mouses-of-all-those-years/" class="article-date">
-  <time datetime="2013-06-29T11:53:00.000Z" itemprop="datePublished">2013-06-29</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/my-mouses-of-all-those-years/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>第四款，罗技M185，卖相不错，无光，一节五号电池驱动，据说很省电，握感不错，正在用。</p>
-<img src="http://pic.yupoo.com/leninlee/CYn6F5gI/medium.jpg">
-<p>第三款，惠普百灵，卖相不错，大小适中，左侧两个快捷按键在浏览网页时前进后退很方便。两节七号电池驱动，不太省电。先后买过两个，都是滚轮失灵，似乎这款的滚轮有问题，伤心了。</p>
-<img src="http://pic.yupoo.com/leninlee/CYn6Fr6q/medium.jpg">
-<p>第二款，雷柏7100，形状较大，握感还可以，用一节五号电池，省电。最后按键失灵，壮烈牺牲。</p>
-<img src="http://pic.yupoo.com/leninlee/CYn6G96i/medium.jpg">
-<p>第一款，Thinkpad 31P7410，先后买过两三个，比较小巧，按键易坏，不推荐。</p>
-<img src="http://pic.yupoo.com/leninlee/CYn6Fkha/medium.jpg">
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-after-reading-ten-years-of-traveling" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/after-reading-ten-years-of-traveling/"><strong>读完《背包十年》</strong></a>
-      <small class="article-date-index">&nbsp; 2013-06-06</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/after-reading-ten-years-of-traveling/" class="article-date">
-  <time datetime="2013-06-06T14:12:00.000Z" itemprop="datePublished">2013-06-06</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/青梅煮酒/">青梅煮酒</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/after-reading-ten-years-of-traveling/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>年龄越大，越有种对失去自由的恐惧。“老牛自知夕阳晚，不用扬鞭自奋蹄”，于是越来越想走得远点儿，然后就看到了这本书。这是我第一次正经买电子书，花了3￥，用了五天的时间。</p>
-<p>这是本游记，主要讲的是作者十年旅行的见闻和心路历程，从自然平实的词句中可以看出作者心态很平和，能体会这种心态，已经很好。</p>
-<img src="http://pic.yupoo.com/leninlee/CUTfChw6/medium.jpg">
-<p><strong>PS: 有点淡淡的忧桑，今天，我高考十年……</strong></p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-make-youcompleteme-ultisnips-compatible" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/make-youcompleteme-ultisnips-compatible/"><strong>How to Make YouCompleteMe Compatible with UltiSnips</strong></a>
-      <small class="article-date-index">&nbsp; 2013-05-23</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/make-youcompleteme-ultisnips-compatible/" class="article-date">
-  <time datetime="2013-05-23T03:26:00.000Z" itemprop="datePublished">2013-05-23</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/make-youcompleteme-ultisnips-compatible/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>I replaced <a href="https://github.com/Shougo/neocomplcache" target="_blank" rel="noopener">NeoComplCache</a> with <a href="https://github.com/Valloric/YouCompleteMe" target="_blank" rel="noopener">YouCompleteMe</a> today. The main reason is for the auto-complete feature and the fast speed. Besides, it seems that YCM provides more features than NCC.</p>
-<p>Although NCC can also do auto-completions, it was so slow that I had to turn it off. For a long time, I have been doing completions by triggering the TAB key manually. YCM is much faster in most conditions, but I found it is also slow for C source files. Moreover, with the power of <a href="https://github.com/davidhalter/jedi" target="_blank" rel="noopener">jedi</a>, YCM makes completions of python sources much wiser, which is very convenient.</p>
-<p>Then a problem raised again. It’s the confiliction of mappings for Tab key between YCM and <a href="https://github.com/SirVer/ultisnips" target="_blank" rel="noopener">UltiSnips</a>. Many people changed the default mapping of either YCM or UltiSnips, but I cannot tolerate that. I insist that the most convenient way is UltiSnips having a higher priority above YCM, which means, when Tab is triggered, UltiSnips expands the snippet, if there is not a valid snippet, YCM will take over the job.</p>
-<p>Fortunately, there is a solution. The idea is the same with <a href="/post/neocomplcache-vim/">my former post about NCC</a>. I made it by the help of <a href="https://github.com/ervandew/supertab" target="_blank" rel="noopener">SuperTab</a>.</p>
-<p>I have to say that UltiSnips is a well-written script, it passes Tab key through if there is not a snippet. Then SuperTab will be triggered. Since the default action of SuperTab is customizable, so I can set it to the key-binding of YCM. That is the whole trick.</p>
-<p>First, change the default key-binding of YCM to \&lt;C-TAB> and \&lt;C-S-TAB>:</p>
-<blockquote>
-<p>let g:ycm_key_list_select_completion = [‘\&lt;C-TAB>‘, ‘\&lt;Down>‘]<br>let g:ycm_key_list_previous_completion = [‘\&lt;C-S-TAB>‘, ‘\&lt;Up>‘]</p>
-</blockquote>
-<p>Then set the default action of SuperTab to triggering \&lt;C-TAB>:</p>
-<blockquote>
-<p>let g:SuperTabDefaultCompletionType = ‘\&lt;C-Tab>‘</p>
-</blockquote>
-<p>OK, job done.</p>
-<h3 id="相关阅读："><a href="#相关阅读：" class="headerlink" title="相关阅读："></a>相关阅读：</h3><ul>
-<li><a href="/post/replace-youcompleteme-with-neocomplete/">用neocomplete换掉了YouCompleteMe</a></li>
-<li><a href="/post/neocomplcache-vim/">Vim的终极自动补全插件：NeoComplCache</a></li>
-</ul>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-vundle-vs-pathogen" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/vundle-vs-pathogen/"><strong>Vundle vs Pathogen</strong></a>
-      <small class="article-date-index">&nbsp; 2013-05-22</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/vundle-vs-pathogen/" class="article-date">
-  <time datetime="2013-05-22T13:33:00.000Z" itemprop="datePublished">2013-05-22</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/vundle-vs-pathogen/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>I have been using Pathogen for a long time and I am happy with it. But it seems that more and more Vim scripts are recommending to use Vundle in their install references. So I made a study today, the conclusion is, although almost all the articles I found from Google have a positive attitude on Vundle, I still prefer Pathogen.</p>
-<p>Most supporters of Vundle praise it for one reason, that is, it can install and update scripts automatically, which is lacked by Pathogen. Yes, since Vundle leverages the vim-scripts repository on GitHub, it is really easier to do so than Pathogen. But the disadvantage is as good as the advantage. I found that the vim-scripts repo is not updated in time, the latest activity was carried out a month ago ! As an OCD patient of updating, I cannot tolerate old versions of vim scripts. Although that Vundle supports using scripts’ git repos of their own (either on GitHub or other places), there is still a problem, what if authors commit broken code to the master brunch ?</p>
-<p>Moreover, not all scripts are deposited in public git repos. How can I organize those scripts in ~/.vim/bundle/ and prevent :BundleClean from deleting them at the same time ?</p>
-<p>Pathogen only handles the organization job that puts scripts in individual folders under ~/.vim/bundle/, so there is without the above problem. For updating issues, GetLatestVimScripts.vim is a good choice, it fetches the latest stable updates from vim.org, so I don’t have to worry about careless commits. The only problem is, when GetLatestVimScripts.vim downloads all packages, I should install them manually. But since most scripts rarely update, I think this is not a hard work to do.</p>
-<p>KISS things are always good.</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <nav id="page-nav">
-        <a class="extend prev" rel="prev" href="/page/25/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/24/">24</a><a class="page-number" href="/page/25/">25</a><span class="page-number current">26</span><a class="page-number" href="/page/27/">27</a><a class="page-number" href="/page/28/">28</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/27/">Next &raquo;</a>
-      </nav>
-    
-
-</section>
-    <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2020 晴耕雨讀&nbsp;
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/52binge/hexo-theme-blairos">blairos</a>
-    </div>
-  </div>
-</footer>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    extensions: ["tex2jax.js"],
-    jax: ["input/TeX"],
-    tex2jax: {
-      inlineMath: [ ['$','$'], ['\\(','\\)'] ],
-      displayMath: [ ['$$','$$']],
-      processEscapes: true
+<html lang="zh-CN">
+    <head>
+	<meta name="generator" content="Hugo 0.72.0" />
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>晴耕雨讀</title><meta name="Description" content="Donie&#39;s blog."><meta property="og:title" content="晴耕雨讀" />
+<meta property="og:description" content="Donie&#39;s blog." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="http://0x3f.org/" />
+<meta property="og:image" content="http://0x3f.org/logo.png"/>
+<meta property="og:updated_time" content="2020-06-17T17:28:11+08:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://0x3f.org/logo.png"/>
+
+<meta name="twitter:title" content="晴耕雨讀"/>
+<meta name="twitter:description" content="Donie&#39;s blog."/>
+<meta name="application-name" content="晴耕雨讀">
+<meta name="apple-mobile-web-app-title" content="晴耕雨讀"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://0x3f.org/" /><link rel="alternate" href="/index.xml" type="application/rss+xml" title="晴耕雨讀">
+    <link rel="feed" href="/index.xml" type="application/rss+xml" title="晴耕雨讀"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "WebSite",
+        "url": "http:\/\/0x3f.org\/","inLanguage": "zh-CN","author": {
+                "@type": "Person",
+                "name": "淘气"
+            },"description": "Donie's blog.","image": "http:\/\/0x3f.org\/images\/Apple-Devices-Preview.png","thumbnailUrl": "http:\/\/0x3f.org\/images\/screenshot.png","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","name": "晴耕雨讀"
     }
-  });
-</script>
-<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML,http://myserver.com/MathJax/config/local/local.js">
-</script>
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
 
-    
-<script type="text/javascript"> <!-- add by blair 0724 type=text/javascript -->
-  var disqus_shortname = '0x3f';
-  
-  (function(){
-    var dsq = document.createElement('script');
-    dsq.type = 'text/javascript';
-    dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="page home" posts><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/post/what-is-yi-ji/">「食其」是什么？</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class="post-publish">发布于 <time datetime="2016-06-06">2016-06-06</time></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E9%9D%92%E6%A2%85%E7%85%AE%E9%85%92/"><i class="far fa-folder fa-fw"></i>青梅煮酒</a></span></div><div class="content">「食其」音「异基」，人名。 读汉初的历史，有三个人都叫这个名字：郦食其、审食其和赵食其。这似乎在当时是个很流行的名字，俨然就是汉代的丽丽、芳芳</div><div class="post-footer">
+        <a href="/post/what-is-yi-ji/">阅读全文</a><div class="post-tags">
+                <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/%E8%AF%BB%E4%B9%A6/">读书</a>,&nbsp;<a href="/tags/%E5%8E%86%E5%8F%B2/">历史</a>,&nbsp;<a href="/tags/%E5%85%AC%E4%BC%97%E5%8F%B7/">公众号</a></div></div>
+</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/post/the-first-post-of-running-dog/">两司马门下走狗创刊号</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class="post-publish">发布于 <time datetime="2016-06-06">2016-06-06</time></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E9%9D%92%E6%A2%85%E7%85%AE%E9%85%92/"><i class="far fa-folder fa-fw"></i>青梅煮酒</a></span></div><div class="content">算是开始玩自媒体了么？ 如果从写博客算起，十年前就算了。从一开始和大多数人一样，把博客当成公开日记写，到后来很快明白博客的定位，我的自媒体时代</div><div class="post-footer">
+        <a href="/post/the-first-post-of-running-dog/">阅读全文</a><div class="post-tags">
+                <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/%E8%AF%BB%E4%B9%A6/">读书</a>,&nbsp;<a href="/tags/%E5%8E%86%E5%8F%B2/">历史</a>,&nbsp;<a href="/tags/%E5%85%AC%E4%BC%97%E5%8F%B7/">公众号</a></div></div>
+</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/post/kindle-lazybones/">Kindle Lazybones: Control Kindle From Your Phone</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class="post-publish">发布于 <time datetime="2016-06-06">2016-06-06</time></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"><i class="far fa-folder fa-fw"></i>计算机</a></span></div><div class="content">Kindle Lazybones .-. _ ( `. .' ) `\ ` .' | | | | | 66|_ | ,__) |(,_| | | | \_, | | | | .' \ ( , ) '--' '-' Remote controlling utilities for Kindle. Feature Flip over Kindle with your smartphone. Issues Currently only Kindle PaperWhite is supported, PW2/PW3 are not yet. Kindle still goes to sleep after 10 minutes, a temporary solution is</div><div class="post-footer">
+        <a href="/post/kindle-lazybones/">阅读全文</a><div class="post-tags">
+                <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/%E7%BC%96%E7%A8%8B/">编程</a>,&nbsp;<a href="/tags/kindle/">kindle</a></div></div>
+</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/post/a-strange-decisive-battle/">奇怪的决战</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class="post-publish">发布于 <time datetime="2016-05-01">2016-05-01</time></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E9%9D%92%E6%A2%85%E7%85%AE%E9%85%92/"><i class="far fa-folder fa-fw"></i>青梅煮酒</a></span></div><div class="content">前两天读史记王翦列传，觉得秦楚的决战很奇怪。 王翦果代李信击荆。荆闻王翦益军而来，乃悉国中兵以拒秦。王翦至，坚壁而守之，不肯战。荆兵数出挑战，</div><div class="post-footer">
+        <a href="/post/a-strange-decisive-battle/">阅读全文</a><div class="post-tags">
+                <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/%E5%8F%B2%E8%AE%B0/">史记</a>,&nbsp;<a href="/tags/%E8%AF%BB%E4%B9%A6/">读书</a>,&nbsp;<a href="/tags/%E9%9A%8F%E7%AC%94/">随笔</a></div></div>
+</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/post/alfred-pushbullet/">Alfred-pushbullet: Push a text to your phone</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class="post-publish">发布于 <time datetime="2016-04-13">2016-04-13</time></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"><i class="far fa-folder fa-fw"></i>计算机</a></span></div><div class="content">Pushbullet workflow for Alfred. Features Push a text to another device. Installation Download the latest release and rename it to pushbullet.alfredworkflow. Double click it to import it into Alfred. Double click the &ldquo;Run Script&rdquo; button and replace &ldquo;ACCESS_TOKEN&rdquo; and &ldquo;DEVICE_NAME&rdquo; according to your pushbullet settings. Activate alfred and input &ldquo;push blablabla&rdquo;, then press enter. Author base64decode IkRvbmllIExlaWdoIiA8ZG9uaWUubGVpZ2hAZ21haWwuY29tPgo= Download https://github.com/xbot/alfred-pushbullet/</div><div class="post-footer">
+        <a href="/post/alfred-pushbullet/">阅读全文</a><div class="post-tags">
+                <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/%E7%BC%96%E7%A8%8B/">编程</a>,&nbsp;<a href="/tags/mac/">Mac</a>,&nbsp;<a href="/tags/alfred/">alfred</a></div></div>
+</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/post/create-mac-bootable-usb-stick-on-linux/">Linux下做Mac OSX安装U盘的步骤</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class="post-publish">发布于 <time datetime="2016-03-08">2016-03-08</time></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"><i class="far fa-folder fa-fw"></i>计算机</a></span></div><div class="content">假设U盘对应/dev/sdb1、OSX安装包是osx.dmg。整个过程就是提取出一系列文件，然后复制到U盘里。 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15</div><div class="post-footer">
+        <a href="/post/create-mac-bootable-usb-stick-on-linux/">阅读全文</a><div class="post-tags">
+                <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/archlinux/">Archlinux</a>,&nbsp;<a href="/tags/mac/">Mac</a></div></div>
+</article><ul class="pagination"><li class="page-item ">
+                    <span class="page-link">
+                        <a href="/">1</a>
+                    </span>
+                </li><li class="page-item ">
+                    <span class="page-link" aria-hidden="true">&hellip;</span>
+                </li><li class="page-item ">
+                    <span class="page-link">
+                        <a href="/page/24/">24</a>
+                    </span>
+                </li><li class="page-item ">
+                    <span class="page-link">
+                        <a href="/page/25/">25</a>
+                    </span>
+                </li><li class="page-item active">
+                    <span class="page-link">
+                        <a href="/page/26/">26</a>
+                    </span>
+                </li><li class="page-item ">
+                    <span class="page-link">
+                        <a href="/page/27/">27</a>
+                    </span>
+                </li><li class="page-item ">
+                    <span class="page-link">
+                        <a href="/page/28/">28</a>
+                    </span>
+                </li><li class="page-item ">
+                    <span class="page-link" aria-hidden="true">&hellip;</span>
+                </li><li class="page-item ">
+                    <span class="page-link">
+                        <a href="/page/69/">69</a>
+                    </span>
+                </li></ul></div></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.72.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2006 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">淘气</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
 
-
-<script src="/js/jquery.min.js"></script>
-
-
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
-
-
-<script src="/js/script.js"></script>
-
-  </div>
-</body>
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"search":{"algoliaAppID":"PASDMWALPK","algoliaIndex":"index.zh-cn","algoliaSearchKey":"b42948e51daaa93df92381c8e2ac0f93","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
 </html>

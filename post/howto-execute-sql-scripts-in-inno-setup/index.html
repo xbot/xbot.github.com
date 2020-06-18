@@ -1,272 +1,307 @@
 <!DOCTYPE html>
-<html>
-<head><meta name="generator" content="Hexo 3.8.0">
-  <meta charset="utf-8">
-  
-  <title>Inno Setup执行SQL脚本的方法 - 晴耕雨讀</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="作为和NSIS并立的、两个最流行的免费Windows应用程序安装包制作工具之一，Inno在学习难度上相对要低一些，非常适合对一些简单的桌面程序打包。但对于较复杂的安装过程，或者Web应用程序来说，我个人觉得不是Inno的强项。当然，既然Inno内嵌了Pascal语言用以扩展功能，理论上不是不可以应付复杂的安装过程，但实现起来要复杂一些。  比如对于在安装过程中连接数据库并执行SQL脚本这样的需求，">
-<meta name="keywords" content="编程,Windows,数据库,MySQL,oracle,安装,客户端">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Inno Setup执行SQL脚本的方法">
-<meta property="og:url" content="http://0x3f.org/post/howto-execute-sql-scripts-in-inno-setup/index.html">
-<meta property="og:site_name" content="晴耕雨讀">
-<meta property="og:description" content="作为和NSIS并立的、两个最流行的免费Windows应用程序安装包制作工具之一，Inno在学习难度上相对要低一些，非常适合对一些简单的桌面程序打包。但对于较复杂的安装过程，或者Web应用程序来说，我个人觉得不是Inno的强项。当然，既然Inno内嵌了Pascal语言用以扩展功能，理论上不是不可以应付复杂的安装过程，但实现起来要复杂一些。  比如对于在安装过程中连接数据库并执行SQL脚本这样的需求，">
-<meta property="og:locale" content="zh-TW">
-<meta property="og:updated_time" content="2020-02-06T13:44:05.333Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Inno Setup执行SQL脚本的方法">
-<meta name="twitter:description" content="作为和NSIS并立的、两个最流行的免费Windows应用程序安装包制作工具之一，Inno在学习难度上相对要低一些，非常适合对一些简单的桌面程序打包。但对于较复杂的安装过程，或者Web应用程序来说，我个人觉得不是Inno的强项。当然，既然Inno内嵌了Pascal语言用以扩展功能，理论上不是不可以应付复杂的安装过程，但实现起来要复杂一些。  比如对于在安装过程中连接数据库并执行SQL脚本这样的需求，">
-  
-  
-    <link rel="icon" href="/favicon.png">
-  
-  <link href="/webfonts/ptserif/main.css" rel="stylesheet" type="text/css">
-  <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="/css/style.css">
-  
-<!-- Google Analytics -->
-<script type="text/javascript">
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>Inno Setup执行SQL脚本的方法 - 晴耕雨讀</title><meta name="Description" content="Donie&#39;s blog."><meta property="og:title" content="Inno Setup执行SQL脚本的方法" />
+<meta property="og:description" content="作为和NSIS并立的、两个最流行的免费Windows应用程序安装包制作工具之一，Inno在学习难度上相对要低一些，非常适合对一些简单的桌面程" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://0x3f.org/post/howto-execute-sql-scripts-in-inno-setup/" />
+<meta property="og:image" content="http://0x3f.org/logo.png"/>
+<meta property="article:published_time" content="2010-05-17T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-06-17T17:28:11+08:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://0x3f.org/logo.png"/>
 
-ga('create', 'UA-93233020-1', 'auto');
-ga('send', 'pageview');
+<meta name="twitter:title" content="Inno Setup执行SQL脚本的方法"/>
+<meta name="twitter:description" content="作为和NSIS并立的、两个最流行的免费Windows应用程序安装包制作工具之一，Inno在学习难度上相对要低一些，非常适合对一些简单的桌面程"/>
+<meta name="application-name" content="晴耕雨讀">
+<meta name="apple-mobile-web-app-title" content="晴耕雨讀"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://0x3f.org/post/howto-execute-sql-scripts-in-inno-setup/" /><link rel="prev" href="http://0x3f.org/post/freearc/" /><link rel="next" href="http://0x3f.org/post/using-cpufrequtils-to-reduce-cpu-temperature/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Inno Setup执行SQL脚本的方法",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/0x3f.org\/post\/howto-execute-sql-scripts-in-inno-setup\/"
+        },"image": ["http:\/\/0x3f.org\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "MySQL, oracle, Windows, 安装, 客户端, 数据库, 编程","wordcount":  1602 ,
+        "url": "http:\/\/0x3f.org\/post\/howto-execute-sql-scripts-in-inno-setup\/","datePublished": "2010-05-17T00:00:00+00:00","dateModified": "2020-06-17T17:28:11+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": "http:\/\/0x3f.org\/images\/avatar.png"},"author": {
+                "@type": "Person",
+                "name": "淘气"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
 
-</script>
-<!-- End Google Analytics -->
-
-
-</head>
-</html>
-<body>
-  <div id="container">
-    <!-- blair add baidu tongji start... @2017.10.03 -->
-<!-- blair add baidu tongji end ! @2017.10.03 -->
-
-<header id="header">
-  <div id="header-outer" class="outer">
-    <div id="header-inner" class="inner">
-      <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
-      <a id="logo" class="logo" href="/"></a>
-      <nav id="main-nav">
-        
-          <a class="main-nav-link" href="/archives">目录</a>
-        
-          <a class="main-nav-link" href="/categories">分类</a>
-        
-          <a class="main-nav-link" href="/tags">标签</a>
-        
-          <a class="main-nav-link" href="https://t.me/s/blingings">不灵</a>
-        
-          <a class="main-nav-link" href="/about">关于</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        <div id="search-form-wrap">
-          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
         </div>
-      </nav>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
     </div>
-  </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
 </header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">Inno Setup执行SQL脚本的方法</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2010-05-17">2010-05-17</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1602 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 4 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"></div>
+            </div><div class="content" id="content"><p>作为和<a href="http://zh.wikipedia.org/zh-cn/Nullsoft%E8%85%B3%E6%9C%AC%E5%AE%89%E8%A3%9D%E7%B3%BB%E7%B5%B1">NSIS</a>并立的、两个最流行的免费Windows应用程序安装包制作工具之一，<a href="http://en.wikipedia.org/wiki/Inno_Setup">Inno</a>在学习难度上相对要低一些，非常适合对一些简单的桌面程序打包。但对于较复杂的安装过程，或者Web应用程序来说，我个人觉得不是Inno的强项。当然，既然Inno内嵌了<a href="http://zh.wikipedia.org/zh-cn/Pascal">Pascal</a>语言用以扩展功能，理论上不是不可以应付复杂的安装过程，但实现起来要复杂一些。</p>
 
-    <br>
-    <section id="main" class="outer"><article id="post-howto-execute-sql-scripts-in-inno-setup" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="article-title" itemprop="name">
-      Inno Setup执行SQL脚本的方法
-      <small class="article-detail-date-index">&nbsp; 2010-05-17</small>
-    </h1>
-  
-
-
-        <div class="page-title"></div>
-        <br>
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/howto-execute-sql-scripts-in-inno-setup/" class="article-date">
-  <time datetime="2010-05-16T16:00:00.000Z" itemprop="datePublished">2010-05-17</time>
-</a>-->
-      <!-- 
---><!-- by blair 160724 -->
-      <!-- by blair
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/howto-execute-sql-scripts-in-inno-setup/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>作为和<a href="http://zh.wikipedia.org/zh-cn/Nullsoft%E8%85%B3%E6%9C%AC%E5%AE%89%E8%A3%9D%E7%B3%BB%E7%B5%B1" target="_blank" rel="noopener">NSIS</a>并立的、两个最流行的免费Windows应用程序安装包制作工具之一，<a href="http://en.wikipedia.org/wiki/Inno_Setup" target="_blank" rel="noopener">Inno</a>在学习难度上相对要低一些，非常适合对一些简单的桌面程序打包。但对于较复杂的安装过程，或者Web应用程序来说，我个人觉得不是Inno的强项。当然，既然Inno内嵌了<a href="http://zh.wikipedia.org/zh-cn/Pascal" target="_blank" rel="noopener">Pascal</a>语言用以扩展功能，理论上不是不可以应付复杂的安装过程，但实现起来要复杂一些。</p>
-
-<p>比如对于在安装过程中连接数据库并执行SQL脚本这样的需求，使用<a href="http://en.wikipedia.org/wiki/InstallShield" target="_blank" rel="noopener">InstallShield</a>应该会简单地多，而Inno却不支持直接操作数据库，并且相关的资料说明少之又少，还不如NSIS丰富，以至于我踏破铁鞋无觅处，最终却在NSIS的资料中找到了思路。</p>
+<p>比如对于在安装过程中连接数据库并执行SQL脚本这样的需求，使用<a href="http://en.wikipedia.org/wiki/InstallShield">InstallShield</a>应该会简单地多，而Inno却不支持直接操作数据库，并且相关的资料说明少之又少，还不如NSIS丰富，以至于我踏破铁鞋无觅处，最终却在NSIS的资料中找到了思路。</p>
 
 <p>主要的思路是，在安装过程中，调用数据库客户端连接数据库并执行SQL脚本，然后将执行结果或错误信息输出到文件中，最后通过分析这个文件来判断命令执行的结果。但是，既然是调用特定的客户端，那么对不同数据库的操作自然就有所区别，具体情况如下所述。</p>
 
 <p>首先在打包脚本的<strong>[Files]</strong>段将必需的文件包含进来：</p>
 
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[Files]</span></span><br><span class="line">Source: "D:\Development\MyDemoApp\code\*"; DestDir: "&#123;app&#125;"; Flags: ignoreversion recursesubdirs createallsubdirs</span><br><span class="line">Source: "D:\Development\MyDemoApp\sqlcmd.exe"; Flags: dontcopy</span><br><span class="line">Source: "D:\Development\MyDemoApp\sqlcmd.rll"; Flags: dontcopy</span><br><span class="line">Source: "D:\Development\MyDemoApp\mysql.exe"; Flags: dontcopy</span><br><span class="line">Source: "D:\Development\MyDemoApp\script_mssql.sql"; Flags: dontcopy</span><br><span class="line">Source: "D:\Development\MyDemoApp\script_mysql.sql"; Flags: dontcopy</span><br><span class="line">Source: "D:\Development\MyDemoApp\script_oracle.sql"; Flags: dontcopy</span><br></pre></td></tr></table></figure>
+```ini
+[Files]
+Source: "D:\Development\MyDemoApp\code\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "D:\Development\MyDemoApp\sqlcmd.exe"; Flags: dontcopy
+Source: "D:\Development\MyDemoApp\sqlcmd.rll"; Flags: dontcopy
+Source: "D:\Development\MyDemoApp\mysql.exe"; Flags: dontcopy
+Source: "D:\Development\MyDemoApp\script_mssql.sql"; Flags: dontcopy
+Source: "D:\Development\MyDemoApp\script_mysql.sql"; Flags: dontcopy
+Source: "D:\Development\MyDemoApp\script_oracle.sql"; Flags: dontcopy
+```
 
 <p>在SQL Server中执行脚本的代码片断：</p>
 
-<figure class="highlight pascal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">ExecScriptInMSSQL</span><span class="params">(DBHost, DBLogin, DBPass, DBName: <span class="keyword">String</span>)</span>:</span> Boolean;</span><br><span class="line"><span class="keyword">var</span></span><br><span class="line">    ConnectExe: <span class="keyword">String</span>;</span><br><span class="line">    ConnectParam: <span class="keyword">String</span>;</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">    <span class="comment">&#123;解压临时文件&#125;</span></span><br><span class="line">    ExtractTemporaryFile(<span class="string">'sqlcmd.exe'</span>);</span><br><span class="line">    ExtractTemporaryFile(<span class="string">'sqlcmd.rll'</span>);</span><br><span class="line">    ExtractTemporaryFile(<span class="string">'script_mssql.sql'</span>);</span><br><span class="line">    <span class="comment">&#123;构造数据库连接字符串&#125;</span></span><br><span class="line">    ConnectExe := ExpandConstant(<span class="string">'&#123;tmp&#125;'</span>) + <span class="string">'\sqlcmd.exe'</span>;</span><br><span class="line">    ConnectParam := <span class="string">' -S '</span> + DBHost</span><br><span class="line">        + <span class="string">' -U '</span> + DBLogin</span><br><span class="line">        + <span class="string">' -P '</span> + DBPass</span><br><span class="line">        + <span class="string">' -d '</span> + DBName</span><br><span class="line">        + <span class="string">' -i script_mssql.sql -o '</span></span><br><span class="line">        + ExpandConstant(<span class="string">'&#123;tmp&#125;'</span>) + <span class="string">'\dbstatus.txt'</span>;</span><br><span class="line">    <span class="comment">&#123;建立数据库连接并执行脚本&#125;</span></span><br><span class="line">    <span class="keyword">if</span> Exec(ConnectExe, ConnectParam, <span class="string">''</span>, SW_HIDE, ewWaitUntilTerminated, ResultCode) <span class="keyword">then</span> <span class="keyword">begin</span></span><br><span class="line">        Result := ResultCode = <span class="number">0</span>;</span><br><span class="line">        LoadStringFromFile(ExpandConstant(<span class="string">'&#123;tmp&#125;'</span>) + <span class="string">'\dbstatus.txt'</span>, StatusString);</span><br><span class="line">        <span class="keyword">if</span> StatusString &lt;&gt; <span class="string">''</span> <span class="keyword">then</span> <span class="keyword">begin</span></span><br><span class="line">            MsgBox(StatusString, mbError, MB_OK);</span><br><span class="line">            Result := False;</span><br><span class="line">        <span class="keyword">end</span> <span class="keyword">else</span> <span class="keyword">begin</span></span><br><span class="line">            Result := True;</span><br><span class="line">        <span class="keyword">end</span>;</span><br><span class="line">    <span class="keyword">end</span> <span class="keyword">else</span> <span class="keyword">begin</span></span><br><span class="line">        MsgBox(<span class="string">'Database update failed:'</span><span class="string">#10#10</span> + SysErrorMessage(ResultCode), mbError, MB_OK);</span><br><span class="line">        Result := False;</span><br><span class="line">    <span class="keyword">end</span>;</span><br><span class="line"><span class="keyword">end</span>;</span><br></pre></td></tr></table></figure>
+```pascal
+function ExecScriptInMSSQL(DBHost, DBLogin, DBPass, DBName: String): Boolean;
+var
+    ConnectExe: String;
+    ConnectParam: String;
+begin
+    {解压临时文件}
+    ExtractTemporaryFile('sqlcmd.exe');
+    ExtractTemporaryFile('sqlcmd.rll');
+    ExtractTemporaryFile('script_mssql.sql');
+    {构造数据库连接字符串}
+    ConnectExe := ExpandConstant('{tmp}') + '\sqlcmd.exe';
+    ConnectParam := ' -S ' + DBHost
+        + ' -U ' + DBLogin
+        + ' -P ' + DBPass
+        + ' -d ' + DBName
+        + ' -i script_mssql.sql -o '
+        + ExpandConstant('{tmp}') + '\dbstatus.txt';
+    {建立数据库连接并执行脚本}
+    if Exec(ConnectExe, ConnectParam, '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then begin
+        Result := ResultCode = 0;
+        LoadStringFromFile(ExpandConstant('{tmp}') + '\dbstatus.txt', StatusString);
+        if StatusString <> '' then begin
+            MsgBox(StatusString, mbError, MB_OK);
+            Result := False;
+        end else begin
+            Result := True;
+        end;
+    end else begin
+        MsgBox('Database update failed:'#10#10 + SysErrorMessage(ResultCode), mbError, MB_OK);
+        Result := False;
+    end;
+end;
+```
 
 <p>在MySQL中执行脚本的代码片断：</p>
 
-<figure class="highlight pascal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">ExecScriptInMYSQL</span><span class="params">(DBHost, DBLogin, DBPass, DBName: <span class="keyword">String</span>)</span>:</span> Boolean;</span><br><span class="line"><span class="keyword">var</span></span><br><span class="line">    ConnectExe: <span class="keyword">String</span>;</span><br><span class="line">    ConnectParam: <span class="keyword">String</span>;</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">    <span class="comment">&#123;解压临时文件&#125;</span></span><br><span class="line">    ExtractTemporaryFile(<span class="string">'mysql.exe'</span>);</span><br><span class="line">    ExtractTemporaryFile(<span class="string">'script_mysql.sql'</span>);</span><br><span class="line">    <span class="comment">&#123;构造数据库连接字符串&#125;</span></span><br><span class="line">    ConnectExe := ExpandConstant(<span class="string">'cmd'</span>);</span><br><span class="line">    ConnectParam := <span class="string">' /c "'</span> + ExpandConstant(<span class="string">'&#123;tmp&#125;'</span>) + <span class="string">'\mysql.exe'</span></span><br><span class="line">        + <span class="string">' -h'</span> + DBHost</span><br><span class="line">        + <span class="string">' -u'</span> + DBLogin</span><br><span class="line">        + <span class="string">' -p'</span> + DBPass</span><br><span class="line">        + <span class="string">' -D'</span> + DBName</span><br><span class="line">        + <span class="string">' -e "source '</span> + ExpandConstant(<span class="string">'&#123;tmp&#125;'</span>) + <span class="string">'\script_mysql.sql"" &gt; '</span> + ExpandConstant(<span class="string">'&#123;tmp&#125;'</span>) + <span class="string">'\dbstatus.txt 2&gt;&amp;1'</span>;</span><br><span class="line">    <span class="comment">&#123;建立数据库连接并执行脚本&#125;</span></span><br><span class="line">    <span class="keyword">if</span> Exec(ConnectExe, ConnectParam, <span class="string">''</span>, SW_HIDE, ewWaitUntilTerminated, ResultCode) <span class="keyword">then</span> <span class="keyword">begin</span></span><br><span class="line">        Result := ResultCode = <span class="number">0</span>;</span><br><span class="line">        LoadStringFromFile(ExpandConstant(<span class="string">'&#123;tmp&#125;'</span>) + <span class="string">'\dbstatus.txt'</span>, StatusString);</span><br><span class="line">        <span class="keyword">if</span> StatusString &lt;&gt; <span class="string">''</span> <span class="keyword">then</span> <span class="keyword">begin</span></span><br><span class="line">            MsgBox(StatusString, mbError, MB_OK);</span><br><span class="line">            Result := False;</span><br><span class="line">        <span class="keyword">end</span> <span class="keyword">else</span> <span class="keyword">begin</span></span><br><span class="line">            Result := True;</span><br><span class="line">        <span class="keyword">end</span>;</span><br><span class="line">    <span class="keyword">end</span> <span class="keyword">else</span> <span class="keyword">begin</span></span><br><span class="line">        MsgBox(<span class="string">'Database update failed:'</span><span class="string">#10#10</span> + SysErrorMessage(ResultCode), mbError, MB_OK);</span><br><span class="line">        Result := False;</span><br><span class="line">    <span class="keyword">end</span>;</span><br><span class="line"><span class="keyword">end</span>;</span><br></pre></td></tr></table></figure>
+```pascal
+function ExecScriptInMYSQL(DBHost, DBLogin, DBPass, DBName: String): Boolean;
+var
+    ConnectExe: String;
+    ConnectParam: String;
+begin
+    {解压临时文件}
+    ExtractTemporaryFile('mysql.exe');
+    ExtractTemporaryFile('script_mysql.sql');
+    {构造数据库连接字符串}
+    ConnectExe := ExpandConstant('cmd');
+    ConnectParam := ' /c "' + ExpandConstant('{tmp}') + '\mysql.exe'
+        + ' -h' + DBHost
+        + ' -u' + DBLogin
+        + ' -p' + DBPass
+        + ' -D' + DBName
+        + ' -e "source ' + ExpandConstant('{tmp}') + '\script_mysql.sql"" > ' + ExpandConstant('{tmp}') + '\dbstatus.txt 2>&1';
+    {建立数据库连接并执行脚本}
+    if Exec(ConnectExe, ConnectParam, '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then begin
+        Result := ResultCode = 0;
+        LoadStringFromFile(ExpandConstant('{tmp}') + '\dbstatus.txt', StatusString);
+        if StatusString <> '' then begin
+            MsgBox(StatusString, mbError, MB_OK);
+            Result := False;
+        end else begin
+            Result := True;
+        end;
+    end else begin
+        MsgBox('Database update failed:'#10#10 + SysErrorMessage(ResultCode), mbError, MB_OK);
+        Result := False;
+    end;
+end;
+```
 
 <p>由于mysql.exe没有输出结果到文件的参数，故需要使用cmd.exe来运行mysql.exe以便将其输出重定向到文件dbstatus.txt中。此外，在命令的最后加上参数<strong>2&gt;&amp;1</strong>，将标准错误输出设备也重定向到文件上，否则命令执行的错误信息不会输出到文件中。</p>
 
 <p>在Oracle中执行脚本的代码片断：</p>
 
-<figure class="highlight pascal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">ExecScriptInORACLE</span><span class="params">(ClientPath, DBInstance, DBLogin, DBPass: <span class="keyword">String</span>)</span>:</span> Boolean;</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">    <span class="comment">&#123;解压临时文件&#125;</span></span><br><span class="line">    ExtractTemporaryFile(<span class="string">'script_oracle.sql'</span>);</span><br><span class="line">    <span class="comment">&#123;连接数据库并执行脚本&#125;</span></span><br><span class="line">    <span class="keyword">if</span> Exec(ExpandConstant(<span class="string">'cmd'</span>), <span class="string">' /c "'</span> + ClientPath + <span class="string">' -L -S '</span> + DBLogin</span><br><span class="line">        + <span class="string">'/'</span> + DBPass</span><br><span class="line">        + <span class="string">'@'</span> + DBInstance</span><br><span class="line">        + <span class="string">' @'</span> + ExpandConstant(<span class="string">'&#123;tmp&#125;'</span>) + <span class="string">'\script_oracle.sql &gt; '</span> + ExpandConstant(<span class="string">'&#123;tmp&#125;'</span>) + <span class="string">'\dbstatus.txt 2&gt;&amp;1'</span>,</span><br><span class="line">        <span class="string">''</span>,</span><br><span class="line">        SW_HIDE, ewWaitUntilTerminated, ResultCode)</span><br><span class="line">    <span class="keyword">then</span> <span class="keyword">begin</span></span><br><span class="line">        Result := ResultCode = <span class="number">0</span>;</span><br><span class="line">        LoadStringFromFile(ExpandConstant(<span class="string">'&#123;tmp&#125;'</span>) + <span class="string">'\dbstatus.txt'</span>, StatusString);</span><br><span class="line">        <span class="keyword">if</span> Pos(<span class="string">'holytail'</span>, StatusString) &lt;&gt; <span class="number">0</span> <span class="keyword">then</span> <span class="keyword">begin</span></span><br><span class="line">            <span class="comment">&#123;若输出信息中有“holytail”的子串，则表示脚本成功执行&#125;</span></span><br><span class="line">            <span class="comment">&#123;若执行有误，提示用户打开日志文件&#125;</span></span><br><span class="line">            <span class="keyword">if</span> Pos(<span class="string">'ORA-'</span>, StatusString) &lt;&gt; <span class="number">0</span> <span class="keyword">then</span> <span class="keyword">begin</span></span><br><span class="line">                <span class="comment">&#123;提示用户脚本执行出错&#125;</span></span><br><span class="line">                <span class="keyword">if</span> MsgBox(<span class="string">'数据库更新出错，是否打开日志文件？'</span>, mbConfirmation, MB_YESNO) = IDYES <span class="keyword">then</span> <span class="keyword">begin</span></span><br><span class="line">                    <span class="comment">&#123;打开日志&#125;</span></span><br><span class="line">                    <span class="keyword">if</span> <span class="keyword">not</span> ShellExec(<span class="string">''</span>, ExpandConstant(<span class="string">'&#123;tmp&#125;'</span>) + <span class="string">'\dbstatus.txt'</span>, <span class="string">''</span>, <span class="string">''</span>, SW_SHOW, ewNoWait, ErrorCode) <span class="keyword">then</span> <span class="keyword">begin</span></span><br><span class="line">                        MsgBox(<span class="string">'日志文件打开错误！'</span>, mbError, MB_OK);</span><br><span class="line">                    <span class="keyword">end</span>;</span><br><span class="line">                <span class="keyword">end</span>;</span><br><span class="line">                Result := False;</span><br><span class="line">            <span class="comment">&#123;若执行无误，返回True&#125;</span></span><br><span class="line">            <span class="keyword">end</span> <span class="keyword">else</span> <span class="keyword">begin</span></span><br><span class="line">                Result := True;</span><br><span class="line">            <span class="keyword">end</span>;</span><br><span class="line">        <span class="keyword">end</span> <span class="keyword">else</span> <span class="keyword">if</span> StatusString &lt;&gt; <span class="string">''</span> <span class="keyword">then</span> <span class="keyword">begin</span></span><br><span class="line">            MsgBox(StatusString, mbError, MB_OK);</span><br><span class="line">            Result := False;</span><br><span class="line">        <span class="keyword">end</span> <span class="keyword">else</span> <span class="keyword">begin</span></span><br><span class="line">            Result := True;</span><br><span class="line">        <span class="keyword">end</span>;</span><br><span class="line">    <span class="keyword">end</span> <span class="keyword">else</span> <span class="keyword">begin</span></span><br><span class="line">        MsgBox(<span class="string">'Database update failed:'</span><span class="string">#10#10</span> + SysErrorMessage(ResultCode), mbError, MB_OK);</span><br><span class="line">        Result := False;</span><br><span class="line">    <span class="keyword">end</span>;</span><br><span class="line"><span class="keyword">end</span>;</span><br></pre></td></tr></table></figure>
+```pascal
+function ExecScriptInORACLE(ClientPath, DBInstance, DBLogin, DBPass: String): Boolean;
+begin
+    {解压临时文件}
+    ExtractTemporaryFile('script_oracle.sql');
+    {连接数据库并执行脚本}
+    if Exec(ExpandConstant('cmd'), ' /c "' + ClientPath + ' -L -S ' + DBLogin
+        + '/' + DBPass
+        + '@' + DBInstance
+        + ' @' + ExpandConstant('{tmp}') + '\script_oracle.sql > ' + ExpandConstant('{tmp}') + '\dbstatus.txt 2>&1',
+        '',
+        SW_HIDE, ewWaitUntilTerminated, ResultCode)
+    then begin
+        Result := ResultCode = 0;
+        LoadStringFromFile(ExpandConstant('{tmp}') + '\dbstatus.txt', StatusString);
+        if Pos('holytail', StatusString) <> 0 then begin
+            {若输出信息中有“holytail”的子串，则表示脚本成功执行}
+            {若执行有误，提示用户打开日志文件}
+            if Pos('ORA-', StatusString) <> 0 then begin
+                {提示用户脚本执行出错}
+                if MsgBox('数据库更新出错，是否打开日志文件？', mbConfirmation, MB_YESNO) = IDYES then begin
+                    {打开日志}
+                    if not ShellExec('', ExpandConstant('{tmp}') + '\dbstatus.txt', '', '', SW_SHOW, ewNoWait, ErrorCode) then begin
+                        MsgBox('日志文件打开错误！', mbError, MB_OK);
+                    end;
+                end;
+                Result := False;
+            {若执行无误，返回True}
+            end else begin
+                Result := True;
+            end;
+        end else if StatusString <> '' then begin
+            MsgBox(StatusString, mbError, MB_OK);
+            Result := False;
+        end else begin
+            Result := True;
+        end;
+    end else begin
+        MsgBox('Database update failed:'#10#10 + SysErrorMessage(ResultCode), mbError, MB_OK);
+        Result := False;
+    end;
+end;
+```
 
 <p>Oracle的客户端太大，不能集成到安装包中，应使用一个<strong>TInputFileWizardPage</strong>由用户选择sqlplus.exe的安装位置。同时，由于sqlplus.exe也没有输出结果到文件的参数，也须使用cmd.exe来运行它并重定向输出到文件。此外，由于sqlplus.exe执行脚本时无论成功还是失败，都会输出信息，故无法像使用sqlcmd.exe和mysql.exe那样简单地判断脚本是否执行成功，需要在脚本的最后通过select语句输出一个特殊的字符串到文件中，然后通过判断dbstatus.txt中是否存在该字符串来判断脚本的执行情况；且由于sqlplus.exe执行完脚本后不会自动退出，还要在脚本最后加上exit语句；故<strong>script_oracle.sql</strong>的最后必须是如下内容：</p>
 
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="string">'holytail'</span> <span class="keyword">FROM</span> dual;</span><br><span class="line">exit;</span><br></pre></td></tr></table></figure>
+```sql
+SELECT 'holytail' FROM dual;
+exit;
+```
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2020-06-17&nbsp;<a class="git-hash" href="https://github.com/dillonzq/LoveIt/commit/b6b131fb549d1c33b519bbe9910a7c0b426257fd" target="_blank" title="commit by Donie Leigh(donie.leigh@gmail.com) b6b131fb549d1c33b519bbe9910a7c0b426257fd: URL地址改为用slug生成；为所有文章追加slug matter">
+                                    <i class="fas fa-hashtag fa-fw"></i>b6b131fb</a></span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/post/howto-execute-sql-scripts-in-inno-setup/index.md" target="_blank">阅读原始文档</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="http://0x3f.org/post/howto-execute-sql-scripts-in-inno-setup/" data-title="Inno Setup执行SQL脚本的方法" data-hashtags="MySQL,oracle,Windows,安装,客户端,数据库,编程"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="http://0x3f.org/post/howto-execute-sql-scripts-in-inno-setup/" data-hashtag="MySQL"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="http://0x3f.org/post/howto-execute-sql-scripts-in-inno-setup/" data-title="Inno Setup执行SQL脚本的方法"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="http://0x3f.org/post/howto-execute-sql-scripts-in-inno-setup/" data-title="Inno Setup执行SQL脚本的方法"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="http://0x3f.org/post/howto-execute-sql-scripts-in-inno-setup/" data-title="Inno Setup执行SQL脚本的方法"><i class="fab fa-weibo fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
 
-      
-     <!-- by blair add this if sentence at 20160725 -->
-      <br>
-      
-<!--
-<div id="bottom-donation-section">
-<span style="font-size: 1.0em; padding:0em 1em 0.5em 1em; margin: 0 auto;">
-  <strong style="vertical-align: top;">分享到:</strong>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_facebook_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://www.facebook.com/sharer/sharer.php?u=" target="_blank">
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/mysql/">MySQL</a>,&nbsp;<a href="/tags/oracle/">oracle</a>,&nbsp;<a href="/tags/windows/">Windows</a>,&nbsp;<a href="/tags/%E5%AE%89%E8%A3%85/">安装</a>,&nbsp;<a href="/tags/%E5%AE%A2%E6%88%B7%E7%AB%AF/">客户端</a>,&nbsp;<a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>,&nbsp;<a href="/tags/%E7%BC%96%E7%A8%8B/">编程</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
     </div>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_weibo_icon.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://service.weibo.com/share/share.php?url" target="_blank">
-    </div>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_wechat_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://api.addthis.com/oexchange/0.8/forward/wechat/offer?url=" target="_blank">
-    </div>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_twitter_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://twitter.com/intent/tweet?url=" target="_blank">
-    </div>
-  <br>  
-  <br>  
-  &nbsp;&nbsp;如果您觉得这篇文章对您的学习很有帮助, 请您也分享它, 让它能再次帮助到更多的需要学习的人.
-您的<a href="/support/"><strong>支持</strong></a>将鼓励我继续创作 !
-  <br>  
 
-</span>
+    <div class="post-nav"><a href="/post/freearc/" class="prev" rel="prev" title="FreeArc：兼顾压缩比率与效率的压缩程序"><i class="fas fa-angle-left fa-fw"></i>FreeArc：兼顾压缩比率与效率的压缩程序</a>
+            <a href="/post/using-cpufrequtils-to-reduce-cpu-temperature/" class="next" rel="next" title="低碳生活：使用 cpufrequtils降低CPU温度">低碳生活：使用 cpufrequtils降低CPU温度<i class="fas fa-angle-right fa-fw"></i></a></div>
 </div>
--->
-<div class="well">
-  <!--
-  原创文章，转载请注明： 转载自<a href="http://52binge.github.io"> Blair Chan's Blog</a>，作者：
-  <a href="/about">Blair Chan</a> <br>
-  -->
-  本文基于<a target="_blank" title="Creative Commons Attribution 4.0 international License" href="https://creativecommons.org/licenses/by-nc/4.0/">署名4.0国际许可协议</a>发布，转载请保留本文署名和文章链接。 如您有任何授权方面的协商，请联系我。
-</div>
- <!-- by blair add 160724-->
-    
-    </div>
-    
-    
-      <footer class="article-footer">
-        <!-- <div class="well" style="width:100px; height:30px;"></div>  by blair-->
-        
- <!-- by blair add 160724-->
-        <!--
-        <div style="width:100px; height:30px;"></div> by blair add 160724
-        -->
-        
-  <div class="article-tag">
-    <a class="article-tag-link" href="/tags/mysql/">MySQL</a><span></span><a class="article-tag-link" href="/tags/windows/">Windows</a><span></span><a class="article-tag-link" href="/tags/oracle/">oracle</a><span></span><a class="article-tag-link" href="/tags/安装/">安装</a><span></span><a class="article-tag-link" href="/tags/客户端/">客户端</a><span></span><a class="article-tag-link" href="/tags/数据库/">数据库</a><span></span><a class="article-tag-link" href="/tags/编程/">编程</a>
-  </div>
+<div id="comments"><div id="utterances"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://utteranc.es/">Utterances</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.72.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2006 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">淘气</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
 
-
-      </footer>
-    
-  </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/post/using-cpufrequtils-to-reduce-cpu-temperature/" id="article-nav-newer" class="article-nav-link-wrap">
-      <div class="article-nav-title"><span>&lt;</span>&nbsp;
-        
-          低碳生活：使用 cpufrequtils降低CPU温度
-        
-      </div>
-    </a>
-  
-  
-    <a href="/post/freearc/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">FreeArc：兼顾压缩比率与效率的压缩程序&nbsp;<span>&gt;</span></div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-<section id="comments">
-  <div id="disqus_thread">
-    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-  </div>
-</section>
-
-</section>
-    <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2020 晴耕雨讀&nbsp;
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/52binge/hexo-theme-blairos">blairos</a>
-    </div>
-  </div>
-</footer>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    extensions: ["tex2jax.js"],
-    jax: ["input/TeX"],
-    tex2jax: {
-      inlineMath: [ ['$','$'], ['\\(','\\)'] ],
-      displayMath: [ ['$$','$$']],
-      processEscapes: true
-    }
-  });
-</script>
-<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML,http://myserver.com/MathJax/config/local/local.js">
-</script>
-
-    
-<script type="text/javascript"> <!-- add by blair 0724 type=text/javascript -->
-  var disqus_shortname = '0x3f';
-  
-  var disqus_url = 'http://0x3f.org/post/howto-execute-sql-scripts-in-inno-setup/';
-  
-  (function(){
-    var dsq = document.createElement('script');
-    dsq.type = 'text/javascript';
-    dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
-
-
-<script src="/js/jquery.min.js"></script>
-
-
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
-
-
-<script src="/js/script.js"></script>
-
-  </div>
-</body>
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"utterances":{"darkTheme":"github-dark","issueTerm":"pathname","label":"","lightTheme":"github-light","repo":"xbot/blog-comments"}},"search":{"algoliaAppID":"PASDMWALPK","algoliaIndex":"index.zh-cn","algoliaSearchKey":"b42948e51daaa93df92381c8e2ac0f93","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
 </html>

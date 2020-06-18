@@ -1,293 +1,206 @@
 <!DOCTYPE html>
-<html>
-<head><meta name="generator" content="Hexo 3.8.0">
-  <meta charset="utf-8">
-  
-  <title>Vim的终极自动补全插件：NeoComplCache - 晴耕雨讀</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="关于自动补全，最初用的是SuperTab，那个时候Vim的自动补全插件寥寥无几，也就SuperTab比较有名。不过实际使用过程中这个插件给我的体验不是很好，原因是补全的准确度不高。  后来出了一个新插件，AutoComplPop，功能和使用都很简单。但是很快我就又用回SuperTab，原因是AutoComplPop在输入的同时实时地查询匹配的关键词，导致输入极不流畅，效率很低。  一直就这么凑合">
-<meta name="keywords" content="配置,Vim">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Vim的终极自动补全插件：NeoComplCache">
-<meta property="og:url" content="http://0x3f.org/post/neocomplcache-vim/index.html">
-<meta property="og:site_name" content="晴耕雨讀">
-<meta property="og:description" content="关于自动补全，最初用的是SuperTab，那个时候Vim的自动补全插件寥寥无几，也就SuperTab比较有名。不过实际使用过程中这个插件给我的体验不是很好，原因是补全的准确度不高。  后来出了一个新插件，AutoComplPop，功能和使用都很简单。但是很快我就又用回SuperTab，原因是AutoComplPop在输入的同时实时地查询匹配的关键词，导致输入极不流畅，效率很低。  一直就这么凑合">
-<meta property="og:locale" content="zh-TW">
-<meta property="og:image" content="http://lh3.ggpht.com/_ceUJ_lBTHzc/SaV494hGreI/AAAAAAAAAzY/xExf7CzGyv0/s800/the-mug-of-vi.jpg">
-<meta property="og:updated_time" content="2020-02-06T13:44:05.322Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Vim的终极自动补全插件：NeoComplCache">
-<meta name="twitter:description" content="关于自动补全，最初用的是SuperTab，那个时候Vim的自动补全插件寥寥无几，也就SuperTab比较有名。不过实际使用过程中这个插件给我的体验不是很好，原因是补全的准确度不高。  后来出了一个新插件，AutoComplPop，功能和使用都很简单。但是很快我就又用回SuperTab，原因是AutoComplPop在输入的同时实时地查询匹配的关键词，导致输入极不流畅，效率很低。  一直就这么凑合">
-<meta name="twitter:image" content="http://lh3.ggpht.com/_ceUJ_lBTHzc/SaV494hGreI/AAAAAAAAAzY/xExf7CzGyv0/s800/the-mug-of-vi.jpg">
-  
-  
-    <link rel="icon" href="/favicon.png">
-  
-  <link href="/webfonts/ptserif/main.css" rel="stylesheet" type="text/css">
-  <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="/css/style.css">
-  
-<!-- Google Analytics -->
-<script type="text/javascript">
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>Vim的终极自动补全插件：NeoComplCache - 晴耕雨讀</title><meta name="Description" content="Donie&#39;s blog."><meta property="og:title" content="Vim的终极自动补全插件：NeoComplCache" />
+<meta property="og:description" content="关于自动补全，最初用的是SuperTab，那个时候Vim的自动补全插件寥寥无几，也就SuperTab比较有名。不过实际使用过程中这个插件给我" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://0x3f.org/post/neocomplcache-vim/" />
+<meta property="og:image" content="http://0x3f.org/logo.png"/>
+<meta property="article:published_time" content="2010-02-27T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-06-17T17:28:11+08:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://0x3f.org/logo.png"/>
 
-ga('create', 'UA-93233020-1', 'auto');
-ga('send', 'pageview');
-
-</script>
-<!-- End Google Analytics -->
-
-
-</head>
-</html>
-<body>
-  <div id="container">
-    <!-- blair add baidu tongji start... @2017.10.03 -->
-<!-- blair add baidu tongji end ! @2017.10.03 -->
-
-<header id="header">
-  <div id="header-outer" class="outer">
-    <div id="header-inner" class="inner">
-      <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
-      <a id="logo" class="logo" href="/"></a>
-      <nav id="main-nav">
-        
-          <a class="main-nav-link" href="/archives">目录</a>
-        
-          <a class="main-nav-link" href="/categories">分类</a>
-        
-          <a class="main-nav-link" href="/tags">标签</a>
-        
-          <a class="main-nav-link" href="https://t.me/s/blingings">不灵</a>
-        
-          <a class="main-nav-link" href="/about">关于</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        <div id="search-form-wrap">
-          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
-        </div>
-      </nav>
-    </div>
-  </div>
-</header>
-
-    <br>
-    <section id="main" class="outer"><article id="post-neocomplcache-vim" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="article-title" itemprop="name">
-      Vim的终极自动补全插件：NeoComplCache
-      <small class="article-detail-date-index">&nbsp; 2010-02-27</small>
-    </h1>
-  
-
-
-        <div class="page-title"></div>
-        <br>
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/neocomplcache-vim/" class="article-date">
-  <time datetime="2010-02-26T16:00:00.000Z" itemprop="datePublished">2010-02-27</time>
-</a>-->
-      <!-- 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/计算机/">计算机</a>
-  </div>
-
---><!-- by blair 160724 -->
-      <!-- by blair
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/neocomplcache-vim/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <img src="http://lh3.ggpht.com/_ceUJ_lBTHzc/SaV494hGreI/AAAAAAAAAzY/xExf7CzGyv0/s800/the-mug-of-vi.jpg">
-<p>关于自动补全，最初用的是<a href="http://www.vim.org/scripts/script.php?script_id=1643" target="_blank" rel="noopener">SuperTab</a>，那个时候Vim的自动补全插件寥寥无几，也就SuperTab比较有名。不过实际使用过程中这个插件给我的体验不是很好，原因是补全的准确度不高。</p>
-
-<p>后来出了一个新插件，<a href="http://www.vim.org/scripts/script.php?script_id=1879" target="_blank" rel="noopener">AutoComplPop</a>，功能和使用都很简单。但是很快我就又用回SuperTab，原因是AutoComplPop在输入的同时实时地查询匹配的关键词，导致输入极不流畅，效率很低。</p>
-
-<p>一直就这么凑合着用着SuperTab，随着这个插件版本的更新，旧功能不断地完善，新功能也接二连三地引入，SuperTab在匹配关键词的准确度上有了一些改善，但是新的问题又出现了。SuperTab后来加入一个新功能，对于程序源文件，可以在其引入的文件以及API文件中匹配关键词。比如假设我当前正在编辑a.php，在a.php中有<strong>include ‘b.php’;</strong>这样的语句，当我输入<strong>array</strong>并按下Tab键时，SuperTab不但会在当前文件中查询所有匹配项，还会到b.php中查询，如果配置过vim、指定一个包含了php的API的文件，则SuperTab还会自动从这个文件中查询匹配项。按理说这个功能的理念很好，但问题就在于SuperTab做的是实时查询，如果源文件中包含的文件较多，各个文件又较大，问题就显而易见了。我不得不在写程序时小心地使用Tab键，否则有时就会出现按一下Tab键然后等着Vim在那狂搜的情况。</p>
-
-<p>前两天发现了<a href="http://www.vim.org/scripts/script.php?script_id=2620" target="_blank" rel="noopener">NeoComplCache</a>，光看名字就让我有点儿兴奋，一般使用缓存的速度都很快。这个插件会在Vim打开文件的时候对上下文作一个索引，并把索引结果保存到缓存中。同时，文件更改的内容会在保存的时候被索引。此外，NeoComplCache支持多种关键词索引模式，例如它会判断当前路径下的文件或目录的名字是否匹配补全条件，也可以从缓存的程序语言API中匹配补全条件。到此为止，它就解决了SuperTab和AutoComplPop共同的效率问题，并具备它们各自的长处。看了一遍文档，发现这个插件的功能比较细致，大概有以下一些特点：</p>
-
-<p>1、使用缓存，自动补全时效率高；<br>2、生成的关键词列表准确；<br>3、支持下划线分割的关键词，如apple_boy_cat，就可以只输入a_b_c，然后补全；<br>4、支持驼峰格式匹配关键词，如AppleBoyCat，就可以只输入ABC，然后补全；<br>5、既可以像AutoComplPop那样在Vim中输入的同时自动弹出补全列表，又可以自定义快捷键手动触发；<br>6、支持从文件名和目录名中匹配补全条件；<br>7、对于程序源文件，支持从语言API中匹配补全条件；</p>
-
-<p>NeoComplCache的缺点是文档不全，虽然从只言片语中发现它还支持Snippet，但从文档中没有找到足够的有用信息。加之一直用<a href="http://www.vim.org/scripts/script.php?script_id=2540" target="_blank" rel="noopener">SnipMate</a>感觉不错，所以目前还是用它来实现snippet功能。</p>
-
-<p>这就有个搭配问题：虽然NeoComplCache不存在补全时的效率问题，但我仍然打算只在需要补全时才用快捷键触发此功能，最主要的原因是我既希望用Tab键触发SnipMate的代码块补全功能，又希望修SuperTab那样用Tab选择补全列表中的选项。也就是要达到只用Tab键就可以完成打开自动补全列表、补全列表选项选择和SnipMate代码块替换的效果。但是，如果将Tab映射到触发自动补全，则补全列表选择和SnipMate均无法使用Tab，反之亦然。</p>
-
-<p>所以我想如果能让NeoComplCache、SuperTab、SnipMate和谐共存，那问题就解决了，几经摸索，终于找到了办法：</p>
-
-<p>1、设置NeoComplCache不自动弹出补全列表，即在vimrc中加入：</p>
-
-<blockquote><br>  <p>let g:NeoComplCache_DisableAutoComplete = 1</p><br></blockquote>
-
-<p>2、由于NeoComplCache在手工模式下使用快捷键组合<code>&lt;C-X&gt;&lt;C-U&gt;</code>打开补全列表，故设置SuperTab的默认补全操作为<code>&lt;C-X&gt;&lt;C-U&gt;</code>，即在vimrc中加入：</p>
-
-<blockquote><br>  <p>let g:SuperTabDefaultCompletionType = ‘<code>&lt;C-X&gt;&lt;C-U&gt;</code>‘</p><br></blockquote>
-
-<p>这样，NeoComplCache只负责补全关键词缓存的生成，SuperTab控制Tab键的行为并在需要触发补全操作时打开补全列表、进而在列表中的选项间移动焦点，而当光标前的关键词是snippet时，SnipMate会被优先调用并完成代码块的替换。</p>
-
-<p>就在写这篇文章的时候，我突然觉得NeoComplCache自动弹出补全列表+SnipMate的方式也挺好，只是这样就不能用Tab键选择列表中的选项了。</p>
-
-<h3 id="相关阅读："><a href="#相关阅读：" class="headerlink" title="相关阅读："></a>相关阅读：</h3><ul>
-<li><a href="/post/replace-youcompleteme-with-neocomplete/">用neocomplete换掉了YouCompleteMe</a></li>
-<li><a href="/post/make-youcompleteme-ultisnips-compatible/">How to Make YouCompleteMe Compatible with UltiSnips</a></li>
-</ul>
-
-      
-     <!-- by blair add this if sentence at 20160725 -->
-      <br>
-      
-<!--
-<div id="bottom-donation-section">
-<span style="font-size: 1.0em; padding:0em 1em 0.5em 1em; margin: 0 auto;">
-  <strong style="vertical-align: top;">分享到:</strong>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_facebook_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://www.facebook.com/sharer/sharer.php?u=" target="_blank">
-    </div>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_weibo_icon.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://service.weibo.com/share/share.php?url" target="_blank">
-    </div>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_wechat_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://api.addthis.com/oexchange/0.8/forward/wechat/offer?url=" target="_blank">
-    </div>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_twitter_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://twitter.com/intent/tweet?url=" target="_blank">
-    </div>
-  <br>  
-  <br>  
-  &nbsp;&nbsp;如果您觉得这篇文章对您的学习很有帮助, 请您也分享它, 让它能再次帮助到更多的需要学习的人.
-您的<a href="/support/"><strong>支持</strong></a>将鼓励我继续创作 !
-  <br>  
-
-</span>
-</div>
--->
-<div class="well">
-  <!--
-  原创文章，转载请注明： 转载自<a href="http://52binge.github.io"> Blair Chan's Blog</a>，作者：
-  <a href="/about">Blair Chan</a> <br>
-  -->
-  本文基于<a target="_blank" title="Creative Commons Attribution 4.0 international License" href="https://creativecommons.org/licenses/by-nc/4.0/">署名4.0国际许可协议</a>发布，转载请保留本文署名和文章链接。 如您有任何授权方面的协商，请联系我。
-</div>
- <!-- by blair add 160724-->
-    
-    </div>
-    
-      <div class="article-toc">
-        <h3>Contents</h3>
-        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#相关阅读："><span class="toc-text">相关阅读：</span></a></li></ol>
-      </div>
-    
-    
-      <footer class="article-footer">
-        <!-- <div class="well" style="width:100px; height:30px;"></div>  by blair-->
-        
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/计算机/">计算机</a>
-  </div>
-
- <!-- by blair add 160724-->
-        <!--
-        <div style="width:100px; height:30px;"></div> by blair add 160724
-        -->
-        
-  <div class="article-tag">
-    <a class="article-tag-link" href="/tags/vim/">Vim</a><span></span><a class="article-tag-link" href="/tags/配置/">配置</a>
-  </div>
-
-
-      </footer>
-    
-  </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/post/supernatural-phenomenon-of-controlling-external-processes-in-python/" id="article-nav-newer" class="article-nav-link-wrap">
-      <div class="article-nav-title"><span>&lt;</span>&nbsp;
-        
-          Python控制外部进程的灵异事件
-        
-      </div>
-    </a>
-  
-  
-    <a href="/post/chinese-problem-of-sqlalchemy-with-sqlserver/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">SQLAlchemy操作SQL Server的中文问题&nbsp;<span>&gt;</span></div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-<section id="comments">
-  <div id="disqus_thread">
-    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-  </div>
-</section>
-
-</section>
-    <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2020 晴耕雨讀&nbsp;
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/52binge/hexo-theme-blairos">blairos</a>
-    </div>
-  </div>
-</footer>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    extensions: ["tex2jax.js"],
-    jax: ["input/TeX"],
-    tex2jax: {
-      inlineMath: [ ['$','$'], ['\\(','\\)'] ],
-      displayMath: [ ['$$','$$']],
-      processEscapes: true
+<meta name="twitter:title" content="Vim的终极自动补全插件：NeoComplCache"/>
+<meta name="twitter:description" content="关于自动补全，最初用的是SuperTab，那个时候Vim的自动补全插件寥寥无几，也就SuperTab比较有名。不过实际使用过程中这个插件给我"/>
+<meta name="application-name" content="晴耕雨讀">
+<meta name="apple-mobile-web-app-title" content="晴耕雨讀"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://0x3f.org/post/neocomplcache-vim/" /><link rel="prev" href="http://0x3f.org/post/chinese-problem-of-sqlalchemy-with-sqlserver/" /><link rel="next" href="http://0x3f.org/post/supernatural-phenomenon-of-controlling-external-processes-in-python/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Vim的终极自动补全插件：NeoComplCache",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/0x3f.org\/post\/neocomplcache-vim\/"
+        },"image": ["http:\/\/0x3f.org\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "Vim, 配置","wordcount":  1862 ,
+        "url": "http:\/\/0x3f.org\/post\/neocomplcache-vim\/","datePublished": "2010-02-27T00:00:00+00:00","dateModified": "2020-06-17T17:28:11+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": "http:\/\/0x3f.org\/images\/avatar.png"},"author": {
+                "@type": "Person",
+                "name": "淘气"
+            },"description": ""
     }
-  });
-</script>
-<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML,http://myserver.com/MathJax/config/local/local.js">
-</script>
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
 
-    
-<script type="text/javascript"> <!-- add by blair 0724 type=text/javascript -->
-  var disqus_shortname = '0x3f';
-  
-  var disqus_url = 'http://0x3f.org/post/neocomplcache-vim/';
-  
-  (function(){
-    var dsq = document.createElement('script');
-    dsq.type = 'text/javascript';
-    dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">Vim的终极自动补全插件：NeoComplCache</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"><i class="far fa-folder fa-fw"></i>计算机</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2010-02-27">2010-02-27</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1862 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 4 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#相关阅读">相关阅读：</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="http://lh3.ggpht.com/_ceUJ_lBTHzc/SaV494hGreI/AAAAAAAAAzY/xExf7CzGyv0/s800/the-mug-of-vi.jpg"
+        data-srcset="http://lh3.ggpht.com/_ceUJ_lBTHzc/SaV494hGreI/AAAAAAAAAzY/xExf7CzGyv0/s800/the-mug-of-vi.jpg, http://lh3.ggpht.com/_ceUJ_lBTHzc/SaV494hGreI/AAAAAAAAAzY/xExf7CzGyv0/s800/the-mug-of-vi.jpg 1.5x, http://lh3.ggpht.com/_ceUJ_lBTHzc/SaV494hGreI/AAAAAAAAAzY/xExf7CzGyv0/s800/the-mug-of-vi.jpg 2x"
+        data-sizes="auto"
+        alt="http://lh3.ggpht.com/_ceUJ_lBTHzc/SaV494hGreI/AAAAAAAAAzY/xExf7CzGyv0/s800/the-mug-of-vi.jpg"
+        title="http://lh3.ggpht.com/_ceUJ_lBTHzc/SaV494hGreI/AAAAAAAAAzY/xExf7CzGyv0/s800/the-mug-of-vi.jpg" /></p>
+<p>关于自动补全，最初用的是<a href="http://www.vim.org/scripts/script.php?script_id=1643">SuperTab</a>，那个时候Vim的自动补全插件寥寥无几，也就SuperTab比较有名。不过实际使用过程中这个插件给我的体验不是很好，原因是补全的准确度不高。</p>
+<p>后来出了一个新插件，<a href="http://www.vim.org/scripts/script.php?script_id=1879">AutoComplPop</a>，功能和使用都很简单。但是很快我就又用回SuperTab，原因是AutoComplPop在输入的同时实时地查询匹配的关键词，导致输入极不流畅，效率很低。</p>
+<p>一直就这么凑合着用着SuperTab，随着这个插件版本的更新，旧功能不断地完善，新功能也接二连三地引入，SuperTab在匹配关键词的准确度上有了一些改善，但是新的问题又出现了。SuperTab后来加入一个新功能，对于程序源文件，可以在其引入的文件以及API文件中匹配关键词。比如假设我当前正在编辑a.php，在a.php中有<strong>include 'b.php';</strong>这样的语句，当我输入<strong>array</strong>并按下Tab键时，SuperTab不但会在当前文件中查询所有匹配项，还会到b.php中查询，如果配置过vim、指定一个包含了php的API的文件，则SuperTab还会自动从这个文件中查询匹配项。按理说这个功能的理念很好，但问题就在于SuperTab做的是实时查询，如果源文件中包含的文件较多，各个文件又较大，问题就显而易见了。我不得不在写程序时小心地使用Tab键，否则有时就会出现按一下Tab键然后等着Vim在那狂搜的情况。</p>
+<p>前两天发现了<a href="http://www.vim.org/scripts/script.php?script_id=2620">NeoComplCache</a>，光看名字就让我有点儿兴奋，一般使用缓存的速度都很快。这个插件会在Vim打开文件的时候对上下文作一个索引，并把索引结果保存到缓存中。同时，文件更改的内容会在保存的时候被索引。此外，NeoComplCache支持多种关键词索引模式，例如它会判断当前路径下的文件或目录的名字是否匹配补全条件，也可以从缓存的程序语言API中匹配补全条件。到此为止，它就解决了SuperTab和AutoComplPop共同的效率问题，并具备它们各自的长处。看了一遍文档，发现这个插件的功能比较细致，大概有以下一些特点：</p>
+<p>1、使用缓存，自动补全时效率高；
+2、生成的关键词列表准确；
+3、支持下划线分割的关键词，如apple_boy_cat，就可以只输入a_b_c，然后补全；
+4、支持驼峰格式匹配关键词，如AppleBoyCat，就可以只输入ABC，然后补全；
+5、既可以像AutoComplPop那样在Vim中输入的同时自动弹出补全列表，又可以自定义快捷键手动触发；
+6、支持从文件名和目录名中匹配补全条件；
+7、对于程序源文件，支持从语言API中匹配补全条件；</p>
+<p>NeoComplCache的缺点是文档不全，虽然从只言片语中发现它还支持Snippet，但从文档中没有找到足够的有用信息。加之一直用<a href="http://www.vim.org/scripts/script.php?script_id=2540">SnipMate</a>感觉不错，所以目前还是用它来实现snippet功能。</p>
+<p>这就有个搭配问题：虽然NeoComplCache不存在补全时的效率问题，但我仍然打算只在需要补全时才用快捷键触发此功能，最主要的原因是我既希望用Tab键触发SnipMate的代码块补全功能，又希望修SuperTab那样用Tab选择补全列表中的选项。也就是要达到只用Tab键就可以完成打开自动补全列表、补全列表选项选择和SnipMate代码块替换的效果。但是，如果将Tab映射到触发自动补全，则补全列表选择和SnipMate均无法使用Tab，反之亦然。</p>
+<p>所以我想如果能让NeoComplCache、SuperTab、SnipMate和谐共存，那问题就解决了，几经摸索，终于找到了办法：</p>
+<p>1、设置NeoComplCache不自动弹出补全列表，即在vimrc中加入：</p>
+<blockquote>
+  <p>let g:NeoComplCache_DisableAutoComplete = 1</p>
+</blockquote>
+<p>2、由于NeoComplCache在手工模式下使用快捷键组合<code>&lt;C-X&gt;&lt;C-U&gt;</code>打开补全列表，故设置SuperTab的默认补全操作为<code>&lt;C-X&gt;&lt;C-U&gt;</code>，即在vimrc中加入：</p>
+<blockquote>
+  <p>let g:SuperTabDefaultCompletionType = '<code>&lt;C-X&gt;&lt;C-U&gt;</code>'</p>
+</blockquote>
+<p>这样，NeoComplCache只负责补全关键词缓存的生成，SuperTab控制Tab键的行为并在需要触发补全操作时打开补全列表、进而在列表中的选项间移动焦点，而当光标前的关键词是snippet时，SnipMate会被优先调用并完成代码块的替换。</p>
+<p>就在写这篇文章的时候，我突然觉得NeoComplCache自动弹出补全列表+SnipMate的方式也挺好，只是这样就不能用Tab键选择列表中的选项了。</p>
+<h3 id="相关阅读">相关阅读：</h3>
+<ul>
+<li><a href="/post/replace-youcompleteme-with-neocomplete/" rel="">用neocomplete换掉了YouCompleteMe</a></li>
+<li><a href="/post/make-youcompleteme-ultisnips-compatible/" rel="">How to Make YouCompleteMe Compatible with UltiSnips</a></li>
+</ul>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2020-06-17&nbsp;<a class="git-hash" href="https://github.com/dillonzq/LoveIt/commit/b6b131fb549d1c33b519bbe9910a7c0b426257fd" target="_blank" title="commit by Donie Leigh(donie.leigh@gmail.com) b6b131fb549d1c33b519bbe9910a7c0b426257fd: URL地址改为用slug生成；为所有文章追加slug matter">
+                                    <i class="fas fa-hashtag fa-fw"></i>b6b131fb</a></span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/post/neocomplcache-vim/index.md" target="_blank">阅读原始文档</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="http://0x3f.org/post/neocomplcache-vim/" data-title="Vim的终极自动补全插件：NeoComplCache" data-hashtags="Vim,配置"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="http://0x3f.org/post/neocomplcache-vim/" data-hashtag="Vim"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="http://0x3f.org/post/neocomplcache-vim/" data-title="Vim的终极自动补全插件：NeoComplCache"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="http://0x3f.org/post/neocomplcache-vim/" data-title="Vim的终极自动补全插件：NeoComplCache"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="http://0x3f.org/post/neocomplcache-vim/" data-title="Vim的终极自动补全插件：NeoComplCache"><i class="fab fa-weibo fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
 
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/vim/">Vim</a>,&nbsp;<a href="/tags/%E9%85%8D%E7%BD%AE/">配置</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
 
-<script src="/js/jquery.min.js"></script>
+    <div class="post-nav"><a href="/post/chinese-problem-of-sqlalchemy-with-sqlserver/" class="prev" rel="prev" title="SQLAlchemy操作SQL Server的中文问题"><i class="fas fa-angle-left fa-fw"></i>SQLAlchemy操作SQL Server的中文问题</a>
+            <a href="/post/supernatural-phenomenon-of-controlling-external-processes-in-python/" class="next" rel="next" title="Python控制外部进程的灵异事件">Python控制外部进程的灵异事件<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+<div id="comments"><div id="utterances"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://utteranc.es/">Utterances</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.72.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2006 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">淘气</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
 
-
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
-
-
-<script src="/js/script.js"></script>
-
-  </div>
-</body>
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"utterances":{"darkTheme":"github-dark","issueTerm":"pathname","label":"","lightTheme":"github-light","repo":"xbot/blog-comments"}},"search":{"algoliaAppID":"PASDMWALPK","algoliaIndex":"index.zh-cn","algoliaSearchKey":"b42948e51daaa93df92381c8e2ac0f93","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
 </html>

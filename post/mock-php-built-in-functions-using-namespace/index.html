@@ -1,265 +1,366 @@
 <!DOCTYPE html>
-<html>
-<head><meta name="generator" content="Hexo 3.8.0">
-  <meta charset="utf-8">
-  
-  <title>利用命名空间Mock PHP的内建函数 - 晴耕雨讀</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="简述Mock PHP的内建函数一般有两种方法：命名空间法和依赖注入法。 命名空间法是利用PHP优先使用同命名空间内函数的特性，在测试对象的命名空间内重载内建函数来实现。前提是内建函数在被调用时没有使用命名空间，例如：\debug_backtrace()是不能使用本方法的。 上篇文章《接口编程中记录日志的最佳实践》中实现的日志类中，核心部分调用了debug_backtrace()函数获取方法调用堆栈">
-<meta name="keywords" content="编程,php,测试">
-<meta property="og:type" content="article">
-<meta property="og:title" content="利用命名空间Mock PHP的内建函数">
-<meta property="og:url" content="http://0x3f.org/post/mock-php-built-in-functions-using-namespace/index.html">
-<meta property="og:site_name" content="晴耕雨讀">
-<meta property="og:description" content="简述Mock PHP的内建函数一般有两种方法：命名空间法和依赖注入法。 命名空间法是利用PHP优先使用同命名空间内函数的特性，在测试对象的命名空间内重载内建函数来实现。前提是内建函数在被调用时没有使用命名空间，例如：\debug_backtrace()是不能使用本方法的。 上篇文章《接口编程中记录日志的最佳实践》中实现的日志类中，核心部分调用了debug_backtrace()函数获取方法调用堆栈">
-<meta property="og:locale" content="zh-TW">
-<meta property="og:updated_time" content="2020-02-06T13:44:05.772Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="利用命名空间Mock PHP的内建函数">
-<meta name="twitter:description" content="简述Mock PHP的内建函数一般有两种方法：命名空间法和依赖注入法。 命名空间法是利用PHP优先使用同命名空间内函数的特性，在测试对象的命名空间内重载内建函数来实现。前提是内建函数在被调用时没有使用命名空间，例如：\debug_backtrace()是不能使用本方法的。 上篇文章《接口编程中记录日志的最佳实践》中实现的日志类中，核心部分调用了debug_backtrace()函数获取方法调用堆栈">
-  
-  
-    <link rel="icon" href="/favicon.png">
-  
-  <link href="/webfonts/ptserif/main.css" rel="stylesheet" type="text/css">
-  <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="/css/style.css">
-  
-<!-- Google Analytics -->
-<script type="text/javascript">
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>利用命名空间Mock PHP的内建函数 - 晴耕雨讀</title><meta name="Description" content="Donie&#39;s blog."><meta property="og:title" content="利用命名空间Mock PHP的内建函数" />
+<meta property="og:description" content="简述 Mock PHP的内建函数一般有两种方法：命名空间法和依赖注入法。 命名空间法是利用PHP优先使用同命名空间内函数的特性，在测试对象的命名空间内重" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://0x3f.org/post/mock-php-built-in-functions-using-namespace/" />
+<meta property="og:image" content="http://0x3f.org/logo.png"/>
+<meta property="article:published_time" content="2017-04-30T09:06:17+00:00" />
+<meta property="article:modified_time" content="2020-06-17T17:28:11+08:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://0x3f.org/logo.png"/>
 
-ga('create', 'UA-93233020-1', 'auto');
-ga('send', 'pageview');
-
-</script>
-<!-- End Google Analytics -->
-
-
-</head>
-</html>
-<body>
-  <div id="container">
-    <!-- blair add baidu tongji start... @2017.10.03 -->
-<!-- blair add baidu tongji end ! @2017.10.03 -->
-
-<header id="header">
-  <div id="header-outer" class="outer">
-    <div id="header-inner" class="inner">
-      <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
-      <a id="logo" class="logo" href="/"></a>
-      <nav id="main-nav">
-        
-          <a class="main-nav-link" href="/archives">目录</a>
-        
-          <a class="main-nav-link" href="/categories">分类</a>
-        
-          <a class="main-nav-link" href="/tags">标签</a>
-        
-          <a class="main-nav-link" href="https://t.me/s/blingings">不灵</a>
-        
-          <a class="main-nav-link" href="/about">关于</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        <div id="search-form-wrap">
-          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
-        </div>
-      </nav>
-    </div>
-  </div>
-</header>
-
-    <br>
-    <section id="main" class="outer"><article id="post-mock-php-built-in-functions-using-namespace" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="article-title" itemprop="name">
-      利用命名空间Mock PHP的内建函数
-      <small class="article-detail-date-index">&nbsp; 2017-04-30</small>
-    </h1>
-  
-
-
-        <div class="page-title"></div>
-        <br>
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/mock-php-built-in-functions-using-namespace/" class="article-date">
-  <time datetime="2017-04-30T01:06:17.000Z" itemprop="datePublished">2017-04-30</time>
-</a>-->
-      <!-- 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/计算机/">计算机</a>
-  </div>
-
---><!-- by blair 160724 -->
-      <!-- by blair
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/mock-php-built-in-functions-using-namespace/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="简述"><a href="#简述" class="headerlink" title="简述"></a>简述</h2><p>Mock PHP的内建函数一般有两种方法：命名空间法和依赖注入法。</p>
-<p>命名空间法是利用PHP优先使用同命名空间内函数的特性，在测试对象的命名空间内重载内建函数来实现。前提是内建函数在被调用时没有使用命名空间，例如：<code>\debug_backtrace()</code>是不能使用本方法的。</p>
-<p>上篇文章<a href="/post/the-best-practice-of-logging-in-api-programming/">《接口编程中记录日志的最佳实践》</a>中实现的日志类中，核心部分调用了<code>debug_backtrace()</code>函数获取方法调用堆栈。下面讨论下如何利用命名空间法实现对此函数的mock。</p>
-<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>先看代码：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">Ox3f</span>\<span class="title">LaravelUtils</span>\<span class="title">Log</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">PHPUnit</span>\<span class="title">Framework</span>\<span class="title">TestCase</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Support</span>\<span class="title">Facades</span>\<span class="title">Auth</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Support</span>\<span class="title">Facades</span>\<span class="title">Request</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Support</span>\<span class="title">Facades</span>\<span class="title">Log</span> <span class="title">as</span> <span class="title">LaravelLog</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Ox3f</span>\<span class="title">LaravelUtils</span>\<span class="title">Log</span>\<span class="title">Log</span>;</span><br><span class="line"></span><br><span class="line">$calledInController = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">debug_backtrace</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">global</span> $calledInController;</span><br><span class="line">    <span class="keyword">if</span> ($calledInController) &#123;</span><br><span class="line">        <span class="keyword">return</span> json_decode(<span class="string">'[&#123;"file":"\/Users\/xbot\/Sites\/sample-project\/vendor\/xbot\/laravel-utils\/src\/Log\/Log.php","line":85,"function":"parseCallStack","class":"Ox3f\\\LaravelUtils\\\Log\\\Log","object":&#123;&#125;,"type":"-&gt;"&#125;,&#123;"file":"\/Users\/xbot\/Sites\/sample-project\/app\/Api\/V1\/Controllers\/WorkController.php","line":29,"function":"saveInput","class":"Ox3f\\\LaravelUtils\\\Log\\\Log","type":"::"&#125;,&#123;"function":"save","class":"App\\\Api\\\V1\\\Controllers\\\WorkController","object":&#123;&#125;,"type":"-&gt;"&#125;,&#123;"file":"\/Users\/xbot\/Sites\/sample-project\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Controller.php","line":55,"function":"call_user_func_array"&#125;,&#123;"file":"\/Users\/xbot\/Sites\/sample-project\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/ControllerDispatcher.php","line":44,"function":"callAction","class":"Illuminate\\\Routing\\\Controller","object":&#123;&#125;,"type":"-&gt;"&#125;]'</span>, <span class="keyword">true</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> json_decode(<span class="string">'[&#123;"file":"\/Users\/xbot\/Sites\/sample-project\/vendor\/xbot\/laravel-utils\/src\/Log\/Log.php","line":85,"function":"parseCallStack","class":"Ox3f\\\LaravelUtils\\\Log\\\Log","object":&#123;&#125;,"type":"-&gt;"&#125;,&#123;"file":"\/Users\/xbot\/Sites\/sample-project\/app\/Notation.php","line":21,"function":"saveInput","class":"Ox3f\\\LaravelUtils\\\Log\\\Log","type":"::"&#125;,&#123;"file":"\/Users\/xbot\/Sites\/sample-project\/app\/Api\/V1\/Controllers\/NotationController.php","line":32,"function":"incrNo","class":"App\\\Notation","type":"::"&#125;,&#123;"function":"save","class":"App\\\Api\\\V1\\\Controllers\\\NotationController","object":&#123;&#125;,"type":"-&gt;"&#125;,&#123;"file":"\/Users\/xbot\/Sites\/sample-project\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Controller.php","line":55,"function":"call_user_func_array"&#125;]'</span>, <span class="keyword">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LogTest</span> <span class="keyword">extends</span> <span class="title">TestCase</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">setUp</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        Auth::shouldReceive(<span class="string">'user'</span>)</span><br><span class="line">            -&gt;once()</span><br><span class="line">            -&gt;andReturn((object)[<span class="string">'name'</span> =&gt; <span class="string">'jim'</span>,]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@covers</span> Ox3f\LaravelUtils\Log\Log::saveInput</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@covers</span> Ox3f\LaravelUtils\Log\Log::saveOutput</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@covers</span> Ox3f\LaravelUtils\Log\Log::parseCallStack</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@covers</span> Ox3f\LaravelUtils\Log\Log::getInstance</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@covers</span> Ox3f\LaravelUtils\Log\Log::__construct</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@covers</span> Ox3f\LaravelUtils\Log\Log::__callStatic</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">testAll</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">global</span> $calledInController;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// test being called in a plain method</span></span><br><span class="line">        $calledInController = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line">        LaravelLog::shouldReceive(<span class="string">'debug'</span>)</span><br><span class="line">            -&gt;once()</span><br><span class="line">            -&gt;with(<span class="string">'jim | App\Notation::incrNo | Input:1'</span>);</span><br><span class="line"></span><br><span class="line">        Log::saveInput(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">        LaravelLog::shouldReceive(<span class="string">'debug'</span>)</span><br><span class="line">            -&gt;once()</span><br><span class="line">            -&gt;with(<span class="string">'jim | App\Notation::incrNo | Output:2'</span>);</span><br><span class="line"></span><br><span class="line">        Log::saveOutput(<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// test being called in a controller action</span></span><br><span class="line">        $calledInController = <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line">        Request::shouldReceive(<span class="string">'path'</span>)</span><br><span class="line">            -&gt;once()</span><br><span class="line">            -&gt;andReturn(<span class="string">'api/user'</span>);</span><br><span class="line">        Request::shouldReceive(<span class="string">'except'</span>)</span><br><span class="line">            -&gt;once()</span><br><span class="line">            -&gt;with(<span class="string">'_url'</span>)</span><br><span class="line">            -&gt;andReturn([<span class="string">'id'</span> =&gt; <span class="number">18</span>,]);</span><br><span class="line">        LaravelLog::shouldReceive(<span class="string">'debug'</span>)</span><br><span class="line">            -&gt;once()</span><br><span class="line">            -&gt;with(<span class="string">'jim | api/user | Input:&#123;"id":18&#125;'</span>);</span><br><span class="line"></span><br><span class="line">        Log::saveInput();</span><br><span class="line"></span><br><span class="line">        Request::shouldReceive(<span class="string">'path'</span>)</span><br><span class="line">            -&gt;once()</span><br><span class="line">            -&gt;andReturn(<span class="string">'api/user'</span>);</span><br><span class="line">        LaravelLog::shouldReceive(<span class="string">'debug'</span>)</span><br><span class="line">            -&gt;once()</span><br><span class="line">            -&gt;with(<span class="string">'jim | api/user | Output:2'</span>);</span><br><span class="line"></span><br><span class="line">        Log::saveOutput(<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">        Request::shouldReceive(<span class="string">'path'</span>)</span><br><span class="line">            -&gt;once()</span><br><span class="line">            -&gt;andReturn(<span class="string">'api/user'</span>);</span><br><span class="line">        LaravelLog::shouldReceive(<span class="string">'error'</span>)</span><br><span class="line">            -&gt;once()</span><br><span class="line">            -&gt;with(<span class="string">'jim | api/user | this is an error'</span>);</span><br><span class="line">            </span><br><span class="line">        Log::error(<span class="string">'this is an error'</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">$this</span>-&gt;assertEquals(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>最重要的是第一行，这里把测试类的命名空间设置得和测试对象一致，这样在下面重载的<code>debug_backtrace()</code>函数就会在测试对象中被优先使用。</p>
-<p>在重载的函数中，通过全局变量<code>$calledInController</code>选择输出事先捕获的真实数据，从而mock出符合我们需要的函数。</p>
-
-      
-     <!-- by blair add this if sentence at 20160725 -->
-      <br>
-      
-<!--
-<div id="bottom-donation-section">
-<span style="font-size: 1.0em; padding:0em 1em 0.5em 1em; margin: 0 auto;">
-  <strong style="vertical-align: top;">分享到:</strong>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_facebook_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://www.facebook.com/sharer/sharer.php?u=" target="_blank">
-    </div>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_weibo_icon.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://service.weibo.com/share/share.php?url" target="_blank">
-    </div>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_wechat_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://api.addthis.com/oexchange/0.8/forward/wechat/offer?url=" target="_blank">
-    </div>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_twitter_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://twitter.com/intent/tweet?url=" target="_blank">
-    </div>
-  <br>  
-  <br>  
-  &nbsp;&nbsp;如果您觉得这篇文章对您的学习很有帮助, 请您也分享它, 让它能再次帮助到更多的需要学习的人.
-您的<a href="/support/"><strong>支持</strong></a>将鼓励我继续创作 !
-  <br>  
-
-</span>
-</div>
--->
-<div class="well">
-  <!--
-  原创文章，转载请注明： 转载自<a href="http://52binge.github.io"> Blair Chan's Blog</a>，作者：
-  <a href="/about">Blair Chan</a> <br>
-  -->
-  本文基于<a target="_blank" title="Creative Commons Attribution 4.0 international License" href="https://creativecommons.org/licenses/by-nc/4.0/">署名4.0国际许可协议</a>发布，转载请保留本文署名和文章链接。 如您有任何授权方面的协商，请联系我。
-</div>
- <!-- by blair add 160724-->
-    
-    </div>
-    
-      <div class="article-toc">
-        <h3>Contents</h3>
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#简述"><span class="toc-text">简述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现"><span class="toc-text">实现</span></a></li></ol>
-      </div>
-    
-    
-      <footer class="article-footer">
-        <!-- <div class="well" style="width:100px; height:30px;"></div>  by blair-->
-        
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/计算机/">计算机</a>
-  </div>
-
- <!-- by blair add 160724-->
-        <!--
-        <div style="width:100px; height:30px;"></div> by blair add 160724
-        -->
-        
-  <div class="article-tag">
-    <a class="article-tag-link" href="/tags/php/">php</a><span></span><a class="article-tag-link" href="/tags/测试/">测试</a><span></span><a class="article-tag-link" href="/tags/编程/">编程</a>
-  </div>
-
-
-      </footer>
-    
-  </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/post/mock-php-built-in-functions-using-dependency-injection/" id="article-nav-newer" class="article-nav-link-wrap">
-      <div class="article-nav-title"><span>&lt;</span>&nbsp;
-        
-          利用依赖注入Mock PHP的内建函数
-        
-      </div>
-    </a>
-  
-  
-    <a href="/post/the-best-practice-of-logging-in-api-programming/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">接口编程中记录日志的最佳实践&nbsp;<span>&gt;</span></div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-<section id="comments">
-  <div id="disqus_thread">
-    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-  </div>
-</section>
-
-</section>
-    <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2020 晴耕雨讀&nbsp;
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/52binge/hexo-theme-blairos">blairos</a>
-    </div>
-  </div>
-</footer>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    extensions: ["tex2jax.js"],
-    jax: ["input/TeX"],
-    tex2jax: {
-      inlineMath: [ ['$','$'], ['\\(','\\)'] ],
-      displayMath: [ ['$$','$$']],
-      processEscapes: true
+<meta name="twitter:title" content="利用命名空间Mock PHP的内建函数"/>
+<meta name="twitter:description" content="简述 Mock PHP的内建函数一般有两种方法：命名空间法和依赖注入法。 命名空间法是利用PHP优先使用同命名空间内函数的特性，在测试对象的命名空间内重"/>
+<meta name="application-name" content="晴耕雨讀">
+<meta name="apple-mobile-web-app-title" content="晴耕雨讀"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://0x3f.org/post/mock-php-built-in-functions-using-namespace/" /><link rel="prev" href="http://0x3f.org/post/the-best-practice-of-logging-in-api-programming/" /><link rel="next" href="http://0x3f.org/post/mock-php-built-in-functions-using-dependency-injection/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "利用命名空间Mock PHP的内建函数",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/0x3f.org\/post\/mock-php-built-in-functions-using-namespace\/"
+        },"image": ["http:\/\/0x3f.org\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "php, 编程, 测试","wordcount":  622 ,
+        "url": "http:\/\/0x3f.org\/post\/mock-php-built-in-functions-using-namespace\/","datePublished": "2017-04-30T09:06:17+00:00","dateModified": "2020-06-17T17:28:11+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": "http:\/\/0x3f.org\/images\/avatar.png"},"author": {
+                "@type": "Person",
+                "name": "淘气"
+            },"description": ""
     }
-  });
-</script>
-<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML,http://myserver.com/MathJax/config/local/local.js">
-</script>
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
 
-    
-<script type="text/javascript"> <!-- add by blair 0724 type=text/javascript -->
-  var disqus_shortname = '0x3f';
-  
-  var disqus_url = 'http://0x3f.org/post/mock-php-built-in-functions-using-namespace/';
-  
-  (function(){
-    var dsq = document.createElement('script');
-    dsq.type = 'text/javascript';
-    dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">利用命名空间Mock PHP的内建函数</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"><i class="far fa-folder fa-fw"></i>计算机</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2017-04-30">2017-04-30</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 622 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 2 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#简述">简述</a></li>
+    <li><a href="#实现">实现</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="简述">简述</h2>
+<p>Mock PHP的内建函数一般有两种方法：命名空间法和依赖注入法。</p>
+<p>命名空间法是利用PHP优先使用同命名空间内函数的特性，在测试对象的命名空间内重载内建函数来实现。前提是内建函数在被调用时没有使用命名空间，例如：<code>\debug_backtrace()</code>是不能使用本方法的。</p>
+<p>上篇文章<a href="/post/the-best-practice-of-logging-in-api-programming/" rel="">《接口编程中记录日志的最佳实践》</a>中实现的日志类中，核心部分调用了<code>debug_backtrace()</code>函数获取方法调用堆栈。下面讨论下如何利用命名空间法实现对此函数的mock。</p>
+<h2 id="实现">实现</h2>
+<p>先看代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span><span class="lnt">83
+</span><span class="lnt">84
+</span><span class="lnt">85
+</span><span class="lnt">86
+</span><span class="lnt">87
+</span><span class="lnt">88
+</span><span class="lnt">89
+</span><span class="lnt">90
+</span><span class="lnt">91
+</span><span class="lnt">92
+</span><span class="lnt">93
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">Ox3f\LaravelUtils\Log</span><span class="p">;</span>
 
+<span class="k">use</span> <span class="nx">PHPUnit\Framework\TestCase</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Auth</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Request</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Log</span> <span class="k">as</span> <span class="nx">LaravelLog</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Ox3f\LaravelUtils\Log\Log</span><span class="p">;</span>
 
-<script src="/js/jquery.min.js"></script>
+<span class="nv">$calledInController</span> <span class="o">=</span> <span class="k">false</span><span class="p">;</span>
 
+<span class="k">function</span> <span class="nf">debug_backtrace</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">global</span> <span class="nv">$calledInController</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$calledInController</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">json_decode</span><span class="p">(</span><span class="s1">&#39;[{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/vendor\/xbot\/laravel-utils\/src\/Log\/Log.php&#34;,&#34;line&#34;:85,&#34;function&#34;:&#34;parseCallStack&#34;,&#34;class&#34;:&#34;Ox3f\\\LaravelUtils\\\Log\\\Log&#34;,&#34;object&#34;:{},&#34;type&#34;:&#34;-&gt;&#34;},{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/app\/Api\/V1\/Controllers\/WorkController.php&#34;,&#34;line&#34;:29,&#34;function&#34;:&#34;saveInput&#34;,&#34;class&#34;:&#34;Ox3f\\\LaravelUtils\\\Log\\\Log&#34;,&#34;type&#34;:&#34;::&#34;},{&#34;function&#34;:&#34;save&#34;,&#34;class&#34;:&#34;App\\\Api\\\V1\\\Controllers\\\WorkController&#34;,&#34;object&#34;:{},&#34;type&#34;:&#34;-&gt;&#34;},{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Controller.php&#34;,&#34;line&#34;:55,&#34;function&#34;:&#34;call_user_func_array&#34;},{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/ControllerDispatcher.php&#34;,&#34;line&#34;:44,&#34;function&#34;:&#34;callAction&#34;,&#34;class&#34;:&#34;Illuminate\\\Routing\\\Controller&#34;,&#34;object&#34;:{},&#34;type&#34;:&#34;-&gt;&#34;}]&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">json_decode</span><span class="p">(</span><span class="s1">&#39;[{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/vendor\/xbot\/laravel-utils\/src\/Log\/Log.php&#34;,&#34;line&#34;:85,&#34;function&#34;:&#34;parseCallStack&#34;,&#34;class&#34;:&#34;Ox3f\\\LaravelUtils\\\Log\\\Log&#34;,&#34;object&#34;:{},&#34;type&#34;:&#34;-&gt;&#34;},{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/app\/Notation.php&#34;,&#34;line&#34;:21,&#34;function&#34;:&#34;saveInput&#34;,&#34;class&#34;:&#34;Ox3f\\\LaravelUtils\\\Log\\\Log&#34;,&#34;type&#34;:&#34;::&#34;},{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/app\/Api\/V1\/Controllers\/NotationController.php&#34;,&#34;line&#34;:32,&#34;function&#34;:&#34;incrNo&#34;,&#34;class&#34;:&#34;App\\\Notation&#34;,&#34;type&#34;:&#34;::&#34;},{&#34;function&#34;:&#34;save&#34;,&#34;class&#34;:&#34;App\\\Api\\\V1\\\Controllers\\\NotationController&#34;,&#34;object&#34;:{},&#34;type&#34;:&#34;-&gt;&#34;},{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Controller.php&#34;,&#34;line&#34;:55,&#34;function&#34;:&#34;call_user_func_array&#34;}]&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+<span class="k">class</span> <span class="nc">LogTest</span> <span class="k">extends</span> <span class="nx">TestCase</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">setUp</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nx">Auth</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">andReturn</span><span class="p">((</span><span class="nx">object</span><span class="p">)[</span><span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;jim&#39;</span><span class="p">,]);</span>
+    <span class="p">}</span>
 
+    <span class="sd">/**
+</span><span class="sd">     * @covers Ox3f\LaravelUtils\Log\Log::saveInput
+</span><span class="sd">     * @covers Ox3f\LaravelUtils\Log\Log::saveOutput
+</span><span class="sd">     * @covers Ox3f\LaravelUtils\Log\Log::parseCallStack
+</span><span class="sd">     * @covers Ox3f\LaravelUtils\Log\Log::getInstance
+</span><span class="sd">     * @covers Ox3f\LaravelUtils\Log\Log::__construct
+</span><span class="sd">     * @covers Ox3f\LaravelUtils\Log\Log::__callStatic
+</span><span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">testAll</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">global</span> <span class="nv">$calledInController</span><span class="p">;</span>
 
-<script src="/js/script.js"></script>
+        <span class="c1">// test being called in a plain method
+</span><span class="c1"></span>        <span class="nv">$calledInController</span> <span class="o">=</span> <span class="k">false</span><span class="p">;</span>
 
-  </div>
-</body>
+        <span class="nx">LaravelLog</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;debug&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;jim | App\Notation::incrNo | Input:1&#39;</span><span class="p">);</span>
+
+        <span class="nx">Log</span><span class="o">::</span><span class="na">saveInput</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+        <span class="nx">LaravelLog</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;debug&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;jim | App\Notation::incrNo | Output:2&#39;</span><span class="p">);</span>
+
+        <span class="nx">Log</span><span class="o">::</span><span class="na">saveOutput</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+
+        <span class="c1">// test being called in a controller action
+</span><span class="c1"></span>        <span class="nv">$calledInController</span> <span class="o">=</span> <span class="k">true</span><span class="p">;</span>
+
+        <span class="nx">Request</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">andReturn</span><span class="p">(</span><span class="s1">&#39;api/user&#39;</span><span class="p">);</span>
+        <span class="nx">Request</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;except&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;_url&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">andReturn</span><span class="p">([</span><span class="s1">&#39;id&#39;</span> <span class="o">=&gt;</span> <span class="mi">18</span><span class="p">,]);</span>
+        <span class="nx">LaravelLog</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;debug&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;jim | api/user | Input:{&#34;id&#34;:18}&#39;</span><span class="p">);</span>
+
+        <span class="nx">Log</span><span class="o">::</span><span class="na">saveInput</span><span class="p">();</span>
+
+        <span class="nx">Request</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">andReturn</span><span class="p">(</span><span class="s1">&#39;api/user&#39;</span><span class="p">);</span>
+        <span class="nx">LaravelLog</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;debug&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;jim | api/user | Output:2&#39;</span><span class="p">);</span>
+
+        <span class="nx">Log</span><span class="o">::</span><span class="na">saveOutput</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+
+        <span class="nx">Request</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">andReturn</span><span class="p">(</span><span class="s1">&#39;api/user&#39;</span><span class="p">);</span>
+        <span class="nx">LaravelLog</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;jim | api/user | this is an error&#39;</span><span class="p">);</span>
+            
+        <span class="nx">Log</span><span class="o">::</span><span class="na">error</span><span class="p">(</span><span class="s1">&#39;this is an error&#39;</span><span class="p">);</span>
+        
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">assertEquals</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>最重要的是第一行，这里把测试类的命名空间设置得和测试对象一致，这样在下面重载的<code>debug_backtrace()</code>函数就会在测试对象中被优先使用。</p>
+<p>在重载的函数中，通过全局变量<code>$calledInController</code>选择输出事先捕获的真实数据，从而mock出符合我们需要的函数。</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2020-06-17&nbsp;<a class="git-hash" href="https://github.com/dillonzq/LoveIt/commit/b6b131fb549d1c33b519bbe9910a7c0b426257fd" target="_blank" title="commit by Donie Leigh(donie.leigh@gmail.com) b6b131fb549d1c33b519bbe9910a7c0b426257fd: URL地址改为用slug生成；为所有文章追加slug matter">
+                                    <i class="fas fa-hashtag fa-fw"></i>b6b131fb</a></span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/post/mock-php-built-in-functions-using-namespace/index.md" target="_blank">阅读原始文档</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="http://0x3f.org/post/mock-php-built-in-functions-using-namespace/" data-title="利用命名空间Mock PHP的内建函数" data-hashtags="php,编程,测试"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="http://0x3f.org/post/mock-php-built-in-functions-using-namespace/" data-hashtag="php"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="http://0x3f.org/post/mock-php-built-in-functions-using-namespace/" data-title="利用命名空间Mock PHP的内建函数"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="http://0x3f.org/post/mock-php-built-in-functions-using-namespace/" data-title="利用命名空间Mock PHP的内建函数"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="http://0x3f.org/post/mock-php-built-in-functions-using-namespace/" data-title="利用命名空间Mock PHP的内建函数"><i class="fab fa-weibo fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/php/">PHP</a>,&nbsp;<a href="/tags/%E7%BC%96%E7%A8%8B/">编程</a>,&nbsp;<a href="/tags/%E6%B5%8B%E8%AF%95/">测试</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/post/the-best-practice-of-logging-in-api-programming/" class="prev" rel="prev" title="接口编程中记录日志的最佳实践"><i class="fas fa-angle-left fa-fw"></i>接口编程中记录日志的最佳实践</a>
+            <a href="/post/mock-php-built-in-functions-using-dependency-injection/" class="next" rel="next" title="利用依赖注入Mock PHP的内建函数">利用依赖注入Mock PHP的内建函数<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+<div id="comments"><div id="utterances"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://utteranc.es/">Utterances</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.72.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2006 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">淘气</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"utterances":{"darkTheme":"github-dark","issueTerm":"pathname","label":"","lightTheme":"github-light","repo":"xbot/blog-comments"}},"search":{"algoliaAppID":"PASDMWALPK","algoliaIndex":"index.zh-cn","algoliaSearchKey":"b42948e51daaa93df92381c8e2ac0f93","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
 </html>

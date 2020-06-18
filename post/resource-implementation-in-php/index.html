@@ -1,281 +1,510 @@
 <!DOCTYPE html>
-<html>
-<head><meta name="generator" content="Hexo 3.8.0">
-  <meta charset="utf-8">
-  
-  <title>PHP资源的实现和操作 - 晴耕雨讀</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="存储结构资源变量也是一个zval结构，zval-&amp;gt;type == IS_RESOURCE，zval-&amp;gt;value-&amp;gt;lval存储一个整数，此整数为资源数据在存储资源的哈希表中的索引。 资源数据的结构为： 123456typedef struct _zend_rsrc_list_entry&amp;#123;    void *ptr;    int type;    int refcou">
-<meta name="keywords" content="PHP,源码">
-<meta property="og:type" content="article">
-<meta property="og:title" content="PHP资源的实现和操作">
-<meta property="og:url" content="http://0x3f.org/post/resource-implementation-in-php/index.html">
-<meta property="og:site_name" content="晴耕雨讀">
-<meta property="og:description" content="存储结构资源变量也是一个zval结构，zval-&amp;gt;type == IS_RESOURCE，zval-&amp;gt;value-&amp;gt;lval存储一个整数，此整数为资源数据在存储资源的哈希表中的索引。 资源数据的结构为： 123456typedef struct _zend_rsrc_list_entry&amp;#123;    void *ptr;    int type;    int refcou">
-<meta property="og:locale" content="zh-TW">
-<meta property="og:updated_time" content="2020-02-06T13:44:05.674Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="PHP资源的实现和操作">
-<meta name="twitter:description" content="存储结构资源变量也是一个zval结构，zval-&amp;gt;type == IS_RESOURCE，zval-&amp;gt;value-&amp;gt;lval存储一个整数，此整数为资源数据在存储资源的哈希表中的索引。 资源数据的结构为： 123456typedef struct _zend_rsrc_list_entry&amp;#123;    void *ptr;    int type;    int refcou">
-  
-  
-    <link rel="icon" href="/favicon.png">
-  
-  <link href="/webfonts/ptserif/main.css" rel="stylesheet" type="text/css">
-  <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="/css/style.css">
-  
-<!-- Google Analytics -->
-<script type="text/javascript">
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>PHP资源的实现和操作 - 晴耕雨讀</title><meta name="Description" content="Donie&#39;s blog."><meta property="og:title" content="PHP资源的实现和操作" />
+<meta property="og:description" content="存储结构 资源变量也是一个zval结构，zval-&gt;type == IS_RESOURCE，zval-&gt;value-&gt;lval存储" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://0x3f.org/post/resource-implementation-in-php/" />
+<meta property="og:image" content="http://0x3f.org/logo.png"/>
+<meta property="article:published_time" content="2015-05-05T18:53:00+00:00" />
+<meta property="article:modified_time" content="2020-06-17T17:28:11+08:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://0x3f.org/logo.png"/>
 
-ga('create', 'UA-93233020-1', 'auto');
-ga('send', 'pageview');
-
-</script>
-<!-- End Google Analytics -->
-
-
-</head>
-</html>
-<body>
-  <div id="container">
-    <!-- blair add baidu tongji start... @2017.10.03 -->
-<!-- blair add baidu tongji end ! @2017.10.03 -->
-
-<header id="header">
-  <div id="header-outer" class="outer">
-    <div id="header-inner" class="inner">
-      <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
-      <a id="logo" class="logo" href="/"></a>
-      <nav id="main-nav">
-        
-          <a class="main-nav-link" href="/archives">目录</a>
-        
-          <a class="main-nav-link" href="/categories">分类</a>
-        
-          <a class="main-nav-link" href="/tags">标签</a>
-        
-          <a class="main-nav-link" href="https://t.me/s/blingings">不灵</a>
-        
-          <a class="main-nav-link" href="/about">关于</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        <div id="search-form-wrap">
-          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
-        </div>
-      </nav>
-    </div>
-  </div>
-</header>
-
-    <br>
-    <section id="main" class="outer"><article id="post-resource-implementation-in-php" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="article-title" itemprop="name">
-      PHP资源的实现和操作
-      <small class="article-detail-date-index">&nbsp; 2015-05-05</small>
-    </h1>
-  
-
-
-        <div class="page-title"></div>
-        <br>
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/resource-implementation-in-php/" class="article-date">
-  <time datetime="2015-05-05T10:53:00.000Z" itemprop="datePublished">2015-05-05</time>
-</a>-->
-      <!-- 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/计算机/">计算机</a>
-  </div>
-
---><!-- by blair 160724 -->
-      <!-- by blair
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/resource-implementation-in-php/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="存储结构"><a href="#存储结构" class="headerlink" title="存储结构"></a>存储结构</h2><p>资源变量也是一个zval结构，zval-&gt;type == IS_RESOURCE，zval-&gt;value-&gt;lval存储一个整数，此整数为资源数据在存储资源的哈希表中的索引。</p>
-<p>资源数据的结构为：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">zend_rsrc_list_entry</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">void</span> *ptr;</span><br><span class="line">    <span class="keyword">int</span> type;</span><br><span class="line">    <span class="keyword">int</span> refcount;</span><br><span class="line">&#125;zend_rsrc_list_entry;</span><br></pre></td></tr></table></figure>
-<h3 id="常规资源与持久资源"><a href="#常规资源与持久资源" class="headerlink" title="常规资源与持久资源"></a>常规资源与持久资源</h3><p>有两个存储资源数据的哈希表。EG(regular_list)存储常规资源，EG(persistent_list)存储持久资源。</p>
-<p>常规资源对应的变量在作用域结束后会被内核回收，对应的资源数据也会被销毁。持久资源可以保持并被多次请求使用。持久资源的自动析构发生在PHP进程退出时。</p>
-<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>重新实现基本的文件句柄和相关操作。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 资源名称</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PHP_DONIE_RES_NAME_FILE <span class="meta-string">"Donie's File Descriptor"</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 资源类型</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> le_donie_file_descriptor;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> le_donie_file_descriptor_persist;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 资源析构函数</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">php_donie_file_descriptor_dtor</span><span class="params">(zend_rsrc_list_entry *rsrc TSRMLS_CC)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	FILE *fp = (FILE*)rsrc-&gt;ptr;</span><br><span class="line">	fclose(fp);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 在扩展的MINIT方法里创建资源类型</span></span><br><span class="line">PHP_MINIT_FUNCTION(donie)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">/* create a new resource type */</span></span><br><span class="line">	le_donie_file_descriptor = zend_register_list_destructors_ex(</span><br><span class="line">		php_donie_file_descriptor_dtor, <span class="literal">NULL</span>, PHP_DONIE_RES_NAME_FILE, module_number</span><br><span class="line">	);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* create a persistent resource type */</span></span><br><span class="line">	le_donie_file_descriptor_persist = zend_register_list_destructors_ex(</span><br><span class="line">		<span class="literal">NULL</span>, php_donie_file_descriptor_dtor, PHP_DONIE_RES_NAME_FILE, module_number</span><br><span class="line">	);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> SUCCESS;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 文件打开操作</span></span><br><span class="line">PHP_FUNCTION(donie_fopen)</span><br><span class="line">&#123;</span><br><span class="line">	FILE *fp;</span><br><span class="line">	<span class="keyword">char</span> *filename, *mode;</span><br><span class="line">	<span class="keyword">int</span> filename_len, mode_len;</span><br><span class="line">	zend_bool persist = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">char</span> *hash_key;</span><br><span class="line">	<span class="keyword">int</span> hash_key_len;</span><br><span class="line">	list_entry *persist_file;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, <span class="string">"ss|b"</span>, &amp;filename, &amp;filename_len, &amp;mode, &amp;mode_len, &amp;persist) == FAILURE)</span><br><span class="line">	&#123;</span><br><span class="line">		RETURN_NULL();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> (!filename_len || !mode_len)</span><br><span class="line">	&#123;</span><br><span class="line">		php_error_docref(<span class="literal">NULL</span> TSRMLS_CC, E_WARNING, <span class="string">"Invalid file name or mode."</span>);</span><br><span class="line">		RETURN_FALSE;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* reuse persistent resource if exists */</span></span><br><span class="line">	hash_key_len = spprintf(&amp;hash_key, <span class="number">0</span>, <span class="string">"php_donie_file_descriptor:%s-%s"</span>, filename, mode);</span><br><span class="line">	<span class="keyword">if</span> (zend_hash_find(&amp;EG(persistent_list), hash_key, hash_key_len+<span class="number">1</span>, (<span class="keyword">void</span> **)&amp;persist_file) == SUCCESS)</span><br><span class="line">	&#123;</span><br><span class="line">		ZEND_REGISTER_RESOURCE(return_value, persist_file-&gt;ptr, le_donie_file_descriptor_persist);</span><br><span class="line">		efree(hash_key);</span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	fp = fopen(filename, mode);</span><br><span class="line">	<span class="keyword">if</span> (!fp)</span><br><span class="line">	&#123;</span><br><span class="line">		php_error_docref(<span class="literal">NULL</span> TSRMLS_CC, E_WARNING, <span class="string">"Failed opening %s with mode %s."</span>, filename, mode);</span><br><span class="line">		RETURN_FALSE;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* this is the key point for registering resources */</span></span><br><span class="line">	<span class="keyword">if</span> (persist)</span><br><span class="line">	&#123;</span><br><span class="line">		ZEND_REGISTER_RESOURCE(return_value, fp, le_donie_file_descriptor_persist);</span><br><span class="line">		list_entry le;</span><br><span class="line">		le.type = le_donie_file_descriptor_persist;</span><br><span class="line">		le.ptr = fp;</span><br><span class="line">		zend_hash_update(&amp;EG(persistent_list), hash_key, hash_key_len+<span class="number">1</span>, (<span class="keyword">void</span>*)&amp;le, <span class="keyword">sizeof</span>(list_entry), <span class="literal">NULL</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		ZEND_REGISTER_RESOURCE(return_value, fp, le_donie_file_descriptor);</span><br><span class="line">	&#125;</span><br><span class="line">	efree(hash_key);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 文件写操作</span></span><br><span class="line">PHP_FUNCTION(donie_fwrite)</span><br><span class="line">&#123;</span><br><span class="line">	FILE *fp;</span><br><span class="line">	zval *file_resource;</span><br><span class="line">	<span class="keyword">char</span> *data;</span><br><span class="line">	<span class="keyword">int</span> data_len;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, <span class="string">"rs"</span>, &amp;file_resource, &amp;data, &amp;data_len) == FAILURE)</span><br><span class="line">	&#123;</span><br><span class="line">		RETURN_NULL();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	ZEND_FETCH_RESOURCE2(fp, FILE*, &amp;file_resource, <span class="number">-1</span>, PHP_DONIE_RES_NAME_FILE, le_donie_file_descriptor, le_donie_file_descriptor_persist);</span><br><span class="line">	RETURN_LONG(fwrite(data, <span class="number">1</span>, data_len, fp));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 文件关闭操作</span></span><br><span class="line">PHP_FUNCTION(donie_fclose)</span><br><span class="line">&#123;</span><br><span class="line">	FILE *fp;</span><br><span class="line">	zval *file_resource;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, <span class="string">"r"</span>, &amp;file_resource) == FAILURE)</span><br><span class="line">	&#123;</span><br><span class="line">		RETURN_NULL();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	ZEND_FETCH_RESOURCE2(fp, FILE*, &amp;file_resource, <span class="number">-1</span>, PHP_DONIE_RES_NAME_FILE, le_donie_file_descriptor, le_donie_file_descriptor_persist);</span><br><span class="line">	zend_hash_index_del(&amp;EG(regular_list), Z_RESVAL_P(file_resource));</span><br><span class="line">	RETURN_TRUE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="创建新资源类型"><a href="#创建新资源类型" class="headerlink" title="创建新资源类型"></a>创建新资源类型</h3><p>zend_register_list_destructors_ex()创建新资源类型，并注册该资源类型的析构函数、资源名称。第一个参数是常规资源的析构函数，第二个是持久资源的析构函数，此处创建的是常规资源类型，故第二个参数不指定。</p>
-<h3 id="注册资源"><a href="#注册资源" class="headerlink" title="注册资源"></a>注册资源</h3><p>宏函数ZEND_REGISTER_RESOURCE()注册新生成的资源到EG(regular_list)，并保存资源的索引到zval-&gt;value-&gt;lval中。</p>
-<h3 id="双重引用计数"><a href="#双重引用计数" class="headerlink" title="双重引用计数"></a>双重引用计数</h3><p>资源变量zval中存在一个引用计数，资源数据zend_rsrc_list_entry中也存在一个。前者遵循与其它变量一致的计数原则，后者取决于资源数据被几个资源变量zval引用。</p>
-<p>例如对于以下场景：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$a = donie_fopen(<span class="string">'/tmp/donie.txt'</span>, <span class="string">'r'</span>);</span><br><span class="line">$b = $a;</span><br><span class="line">$c = &amp;$a;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-<p>a赋值给b时，zval的引用计数加一。a的引用赋值给c时，发生zval的拆分，b获得新的zval，引用计数是1，a和c共用一个zval，引用计数是2。此时，资源数据的引用计数加一。</p>
-<h3 id="获取资源"><a href="#获取资源" class="headerlink" title="获取资源"></a>获取资源</h3><p>ZEND_FETCH_RESOURCE()根据资源变量zval取出资源数据的ptr并验证资源类型。ZEND_FETCH_RESOURCE2()可以同时指定两个资源类型，任一类型匹配成功都可以。</p>
-<h3 id="销毁资源"><a href="#销毁资源" class="headerlink" title="销毁资源"></a>销毁资源</h3><p>根据上述二重计数原则，只有当资源数据的引用计数为0时，资源的析构函数才会被调用，而销毁资源变量不一定能销毁资源，所以需要手工强制销毁资源。</p>
-<p>zend_hash_index_del()从EG(regular_list)中删除资源时，该资源类型注册的dtor会被自动调用，从而析构资源。</p>
-<h3 id="持久资源"><a href="#持久资源" class="headerlink" title="持久资源"></a>持久资源</h3><h4 id="存储"><a href="#存储" class="headerlink" title="存储"></a>存储</h4><p>EG(persistent_list)是个用字符串索引的哈希表。需要自行定义键的命名规则，做到全局唯一。</p>
-<h4 id="创建持久资源类型"><a href="#创建持久资源类型" class="headerlink" title="创建持久资源类型"></a>创建持久资源类型</h4><p>zend_register_list_destructors_ex()注册资源类型时，将析构函数指定为第二个参数，第一个参数为NULL。析构持久资源时，会自动调用该函数。</p>
-<h4 id="注册持久资源"><a href="#注册持久资源" class="headerlink" title="注册持久资源"></a>注册持久资源</h4><p>EG(persistent_list)中的资源数据并不被直接使用，对资源的操作仍然使用EG(regular_list)。故在注册持久资源时，两个哈希表中都需要保存一份。</p>
-<p>往EG(persistent_list)中存资源数据：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span> *hash_key;</span><br><span class="line"><span class="keyword">int</span> hash_key_len;</span><br><span class="line">zend_rsrc_list_entry le;</span><br><span class="line">le.type = le_donie_file_descriptor_persist;</span><br><span class="line">le.ptr = fp;</span><br><span class="line">hash_key_len = spprintf(&amp;hash_key, <span class="number">0</span>, <span class="string">"php_donie_file_descriptor:%s-%s"</span>, filename, mode);</span><br><span class="line">zend_hash_update(&amp;EG(persistent_list), hash_key, hash_key_len+<span class="number">1</span>, (<span class="keyword">void</span>*)&amp;le, <span class="keyword">sizeof</span>(list_entry), <span class="literal">NULL</span>);</span><br></pre></td></tr></table></figure>
-<h4 id="获取持久资源"><a href="#获取持久资源" class="headerlink" title="获取持久资源"></a>获取持久资源</h4><p>对持久资源的常规操作和操作常规资源一样，仍使用EG(regular_list)，因为变量zval中存储的是EG(regular_list)中的索引。所以需要先在EG(persistent_list)中查询，若资源存在，先注册到EG(regular_list)中，再进行后续操作。</p>
-<h4 id="手动析构持久资源"><a href="#手动析构持久资源" class="headerlink" title="手动析构持久资源"></a>手动析构持久资源</h4><p>用zend_hash_del()从EG(persistent_list)中删除资源数据即可自动触发析构函数。</p>
-
-      
-     <!-- by blair add this if sentence at 20160725 -->
-      <br>
-      
-<!--
-<div id="bottom-donation-section">
-<span style="font-size: 1.0em; padding:0em 1em 0.5em 1em; margin: 0 auto;">
-  <strong style="vertical-align: top;">分享到:</strong>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_facebook_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://www.facebook.com/sharer/sharer.php?u=" target="_blank">
-    </div>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_weibo_icon.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://service.weibo.com/share/share.php?url" target="_blank">
-    </div>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_wechat_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://api.addthis.com/oexchange/0.8/forward/wechat/offer?url=" target="_blank">
-    </div>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_twitter_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://twitter.com/intent/tweet?url=" target="_blank">
-    </div>
-  <br>  
-  <br>  
-  &nbsp;&nbsp;如果您觉得这篇文章对您的学习很有帮助, 请您也分享它, 让它能再次帮助到更多的需要学习的人.
-您的<a href="/support/"><strong>支持</strong></a>将鼓励我继续创作 !
-  <br>  
-
-</span>
-</div>
--->
-<div class="well">
-  <!--
-  原创文章，转载请注明： 转载自<a href="http://52binge.github.io"> Blair Chan's Blog</a>，作者：
-  <a href="/about">Blair Chan</a> <br>
-  -->
-  本文基于<a target="_blank" title="Creative Commons Attribution 4.0 international License" href="https://creativecommons.org/licenses/by-nc/4.0/">署名4.0国际许可协议</a>发布，转载请保留本文署名和文章链接。 如您有任何授权方面的协商，请联系我。
-</div>
- <!-- by blair add 160724-->
-    
-    </div>
-    
-      <div class="article-toc">
-        <h3>Contents</h3>
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#存储结构"><span class="toc-text">存储结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#常规资源与持久资源"><span class="toc-text">常规资源与持久资源</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现"><span class="toc-text">实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建新资源类型"><span class="toc-text">创建新资源类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#注册资源"><span class="toc-text">注册资源</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#双重引用计数"><span class="toc-text">双重引用计数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#获取资源"><span class="toc-text">获取资源</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#销毁资源"><span class="toc-text">销毁资源</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#持久资源"><span class="toc-text">持久资源</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#存储"><span class="toc-text">存储</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#创建持久资源类型"><span class="toc-text">创建持久资源类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#注册持久资源"><span class="toc-text">注册持久资源</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#获取持久资源"><span class="toc-text">获取持久资源</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#手动析构持久资源"><span class="toc-text">手动析构持久资源</span></a></li></ol></li></ol></li></ol>
-      </div>
-    
-    
-      <footer class="article-footer">
-        <!-- <div class="well" style="width:100px; height:30px;"></div>  by blair-->
-        
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/计算机/">计算机</a>
-  </div>
-
- <!-- by blair add 160724-->
-        <!--
-        <div style="width:100px; height:30px;"></div> by blair add 160724
-        -->
-        
-  <div class="article-tag">
-    <a class="article-tag-link" href="/tags/php/">PHP</a><span></span><a class="article-tag-link" href="/tags/源码/">源码</a>
-  </div>
-
-
-      </footer>
-    
-  </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/post/constant-implementation-in-php/" id="article-nav-newer" class="article-nav-link-wrap">
-      <div class="article-nav-title"><span>&lt;</span>&nbsp;
-        
-          PHP常量的实现和操作
-        
-      </div>
-    </a>
-  
-  
-    <a href="/post/object-implementation-in-php/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">PHP对象的实现和操作&nbsp;<span>&gt;</span></div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-<section id="comments">
-  <div id="disqus_thread">
-    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-  </div>
-</section>
-
-</section>
-    <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2020 晴耕雨讀&nbsp;
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/52binge/hexo-theme-blairos">blairos</a>
-    </div>
-  </div>
-</footer>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    extensions: ["tex2jax.js"],
-    jax: ["input/TeX"],
-    tex2jax: {
-      inlineMath: [ ['$','$'], ['\\(','\\)'] ],
-      displayMath: [ ['$$','$$']],
-      processEscapes: true
+<meta name="twitter:title" content="PHP资源的实现和操作"/>
+<meta name="twitter:description" content="存储结构 资源变量也是一个zval结构，zval-&gt;type == IS_RESOURCE，zval-&gt;value-&gt;lval存储"/>
+<meta name="application-name" content="晴耕雨讀">
+<meta name="apple-mobile-web-app-title" content="晴耕雨讀"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://0x3f.org/post/resource-implementation-in-php/" /><link rel="prev" href="http://0x3f.org/post/object-implementation-in-php/" /><link rel="next" href="http://0x3f.org/post/constant-implementation-in-php/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "PHP资源的实现和操作",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/0x3f.org\/post\/resource-implementation-in-php\/"
+        },"image": ["http:\/\/0x3f.org\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "PHP, 源码","wordcount":  1890 ,
+        "url": "http:\/\/0x3f.org\/post\/resource-implementation-in-php\/","datePublished": "2015-05-05T18:53:00+00:00","dateModified": "2020-06-17T17:28:11+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": "http:\/\/0x3f.org\/images\/avatar.png"},"author": {
+                "@type": "Person",
+                "name": "淘气"
+            },"description": ""
     }
-  });
-</script>
-<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML,http://myserver.com/MathJax/config/local/local.js">
-</script>
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
 
-    
-<script type="text/javascript"> <!-- add by blair 0724 type=text/javascript -->
-  var disqus_shortname = '0x3f';
-  
-  var disqus_url = 'http://0x3f.org/post/resource-implementation-in-php/';
-  
-  (function(){
-    var dsq = document.createElement('script');
-    dsq.type = 'text/javascript';
-    dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">PHP资源的实现和操作</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"><i class="far fa-folder fa-fw"></i>计算机</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2015-05-05">2015-05-05</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1890 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 4 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#存储结构">存储结构</a>
+      <ul>
+        <li><a href="#常规资源与持久资源">常规资源与持久资源</a></li>
+      </ul>
+    </li>
+    <li><a href="#实现">实现</a>
+      <ul>
+        <li><a href="#创建新资源类型">创建新资源类型</a></li>
+        <li><a href="#注册资源">注册资源</a></li>
+        <li><a href="#双重引用计数">双重引用计数</a></li>
+        <li><a href="#获取资源">获取资源</a></li>
+        <li><a href="#销毁资源">销毁资源</a></li>
+        <li><a href="#持久资源">持久资源</a>
+          <ul>
+            <li><a href="#存储">存储</a></li>
+            <li><a href="#创建持久资源类型">创建持久资源类型</a></li>
+            <li><a href="#注册持久资源">注册持久资源</a></li>
+            <li><a href="#获取持久资源">获取持久资源</a></li>
+            <li><a href="#手动析构持久资源">手动析构持久资源</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="存储结构">存储结构</h2>
+<p>资源变量也是一个zval结构，zval-&gt;type == IS_RESOURCE，zval-&gt;value-&gt;lval存储一个整数，此整数为资源数据在存储资源的哈希表中的索引。</p>
+<p>资源数据的结构为：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">_zend_rsrc_list_entry</span>
+<span class="p">{</span>
+    <span class="kt">void</span> <span class="o">*</span><span class="n">ptr</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">type</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">refcount</span><span class="p">;</span>
+<span class="p">}</span><span class="n">zend_rsrc_list_entry</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="常规资源与持久资源">常规资源与持久资源</h3>
+<p>有两个存储资源数据的哈希表。EG(regular_list)存储常规资源，EG(persistent_list)存储持久资源。</p>
+<p>常规资源对应的变量在作用域结束后会被内核回收，对应的资源数据也会被销毁。持久资源可以保持并被多次请求使用。持久资源的自动析构发生在PHP进程退出时。</p>
+<h2 id="实现">实现</h2>
+<p>重新实现基本的文件句柄和相关操作。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span><span class="lnt">115
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 资源名称
+</span><span class="c1"></span><span class="cp">#define PHP_DONIE_RES_NAME_FILE &#34;Donie&#39;s File Descriptor&#34;
+</span><span class="cp"></span>
+<span class="c1">// 资源类型
+</span><span class="c1"></span><span class="k">static</span> <span class="kt">int</span> <span class="n">le_donie_file_descriptor</span><span class="p">;</span>
+<span class="k">static</span> <span class="kt">int</span> <span class="n">le_donie_file_descriptor_persist</span><span class="p">;</span>
 
+<span class="c1">// 资源析构函数
+</span><span class="c1"></span><span class="k">static</span> <span class="kt">void</span> <span class="nf">php_donie_file_descriptor_dtor</span><span class="p">(</span><span class="n">zend_rsrc_list_entry</span> <span class="o">*</span><span class="n">rsrc</span> <span class="n">TSRMLS_CC</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">FILE</span> <span class="o">*</span><span class="n">fp</span> <span class="o">=</span> <span class="p">(</span><span class="n">FILE</span><span class="o">*</span><span class="p">)</span><span class="n">rsrc</span><span class="o">-&gt;</span><span class="n">ptr</span><span class="p">;</span>
+	<span class="n">fclose</span><span class="p">(</span><span class="n">fp</span><span class="p">);</span>
+<span class="p">}</span>
 
-<script src="/js/jquery.min.js"></script>
+<span class="c1">// 在扩展的MINIT方法里创建资源类型
+</span><span class="c1"></span><span class="n">PHP_MINIT_FUNCTION</span><span class="p">(</span><span class="n">donie</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="cm">/* create a new resource type */</span>
+	<span class="n">le_donie_file_descriptor</span> <span class="o">=</span> <span class="n">zend_register_list_destructors_ex</span><span class="p">(</span>
+		<span class="n">php_donie_file_descriptor_dtor</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">PHP_DONIE_RES_NAME_FILE</span><span class="p">,</span> <span class="n">module_number</span>
+	<span class="p">);</span>
 
+	<span class="cm">/* create a persistent resource type */</span>
+	<span class="n">le_donie_file_descriptor_persist</span> <span class="o">=</span> <span class="n">zend_register_list_destructors_ex</span><span class="p">(</span>
+		<span class="nb">NULL</span><span class="p">,</span> <span class="n">php_donie_file_descriptor_dtor</span><span class="p">,</span> <span class="n">PHP_DONIE_RES_NAME_FILE</span><span class="p">,</span> <span class="n">module_number</span>
+	<span class="p">);</span>
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+	<span class="k">return</span> <span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
 
+<span class="c1">// 文件打开操作
+</span><span class="c1"></span><span class="n">PHP_FUNCTION</span><span class="p">(</span><span class="n">donie_fopen</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">FILE</span> <span class="o">*</span><span class="n">fp</span><span class="p">;</span>
+	<span class="kt">char</span> <span class="o">*</span><span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">mode</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">filename_len</span><span class="p">,</span> <span class="n">mode_len</span><span class="p">;</span>
+	<span class="n">zend_bool</span> <span class="n">persist</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="kt">char</span> <span class="o">*</span><span class="n">hash_key</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">hash_key_len</span><span class="p">;</span>
+	<span class="n">list_entry</span> <span class="o">*</span><span class="n">persist_file</span><span class="p">;</span>
 
-<script src="/js/script.js"></script>
+	<span class="k">if</span> <span class="p">(</span><span class="n">zend_parse_parameters</span><span class="p">(</span><span class="n">ZEND_NUM_ARGS</span><span class="p">()</span> <span class="n">TSRMLS_CC</span><span class="p">,</span> <span class="s">&#34;ss|b&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">filename</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">filename_len</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">mode</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">mode_len</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">persist</span><span class="p">)</span> <span class="o">==</span> <span class="n">FAILURE</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">RETURN_NULL</span><span class="p">();</span>
+	<span class="p">}</span>
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">filename_len</span> <span class="o">||</span> <span class="o">!</span><span class="n">mode_len</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">php_error_docref</span><span class="p">(</span><span class="nb">NULL</span> <span class="n">TSRMLS_CC</span><span class="p">,</span> <span class="n">E_WARNING</span><span class="p">,</span> <span class="s">&#34;Invalid file name or mode.&#34;</span><span class="p">);</span>
+		<span class="n">RETURN_FALSE</span><span class="p">;</span>
+	<span class="p">}</span>
 
-  </div>
-</body>
+	<span class="cm">/* reuse persistent resource if exists */</span>
+	<span class="n">hash_key_len</span> <span class="o">=</span> <span class="n">spprintf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">hash_key</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#34;php_donie_file_descriptor:%s-%s&#34;</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">zend_hash_find</span><span class="p">(</span><span class="o">&amp;</span><span class="n">EG</span><span class="p">(</span><span class="n">persistent_list</span><span class="p">),</span> <span class="n">hash_key</span><span class="p">,</span> <span class="n">hash_key_len</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="kt">void</span> <span class="o">**</span><span class="p">)</span><span class="o">&amp;</span><span class="n">persist_file</span><span class="p">)</span> <span class="o">==</span> <span class="n">SUCCESS</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">ZEND_REGISTER_RESOURCE</span><span class="p">(</span><span class="n">return_value</span><span class="p">,</span> <span class="n">persist_file</span><span class="o">-&gt;</span><span class="n">ptr</span><span class="p">,</span> <span class="n">le_donie_file_descriptor_persist</span><span class="p">);</span>
+		<span class="n">efree</span><span class="p">(</span><span class="n">hash_key</span><span class="p">);</span>
+		<span class="k">return</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="n">fp</span> <span class="o">=</span> <span class="n">fopen</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">fp</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">php_error_docref</span><span class="p">(</span><span class="nb">NULL</span> <span class="n">TSRMLS_CC</span><span class="p">,</span> <span class="n">E_WARNING</span><span class="p">,</span> <span class="s">&#34;Failed opening %s with mode %s.&#34;</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="p">);</span>
+		<span class="n">RETURN_FALSE</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="cm">/* this is the key point for registering resources */</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">persist</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">ZEND_REGISTER_RESOURCE</span><span class="p">(</span><span class="n">return_value</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">le_donie_file_descriptor_persist</span><span class="p">);</span>
+		<span class="n">list_entry</span> <span class="n">le</span><span class="p">;</span>
+		<span class="n">le</span><span class="p">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">le_donie_file_descriptor_persist</span><span class="p">;</span>
+		<span class="n">le</span><span class="p">.</span><span class="n">ptr</span> <span class="o">=</span> <span class="n">fp</span><span class="p">;</span>
+		<span class="n">zend_hash_update</span><span class="p">(</span><span class="o">&amp;</span><span class="n">EG</span><span class="p">(</span><span class="n">persistent_list</span><span class="p">),</span> <span class="n">hash_key</span><span class="p">,</span> <span class="n">hash_key_len</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">le</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">list_entry</span><span class="p">),</span> <span class="nb">NULL</span><span class="p">);</span>
+	<span class="p">}</span>
+	<span class="k">else</span>
+	<span class="p">{</span>
+		<span class="n">ZEND_REGISTER_RESOURCE</span><span class="p">(</span><span class="n">return_value</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">le_donie_file_descriptor</span><span class="p">);</span>
+	<span class="p">}</span>
+	<span class="n">efree</span><span class="p">(</span><span class="n">hash_key</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// 文件写操作
+</span><span class="c1"></span><span class="n">PHP_FUNCTION</span><span class="p">(</span><span class="n">donie_fwrite</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">FILE</span> <span class="o">*</span><span class="n">fp</span><span class="p">;</span>
+	<span class="n">zval</span> <span class="o">*</span><span class="n">file_resource</span><span class="p">;</span>
+	<span class="kt">char</span> <span class="o">*</span><span class="n">data</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">data_len</span><span class="p">;</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="n">zend_parse_parameters</span><span class="p">(</span><span class="n">ZEND_NUM_ARGS</span><span class="p">()</span> <span class="n">TSRMLS_CC</span><span class="p">,</span> <span class="s">&#34;rs&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">file_resource</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">data</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">data_len</span><span class="p">)</span> <span class="o">==</span> <span class="n">FAILURE</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">RETURN_NULL</span><span class="p">();</span>
+	<span class="p">}</span>
+
+	<span class="n">ZEND_FETCH_RESOURCE2</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="n">FILE</span><span class="o">*</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">file_resource</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">PHP_DONIE_RES_NAME_FILE</span><span class="p">,</span> <span class="n">le_donie_file_descriptor</span><span class="p">,</span> <span class="n">le_donie_file_descriptor_persist</span><span class="p">);</span>
+	<span class="n">RETURN_LONG</span><span class="p">(</span><span class="n">fwrite</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">data_len</span><span class="p">,</span> <span class="n">fp</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="c1">// 文件关闭操作
+</span><span class="c1"></span><span class="n">PHP_FUNCTION</span><span class="p">(</span><span class="n">donie_fclose</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">FILE</span> <span class="o">*</span><span class="n">fp</span><span class="p">;</span>
+	<span class="n">zval</span> <span class="o">*</span><span class="n">file_resource</span><span class="p">;</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="n">zend_parse_parameters</span><span class="p">(</span><span class="n">ZEND_NUM_ARGS</span><span class="p">()</span> <span class="n">TSRMLS_CC</span><span class="p">,</span> <span class="s">&#34;r&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">file_resource</span><span class="p">)</span> <span class="o">==</span> <span class="n">FAILURE</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">RETURN_NULL</span><span class="p">();</span>
+	<span class="p">}</span>
+
+	<span class="n">ZEND_FETCH_RESOURCE2</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="n">FILE</span><span class="o">*</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">file_resource</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">PHP_DONIE_RES_NAME_FILE</span><span class="p">,</span> <span class="n">le_donie_file_descriptor</span><span class="p">,</span> <span class="n">le_donie_file_descriptor_persist</span><span class="p">);</span>
+	<span class="n">zend_hash_index_del</span><span class="p">(</span><span class="o">&amp;</span><span class="n">EG</span><span class="p">(</span><span class="n">regular_list</span><span class="p">),</span> <span class="n">Z_RESVAL_P</span><span class="p">(</span><span class="n">file_resource</span><span class="p">));</span>
+	<span class="n">RETURN_TRUE</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="创建新资源类型">创建新资源类型</h3>
+<p>zend_register_list_destructors_ex()创建新资源类型，并注册该资源类型的析构函数、资源名称。第一个参数是常规资源的析构函数，第二个是持久资源的析构函数，此处创建的是常规资源类型，故第二个参数不指定。</p>
+<h3 id="注册资源">注册资源</h3>
+<p>宏函数ZEND_REGISTER_RESOURCE()注册新生成的资源到EG(regular_list)，并保存资源的索引到zval-&gt;value-&gt;lval中。</p>
+<h3 id="双重引用计数">双重引用计数</h3>
+<p>资源变量zval中存在一个引用计数，资源数据zend_rsrc_list_entry中也存在一个。前者遵循与其它变量一致的计数原则，后者取决于资源数据被几个资源变量zval引用。</p>
+<p>例如对于以下场景：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="nv">$a</span> <span class="o">=</span> <span class="nx">donie_fopen</span><span class="p">(</span><span class="s1">&#39;/tmp/donie.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">);</span>
+<span class="nv">$b</span> <span class="o">=</span> <span class="nv">$a</span><span class="p">;</span>
+<span class="nv">$c</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">$a</span><span class="p">;</span>
+<span class="cp">?&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>a赋值给b时，zval的引用计数加一。a的引用赋值给c时，发生zval的拆分，b获得新的zval，引用计数是1，a和c共用一个zval，引用计数是2。此时，资源数据的引用计数加一。</p>
+<h3 id="获取资源">获取资源</h3>
+<p>ZEND_FETCH_RESOURCE()根据资源变量zval取出资源数据的ptr并验证资源类型。ZEND_FETCH_RESOURCE2()可以同时指定两个资源类型，任一类型匹配成功都可以。</p>
+<h3 id="销毁资源">销毁资源</h3>
+<p>根据上述二重计数原则，只有当资源数据的引用计数为0时，资源的析构函数才会被调用，而销毁资源变量不一定能销毁资源，所以需要手工强制销毁资源。</p>
+<p>zend_hash_index_del()从EG(regular_list)中删除资源时，该资源类型注册的dtor会被自动调用，从而析构资源。</p>
+<h3 id="持久资源">持久资源</h3>
+<h4 id="存储">存储</h4>
+<p>EG(persistent_list)是个用字符串索引的哈希表。需要自行定义键的命名规则，做到全局唯一。</p>
+<h4 id="创建持久资源类型">创建持久资源类型</h4>
+<p>zend_register_list_destructors_ex()注册资源类型时，将析构函数指定为第二个参数，第一个参数为NULL。析构持久资源时，会自动调用该函数。</p>
+<h4 id="注册持久资源">注册持久资源</h4>
+<p>EG(persistent_list)中的资源数据并不被直接使用，对资源的操作仍然使用EG(regular_list)。故在注册持久资源时，两个哈希表中都需要保存一份。</p>
+<p>往EG(persistent_list)中存资源数据：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">char</span> <span class="o">*</span><span class="n">hash_key</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">hash_key_len</span><span class="p">;</span>
+<span class="n">zend_rsrc_list_entry</span> <span class="n">le</span><span class="p">;</span>
+<span class="n">le</span><span class="p">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">le_donie_file_descriptor_persist</span><span class="p">;</span>
+<span class="n">le</span><span class="p">.</span><span class="n">ptr</span> <span class="o">=</span> <span class="n">fp</span><span class="p">;</span>
+<span class="n">hash_key_len</span> <span class="o">=</span> <span class="n">spprintf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">hash_key</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#34;php_donie_file_descriptor:%s-%s&#34;</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="p">);</span>
+<span class="n">zend_hash_update</span><span class="p">(</span><span class="o">&amp;</span><span class="n">EG</span><span class="p">(</span><span class="n">persistent_list</span><span class="p">),</span> <span class="n">hash_key</span><span class="p">,</span> <span class="n">hash_key_len</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">le</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">list_entry</span><span class="p">),</span> <span class="nb">NULL</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="获取持久资源">获取持久资源</h4>
+<p>对持久资源的常规操作和操作常规资源一样，仍使用EG(regular_list)，因为变量zval中存储的是EG(regular_list)中的索引。所以需要先在EG(persistent_list)中查询，若资源存在，先注册到EG(regular_list)中，再进行后续操作。</p>
+<h4 id="手动析构持久资源">手动析构持久资源</h4>
+<p>用zend_hash_del()从EG(persistent_list)中删除资源数据即可自动触发析构函数。</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2020-06-17&nbsp;<a class="git-hash" href="https://github.com/dillonzq/LoveIt/commit/b6b131fb549d1c33b519bbe9910a7c0b426257fd" target="_blank" title="commit by Donie Leigh(donie.leigh@gmail.com) b6b131fb549d1c33b519bbe9910a7c0b426257fd: URL地址改为用slug生成；为所有文章追加slug matter">
+                                    <i class="fas fa-hashtag fa-fw"></i>b6b131fb</a></span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/post/resource-implementation-in-php/index.md" target="_blank">阅读原始文档</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="http://0x3f.org/post/resource-implementation-in-php/" data-title="PHP资源的实现和操作" data-hashtags="PHP,源码"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="http://0x3f.org/post/resource-implementation-in-php/" data-hashtag="PHP"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="http://0x3f.org/post/resource-implementation-in-php/" data-title="PHP资源的实现和操作"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="http://0x3f.org/post/resource-implementation-in-php/" data-title="PHP资源的实现和操作"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="http://0x3f.org/post/resource-implementation-in-php/" data-title="PHP资源的实现和操作"><i class="fab fa-weibo fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/php/">PHP</a>,&nbsp;<a href="/tags/%E6%BA%90%E7%A0%81/">源码</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/post/object-implementation-in-php/" class="prev" rel="prev" title="PHP对象的实现和操作"><i class="fas fa-angle-left fa-fw"></i>PHP对象的实现和操作</a>
+            <a href="/post/constant-implementation-in-php/" class="next" rel="next" title="PHP常量的实现和操作">PHP常量的实现和操作<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+<div id="comments"><div id="utterances"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://utteranc.es/">Utterances</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.72.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2006 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">淘气</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"utterances":{"darkTheme":"github-dark","issueTerm":"pathname","label":"","lightTheme":"github-light","repo":"xbot/blog-comments"}},"search":{"algoliaAppID":"PASDMWALPK","algoliaIndex":"index.zh-cn","algoliaSearchKey":"b42948e51daaa93df92381c8e2ac0f93","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
 </html>

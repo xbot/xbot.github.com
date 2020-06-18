@@ -1,114 +1,120 @@
 <!DOCTYPE html>
-<html>
-<head><meta name="generator" content="Hexo 3.8.0">
-  <meta charset="utf-8">
-  
-  <title>SSL证书生成方法 - 晴耕雨讀</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="一般情况下，如果能找到可用的证书，就可以直接使用，只不过会因证书的某些信息不正确或与部署证书的主机不匹配而导致浏览器提示证书无效，但这并不影响使用。  需要手工生成证书的情况有：   找不到可用的证书 需要配置双向SSL，但缺少客户端证书 需要对证书作特别的定制   首先，无论是在Linux下还是在Windows下的Cygwin中，进行下面的操作前都须确认已安装OpenSSL软件包。  1. 创建">
-<meta name="keywords" content="计算机,安全,服务器,SSL">
-<meta property="og:type" content="article">
-<meta property="og:title" content="SSL证书生成方法">
-<meta property="og:url" content="http://0x3f.org/post/howto-create-ssl-certificates/index.html">
-<meta property="og:site_name" content="晴耕雨讀">
-<meta property="og:description" content="一般情况下，如果能找到可用的证书，就可以直接使用，只不过会因证书的某些信息不正确或与部署证书的主机不匹配而导致浏览器提示证书无效，但这并不影响使用。  需要手工生成证书的情况有：   找不到可用的证书 需要配置双向SSL，但缺少客户端证书 需要对证书作特别的定制   首先，无论是在Linux下还是在Windows下的Cygwin中，进行下面的操作前都须确认已安装OpenSSL软件包。  1. 创建">
-<meta property="og:locale" content="zh-TW">
-<meta property="og:updated_time" content="2020-02-06T13:44:05.332Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="SSL证书生成方法">
-<meta name="twitter:description" content="一般情况下，如果能找到可用的证书，就可以直接使用，只不过会因证书的某些信息不正确或与部署证书的主机不匹配而导致浏览器提示证书无效，但这并不影响使用。  需要手工生成证书的情况有：   找不到可用的证书 需要配置双向SSL，但缺少客户端证书 需要对证书作特别的定制   首先，无论是在Linux下还是在Windows下的Cygwin中，进行下面的操作前都须确认已安装OpenSSL软件包。  1. 创建">
-  
-  
-    <link rel="icon" href="/favicon.png">
-  
-  <link href="/webfonts/ptserif/main.css" rel="stylesheet" type="text/css">
-  <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="/css/style.css">
-  
-<!-- Google Analytics -->
-<script type="text/javascript">
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>SSL证书生成方法 - 晴耕雨讀</title><meta name="Description" content="Donie&#39;s blog."><meta property="og:title" content="SSL证书生成方法" />
+<meta property="og:description" content="一般情况下，如果能找到可用的证书，就可以直接使用，只不过会因证书的某些信息不正确或与部署证书的主机不匹配而导致浏览器提示证书无效，但这并不影" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://0x3f.org/post/howto-create-ssl-certificates/" />
+<meta property="og:image" content="http://0x3f.org/logo.png"/>
+<meta property="article:published_time" content="2010-05-03T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-06-17T17:28:11+08:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://0x3f.org/logo.png"/>
 
-ga('create', 'UA-93233020-1', 'auto');
-ga('send', 'pageview');
+<meta name="twitter:title" content="SSL证书生成方法"/>
+<meta name="twitter:description" content="一般情况下，如果能找到可用的证书，就可以直接使用，只不过会因证书的某些信息不正确或与部署证书的主机不匹配而导致浏览器提示证书无效，但这并不影"/>
+<meta name="application-name" content="晴耕雨讀">
+<meta name="apple-mobile-web-app-title" content="晴耕雨讀"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://0x3f.org/post/howto-create-ssl-certificates/" /><link rel="prev" href="http://0x3f.org/post/phpjs/" /><link rel="next" href="http://0x3f.org/post/freearc/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "SSL证书生成方法",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/0x3f.org\/post\/howto-create-ssl-certificates\/"
+        },"image": ["http:\/\/0x3f.org\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "SSL, 安全, 服务器, 计算机","wordcount":  1818 ,
+        "url": "http:\/\/0x3f.org\/post\/howto-create-ssl-certificates\/","datePublished": "2010-05-03T00:00:00+00:00","dateModified": "2020-06-17T17:28:11+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": "http:\/\/0x3f.org\/images\/avatar.png"},"author": {
+                "@type": "Person",
+                "name": "淘气"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
 
-</script>
-<!-- End Google Analytics -->
-
-
-</head>
-</html>
-<body>
-  <div id="container">
-    <!-- blair add baidu tongji start... @2017.10.03 -->
-<!-- blair add baidu tongji end ! @2017.10.03 -->
-
-<header id="header">
-  <div id="header-outer" class="outer">
-    <div id="header-inner" class="inner">
-      <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
-      <a id="logo" class="logo" href="/"></a>
-      <nav id="main-nav">
-        
-          <a class="main-nav-link" href="/archives">目录</a>
-        
-          <a class="main-nav-link" href="/categories">分类</a>
-        
-          <a class="main-nav-link" href="/tags">标签</a>
-        
-          <a class="main-nav-link" href="https://t.me/s/blingings">不灵</a>
-        
-          <a class="main-nav-link" href="/about">关于</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        <div id="search-form-wrap">
-          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
         </div>
-      </nav>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
     </div>
-  </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
 </header>
-
-    <br>
-    <section id="main" class="outer"><article id="post-howto-create-ssl-certificates" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="article-title" itemprop="name">
-      SSL证书生成方法
-      <small class="article-detail-date-index">&nbsp; 2010-05-03</small>
-    </h1>
-  
-
-
-        <div class="page-title"></div>
-        <br>
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/howto-create-ssl-certificates/" class="article-date">
-  <time datetime="2010-05-02T16:00:00.000Z" itemprop="datePublished">2010-05-03</time>
-</a>-->
-      <!-- 
---><!-- by blair 160724 -->
-      <!-- by blair
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/howto-create-ssl-certificates/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>一般情况下，如果能找到可用的证书，就可以直接使用，只不过会因证书的某些信息不正确或与部署证书的主机不匹配而导致浏览器提示证书无效，但这并不影响使用。</p>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">SSL证书生成方法</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2010-05-03">2010-05-03</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1818 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 4 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"></div>
+            </div><div class="content" id="content"><p>一般情况下，如果能找到可用的证书，就可以直接使用，只不过会因证书的某些信息不正确或与部署证书的主机不匹配而导致浏览器提示证书无效，但这并不影响使用。</p>
 
 <p>需要手工生成证书的情况有：</p>
 
@@ -122,217 +128,264 @@ ga('send', 'pageview');
 
 <p>1. 创建根证书密钥文件<strong>root.key</strong>：</p>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl genrsa -des3 -out root.key</span><br></pre></td></tr></table></figure>
+```
+openssl genrsa -des3 -out root.key
+```
 
 <p>输出内容为：</p>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[lenin@archer ~]$ openssl genrsa -des3 -out root.key</span><br><span class="line">Generating RSA private key, 512 bit long modulus</span><br><span class="line">.................++++++++++++</span><br><span class="line">..++++++++++++</span><br><span class="line">e is 65537 (0x10001)</span><br><span class="line">Enter pass phrase for root.key:                ← 输入一个新密码</span><br><span class="line">Verifying - Enter pass phrase for root.key:    ← 重新输入一遍密码</span><br></pre></td></tr></table></figure>
+```
+[lenin@archer ~]$ openssl genrsa -des3 -out root.key
+Generating RSA private key, 512 bit long modulus
+.................++++++++++++
+..++++++++++++
+e is 65537 (0x10001)
+Enter pass phrase for root.key:                ← 输入一个新密码
+Verifying - Enter pass phrase for root.key:    ← 重新输入一遍密码
+```
 
 <p>2. 创建根证书的申请文件<strong>root.req</strong>：</p>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl req -new -key root.key -out root.req</span><br></pre></td></tr></table></figure>
+```
+openssl req -new -key root.key -out root.req
+```
 
 <p>输出内容为：</p>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">[lenin@archer ~]$ openssl req -new -key root.key -out root.req</span><br><span class="line">Enter pass phrase for root.key:                                              ← 输入前面创建的密码</span><br><span class="line">You are about to be asked to enter information that will be incorporated</span><br><span class="line">into your certificate request.</span><br><span class="line">What you are about to enter is what is called a Distinguished Name or a DN.</span><br><span class="line">There are quite a few fields but you can leave some blank</span><br><span class="line">For some fields there will be a default value,</span><br><span class="line">If you enter &apos;.&apos;, the field will be left blank.</span><br><span class="line">-----</span><br><span class="line">Country Name (2 letter code) [AU]:CN                                         ← 国家代号，中国输入CN</span><br><span class="line">State or Province Name (full name) [Some-State]:BeiJing                      ← 省的全名，拼音</span><br><span class="line">Locality Name (eg, city) []:BeiJing                                          ← 市的全名，拼音</span><br><span class="line">Organization Name (eg, company) [Internet Widgits Pty Ltd]:MyCompany Corp.   ← 公司英文名</span><br><span class="line">Organizational Unit Name (eg, section) []:                                   ← 可以不输入</span><br><span class="line">Common Name (eg, YOUR name) []:                                              ← 此时不输入</span><br><span class="line">Email Address []:admin@mycompany.com                                         ← 电子邮箱，可随意填&lt;/p&gt;</span><br><span class="line"></span><br><span class="line">Please enter the following &apos;extra&apos; attributes</span><br><span class="line">to be sent with your certificate request</span><br><span class="line">A challenge password []:                                                     ← 可以不输入</span><br><span class="line">An optional company name []:                                                 ← 可以不输入&lt;/p&gt;</span><br></pre></td></tr></table></figure>
+```
+[lenin@archer ~]$ openssl req -new -key root.key -out root.req
+Enter pass phrase for root.key:                                              ← 输入前面创建的密码
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [AU]:CN                                         ← 国家代号，中国输入CN
+State or Province Name (full name) [Some-State]:BeiJing                      ← 省的全名，拼音
+Locality Name (eg, city) []:BeiJing                                          ← 市的全名，拼音
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:MyCompany Corp.   ← 公司英文名
+Organizational Unit Name (eg, section) []:                                   ← 可以不输入
+Common Name (eg, YOUR name) []:                                              ← 此时不输入
+Email Address []:admin@mycompany.com                                         ← 电子邮箱，可随意填</p>
+
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:                                                     ← 可以不输入
+An optional company name []:                                                 ← 可以不输入</p>
+```
 
 <p>3. 创建一个自当前日期起为期十年的根证书<strong>root.crt</strong>：</p>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -req -days 3650 -sha1 -extensions v3_ca -signkey root.key -in root.req -out root.crt</span><br></pre></td></tr></table></figure>
+```
+openssl x509 -req -days 3650 -sha1 -extensions v3_ca -signkey root.key -in root.req -out root.crt
+```
 
 <p>输出内容为：</p>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[lenin@archer ~]$ openssl x509 -req -days 3650 -sha1 -extensions v3_ca -signkey root.key -in root.req -out root.crt</span><br><span class="line">Signature ok</span><br><span class="line">subject=/C=CN/ST=BeiJing/L=BeiJing/O=MyCompany Corp./emailAddress=admin@mycompany.com</span><br><span class="line">Getting Private key</span><br><span class="line">Enter pass phrase for root.key:    ← 输入前面创建的密码</span><br></pre></td></tr></table></figure>
+```
+[lenin@archer ~]$ openssl x509 -req -days 3650 -sha1 -extensions v3_ca -signkey root.key -in root.req -out root.crt
+Signature ok
+subject=/C=CN/ST=BeiJing/L=BeiJing/O=MyCompany Corp./emailAddress=admin@mycompany.com
+Getting Private key
+Enter pass phrase for root.key:    ← 输入前面创建的密码
+```
 
 <p>4. 创建服务器证书密钥<strong>server.key</strong>：</p>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl genrsa -out server.key 2048</span><br></pre></td></tr></table></figure>
+```
+openssl genrsa -out server.key 2048
+```
 
 <p>输出内容为：</p>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[lenin@archer ~]$ openssl genrsa -out server.key 2048</span><br><span class="line">Generating RSA private key, 2048 bit long modulus</span><br><span class="line">....+++</span><br><span class="line">..................................................+++</span><br><span class="line">e is 65537 (0x10001)</span><br></pre></td></tr></table></figure>
+```
+[lenin@archer ~]$ openssl genrsa -out server.key 2048
+Generating RSA private key, 2048 bit long modulus
+....+++
+..................................................+++
+e is 65537 (0x10001)
+```
 
 <p>5.创建服务器证书的申请文件<strong>server.req</strong>：</p>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl req -new -key server.key -out server.req</span><br></pre></td></tr></table></figure>
+```
+openssl req -new -key server.key -out server.req
+```
 
 <p>输出内容为：</p>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">[lenin@archer ~]$ openssl req -new -key server.key -out server.req</span><br><span class="line">You are about to be asked to enter information that will be incorporated</span><br><span class="line">into your certificate request.</span><br><span class="line">What you are about to enter is what is called a Distinguished Name or a DN.</span><br><span class="line">There are quite a few fields but you can leave some blank</span><br><span class="line">For some fields there will be a default value,</span><br><span class="line">If you enter &apos;.&apos;, the field will be left blank.</span><br><span class="line">-----</span><br><span class="line">Country Name (2 letter code) [AU]:CN                                          ← 国家名称，中国输入CN</span><br><span class="line">State or Province Name (full name) [Some-State]:BeiJing                       ← 省名，拼音</span><br><span class="line">Locality Name (eg, city) []:BeiJing                                           ← 市名，拼音</span><br><span class="line">Organization Name (eg, company) [Internet Widgits Pty Ltd]:MyCompany Corp.    ← 公司英文名</span><br><span class="line">Organizational Unit Name (eg, section) []:                                    ← 可以不输入</span><br><span class="line">Common Name (eg, YOUR name) []:www.mycompany.com                              ← 服务器主机名，若填写不正确，浏览器会报告证书无效，但并不影响使用</span><br><span class="line">Email Address []:admin@mycompany.com                                          ← 电子邮箱，可随便填</span><br><span class="line"></span><br><span class="line">Please enter the following &apos;extra&apos; attributes</span><br><span class="line">to be sent with your certificate request</span><br><span class="line">A challenge password []:                                                      ← 可以不输入</span><br><span class="line">An optional company name []:                                                  ← 可以不输入</span><br></pre></td></tr></table></figure>
+```
+[lenin@archer ~]$ openssl req -new -key server.key -out server.req
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [AU]:CN                                          ← 国家名称，中国输入CN
+State or Province Name (full name) [Some-State]:BeiJing                       ← 省名，拼音
+Locality Name (eg, city) []:BeiJing                                           ← 市名，拼音
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:MyCompany Corp.    ← 公司英文名
+Organizational Unit Name (eg, section) []:                                    ← 可以不输入
+Common Name (eg, YOUR name) []:www.mycompany.com                              ← 服务器主机名，若填写不正确，浏览器会报告证书无效，但并不影响使用
+Email Address []:admin@mycompany.com                                          ← 电子邮箱，可随便填
+
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:                                                      ← 可以不输入
+An optional company name []:                                                  ← 可以不输入
+```
 
 <p>6. 创建自当前日期起有效期为期两年的服务器证书<strong>server.crt</strong>：</p>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -req -days 730 -sha1 -extensions v3_req -CA root.crt -CAkey root.key -CAserial root.srl -CAcreateserial -in server.req -out server.crt</span><br></pre></td></tr></table></figure>
+```
+openssl x509 -req -days 730 -sha1 -extensions v3_req -CA root.crt -CAkey root.key -CAserial root.srl -CAcreateserial -in server.req -out server.crt
+```
 
 <p>输出内容为：</p>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[lenin@archer ~]$ openssl x509 -req -days 730 -sha1 -extensions v3_req -CA root.crt -CAkey root.key -CAserial root.srl -CAcreateserial -in server.req -out server.crt</span><br><span class="line">Signature ok</span><br><span class="line">subject=/C=CN/ST=BeiJing/L=BeiJing/O=MyCompany Corp./CN=www.mycompany.com/emailAddress=admin@mycompany.com</span><br><span class="line">Getting CA Private Key</span><br><span class="line">Enter pass phrase for root.key:    ← 输入前面创建的密码</span><br></pre></td></tr></table></figure>
+```
+[lenin@archer ~]$ openssl x509 -req -days 730 -sha1 -extensions v3_req -CA root.crt -CAkey root.key -CAserial root.srl -CAcreateserial -in server.req -out server.crt
+Signature ok
+subject=/C=CN/ST=BeiJing/L=BeiJing/O=MyCompany Corp./CN=www.mycompany.com/emailAddress=admin@mycompany.com
+Getting CA Private Key
+Enter pass phrase for root.key:    ← 输入前面创建的密码
+```
 
 <p>7. 创建客户端证书密钥文件<strong>client.key</strong>：</p>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl genrsa -des3 -out client.key 2048</span><br></pre></td></tr></table></figure>
+```
+openssl genrsa -des3 -out client.key 2048
+```
 
 <p>输出内容为：</p>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[lenin@archer ~]$ openssl genrsa -des3 -out client.key 2048</span><br><span class="line">Generating RSA private key, 2048 bit long modulus</span><br><span class="line">.........................................................................................+++</span><br><span class="line">......................................................................................................................+++</span><br><span class="line">e is 65537 (0x10001)</span><br><span class="line">Enter pass phrase for client.key:              ← 输入一个新密码</span><br><span class="line">Verifying - Enter pass phrase for client.key:  ← 重新输入一遍密码</span><br></pre></td></tr></table></figure>
+```
+[lenin@archer ~]$ openssl genrsa -des3 -out client.key 2048
+Generating RSA private key, 2048 bit long modulus
+.........................................................................................+++
+......................................................................................................................+++
+e is 65537 (0x10001)
+Enter pass phrase for client.key:              ← 输入一个新密码
+Verifying - Enter pass phrase for client.key:  ← 重新输入一遍密码
+```
 
 <p>8. 创建客户端证书的申请文件<strong>client.req</strong>：</p>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl req -new -key client.key -out client.req</span><br></pre></td></tr></table></figure>
+```
+openssl req -new -key client.key -out client.req
+```
 
 <p>输出内容为：</p>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">[lenin@archer ~]$ openssl genrsa -des3 -out client.key 2048</span><br><span class="line">Generating RSA private key, 2048 bit long modulus</span><br><span class="line">.........................................................................................+++</span><br><span class="line">......................................................................................................................+++</span><br><span class="line">e is 65537 (0x10001)</span><br><span class="line">Enter pass phrase for client.key:</span><br><span class="line">Verifying - Enter pass phrase for client.key:</span><br><span class="line">[lenin@archer ~]$ openssl req -new -key client.key -out client.req</span><br><span class="line">Enter pass phrase for client.key:                                              ← 输入上一步中创建的密码</span><br><span class="line">You are about to be asked to enter information that will be incorporated</span><br><span class="line">into your certificate request.</span><br><span class="line">What you are about to enter is what is called a Distinguished Name or a DN.</span><br><span class="line">There are quite a few fields but you can leave some blank</span><br><span class="line">For some fields there will be a default value,</span><br><span class="line">If you enter &apos;.&apos;, the field will be left blank.</span><br><span class="line">-----</span><br><span class="line">Country Name (2 letter code) [AU]:CN                                           ← 国家名称，中国输入CN</span><br><span class="line">State or Province Name (full name) [Some-State]:BeiJing                        ← 省名称，拼音</span><br><span class="line">Locality Name (eg, city) []:BeiJing                                            ← 市名称，拼音</span><br><span class="line">Organization Name (eg, company) [Internet Widgits Pty Ltd]:MyCompany Corp.     ← 公司英文名</span><br><span class="line">Organizational Unit Name (eg, section) []:                                     ← 可以不填</span><br><span class="line">Common Name (eg, YOUR name) []:Lenin                                           ← 自己的英文名，可以随便填</span><br><span class="line">Email Address []:admin@mycompany.com                                           ← 电子邮箱，可以随便填</span><br><span class="line"></span><br><span class="line">Please enter the following &apos;extra&apos; attributes</span><br><span class="line">to be sent with your certificate request</span><br><span class="line">A challenge password []:                                                       ← 可以不填</span><br><span class="line">An optional company name []:                                                   ← 可以不填</span><br></pre></td></tr></table></figure>
+```
+[lenin@archer ~]$ openssl genrsa -des3 -out client.key 2048
+Generating RSA private key, 2048 bit long modulus
+.........................................................................................+++
+......................................................................................................................+++
+e is 65537 (0x10001)
+Enter pass phrase for client.key:
+Verifying - Enter pass phrase for client.key:
+[lenin@archer ~]$ openssl req -new -key client.key -out client.req
+Enter pass phrase for client.key:                                              ← 输入上一步中创建的密码
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [AU]:CN                                           ← 国家名称，中国输入CN
+State or Province Name (full name) [Some-State]:BeiJing                        ← 省名称，拼音
+Locality Name (eg, city) []:BeiJing                                            ← 市名称，拼音
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:MyCompany Corp.     ← 公司英文名
+Organizational Unit Name (eg, section) []:                                     ← 可以不填
+Common Name (eg, YOUR name) []:Lenin                                           ← 自己的英文名，可以随便填
+Email Address []:admin@mycompany.com                                           ← 电子邮箱，可以随便填
+
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:                                                       ← 可以不填
+An optional company name []:                                                   ← 可以不填
+```
 
 <p>9. 创建一个自当前日期起有效期为两年的客户端证书<strong>client.crt</strong>：</p>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -req -days 730 -sha1 -extensions v3_req -CA root.crt -CAkey root.key -CAserial root.srl -CAcreateserial -in client.req -out client.crt</span><br></pre></td></tr></table></figure>
+```
+openssl x509 -req -days 730 -sha1 -extensions v3_req -CA root.crt -CAkey root.key -CAserial root.srl -CAcreateserial -in client.req -out client.crt
+```
 
 <p>输出内容为：</p>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[lenin@archer ~]$ openssl x509 -req -days 730 -sha1 -extensions v3_req -CA root.crt -CAkey root.key -CAserial root.srl -CAcreateserial -in client.req -out client.crt</span><br><span class="line">Signature ok</span><br><span class="line">subject=/C=CN/ST=BeiJing/L=BeiJing/O=MyCompany Corp./CN=www.mycompany.com/emailAddress=admin@mycompany.com</span><br><span class="line">Getting CA Private Key</span><br><span class="line">Enter pass phrase for root.key:          ← 输入上面创建的密码</span><br></pre></td></tr></table></figure>
+```
+[lenin@archer ~]$ openssl x509 -req -days 730 -sha1 -extensions v3_req -CA root.crt -CAkey root.key -CAserial root.srl -CAcreateserial -in client.req -out client.crt
+Signature ok
+subject=/C=CN/ST=BeiJing/L=BeiJing/O=MyCompany Corp./CN=www.mycompany.com/emailAddress=admin@mycompany.com
+Getting CA Private Key
+Enter pass phrase for root.key:          ← 输入上面创建的密码
+```
 
 <p>10. 将客户端证书文件<strong>client.crt</strong>和客户端证书密钥文件<strong>client.key</strong>合并成客户端证书安装包<strong>client.pfx</strong>：</p>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl pkcs12 -export -in client.crt -inkey client.key -out client.pfx</span><br></pre></td></tr></table></figure>
+```
+openssl pkcs12 -export -in client.crt -inkey client.key -out client.pfx
+```
 
 <p>输出内容为：</p>
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[lenin@archer ~]$ openssl pkcs12 -export -in client.crt -inkey client.key -out client.pfx</span><br><span class="line">Enter pass phrase for client.key:        ← 输入上面创建的密码</span><br><span class="line">Enter Export Password:                   ← 输入一个新的密码，用作客户端证书的保护密码，在客户端安装证书时需要输入此密码</span><br><span class="line">Verifying - Enter Export Password:       ← 确认密码</span><br></pre></td></tr></table></figure>
+```
+[lenin@archer ~]$ openssl pkcs12 -export -in client.crt -inkey client.key -out client.pfx
+Enter pass phrase for client.key:        ← 输入上面创建的密码
+Enter Export Password:                   ← 输入一个新的密码，用作客户端证书的保护密码，在客户端安装证书时需要输入此密码
+Verifying - Enter Export Password:       ← 确认密码
+```
 
 <p>11. 保存生成的文件备用，其中<strong>server.crt</strong>和<strong>server.key</strong>是配置单向SSL时需要使用的证书文件，<strong>client.crt</strong>是配置双向SSL时需要使用的证书文件，<strong>client.pfx</strong>是配置双向SSL时需要客户端安装的证书文件</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2020-06-17&nbsp;<a class="git-hash" href="https://github.com/dillonzq/LoveIt/commit/b6b131fb549d1c33b519bbe9910a7c0b426257fd" target="_blank" title="commit by Donie Leigh(donie.leigh@gmail.com) b6b131fb549d1c33b519bbe9910a7c0b426257fd: URL地址改为用slug生成；为所有文章追加slug matter">
+                                    <i class="fas fa-hashtag fa-fw"></i>b6b131fb</a></span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/post/howto-create-ssl-certificates/index.md" target="_blank">阅读原始文档</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="http://0x3f.org/post/howto-create-ssl-certificates/" data-title="SSL证书生成方法" data-hashtags="SSL,安全,服务器,计算机"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="http://0x3f.org/post/howto-create-ssl-certificates/" data-hashtag="SSL"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="http://0x3f.org/post/howto-create-ssl-certificates/" data-title="SSL证书生成方法"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="http://0x3f.org/post/howto-create-ssl-certificates/" data-title="SSL证书生成方法"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="http://0x3f.org/post/howto-create-ssl-certificates/" data-title="SSL证书生成方法"><i class="fab fa-weibo fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
 
-      
-     <!-- by blair add this if sentence at 20160725 -->
-      <br>
-      
-<!--
-<div id="bottom-donation-section">
-<span style="font-size: 1.0em; padding:0em 1em 0.5em 1em; margin: 0 auto;">
-  <strong style="vertical-align: top;">分享到:</strong>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_facebook_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://www.facebook.com/sharer/sharer.php?u=" target="_blank">
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/ssl/">SSL</a>,&nbsp;<a href="/tags/%E5%AE%89%E5%85%A8/">安全</a>,&nbsp;<a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/">服务器</a>,&nbsp;<a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/">计算机</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
     </div>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_weibo_icon.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://service.weibo.com/share/share.php?url" target="_blank">
-    </div>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_wechat_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://api.addthis.com/oexchange/0.8/forward/wechat/offer?url=" target="_blank">
-    </div>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_twitter_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://twitter.com/intent/tweet?url=" target="_blank">
-    </div>
-  <br>  
-  <br>  
-  &nbsp;&nbsp;如果您觉得这篇文章对您的学习很有帮助, 请您也分享它, 让它能再次帮助到更多的需要学习的人.
-您的<a href="/support/"><strong>支持</strong></a>将鼓励我继续创作 !
-  <br>  
 
-</span>
+    <div class="post-nav"><a href="/post/phpjs/" class="prev" rel="prev" title="强大的工具函数库：php.js"><i class="fas fa-angle-left fa-fw"></i>强大的工具函数库：php.js</a>
+            <a href="/post/freearc/" class="next" rel="next" title="FreeArc：兼顾压缩比率与效率的压缩程序">FreeArc：兼顾压缩比率与效率的压缩程序<i class="fas fa-angle-right fa-fw"></i></a></div>
 </div>
--->
-<div class="well">
-  <!--
-  原创文章，转载请注明： 转载自<a href="http://52binge.github.io"> Blair Chan's Blog</a>，作者：
-  <a href="/about">Blair Chan</a> <br>
-  -->
-  本文基于<a target="_blank" title="Creative Commons Attribution 4.0 international License" href="https://creativecommons.org/licenses/by-nc/4.0/">署名4.0国际许可协议</a>发布，转载请保留本文署名和文章链接。 如您有任何授权方面的协商，请联系我。
-</div>
- <!-- by blair add 160724-->
-    
-    </div>
-    
-    
-      <footer class="article-footer">
-        <!-- <div class="well" style="width:100px; height:30px;"></div>  by blair-->
-        
- <!-- by blair add 160724-->
-        <!--
-        <div style="width:100px; height:30px;"></div> by blair add 160724
-        -->
-        
-  <div class="article-tag">
-    <a class="article-tag-link" href="/tags/ssl/">SSL</a><span></span><a class="article-tag-link" href="/tags/安全/">安全</a><span></span><a class="article-tag-link" href="/tags/服务器/">服务器</a><span></span><a class="article-tag-link" href="/tags/计算机/">计算机</a>
-  </div>
+<div id="comments"><div id="utterances"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://utteranc.es/">Utterances</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.72.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2006 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">淘气</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
 
-
-      </footer>
-    
-  </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/post/freearc/" id="article-nav-newer" class="article-nav-link-wrap">
-      <div class="article-nav-title"><span>&lt;</span>&nbsp;
-        
-          FreeArc：兼顾压缩比率与效率的压缩程序
-        
-      </div>
-    </a>
-  
-  
-    <a href="/post/phpjs/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">强大的工具函数库：php.js&nbsp;<span>&gt;</span></div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-<section id="comments">
-  <div id="disqus_thread">
-    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-  </div>
-</section>
-
-</section>
-    <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2020 晴耕雨讀&nbsp;
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/52binge/hexo-theme-blairos">blairos</a>
-    </div>
-  </div>
-</footer>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    extensions: ["tex2jax.js"],
-    jax: ["input/TeX"],
-    tex2jax: {
-      inlineMath: [ ['$','$'], ['\\(','\\)'] ],
-      displayMath: [ ['$$','$$']],
-      processEscapes: true
-    }
-  });
-</script>
-<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML,http://myserver.com/MathJax/config/local/local.js">
-</script>
-
-    
-<script type="text/javascript"> <!-- add by blair 0724 type=text/javascript -->
-  var disqus_shortname = '0x3f';
-  
-  var disqus_url = 'http://0x3f.org/post/howto-create-ssl-certificates/';
-  
-  (function(){
-    var dsq = document.createElement('script');
-    dsq.type = 'text/javascript';
-    dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
-
-
-<script src="/js/jquery.min.js"></script>
-
-
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
-
-
-<script src="/js/script.js"></script>
-
-  </div>
-</body>
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"utterances":{"darkTheme":"github-dark","issueTerm":"pathname","label":"","lightTheme":"github-light","repo":"xbot/blog-comments"}},"search":{"algoliaAppID":"PASDMWALPK","algoliaIndex":"index.zh-cn","algoliaSearchKey":"b42948e51daaa93df92381c8e2ac0f93","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
 </html>

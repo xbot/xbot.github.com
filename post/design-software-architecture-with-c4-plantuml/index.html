@@ -1,270 +1,207 @@
 <!DOCTYPE html>
-<html>
-<head><meta name="generator" content="Hexo 3.8.0">
-  <meta charset="utf-8">
-  
-  <title>用C4-PlantUML画软件架构图 - 晴耕雨讀</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="C4 Model是一种简洁有序的架构模型，四个“C”分别表示“Context”、“Container”、“Component”和“Code”，是由上而下逐步细化的四个层级。">
-<meta name="keywords" content="编程,最佳实践">
-<meta property="og:type" content="article">
-<meta property="og:title" content="用C4-PlantUML画软件架构图">
-<meta property="og:url" content="http://0x3f.org/post/design-software-architecture-with-c4-plantuml/index.html">
-<meta property="og:site_name" content="晴耕雨讀">
-<meta property="og:description" content="C4 Model是一种简洁有序的架构模型，四个“C”分别表示“Context”、“Container”、“Component”和“Code”，是由上而下逐步细化的四个层级。">
-<meta property="og:locale" content="zh-TW">
-<meta property="og:image" content="https://www.plantuml.com/plantuml/svg/0/TLHBRzim3BxxLt2vD0NIP8UTTceUnbeiZo8F53qPYaB7GcJ9a-IcmR3_FigE4xjrSeh8Z-H7ygCVhMF6vQaClWd5PRx3t4X8dClipy70i6D_BroIRtEBXclbKBa-r-bWAJWpEpqNcA4SZ7yyl4Yct6Os7QJCEZHaYiOU_-7wcKz_1xcYm9GIW4iGOYsbFWgr1oaK0bCxQBY5iVHF0nK6gJcJyaGvAfBmENrmDns-BJRhQBruYIQBr_d5C5n5gz_XUln4uMVJw_FwAPg6lyBv90YSS19XTIBMAKo9X-KiGzW9jZSi9Pu6Hc8F8wOEa4aU12zeh5PTdbkdKpGzw9GM9WkGRsbyzdN8EOGA2JekUjiIgWT7cYjaLQIt0UDSvyhPVkS-24BgpcH6M8n6PDqnS-hoxvImpgPp3ty3e5_9lxij2KIsU1BusMTHw2xKIc11p2_0NjXPF-rtWKSGYffEcHDQ0TlglDY8C4sElM9bAJiWPEpazrRIlfA9mW_NPSwp6AvdjohwCUn8Py2PJNo6JmbI9kIrdV31ly5UcbZJF4NH8mrn9hZHLiSEmW-UCBL7m7f06q5ogvWMZPHiLlrlcTRAQOCMI8VL6ZaPu3pmbfbTkkpLPkOCKvPn3wCNEdwXL6gee5H5HdHpxu9xPfMWO5MQOELO77VgdZCOhFSKOnNg8hTgiBKgMyOFaOxZii28Nh0eNjVSmrqgbB14kkoB5cxpBDF6tQxoBmYMAACvYdsorQPs9b-qkR5eASB3bpLSAPdNiovi8Gpw353e6Uovrl1DXQoGBlYyTYymFz_F5Le6FBG72tzojCLgV9mN5qhC4gsmIZBvSc2tYpSeByj3g8kjqNrBsZRWf4KRDw2Rve9RKC6KdIXZGQnPl-chIjuNnatp8g_EH-gTliJ_0G00">
-<meta property="og:image" content="https://www.plantuml.com/plantuml/svg/0/bLN1Zjf84BtxAsh98KJo35ffJtiA0sXdae7nZfcTv6ILsmMqqkwskjiG5Es_RxMn0KEKP3dPHTMhrwzUjTyxZzRNfOf-argekg3QAjXuNxa_HoEBkzkrz9iwhnrPORGdxM-5AKVFKg0jp49IHMeq-UCcKQZzo_nnLABpP3cKJJWVfIPxMuK6Rw7MN5eo1FWDmSeePNPIhq5n4g0keFUtj8wV371hK4QWKdl6w6Z2TOFeSVpvwMMPBP-IRFhqkeZUje5ncgKVPyl9FTUteTU7vNtsEFjhjfX6aPTUCM271eN4jSMI6Lfuu3DRJHxkK7y9PDCzdw-CeeIiCteeQkTDIJQ6oV5fC8Ok36RLd2RdwXXsh2LKJI6g9WOeXAcrTuDtKNI0pkuuKA3T3yNlZ7L9OF0ElaN0loFVuOxo3AkAaryfXt5LAPwEbqOFEFG1jnX3Mjb0VlxF9CIcfEIMQJJKs05U2cYdsymXX8zzy-xWoPX9zZkxYh47AV-jw2R1DONkNTTKM5dv6CPwNIkq8PnOivK5EU1fVh_BYaqIgAEIVX_6B-f6I0TRYQ54Mk3pGcxDZZrvnQWqkLJKoZ5lNZfEapSnVC8IMOa-5pPWAJqLuEhSCPTsPh_2pLsHEn20WhPIq2MzQJuiq6EEZi8OsiV09ltx4NhltbZc5lOEBAsbynQvDKZDhYoRwSQmuUG2i6PN2Ki5Zq-YSd4m5Jd7MxFc5_BYzagc7CKNqWNh98DVauVlssPgECsUwdgw_KIV80a3S-j_ZzQUVVL3Ab6gp3K1XflTpFczNQk0lsJfPGFDEpANmXfdLXvcNyK6DJliKCcmPvWjWnCgO-eLxp1TxEsPjC62xQG51uwdE5COC3UrFuqvFgvh33mFxR0vxqdaw9dKsPLmMimNHoxqlbykavGJ-tc7DVfnJi_OJUgXNROWkTxavkmQEC1rIzuYDS7-sBk6wFPQnF0XVLgCpfkVj_nVbTaTPv-8dIpVHtacB1oih2cRMsTdUGdvJZ81kGMUtaswSmRCCpqkR9Goh0Ew2T46uqJamd5z3lswseKRzjW-dI-J5kXuc5xvbUywOKBzg5Nd4tyLEt7USob_g_u3">
-<meta property="og:image" content="https://www.plantuml.com/plantuml/svg/0/fLLDRnen4BtlhvXoQ45AmgMddaf8sYJA1mBIZnEQzGwBMt-iR2yKLVtl7Nk1NPAeYjHSuXsFPzwyzsm--e0kr5fbRwGHgYweTWfM8LJ-mt3eS7DMoh2gyzgJ4zO4Ck5CM3sSIe6kiFUIAbB3yVlJYK8J7kzkXnfz8CUXnTZgoffueeeDta5j-AZc08GLmT8gPJVIbA2a8K1JmD6sT9vN5hWrA2jGgItNsCE4vmsosz7tXyVvuklr_6fnU_dvylwYFyYo88FYz7qk519BXvhxExZcYPoX0ETeVaOeiosZrt0AeyarZAfAyPn1MfDbOvuU6QZh-mfFe3VZTAuxmPAwYJtU-e5hzCB9AgIfq9IrGXTt9iwkPK4UU9eqfTm3o7S0banIh8DAXcqSNzG-M4tEmrfYF2CTR2Y7tDaDYtBM6tIWwOZipkPI9L2nvJVKwAGvxiwKQnce05_ddhlRy1zeTDDlzw-WjHHq1EiYxnSvzx_0W3bwYbYcfB2f3FimpCIADCRTMR2ESKRNWQDI-k1IDYDasNHQdy0A_Ofdm9fncB0J08IZ8dwYyYU0Gf3tx9-IFoY8YAlHU77vA_HrxYDXZ7B9bg0dDkWWYNhPPI99SE10K0SFO6xhq3AKcjlQ15unVECnKTdYQ0bQd7DUWMxRnqfoqoVcwmtWTmRyTp1ntylI91EMXaqCiPBZ-qJ9PNTVnZ0blZs7S8oEudLhEFLHobY2ySVbYzhxXeF1ayxjKBtHRWcpMhF9jg-2SJ1XQwKDFp7iISzLB5TfU6PZHIG74fy1yIHgnxQCDEoMxMwIhd9nZdF2O_SVczf58xAB4YEcR4Gz0R72vgD2xpVM5Qrknp3OGaiKMD0_Z0IVKiOBe4RG70QcgD517seS2v4S4rlppTd9ts7WqTEUeRZVYjI5zoIfFPvkvvImWBUmuH0n6n7TpSNvk7EWKwkvEAbWV6FutR-QpoSpJlwJPQbuV2HtBjsdtSmUxWzvXwIEeLvCJ9dw5TNqAufz95FmRyLV">
-<meta property="og:image" content="https://www.plantuml.com/plantuml/svg/0/jLXVJzjM57_Ff_3oKYAnvcLFUse7Q7Ib445GDMcIPHmRh3fsP3ljq5I9m4ef8v0MwDgDjGqjRRKL1rG68H7amyptElaMkzVNyP_43cPXUOXkxZs_txddt7FEFJStL8rHj7nMZCM-42HMp6SuQaxJSkhNoQJ2FBW-AsXp-PcyoYciB6cSf5rdvMnoKc0P9IEF2roE4vD3NtsP4Xb9cxupbimogiOfQ8eUGlAC877AzHoclqRb9GJD8WfAc-CeNXP5-O4WpL8Y4g8OAKFvbWL5HIEPGgefKMOPKPn77CuUknN4ncv-Fp6TfjCJANfuukuuahPdRaxHKxT7qaEZ0mbtykwjz2WzDlBjoFWmcevfWYPob57x03OBIQFs3hxOJ3QFTi5g6VvTCAg_uS6hO_ZgvrWinIcgB0ta53cJPpKwoqZCBASCsc2plc6MbXDjAJQlQdAMKsX6LGNaQqaRf82-2tUAtI8E4nPOEUbWObXMpak4WUoilKIF_AWvB6sqRp73gSAiX1UR-dbJBuFg2h9v11seabC4bQE_GTGPHfaVU20hzsOuYPqRfEBWPCyusm4R1_44zLECGf-fUNIwMLUwxGEMmrG8GdnWLFT1Oyb1uOzpM0CvbkOLAvOoMCUJelbN9Ov6tp7t6PLLX1ooxwQa3LjRZZiYhVAf-RiUJmGppZ3iFPkmj6uJfaPJWzHO7eLKt9c7wtjWusqGo_0Cviam6ZF3g5o7AN3x01PrKDl4JAqNZTRZDQFsr9qbV0zZWKvYbIn23KtU2N48MhzgZs3AAt499lBu11dHbojuGM8abdFZXGHoptZXhpnU-2kA5zuNBrvJeZhfON0Iec97eufxNs0v5M_bN4Vr0f67vg57k4FIRxajHzjvwqIv3UfsmigoULZ_Pw4mbPh6txUd0ntQfaMb6Nl2h3NCezqmJh9gwcLKt13d3n8ehS7zFVFJ9wFw13u_TMAifoevbvFHlIK9sZpUv_OotAc5Mc6jzglHBR1nKc53rP7gRQdhpOXc5COw1b1QmPiAOxHM-tQPaY4vf--2udQOBhAAj83z4Xdt9BKpsed_C5guLJ7gBu1UXc-gY1nk7SDFvwtDusPv3HJBZcbmesIk7pXYnjdBrkuVw0Q61qVeP-ljEbp_q7C_agm9F0u9nDHQVXRgqOsdhOM2-NhVQ9HxycdCB2PxyzZSFm-DQ6ltHCQi7u7QUso9zTCPW6The7BQF2o3Hv-RXItqRNwkzowMCkg355yTU7GCzAM01BUH-APNLHbB5hVDnLFpPHsSUO_FAsVRXpixRCBMHpUYUmAuB2E8kAejwaRzs8Umwjcr__n1lHdPXd7MG0E04lfbfH--IKxixjByxKTJRxH-rV4XZgRJgIba20O5DMqTj_G5G4TT99YtjUFPoyb7Kj2P7PvQHdA0P4k7j7tK7c7xq8E4szHkgnc1sYFSGTrV77bxjpuZY9xqTwo-PhDPEO67YrOtCZKndiGkjmtrOKXIskdO8UpgS6ZzVQYh8psKIjxoA700NdxufjpwSoraIowYgn7eQKeNpYuRyFLUix9hPoqwwaAboxo-pX5TRFqVdpz3_ArnkDL-L8GJz15tzCqXP-Y3H3j4FyJVTy7D8dglaVugCjRVI14AqZ15L-yM21jlTK3HyMuVPEEjVYUw2NPZGy1sqn8L73cIGndS728aTl6v78cdZ-ePabr0f-7njJHHqUtRd8193RxQ5FO-Y_hFPT_jo4ShnVmbIx6NbezIYlbBbsAUxIiBWk1E4bWnI9A0n21SUMuqTBXrIYRDrMEuK8XAUwdq23JBKnmi4b8SBaSI9Jk2S96J8mZy_-S6g2w1muK-EKxUeuT5wwo4_zfavkdXNlSy_lyJhgvwdpFeOU9zkS6jSx1oW5-MjJNqDeiHogvIvtaU9IwI8OTmeLWxK2uKj8F1jWMyUzvQ-cY_NwpDmvq5e_eBUXPt45bFkNR7cGXQTBVWEDEV1xxGI3X2dHK6uM-WSJuh_Wi0">
-<meta property="og:updated_time" content="2020-02-06T13:44:05.850Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="用C4-PlantUML画软件架构图">
-<meta name="twitter:description" content="C4 Model是一种简洁有序的架构模型，四个“C”分别表示“Context”、“Container”、“Component”和“Code”，是由上而下逐步细化的四个层级。">
-<meta name="twitter:image" content="https://www.plantuml.com/plantuml/svg/0/TLHBRzim3BxxLt2vD0NIP8UTTceUnbeiZo8F53qPYaB7GcJ9a-IcmR3_FigE4xjrSeh8Z-H7ygCVhMF6vQaClWd5PRx3t4X8dClipy70i6D_BroIRtEBXclbKBa-r-bWAJWpEpqNcA4SZ7yyl4Yct6Os7QJCEZHaYiOU_-7wcKz_1xcYm9GIW4iGOYsbFWgr1oaK0bCxQBY5iVHF0nK6gJcJyaGvAfBmENrmDns-BJRhQBruYIQBr_d5C5n5gz_XUln4uMVJw_FwAPg6lyBv90YSS19XTIBMAKo9X-KiGzW9jZSi9Pu6Hc8F8wOEa4aU12zeh5PTdbkdKpGzw9GM9WkGRsbyzdN8EOGA2JekUjiIgWT7cYjaLQIt0UDSvyhPVkS-24BgpcH6M8n6PDqnS-hoxvImpgPp3ty3e5_9lxij2KIsU1BusMTHw2xKIc11p2_0NjXPF-rtWKSGYffEcHDQ0TlglDY8C4sElM9bAJiWPEpazrRIlfA9mW_NPSwp6AvdjohwCUn8Py2PJNo6JmbI9kIrdV31ly5UcbZJF4NH8mrn9hZHLiSEmW-UCBL7m7f06q5ogvWMZPHiLlrlcTRAQOCMI8VL6ZaPu3pmbfbTkkpLPkOCKvPn3wCNEdwXL6gee5H5HdHpxu9xPfMWO5MQOELO77VgdZCOhFSKOnNg8hTgiBKgMyOFaOxZii28Nh0eNjVSmrqgbB14kkoB5cxpBDF6tQxoBmYMAACvYdsorQPs9b-qkR5eASB3bpLSAPdNiovi8Gpw353e6Uovrl1DXQoGBlYyTYymFz_F5Le6FBG72tzojCLgV9mN5qhC4gsmIZBvSc2tYpSeByj3g8kjqNrBsZRWf4KRDw2Rve9RKC6KdIXZGQnPl-chIjuNnatp8g_EH-gTliJ_0G00">
-  
-  
-    <link rel="icon" href="/favicon.png">
-  
-  <link href="/webfonts/ptserif/main.css" rel="stylesheet" type="text/css">
-  <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="/css/style.css">
-  
-<!-- Google Analytics -->
-<script type="text/javascript">
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>用C4-PlantUML画软件架构图 - 晴耕雨讀</title><meta name="Description" content="Donie&#39;s blog."><meta property="og:title" content="用C4-PlantUML画软件架构图" />
+<meta property="og:description" content="C4 Model是一种简洁有序的架构模型，四个“C”分别表示“Context”、“Container”、“Component”和“Code”，是由上而下逐步细化的四个层级。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://0x3f.org/post/design-software-architecture-with-c4-plantuml/" />
+<meta property="og:image" content="http://0x3f.org/logo.png"/>
+<meta property="article:published_time" content="2020-01-17T17:29:24+00:00" />
+<meta property="article:modified_time" content="2020-06-17T17:28:11+08:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://0x3f.org/logo.png"/>
 
-ga('create', 'UA-93233020-1', 'auto');
-ga('send', 'pageview');
-
-</script>
-<!-- End Google Analytics -->
-
-
-</head>
-</html>
-<body>
-  <div id="container">
-    <!-- blair add baidu tongji start... @2017.10.03 -->
-<!-- blair add baidu tongji end ! @2017.10.03 -->
-
-<header id="header">
-  <div id="header-outer" class="outer">
-    <div id="header-inner" class="inner">
-      <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
-      <a id="logo" class="logo" href="/"></a>
-      <nav id="main-nav">
-        
-          <a class="main-nav-link" href="/archives">目录</a>
-        
-          <a class="main-nav-link" href="/categories">分类</a>
-        
-          <a class="main-nav-link" href="/tags">标签</a>
-        
-          <a class="main-nav-link" href="https://t.me/s/blingings">不灵</a>
-        
-          <a class="main-nav-link" href="/about">关于</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        <div id="search-form-wrap">
-          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
-        </div>
-      </nav>
-    </div>
-  </div>
-</header>
-
-    <br>
-    <section id="main" class="outer"><article id="post-design-software-architecture-with-c4-plantuml" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="article-title" itemprop="name">
-      用C4-PlantUML画软件架构图
-      <small class="article-detail-date-index">&nbsp; 2020-01-17</small>
-    </h1>
-  
-
-
-        <div class="page-title"></div>
-        <br>
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/design-software-architecture-with-c4-plantuml/" class="article-date">
-  <time datetime="2020-01-17T09:29:24.000Z" itemprop="datePublished">2020-01-17</time>
-</a>-->
-      <!-- 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/计算机/">计算机</a>
-  </div>
-
---><!-- by blair 160724 -->
-      <!-- by blair
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/design-software-architecture-with-c4-plantuml/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a href="https://c4model.com" target="_blank" rel="noopener">C4 Model</a>是一种简洁有序的架构模型，四个“C”分别表示“Context”、“Container”、“Component”和“Code”，是由上而下逐步细化的四个层级。</p>
-<a id="more"></a>
-<p>Contex即上下文，它表示我们正在构架的软件系统和用户、其它系统之间的关系。例如：</p>
-<p><img src="https://www.plantuml.com/plantuml/svg/0/TLHBRzim3BxxLt2vD0NIP8UTTceUnbeiZo8F53qPYaB7GcJ9a-IcmR3_FigE4xjrSeh8Z-H7ygCVhMF6vQaClWd5PRx3t4X8dClipy70i6D_BroIRtEBXclbKBa-r-bWAJWpEpqNcA4SZ7yyl4Yct6Os7QJCEZHaYiOU_-7wcKz_1xcYm9GIW4iGOYsbFWgr1oaK0bCxQBY5iVHF0nK6gJcJyaGvAfBmENrmDns-BJRhQBruYIQBr_d5C5n5gz_XUln4uMVJw_FwAPg6lyBv90YSS19XTIBMAKo9X-KiGzW9jZSi9Pu6Hc8F8wOEa4aU12zeh5PTdbkdKpGzw9GM9WkGRsbyzdN8EOGA2JekUjiIgWT7cYjaLQIt0UDSvyhPVkS-24BgpcH6M8n6PDqnS-hoxvImpgPp3ty3e5_9lxij2KIsU1BusMTHw2xKIc11p2_0NjXPF-rtWKSGYffEcHDQ0TlglDY8C4sElM9bAJiWPEpazrRIlfA9mW_NPSwp6AvdjohwCUn8Py2PJNo6JmbI9kIrdV31ly5UcbZJF4NH8mrn9hZHLiSEmW-UCBL7m7f06q5ogvWMZPHiLlrlcTRAQOCMI8VL6ZaPu3pmbfbTkkpLPkOCKvPn3wCNEdwXL6gee5H5HdHpxu9xPfMWO5MQOELO77VgdZCOhFSKOnNg8hTgiBKgMyOFaOxZii28Nh0eNjVSmrqgbB14kkoB5cxpBDF6tQxoBmYMAACvYdsorQPs9b-qkR5eASB3bpLSAPdNiovi8Gpw353e6Uovrl1DXQoGBlYyTYymFz_F5Le6FBG72tzojCLgV9mN5qhC4gsmIZBvSc2tYpSeByj3g8kjqNrBsZRWf4KRDw2Rve9RKC6KdIXZGQnPl-chIjuNnatp8g_EH-gTliJ_0G00" alt="System Landscape diagram for Big Bank plc" title="System Landscape diagram for Big Bank plc"></p>
-<p>容器（Container）把关注点放在被架构的系统本身，显示组成系统的容器（例如：APP、Web端、API、微服务、数据库等）及彼此之间的关系。例如：</p>
-<p><img src="https://www.plantuml.com/plantuml/svg/0/bLN1Zjf84BtxAsh98KJo35ffJtiA0sXdae7nZfcTv6ILsmMqqkwskjiG5Es_RxMn0KEKP3dPHTMhrwzUjTyxZzRNfOf-argekg3QAjXuNxa_HoEBkzkrz9iwhnrPORGdxM-5AKVFKg0jp49IHMeq-UCcKQZzo_nnLABpP3cKJJWVfIPxMuK6Rw7MN5eo1FWDmSeePNPIhq5n4g0keFUtj8wV371hK4QWKdl6w6Z2TOFeSVpvwMMPBP-IRFhqkeZUje5ncgKVPyl9FTUteTU7vNtsEFjhjfX6aPTUCM271eN4jSMI6Lfuu3DRJHxkK7y9PDCzdw-CeeIiCteeQkTDIJQ6oV5fC8Ok36RLd2RdwXXsh2LKJI6g9WOeXAcrTuDtKNI0pkuuKA3T3yNlZ7L9OF0ElaN0loFVuOxo3AkAaryfXt5LAPwEbqOFEFG1jnX3Mjb0VlxF9CIcfEIMQJJKs05U2cYdsymXX8zzy-xWoPX9zZkxYh47AV-jw2R1DONkNTTKM5dv6CPwNIkq8PnOivK5EU1fVh_BYaqIgAEIVX_6B-f6I0TRYQ54Mk3pGcxDZZrvnQWqkLJKoZ5lNZfEapSnVC8IMOa-5pPWAJqLuEhSCPTsPh_2pLsHEn20WhPIq2MzQJuiq6EEZi8OsiV09ltx4NhltbZc5lOEBAsbynQvDKZDhYoRwSQmuUG2i6PN2Ki5Zq-YSd4m5Jd7MxFc5_BYzagc7CKNqWNh98DVauVlssPgECsUwdgw_KIV80a3S-j_ZzQUVVL3Ab6gp3K1XflTpFczNQk0lsJfPGFDEpANmXfdLXvcNyK6DJliKCcmPvWjWnCgO-eLxp1TxEsPjC62xQG51uwdE5COC3UrFuqvFgvh33mFxR0vxqdaw9dKsPLmMimNHoxqlbykavGJ-tc7DVfnJi_OJUgXNROWkTxavkmQEC1rIzuYDS7-sBk6wFPQnF0XVLgCpfkVj_nVbTaTPv-8dIpVHtacB1oih2cRMsTdUGdvJZ81kGMUtaswSmRCCpqkR9Goh0Ew2T46uqJamd5z3lswseKRzjW-dI-J5kXuc5xvbUywOKBzg5Nd4tyLEt7USob_g_u3" alt="Container diagram for Internet Banking System" title="Container diagram for Internet Banking System"></p>
-<p>组件（Component）把一个容器放大，拆分成不同的抽象逻辑，这一层级已经涉及代码层面的内容。例如：</p>
-<p><img src="https://www.plantuml.com/plantuml/svg/0/fLLDRnen4BtlhvXoQ45AmgMddaf8sYJA1mBIZnEQzGwBMt-iR2yKLVtl7Nk1NPAeYjHSuXsFPzwyzsm--e0kr5fbRwGHgYweTWfM8LJ-mt3eS7DMoh2gyzgJ4zO4Ck5CM3sSIe6kiFUIAbB3yVlJYK8J7kzkXnfz8CUXnTZgoffueeeDta5j-AZc08GLmT8gPJVIbA2a8K1JmD6sT9vN5hWrA2jGgItNsCE4vmsosz7tXyVvuklr_6fnU_dvylwYFyYo88FYz7qk519BXvhxExZcYPoX0ETeVaOeiosZrt0AeyarZAfAyPn1MfDbOvuU6QZh-mfFe3VZTAuxmPAwYJtU-e5hzCB9AgIfq9IrGXTt9iwkPK4UU9eqfTm3o7S0banIh8DAXcqSNzG-M4tEmrfYF2CTR2Y7tDaDYtBM6tIWwOZipkPI9L2nvJVKwAGvxiwKQnce05_ddhlRy1zeTDDlzw-WjHHq1EiYxnSvzx_0W3bwYbYcfB2f3FimpCIADCRTMR2ESKRNWQDI-k1IDYDasNHQdy0A_Ofdm9fncB0J08IZ8dwYyYU0Gf3tx9-IFoY8YAlHU77vA_HrxYDXZ7B9bg0dDkWWYNhPPI99SE10K0SFO6xhq3AKcjlQ15unVECnKTdYQ0bQd7DUWMxRnqfoqoVcwmtWTmRyTp1ntylI91EMXaqCiPBZ-qJ9PNTVnZ0blZs7S8oEudLhEFLHobY2ySVbYzhxXeF1ayxjKBtHRWcpMhF9jg-2SJ1XQwKDFp7iISzLB5TfU6PZHIG74fy1yIHgnxQCDEoMxMwIhd9nZdF2O_SVczf58xAB4YEcR4Gz0R72vgD2xpVM5Qrknp3OGaiKMD0_Z0IVKiOBe4RG70QcgD517seS2v4S4rlppTd9ts7WqTEUeRZVYjI5zoIfFPvkvvImWBUmuH0n6n7TpSNvk7EWKwkvEAbWV6FutR-QpoSpJlwJPQbuV2HtBjsdtSmUxWzvXwIEeLvCJ9dw5TNqAufz95FmRyLV" alt="Component diagram for Internet Banking System - API Application" title="Component diagram for Internet Banking System - API Application"></p>
-<p>而抽象逻辑内部代码之间的关系由Code这一层展示。</p>
-<p><a href="https://github.com/RicardoNiepel/C4-PlantUML" target="_blank" rel="noopener">C4-PlantUML</a>是为PlantUML封装的一套模板，用来画C4架构图既美观又方便。下面是我画的样子：</p>
-<p><img src="https://www.plantuml.com/plantuml/svg/0/jLXVJzjM57_Ff_3oKYAnvcLFUse7Q7Ib445GDMcIPHmRh3fsP3ljq5I9m4ef8v0MwDgDjGqjRRKL1rG68H7amyptElaMkzVNyP_43cPXUOXkxZs_txddt7FEFJStL8rHj7nMZCM-42HMp6SuQaxJSkhNoQJ2FBW-AsXp-PcyoYciB6cSf5rdvMnoKc0P9IEF2roE4vD3NtsP4Xb9cxupbimogiOfQ8eUGlAC877AzHoclqRb9GJD8WfAc-CeNXP5-O4WpL8Y4g8OAKFvbWL5HIEPGgefKMOPKPn77CuUknN4ncv-Fp6TfjCJANfuukuuahPdRaxHKxT7qaEZ0mbtykwjz2WzDlBjoFWmcevfWYPob57x03OBIQFs3hxOJ3QFTi5g6VvTCAg_uS6hO_ZgvrWinIcgB0ta53cJPpKwoqZCBASCsc2plc6MbXDjAJQlQdAMKsX6LGNaQqaRf82-2tUAtI8E4nPOEUbWObXMpak4WUoilKIF_AWvB6sqRp73gSAiX1UR-dbJBuFg2h9v11seabC4bQE_GTGPHfaVU20hzsOuYPqRfEBWPCyusm4R1_44zLECGf-fUNIwMLUwxGEMmrG8GdnWLFT1Oyb1uOzpM0CvbkOLAvOoMCUJelbN9Ov6tp7t6PLLX1ooxwQa3LjRZZiYhVAf-RiUJmGppZ3iFPkmj6uJfaPJWzHO7eLKt9c7wtjWusqGo_0Cviam6ZF3g5o7AN3x01PrKDl4JAqNZTRZDQFsr9qbV0zZWKvYbIn23KtU2N48MhzgZs3AAt499lBu11dHbojuGM8abdFZXGHoptZXhpnU-2kA5zuNBrvJeZhfON0Iec97eufxNs0v5M_bN4Vr0f67vg57k4FIRxajHzjvwqIv3UfsmigoULZ_Pw4mbPh6txUd0ntQfaMb6Nl2h3NCezqmJh9gwcLKt13d3n8ehS7zFVFJ9wFw13u_TMAifoevbvFHlIK9sZpUv_OotAc5Mc6jzglHBR1nKc53rP7gRQdhpOXc5COw1b1QmPiAOxHM-tQPaY4vf--2udQOBhAAj83z4Xdt9BKpsed_C5guLJ7gBu1UXc-gY1nk7SDFvwtDusPv3HJBZcbmesIk7pXYnjdBrkuVw0Q61qVeP-ljEbp_q7C_agm9F0u9nDHQVXRgqOsdhOM2-NhVQ9HxycdCB2PxyzZSFm-DQ6ltHCQi7u7QUso9zTCPW6The7BQF2o3Hv-RXItqRNwkzowMCkg355yTU7GCzAM01BUH-APNLHbB5hVDnLFpPHsSUO_FAsVRXpixRCBMHpUYUmAuB2E8kAejwaRzs8Umwjcr__n1lHdPXd7MG0E04lfbfH--IKxixjByxKTJRxH-rV4XZgRJgIba20O5DMqTj_G5G4TT99YtjUFPoyb7Kj2P7PvQHdA0P4k7j7tK7c7xq8E4szHkgnc1sYFSGTrV77bxjpuZY9xqTwo-PhDPEO67YrOtCZKndiGkjmtrOKXIskdO8UpgS6ZzVQYh8psKIjxoA700NdxufjpwSoraIowYgn7eQKeNpYuRyFLUix9hPoqwwaAboxo-pX5TRFqVdpz3_ArnkDL-L8GJz15tzCqXP-Y3H3j4FyJVTy7D8dglaVugCjRVI14AqZ15L-yM21jlTK3HyMuVPEEjVYUw2NPZGy1sqn8L73cIGndS728aTl6v78cdZ-ePabr0f-7njJHHqUtRd8193RxQ5FO-Y_hFPT_jo4ShnVmbIx6NbezIYlbBbsAUxIiBWk1E4bWnI9A0n21SUMuqTBXrIYRDrMEuK8XAUwdq23JBKnmi4b8SBaSI9Jk2S96J8mZy_-S6g2w1muK-EKxUeuT5wwo4_zfavkdXNlSy_lyJhgvwdpFeOU9zkS6jSx1oW5-MjJNqDeiHogvIvtaU9IwI8OTmeLWxK2uKj8F1jWMyUzvQ-cY_NwpDmvq5e_eBUXPt45bFkNR7cGXQTBVWEDEV1xxGI3X2dHK6uM-WSJuh_Wi0" alt="产品 交易 财务流业务架构" title="产品 交易 财务流业务架构"></p>
-<p>和上面的例子相比，好像不太适合画较复杂的架构，布局不太好处理，另外连线太多容易重叠在一块傻傻分不清楚。</p>
-
-      
-     <!-- by blair add this if sentence at 20160725 -->
-      <br>
-      
-<!--
-<div id="bottom-donation-section">
-<span style="font-size: 1.0em; padding:0em 1em 0.5em 1em; margin: 0 auto;">
-  <strong style="vertical-align: top;">分享到:</strong>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_facebook_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://www.facebook.com/sharer/sharer.php?u=" target="_blank">
-    </div>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_weibo_icon.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://service.weibo.com/share/share.php?url" target="_blank">
-    </div>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_wechat_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://api.addthis.com/oexchange/0.8/forward/wechat/offer?url=" target="_blank">
-    </div>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_twitter_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://twitter.com/intent/tweet?url=" target="_blank">
-    </div>
-  <br>  
-  <br>  
-  &nbsp;&nbsp;如果您觉得这篇文章对您的学习很有帮助, 请您也分享它, 让它能再次帮助到更多的需要学习的人.
-您的<a href="/support/"><strong>支持</strong></a>将鼓励我继续创作 !
-  <br>  
-
-</span>
-</div>
--->
-<div class="well">
-  <!--
-  原创文章，转载请注明： 转载自<a href="http://52binge.github.io"> Blair Chan's Blog</a>，作者：
-  <a href="/about">Blair Chan</a> <br>
-  -->
-  本文基于<a target="_blank" title="Creative Commons Attribution 4.0 international License" href="https://creativecommons.org/licenses/by-nc/4.0/">署名4.0国际许可协议</a>发布，转载请保留本文署名和文章链接。 如您有任何授权方面的协商，请联系我。
-</div>
- <!-- by blair add 160724-->
-    
-    </div>
-    
-    
-      <footer class="article-footer">
-        <!-- <div class="well" style="width:100px; height:30px;"></div>  by blair-->
-        
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/计算机/">计算机</a>
-  </div>
-
- <!-- by blair add 160724-->
-        <!--
-        <div style="width:100px; height:30px;"></div> by blair add 160724
-        -->
-        
-  <div class="article-tag">
-    <a class="article-tag-link" href="/tags/最佳实践/">最佳实践</a><span></span><a class="article-tag-link" href="/tags/编程/">编程</a>
-  </div>
-
-
-      </footer>
-    
-  </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/post/lumen-facade-doesnot-support-pass-by-reference-param/" id="article-nav-newer" class="article-nav-link-wrap">
-      <div class="article-nav-title"><span>&lt;</span>&nbsp;
-        
-          关于Lumen的Facade不支持引用传递的看法
-        
-      </div>
-    </a>
-  
-  
-    <a href="/post/input-date-and-time-with-rime/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">用鼠须管输入日期时间的方法&nbsp;<span>&gt;</span></div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-<section id="comments">
-  <div id="disqus_thread">
-    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-  </div>
-</section>
-
-</section>
-    <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2020 晴耕雨讀&nbsp;
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/52binge/hexo-theme-blairos">blairos</a>
-    </div>
-  </div>
-</footer>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    extensions: ["tex2jax.js"],
-    jax: ["input/TeX"],
-    tex2jax: {
-      inlineMath: [ ['$','$'], ['\\(','\\)'] ],
-      displayMath: [ ['$$','$$']],
-      processEscapes: true
+<meta name="twitter:title" content="用C4-PlantUML画软件架构图"/>
+<meta name="twitter:description" content="C4 Model是一种简洁有序的架构模型，四个“C”分别表示“Context”、“Container”、“Component”和“Code”，是由上而下逐步细化的四个层级。"/>
+<meta name="application-name" content="晴耕雨讀">
+<meta name="apple-mobile-web-app-title" content="晴耕雨讀"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://0x3f.org/post/design-software-architecture-with-c4-plantuml/" /><link rel="prev" href="http://0x3f.org/post/input-date-and-time-with-rime/" /><link rel="next" href="http://0x3f.org/post/lumen-facade-doesnot-support-pass-by-reference-param/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "用C4-PlantUML画软件架构图",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/0x3f.org\/post\/design-software-architecture-with-c4-plantuml\/"
+        },"image": ["http:\/\/0x3f.org\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "编程, 最佳实践","wordcount":  481 ,
+        "url": "http:\/\/0x3f.org\/post\/design-software-architecture-with-c4-plantuml\/","datePublished": "2020-01-17T17:29:24+00:00","dateModified": "2020-06-17T17:28:11+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": "http:\/\/0x3f.org\/images\/avatar.png"},"author": {
+                "@type": "Person",
+                "name": "淘气"
+            },"description": ""
     }
-  });
-</script>
-<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML,http://myserver.com/MathJax/config/local/local.js">
-</script>
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
 
-    
-<script type="text/javascript"> <!-- add by blair 0724 type=text/javascript -->
-  var disqus_shortname = '0x3f';
-  
-  var disqus_url = 'http://0x3f.org/post/design-software-architecture-with-c4-plantuml/';
-  
-  (function(){
-    var dsq = document.createElement('script');
-    dsq.type = 'text/javascript';
-    dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">用C4-PlantUML画软件架构图</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"><i class="far fa-folder fa-fw"></i>计算机</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2020-01-17">2020-01-17</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 481 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 1 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><p><a href="https://c4model.com" target="_blank" rel="noopener noreffer">C4 Model</a>是一种简洁有序的架构模型，四个“C”分别表示“Context”、“Container”、“Component”和“Code”，是由上而下逐步细化的四个层级。</p>
+<p>Contex即上下文，它表示我们正在构架的软件系统和用户、其它系统之间的关系。例如：</p>
+<p><figure><a class="lightgallery" href="https://www.plantuml.com/plantuml/svg/0/TLHBRzim3BxxLt2vD0NIP8UTTceUnbeiZo8F53qPYaB7GcJ9a-IcmR3_FigE4xjrSeh8Z-H7ygCVhMF6vQaClWd5PRx3t4X8dClipy70i6D_BroIRtEBXclbKBa-r-bWAJWpEpqNcA4SZ7yyl4Yct6Os7QJCEZHaYiOU_-7wcKz_1xcYm9GIW4iGOYsbFWgr1oaK0bCxQBY5iVHF0nK6gJcJyaGvAfBmENrmDns-BJRhQBruYIQBr_d5C5n5gz_XUln4uMVJw_FwAPg6lyBv90YSS19XTIBMAKo9X-KiGzW9jZSi9Pu6Hc8F8wOEa4aU12zeh5PTdbkdKpGzw9GM9WkGRsbyzdN8EOGA2JekUjiIgWT7cYjaLQIt0UDSvyhPVkS-24BgpcH6M8n6PDqnS-hoxvImpgPp3ty3e5_9lxij2KIsU1BusMTHw2xKIc11p2_0NjXPF-rtWKSGYffEcHDQ0TlglDY8C4sElM9bAJiWPEpazrRIlfA9mW_NPSwp6AvdjohwCUn8Py2PJNo6JmbI9kIrdV31ly5UcbZJF4NH8mrn9hZHLiSEmW-UCBL7m7f06q5ogvWMZPHiLlrlcTRAQOCMI8VL6ZaPu3pmbfbTkkpLPkOCKvPn3wCNEdwXL6gee5H5HdHpxu9xPfMWO5MQOELO77VgdZCOhFSKOnNg8hTgiBKgMyOFaOxZii28Nh0eNjVSmrqgbB14kkoB5cxpBDF6tQxoBmYMAACvYdsorQPs9b-qkR5eASB3bpLSAPdNiovi8Gpw353e6Uovrl1DXQoGBlYyTYymFz_F5Le6FBG72tzojCLgV9mN5qhC4gsmIZBvSc2tYpSeByj3g8kjqNrBsZRWf4KRDw2Rve9RKC6KdIXZGQnPl-chIjuNnatp8g_EH-gTliJ_0G00" title="System Landscape diagram for Big Bank plc" data-thumbnail="https://www.plantuml.com/plantuml/svg/0/TLHBRzim3BxxLt2vD0NIP8UTTceUnbeiZo8F53qPYaB7GcJ9a-IcmR3_FigE4xjrSeh8Z-H7ygCVhMF6vQaClWd5PRx3t4X8dClipy70i6D_BroIRtEBXclbKBa-r-bWAJWpEpqNcA4SZ7yyl4Yct6Os7QJCEZHaYiOU_-7wcKz_1xcYm9GIW4iGOYsbFWgr1oaK0bCxQBY5iVHF0nK6gJcJyaGvAfBmENrmDns-BJRhQBruYIQBr_d5C5n5gz_XUln4uMVJw_FwAPg6lyBv90YSS19XTIBMAKo9X-KiGzW9jZSi9Pu6Hc8F8wOEa4aU12zeh5PTdbkdKpGzw9GM9WkGRsbyzdN8EOGA2JekUjiIgWT7cYjaLQIt0UDSvyhPVkS-24BgpcH6M8n6PDqnS-hoxvImpgPp3ty3e5_9lxij2KIsU1BusMTHw2xKIc11p2_0NjXPF-rtWKSGYffEcHDQ0TlglDY8C4sElM9bAJiWPEpazrRIlfA9mW_NPSwp6AvdjohwCUn8Py2PJNo6JmbI9kIrdV31ly5UcbZJF4NH8mrn9hZHLiSEmW-UCBL7m7f06q5ogvWMZPHiLlrlcTRAQOCMI8VL6ZaPu3pmbfbTkkpLPkOCKvPn3wCNEdwXL6gee5H5HdHpxu9xPfMWO5MQOELO77VgdZCOhFSKOnNg8hTgiBKgMyOFaOxZii28Nh0eNjVSmrqgbB14kkoB5cxpBDF6tQxoBmYMAACvYdsorQPs9b-qkR5eASB3bpLSAPdNiovi8Gpw353e6Uovrl1DXQoGBlYyTYymFz_F5Le6FBG72tzojCLgV9mN5qhC4gsmIZBvSc2tYpSeByj3g8kjqNrBsZRWf4KRDw2Rve9RKC6KdIXZGQnPl-chIjuNnatp8g_EH-gTliJ_0G00" data-sub-html="<h2>System Landscape diagram for Big Bank plc</h2><p>System Landscape diagram for Big Bank plc</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://www.plantuml.com/plantuml/svg/0/TLHBRzim3BxxLt2vD0NIP8UTTceUnbeiZo8F53qPYaB7GcJ9a-IcmR3_FigE4xjrSeh8Z-H7ygCVhMF6vQaClWd5PRx3t4X8dClipy70i6D_BroIRtEBXclbKBa-r-bWAJWpEpqNcA4SZ7yyl4Yct6Os7QJCEZHaYiOU_-7wcKz_1xcYm9GIW4iGOYsbFWgr1oaK0bCxQBY5iVHF0nK6gJcJyaGvAfBmENrmDns-BJRhQBruYIQBr_d5C5n5gz_XUln4uMVJw_FwAPg6lyBv90YSS19XTIBMAKo9X-KiGzW9jZSi9Pu6Hc8F8wOEa4aU12zeh5PTdbkdKpGzw9GM9WkGRsbyzdN8EOGA2JekUjiIgWT7cYjaLQIt0UDSvyhPVkS-24BgpcH6M8n6PDqnS-hoxvImpgPp3ty3e5_9lxij2KIsU1BusMTHw2xKIc11p2_0NjXPF-rtWKSGYffEcHDQ0TlglDY8C4sElM9bAJiWPEpazrRIlfA9mW_NPSwp6AvdjohwCUn8Py2PJNo6JmbI9kIrdV31ly5UcbZJF4NH8mrn9hZHLiSEmW-UCBL7m7f06q5ogvWMZPHiLlrlcTRAQOCMI8VL6ZaPu3pmbfbTkkpLPkOCKvPn3wCNEdwXL6gee5H5HdHpxu9xPfMWO5MQOELO77VgdZCOhFSKOnNg8hTgiBKgMyOFaOxZii28Nh0eNjVSmrqgbB14kkoB5cxpBDF6tQxoBmYMAACvYdsorQPs9b-qkR5eASB3bpLSAPdNiovi8Gpw353e6Uovrl1DXQoGBlYyTYymFz_F5Le6FBG72tzojCLgV9mN5qhC4gsmIZBvSc2tYpSeByj3g8kjqNrBsZRWf4KRDw2Rve9RKC6KdIXZGQnPl-chIjuNnatp8g_EH-gTliJ_0G00"
+            data-srcset="https://www.plantuml.com/plantuml/svg/0/TLHBRzim3BxxLt2vD0NIP8UTTceUnbeiZo8F53qPYaB7GcJ9a-IcmR3_FigE4xjrSeh8Z-H7ygCVhMF6vQaClWd5PRx3t4X8dClipy70i6D_BroIRtEBXclbKBa-r-bWAJWpEpqNcA4SZ7yyl4Yct6Os7QJCEZHaYiOU_-7wcKz_1xcYm9GIW4iGOYsbFWgr1oaK0bCxQBY5iVHF0nK6gJcJyaGvAfBmENrmDns-BJRhQBruYIQBr_d5C5n5gz_XUln4uMVJw_FwAPg6lyBv90YSS19XTIBMAKo9X-KiGzW9jZSi9Pu6Hc8F8wOEa4aU12zeh5PTdbkdKpGzw9GM9WkGRsbyzdN8EOGA2JekUjiIgWT7cYjaLQIt0UDSvyhPVkS-24BgpcH6M8n6PDqnS-hoxvImpgPp3ty3e5_9lxij2KIsU1BusMTHw2xKIc11p2_0NjXPF-rtWKSGYffEcHDQ0TlglDY8C4sElM9bAJiWPEpazrRIlfA9mW_NPSwp6AvdjohwCUn8Py2PJNo6JmbI9kIrdV31ly5UcbZJF4NH8mrn9hZHLiSEmW-UCBL7m7f06q5ogvWMZPHiLlrlcTRAQOCMI8VL6ZaPu3pmbfbTkkpLPkOCKvPn3wCNEdwXL6gee5H5HdHpxu9xPfMWO5MQOELO77VgdZCOhFSKOnNg8hTgiBKgMyOFaOxZii28Nh0eNjVSmrqgbB14kkoB5cxpBDF6tQxoBmYMAACvYdsorQPs9b-qkR5eASB3bpLSAPdNiovi8Gpw353e6Uovrl1DXQoGBlYyTYymFz_F5Le6FBG72tzojCLgV9mN5qhC4gsmIZBvSc2tYpSeByj3g8kjqNrBsZRWf4KRDw2Rve9RKC6KdIXZGQnPl-chIjuNnatp8g_EH-gTliJ_0G00, https://www.plantuml.com/plantuml/svg/0/TLHBRzim3BxxLt2vD0NIP8UTTceUnbeiZo8F53qPYaB7GcJ9a-IcmR3_FigE4xjrSeh8Z-H7ygCVhMF6vQaClWd5PRx3t4X8dClipy70i6D_BroIRtEBXclbKBa-r-bWAJWpEpqNcA4SZ7yyl4Yct6Os7QJCEZHaYiOU_-7wcKz_1xcYm9GIW4iGOYsbFWgr1oaK0bCxQBY5iVHF0nK6gJcJyaGvAfBmENrmDns-BJRhQBruYIQBr_d5C5n5gz_XUln4uMVJw_FwAPg6lyBv90YSS19XTIBMAKo9X-KiGzW9jZSi9Pu6Hc8F8wOEa4aU12zeh5PTdbkdKpGzw9GM9WkGRsbyzdN8EOGA2JekUjiIgWT7cYjaLQIt0UDSvyhPVkS-24BgpcH6M8n6PDqnS-hoxvImpgPp3ty3e5_9lxij2KIsU1BusMTHw2xKIc11p2_0NjXPF-rtWKSGYffEcHDQ0TlglDY8C4sElM9bAJiWPEpazrRIlfA9mW_NPSwp6AvdjohwCUn8Py2PJNo6JmbI9kIrdV31ly5UcbZJF4NH8mrn9hZHLiSEmW-UCBL7m7f06q5ogvWMZPHiLlrlcTRAQOCMI8VL6ZaPu3pmbfbTkkpLPkOCKvPn3wCNEdwXL6gee5H5HdHpxu9xPfMWO5MQOELO77VgdZCOhFSKOnNg8hTgiBKgMyOFaOxZii28Nh0eNjVSmrqgbB14kkoB5cxpBDF6tQxoBmYMAACvYdsorQPs9b-qkR5eASB3bpLSAPdNiovi8Gpw353e6Uovrl1DXQoGBlYyTYymFz_F5Le6FBG72tzojCLgV9mN5qhC4gsmIZBvSc2tYpSeByj3g8kjqNrBsZRWf4KRDw2Rve9RKC6KdIXZGQnPl-chIjuNnatp8g_EH-gTliJ_0G00 1.5x, https://www.plantuml.com/plantuml/svg/0/TLHBRzim3BxxLt2vD0NIP8UTTceUnbeiZo8F53qPYaB7GcJ9a-IcmR3_FigE4xjrSeh8Z-H7ygCVhMF6vQaClWd5PRx3t4X8dClipy70i6D_BroIRtEBXclbKBa-r-bWAJWpEpqNcA4SZ7yyl4Yct6Os7QJCEZHaYiOU_-7wcKz_1xcYm9GIW4iGOYsbFWgr1oaK0bCxQBY5iVHF0nK6gJcJyaGvAfBmENrmDns-BJRhQBruYIQBr_d5C5n5gz_XUln4uMVJw_FwAPg6lyBv90YSS19XTIBMAKo9X-KiGzW9jZSi9Pu6Hc8F8wOEa4aU12zeh5PTdbkdKpGzw9GM9WkGRsbyzdN8EOGA2JekUjiIgWT7cYjaLQIt0UDSvyhPVkS-24BgpcH6M8n6PDqnS-hoxvImpgPp3ty3e5_9lxij2KIsU1BusMTHw2xKIc11p2_0NjXPF-rtWKSGYffEcHDQ0TlglDY8C4sElM9bAJiWPEpazrRIlfA9mW_NPSwp6AvdjohwCUn8Py2PJNo6JmbI9kIrdV31ly5UcbZJF4NH8mrn9hZHLiSEmW-UCBL7m7f06q5ogvWMZPHiLlrlcTRAQOCMI8VL6ZaPu3pmbfbTkkpLPkOCKvPn3wCNEdwXL6gee5H5HdHpxu9xPfMWO5MQOELO77VgdZCOhFSKOnNg8hTgiBKgMyOFaOxZii28Nh0eNjVSmrqgbB14kkoB5cxpBDF6tQxoBmYMAACvYdsorQPs9b-qkR5eASB3bpLSAPdNiovi8Gpw353e6Uovrl1DXQoGBlYyTYymFz_F5Le6FBG72tzojCLgV9mN5qhC4gsmIZBvSc2tYpSeByj3g8kjqNrBsZRWf4KRDw2Rve9RKC6KdIXZGQnPl-chIjuNnatp8g_EH-gTliJ_0G00 2x"
+            data-sizes="auto"
+            alt="https://www.plantuml.com/plantuml/svg/0/TLHBRzim3BxxLt2vD0NIP8UTTceUnbeiZo8F53qPYaB7GcJ9a-IcmR3_FigE4xjrSeh8Z-H7ygCVhMF6vQaClWd5PRx3t4X8dClipy70i6D_BroIRtEBXclbKBa-r-bWAJWpEpqNcA4SZ7yyl4Yct6Os7QJCEZHaYiOU_-7wcKz_1xcYm9GIW4iGOYsbFWgr1oaK0bCxQBY5iVHF0nK6gJcJyaGvAfBmENrmDns-BJRhQBruYIQBr_d5C5n5gz_XUln4uMVJw_FwAPg6lyBv90YSS19XTIBMAKo9X-KiGzW9jZSi9Pu6Hc8F8wOEa4aU12zeh5PTdbkdKpGzw9GM9WkGRsbyzdN8EOGA2JekUjiIgWT7cYjaLQIt0UDSvyhPVkS-24BgpcH6M8n6PDqnS-hoxvImpgPp3ty3e5_9lxij2KIsU1BusMTHw2xKIc11p2_0NjXPF-rtWKSGYffEcHDQ0TlglDY8C4sElM9bAJiWPEpazrRIlfA9mW_NPSwp6AvdjohwCUn8Py2PJNo6JmbI9kIrdV31ly5UcbZJF4NH8mrn9hZHLiSEmW-UCBL7m7f06q5ogvWMZPHiLlrlcTRAQOCMI8VL6ZaPu3pmbfbTkkpLPkOCKvPn3wCNEdwXL6gee5H5HdHpxu9xPfMWO5MQOELO77VgdZCOhFSKOnNg8hTgiBKgMyOFaOxZii28Nh0eNjVSmrqgbB14kkoB5cxpBDF6tQxoBmYMAACvYdsorQPs9b-qkR5eASB3bpLSAPdNiovi8Gpw353e6Uovrl1DXQoGBlYyTYymFz_F5Le6FBG72tzojCLgV9mN5qhC4gsmIZBvSc2tYpSeByj3g8kjqNrBsZRWf4KRDw2Rve9RKC6KdIXZGQnPl-chIjuNnatp8g_EH-gTliJ_0G00" />
+    </a><figcaption class="image-caption">System Landscape diagram for Big Bank plc</figcaption>
+    </figure></p>
+<p>容器（Container）把关注点放在被架构的系统本身，显示组成系统的容器（例如：APP、Web端、API、微服务、数据库等）及彼此之间的关系。例如：</p>
+<p><figure><a class="lightgallery" href="https://www.plantuml.com/plantuml/svg/0/bLN1Zjf84BtxAsh98KJo35ffJtiA0sXdae7nZfcTv6ILsmMqqkwskjiG5Es_RxMn0KEKP3dPHTMhrwzUjTyxZzRNfOf-argekg3QAjXuNxa_HoEBkzkrz9iwhnrPORGdxM-5AKVFKg0jp49IHMeq-UCcKQZzo_nnLABpP3cKJJWVfIPxMuK6Rw7MN5eo1FWDmSeePNPIhq5n4g0keFUtj8wV371hK4QWKdl6w6Z2TOFeSVpvwMMPBP-IRFhqkeZUje5ncgKVPyl9FTUteTU7vNtsEFjhjfX6aPTUCM271eN4jSMI6Lfuu3DRJHxkK7y9PDCzdw-CeeIiCteeQkTDIJQ6oV5fC8Ok36RLd2RdwXXsh2LKJI6g9WOeXAcrTuDtKNI0pkuuKA3T3yNlZ7L9OF0ElaN0loFVuOxo3AkAaryfXt5LAPwEbqOFEFG1jnX3Mjb0VlxF9CIcfEIMQJJKs05U2cYdsymXX8zzy-xWoPX9zZkxYh47AV-jw2R1DONkNTTKM5dv6CPwNIkq8PnOivK5EU1fVh_BYaqIgAEIVX_6B-f6I0TRYQ54Mk3pGcxDZZrvnQWqkLJKoZ5lNZfEapSnVC8IMOa-5pPWAJqLuEhSCPTsPh_2pLsHEn20WhPIq2MzQJuiq6EEZi8OsiV09ltx4NhltbZc5lOEBAsbynQvDKZDhYoRwSQmuUG2i6PN2Ki5Zq-YSd4m5Jd7MxFc5_BYzagc7CKNqWNh98DVauVlssPgECsUwdgw_KIV80a3S-j_ZzQUVVL3Ab6gp3K1XflTpFczNQk0lsJfPGFDEpANmXfdLXvcNyK6DJliKCcmPvWjWnCgO-eLxp1TxEsPjC62xQG51uwdE5COC3UrFuqvFgvh33mFxR0vxqdaw9dKsPLmMimNHoxqlbykavGJ-tc7DVfnJi_OJUgXNROWkTxavkmQEC1rIzuYDS7-sBk6wFPQnF0XVLgCpfkVj_nVbTaTPv-8dIpVHtacB1oih2cRMsTdUGdvJZ81kGMUtaswSmRCCpqkR9Goh0Ew2T46uqJamd5z3lswseKRzjW-dI-J5kXuc5xvbUywOKBzg5Nd4tyLEt7USob_g_u3" title="Container diagram for Internet Banking System" data-thumbnail="https://www.plantuml.com/plantuml/svg/0/bLN1Zjf84BtxAsh98KJo35ffJtiA0sXdae7nZfcTv6ILsmMqqkwskjiG5Es_RxMn0KEKP3dPHTMhrwzUjTyxZzRNfOf-argekg3QAjXuNxa_HoEBkzkrz9iwhnrPORGdxM-5AKVFKg0jp49IHMeq-UCcKQZzo_nnLABpP3cKJJWVfIPxMuK6Rw7MN5eo1FWDmSeePNPIhq5n4g0keFUtj8wV371hK4QWKdl6w6Z2TOFeSVpvwMMPBP-IRFhqkeZUje5ncgKVPyl9FTUteTU7vNtsEFjhjfX6aPTUCM271eN4jSMI6Lfuu3DRJHxkK7y9PDCzdw-CeeIiCteeQkTDIJQ6oV5fC8Ok36RLd2RdwXXsh2LKJI6g9WOeXAcrTuDtKNI0pkuuKA3T3yNlZ7L9OF0ElaN0loFVuOxo3AkAaryfXt5LAPwEbqOFEFG1jnX3Mjb0VlxF9CIcfEIMQJJKs05U2cYdsymXX8zzy-xWoPX9zZkxYh47AV-jw2R1DONkNTTKM5dv6CPwNIkq8PnOivK5EU1fVh_BYaqIgAEIVX_6B-f6I0TRYQ54Mk3pGcxDZZrvnQWqkLJKoZ5lNZfEapSnVC8IMOa-5pPWAJqLuEhSCPTsPh_2pLsHEn20WhPIq2MzQJuiq6EEZi8OsiV09ltx4NhltbZc5lOEBAsbynQvDKZDhYoRwSQmuUG2i6PN2Ki5Zq-YSd4m5Jd7MxFc5_BYzagc7CKNqWNh98DVauVlssPgECsUwdgw_KIV80a3S-j_ZzQUVVL3Ab6gp3K1XflTpFczNQk0lsJfPGFDEpANmXfdLXvcNyK6DJliKCcmPvWjWnCgO-eLxp1TxEsPjC62xQG51uwdE5COC3UrFuqvFgvh33mFxR0vxqdaw9dKsPLmMimNHoxqlbykavGJ-tc7DVfnJi_OJUgXNROWkTxavkmQEC1rIzuYDS7-sBk6wFPQnF0XVLgCpfkVj_nVbTaTPv-8dIpVHtacB1oih2cRMsTdUGdvJZ81kGMUtaswSmRCCpqkR9Goh0Ew2T46uqJamd5z3lswseKRzjW-dI-J5kXuc5xvbUywOKBzg5Nd4tyLEt7USob_g_u3" data-sub-html="<h2>Container diagram for Internet Banking System</h2><p>Container diagram for Internet Banking System</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://www.plantuml.com/plantuml/svg/0/bLN1Zjf84BtxAsh98KJo35ffJtiA0sXdae7nZfcTv6ILsmMqqkwskjiG5Es_RxMn0KEKP3dPHTMhrwzUjTyxZzRNfOf-argekg3QAjXuNxa_HoEBkzkrz9iwhnrPORGdxM-5AKVFKg0jp49IHMeq-UCcKQZzo_nnLABpP3cKJJWVfIPxMuK6Rw7MN5eo1FWDmSeePNPIhq5n4g0keFUtj8wV371hK4QWKdl6w6Z2TOFeSVpvwMMPBP-IRFhqkeZUje5ncgKVPyl9FTUteTU7vNtsEFjhjfX6aPTUCM271eN4jSMI6Lfuu3DRJHxkK7y9PDCzdw-CeeIiCteeQkTDIJQ6oV5fC8Ok36RLd2RdwXXsh2LKJI6g9WOeXAcrTuDtKNI0pkuuKA3T3yNlZ7L9OF0ElaN0loFVuOxo3AkAaryfXt5LAPwEbqOFEFG1jnX3Mjb0VlxF9CIcfEIMQJJKs05U2cYdsymXX8zzy-xWoPX9zZkxYh47AV-jw2R1DONkNTTKM5dv6CPwNIkq8PnOivK5EU1fVh_BYaqIgAEIVX_6B-f6I0TRYQ54Mk3pGcxDZZrvnQWqkLJKoZ5lNZfEapSnVC8IMOa-5pPWAJqLuEhSCPTsPh_2pLsHEn20WhPIq2MzQJuiq6EEZi8OsiV09ltx4NhltbZc5lOEBAsbynQvDKZDhYoRwSQmuUG2i6PN2Ki5Zq-YSd4m5Jd7MxFc5_BYzagc7CKNqWNh98DVauVlssPgECsUwdgw_KIV80a3S-j_ZzQUVVL3Ab6gp3K1XflTpFczNQk0lsJfPGFDEpANmXfdLXvcNyK6DJliKCcmPvWjWnCgO-eLxp1TxEsPjC62xQG51uwdE5COC3UrFuqvFgvh33mFxR0vxqdaw9dKsPLmMimNHoxqlbykavGJ-tc7DVfnJi_OJUgXNROWkTxavkmQEC1rIzuYDS7-sBk6wFPQnF0XVLgCpfkVj_nVbTaTPv-8dIpVHtacB1oih2cRMsTdUGdvJZ81kGMUtaswSmRCCpqkR9Goh0Ew2T46uqJamd5z3lswseKRzjW-dI-J5kXuc5xvbUywOKBzg5Nd4tyLEt7USob_g_u3"
+            data-srcset="https://www.plantuml.com/plantuml/svg/0/bLN1Zjf84BtxAsh98KJo35ffJtiA0sXdae7nZfcTv6ILsmMqqkwskjiG5Es_RxMn0KEKP3dPHTMhrwzUjTyxZzRNfOf-argekg3QAjXuNxa_HoEBkzkrz9iwhnrPORGdxM-5AKVFKg0jp49IHMeq-UCcKQZzo_nnLABpP3cKJJWVfIPxMuK6Rw7MN5eo1FWDmSeePNPIhq5n4g0keFUtj8wV371hK4QWKdl6w6Z2TOFeSVpvwMMPBP-IRFhqkeZUje5ncgKVPyl9FTUteTU7vNtsEFjhjfX6aPTUCM271eN4jSMI6Lfuu3DRJHxkK7y9PDCzdw-CeeIiCteeQkTDIJQ6oV5fC8Ok36RLd2RdwXXsh2LKJI6g9WOeXAcrTuDtKNI0pkuuKA3T3yNlZ7L9OF0ElaN0loFVuOxo3AkAaryfXt5LAPwEbqOFEFG1jnX3Mjb0VlxF9CIcfEIMQJJKs05U2cYdsymXX8zzy-xWoPX9zZkxYh47AV-jw2R1DONkNTTKM5dv6CPwNIkq8PnOivK5EU1fVh_BYaqIgAEIVX_6B-f6I0TRYQ54Mk3pGcxDZZrvnQWqkLJKoZ5lNZfEapSnVC8IMOa-5pPWAJqLuEhSCPTsPh_2pLsHEn20WhPIq2MzQJuiq6EEZi8OsiV09ltx4NhltbZc5lOEBAsbynQvDKZDhYoRwSQmuUG2i6PN2Ki5Zq-YSd4m5Jd7MxFc5_BYzagc7CKNqWNh98DVauVlssPgECsUwdgw_KIV80a3S-j_ZzQUVVL3Ab6gp3K1XflTpFczNQk0lsJfPGFDEpANmXfdLXvcNyK6DJliKCcmPvWjWnCgO-eLxp1TxEsPjC62xQG51uwdE5COC3UrFuqvFgvh33mFxR0vxqdaw9dKsPLmMimNHoxqlbykavGJ-tc7DVfnJi_OJUgXNROWkTxavkmQEC1rIzuYDS7-sBk6wFPQnF0XVLgCpfkVj_nVbTaTPv-8dIpVHtacB1oih2cRMsTdUGdvJZ81kGMUtaswSmRCCpqkR9Goh0Ew2T46uqJamd5z3lswseKRzjW-dI-J5kXuc5xvbUywOKBzg5Nd4tyLEt7USob_g_u3, https://www.plantuml.com/plantuml/svg/0/bLN1Zjf84BtxAsh98KJo35ffJtiA0sXdae7nZfcTv6ILsmMqqkwskjiG5Es_RxMn0KEKP3dPHTMhrwzUjTyxZzRNfOf-argekg3QAjXuNxa_HoEBkzkrz9iwhnrPORGdxM-5AKVFKg0jp49IHMeq-UCcKQZzo_nnLABpP3cKJJWVfIPxMuK6Rw7MN5eo1FWDmSeePNPIhq5n4g0keFUtj8wV371hK4QWKdl6w6Z2TOFeSVpvwMMPBP-IRFhqkeZUje5ncgKVPyl9FTUteTU7vNtsEFjhjfX6aPTUCM271eN4jSMI6Lfuu3DRJHxkK7y9PDCzdw-CeeIiCteeQkTDIJQ6oV5fC8Ok36RLd2RdwXXsh2LKJI6g9WOeXAcrTuDtKNI0pkuuKA3T3yNlZ7L9OF0ElaN0loFVuOxo3AkAaryfXt5LAPwEbqOFEFG1jnX3Mjb0VlxF9CIcfEIMQJJKs05U2cYdsymXX8zzy-xWoPX9zZkxYh47AV-jw2R1DONkNTTKM5dv6CPwNIkq8PnOivK5EU1fVh_BYaqIgAEIVX_6B-f6I0TRYQ54Mk3pGcxDZZrvnQWqkLJKoZ5lNZfEapSnVC8IMOa-5pPWAJqLuEhSCPTsPh_2pLsHEn20WhPIq2MzQJuiq6EEZi8OsiV09ltx4NhltbZc5lOEBAsbynQvDKZDhYoRwSQmuUG2i6PN2Ki5Zq-YSd4m5Jd7MxFc5_BYzagc7CKNqWNh98DVauVlssPgECsUwdgw_KIV80a3S-j_ZzQUVVL3Ab6gp3K1XflTpFczNQk0lsJfPGFDEpANmXfdLXvcNyK6DJliKCcmPvWjWnCgO-eLxp1TxEsPjC62xQG51uwdE5COC3UrFuqvFgvh33mFxR0vxqdaw9dKsPLmMimNHoxqlbykavGJ-tc7DVfnJi_OJUgXNROWkTxavkmQEC1rIzuYDS7-sBk6wFPQnF0XVLgCpfkVj_nVbTaTPv-8dIpVHtacB1oih2cRMsTdUGdvJZ81kGMUtaswSmRCCpqkR9Goh0Ew2T46uqJamd5z3lswseKRzjW-dI-J5kXuc5xvbUywOKBzg5Nd4tyLEt7USob_g_u3 1.5x, https://www.plantuml.com/plantuml/svg/0/bLN1Zjf84BtxAsh98KJo35ffJtiA0sXdae7nZfcTv6ILsmMqqkwskjiG5Es_RxMn0KEKP3dPHTMhrwzUjTyxZzRNfOf-argekg3QAjXuNxa_HoEBkzkrz9iwhnrPORGdxM-5AKVFKg0jp49IHMeq-UCcKQZzo_nnLABpP3cKJJWVfIPxMuK6Rw7MN5eo1FWDmSeePNPIhq5n4g0keFUtj8wV371hK4QWKdl6w6Z2TOFeSVpvwMMPBP-IRFhqkeZUje5ncgKVPyl9FTUteTU7vNtsEFjhjfX6aPTUCM271eN4jSMI6Lfuu3DRJHxkK7y9PDCzdw-CeeIiCteeQkTDIJQ6oV5fC8Ok36RLd2RdwXXsh2LKJI6g9WOeXAcrTuDtKNI0pkuuKA3T3yNlZ7L9OF0ElaN0loFVuOxo3AkAaryfXt5LAPwEbqOFEFG1jnX3Mjb0VlxF9CIcfEIMQJJKs05U2cYdsymXX8zzy-xWoPX9zZkxYh47AV-jw2R1DONkNTTKM5dv6CPwNIkq8PnOivK5EU1fVh_BYaqIgAEIVX_6B-f6I0TRYQ54Mk3pGcxDZZrvnQWqkLJKoZ5lNZfEapSnVC8IMOa-5pPWAJqLuEhSCPTsPh_2pLsHEn20WhPIq2MzQJuiq6EEZi8OsiV09ltx4NhltbZc5lOEBAsbynQvDKZDhYoRwSQmuUG2i6PN2Ki5Zq-YSd4m5Jd7MxFc5_BYzagc7CKNqWNh98DVauVlssPgECsUwdgw_KIV80a3S-j_ZzQUVVL3Ab6gp3K1XflTpFczNQk0lsJfPGFDEpANmXfdLXvcNyK6DJliKCcmPvWjWnCgO-eLxp1TxEsPjC62xQG51uwdE5COC3UrFuqvFgvh33mFxR0vxqdaw9dKsPLmMimNHoxqlbykavGJ-tc7DVfnJi_OJUgXNROWkTxavkmQEC1rIzuYDS7-sBk6wFPQnF0XVLgCpfkVj_nVbTaTPv-8dIpVHtacB1oih2cRMsTdUGdvJZ81kGMUtaswSmRCCpqkR9Goh0Ew2T46uqJamd5z3lswseKRzjW-dI-J5kXuc5xvbUywOKBzg5Nd4tyLEt7USob_g_u3 2x"
+            data-sizes="auto"
+            alt="https://www.plantuml.com/plantuml/svg/0/bLN1Zjf84BtxAsh98KJo35ffJtiA0sXdae7nZfcTv6ILsmMqqkwskjiG5Es_RxMn0KEKP3dPHTMhrwzUjTyxZzRNfOf-argekg3QAjXuNxa_HoEBkzkrz9iwhnrPORGdxM-5AKVFKg0jp49IHMeq-UCcKQZzo_nnLABpP3cKJJWVfIPxMuK6Rw7MN5eo1FWDmSeePNPIhq5n4g0keFUtj8wV371hK4QWKdl6w6Z2TOFeSVpvwMMPBP-IRFhqkeZUje5ncgKVPyl9FTUteTU7vNtsEFjhjfX6aPTUCM271eN4jSMI6Lfuu3DRJHxkK7y9PDCzdw-CeeIiCteeQkTDIJQ6oV5fC8Ok36RLd2RdwXXsh2LKJI6g9WOeXAcrTuDtKNI0pkuuKA3T3yNlZ7L9OF0ElaN0loFVuOxo3AkAaryfXt5LAPwEbqOFEFG1jnX3Mjb0VlxF9CIcfEIMQJJKs05U2cYdsymXX8zzy-xWoPX9zZkxYh47AV-jw2R1DONkNTTKM5dv6CPwNIkq8PnOivK5EU1fVh_BYaqIgAEIVX_6B-f6I0TRYQ54Mk3pGcxDZZrvnQWqkLJKoZ5lNZfEapSnVC8IMOa-5pPWAJqLuEhSCPTsPh_2pLsHEn20WhPIq2MzQJuiq6EEZi8OsiV09ltx4NhltbZc5lOEBAsbynQvDKZDhYoRwSQmuUG2i6PN2Ki5Zq-YSd4m5Jd7MxFc5_BYzagc7CKNqWNh98DVauVlssPgECsUwdgw_KIV80a3S-j_ZzQUVVL3Ab6gp3K1XflTpFczNQk0lsJfPGFDEpANmXfdLXvcNyK6DJliKCcmPvWjWnCgO-eLxp1TxEsPjC62xQG51uwdE5COC3UrFuqvFgvh33mFxR0vxqdaw9dKsPLmMimNHoxqlbykavGJ-tc7DVfnJi_OJUgXNROWkTxavkmQEC1rIzuYDS7-sBk6wFPQnF0XVLgCpfkVj_nVbTaTPv-8dIpVHtacB1oih2cRMsTdUGdvJZ81kGMUtaswSmRCCpqkR9Goh0Ew2T46uqJamd5z3lswseKRzjW-dI-J5kXuc5xvbUywOKBzg5Nd4tyLEt7USob_g_u3" />
+    </a><figcaption class="image-caption">Container diagram for Internet Banking System</figcaption>
+    </figure></p>
+<p>组件（Component）把一个容器放大，拆分成不同的抽象逻辑，这一层级已经涉及代码层面的内容。例如：</p>
+<p><figure><a class="lightgallery" href="https://www.plantuml.com/plantuml/svg/0/fLLDRnen4BtlhvXoQ45AmgMddaf8sYJA1mBIZnEQzGwBMt-iR2yKLVtl7Nk1NPAeYjHSuXsFPzwyzsm--e0kr5fbRwGHgYweTWfM8LJ-mt3eS7DMoh2gyzgJ4zO4Ck5CM3sSIe6kiFUIAbB3yVlJYK8J7kzkXnfz8CUXnTZgoffueeeDta5j-AZc08GLmT8gPJVIbA2a8K1JmD6sT9vN5hWrA2jGgItNsCE4vmsosz7tXyVvuklr_6fnU_dvylwYFyYo88FYz7qk519BXvhxExZcYPoX0ETeVaOeiosZrt0AeyarZAfAyPn1MfDbOvuU6QZh-mfFe3VZTAuxmPAwYJtU-e5hzCB9AgIfq9IrGXTt9iwkPK4UU9eqfTm3o7S0banIh8DAXcqSNzG-M4tEmrfYF2CTR2Y7tDaDYtBM6tIWwOZipkPI9L2nvJVKwAGvxiwKQnce05_ddhlRy1zeTDDlzw-WjHHq1EiYxnSvzx_0W3bwYbYcfB2f3FimpCIADCRTMR2ESKRNWQDI-k1IDYDasNHQdy0A_Ofdm9fncB0J08IZ8dwYyYU0Gf3tx9-IFoY8YAlHU77vA_HrxYDXZ7B9bg0dDkWWYNhPPI99SE10K0SFO6xhq3AKcjlQ15unVECnKTdYQ0bQd7DUWMxRnqfoqoVcwmtWTmRyTp1ntylI91EMXaqCiPBZ-qJ9PNTVnZ0blZs7S8oEudLhEFLHobY2ySVbYzhxXeF1ayxjKBtHRWcpMhF9jg-2SJ1XQwKDFp7iISzLB5TfU6PZHIG74fy1yIHgnxQCDEoMxMwIhd9nZdF2O_SVczf58xAB4YEcR4Gz0R72vgD2xpVM5Qrknp3OGaiKMD0_Z0IVKiOBe4RG70QcgD517seS2v4S4rlppTd9ts7WqTEUeRZVYjI5zoIfFPvkvvImWBUmuH0n6n7TpSNvk7EWKwkvEAbWV6FutR-QpoSpJlwJPQbuV2HtBjsdtSmUxWzvXwIEeLvCJ9dw5TNqAufz95FmRyLV" title="Component diagram for Internet Banking System - API Application" data-thumbnail="https://www.plantuml.com/plantuml/svg/0/fLLDRnen4BtlhvXoQ45AmgMddaf8sYJA1mBIZnEQzGwBMt-iR2yKLVtl7Nk1NPAeYjHSuXsFPzwyzsm--e0kr5fbRwGHgYweTWfM8LJ-mt3eS7DMoh2gyzgJ4zO4Ck5CM3sSIe6kiFUIAbB3yVlJYK8J7kzkXnfz8CUXnTZgoffueeeDta5j-AZc08GLmT8gPJVIbA2a8K1JmD6sT9vN5hWrA2jGgItNsCE4vmsosz7tXyVvuklr_6fnU_dvylwYFyYo88FYz7qk519BXvhxExZcYPoX0ETeVaOeiosZrt0AeyarZAfAyPn1MfDbOvuU6QZh-mfFe3VZTAuxmPAwYJtU-e5hzCB9AgIfq9IrGXTt9iwkPK4UU9eqfTm3o7S0banIh8DAXcqSNzG-M4tEmrfYF2CTR2Y7tDaDYtBM6tIWwOZipkPI9L2nvJVKwAGvxiwKQnce05_ddhlRy1zeTDDlzw-WjHHq1EiYxnSvzx_0W3bwYbYcfB2f3FimpCIADCRTMR2ESKRNWQDI-k1IDYDasNHQdy0A_Ofdm9fncB0J08IZ8dwYyYU0Gf3tx9-IFoY8YAlHU77vA_HrxYDXZ7B9bg0dDkWWYNhPPI99SE10K0SFO6xhq3AKcjlQ15unVECnKTdYQ0bQd7DUWMxRnqfoqoVcwmtWTmRyTp1ntylI91EMXaqCiPBZ-qJ9PNTVnZ0blZs7S8oEudLhEFLHobY2ySVbYzhxXeF1ayxjKBtHRWcpMhF9jg-2SJ1XQwKDFp7iISzLB5TfU6PZHIG74fy1yIHgnxQCDEoMxMwIhd9nZdF2O_SVczf58xAB4YEcR4Gz0R72vgD2xpVM5Qrknp3OGaiKMD0_Z0IVKiOBe4RG70QcgD517seS2v4S4rlppTd9ts7WqTEUeRZVYjI5zoIfFPvkvvImWBUmuH0n6n7TpSNvk7EWKwkvEAbWV6FutR-QpoSpJlwJPQbuV2HtBjsdtSmUxWzvXwIEeLvCJ9dw5TNqAufz95FmRyLV" data-sub-html="<h2>Component diagram for Internet Banking System - API Application</h2><p>Component diagram for Internet Banking System - API Application</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://www.plantuml.com/plantuml/svg/0/fLLDRnen4BtlhvXoQ45AmgMddaf8sYJA1mBIZnEQzGwBMt-iR2yKLVtl7Nk1NPAeYjHSuXsFPzwyzsm--e0kr5fbRwGHgYweTWfM8LJ-mt3eS7DMoh2gyzgJ4zO4Ck5CM3sSIe6kiFUIAbB3yVlJYK8J7kzkXnfz8CUXnTZgoffueeeDta5j-AZc08GLmT8gPJVIbA2a8K1JmD6sT9vN5hWrA2jGgItNsCE4vmsosz7tXyVvuklr_6fnU_dvylwYFyYo88FYz7qk519BXvhxExZcYPoX0ETeVaOeiosZrt0AeyarZAfAyPn1MfDbOvuU6QZh-mfFe3VZTAuxmPAwYJtU-e5hzCB9AgIfq9IrGXTt9iwkPK4UU9eqfTm3o7S0banIh8DAXcqSNzG-M4tEmrfYF2CTR2Y7tDaDYtBM6tIWwOZipkPI9L2nvJVKwAGvxiwKQnce05_ddhlRy1zeTDDlzw-WjHHq1EiYxnSvzx_0W3bwYbYcfB2f3FimpCIADCRTMR2ESKRNWQDI-k1IDYDasNHQdy0A_Ofdm9fncB0J08IZ8dwYyYU0Gf3tx9-IFoY8YAlHU77vA_HrxYDXZ7B9bg0dDkWWYNhPPI99SE10K0SFO6xhq3AKcjlQ15unVECnKTdYQ0bQd7DUWMxRnqfoqoVcwmtWTmRyTp1ntylI91EMXaqCiPBZ-qJ9PNTVnZ0blZs7S8oEudLhEFLHobY2ySVbYzhxXeF1ayxjKBtHRWcpMhF9jg-2SJ1XQwKDFp7iISzLB5TfU6PZHIG74fy1yIHgnxQCDEoMxMwIhd9nZdF2O_SVczf58xAB4YEcR4Gz0R72vgD2xpVM5Qrknp3OGaiKMD0_Z0IVKiOBe4RG70QcgD517seS2v4S4rlppTd9ts7WqTEUeRZVYjI5zoIfFPvkvvImWBUmuH0n6n7TpSNvk7EWKwkvEAbWV6FutR-QpoSpJlwJPQbuV2HtBjsdtSmUxWzvXwIEeLvCJ9dw5TNqAufz95FmRyLV"
+            data-srcset="https://www.plantuml.com/plantuml/svg/0/fLLDRnen4BtlhvXoQ45AmgMddaf8sYJA1mBIZnEQzGwBMt-iR2yKLVtl7Nk1NPAeYjHSuXsFPzwyzsm--e0kr5fbRwGHgYweTWfM8LJ-mt3eS7DMoh2gyzgJ4zO4Ck5CM3sSIe6kiFUIAbB3yVlJYK8J7kzkXnfz8CUXnTZgoffueeeDta5j-AZc08GLmT8gPJVIbA2a8K1JmD6sT9vN5hWrA2jGgItNsCE4vmsosz7tXyVvuklr_6fnU_dvylwYFyYo88FYz7qk519BXvhxExZcYPoX0ETeVaOeiosZrt0AeyarZAfAyPn1MfDbOvuU6QZh-mfFe3VZTAuxmPAwYJtU-e5hzCB9AgIfq9IrGXTt9iwkPK4UU9eqfTm3o7S0banIh8DAXcqSNzG-M4tEmrfYF2CTR2Y7tDaDYtBM6tIWwOZipkPI9L2nvJVKwAGvxiwKQnce05_ddhlRy1zeTDDlzw-WjHHq1EiYxnSvzx_0W3bwYbYcfB2f3FimpCIADCRTMR2ESKRNWQDI-k1IDYDasNHQdy0A_Ofdm9fncB0J08IZ8dwYyYU0Gf3tx9-IFoY8YAlHU77vA_HrxYDXZ7B9bg0dDkWWYNhPPI99SE10K0SFO6xhq3AKcjlQ15unVECnKTdYQ0bQd7DUWMxRnqfoqoVcwmtWTmRyTp1ntylI91EMXaqCiPBZ-qJ9PNTVnZ0blZs7S8oEudLhEFLHobY2ySVbYzhxXeF1ayxjKBtHRWcpMhF9jg-2SJ1XQwKDFp7iISzLB5TfU6PZHIG74fy1yIHgnxQCDEoMxMwIhd9nZdF2O_SVczf58xAB4YEcR4Gz0R72vgD2xpVM5Qrknp3OGaiKMD0_Z0IVKiOBe4RG70QcgD517seS2v4S4rlppTd9ts7WqTEUeRZVYjI5zoIfFPvkvvImWBUmuH0n6n7TpSNvk7EWKwkvEAbWV6FutR-QpoSpJlwJPQbuV2HtBjsdtSmUxWzvXwIEeLvCJ9dw5TNqAufz95FmRyLV, https://www.plantuml.com/plantuml/svg/0/fLLDRnen4BtlhvXoQ45AmgMddaf8sYJA1mBIZnEQzGwBMt-iR2yKLVtl7Nk1NPAeYjHSuXsFPzwyzsm--e0kr5fbRwGHgYweTWfM8LJ-mt3eS7DMoh2gyzgJ4zO4Ck5CM3sSIe6kiFUIAbB3yVlJYK8J7kzkXnfz8CUXnTZgoffueeeDta5j-AZc08GLmT8gPJVIbA2a8K1JmD6sT9vN5hWrA2jGgItNsCE4vmsosz7tXyVvuklr_6fnU_dvylwYFyYo88FYz7qk519BXvhxExZcYPoX0ETeVaOeiosZrt0AeyarZAfAyPn1MfDbOvuU6QZh-mfFe3VZTAuxmPAwYJtU-e5hzCB9AgIfq9IrGXTt9iwkPK4UU9eqfTm3o7S0banIh8DAXcqSNzG-M4tEmrfYF2CTR2Y7tDaDYtBM6tIWwOZipkPI9L2nvJVKwAGvxiwKQnce05_ddhlRy1zeTDDlzw-WjHHq1EiYxnSvzx_0W3bwYbYcfB2f3FimpCIADCRTMR2ESKRNWQDI-k1IDYDasNHQdy0A_Ofdm9fncB0J08IZ8dwYyYU0Gf3tx9-IFoY8YAlHU77vA_HrxYDXZ7B9bg0dDkWWYNhPPI99SE10K0SFO6xhq3AKcjlQ15unVECnKTdYQ0bQd7DUWMxRnqfoqoVcwmtWTmRyTp1ntylI91EMXaqCiPBZ-qJ9PNTVnZ0blZs7S8oEudLhEFLHobY2ySVbYzhxXeF1ayxjKBtHRWcpMhF9jg-2SJ1XQwKDFp7iISzLB5TfU6PZHIG74fy1yIHgnxQCDEoMxMwIhd9nZdF2O_SVczf58xAB4YEcR4Gz0R72vgD2xpVM5Qrknp3OGaiKMD0_Z0IVKiOBe4RG70QcgD517seS2v4S4rlppTd9ts7WqTEUeRZVYjI5zoIfFPvkvvImWBUmuH0n6n7TpSNvk7EWKwkvEAbWV6FutR-QpoSpJlwJPQbuV2HtBjsdtSmUxWzvXwIEeLvCJ9dw5TNqAufz95FmRyLV 1.5x, https://www.plantuml.com/plantuml/svg/0/fLLDRnen4BtlhvXoQ45AmgMddaf8sYJA1mBIZnEQzGwBMt-iR2yKLVtl7Nk1NPAeYjHSuXsFPzwyzsm--e0kr5fbRwGHgYweTWfM8LJ-mt3eS7DMoh2gyzgJ4zO4Ck5CM3sSIe6kiFUIAbB3yVlJYK8J7kzkXnfz8CUXnTZgoffueeeDta5j-AZc08GLmT8gPJVIbA2a8K1JmD6sT9vN5hWrA2jGgItNsCE4vmsosz7tXyVvuklr_6fnU_dvylwYFyYo88FYz7qk519BXvhxExZcYPoX0ETeVaOeiosZrt0AeyarZAfAyPn1MfDbOvuU6QZh-mfFe3VZTAuxmPAwYJtU-e5hzCB9AgIfq9IrGXTt9iwkPK4UU9eqfTm3o7S0banIh8DAXcqSNzG-M4tEmrfYF2CTR2Y7tDaDYtBM6tIWwOZipkPI9L2nvJVKwAGvxiwKQnce05_ddhlRy1zeTDDlzw-WjHHq1EiYxnSvzx_0W3bwYbYcfB2f3FimpCIADCRTMR2ESKRNWQDI-k1IDYDasNHQdy0A_Ofdm9fncB0J08IZ8dwYyYU0Gf3tx9-IFoY8YAlHU77vA_HrxYDXZ7B9bg0dDkWWYNhPPI99SE10K0SFO6xhq3AKcjlQ15unVECnKTdYQ0bQd7DUWMxRnqfoqoVcwmtWTmRyTp1ntylI91EMXaqCiPBZ-qJ9PNTVnZ0blZs7S8oEudLhEFLHobY2ySVbYzhxXeF1ayxjKBtHRWcpMhF9jg-2SJ1XQwKDFp7iISzLB5TfU6PZHIG74fy1yIHgnxQCDEoMxMwIhd9nZdF2O_SVczf58xAB4YEcR4Gz0R72vgD2xpVM5Qrknp3OGaiKMD0_Z0IVKiOBe4RG70QcgD517seS2v4S4rlppTd9ts7WqTEUeRZVYjI5zoIfFPvkvvImWBUmuH0n6n7TpSNvk7EWKwkvEAbWV6FutR-QpoSpJlwJPQbuV2HtBjsdtSmUxWzvXwIEeLvCJ9dw5TNqAufz95FmRyLV 2x"
+            data-sizes="auto"
+            alt="https://www.plantuml.com/plantuml/svg/0/fLLDRnen4BtlhvXoQ45AmgMddaf8sYJA1mBIZnEQzGwBMt-iR2yKLVtl7Nk1NPAeYjHSuXsFPzwyzsm--e0kr5fbRwGHgYweTWfM8LJ-mt3eS7DMoh2gyzgJ4zO4Ck5CM3sSIe6kiFUIAbB3yVlJYK8J7kzkXnfz8CUXnTZgoffueeeDta5j-AZc08GLmT8gPJVIbA2a8K1JmD6sT9vN5hWrA2jGgItNsCE4vmsosz7tXyVvuklr_6fnU_dvylwYFyYo88FYz7qk519BXvhxExZcYPoX0ETeVaOeiosZrt0AeyarZAfAyPn1MfDbOvuU6QZh-mfFe3VZTAuxmPAwYJtU-e5hzCB9AgIfq9IrGXTt9iwkPK4UU9eqfTm3o7S0banIh8DAXcqSNzG-M4tEmrfYF2CTR2Y7tDaDYtBM6tIWwOZipkPI9L2nvJVKwAGvxiwKQnce05_ddhlRy1zeTDDlzw-WjHHq1EiYxnSvzx_0W3bwYbYcfB2f3FimpCIADCRTMR2ESKRNWQDI-k1IDYDasNHQdy0A_Ofdm9fncB0J08IZ8dwYyYU0Gf3tx9-IFoY8YAlHU77vA_HrxYDXZ7B9bg0dDkWWYNhPPI99SE10K0SFO6xhq3AKcjlQ15unVECnKTdYQ0bQd7DUWMxRnqfoqoVcwmtWTmRyTp1ntylI91EMXaqCiPBZ-qJ9PNTVnZ0blZs7S8oEudLhEFLHobY2ySVbYzhxXeF1ayxjKBtHRWcpMhF9jg-2SJ1XQwKDFp7iISzLB5TfU6PZHIG74fy1yIHgnxQCDEoMxMwIhd9nZdF2O_SVczf58xAB4YEcR4Gz0R72vgD2xpVM5Qrknp3OGaiKMD0_Z0IVKiOBe4RG70QcgD517seS2v4S4rlppTd9ts7WqTEUeRZVYjI5zoIfFPvkvvImWBUmuH0n6n7TpSNvk7EWKwkvEAbWV6FutR-QpoSpJlwJPQbuV2HtBjsdtSmUxWzvXwIEeLvCJ9dw5TNqAufz95FmRyLV" />
+    </a><figcaption class="image-caption">Component diagram for Internet Banking System - API Application</figcaption>
+    </figure></p>
+<p>而抽象逻辑内部代码之间的关系由Code这一层展示。</p>
+<p><a href="https://github.com/RicardoNiepel/C4-PlantUML" target="_blank" rel="noopener noreffer">C4-PlantUML</a>是为PlantUML封装的一套模板，用来画C4架构图既美观又方便。下面是我画的样子：</p>
+<p><figure><a class="lightgallery" href="https://www.plantuml.com/plantuml/svg/0/jLXVJzjM57_Ff_3oKYAnvcLFUse7Q7Ib445GDMcIPHmRh3fsP3ljq5I9m4ef8v0MwDgDjGqjRRKL1rG68H7amyptElaMkzVNyP_43cPXUOXkxZs_txddt7FEFJStL8rHj7nMZCM-42HMp6SuQaxJSkhNoQJ2FBW-AsXp-PcyoYciB6cSf5rdvMnoKc0P9IEF2roE4vD3NtsP4Xb9cxupbimogiOfQ8eUGlAC877AzHoclqRb9GJD8WfAc-CeNXP5-O4WpL8Y4g8OAKFvbWL5HIEPGgefKMOPKPn77CuUknN4ncv-Fp6TfjCJANfuukuuahPdRaxHKxT7qaEZ0mbtykwjz2WzDlBjoFWmcevfWYPob57x03OBIQFs3hxOJ3QFTi5g6VvTCAg_uS6hO_ZgvrWinIcgB0ta53cJPpKwoqZCBASCsc2plc6MbXDjAJQlQdAMKsX6LGNaQqaRf82-2tUAtI8E4nPOEUbWObXMpak4WUoilKIF_AWvB6sqRp73gSAiX1UR-dbJBuFg2h9v11seabC4bQE_GTGPHfaVU20hzsOuYPqRfEBWPCyusm4R1_44zLECGf-fUNIwMLUwxGEMmrG8GdnWLFT1Oyb1uOzpM0CvbkOLAvOoMCUJelbN9Ov6tp7t6PLLX1ooxwQa3LjRZZiYhVAf-RiUJmGppZ3iFPkmj6uJfaPJWzHO7eLKt9c7wtjWusqGo_0Cviam6ZF3g5o7AN3x01PrKDl4JAqNZTRZDQFsr9qbV0zZWKvYbIn23KtU2N48MhzgZs3AAt499lBu11dHbojuGM8abdFZXGHoptZXhpnU-2kA5zuNBrvJeZhfON0Iec97eufxNs0v5M_bN4Vr0f67vg57k4FIRxajHzjvwqIv3UfsmigoULZ_Pw4mbPh6txUd0ntQfaMb6Nl2h3NCezqmJh9gwcLKt13d3n8ehS7zFVFJ9wFw13u_TMAifoevbvFHlIK9sZpUv_OotAc5Mc6jzglHBR1nKc53rP7gRQdhpOXc5COw1b1QmPiAOxHM-tQPaY4vf--2udQOBhAAj83z4Xdt9BKpsed_C5guLJ7gBu1UXc-gY1nk7SDFvwtDusPv3HJBZcbmesIk7pXYnjdBrkuVw0Q61qVeP-ljEbp_q7C_agm9F0u9nDHQVXRgqOsdhOM2-NhVQ9HxycdCB2PxyzZSFm-DQ6ltHCQi7u7QUso9zTCPW6The7BQF2o3Hv-RXItqRNwkzowMCkg355yTU7GCzAM01BUH-APNLHbB5hVDnLFpPHsSUO_FAsVRXpixRCBMHpUYUmAuB2E8kAejwaRzs8Umwjcr__n1lHdPXd7MG0E04lfbfH--IKxixjByxKTJRxH-rV4XZgRJgIba20O5DMqTj_G5G4TT99YtjUFPoyb7Kj2P7PvQHdA0P4k7j7tK7c7xq8E4szHkgnc1sYFSGTrV77bxjpuZY9xqTwo-PhDPEO67YrOtCZKndiGkjmtrOKXIskdO8UpgS6ZzVQYh8psKIjxoA700NdxufjpwSoraIowYgn7eQKeNpYuRyFLUix9hPoqwwaAboxo-pX5TRFqVdpz3_ArnkDL-L8GJz15tzCqXP-Y3H3j4FyJVTy7D8dglaVugCjRVI14AqZ15L-yM21jlTK3HyMuVPEEjVYUw2NPZGy1sqn8L73cIGndS728aTl6v78cdZ-ePabr0f-7njJHHqUtRd8193RxQ5FO-Y_hFPT_jo4ShnVmbIx6NbezIYlbBbsAUxIiBWk1E4bWnI9A0n21SUMuqTBXrIYRDrMEuK8XAUwdq23JBKnmi4b8SBaSI9Jk2S96J8mZy_-S6g2w1muK-EKxUeuT5wwo4_zfavkdXNlSy_lyJhgvwdpFeOU9zkS6jSx1oW5-MjJNqDeiHogvIvtaU9IwI8OTmeLWxK2uKj8F1jWMyUzvQ-cY_NwpDmvq5e_eBUXPt45bFkNR7cGXQTBVWEDEV1xxGI3X2dHK6uM-WSJuh_Wi0" title="产品 交易 财务流业务架构" data-thumbnail="https://www.plantuml.com/plantuml/svg/0/jLXVJzjM57_Ff_3oKYAnvcLFUse7Q7Ib445GDMcIPHmRh3fsP3ljq5I9m4ef8v0MwDgDjGqjRRKL1rG68H7amyptElaMkzVNyP_43cPXUOXkxZs_txddt7FEFJStL8rHj7nMZCM-42HMp6SuQaxJSkhNoQJ2FBW-AsXp-PcyoYciB6cSf5rdvMnoKc0P9IEF2roE4vD3NtsP4Xb9cxupbimogiOfQ8eUGlAC877AzHoclqRb9GJD8WfAc-CeNXP5-O4WpL8Y4g8OAKFvbWL5HIEPGgefKMOPKPn77CuUknN4ncv-Fp6TfjCJANfuukuuahPdRaxHKxT7qaEZ0mbtykwjz2WzDlBjoFWmcevfWYPob57x03OBIQFs3hxOJ3QFTi5g6VvTCAg_uS6hO_ZgvrWinIcgB0ta53cJPpKwoqZCBASCsc2plc6MbXDjAJQlQdAMKsX6LGNaQqaRf82-2tUAtI8E4nPOEUbWObXMpak4WUoilKIF_AWvB6sqRp73gSAiX1UR-dbJBuFg2h9v11seabC4bQE_GTGPHfaVU20hzsOuYPqRfEBWPCyusm4R1_44zLECGf-fUNIwMLUwxGEMmrG8GdnWLFT1Oyb1uOzpM0CvbkOLAvOoMCUJelbN9Ov6tp7t6PLLX1ooxwQa3LjRZZiYhVAf-RiUJmGppZ3iFPkmj6uJfaPJWzHO7eLKt9c7wtjWusqGo_0Cviam6ZF3g5o7AN3x01PrKDl4JAqNZTRZDQFsr9qbV0zZWKvYbIn23KtU2N48MhzgZs3AAt499lBu11dHbojuGM8abdFZXGHoptZXhpnU-2kA5zuNBrvJeZhfON0Iec97eufxNs0v5M_bN4Vr0f67vg57k4FIRxajHzjvwqIv3UfsmigoULZ_Pw4mbPh6txUd0ntQfaMb6Nl2h3NCezqmJh9gwcLKt13d3n8ehS7zFVFJ9wFw13u_TMAifoevbvFHlIK9sZpUv_OotAc5Mc6jzglHBR1nKc53rP7gRQdhpOXc5COw1b1QmPiAOxHM-tQPaY4vf--2udQOBhAAj83z4Xdt9BKpsed_C5guLJ7gBu1UXc-gY1nk7SDFvwtDusPv3HJBZcbmesIk7pXYnjdBrkuVw0Q61qVeP-ljEbp_q7C_agm9F0u9nDHQVXRgqOsdhOM2-NhVQ9HxycdCB2PxyzZSFm-DQ6ltHCQi7u7QUso9zTCPW6The7BQF2o3Hv-RXItqRNwkzowMCkg355yTU7GCzAM01BUH-APNLHbB5hVDnLFpPHsSUO_FAsVRXpixRCBMHpUYUmAuB2E8kAejwaRzs8Umwjcr__n1lHdPXd7MG0E04lfbfH--IKxixjByxKTJRxH-rV4XZgRJgIba20O5DMqTj_G5G4TT99YtjUFPoyb7Kj2P7PvQHdA0P4k7j7tK7c7xq8E4szHkgnc1sYFSGTrV77bxjpuZY9xqTwo-PhDPEO67YrOtCZKndiGkjmtrOKXIskdO8UpgS6ZzVQYh8psKIjxoA700NdxufjpwSoraIowYgn7eQKeNpYuRyFLUix9hPoqwwaAboxo-pX5TRFqVdpz3_ArnkDL-L8GJz15tzCqXP-Y3H3j4FyJVTy7D8dglaVugCjRVI14AqZ15L-yM21jlTK3HyMuVPEEjVYUw2NPZGy1sqn8L73cIGndS728aTl6v78cdZ-ePabr0f-7njJHHqUtRd8193RxQ5FO-Y_hFPT_jo4ShnVmbIx6NbezIYlbBbsAUxIiBWk1E4bWnI9A0n21SUMuqTBXrIYRDrMEuK8XAUwdq23JBKnmi4b8SBaSI9Jk2S96J8mZy_-S6g2w1muK-EKxUeuT5wwo4_zfavkdXNlSy_lyJhgvwdpFeOU9zkS6jSx1oW5-MjJNqDeiHogvIvtaU9IwI8OTmeLWxK2uKj8F1jWMyUzvQ-cY_NwpDmvq5e_eBUXPt45bFkNR7cGXQTBVWEDEV1xxGI3X2dHK6uM-WSJuh_Wi0" data-sub-html="<h2>产品 交易 财务流业务架构</h2><p>产品 交易 财务流业务架构</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="https://www.plantuml.com/plantuml/svg/0/jLXVJzjM57_Ff_3oKYAnvcLFUse7Q7Ib445GDMcIPHmRh3fsP3ljq5I9m4ef8v0MwDgDjGqjRRKL1rG68H7amyptElaMkzVNyP_43cPXUOXkxZs_txddt7FEFJStL8rHj7nMZCM-42HMp6SuQaxJSkhNoQJ2FBW-AsXp-PcyoYciB6cSf5rdvMnoKc0P9IEF2roE4vD3NtsP4Xb9cxupbimogiOfQ8eUGlAC877AzHoclqRb9GJD8WfAc-CeNXP5-O4WpL8Y4g8OAKFvbWL5HIEPGgefKMOPKPn77CuUknN4ncv-Fp6TfjCJANfuukuuahPdRaxHKxT7qaEZ0mbtykwjz2WzDlBjoFWmcevfWYPob57x03OBIQFs3hxOJ3QFTi5g6VvTCAg_uS6hO_ZgvrWinIcgB0ta53cJPpKwoqZCBASCsc2plc6MbXDjAJQlQdAMKsX6LGNaQqaRf82-2tUAtI8E4nPOEUbWObXMpak4WUoilKIF_AWvB6sqRp73gSAiX1UR-dbJBuFg2h9v11seabC4bQE_GTGPHfaVU20hzsOuYPqRfEBWPCyusm4R1_44zLECGf-fUNIwMLUwxGEMmrG8GdnWLFT1Oyb1uOzpM0CvbkOLAvOoMCUJelbN9Ov6tp7t6PLLX1ooxwQa3LjRZZiYhVAf-RiUJmGppZ3iFPkmj6uJfaPJWzHO7eLKt9c7wtjWusqGo_0Cviam6ZF3g5o7AN3x01PrKDl4JAqNZTRZDQFsr9qbV0zZWKvYbIn23KtU2N48MhzgZs3AAt499lBu11dHbojuGM8abdFZXGHoptZXhpnU-2kA5zuNBrvJeZhfON0Iec97eufxNs0v5M_bN4Vr0f67vg57k4FIRxajHzjvwqIv3UfsmigoULZ_Pw4mbPh6txUd0ntQfaMb6Nl2h3NCezqmJh9gwcLKt13d3n8ehS7zFVFJ9wFw13u_TMAifoevbvFHlIK9sZpUv_OotAc5Mc6jzglHBR1nKc53rP7gRQdhpOXc5COw1b1QmPiAOxHM-tQPaY4vf--2udQOBhAAj83z4Xdt9BKpsed_C5guLJ7gBu1UXc-gY1nk7SDFvwtDusPv3HJBZcbmesIk7pXYnjdBrkuVw0Q61qVeP-ljEbp_q7C_agm9F0u9nDHQVXRgqOsdhOM2-NhVQ9HxycdCB2PxyzZSFm-DQ6ltHCQi7u7QUso9zTCPW6The7BQF2o3Hv-RXItqRNwkzowMCkg355yTU7GCzAM01BUH-APNLHbB5hVDnLFpPHsSUO_FAsVRXpixRCBMHpUYUmAuB2E8kAejwaRzs8Umwjcr__n1lHdPXd7MG0E04lfbfH--IKxixjByxKTJRxH-rV4XZgRJgIba20O5DMqTj_G5G4TT99YtjUFPoyb7Kj2P7PvQHdA0P4k7j7tK7c7xq8E4szHkgnc1sYFSGTrV77bxjpuZY9xqTwo-PhDPEO67YrOtCZKndiGkjmtrOKXIskdO8UpgS6ZzVQYh8psKIjxoA700NdxufjpwSoraIowYgn7eQKeNpYuRyFLUix9hPoqwwaAboxo-pX5TRFqVdpz3_ArnkDL-L8GJz15tzCqXP-Y3H3j4FyJVTy7D8dglaVugCjRVI14AqZ15L-yM21jlTK3HyMuVPEEjVYUw2NPZGy1sqn8L73cIGndS728aTl6v78cdZ-ePabr0f-7njJHHqUtRd8193RxQ5FO-Y_hFPT_jo4ShnVmbIx6NbezIYlbBbsAUxIiBWk1E4bWnI9A0n21SUMuqTBXrIYRDrMEuK8XAUwdq23JBKnmi4b8SBaSI9Jk2S96J8mZy_-S6g2w1muK-EKxUeuT5wwo4_zfavkdXNlSy_lyJhgvwdpFeOU9zkS6jSx1oW5-MjJNqDeiHogvIvtaU9IwI8OTmeLWxK2uKj8F1jWMyUzvQ-cY_NwpDmvq5e_eBUXPt45bFkNR7cGXQTBVWEDEV1xxGI3X2dHK6uM-WSJuh_Wi0"
+            data-srcset="https://www.plantuml.com/plantuml/svg/0/jLXVJzjM57_Ff_3oKYAnvcLFUse7Q7Ib445GDMcIPHmRh3fsP3ljq5I9m4ef8v0MwDgDjGqjRRKL1rG68H7amyptElaMkzVNyP_43cPXUOXkxZs_txddt7FEFJStL8rHj7nMZCM-42HMp6SuQaxJSkhNoQJ2FBW-AsXp-PcyoYciB6cSf5rdvMnoKc0P9IEF2roE4vD3NtsP4Xb9cxupbimogiOfQ8eUGlAC877AzHoclqRb9GJD8WfAc-CeNXP5-O4WpL8Y4g8OAKFvbWL5HIEPGgefKMOPKPn77CuUknN4ncv-Fp6TfjCJANfuukuuahPdRaxHKxT7qaEZ0mbtykwjz2WzDlBjoFWmcevfWYPob57x03OBIQFs3hxOJ3QFTi5g6VvTCAg_uS6hO_ZgvrWinIcgB0ta53cJPpKwoqZCBASCsc2plc6MbXDjAJQlQdAMKsX6LGNaQqaRf82-2tUAtI8E4nPOEUbWObXMpak4WUoilKIF_AWvB6sqRp73gSAiX1UR-dbJBuFg2h9v11seabC4bQE_GTGPHfaVU20hzsOuYPqRfEBWPCyusm4R1_44zLECGf-fUNIwMLUwxGEMmrG8GdnWLFT1Oyb1uOzpM0CvbkOLAvOoMCUJelbN9Ov6tp7t6PLLX1ooxwQa3LjRZZiYhVAf-RiUJmGppZ3iFPkmj6uJfaPJWzHO7eLKt9c7wtjWusqGo_0Cviam6ZF3g5o7AN3x01PrKDl4JAqNZTRZDQFsr9qbV0zZWKvYbIn23KtU2N48MhzgZs3AAt499lBu11dHbojuGM8abdFZXGHoptZXhpnU-2kA5zuNBrvJeZhfON0Iec97eufxNs0v5M_bN4Vr0f67vg57k4FIRxajHzjvwqIv3UfsmigoULZ_Pw4mbPh6txUd0ntQfaMb6Nl2h3NCezqmJh9gwcLKt13d3n8ehS7zFVFJ9wFw13u_TMAifoevbvFHlIK9sZpUv_OotAc5Mc6jzglHBR1nKc53rP7gRQdhpOXc5COw1b1QmPiAOxHM-tQPaY4vf--2udQOBhAAj83z4Xdt9BKpsed_C5guLJ7gBu1UXc-gY1nk7SDFvwtDusPv3HJBZcbmesIk7pXYnjdBrkuVw0Q61qVeP-ljEbp_q7C_agm9F0u9nDHQVXRgqOsdhOM2-NhVQ9HxycdCB2PxyzZSFm-DQ6ltHCQi7u7QUso9zTCPW6The7BQF2o3Hv-RXItqRNwkzowMCkg355yTU7GCzAM01BUH-APNLHbB5hVDnLFpPHsSUO_FAsVRXpixRCBMHpUYUmAuB2E8kAejwaRzs8Umwjcr__n1lHdPXd7MG0E04lfbfH--IKxixjByxKTJRxH-rV4XZgRJgIba20O5DMqTj_G5G4TT99YtjUFPoyb7Kj2P7PvQHdA0P4k7j7tK7c7xq8E4szHkgnc1sYFSGTrV77bxjpuZY9xqTwo-PhDPEO67YrOtCZKndiGkjmtrOKXIskdO8UpgS6ZzVQYh8psKIjxoA700NdxufjpwSoraIowYgn7eQKeNpYuRyFLUix9hPoqwwaAboxo-pX5TRFqVdpz3_ArnkDL-L8GJz15tzCqXP-Y3H3j4FyJVTy7D8dglaVugCjRVI14AqZ15L-yM21jlTK3HyMuVPEEjVYUw2NPZGy1sqn8L73cIGndS728aTl6v78cdZ-ePabr0f-7njJHHqUtRd8193RxQ5FO-Y_hFPT_jo4ShnVmbIx6NbezIYlbBbsAUxIiBWk1E4bWnI9A0n21SUMuqTBXrIYRDrMEuK8XAUwdq23JBKnmi4b8SBaSI9Jk2S96J8mZy_-S6g2w1muK-EKxUeuT5wwo4_zfavkdXNlSy_lyJhgvwdpFeOU9zkS6jSx1oW5-MjJNqDeiHogvIvtaU9IwI8OTmeLWxK2uKj8F1jWMyUzvQ-cY_NwpDmvq5e_eBUXPt45bFkNR7cGXQTBVWEDEV1xxGI3X2dHK6uM-WSJuh_Wi0, https://www.plantuml.com/plantuml/svg/0/jLXVJzjM57_Ff_3oKYAnvcLFUse7Q7Ib445GDMcIPHmRh3fsP3ljq5I9m4ef8v0MwDgDjGqjRRKL1rG68H7amyptElaMkzVNyP_43cPXUOXkxZs_txddt7FEFJStL8rHj7nMZCM-42HMp6SuQaxJSkhNoQJ2FBW-AsXp-PcyoYciB6cSf5rdvMnoKc0P9IEF2roE4vD3NtsP4Xb9cxupbimogiOfQ8eUGlAC877AzHoclqRb9GJD8WfAc-CeNXP5-O4WpL8Y4g8OAKFvbWL5HIEPGgefKMOPKPn77CuUknN4ncv-Fp6TfjCJANfuukuuahPdRaxHKxT7qaEZ0mbtykwjz2WzDlBjoFWmcevfWYPob57x03OBIQFs3hxOJ3QFTi5g6VvTCAg_uS6hO_ZgvrWinIcgB0ta53cJPpKwoqZCBASCsc2plc6MbXDjAJQlQdAMKsX6LGNaQqaRf82-2tUAtI8E4nPOEUbWObXMpak4WUoilKIF_AWvB6sqRp73gSAiX1UR-dbJBuFg2h9v11seabC4bQE_GTGPHfaVU20hzsOuYPqRfEBWPCyusm4R1_44zLECGf-fUNIwMLUwxGEMmrG8GdnWLFT1Oyb1uOzpM0CvbkOLAvOoMCUJelbN9Ov6tp7t6PLLX1ooxwQa3LjRZZiYhVAf-RiUJmGppZ3iFPkmj6uJfaPJWzHO7eLKt9c7wtjWusqGo_0Cviam6ZF3g5o7AN3x01PrKDl4JAqNZTRZDQFsr9qbV0zZWKvYbIn23KtU2N48MhzgZs3AAt499lBu11dHbojuGM8abdFZXGHoptZXhpnU-2kA5zuNBrvJeZhfON0Iec97eufxNs0v5M_bN4Vr0f67vg57k4FIRxajHzjvwqIv3UfsmigoULZ_Pw4mbPh6txUd0ntQfaMb6Nl2h3NCezqmJh9gwcLKt13d3n8ehS7zFVFJ9wFw13u_TMAifoevbvFHlIK9sZpUv_OotAc5Mc6jzglHBR1nKc53rP7gRQdhpOXc5COw1b1QmPiAOxHM-tQPaY4vf--2udQOBhAAj83z4Xdt9BKpsed_C5guLJ7gBu1UXc-gY1nk7SDFvwtDusPv3HJBZcbmesIk7pXYnjdBrkuVw0Q61qVeP-ljEbp_q7C_agm9F0u9nDHQVXRgqOsdhOM2-NhVQ9HxycdCB2PxyzZSFm-DQ6ltHCQi7u7QUso9zTCPW6The7BQF2o3Hv-RXItqRNwkzowMCkg355yTU7GCzAM01BUH-APNLHbB5hVDnLFpPHsSUO_FAsVRXpixRCBMHpUYUmAuB2E8kAejwaRzs8Umwjcr__n1lHdPXd7MG0E04lfbfH--IKxixjByxKTJRxH-rV4XZgRJgIba20O5DMqTj_G5G4TT99YtjUFPoyb7Kj2P7PvQHdA0P4k7j7tK7c7xq8E4szHkgnc1sYFSGTrV77bxjpuZY9xqTwo-PhDPEO67YrOtCZKndiGkjmtrOKXIskdO8UpgS6ZzVQYh8psKIjxoA700NdxufjpwSoraIowYgn7eQKeNpYuRyFLUix9hPoqwwaAboxo-pX5TRFqVdpz3_ArnkDL-L8GJz15tzCqXP-Y3H3j4FyJVTy7D8dglaVugCjRVI14AqZ15L-yM21jlTK3HyMuVPEEjVYUw2NPZGy1sqn8L73cIGndS728aTl6v78cdZ-ePabr0f-7njJHHqUtRd8193RxQ5FO-Y_hFPT_jo4ShnVmbIx6NbezIYlbBbsAUxIiBWk1E4bWnI9A0n21SUMuqTBXrIYRDrMEuK8XAUwdq23JBKnmi4b8SBaSI9Jk2S96J8mZy_-S6g2w1muK-EKxUeuT5wwo4_zfavkdXNlSy_lyJhgvwdpFeOU9zkS6jSx1oW5-MjJNqDeiHogvIvtaU9IwI8OTmeLWxK2uKj8F1jWMyUzvQ-cY_NwpDmvq5e_eBUXPt45bFkNR7cGXQTBVWEDEV1xxGI3X2dHK6uM-WSJuh_Wi0 1.5x, https://www.plantuml.com/plantuml/svg/0/jLXVJzjM57_Ff_3oKYAnvcLFUse7Q7Ib445GDMcIPHmRh3fsP3ljq5I9m4ef8v0MwDgDjGqjRRKL1rG68H7amyptElaMkzVNyP_43cPXUOXkxZs_txddt7FEFJStL8rHj7nMZCM-42HMp6SuQaxJSkhNoQJ2FBW-AsXp-PcyoYciB6cSf5rdvMnoKc0P9IEF2roE4vD3NtsP4Xb9cxupbimogiOfQ8eUGlAC877AzHoclqRb9GJD8WfAc-CeNXP5-O4WpL8Y4g8OAKFvbWL5HIEPGgefKMOPKPn77CuUknN4ncv-Fp6TfjCJANfuukuuahPdRaxHKxT7qaEZ0mbtykwjz2WzDlBjoFWmcevfWYPob57x03OBIQFs3hxOJ3QFTi5g6VvTCAg_uS6hO_ZgvrWinIcgB0ta53cJPpKwoqZCBASCsc2plc6MbXDjAJQlQdAMKsX6LGNaQqaRf82-2tUAtI8E4nPOEUbWObXMpak4WUoilKIF_AWvB6sqRp73gSAiX1UR-dbJBuFg2h9v11seabC4bQE_GTGPHfaVU20hzsOuYPqRfEBWPCyusm4R1_44zLECGf-fUNIwMLUwxGEMmrG8GdnWLFT1Oyb1uOzpM0CvbkOLAvOoMCUJelbN9Ov6tp7t6PLLX1ooxwQa3LjRZZiYhVAf-RiUJmGppZ3iFPkmj6uJfaPJWzHO7eLKt9c7wtjWusqGo_0Cviam6ZF3g5o7AN3x01PrKDl4JAqNZTRZDQFsr9qbV0zZWKvYbIn23KtU2N48MhzgZs3AAt499lBu11dHbojuGM8abdFZXGHoptZXhpnU-2kA5zuNBrvJeZhfON0Iec97eufxNs0v5M_bN4Vr0f67vg57k4FIRxajHzjvwqIv3UfsmigoULZ_Pw4mbPh6txUd0ntQfaMb6Nl2h3NCezqmJh9gwcLKt13d3n8ehS7zFVFJ9wFw13u_TMAifoevbvFHlIK9sZpUv_OotAc5Mc6jzglHBR1nKc53rP7gRQdhpOXc5COw1b1QmPiAOxHM-tQPaY4vf--2udQOBhAAj83z4Xdt9BKpsed_C5guLJ7gBu1UXc-gY1nk7SDFvwtDusPv3HJBZcbmesIk7pXYnjdBrkuVw0Q61qVeP-ljEbp_q7C_agm9F0u9nDHQVXRgqOsdhOM2-NhVQ9HxycdCB2PxyzZSFm-DQ6ltHCQi7u7QUso9zTCPW6The7BQF2o3Hv-RXItqRNwkzowMCkg355yTU7GCzAM01BUH-APNLHbB5hVDnLFpPHsSUO_FAsVRXpixRCBMHpUYUmAuB2E8kAejwaRzs8Umwjcr__n1lHdPXd7MG0E04lfbfH--IKxixjByxKTJRxH-rV4XZgRJgIba20O5DMqTj_G5G4TT99YtjUFPoyb7Kj2P7PvQHdA0P4k7j7tK7c7xq8E4szHkgnc1sYFSGTrV77bxjpuZY9xqTwo-PhDPEO67YrOtCZKndiGkjmtrOKXIskdO8UpgS6ZzVQYh8psKIjxoA700NdxufjpwSoraIowYgn7eQKeNpYuRyFLUix9hPoqwwaAboxo-pX5TRFqVdpz3_ArnkDL-L8GJz15tzCqXP-Y3H3j4FyJVTy7D8dglaVugCjRVI14AqZ15L-yM21jlTK3HyMuVPEEjVYUw2NPZGy1sqn8L73cIGndS728aTl6v78cdZ-ePabr0f-7njJHHqUtRd8193RxQ5FO-Y_hFPT_jo4ShnVmbIx6NbezIYlbBbsAUxIiBWk1E4bWnI9A0n21SUMuqTBXrIYRDrMEuK8XAUwdq23JBKnmi4b8SBaSI9Jk2S96J8mZy_-S6g2w1muK-EKxUeuT5wwo4_zfavkdXNlSy_lyJhgvwdpFeOU9zkS6jSx1oW5-MjJNqDeiHogvIvtaU9IwI8OTmeLWxK2uKj8F1jWMyUzvQ-cY_NwpDmvq5e_eBUXPt45bFkNR7cGXQTBVWEDEV1xxGI3X2dHK6uM-WSJuh_Wi0 2x"
+            data-sizes="auto"
+            alt="https://www.plantuml.com/plantuml/svg/0/jLXVJzjM57_Ff_3oKYAnvcLFUse7Q7Ib445GDMcIPHmRh3fsP3ljq5I9m4ef8v0MwDgDjGqjRRKL1rG68H7amyptElaMkzVNyP_43cPXUOXkxZs_txddt7FEFJStL8rHj7nMZCM-42HMp6SuQaxJSkhNoQJ2FBW-AsXp-PcyoYciB6cSf5rdvMnoKc0P9IEF2roE4vD3NtsP4Xb9cxupbimogiOfQ8eUGlAC877AzHoclqRb9GJD8WfAc-CeNXP5-O4WpL8Y4g8OAKFvbWL5HIEPGgefKMOPKPn77CuUknN4ncv-Fp6TfjCJANfuukuuahPdRaxHKxT7qaEZ0mbtykwjz2WzDlBjoFWmcevfWYPob57x03OBIQFs3hxOJ3QFTi5g6VvTCAg_uS6hO_ZgvrWinIcgB0ta53cJPpKwoqZCBASCsc2plc6MbXDjAJQlQdAMKsX6LGNaQqaRf82-2tUAtI8E4nPOEUbWObXMpak4WUoilKIF_AWvB6sqRp73gSAiX1UR-dbJBuFg2h9v11seabC4bQE_GTGPHfaVU20hzsOuYPqRfEBWPCyusm4R1_44zLECGf-fUNIwMLUwxGEMmrG8GdnWLFT1Oyb1uOzpM0CvbkOLAvOoMCUJelbN9Ov6tp7t6PLLX1ooxwQa3LjRZZiYhVAf-RiUJmGppZ3iFPkmj6uJfaPJWzHO7eLKt9c7wtjWusqGo_0Cviam6ZF3g5o7AN3x01PrKDl4JAqNZTRZDQFsr9qbV0zZWKvYbIn23KtU2N48MhzgZs3AAt499lBu11dHbojuGM8abdFZXGHoptZXhpnU-2kA5zuNBrvJeZhfON0Iec97eufxNs0v5M_bN4Vr0f67vg57k4FIRxajHzjvwqIv3UfsmigoULZ_Pw4mbPh6txUd0ntQfaMb6Nl2h3NCezqmJh9gwcLKt13d3n8ehS7zFVFJ9wFw13u_TMAifoevbvFHlIK9sZpUv_OotAc5Mc6jzglHBR1nKc53rP7gRQdhpOXc5COw1b1QmPiAOxHM-tQPaY4vf--2udQOBhAAj83z4Xdt9BKpsed_C5guLJ7gBu1UXc-gY1nk7SDFvwtDusPv3HJBZcbmesIk7pXYnjdBrkuVw0Q61qVeP-ljEbp_q7C_agm9F0u9nDHQVXRgqOsdhOM2-NhVQ9HxycdCB2PxyzZSFm-DQ6ltHCQi7u7QUso9zTCPW6The7BQF2o3Hv-RXItqRNwkzowMCkg355yTU7GCzAM01BUH-APNLHbB5hVDnLFpPHsSUO_FAsVRXpixRCBMHpUYUmAuB2E8kAejwaRzs8Umwjcr__n1lHdPXd7MG0E04lfbfH--IKxixjByxKTJRxH-rV4XZgRJgIba20O5DMqTj_G5G4TT99YtjUFPoyb7Kj2P7PvQHdA0P4k7j7tK7c7xq8E4szHkgnc1sYFSGTrV77bxjpuZY9xqTwo-PhDPEO67YrOtCZKndiGkjmtrOKXIskdO8UpgS6ZzVQYh8psKIjxoA700NdxufjpwSoraIowYgn7eQKeNpYuRyFLUix9hPoqwwaAboxo-pX5TRFqVdpz3_ArnkDL-L8GJz15tzCqXP-Y3H3j4FyJVTy7D8dglaVugCjRVI14AqZ15L-yM21jlTK3HyMuVPEEjVYUw2NPZGy1sqn8L73cIGndS728aTl6v78cdZ-ePabr0f-7njJHHqUtRd8193RxQ5FO-Y_hFPT_jo4ShnVmbIx6NbezIYlbBbsAUxIiBWk1E4bWnI9A0n21SUMuqTBXrIYRDrMEuK8XAUwdq23JBKnmi4b8SBaSI9Jk2S96J8mZy_-S6g2w1muK-EKxUeuT5wwo4_zfavkdXNlSy_lyJhgvwdpFeOU9zkS6jSx1oW5-MjJNqDeiHogvIvtaU9IwI8OTmeLWxK2uKj8F1jWMyUzvQ-cY_NwpDmvq5e_eBUXPt45bFkNR7cGXQTBVWEDEV1xxGI3X2dHK6uM-WSJuh_Wi0" />
+    </a><figcaption class="image-caption">产品 交易 财务流业务架构</figcaption>
+    </figure></p>
+<p>和上面的例子相比，好像不太适合画较复杂的架构，布局不太好处理，另外连线太多容易重叠在一块傻傻分不清楚。</p></div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2020-06-17&nbsp;<a class="git-hash" href="https://github.com/dillonzq/LoveIt/commit/b6b131fb549d1c33b519bbe9910a7c0b426257fd" target="_blank" title="commit by Donie Leigh(donie.leigh@gmail.com) b6b131fb549d1c33b519bbe9910a7c0b426257fd: URL地址改为用slug生成；为所有文章追加slug matter">
+                                    <i class="fas fa-hashtag fa-fw"></i>b6b131fb</a></span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/post/design-software-architecture-with-c4-plantuml/index.md" target="_blank">阅读原始文档</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="http://0x3f.org/post/design-software-architecture-with-c4-plantuml/" data-title="用C4-PlantUML画软件架构图" data-hashtags="编程,最佳实践"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="http://0x3f.org/post/design-software-architecture-with-c4-plantuml/" data-hashtag="编程"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="http://0x3f.org/post/design-software-architecture-with-c4-plantuml/" data-title="用C4-PlantUML画软件架构图"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="http://0x3f.org/post/design-software-architecture-with-c4-plantuml/" data-title="用C4-PlantUML画软件架构图"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="http://0x3f.org/post/design-software-architecture-with-c4-plantuml/" data-title="用C4-PlantUML画软件架构图"><i class="fab fa-weibo fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
 
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/%E7%BC%96%E7%A8%8B/">编程</a>,&nbsp;<a href="/tags/%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">最佳实践</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
 
-<script src="/js/jquery.min.js"></script>
+    <div class="post-nav"><a href="/post/input-date-and-time-with-rime/" class="prev" rel="prev" title="用鼠须管输入日期时间的方法"><i class="fas fa-angle-left fa-fw"></i>用鼠须管输入日期时间的方法</a>
+            <a href="/post/lumen-facade-doesnot-support-pass-by-reference-param/" class="next" rel="next" title="关于Lumen的Facade不支持引用传递的看法">关于Lumen的Facade不支持引用传递的看法<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+<div id="comments"><div id="utterances"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://utteranc.es/">Utterances</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.72.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2006 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">淘气</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
 
-
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
-
-
-<script src="/js/script.js"></script>
-
-  </div>
-</body>
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"utterances":{"darkTheme":"github-dark","issueTerm":"pathname","label":"","lightTheme":"github-light","repo":"xbot/blog-comments"}},"search":{"algoliaAppID":"PASDMWALPK","algoliaIndex":"index.zh-cn","algoliaSearchKey":"b42948e51daaa93df92381c8e2ac0f93","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
 </html>

@@ -1,278 +1,324 @@
 <!DOCTYPE html>
-<html>
-<head><meta name="generator" content="Hexo 3.8.0">
-  <meta charset="utf-8">
-  
-  <title>Vim搜索的最佳实践 - 晴耕雨讀</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="目标 使用PCRE正则表达式在当前目录下递归搜索 将选定内容自动转换成正则表达式 有较高的搜索速度  依赖 Ferret：实现用PCRE正则表达式递归搜索 The Silver Searcher：搜索速度快  配置123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051">
-<meta name="keywords" content="编程,vim,最佳实践">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Vim搜索的最佳实践">
-<meta property="og:url" content="http://0x3f.org/post/the-best-practice-of-searching-in-vim/index.html">
-<meta property="og:site_name" content="晴耕雨讀">
-<meta property="og:description" content="目标 使用PCRE正则表达式在当前目录下递归搜索 将选定内容自动转换成正则表达式 有较高的搜索速度  依赖 Ferret：实现用PCRE正则表达式递归搜索 The Silver Searcher：搜索速度快  配置123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051">
-<meta property="og:locale" content="zh-TW">
-<meta property="og:updated_time" content="2020-02-06T13:44:05.744Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Vim搜索的最佳实践">
-<meta name="twitter:description" content="目标 使用PCRE正则表达式在当前目录下递归搜索 将选定内容自动转换成正则表达式 有较高的搜索速度  依赖 Ferret：实现用PCRE正则表达式递归搜索 The Silver Searcher：搜索速度快  配置123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051">
-  
-  
-    <link rel="icon" href="/favicon.png">
-  
-  <link href="/webfonts/ptserif/main.css" rel="stylesheet" type="text/css">
-  <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="/css/style.css">
-  
-<!-- Google Analytics -->
-<script type="text/javascript">
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>Vim搜索的最佳实践 - 晴耕雨讀</title><meta name="Description" content="Donie&#39;s blog."><meta property="og:title" content="Vim搜索的最佳实践" />
+<meta property="og:description" content="目标 使用PCRE正则表达式在当前目录下递归搜索 将选定内容自动转换成正则表达式 有较高的搜索速度 依赖 Ferret：实现用PCRE正则表达式递归搜" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://0x3f.org/post/the-best-practice-of-searching-in-vim/" />
+<meta property="og:image" content="http://0x3f.org/logo.png"/>
+<meta property="article:published_time" content="2017-02-19T20:37:18+00:00" />
+<meta property="article:modified_time" content="2020-06-17T17:28:11+08:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://0x3f.org/logo.png"/>
 
-ga('create', 'UA-93233020-1', 'auto');
-ga('send', 'pageview');
+<meta name="twitter:title" content="Vim搜索的最佳实践"/>
+<meta name="twitter:description" content="目标 使用PCRE正则表达式在当前目录下递归搜索 将选定内容自动转换成正则表达式 有较高的搜索速度 依赖 Ferret：实现用PCRE正则表达式递归搜"/>
+<meta name="application-name" content="晴耕雨讀">
+<meta name="apple-mobile-web-app-title" content="晴耕雨讀"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://0x3f.org/post/the-best-practice-of-searching-in-vim/" /><link rel="prev" href="http://0x3f.org/post/the-experience-of-bose-qc35/" /><link rel="next" href="http://0x3f.org/post/vim-js-beautify/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Vim搜索的最佳实践",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/0x3f.org\/post\/the-best-practice-of-searching-in-vim\/"
+        },"image": ["http:\/\/0x3f.org\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "vim, 最佳实践, 编程","wordcount":  1114 ,
+        "url": "http:\/\/0x3f.org\/post\/the-best-practice-of-searching-in-vim\/","datePublished": "2017-02-19T20:37:18+00:00","dateModified": "2020-06-17T17:28:11+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": "http:\/\/0x3f.org\/images\/avatar.png"},"author": {
+                "@type": "Person",
+                "name": "淘气"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
 
-</script>
-<!-- End Google Analytics -->
-
-
-</head>
-</html>
-<body>
-  <div id="container">
-    <!-- blair add baidu tongji start... @2017.10.03 -->
-<!-- blair add baidu tongji end ! @2017.10.03 -->
-
-<header id="header">
-  <div id="header-outer" class="outer">
-    <div id="header-inner" class="inner">
-      <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
-      <a id="logo" class="logo" href="/"></a>
-      <nav id="main-nav">
-        
-          <a class="main-nav-link" href="/archives">目录</a>
-        
-          <a class="main-nav-link" href="/categories">分类</a>
-        
-          <a class="main-nav-link" href="/tags">标签</a>
-        
-          <a class="main-nav-link" href="https://t.me/s/blingings">不灵</a>
-        
-          <a class="main-nav-link" href="/about">关于</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        <div id="search-form-wrap">
-          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
         </div>
-      </nav>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
     </div>
-  </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
 </header>
-
-    <br>
-    <section id="main" class="outer"><article id="post-the-best-practice-of-searching-in-vim" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="article-title" itemprop="name">
-      Vim搜索的最佳实践
-      <small class="article-detail-date-index">&nbsp; 2017-02-19</small>
-    </h1>
-  
-
-
-        <div class="page-title"></div>
-        <br>
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/the-best-practice-of-searching-in-vim/" class="article-date">
-  <time datetime="2017-02-19T12:37:18.000Z" itemprop="datePublished">2017-02-19</time>
-</a>-->
-      <!-- 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/计算机/">计算机</a>
-  </div>
-
---><!-- by blair 160724 -->
-      <!-- by blair
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/the-best-practice-of-searching-in-vim/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><ul>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">Vim搜索的最佳实践</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"><i class="far fa-folder fa-fw"></i>计算机</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2017-02-19">2017-02-19</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1114 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 3 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#目标">目标</a></li>
+    <li><a href="#依赖">依赖</a></li>
+    <li><a href="#配置">配置</a>
+      <ul>
+        <li><a href="#ferret">Ferret</a></li>
+        <li><a href="#the-silver-searcher">The Silver Searcher</a></li>
+        <li><a href="#搜索运算符">搜索运算符</a></li>
+        <li><a href="#转换选定内容到正则表达式">转换选定内容到正则表达式</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="目标">目标</h2>
+<ul>
 <li>使用PCRE正则表达式在当前目录下递归搜索</li>
 <li>将选定内容自动转换成正则表达式</li>
 <li>有较高的搜索速度</li>
 </ul>
-<h2 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h2><ul>
-<li><a href="https://github.com/wincent/ferret" target="_blank" rel="noopener">Ferret</a>：实现用PCRE正则表达式递归搜索</li>
-<li><a href="https://github.com/ggreer/the_silver_searcher" target="_blank" rel="noopener">The Silver Searcher</a>：搜索速度快</li>
+<h2 id="依赖">依赖</h2>
+<ul>
+<li><a href="https://github.com/wincent/ferret" target="_blank" rel="noopener noreffer">Ferret</a>：实现用PCRE正则表达式递归搜索</li>
+<li><a href="https://github.com/ggreer/the_silver_searcher" target="_blank" rel="noopener noreffer">The Silver Searcher</a>：搜索速度快</li>
 </ul>
-<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">" 在当前缓冲区中查找与替换</span></span><br><span class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;leader&gt;</span>ff yiw/\&lt;<span class="symbol">&lt;C-R&gt;</span><span class="comment">"\&gt;\C</span></span><br><span class="line"><span class="keyword">vmap</span> <span class="symbol">&lt;leader&gt;</span>ff <span class="keyword">y</span>/<span class="symbol">&lt;C-R&gt;</span>=XEscapeRegex(@<span class="comment">")&lt;CR&gt;\C</span></span><br><span class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;leader&gt;</span>rr yi<span class="variable">w:</span>%s/\&lt;<span class="symbol">&lt;C-R&gt;</span><span class="comment">"\&gt;\C//g&lt;LEFT&gt;&lt;LEFT&gt;</span></span><br><span class="line"><span class="keyword">vmap</span> <span class="symbol">&lt;leader&gt;</span>rr <span class="keyword">y</span>:%s/<span class="symbol">&lt;C-R&gt;</span>=XEscapeRegex(@<span class="comment">")&lt;CR&gt;\C//g&lt;LEFT&gt;&lt;LEFT&gt;</span></span><br><span class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;leader&gt;</span>rl yi<span class="variable">w:s</span>/\&lt;<span class="symbol">&lt;C-R&gt;</span><span class="comment">"\&gt;\C//g&lt;LEFT&gt;&lt;LEFT&gt;</span></span><br><span class="line"><span class="keyword">vmap</span> <span class="symbol">&lt;leader&gt;</span>rl <span class="keyword">y</span>:s/<span class="symbol">&lt;C-R&gt;</span>=XEscapeRegex(@<span class="comment">")&lt;CR&gt;\C//g&lt;LEFT&gt;&lt;LEFT&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">" 在当前目录下递归搜索和替换</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">g:FerretExecutable</span>=<span class="string">'ag'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;leader&gt;</span>ak <span class="symbol">&lt;Plug&gt;</span>(FerretAck)</span><br><span class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;leader&gt;</span>lak <span class="symbol">&lt;Plug&gt;</span>(FerretLack)</span><br><span class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;leader&gt;</span>aw <span class="symbol">&lt;Plug&gt;</span>(FerretAckWord)</span><br><span class="line"><span class="keyword">nmap</span> <span class="symbol">&lt;leader&gt;</span><span class="keyword">as</span> <span class="symbol">&lt;Plug&gt;</span>(FerretAcks)</span><br><span class="line"><span class="keyword">vmap</span> <span class="symbol">&lt;leader&gt;</span>ak <span class="keyword">y</span>:Ack <span class="symbol">&lt;C-R&gt;</span>=XEscapeRegex(@<span class="comment">", 2)&lt;CR&gt;</span></span><br><span class="line"><span class="keyword">vmap</span> <span class="symbol">&lt;leader&gt;</span>lak <span class="keyword">y</span>:Lack <span class="symbol">&lt;C-R&gt;</span>=XEscapeRegex(@<span class="comment">", 2)&lt;CR&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">nnoremap</span> <span class="symbol">&lt;leader&gt;</span><span class="keyword">a</span> :<span class="keyword">set</span> operatorfunc=GrepOperator<span class="symbol">&lt;CR&gt;</span>g@</span><br><span class="line"><span class="keyword">vnoremap</span> <span class="symbol">&lt;leader&gt;</span><span class="keyword">a</span> :<span class="symbol">&lt;c-u&gt;</span><span class="keyword">call</span> GrepOperator(<span class="built_in">visualmode</span>())<span class="symbol">&lt;CR&gt;</span></span><br><span class="line"><span class="function"><span class="keyword">function</span>! <span class="title">GrepOperator</span><span class="params">(type)</span>"&#123;&#123;&#123;</span></span><br><span class="line">    <span class="keyword">if</span> <span class="variable">a:type</span> ==# <span class="string">'v'</span></span><br><span class="line">        normal! `&lt;v`&gt;<span class="keyword">y</span></span><br><span class="line">    <span class="keyword">elseif</span> <span class="variable">a:type</span> ==# <span class="string">'char'</span></span><br><span class="line">        normal! `[v`]<span class="keyword">y</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    <span class="keyword">endif</span></span><br><span class="line"></span><br><span class="line">    exec <span class="string">"Ack "</span>.XEscapeRegex(@@, <span class="number">2</span>)</span><br><span class="line">    <span class="string">" exec "</span>Grep <span class="comment">".XEscapeRegex(@@, 2)</span></span><br><span class="line"><span class="keyword">endfunction</span><span class="comment">"&#125;&#125;&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">" 转义正则表达式特殊字符，以便在正则表达式中使用</span></span><br><span class="line"><span class="comment">" a:1   是否转义为vimgrep的pattern格式，1，2</span></span><br><span class="line"><span class="comment">" a:2   是否用shellescape()转义，1是转义，2是转义并去掉两侧单引号</span></span><br><span class="line"><span class="function"><span class="keyword">function</span>! <span class="title">XEscapeRegex</span><span class="params">(str, ...)</span>"&#123;&#123;&#123;</span></span><br><span class="line">    <span class="keyword">let</span> pattern = <span class="variable">a:str</span></span><br><span class="line">    <span class="keyword">let</span> pattern = <span class="built_in">escape</span>(pattern, <span class="string">'/\.*$^~[]"'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="variable">a:0</span> &amp;&amp; <span class="variable">a:1</span></span><br><span class="line">        <span class="keyword">let</span> pattern = <span class="built_in">escape</span>(pattern, <span class="string">'()+?'</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="variable">a:1</span> == <span class="number">2</span></span><br><span class="line">            <span class="keyword">let</span> pattern = <span class="built_in">escape</span>(pattern, <span class="string">'\'</span>)</span><br><span class="line">        <span class="keyword">endif</span></span><br><span class="line">    <span class="keyword">endif</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="variable">a:0</span> &gt; <span class="number">1</span> &amp;&amp; <span class="variable">a:2</span></span><br><span class="line">        <span class="keyword">let</span> pattern = <span class="built_in">shellescape</span>(pattern)</span><br><span class="line">        <span class="keyword">if</span> <span class="variable">a:2</span> == <span class="number">2</span></span><br><span class="line">            <span class="keyword">let</span> pattern = pattern[<span class="number">1</span>:-<span class="number">2</span>]</span><br><span class="line">        <span class="keyword">endif</span></span><br><span class="line">    <span class="keyword">endif</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> whitespacePattern = <span class="variable">a:0</span> &amp;&amp; <span class="variable">a:1</span> ? <span class="string">'\\s\+'</span> : <span class="string">'\\s\\+'</span></span><br><span class="line">    <span class="keyword">let</span> pattern = <span class="keyword">substitute</span>(pattern, <span class="string">'\s\+'</span>, whitespacePattern, <span class="string">'g'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> pattern</span><br><span class="line"><span class="keyword">endfunction</span><span class="comment">"&#125;&#125;&#125;</span></span><br></pre></td></tr></table></figure>
-<h3 id="Ferret"><a href="#Ferret" class="headerlink" title="Ferret"></a>Ferret</h3><p>Ferret是我用过的vim搜索扩展里最接近理想的一个，最大的优点是不用引号包裹搜索内容，且较大程度地支持PCRE正则表达式。</p>
+<h2 id="配置">配置</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-vim" data-lang="vim"><span class="c">&#34; 在当前缓冲区中查找与替换</span><span class="err">
+</span><span class="err"></span><span class="nx">nmap</span> <span class="p">&lt;</span><span class="nx">leader</span><span class="p">&gt;</span><span class="nx">ff</span> <span class="nx">yiw</span>/\<span class="p">&lt;&lt;</span><span class="nx">C</span><span class="p">-</span><span class="nx">R</span><span class="p">&gt;</span>&#34;\<span class="p">&gt;</span>\<span class="nx">C</span><span class="err">
+</span><span class="err"></span><span class="nx">vmap</span> <span class="p">&lt;</span><span class="nx">leader</span><span class="p">&gt;</span><span class="nx">ff</span> <span class="nx">y</span>/<span class="p">&lt;</span><span class="nx">C</span><span class="p">-</span><span class="nx">R</span><span class="p">&gt;=</span><span class="nx">XEscapeRegex</span><span class="p">(</span>@&#34;<span class="p">)&lt;</span><span class="nx">CR</span><span class="p">&gt;</span>\<span class="nx">C</span><span class="err">
+</span><span class="err"></span><span class="nx">nmap</span> <span class="p">&lt;</span><span class="nx">leader</span><span class="p">&gt;</span><span class="nx">rr</span> <span class="nx">yiw</span>:%<span class="nx">s</span><span class="sr">/\&lt;&lt;C-R&gt;&#34;\&gt;\C/</span>/<span class="nx">g</span><span class="p">&lt;</span><span class="nx">LEFT</span><span class="p">&gt;&lt;</span><span class="nx">LEFT</span><span class="p">&gt;</span><span class="err">
+</span><span class="err"></span><span class="nx">vmap</span> <span class="p">&lt;</span><span class="nx">leader</span><span class="p">&gt;</span><span class="nx">rr</span> <span class="nx">y</span>:%<span class="nx">s</span><span class="sr">/&lt;C-R&gt;=XEscapeRegex(@&#34;)&lt;CR&gt;\C/</span>/<span class="nx">g</span><span class="p">&lt;</span><span class="nx">LEFT</span><span class="p">&gt;&lt;</span><span class="nx">LEFT</span><span class="p">&gt;</span><span class="err">
+</span><span class="err"></span><span class="nx">nmap</span> <span class="p">&lt;</span><span class="nx">leader</span><span class="p">&gt;</span><span class="nx">rl</span> <span class="nx">yiw</span>:<span class="nx">s</span><span class="sr">/\&lt;&lt;C-R&gt;&#34;\&gt;\C/</span>/<span class="nx">g</span><span class="p">&lt;</span><span class="nx">LEFT</span><span class="p">&gt;&lt;</span><span class="nx">LEFT</span><span class="p">&gt;</span><span class="err">
+</span><span class="err"></span><span class="nx">vmap</span> <span class="p">&lt;</span><span class="nx">leader</span><span class="p">&gt;</span><span class="nx">rl</span> <span class="nx">y</span>:<span class="nx">s</span><span class="sr">/&lt;C-R&gt;=XEscapeRegex(@&#34;)&lt;CR&gt;\C/</span>/<span class="nx">g</span><span class="p">&lt;</span><span class="nx">LEFT</span><span class="p">&gt;&lt;</span><span class="nx">LEFT</span><span class="p">&gt;</span><span class="err">
+</span><span class="err"></span><span class="c">
+</span><span class="c">&#34; 在当前目录下递归搜索和替换</span><span class="err">
+</span><span class="err"></span><span class="k">let</span> <span class="nx">g</span>:<span class="nx">FerretExecutable</span><span class="p">=</span><span class="s1">&#39;ag&#39;</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="nx">nmap</span> <span class="p">&lt;</span><span class="nx">leader</span><span class="p">&gt;</span><span class="nx">ak</span> <span class="p">&lt;</span><span class="nx">Plug</span><span class="p">&gt;(</span><span class="nx">FerretAck</span><span class="p">)</span><span class="err">
+</span><span class="err"></span><span class="nx">nmap</span> <span class="p">&lt;</span><span class="nx">leader</span><span class="p">&gt;</span><span class="nx">lak</span> <span class="p">&lt;</span><span class="nx">Plug</span><span class="p">&gt;(</span><span class="nx">FerretLack</span><span class="p">)</span><span class="err">
+</span><span class="err"></span><span class="nx">nmap</span> <span class="p">&lt;</span><span class="nx">leader</span><span class="p">&gt;</span><span class="nx">aw</span> <span class="p">&lt;</span><span class="nx">Plug</span><span class="p">&gt;(</span><span class="nx">FerretAckWord</span><span class="p">)</span><span class="err">
+</span><span class="err"></span><span class="nx">nmap</span> <span class="p">&lt;</span><span class="nx">leader</span><span class="p">&gt;</span><span class="nx">as</span> <span class="p">&lt;</span><span class="nx">Plug</span><span class="p">&gt;(</span><span class="nx">FerretAcks</span><span class="p">)</span><span class="err">
+</span><span class="err"></span><span class="nx">vmap</span> <span class="p">&lt;</span><span class="nx">leader</span><span class="p">&gt;</span><span class="nx">ak</span> <span class="nx">y</span>:<span class="nx">Ack</span> <span class="p">&lt;</span><span class="nx">C</span><span class="p">-</span><span class="nx">R</span><span class="p">&gt;=</span><span class="nx">XEscapeRegex</span><span class="p">(</span>@&#34;<span class="p">,</span> <span class="m">2</span><span class="p">)&lt;</span><span class="nx">CR</span><span class="p">&gt;</span><span class="err">
+</span><span class="err"></span><span class="nx">vmap</span> <span class="p">&lt;</span><span class="nx">leader</span><span class="p">&gt;</span><span class="nx">lak</span> <span class="nx">y</span>:<span class="nx">Lack</span> <span class="p">&lt;</span><span class="nx">C</span><span class="p">-</span><span class="nx">R</span><span class="p">&gt;=</span><span class="nx">XEscapeRegex</span><span class="p">(</span>@&#34;<span class="p">,</span> <span class="m">2</span><span class="p">)&lt;</span><span class="nx">CR</span><span class="p">&gt;</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="nx">nnoremap</span> <span class="p">&lt;</span><span class="nx">leader</span><span class="p">&gt;</span><span class="nx">a</span> :<span class="nx">set</span> <span class="nx">operatorfunc</span><span class="p">=</span><span class="nx">GrepOperator</span><span class="p">&lt;</span><span class="nx">CR</span><span class="p">&gt;</span><span class="nx">g</span>@<span class="err">
+</span><span class="err"></span><span class="nx">vnoremap</span> <span class="p">&lt;</span><span class="nx">leader</span><span class="p">&gt;</span><span class="nx">a</span> :<span class="p">&lt;</span><span class="nx">c</span><span class="p">-</span><span class="nx">u</span><span class="p">&gt;</span><span class="nx">call</span> <span class="nx">GrepOperator</span><span class="p">(</span><span class="nx">visualmode</span><span class="p">())&lt;</span><span class="nx">CR</span><span class="p">&gt;</span><span class="err">
+</span><span class="err"></span><span class="k">function</span><span class="p">!</span> <span class="nx">GrepOperator</span><span class="p">(</span><span class="nx">type</span><span class="p">)</span>&#34;{{{<span class="err">
+</span><span class="err"></span>    <span class="k">if</span> <span class="nx">a</span>:<span class="nx">type</span> <span class="p">==</span># <span class="s1">&#39;v&#39;</span><span class="err">
+</span><span class="err"></span>        <span class="nx">normal</span><span class="p">!</span> `<span class="p">&lt;</span><span class="nx">v</span>`<span class="p">&gt;</span><span class="nx">y</span><span class="err">
+</span><span class="err"></span>    <span class="k">elseif</span> <span class="nx">a</span>:<span class="nx">type</span> <span class="p">==</span># <span class="s1">&#39;char&#39;</span><span class="err">
+</span><span class="err"></span>        <span class="nx">normal</span><span class="p">!</span> `[<span class="nx">v</span>`]<span class="nx">y</span><span class="err">
+</span><span class="err"></span>    <span class="k">else</span><span class="err">
+</span><span class="err"></span>        <span class="nx">return</span><span class="err">
+</span><span class="err"></span>    <span class="k">endif</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>    <span class="nx">exec</span> <span class="s2">&#34;Ack &#34;</span>.<span class="nx">XEscapeRegex</span><span class="p">(</span>@@<span class="p">,</span> <span class="m">2</span><span class="p">)</span><span class="err">
+</span><span class="err"></span><span class="c">    &#34; exec &#34;Grep &#34;.XEscapeRegex(@@, 2)</span><span class="err">
+</span><span class="err"></span><span class="k">endfunction</span>&#34;}}}<span class="err">
+</span><span class="err"></span><span class="c">
+</span><span class="c">&#34; 转义正则表达式特殊字符，以便在正则表达式中使用</span><span class="err">
+</span><span class="err"></span><span class="c">&#34; a:1   是否转义为vimgrep的pattern格式，1，2</span><span class="err">
+</span><span class="err"></span><span class="c">&#34; a:2   是否用shellescape()转义，1是转义，2是转义并去掉两侧单引号</span><span class="err">
+</span><span class="err"></span><span class="k">function</span><span class="p">!</span> <span class="nx">XEscapeRegex</span><span class="p">(</span><span class="nx">str</span><span class="p">,</span> ...<span class="p">)</span>&#34;{{{<span class="err">
+</span><span class="err"></span>    <span class="k">let</span> <span class="nx">pattern</span> <span class="p">=</span> <span class="nx">a</span>:<span class="nx">str</span><span class="err">
+</span><span class="err"></span>    <span class="k">let</span> <span class="nx">pattern</span> <span class="p">=</span> <span class="nx">escape</span><span class="p">(</span><span class="nx">pattern</span><span class="p">,</span> <span class="s1">&#39;/\.*$^~[]&#34;&#39;</span><span class="p">)</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>    <span class="k">if</span> <span class="nx">a</span>:<span class="m">0</span> &amp;&amp; <span class="nx">a</span>:<span class="m">1</span><span class="err">
+</span><span class="err"></span>        <span class="k">let</span> <span class="nx">pattern</span> <span class="p">=</span> <span class="nx">escape</span><span class="p">(</span><span class="nx">pattern</span><span class="p">,</span> <span class="s1">&#39;()+?&#39;</span><span class="p">)</span><span class="err">
+</span><span class="err"></span>        <span class="k">if</span> <span class="nx">a</span>:<span class="m">1</span> <span class="p">==</span> <span class="m">2</span><span class="err">
+</span><span class="err"></span>            <span class="k">let</span> <span class="nx">pattern</span> <span class="p">=</span> <span class="nx">escape</span><span class="p">(</span><span class="nx">pattern</span><span class="p">,</span> <span class="s1">&#39;\&#39;</span><span class="p">)</span><span class="err">
+</span><span class="err"></span>        <span class="k">endif</span><span class="err">
+</span><span class="err"></span>    <span class="k">endif</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>    <span class="k">if</span> <span class="nx">a</span>:<span class="m">0</span> <span class="p">&gt;</span> <span class="m">1</span> &amp;&amp; <span class="nx">a</span>:<span class="m">2</span><span class="err">
+</span><span class="err"></span>        <span class="k">let</span> <span class="nx">pattern</span> <span class="p">=</span> <span class="nx">shellescape</span><span class="p">(</span><span class="nx">pattern</span><span class="p">)</span><span class="err">
+</span><span class="err"></span>        <span class="k">if</span> <span class="nx">a</span>:<span class="m">2</span> <span class="p">==</span> <span class="m">2</span><span class="err">
+</span><span class="err"></span>            <span class="k">let</span> <span class="nx">pattern</span> <span class="p">=</span> <span class="nx">pattern</span>[<span class="m">1</span>:<span class="m">-2</span>]<span class="err">
+</span><span class="err"></span>        <span class="k">endif</span><span class="err">
+</span><span class="err"></span>    <span class="k">endif</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>    <span class="k">let</span> <span class="nx">whitespacePattern</span> <span class="p">=</span> <span class="nx">a</span>:<span class="m">0</span> &amp;&amp; <span class="nx">a</span>:<span class="m">1</span> ? <span class="s1">&#39;\\s\+&#39;</span> : <span class="s1">&#39;\\s\\+&#39;</span><span class="err">
+</span><span class="err"></span>    <span class="k">let</span> <span class="nx">pattern</span> <span class="p">=</span> <span class="nx">substitute</span><span class="p">(</span><span class="nx">pattern</span><span class="p">,</span> <span class="s1">&#39;\s\+&#39;</span><span class="p">,</span> <span class="nx">whitespacePattern</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">)</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>    <span class="nx">return</span> <span class="nx">pattern</span><span class="err">
+</span><span class="err"></span><span class="k">endfunction</span>&#34;}}}<span class="err">
+</span></code></pre></td></tr></table>
+</div>
+</div><h3 id="ferret">Ferret</h3>
+<p>Ferret是我用过的vim搜索扩展里最接近理想的一个，最大的优点是不用引号包裹搜索内容，且较大程度地支持PCRE正则表达式。</p>
 <p>EasyGrep的缺点是正则表达式必须是shellescape()过的，手写不方便，也不直观。Ferret在底层做了shellescape()，所以比EasyGrep简单一些。不过Ferret对反斜杠的处理仍然不直观，例如搜索<code>App\Link</code>，正则表达式是<code>App\\Link</code>，而Ferret里只能用<code>App\\\\Link</code>。原因是从输入到执行，存在著三层转义：Vim命令行、Shell、grep/ag。所以对于EasyGrep，要搜索一个<code>\</code>，必须输入<code>\\\\\\\\</code>。对于Ferret，由于底层做了shellescape()，只需要两层转义，即<code>\\\\</code>。当然这样也不方便，所以我用自定义函数XEscapeRegex()对选择的内容做这个事，不过最完美的方法当然是Ferret自己支持，或者自己再封装一下Ferret的命令，这样输入的正则表达式可读性就正常了。</p>
-<h3 id="The-Silver-Searcher"><a href="#The-Silver-Searcher" class="headerlink" title="The Silver Searcher"></a>The Silver Searcher</h3><p>ag是我用过的搜索工具里对速度和功能兼顾得最好的。</p>
-<h3 id="搜索运算符"><a href="#搜索运算符" class="headerlink" title="搜索运算符"></a>搜索运算符</h3><p>GrepOperator是从<a href="http://learnvimscriptthehardway.stevelosh.com/" target="_blank" rel="noopener">Learn Vimscript the Hard Way</a>里扒出来的，可以实现自动搜索指定范围的内容：</p>
+<h3 id="the-silver-searcher">The Silver Searcher</h3>
+<p>ag是我用过的搜索工具里对速度和功能兼顾得最好的。</p>
+<h3 id="搜索运算符">搜索运算符</h3>
+<p>GrepOperator是从<a href="http://learnvimscriptthehardway.stevelosh.com/" target="_blank" rel="noopener noreffer">Learn Vimscript the Hard Way</a>里扒出来的，可以实现自动搜索指定范围的内容：</p>
 <ul>
 <li><code>&lt;leader&gt;aiw</code>：搜索光标下的词</li>
 <li><code>&lt;leader&gt;a$</code>：搜索从光标到行末的内容</li>
 <li><code>&lt;leader&gt;at;</code>：搜索从光标到下一个分号的内容</li>
 </ul>
-<h3 id="转换选定内容到正则表达式"><a href="#转换选定内容到正则表达式" class="headerlink" title="转换选定内容到正则表达式"></a>转换选定内容到正则表达式</h3><p>XEscapeRegex()根据参数转换字符串到不同格式的正则表达式。主要用途为转换成给搜索当前缓冲区的Vim格式的正则，或给Ferret使用的PCRE格式。</p>
+<h3 id="转换选定内容到正则表达式">转换选定内容到正则表达式</h3>
+<p>XEscapeRegex()根据参数转换字符串到不同格式的正则表达式。主要用途为转换成给搜索当前缓冲区的Vim格式的正则，或给Ferret使用的PCRE格式。</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2020-06-17&nbsp;<a class="git-hash" href="https://github.com/dillonzq/LoveIt/commit/b6b131fb549d1c33b519bbe9910a7c0b426257fd" target="_blank" title="commit by Donie Leigh(donie.leigh@gmail.com) b6b131fb549d1c33b519bbe9910a7c0b426257fd: URL地址改为用slug生成；为所有文章追加slug matter">
+                                    <i class="fas fa-hashtag fa-fw"></i>b6b131fb</a></span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/post/the-best-practice-of-searching-in-vim/index.md" target="_blank">阅读原始文档</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="http://0x3f.org/post/the-best-practice-of-searching-in-vim/" data-title="Vim搜索的最佳实践" data-hashtags="vim,最佳实践,编程"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="http://0x3f.org/post/the-best-practice-of-searching-in-vim/" data-hashtag="vim"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="http://0x3f.org/post/the-best-practice-of-searching-in-vim/" data-title="Vim搜索的最佳实践"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="http://0x3f.org/post/the-best-practice-of-searching-in-vim/" data-title="Vim搜索的最佳实践"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="http://0x3f.org/post/the-best-practice-of-searching-in-vim/" data-title="Vim搜索的最佳实践"><i class="fab fa-weibo fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
 
-      
-     <!-- by blair add this if sentence at 20160725 -->
-      <br>
-      
-<!--
-<div id="bottom-donation-section">
-<span style="font-size: 1.0em; padding:0em 1em 0.5em 1em; margin: 0 auto;">
-  <strong style="vertical-align: top;">分享到:</strong>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_facebook_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://www.facebook.com/sharer/sharer.php?u=" target="_blank">
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/vim/">Vim</a>,&nbsp;<a href="/tags/%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">最佳实践</a>,&nbsp;<a href="/tags/%E7%BC%96%E7%A8%8B/">编程</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
     </div>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_weibo_icon.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://service.weibo.com/share/share.php?url" target="_blank">
-    </div>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_wechat_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://api.addthis.com/oexchange/0.8/forward/wechat/offer?url=" target="_blank">
-    </div>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_twitter_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://twitter.com/intent/tweet?url=" target="_blank">
-    </div>
-  <br>  
-  <br>  
-  &nbsp;&nbsp;如果您觉得这篇文章对您的学习很有帮助, 请您也分享它, 让它能再次帮助到更多的需要学习的人.
-您的<a href="/support/"><strong>支持</strong></a>将鼓励我继续创作 !
-  <br>  
 
-</span>
+    <div class="post-nav"><a href="/post/the-experience-of-bose-qc35/" class="prev" rel="prev" title="Bose QC35，这安静有毒"><i class="fas fa-angle-left fa-fw"></i>Bose QC35，这安静有毒</a>
+            <a href="/post/vim-js-beautify/" class="next" rel="next" title="在Vim中格式化Javascript、HTML和CSS">在Vim中格式化Javascript、HTML和CSS<i class="fas fa-angle-right fa-fw"></i></a></div>
 </div>
--->
-<div class="well">
-  <!--
-  原创文章，转载请注明： 转载自<a href="http://52binge.github.io"> Blair Chan's Blog</a>，作者：
-  <a href="/about">Blair Chan</a> <br>
-  -->
-  本文基于<a target="_blank" title="Creative Commons Attribution 4.0 international License" href="https://creativecommons.org/licenses/by-nc/4.0/">署名4.0国际许可协议</a>发布，转载请保留本文署名和文章链接。 如您有任何授权方面的协商，请联系我。
-</div>
- <!-- by blair add 160724-->
-    
-    </div>
-    
-      <div class="article-toc">
-        <h3>Contents</h3>
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#目标"><span class="toc-text">目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#依赖"><span class="toc-text">依赖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置"><span class="toc-text">配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Ferret"><span class="toc-text">Ferret</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#The-Silver-Searcher"><span class="toc-text">The Silver Searcher</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#搜索运算符"><span class="toc-text">搜索运算符</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#转换选定内容到正则表达式"><span class="toc-text">转换选定内容到正则表达式</span></a></li></ol></li></ol>
-      </div>
-    
-    
-      <footer class="article-footer">
-        <!-- <div class="well" style="width:100px; height:30px;"></div>  by blair-->
-        
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/计算机/">计算机</a>
-  </div>
+<div id="comments"><div id="utterances"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://utteranc.es/">Utterances</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.72.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2006 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">淘气</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
 
- <!-- by blair add 160724-->
-        <!--
-        <div style="width:100px; height:30px;"></div> by blair add 160724
-        -->
-        
-  <div class="article-tag">
-    <a class="article-tag-link" href="/tags/vim/">vim</a><span></span><a class="article-tag-link" href="/tags/最佳实践/">最佳实践</a><span></span><a class="article-tag-link" href="/tags/编程/">编程</a>
-  </div>
-
-
-      </footer>
-    
-  </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/post/vim-js-beautify/" id="article-nav-newer" class="article-nav-link-wrap">
-      <div class="article-nav-title"><span>&lt;</span>&nbsp;
-        
-          在Vim中格式化Javascript、HTML和CSS
-        
-      </div>
-    </a>
-  
-  
-    <a href="/post/the-experience-of-bose-qc35/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Bose QC35，这安静有毒&nbsp;<span>&gt;</span></div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-<section id="comments">
-  <div id="disqus_thread">
-    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-  </div>
-</section>
-
-</section>
-    <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2020 晴耕雨讀&nbsp;
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/52binge/hexo-theme-blairos">blairos</a>
-    </div>
-  </div>
-</footer>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    extensions: ["tex2jax.js"],
-    jax: ["input/TeX"],
-    tex2jax: {
-      inlineMath: [ ['$','$'], ['\\(','\\)'] ],
-      displayMath: [ ['$$','$$']],
-      processEscapes: true
-    }
-  });
-</script>
-<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML,http://myserver.com/MathJax/config/local/local.js">
-</script>
-
-    
-<script type="text/javascript"> <!-- add by blair 0724 type=text/javascript -->
-  var disqus_shortname = '0x3f';
-  
-  var disqus_url = 'http://0x3f.org/post/the-best-practice-of-searching-in-vim/';
-  
-  (function(){
-    var dsq = document.createElement('script');
-    dsq.type = 'text/javascript';
-    dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
-
-
-<script src="/js/jquery.min.js"></script>
-
-
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
-
-
-<script src="/js/script.js"></script>
-
-  </div>
-</body>
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"utterances":{"darkTheme":"github-dark","issueTerm":"pathname","label":"","lightTheme":"github-light","repo":"xbot/blog-comments"}},"search":{"algoliaAppID":"PASDMWALPK","algoliaIndex":"index.zh-cn","algoliaSearchKey":"b42948e51daaa93df92381c8e2ac0f93","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
 </html>

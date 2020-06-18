@@ -1,126 +1,192 @@
 <!DOCTYPE html>
-<html>
-<head><meta name="generator" content="Hexo 3.8.0">
-  <meta charset="utf-8">
-  
-  <title>PHP流的上下文和过滤器的实现 - 晴耕雨讀</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="上下文的实现和应用上下文包含流的选项和流的参数两部分内容。 1php_stream_context *php_stream_context_alloc(void); 流的选项是一系列键值对。 123int php_stream_context_set_option(php_stream_context *context, const char *wrappername, const char *o">
-<meta name="keywords" content="PHP,源码">
-<meta property="og:type" content="article">
-<meta property="og:title" content="PHP流的上下文和过滤器的实现">
-<meta property="og:url" content="http://0x3f.org/post/contexts-and-filters-implementation-of-php/index.html">
-<meta property="og:site_name" content="晴耕雨讀">
-<meta property="og:description" content="上下文的实现和应用上下文包含流的选项和流的参数两部分内容。 1php_stream_context *php_stream_context_alloc(void); 流的选项是一系列键值对。 123int php_stream_context_set_option(php_stream_context *context, const char *wrappername, const char *o">
-<meta property="og:locale" content="zh-TW">
-<meta property="og:updated_time" content="2020-02-06T13:44:05.689Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="PHP流的上下文和过滤器的实现">
-<meta name="twitter:description" content="上下文的实现和应用上下文包含流的选项和流的参数两部分内容。 1php_stream_context *php_stream_context_alloc(void); 流的选项是一系列键值对。 123int php_stream_context_set_option(php_stream_context *context, const char *wrappername, const char *o">
-  
-  
-    <link rel="icon" href="/favicon.png">
-  
-  <link href="/webfonts/ptserif/main.css" rel="stylesheet" type="text/css">
-  <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="/css/style.css">
-  
-<!-- Google Analytics -->
-<script type="text/javascript">
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>PHP流的上下文和过滤器的实现 - 晴耕雨讀</title><meta name="Description" content="Donie&#39;s blog."><meta property="og:title" content="PHP流的上下文和过滤器的实现" />
+<meta property="og:description" content="上下文的实现和应用 上下文包含流的选项和流的参数两部分内容。 1 php_stream_context *php_stream_context_alloc(void); 流的选项是一系列键值对。 1 2 3 int php_stream_context_set_option(php_stream_context *context, const char *wrappername, const char *optionname, zval *optionvalue); int php_stream_context_get_option(php_stream_context *context, const char *wrappername, const char *optionname, zval ***optionvalue); 流" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://0x3f.org/post/contexts-and-filters-implementation-of-php/" />
+<meta property="og:image" content="http://0x3f.org/logo.png"/>
+<meta property="article:published_time" content="2015-06-15T19:15:00+00:00" />
+<meta property="article:modified_time" content="2020-06-17T17:28:11+08:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://0x3f.org/logo.png"/>
 
-ga('create', 'UA-93233020-1', 'auto');
-ga('send', 'pageview');
+<meta name="twitter:title" content="PHP流的上下文和过滤器的实现"/>
+<meta name="twitter:description" content="上下文的实现和应用 上下文包含流的选项和流的参数两部分内容。 1 php_stream_context *php_stream_context_alloc(void); 流的选项是一系列键值对。 1 2 3 int php_stream_context_set_option(php_stream_context *context, const char *wrappername, const char *optionname, zval *optionvalue); int php_stream_context_get_option(php_stream_context *context, const char *wrappername, const char *optionname, zval ***optionvalue); 流"/>
+<meta name="application-name" content="晴耕雨讀">
+<meta name="apple-mobile-web-app-title" content="晴耕雨讀"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://0x3f.org/post/contexts-and-filters-implementation-of-php/" /><link rel="prev" href="http://0x3f.org/post/enhance-search-with-gn-in-vim/" /><link rel="next" href="http://0x3f.org/post/create-php-extension-skeleton/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "PHP流的上下文和过滤器的实现",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/0x3f.org\/post\/contexts-and-filters-implementation-of-php\/"
+        },"image": ["http:\/\/0x3f.org\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "PHP, 源码","wordcount":  1869 ,
+        "url": "http:\/\/0x3f.org\/post\/contexts-and-filters-implementation-of-php\/","datePublished": "2015-06-15T19:15:00+00:00","dateModified": "2020-06-17T17:28:11+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": "http:\/\/0x3f.org\/images\/avatar.png"},"author": {
+                "@type": "Person",
+                "name": "淘气"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
 
-</script>
-<!-- End Google Analytics -->
-
-
-</head>
-</html>
-<body>
-  <div id="container">
-    <!-- blair add baidu tongji start... @2017.10.03 -->
-<!-- blair add baidu tongji end ! @2017.10.03 -->
-
-<header id="header">
-  <div id="header-outer" class="outer">
-    <div id="header-inner" class="inner">
-      <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
-      <a id="logo" class="logo" href="/"></a>
-      <nav id="main-nav">
-        
-          <a class="main-nav-link" href="/archives">目录</a>
-        
-          <a class="main-nav-link" href="/categories">分类</a>
-        
-          <a class="main-nav-link" href="/tags">标签</a>
-        
-          <a class="main-nav-link" href="https://t.me/s/blingings">不灵</a>
-        
-          <a class="main-nav-link" href="/about">关于</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        <div id="search-form-wrap">
-          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
         </div>
-      </nav>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
     </div>
-  </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
 </header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">PHP流的上下文和过滤器的实现</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"><i class="far fa-folder fa-fw"></i>计算机</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2015-06-15">2015-06-15</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1869 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 4 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#上下文的实现和应用">上下文的实现和应用</a></li>
+    <li><a href="#过滤器的实现和应用">过滤器的实现和应用</a>
+      <ul>
+        <li><a href="#注册和注销">注册和注销</a></li>
+        <li><a href="#过滤器的执行过程">过滤器的执行过程</a></li>
+        <li><a href="#业务逻辑">业务逻辑</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="上下文的实现和应用">上下文的实现和应用</h2>
+<p>上下文包含流的选项和流的参数两部分内容。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="n">php_stream_context</span> <span class="o">*</span><span class="nf">php_stream_context_alloc</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>流的选项是一系列键值对。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">int</span> <span class="nf">php_stream_context_set_option</span><span class="p">(</span><span class="n">php_stream_context</span> <span class="o">*</span><span class="n">context</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">wrappername</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">optionname</span><span class="p">,</span> <span class="n">zval</span> <span class="o">*</span><span class="n">optionvalue</span><span class="p">);</span>
 
-    <br>
-    <section id="main" class="outer"><article id="post-contexts-and-filters-implementation-of-php" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="article-title" itemprop="name">
-      PHP流的上下文和过滤器的实现
-      <small class="article-detail-date-index">&nbsp; 2015-06-15</small>
-    </h1>
-  
-
-
-        <div class="page-title"></div>
-        <br>
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/contexts-and-filters-implementation-of-php/" class="article-date">
-  <time datetime="2015-06-15T11:15:00.000Z" itemprop="datePublished">2015-06-15</time>
-</a>-->
-      <!-- 
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/计算机/">计算机</a>
-  </div>
-
---><!-- by blair 160724 -->
-      <!-- by blair
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/contexts-and-filters-implementation-of-php/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="上下文的实现和应用"><a href="#上下文的实现和应用" class="headerlink" title="上下文的实现和应用"></a>上下文的实现和应用</h2><p>上下文包含流的选项和流的参数两部分内容。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">php_stream_context *<span class="title">php_stream_context_alloc</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br></pre></td></tr></table></figure>
-<p>流的选项是一系列键值对。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">php_stream_context_set_option</span><span class="params">(php_stream_context *context, <span class="keyword">const</span> <span class="keyword">char</span> *wrappername, <span class="keyword">const</span> <span class="keyword">char</span> *optionname, zval *optionvalue)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">php_stream_context_get_option</span><span class="params">(php_stream_context *context, <span class="keyword">const</span> <span class="keyword">char</span> *wrappername, <span class="keyword">const</span> <span class="keyword">char</span> *optionname, zval ***optionvalue)</span></span>;</span><br></pre></td></tr></table></figure>
-<p>流的参数目前只实现对流的事件的回调，php_stream_context-&gt;notifier存储如下结构：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    php_stream_notification_func func;</span><br><span class="line">    <span class="keyword">void</span> (*dtor)(php_stream_notifier *notifier);</span><br><span class="line">    <span class="keyword">void</span> *ptr;</span><br><span class="line">    <span class="keyword">int</span> mask;</span><br><span class="line">    <span class="keyword">size_t</span> progress, progress_max;</span><br><span class="line">&#125; php_stream_notifier;</span><br></pre></td></tr></table></figure>
-<p>回调函数的原型为：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">void</span> <span class="params">(*php_stream_notification_func)</span><span class="params">(php_stream_context *context,</span></span></span><br><span class="line"><span class="function"><span class="params">		<span class="keyword">int</span> notifycode, <span class="keyword">int</span> severity,</span></span></span><br><span class="line"><span class="function"><span class="params">		<span class="keyword">char</span> *xmsg, <span class="keyword">int</span> xcode,</span></span></span><br><span class="line"><span class="function"><span class="params">		<span class="keyword">size_t</span> bytes_sofar, <span class="keyword">size_t</span> bytes_max,</span></span></span><br><span class="line"><span class="function"><span class="params">		<span class="keyword">void</span> * ptr TSRMLS_DC)</span></span>;</span><br></pre></td></tr></table></figure>
-<p>notifycode包含如下：</p>
+<span class="kt">int</span> <span class="nf">php_stream_context_get_option</span><span class="p">(</span><span class="n">php_stream_context</span> <span class="o">*</span><span class="n">context</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">wrappername</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">optionname</span><span class="p">,</span> <span class="n">zval</span> <span class="o">***</span><span class="n">optionvalue</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>流的参数目前只实现对流的事件的回调，php_stream_context-&gt;notifier存储如下结构：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+    <span class="n">php_stream_notification_func</span> <span class="n">func</span><span class="p">;</span>
+    <span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">dtor</span><span class="p">)(</span><span class="n">php_stream_notifier</span> <span class="o">*</span><span class="n">notifier</span><span class="p">);</span>
+    <span class="kt">void</span> <span class="o">*</span><span class="n">ptr</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">mask</span><span class="p">;</span>
+    <span class="n">size_t</span> <span class="n">progress</span><span class="p">,</span> <span class="n">progress_max</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">php_stream_notifier</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>回调函数的原型为：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="nf">void</span> <span class="p">(</span><span class="o">*</span><span class="n">php_stream_notification_func</span><span class="p">)(</span><span class="n">php_stream_context</span> <span class="o">*</span><span class="n">context</span><span class="p">,</span>
+		<span class="kt">int</span> <span class="n">notifycode</span><span class="p">,</span> <span class="kt">int</span> <span class="n">severity</span><span class="p">,</span>
+		<span class="kt">char</span> <span class="o">*</span><span class="n">xmsg</span><span class="p">,</span> <span class="kt">int</span> <span class="n">xcode</span><span class="p">,</span>
+		<span class="n">size_t</span> <span class="n">bytes_sofar</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">bytes_max</span><span class="p">,</span>
+		<span class="kt">void</span> <span class="o">*</span> <span class="n">ptr</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>notifycode包含如下：</p>
 <ul>
 <li>PHP_STREAM_NOTIFY_RESOLVE：主机名解析完成</li>
 <li>PHP_STREAM_NOTIFY_CONNECT：socket连接建立</li>
@@ -141,156 +207,257 @@ ga('send', 'pageview');
 </ul>
 <p>php_stream_notifier-&gt;ptr用于存储附加数据，如果该数据需要手工回收，需指定php_stream_notifier-&gt;dtor。</p>
 <p>php_stream_notifier-&gt;mask如果被赋值severity，其它severity的事件将不会触发回调函数。</p>
-<h2 id="过滤器的实现和应用"><a href="#过滤器的实现和应用" class="headerlink" title="过滤器的实现和应用"></a>过滤器的实现和应用</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"ext/standard/php_string.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">	<span class="keyword">char</span> is_persistent;</span><br><span class="line">	<span class="keyword">char</span> *from_chars;</span><br><span class="line">	<span class="keyword">char</span> *to_chars;</span><br><span class="line">	<span class="keyword">int</span> tr_len;</span><br><span class="line">&#125; php_donie_filter_data;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> php_stream_filter_status_t <span class="title">php_donie_stream_filter</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">	php_stream *stream, php_stream_filter *thisfilter,</span></span></span><br><span class="line"><span class="function"><span class="params">	php_stream_bucket_brigade *buckets_in,</span></span></span><br><span class="line"><span class="function"><span class="params">	php_stream_bucket_brigade *buckets_out,</span></span></span><br><span class="line"><span class="function"><span class="params">	<span class="keyword">size_t</span> *bytes_consumed, <span class="keyword">int</span> flags TSRMLS_DC</span></span></span><br><span class="line"><span class="function"><span class="params">)</span> </span>&#123;</span><br><span class="line">	php_donie_filter_data *data = thisfilter-&gt;abstract;</span><br><span class="line">	php_stream_bucket *bucket;</span><br><span class="line">	<span class="keyword">size_t</span> consumed = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">while</span>(buckets_in-&gt;head) &#123;</span><br><span class="line">		bucket = php_stream_bucket_make_writeable(buckets_in-&gt;head TSRMLS_CC);</span><br><span class="line">		php_strtr(bucket-&gt;buf, bucket-&gt;buflen, data-&gt;from_chars, data-&gt;to_chars, data-&gt;tr_len);</span><br><span class="line">		consumed += bucket-&gt;buflen;</span><br><span class="line">		php_stream_bucket_append(buckets_out, bucket TSRMLS_CC);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (bytes_consumed) &#123;</span><br><span class="line">		*bytes_consumed = consumed;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> PSFS_PASS_ON;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">php_donie_stream_filter_dtor</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">	php_stream_filter *thisfilter TSRMLS_DC</span></span></span><br><span class="line"><span class="function"><span class="params">)</span> </span>&#123;</span><br><span class="line">	php_donie_filter_data *data = thisfilter-&gt;abstract;</span><br><span class="line">	pefree(data, data-&gt;is_persistent);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> php_stream_filter_ops php_donie_stream_filter_ops = &#123;</span><br><span class="line">	php_donie_stream_filter,</span><br><span class="line">	php_donie_stream_filter_dtor,</span><br><span class="line">	<span class="string">"donie.to_upper_case"</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> php_stream_filter *<span class="title">php_donie_stream_filter_create</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">	<span class="keyword">const</span> <span class="keyword">char</span> *name, zval *param, <span class="keyword">int</span> persistent TSRMLS_DC</span></span></span><br><span class="line"><span class="function"><span class="params">)</span> </span>&#123;</span><br><span class="line">	php_donie_filter_data *data;</span><br><span class="line"></span><br><span class="line">	data = pemalloc(<span class="keyword">sizeof</span>(php_donie_filter_data), persistent);</span><br><span class="line">	<span class="keyword">if</span> (!data) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	data-&gt;is_persistent = persistent;</span><br><span class="line">	data-&gt;from_chars = <span class="string">"abcdefghijklmnopqrstuvwxyz"</span>;</span><br><span class="line">	data-&gt;to_chars = <span class="string">"ABCDEFGHIJKLMNOPQRSTUVWXYZ"</span>;</span><br><span class="line">	data-&gt;tr_len = <span class="built_in">strlen</span>(data-&gt;from_chars);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> php_stream_filter_alloc(&amp;php_donie_stream_filter_ops, data, persistent);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> php_stream_filter_factory php_donie_stream_uppercase_factory = &#123;</span><br><span class="line">	php_donie_stream_filter_create</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">PHP_MINIT_FUNCTION(donie)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">/* register a filter */</span></span><br><span class="line">	php_stream_filter_register_factory(<span class="string">"donie.to_upper_case"</span>, &amp;php_donie_stream_uppercase_factory TSRMLS_CC);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> SUCCESS;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">PHP_MSHUTDOWN_FUNCTION(donie)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">/* unregister the filter */</span></span><br><span class="line">	php_stream_filter_unregister_factory(<span class="string">"donie.to_upper_case"</span> TSRMLS_CC);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> SUCCESS;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="注册和注销"><a href="#注册和注销" class="headerlink" title="注册和注销"></a>注册和注销</h3><p>分别在MINIT和MSHUTDOWN函数中调用php_stream_filter_register_factory()和php_stream_filter_unregister_factory()注册和注销过滤器。</p>
-<h3 id="过滤器的执行过程"><a href="#过滤器的执行过程" class="headerlink" title="过滤器的执行过程"></a>过滤器的执行过程</h3><p>当过滤器被调用时，调用方将使用php_donie_stream_filter_create()函数创建过滤器的实例。该函数在被执行时初始化过滤器的相关数据，并指定过滤器的相关操作。</p>
+<h2 id="过滤器的实现和应用">过滤器的实现和应用</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&#34;ext/standard/php_string.h&#34;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="kt">char</span> <span class="n">is_persistent</span><span class="p">;</span>
+	<span class="kt">char</span> <span class="o">*</span><span class="n">from_chars</span><span class="p">;</span>
+	<span class="kt">char</span> <span class="o">*</span><span class="n">to_chars</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">tr_len</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">php_donie_filter_data</span><span class="p">;</span>
+
+<span class="k">static</span> <span class="n">php_stream_filter_status_t</span> <span class="nf">php_donie_stream_filter</span><span class="p">(</span>
+	<span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="n">php_stream_filter</span> <span class="o">*</span><span class="n">thisfilter</span><span class="p">,</span>
+	<span class="n">php_stream_bucket_brigade</span> <span class="o">*</span><span class="n">buckets_in</span><span class="p">,</span>
+	<span class="n">php_stream_bucket_brigade</span> <span class="o">*</span><span class="n">buckets_out</span><span class="p">,</span>
+	<span class="n">size_t</span> <span class="o">*</span><span class="n">bytes_consumed</span><span class="p">,</span> <span class="kt">int</span> <span class="n">flags</span> <span class="n">TSRMLS_DC</span>
+<span class="p">)</span> <span class="p">{</span>
+	<span class="n">php_donie_filter_data</span> <span class="o">*</span><span class="n">data</span> <span class="o">=</span> <span class="n">thisfilter</span><span class="o">-&gt;</span><span class="n">abstract</span><span class="p">;</span>
+	<span class="n">php_stream_bucket</span> <span class="o">*</span><span class="n">bucket</span><span class="p">;</span>
+	<span class="n">size_t</span> <span class="n">consumed</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+	<span class="k">while</span><span class="p">(</span><span class="n">buckets_in</span><span class="o">-&gt;</span><span class="n">head</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">bucket</span> <span class="o">=</span> <span class="n">php_stream_bucket_make_writeable</span><span class="p">(</span><span class="n">buckets_in</span><span class="o">-&gt;</span><span class="n">head</span> <span class="n">TSRMLS_CC</span><span class="p">);</span>
+		<span class="n">php_strtr</span><span class="p">(</span><span class="n">bucket</span><span class="o">-&gt;</span><span class="n">buf</span><span class="p">,</span> <span class="n">bucket</span><span class="o">-&gt;</span><span class="n">buflen</span><span class="p">,</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">from_chars</span><span class="p">,</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">to_chars</span><span class="p">,</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">tr_len</span><span class="p">);</span>
+		<span class="n">consumed</span> <span class="o">+=</span> <span class="n">bucket</span><span class="o">-&gt;</span><span class="n">buflen</span><span class="p">;</span>
+		<span class="n">php_stream_bucket_append</span><span class="p">(</span><span class="n">buckets_out</span><span class="p">,</span> <span class="n">bucket</span> <span class="n">TSRMLS_CC</span><span class="p">);</span>
+	<span class="p">}</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="n">bytes_consumed</span><span class="p">)</span> <span class="p">{</span>
+		<span class="o">*</span><span class="n">bytes_consumed</span> <span class="o">=</span> <span class="n">consumed</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="k">return</span> <span class="n">PSFS_PASS_ON</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">php_donie_stream_filter_dtor</span><span class="p">(</span>
+	<span class="n">php_stream_filter</span> <span class="o">*</span><span class="n">thisfilter</span> <span class="n">TSRMLS_DC</span>
+<span class="p">)</span> <span class="p">{</span>
+	<span class="n">php_donie_filter_data</span> <span class="o">*</span><span class="n">data</span> <span class="o">=</span> <span class="n">thisfilter</span><span class="o">-&gt;</span><span class="n">abstract</span><span class="p">;</span>
+	<span class="n">pefree</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">is_persistent</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">static</span> <span class="n">php_stream_filter_ops</span> <span class="n">php_donie_stream_filter_ops</span> <span class="o">=</span> <span class="p">{</span>
+	<span class="n">php_donie_stream_filter</span><span class="p">,</span>
+	<span class="n">php_donie_stream_filter_dtor</span><span class="p">,</span>
+	<span class="s">&#34;donie.to_upper_case&#34;</span>
+<span class="p">};</span>
+
+<span class="k">static</span> <span class="n">php_stream_filter</span> <span class="o">*</span><span class="nf">php_donie_stream_filter_create</span><span class="p">(</span>
+	<span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="n">zval</span> <span class="o">*</span><span class="n">param</span><span class="p">,</span> <span class="kt">int</span> <span class="n">persistent</span> <span class="n">TSRMLS_DC</span>
+<span class="p">)</span> <span class="p">{</span>
+	<span class="n">php_donie_filter_data</span> <span class="o">*</span><span class="n">data</span><span class="p">;</span>
+
+	<span class="n">data</span> <span class="o">=</span> <span class="n">pemalloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">php_donie_filter_data</span><span class="p">),</span> <span class="n">persistent</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">data</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="n">data</span><span class="o">-&gt;</span><span class="n">is_persistent</span> <span class="o">=</span> <span class="n">persistent</span><span class="p">;</span>
+	<span class="n">data</span><span class="o">-&gt;</span><span class="n">from_chars</span> <span class="o">=</span> <span class="s">&#34;abcdefghijklmnopqrstuvwxyz&#34;</span><span class="p">;</span>
+	<span class="n">data</span><span class="o">-&gt;</span><span class="n">to_chars</span> <span class="o">=</span> <span class="s">&#34;ABCDEFGHIJKLMNOPQRSTUVWXYZ&#34;</span><span class="p">;</span>
+	<span class="n">data</span><span class="o">-&gt;</span><span class="n">tr_len</span> <span class="o">=</span> <span class="n">strlen</span><span class="p">(</span><span class="n">data</span><span class="o">-&gt;</span><span class="n">from_chars</span><span class="p">);</span>
+
+	<span class="k">return</span> <span class="n">php_stream_filter_alloc</span><span class="p">(</span><span class="o">&amp;</span><span class="n">php_donie_stream_filter_ops</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">persistent</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">static</span> <span class="n">php_stream_filter_factory</span> <span class="n">php_donie_stream_uppercase_factory</span> <span class="o">=</span> <span class="p">{</span>
+	<span class="n">php_donie_stream_filter_create</span>
+<span class="p">};</span>
+
+<span class="n">PHP_MINIT_FUNCTION</span><span class="p">(</span><span class="n">donie</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="cm">/* register a filter */</span>
+	<span class="n">php_stream_filter_register_factory</span><span class="p">(</span><span class="s">&#34;donie.to_upper_case&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">php_donie_stream_uppercase_factory</span> <span class="n">TSRMLS_CC</span><span class="p">);</span>
+
+	<span class="k">return</span> <span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">PHP_MSHUTDOWN_FUNCTION</span><span class="p">(</span><span class="n">donie</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="cm">/* unregister the filter */</span>
+	<span class="n">php_stream_filter_unregister_factory</span><span class="p">(</span><span class="s">&#34;donie.to_upper_case&#34;</span> <span class="n">TSRMLS_CC</span><span class="p">);</span>
+
+	<span class="k">return</span> <span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="注册和注销">注册和注销</h3>
+<p>分别在MINIT和MSHUTDOWN函数中调用php_stream_filter_register_factory()和php_stream_filter_unregister_factory()注册和注销过滤器。</p>
+<h3 id="过滤器的执行过程">过滤器的执行过程</h3>
+<p>当过滤器被调用时，调用方将使用php_donie_stream_filter_create()函数创建过滤器的实例。该函数在被执行时初始化过滤器的相关数据，并指定过滤器的相关操作。</p>
 <p>调用方然后将过滤器实例添加到对应的流的读过滤器链或写过滤器链中，当流中发生读或写的操作时，过滤器链将数据放到一或多个php_stream_bucket结构中，并传递给过滤器处理。</p>
-<h3 id="业务逻辑"><a href="#业务逻辑" class="headerlink" title="业务逻辑"></a>业务逻辑</h3><p>结构体php_donie_stream_filter_ops指定了过滤器的名称和相关业务逻辑。php_donie_stream_filter_ops-&gt;php_donie_stream_filter_dtor是过滤器的析构函数。php_donie_stream_filter_ops-&gt;php_donie_stream_filter是过滤器的主要业务逻辑。</p>
+<h3 id="业务逻辑">业务逻辑</h3>
+<p>结构体php_donie_stream_filter_ops指定了过滤器的名称和相关业务逻辑。php_donie_stream_filter_ops-&gt;php_donie_stream_filter_dtor是过滤器的析构函数。php_donie_stream_filter_ops-&gt;php_donie_stream_filter是过滤器的主要业务逻辑。</p>
 <p>在php_donie_stream_filter()中，函数接收一个php_stream_bucket链表buckets_in，并将处理后的php_stream_bucket追加到链表buckets_out中输出。</p>
 <p>php_stream_bucket_make_writeable()将一个bucket从链表中移除，如果必要，复制其内部缓冲数据，以获得对内容的写权限。此外，对bucket的相关操作还有：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">php_stream_bucket *<span class="title">php_stream_bucket_new</span><span class="params">(php_stream *stream, <span class="keyword">char</span> *buf, <span class="keyword">size_t</span> buflen, <span class="keyword">int</span> own_buf, <span class="keyword">int</span> buf_persistent TSRMLS_DC)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">php_stream_bucket_split</span><span class="params">(php_stream_bucket *in, php_stream_bucket **left, php_stream_bucket **right, <span class="keyword">size_t</span> length TSRMLS_DC)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">php_stream_bucket_delref</span><span class="params">(php_stream_bucket *bucket TSRMLS_DC)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">php_stream_bucket_addref</span><span class="params">(php_stream_bucket *bucket)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">php_stream_bucket_prepend</span><span class="params">(php_stream_bucket_brigade *brigade, php_stream_bucket *bucket TSRMLS_DC)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">php_stream_bucket_append</span><span class="params">(php_stream_bucket_brigade *brigade, php_stream_bucket *bucket TSRMLS_DC)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">php_stream_bucket_unlink</span><span class="params">(php_stream_bucket *bucket TSRMLS_DC)</span></span>;</span><br></pre></td></tr></table></figure>
-<p>若过滤器已准备好输出的数据，返回PSFS_PASS_ON；若还需要更多数据才能结束过滤操作，返回PSFS_FEED_ME；若遇到严重问题，返回PSFS_ERR_FATAL。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="n">php_stream_bucket</span> <span class="o">*</span><span class="nf">php_stream_bucket_new</span><span class="p">(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">buflen</span><span class="p">,</span> <span class="kt">int</span> <span class="n">own_buf</span><span class="p">,</span> <span class="kt">int</span> <span class="n">buf_persistent</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
 
-      
-     <!-- by blair add this if sentence at 20160725 -->
-      <br>
-      
-<!--
-<div id="bottom-donation-section">
-<span style="font-size: 1.0em; padding:0em 1em 0.5em 1em; margin: 0 auto;">
-  <strong style="vertical-align: top;">分享到:</strong>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_facebook_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://www.facebook.com/sharer/sharer.php?u=" target="_blank">
-    </div>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_weibo_icon.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://service.weibo.com/share/share.php?url" target="_blank">
-    </div>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_wechat_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://api.addthis.com/oexchange/0.8/forward/wechat/offer?url=" target="_blank">
-    </div>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_twitter_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://twitter.com/intent/tweet?url=" target="_blank">
-    </div>
-  <br>  
-  <br>  
-  &nbsp;&nbsp;如果您觉得这篇文章对您的学习很有帮助, 请您也分享它, 让它能再次帮助到更多的需要学习的人.
-您的<a href="/support/"><strong>支持</strong></a>将鼓励我继续创作 !
-  <br>  
+<span class="kt">int</span> <span class="nf">php_stream_bucket_split</span><span class="p">(</span><span class="n">php_stream_bucket</span> <span class="o">*</span><span class="n">in</span><span class="p">,</span> <span class="n">php_stream_bucket</span> <span class="o">**</span><span class="n">left</span><span class="p">,</span> <span class="n">php_stream_bucket</span> <span class="o">**</span><span class="n">right</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">length</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
 
-</span>
+<span class="kt">void</span> <span class="nf">php_stream_bucket_delref</span><span class="p">(</span><span class="n">php_stream_bucket</span> <span class="o">*</span><span class="n">bucket</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">php_stream_bucket_addref</span><span class="p">(</span><span class="n">php_stream_bucket</span> <span class="o">*</span><span class="n">bucket</span><span class="p">);</span>
+
+<span class="kt">void</span> <span class="nf">php_stream_bucket_prepend</span><span class="p">(</span><span class="n">php_stream_bucket_brigade</span> <span class="o">*</span><span class="n">brigade</span><span class="p">,</span> <span class="n">php_stream_bucket</span> <span class="o">*</span><span class="n">bucket</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">php_stream_bucket_append</span><span class="p">(</span><span class="n">php_stream_bucket_brigade</span> <span class="o">*</span><span class="n">brigade</span><span class="p">,</span> <span class="n">php_stream_bucket</span> <span class="o">*</span><span class="n">bucket</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
+
+<span class="kt">void</span> <span class="nf">php_stream_bucket_unlink</span><span class="p">(</span><span class="n">php_stream_bucket</span> <span class="o">*</span><span class="n">bucket</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
+</code></pre></td></tr></table>
 </div>
--->
-<div class="well">
-  <!--
-  原创文章，转载请注明： 转载自<a href="http://52binge.github.io"> Blair Chan's Blog</a>，作者：
-  <a href="/about">Blair Chan</a> <br>
-  -->
-  本文基于<a target="_blank" title="Creative Commons Attribution 4.0 international License" href="https://creativecommons.org/licenses/by-nc/4.0/">署名4.0国际许可协议</a>发布，转载请保留本文署名和文章链接。 如您有任何授权方面的协商，请联系我。
+</div><p>若过滤器已准备好输出的数据，返回PSFS_PASS_ON；若还需要更多数据才能结束过滤操作，返回PSFS_FEED_ME；若遇到严重问题，返回PSFS_ERR_FATAL。</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2020-06-17&nbsp;<a class="git-hash" href="https://github.com/dillonzq/LoveIt/commit/b6b131fb549d1c33b519bbe9910a7c0b426257fd" target="_blank" title="commit by Donie Leigh(donie.leigh@gmail.com) b6b131fb549d1c33b519bbe9910a7c0b426257fd: URL地址改为用slug生成；为所有文章追加slug matter">
+                                    <i class="fas fa-hashtag fa-fw"></i>b6b131fb</a></span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/post/contexts-and-filters-implementation-of-php/index.md" target="_blank">阅读原始文档</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="http://0x3f.org/post/contexts-and-filters-implementation-of-php/" data-title="PHP流的上下文和过滤器的实现" data-hashtags="PHP,源码"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="http://0x3f.org/post/contexts-and-filters-implementation-of-php/" data-hashtag="PHP"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="http://0x3f.org/post/contexts-and-filters-implementation-of-php/" data-title="PHP流的上下文和过滤器的实现"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="http://0x3f.org/post/contexts-and-filters-implementation-of-php/" data-title="PHP流的上下文和过滤器的实现"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="http://0x3f.org/post/contexts-and-filters-implementation-of-php/" data-title="PHP流的上下文和过滤器的实现"><i class="fab fa-weibo fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/php/">PHP</a>,&nbsp;<a href="/tags/%E6%BA%90%E7%A0%81/">源码</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/post/enhance-search-with-gn-in-vim/" class="prev" rel="prev" title="使用gn操作增强Vim的搜索"><i class="fas fa-angle-left fa-fw"></i>使用gn操作增强Vim的搜索</a>
+            <a href="/post/create-php-extension-skeleton/" class="next" rel="next" title="PHP扩展框架的创建">PHP扩展框架的创建<i class="fas fa-angle-right fa-fw"></i></a></div>
 </div>
- <!-- by blair add 160724-->
-    
-    </div>
-    
-      <div class="article-toc">
-        <h3>Contents</h3>
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#上下文的实现和应用"><span class="toc-text">上下文的实现和应用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#过滤器的实现和应用"><span class="toc-text">过滤器的实现和应用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#注册和注销"><span class="toc-text">注册和注销</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#过滤器的执行过程"><span class="toc-text">过滤器的执行过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#业务逻辑"><span class="toc-text">业务逻辑</span></a></li></ol></li></ol>
-      </div>
-    
-    
-      <footer class="article-footer">
-        <!-- <div class="well" style="width:100px; height:30px;"></div>  by blair-->
-        
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/计算机/">计算机</a>
-  </div>
+<div id="comments"><div id="utterances"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://utteranc.es/">Utterances</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.72.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2006 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">淘气</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
 
- <!-- by blair add 160724-->
-        <!--
-        <div style="width:100px; height:30px;"></div> by blair add 160724
-        -->
-        
-  <div class="article-tag">
-    <a class="article-tag-link" href="/tags/php/">PHP</a><span></span><a class="article-tag-link" href="/tags/源码/">源码</a>
-  </div>
-
-
-      </footer>
-    
-  </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/post/create-php-extension-skeleton/" id="article-nav-newer" class="article-nav-link-wrap">
-      <div class="article-nav-title"><span>&lt;</span>&nbsp;
-        
-          PHP扩展框架的创建
-        
-      </div>
-    </a>
-  
-  
-    <a href="/post/enhance-search-with-gn-in-vim/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">使用gn操作增强Vim的搜索&nbsp;<span>&gt;</span></div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-<section id="comments">
-  <div id="disqus_thread">
-    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-  </div>
-</section>
-
-</section>
-    <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2020 晴耕雨讀&nbsp;
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/52binge/hexo-theme-blairos">blairos</a>
-    </div>
-  </div>
-</footer>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    extensions: ["tex2jax.js"],
-    jax: ["input/TeX"],
-    tex2jax: {
-      inlineMath: [ ['$','$'], ['\\(','\\)'] ],
-      displayMath: [ ['$$','$$']],
-      processEscapes: true
-    }
-  });
-</script>
-<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML,http://myserver.com/MathJax/config/local/local.js">
-</script>
-
-    
-<script type="text/javascript"> <!-- add by blair 0724 type=text/javascript -->
-  var disqus_shortname = '0x3f';
-  
-  var disqus_url = 'http://0x3f.org/post/contexts-and-filters-implementation-of-php/';
-  
-  (function(){
-    var dsq = document.createElement('script');
-    dsq.type = 'text/javascript';
-    dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
-
-
-<script src="/js/jquery.min.js"></script>
-
-
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
-
-
-<script src="/js/script.js"></script>
-
-  </div>
-</body>
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"utterances":{"darkTheme":"github-dark","issueTerm":"pathname","label":"","lightTheme":"github-light","repo":"xbot/blog-comments"}},"search":{"algoliaAppID":"PASDMWALPK","algoliaIndex":"index.zh-cn","algoliaSearchKey":"b42948e51daaa93df92381c8e2ac0f93","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
 </html>

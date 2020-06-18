@@ -1,813 +1,160 @@
 <!DOCTYPE html>
-<html>
-<head><meta name="generator" content="Hexo 3.8.0">
-  <meta charset="utf-8">
-  
-  <title>晴耕雨讀</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="晴耕雨讀">
-<meta property="og:url" content="http://0x3f.org/index.html">
-<meta property="og:site_name" content="晴耕雨讀">
-<meta property="og:locale" content="zh-TW">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="晴耕雨讀">
-  
-  
-    <link rel="icon" href="/favicon.png">
-  
-  <link href="/webfonts/ptserif/main.css" rel="stylesheet" type="text/css">
-  <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="/css/style.css">
-  
-<!-- Google Analytics -->
-<script type="text/javascript">
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-ga('create', 'UA-93233020-1', 'auto');
-ga('send', 'pageview');
-
-</script>
-<!-- End Google Analytics -->
-
-
-</head>
-</html>
-<body>
-  <div id="container">
-    <!-- blair add baidu tongji start... @2017.10.03 -->
-<!-- blair add baidu tongji end ! @2017.10.03 -->
-
-<header id="header">
-  <div id="header-outer" class="outer">
-    <div id="header-inner" class="inner">
-      <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
-      <a id="logo" class="logo" href="/"></a>
-      <nav id="main-nav">
-        
-          <a class="main-nav-link" href="/archives">目录</a>
-        
-          <a class="main-nav-link" href="/categories">分类</a>
-        
-          <a class="main-nav-link" href="/tags">标签</a>
-        
-          <a class="main-nav-link" href="https://t.me/s/blingings">不灵</a>
-        
-          <a class="main-nav-link" href="/about">关于</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        <div id="search-form-wrap">
-          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
-        </div>
-      </nav>
-    </div>
-  </div>
-</header>
-
-    <br>
-    <section id="main" class="outer">
-      <article id="post-debug-git-connection-with-ssh" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/debug-git-connection-with-ssh/"><strong>用 SSH 命令调试 Git 的连接问题</strong></a>
-      <small class="article-date-index">&nbsp; 2020-03-28</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/debug-git-connection-with-ssh/" class="article-date">
-  <time datetime="2020-03-28T15:17:45.000Z" itemprop="datePublished">2020-03-28</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/debug-git-connection-with-ssh/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>昨天执行<code>git pull</code>的时候发现会一直卡在那儿，排除了各种可能，而且 Github 上的项目也是可以正常拉取的，说明跟网络、代理等关系应该不大，git 命令本身也工作正常。</p>
-<p>问题集中在公司的项目上，所有项目都无法拉取代码。起先怀疑是公司自建的 Gitlab 出了问题，但是其他人那里又是正常的，甚至跟我同一局域网的电脑上也是正常的。</p>
-<p>也就是说问题应该出在我自己的电脑上。考虑到前两天还能正常使用，之后唯一一件相关的事就是升级 macOS 到 10.15.4 了。</p>
-<p>然而用 Homebrew 重新安装 git 等相关的几个包也没能解决问题，于是用<code>ssh -T -v git@gitlab.xxx.com -p 8848</code>调试，输出如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">donie@Donies  ~  ssh -T -v git@gitlab.xxx.com -p 8848                                                                      -- INSERT --</span><br><span class="line">OpenSSH_8.1p1, LibreSSL 2.7.3</span><br><span class="line">debug1: Reading configuration data /Users/donie/.ssh/config</span><br><span class="line">debug1: /Users/donie/.ssh/config line 9: Applying options for gitlab.xxx.com</span><br><span class="line">debug1: Reading configuration data /etc/ssh/ssh_config</span><br><span class="line">debug1: /etc/ssh/ssh_config line 47: Applying options for *</span><br><span class="line">debug1: Connecting to gitlab.xxx.com port 8848.</span><br></pre></td></tr></table></figure>
-<p>卡在了“Connecting to gitlab.xxx.com port 8848”这一步，但是<code>telnet gitlab.xxx.com 8848</code>却是通的。</p>
-<p>问题陷入僵局。</p>
-<p>Google的过程中偶然注意到别人正常的调试信息中这一步的输出是有 IP 地址的，如下所示：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">debug1: Connecting to gitlab.xxx.com [xxx.xxx.xxx.xxx] port 8848.</span><br></pre></td></tr></table></figure>
-<p>首先怀疑应该是主机名映射出了问题，但是无论是修改 Hosts 还是在 ~/.ssh/config 中指定都还是不行，ping 主机名也能正常解析出 IP 地址。</p>
-<p>问题陷入绝境。</p>
-<p>绝望之际，突然想到会不会是 SSH 自身出了问题呢？<code>which ssh</code>发现是系统自带的，所以装上 Homebrew 的版本试了一下，竟然好了！</p>
-<p>bugOS !!!</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-auto-switch-input-method-while-changing-vim-mode" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/auto-switch-input-method-while-changing-vim-mode/"><strong>改变Vim模式时自动切换输入法的方法</strong></a>
-      <small class="article-date-index">&nbsp; 2020-02-19</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/auto-switch-input-method-while-changing-vim-mode/" class="article-date">
-  <time datetime="2020-02-19T13:48:15.000Z" itemprop="datePublished">2020-02-19</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/auto-switch-input-method-while-changing-vim-mode/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>VS Code的Vim插件有个很贴心的功能，可以在切换到普通模式时自动切换到英文输入法，而当切换回插入模式时再换到此前的输入法。</p>
-<p>设置的方法很简单。先安装<a href="https://github.com/daipeihust/im-select" target="_blank" rel="noopener">im-select</a>，然后配置如下（macOS）：</p>
-<p><img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2020-02-19-21-59-02-510Ak5.png" alt="2020-02-19-21-59-02-510Ak5"></p>
-<p>当然，在Vim里也可以利用im-select实现这个功能。</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-quickly-create-phpunit-test-cases-with-vscode" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/quickly-create-phpunit-test-cases-with-vscode/"><strong>在VS Code中快速创建PHPUnit测试类的方法</strong></a>
-      <small class="article-date-index">&nbsp; 2020-02-18</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/quickly-create-phpunit-test-cases-with-vscode/" class="article-date">
-  <time datetime="2020-02-18T14:49:45.000Z" itemprop="datePublished">2020-02-18</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/quickly-create-phpunit-test-cases-with-vscode/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>通过单元测试解决问题或者调试代码，可以避开错综复杂的依赖关系、直击问题的核心，从而极大地节约时间、提高效率。</p>
-<p>但是，当创建测试类成为一个经常发生的操作时，每次都手动创建类、引入基类、添加测试方法就显得很烦琐。我需要这样一个解决方案，让我可以立即开始着手写测试代码。</p>
-         
-          <p class="article-more-link">
-            <a href="/post/quickly-create-phpunit-test-cases-with-vscode/">继续看...</a>
-          </p> 
-        
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-take-github-as-image-hosting-service" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/take-github-as-image-hosting-service/"><strong>用Github当图床</strong></a>
-      <small class="article-date-index">&nbsp; 2020-02-06</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/take-github-as-image-hosting-service/" class="article-date">
-  <time datetime="2020-02-06T14:00:00.000Z" itemprop="datePublished">2020-02-06</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/青梅煮酒/">青梅煮酒</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/take-github-as-image-hosting-service/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>微博图床的域名不知道什么时候改了，Google找不到相关信息，经过排查发现原域名中的“ws”改成了“wx”，浪费了不少时间。</p>
-<p>于是打算换图床。</p>
-         
-          <p class="article-more-link">
-            <a href="/post/take-github-as-image-hosting-service/">继续看...</a>
-          </p> 
-        
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-lumen-facade-doesnot-support-pass-by-reference-param" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/lumen-facade-doesnot-support-pass-by-reference-param/"><strong>关于Lumen的Facade不支持引用传递的看法</strong></a>
-      <small class="article-date-index">&nbsp; 2020-02-04</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/lumen-facade-doesnot-support-pass-by-reference-param/" class="article-date">
-  <time datetime="2020-02-04T09:40:34.000Z" itemprop="datePublished">2020-02-04</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/lumen-facade-doesnot-support-pass-by-reference-param/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>今天遇到一个奇怪的问题，一次调用带引用传递形参的方法后，该形参对应的变量值没有按预期改变。</p>
-         
-          <p class="article-more-link">
-            <a href="/post/lumen-facade-doesnot-support-pass-by-reference-param/">继续看...</a>
-          </p> 
-        
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-design-software-architecture-with-c4-plantuml" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/design-software-architecture-with-c4-plantuml/"><strong>用C4-PlantUML画软件架构图</strong></a>
-      <small class="article-date-index">&nbsp; 2020-01-17</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/design-software-architecture-with-c4-plantuml/" class="article-date">
-  <time datetime="2020-01-17T09:29:24.000Z" itemprop="datePublished">2020-01-17</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/design-software-architecture-with-c4-plantuml/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a href="https://c4model.com" target="_blank" rel="noopener">C4 Model</a>是一种简洁有序的架构模型，四个“C”分别表示“Context”、“Container”、“Component”和“Code”，是由上而下逐步细化的四个层级。</p>
-         
-          <p class="article-more-link">
-            <a href="/post/design-software-architecture-with-c4-plantuml/">继续看...</a>
-          </p> 
-        
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-input-date-and-time-with-rime" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/input-date-and-time-with-rime/"><strong>用鼠须管输入日期时间的方法</strong></a>
-      <small class="article-date-index">&nbsp; 2020-01-08</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/input-date-and-time-with-rime/" class="article-date">
-  <time datetime="2020-01-08T05:52:49.000Z" itemprop="datePublished">2020-01-08</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/input-date-and-time-with-rime/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>原来在Linux下用小小输入法，输入日期时间很方便。换到Mac后，很早就在关注这个问题，直到后来鼠须管实现了嵌入Lua脚本的功能才得以解决。</p>
-         
-          <p class="article-more-link">
-            <a href="/post/input-date-and-time-with-rime/">继续看...</a>
-          </p> 
-        
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-plantuml-erd" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/plantuml-erd/"><strong>用PlantUML实现ERD</strong></a>
-      <small class="article-date-index">&nbsp; 2020-01-03</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/plantuml-erd/" class="article-date">
-  <time datetime="2020-01-03T09:01:41.000Z" itemprop="datePublished">2020-01-03</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/plantuml-erd/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>很长一段时间，我们都在用MySQLWorkbench画ER图。但是这个东西有一些缺陷，导致体验很不好。</p>
-<p>首先它生成的文件是二进制的，做不了版本控制。这意味着在版本迭代的过程中做数据结构评审的体验很糟糕。其次，离线文件难以管理，不利于团队协作。第三，图形界面虽然简单，但并不等价于高效。用它画图的成本还是比较高的。</p>
-<p>PlantUML是个基于文本、灵活且强大的UML画图工具，高度可定制，而且可以集成到多种开发工具中。主流的IDE、文本编辑器都可以集成PlantUML，以便用自己最熟悉的工具画图并实时预览。基于文本的特性使得版本控制和Code Review很容易实现。如果VCS用的是Gitlab，可以更进一步，借助PlantUML Server实现实时预览。即使对于像Github这种暂时没有提供支持的Web平台，也有变通的解决方案。</p>
-         
-          <p class="article-more-link">
-            <a href="/post/plantuml-erd/">继续看...</a>
-          </p> 
-        
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-the-expirence-of-airpods-pro" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/the-expirence-of-airpods-pro/"><strong>AirPods Pro的使用感受</strong></a>
-      <small class="article-date-index">&nbsp; 2019-11-05</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/the-expirence-of-airpods-pro/" class="article-date">
-  <time datetime="2019-11-05T08:18:54.000Z" itemprop="datePublished">2019-11-05</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/青梅煮酒/">青梅煮酒</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/the-expirence-of-airpods-pro/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Bose QC35曾是带给我巨大幸福感的工具，并且三年来一直处于重度使用的状态。但是它的一些弱点，使得在某些细分场景下并不能得到很好的体验。首先是包耳式的设计在夏天会很热。其次，虽然有折叠的功能，但头戴式的设计对于日常通勤来说，还是不够便携。再次，QC35一代的降噪级别只能通过APP设置，很麻烦，所以我一直都保持默认开启状态，出于安全性考虑，不适合徒步或者骑行。</p>
-<p>于是后来买了一副AirPods（以下简称AP）。高温和骑行的体验得以改善，但一直被通勤过程中北京公交糟糕的乘坐体验所困扰。其实在购买AP之前，更想买的是带降噪功能的耳塞，当时索尼的降噪豆一代才刚上市，评测普遍反馈体验不太好，而QC30的狗圈又让我完全接受不能，除此之外，在当时并无更多的选择。AP其实是权衡之后妥协的结果。</p>
-<p>所以从看到AirPods Pro（以下简称APP）上市的消息到下单，并没有考虑太久。下单时提示可能一到两周才能到货，但其实第二天就发了货，次日到手。体验了几天，说说感受。</p>
-         
-          <p class="article-more-link">
-            <a href="/post/the-expirence-of-airpods-pro/">继续看...</a>
-          </p> 
-        
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-mocking-objects-made-by-laravel-container-with-parameters" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/mocking-objects-made-by-laravel-container-with-parameters/"><strong>解决Laravel中makeWith()无法取到被mock的实例的问题</strong></a>
-      <small class="article-date-index">&nbsp; 2019-08-16</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/mocking-objects-made-by-laravel-container-with-parameters/" class="article-date">
-  <time datetime="2019-08-16T02:55:40.000Z" itemprop="datePublished">2019-08-16</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/mocking-objects-made-by-laravel-container-with-parameters/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>被测单元有一行实例化一个类的代码，而且该类的构造方法需要参数。基于面向单元测试编程的原则，通过容器的makeWith()方法实现：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$api = app()-&gt;makeWith(Api::class, [<span class="string">'config'</span> =&gt; $config]);</span><br></pre></td></tr></table></figure>
-<p>但是在执行单元测试时发现，虽然测试代码中已经mock了这个类且注入到容器，但在被测单元中取到的还是原类的实例。</p>
-         
-          <p class="article-more-link">
-            <a href="/post/mocking-objects-made-by-laravel-container-with-parameters/">继续看...</a>
-          </p> 
-        
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <nav id="page-nav">
-        <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
-      </nav>
-    
-
-</section>
-    <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2020 晴耕雨讀&nbsp;
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/52binge/hexo-theme-blairos">blairos</a>
-    </div>
-  </div>
-</footer>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    extensions: ["tex2jax.js"],
-    jax: ["input/TeX"],
-    tex2jax: {
-      inlineMath: [ ['$','$'], ['\\(','\\)'] ],
-      displayMath: [ ['$$','$$']],
-      processEscapes: true
+<html lang="zh-CN">
+    <head>
+	<meta name="generator" content="Hugo 0.72.0" />
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>晴耕雨讀</title><meta name="Description" content="Donie&#39;s blog."><meta property="og:title" content="晴耕雨讀" />
+<meta property="og:description" content="Donie&#39;s blog." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="http://0x3f.org/" />
+<meta property="og:image" content="http://0x3f.org/logo.png"/>
+<meta property="og:updated_time" content="2020-06-17T17:28:11+08:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://0x3f.org/logo.png"/>
+
+<meta name="twitter:title" content="晴耕雨讀"/>
+<meta name="twitter:description" content="Donie&#39;s blog."/>
+<meta name="application-name" content="晴耕雨讀">
+<meta name="apple-mobile-web-app-title" content="晴耕雨讀"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://0x3f.org/" /><link rel="alternate" href="/index.xml" type="application/rss+xml" title="晴耕雨讀">
+    <link rel="feed" href="/index.xml" type="application/rss+xml" title="晴耕雨讀"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "WebSite",
+        "url": "http:\/\/0x3f.org\/","inLanguage": "zh-CN","author": {
+                "@type": "Person",
+                "name": "淘气"
+            },"description": "Donie's blog.","image": "http:\/\/0x3f.org\/images\/Apple-Devices-Preview.png","thumbnailUrl": "http:\/\/0x3f.org\/images\/screenshot.png","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","name": "晴耕雨讀"
     }
-  });
-</script>
-<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML,http://myserver.com/MathJax/config/local/local.js">
-</script>
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
 
-    
-<script type="text/javascript"> <!-- add by blair 0724 type=text/javascript -->
-  var disqus_shortname = '0x3f';
-  
-  (function(){
-    var dsq = document.createElement('script');
-    dsq.type = 'text/javascript';
-    dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="page home" posts><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/post/debug-git-connection-with-ssh/">用 SSH 命令调试 Git 的连接问题</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class="post-publish">发布于 <time datetime="2020-03-28">2020-03-28</time></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"><i class="far fa-folder fa-fw"></i>计算机</a></span></div><div class="content">昨天执行git pull的时候发现会一直卡在那儿，排除了各种可能，而且 Github 上的项目也是可以正常拉取的，说明跟网络、代理等关系应该不大，git 命令</div><div class="post-footer">
+        <a href="/post/debug-git-connection-with-ssh/">阅读全文</a><div class="post-tags">
+                <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/git/">Git</a>,&nbsp;<a href="/tags/gitlab/">Gitlab</a>,&nbsp;<a href="/tags/mac/">Mac</a></div></div>
+</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/post/auto-switch-input-method-while-changing-vim-mode/">改变Vim模式时自动切换输入法的方法</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class="post-publish">发布于 <time datetime="2020-02-19">2020-02-19</time></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"><i class="far fa-folder fa-fw"></i>计算机</a></span></div><div class="content">VS Code的Vim插件有个很贴心的功能，可以在切换到普通模式时自动切换到英文输入法，而当切换回插入模式时再换到此前的输入法。 设置的方法很简单</div><div class="post-footer">
+        <a href="/post/auto-switch-input-method-while-changing-vim-mode/">阅读全文</a><div class="post-tags">
+                <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">最佳实践</a>,&nbsp;<a href="/tags/vim/">Vim</a>,&nbsp;<a href="/tags/vscode/">vscode</a></div></div>
+</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/post/quickly-create-phpunit-test-cases-with-vscode/">在VS Code中快速创建PHPUnit测试类的方法</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class="post-publish">发布于 <time datetime="2020-02-18">2020-02-18</time></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"><i class="far fa-folder fa-fw"></i>计算机</a></span></div><div class="content"><p>通过单元测试解决问题或者调试代码，可以避开错综复杂的依赖关系、直击问题的核心，从而极大地节约时间、提高效率。</p>
+<p>但是，当创建测试类成为一个经常发生的操作时，每次都手动创建类、引入基类、添加测试方法就显得很烦琐。我需要这样一个解决方案，让我可以立即开始着手写测试代码。</p></div><div class="post-footer">
+        <a href="/post/quickly-create-phpunit-test-cases-with-vscode/">阅读全文</a><div class="post-tags">
+                <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">最佳实践</a>,&nbsp;<a href="/tags/%E7%BC%96%E7%A8%8B/">编程</a>,&nbsp;<a href="/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/">单元测试</a>,&nbsp;<a href="/tags/php/">PHP</a>,&nbsp;<a href="/tags/phpunit/">phpunit</a>,&nbsp;<a href="/tags/vscode/">vscode</a></div></div>
+</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/post/take-github-as-image-hosting-service/">用Github当图床</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class="post-publish">发布于 <time datetime="2020-02-06">2020-02-06</time></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E9%9D%92%E6%A2%85%E7%85%AE%E9%85%92/"><i class="far fa-folder fa-fw"></i>青梅煮酒</a></span></div><div class="content"><p>微博图床的域名不知道什么时候改了，Google找不到相关信息，经过排查发现原域名中的“ws”改成了“wx”，浪费了不少时间。</p>
+<p>于是打算换图床。</p></div><div class="post-footer">
+        <a href="/post/take-github-as-image-hosting-service/">阅读全文</a><div class="post-tags">
+                <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">最佳实践</a>,&nbsp;<a href="/tags/%E5%8D%9A%E5%AE%A2/">博客</a>,&nbsp;<a href="/tags/github/">github</a></div></div>
+</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/post/lumen-facade-doesnot-support-pass-by-reference-param/">关于Lumen的Facade不支持引用传递的看法</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class="post-publish">发布于 <time datetime="2020-02-04">2020-02-04</time></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"><i class="far fa-folder fa-fw"></i>计算机</a></span></div><div class="content"><p>今天遇到一个奇怪的问题，一次调用带引用传递形参的方法后，该形参对应的变量值没有按预期改变。</p></div><div class="post-footer">
+        <a href="/post/lumen-facade-doesnot-support-pass-by-reference-param/">阅读全文</a><div class="post-tags">
+                <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/%E7%BC%96%E7%A8%8B/">编程</a>,&nbsp;<a href="/tags/laravel/lumen/">Laravel/Lumen</a></div></div>
+</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/post/design-software-architecture-with-c4-plantuml/">用C4-PlantUML画软件架构图</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class="post-publish">发布于 <time datetime="2020-01-17">2020-01-17</time></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"><i class="far fa-folder fa-fw"></i>计算机</a></span></div><div class="content"><p><a href="https://c4model.com" target="_blank" rel="noopener noreffer">C4 Model</a>是一种简洁有序的架构模型，四个“C”分别表示“Context”、“Container”、“Component”和“Code”，是由上而下逐步细化的四个层级。</p></div><div class="post-footer">
+        <a href="/post/design-software-architecture-with-c4-plantuml/">阅读全文</a><div class="post-tags">
+                <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/%E7%BC%96%E7%A8%8B/">编程</a>,&nbsp;<a href="/tags/%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">最佳实践</a></div></div>
+</article><ul class="pagination"><li class="page-item active">
+                    <span class="page-link">
+                        <a href="/">1</a>
+                    </span>
+                </li><li class="page-item ">
+                    <span class="page-link">
+                        <a href="/page/2/">2</a>
+                    </span>
+                </li><li class="page-item ">
+                    <span class="page-link">
+                        <a href="/page/3/">3</a>
+                    </span>
+                </li><li class="page-item ">
+                    <span class="page-link" aria-hidden="true">&hellip;</span>
+                </li><li class="page-item ">
+                    <span class="page-link">
+                        <a href="/page/69/">69</a>
+                    </span>
+                </li></ul></div></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.72.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2006 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">淘气</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
 
-
-<script src="/js/jquery.min.js"></script>
-
-
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
-
-
-<script src="/js/script.js"></script>
-
-  </div>
-</body>
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"search":{"algoliaAppID":"PASDMWALPK","algoliaIndex":"index.zh-cn","algoliaSearchKey":"b42948e51daaa93df92381c8e2ac0f93","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
 </html>

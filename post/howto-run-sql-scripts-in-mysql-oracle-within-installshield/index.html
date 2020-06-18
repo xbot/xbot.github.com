@@ -1,257 +1,374 @@
 <!DOCTYPE html>
-<html>
-<head><meta name="generator" content="Hexo 3.8.0">
-  <meta charset="utf-8">
-  
-  <title>InstallShield在MySQL和Oracle中执行SQL脚本的方法 - 晴耕雨讀</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="简述  InstallShield已经内建了对MySQL和Oracle的支持。但是这个功能是通过ODBC实现的，它对SQL脚本的格式要求非常严格，因此已经通过官方客户端测试的脚本在IS中执行时往往就会报错。 一般来说，数据库脚本只保证通过官方客户端测试即可，同时维护一份供IS执行的脚本费时费力。因此，考虑安装程序对两数据库的支持通过官方客户端实现。 MySQL1234567891011121314">
-<meta name="keywords" content="编程,SQL,数据库,MySQL,oracle,安装,客户端,InstallShield">
-<meta property="og:type" content="article">
-<meta property="og:title" content="InstallShield在MySQL和Oracle中执行SQL脚本的方法">
-<meta property="og:url" content="http://0x3f.org/post/howto-run-sql-scripts-in-mysql-oracle-within-installshield/index.html">
-<meta property="og:site_name" content="晴耕雨讀">
-<meta property="og:description" content="简述  InstallShield已经内建了对MySQL和Oracle的支持。但是这个功能是通过ODBC实现的，它对SQL脚本的格式要求非常严格，因此已经通过官方客户端测试的脚本在IS中执行时往往就会报错。 一般来说，数据库脚本只保证通过官方客户端测试即可，同时维护一份供IS执行的脚本费时费力。因此，考虑安装程序对两数据库的支持通过官方客户端实现。 MySQL1234567891011121314">
-<meta property="og:locale" content="zh-TW">
-<meta property="og:updated_time" content="2020-02-06T13:44:05.342Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="InstallShield在MySQL和Oracle中执行SQL脚本的方法">
-<meta name="twitter:description" content="简述  InstallShield已经内建了对MySQL和Oracle的支持。但是这个功能是通过ODBC实现的，它对SQL脚本的格式要求非常严格，因此已经通过官方客户端测试的脚本在IS中执行时往往就会报错。 一般来说，数据库脚本只保证通过官方客户端测试即可，同时维护一份供IS执行的脚本费时费力。因此，考虑安装程序对两数据库的支持通过官方客户端实现。 MySQL1234567891011121314">
-  
-  
-    <link rel="icon" href="/favicon.png">
-  
-  <link href="/webfonts/ptserif/main.css" rel="stylesheet" type="text/css">
-  <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="/css/style.css">
-  
-<!-- Google Analytics -->
-<script type="text/javascript">
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>InstallShield在MySQL和Oracle中执行SQL脚本的方法 - 晴耕雨讀</title><meta name="Description" content="Donie&#39;s blog."><meta property="og:title" content="InstallShield在MySQL和Oracle中执行SQL脚本的方法" />
+<meta property="og:description" content="简述 InstallShield已经内建了对MySQL和Oracle的支持。但是这个功能是通过ODBC实现的，它对SQL脚本的格式要求非常严格" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://0x3f.org/post/howto-run-sql-scripts-in-mysql-oracle-within-installshield/" />
+<meta property="og:image" content="http://0x3f.org/logo.png"/>
+<meta property="article:published_time" content="2010-08-24T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-06-17T17:28:11+08:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://0x3f.org/logo.png"/>
 
-ga('create', 'UA-93233020-1', 'auto');
-ga('send', 'pageview');
+<meta name="twitter:title" content="InstallShield在MySQL和Oracle中执行SQL脚本的方法"/>
+<meta name="twitter:description" content="简述 InstallShield已经内建了对MySQL和Oracle的支持。但是这个功能是通过ODBC实现的，它对SQL脚本的格式要求非常严格"/>
+<meta name="application-name" content="晴耕雨讀">
+<meta name="apple-mobile-web-app-title" content="晴耕雨讀"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://0x3f.org/post/howto-run-sql-scripts-in-mysql-oracle-within-installshield/" /><link rel="prev" href="http://0x3f.org/post/howto-make-thinkpad-mute-button-detected-on-linux/" /><link rel="next" href="http://0x3f.org/post/howto-auto-maximize-gvim-at-startup/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "InstallShield在MySQL和Oracle中执行SQL脚本的方法",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/0x3f.org\/post\/howto-run-sql-scripts-in-mysql-oracle-within-installshield\/"
+        },"image": ["http:\/\/0x3f.org\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "InstallShield, MySQL, oracle, SQL, 安装, 客户端, 数据库, 编程","wordcount":  1494 ,
+        "url": "http:\/\/0x3f.org\/post\/howto-run-sql-scripts-in-mysql-oracle-within-installshield\/","datePublished": "2010-08-24T00:00:00+00:00","dateModified": "2020-06-17T17:28:11+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": "http:\/\/0x3f.org\/images\/avatar.png"},"author": {
+                "@type": "Person",
+                "name": "淘气"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
 
-</script>
-<!-- End Google Analytics -->
-
-
-</head>
-</html>
-<body>
-  <div id="container">
-    <!-- blair add baidu tongji start... @2017.10.03 -->
-<!-- blair add baidu tongji end ! @2017.10.03 -->
-
-<header id="header">
-  <div id="header-outer" class="outer">
-    <div id="header-inner" class="inner">
-      <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
-      <a id="logo" class="logo" href="/"></a>
-      <nav id="main-nav">
-        
-          <a class="main-nav-link" href="/archives">目录</a>
-        
-          <a class="main-nav-link" href="/categories">分类</a>
-        
-          <a class="main-nav-link" href="/tags">标签</a>
-        
-          <a class="main-nav-link" href="https://t.me/s/blingings">不灵</a>
-        
-          <a class="main-nav-link" href="/about">关于</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        <div id="search-form-wrap">
-          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
         </div>
-      </nav>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
     </div>
-  </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
 </header>
-
-    <br>
-    <section id="main" class="outer"><article id="post-howto-run-sql-scripts-in-mysql-oracle-within-installshield" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="article-title" itemprop="name">
-      InstallShield在MySQL和Oracle中执行SQL脚本的方法
-      <small class="article-detail-date-index">&nbsp; 2010-08-24</small>
-    </h1>
-  
-
-
-        <div class="page-title"></div>
-        <br>
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/howto-run-sql-scripts-in-mysql-oracle-within-installshield/" class="article-date">
-  <time datetime="2010-08-23T16:00:00.000Z" itemprop="datePublished">2010-08-24</time>
-</a>-->
-      <!-- 
---><!-- by blair 160724 -->
-      <!-- by blair
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/howto-run-sql-scripts-in-mysql-oracle-within-installshield/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2>简述</h2>
-
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">InstallShield在MySQL和Oracle中执行SQL脚本的方法</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2010-08-24">2010-08-24</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1494 字&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 3 分钟&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><h2>简述</h2>
 <p>InstallShield已经内建了对MySQL和Oracle的支持。但是这个功能是通过ODBC实现的，它对SQL脚本的格式要求非常严格，因此已经通过官方客户端测试的脚本在IS中执行时往往就会报错。</p>
 <p>一般来说，数据库脚本只保证通过官方客户端测试即可，同时维护一份供IS执行的脚本费时费力。因此，考虑安装程序对两数据库的支持通过官方客户端实现。</p>
-<h2>MySQL</h2><br><br><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">function InstallMySQLComponent(szComponent)</span><br><span class="line">    NUMBER nResult;</span><br><span class="line">    STRING szServer,szDB,szUser,szPassword,sCMD,sOPT,sResult1,sResult2,svLine,sMsg,sPath;</span><br><span class="line">    NUMBER nvFileHandle,nvCount;</span><br><span class="line">    LIST listStatus;</span><br><span class="line">begin</span><br><span class="line">    sMsg = &apos;安装&apos;+szComponent+&apos; ...&apos;;</span><br><span class="line">    SdShowMsg(sMsg, TRUE);</span><br><span class="line">    // source命令不认识windows路径中的反斜杠，故将SRCDIR中的反斜杠替换成斜杠</span><br><span class="line">    sPath = SRCDIR;</span><br><span class="line">    StrReplace(sPath, &apos;\\&apos;, &apos;/&apos;, 0);</span><br><span class="line">    // Fetch database connection information</span><br><span class="line">    SQLRTGetConnectionInfo( &apos;mysql&apos;, szServer, szDB, szUser, szPassword );</span><br><span class="line">    sCMD = WINSYSDIR^&apos;cmd.exe&apos;;</span><br><span class="line">    sOPT = &apos; /c &apos;+SRCDIR^&apos;mysql.exe -h&apos;+szServer+&apos; -u&apos;+szUser+&apos; -p&apos;+szPassword+&apos; -D&apos;+szDB;</span><br><span class="line">    sOPT = sOPT+&apos; -e &quot;source &apos;+sPath^szComponent+&apos;.sql&quot; &gt; &apos;+SRCDIR^&apos;dbstatus.txt 2&gt;&amp;1&apos;;</span><br><span class="line">    // Execute the script associated with the given component in database</span><br><span class="line">    nResult=LaunchAppAndWait(sCMD, sOPT, WAIT|LAAW_OPTION_HIDDEN);</span><br><span class="line">    if (nResult &lt; 0) then</span><br><span class="line">        MessageBox(&apos;Failed installing &apos;+szComponent+&apos; !&apos;, SEVERE);</span><br><span class="line">        abort;</span><br><span class="line">    endif;</span><br><span class="line">    // 关闭安装提示</span><br><span class="line">    SdShowMsg(&apos;&apos;, FALSE);</span><br><span class="line">    // Read dbstatus.txt</span><br><span class="line">    OpenFileMode(FILE_MODE_NORMAL);</span><br><span class="line">    if (OpenFile(nvFileHandle, SRCDIR, &apos;dbstatus.txt&apos;)&lt;0) then</span><br><span class="line">        MessageBox(&apos;Failed checking the status of installing &apos;+szComponent+&apos; !&apos;, SEVERE);</span><br><span class="line">        abort;</span><br><span class="line">    endif;</span><br><span class="line">    listStatus = ListCreate(STRINGLIST);</span><br><span class="line">    while GetLine(nvFileHandle, svLine) = 0</span><br><span class="line">        ListAddString(listStatus, svLine, AFTER);</span><br><span class="line">    endwhile;</span><br><span class="line">    CloseFile(nvFileHandle);</span><br><span class="line">    // Count how many lines fetched from dbstatus.txt</span><br><span class="line">    nvCount = ListCount(listStatus);</span><br><span class="line">    if nvCount &gt; 0 then</span><br><span class="line">        sMsg = &quot;更新数据库出错，点“是”打开日志文件并退出安装，点“否”直接退出安装。\n&quot;;</span><br><span class="line">        sMsg = sMsg+&quot;若错误可忽略，可选择数据库类型“none”以跳过数据库更新并直接更新程序，\n&quot;;</span><br><span class="line">        sMsg = sMsg+&quot;然后在数据库中手工执行SQL脚本（安装后保存在script目录下）&quot;;</span><br><span class="line">        nResult = AskYesNo(sMsg, YES);</span><br><span class="line">        if (nResult = YES) then</span><br><span class="line">            LaunchApp(WINSYSDIR^&apos;notepad.exe&apos;, SRCDIR^&apos;dbstatus.txt&apos;);</span><br><span class="line">	endif;                   </span><br><span class="line">        abort;</span><br><span class="line">    endif;</span><br><span class="line">end;</span><br></pre></td></tr></table></figure><br><br><h2>Oracle</h2><br><br><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">function InstallOracleComponent(szComponent)  </span><br><span class="line">    NUMBER nResult,nvFileHandle,nIndex,nvCount;</span><br><span class="line">    STRING sMsg,szServer,szDB,szUser,szPassword,sCMD,sOPT,sInstance,sTmp,svLine;</span><br><span class="line">    LIST listStatus;</span><br><span class="line">begin</span><br><span class="line">    sMsg = &apos;安装&apos;+szComponent+&apos; ...&apos;;</span><br><span class="line">    SdShowMsg(sMsg, TRUE);</span><br><span class="line">    // Fetch database connection information</span><br><span class="line">    SQLRTGetConnectionInfo( &apos;oracle&apos;, szServer, szDB, szUser, szPassword );</span><br><span class="line">    nIndex = StrFind(szServer, &apos;:&apos;);</span><br><span class="line">    nIndex = StrFindEx(szServer, &apos;/&apos;, nIndex);</span><br><span class="line">    StrSub(sInstance, szServer, nIndex+1, 100);</span><br><span class="line">    sCMD = WINSYSDIR^&apos;cmd.exe&apos;;</span><br><span class="line">    sOPT = &apos; /c &apos;+&apos;sqlplus.exe -L -S &apos;+szUser+&apos;/&apos;+szPassword+&apos;@&apos;+sInstance;</span><br><span class="line">    sOPT = sOPT+&apos; @&apos;+SRCDIR^szComponent+&apos;.sql &gt; &apos;+SRCDIR^&apos;dbstatus.txt 2&gt;&amp;1&apos;;</span><br><span class="line">    // Execute the script associated with the given component in database</span><br><span class="line">    nResult=LaunchAppAndWait(sCMD, sOPT, WAIT|LAAW_OPTION_HIDDEN);</span><br><span class="line">    if (nResult &lt; 0) then</span><br><span class="line">        MessageBox(&apos;Failed installing &apos;+szComponent+&apos; !&apos;, SEVERE);</span><br><span class="line">        abort;</span><br><span class="line">    endif;               </span><br><span class="line">    // 关闭安装提示</span><br><span class="line">    SdShowMsg(&apos;&apos;, FALSE);</span><br><span class="line">    // 在dbstatus.txt中查询字符串holytail，如果存在，说明脚本已执行完</span><br><span class="line">    if (FileGrep(SRCDIR^&apos;dbstatus.txt&apos;, &apos;holytail&apos;, svLine, nIndex, RESTART) = 0) then</span><br><span class="line">        // 在dbstatus.txt中查询字符串ORA-，如果存在，说明脚本执行出现错误</span><br><span class="line">        if (FileGrep(SRCDIR^&apos;dbstatus.txt&apos;, &apos;ORA-&apos;, svLine, nIndex, RESTART) = 0) then</span><br><span class="line">            sMsg = &quot;更新数据库出错，点“是”打开日志文件并退出安装，点“否”直接退出安装。\n&quot;;</span><br><span class="line">            sMsg = sMsg+&quot;若错误可忽略，可选择数据库类型“none”以跳过数据库更新并直接更新程序，\n&quot;;</span><br><span class="line">            sMsg = sMsg+&quot;然后在数据库中手工执行SQL脚本（安装后保存在script目录下）&quot;;</span><br><span class="line">            nResult = AskYesNo(sMsg, YES);</span><br><span class="line">            if (nResult = YES) then</span><br><span class="line">                LaunchApp(WINSYSDIR^&apos;notepad.exe&apos;, SRCDIR^&apos;dbstatus.txt&apos;);</span><br><span class="line">            endif;                   </span><br><span class="line">            abort;</span><br><span class="line">        endif;</span><br><span class="line">    else</span><br><span class="line">        sMsg = &quot;更新数据库出错，点“是”打开日志文件并退出安装，点“否”直接退出安装。\n&quot;;</span><br><span class="line">        sMsg = sMsg+&quot;若错误可忽略，可选择数据库类型“none”以跳过数据库更新并直接更新程序，\n&quot;;</span><br><span class="line">        sMsg = sMsg+&quot;然后在数据库中手工执行SQL脚本（安装后保存在script目录下）&quot;;</span><br><span class="line">        nResult = AskYesNo(sMsg, YES);</span><br><span class="line">        if (nResult = YES) then</span><br><span class="line">            LaunchApp(WINSYSDIR^&apos;notepad.exe&apos;, SRCDIR^&apos;dbstatus.txt&apos;);</span><br><span class="line">        endif;                   </span><br><span class="line">        abort;</span><br><span class="line">    endif;</span><br><span class="line">end;</span><br></pre></td></tr></table></figure><br><br><h2>总结</h2>
-
-<ol><br>    <li>为便于获取脚本在数据库中的执行结果，故通过官方客户端执行脚本时通过符号“<strong>&gt;</strong>”将客户端的输出信息重定向到<strong>dbstatus.txt</strong>中；同时，使用“<strong>2&gt;&amp;1</strong>”将标准错误输出重定向到标准输出设备上，当然，会进一步重定向到dbstatus.txt文件中，否则，无法获取出错信息。</li><br>    <li>sqlplus执行SQL脚本后不会自动退出，故应在Oracle的脚本后加上语句“<strong>exit;</strong>”。</li><br>    <li>重载<strong>OnSQLComponentInstalled()</strong>函数，并在其中禁止MySQL和Oracle的SQL脚本对应的Component被执行安装，然后通过以上两个函数更新数据库。</li><br></ol>
-
-      
-     <!-- by blair add this if sentence at 20160725 -->
-      <br>
-      
-<!--
-<div id="bottom-donation-section">
-<span style="font-size: 1.0em; padding:0em 1em 0.5em 1em; margin: 0 auto;">
-  <strong style="vertical-align: top;">分享到:</strong>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_facebook_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://www.facebook.com/sharer/sharer.php?u=" target="_blank">
-    </div>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_weibo_icon.png);background-size: contain;display: inline-block; width:50px; height:50px" href="https://service.weibo.com/share/share.php?url" target="_blank">
-    </div>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_wechat_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://api.addthis.com/oexchange/0.8/forward/wechat/offer?url=" target="_blank">
-    </div>
-    <div class="j_handlclick"  style="background: url(/images/logos/share_twitter_icon.jpg);background-size: contain;display: inline-block; width:50px; height:50px" href="https://twitter.com/intent/tweet?url=" target="_blank">
-    </div>
-  <br>  
-  <br>  
-  &nbsp;&nbsp;如果您觉得这篇文章对您的学习很有帮助, 请您也分享它, 让它能再次帮助到更多的需要学习的人.
-您的<a href="/support/"><strong>支持</strong></a>将鼓励我继续创作 !
-  <br>  
-
-</span>
+<h2>MySQL</h2><br>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">function InstallMySQLComponent(szComponent)
+    NUMBER nResult;
+    STRING szServer,szDB,szUser,szPassword,sCMD,sOPT,sResult1,sResult2,svLine,sMsg,sPath;
+    NUMBER nvFileHandle,nvCount;
+    LIST listStatus;
+begin
+    sMsg = &#39;安装&#39;+szComponent+&#39; ...&#39;;
+    SdShowMsg(sMsg, TRUE);
+    // source命令不认识windows路径中的反斜杠，故将SRCDIR中的反斜杠替换成斜杠
+    sPath = SRCDIR;
+    StrReplace(sPath, &#39;\\&#39;, &#39;/&#39;, 0);
+    // Fetch database connection information
+    SQLRTGetConnectionInfo( &#39;mysql&#39;, szServer, szDB, szUser, szPassword );
+    sCMD = WINSYSDIR^&#39;cmd.exe&#39;;
+    sOPT = &#39; /c &#39;+SRCDIR^&#39;mysql.exe -h&#39;+szServer+&#39; -u&#39;+szUser+&#39; -p&#39;+szPassword+&#39; -D&#39;+szDB;
+    sOPT = sOPT+&#39; -e &#34;source &#39;+sPath^szComponent+&#39;.sql&#34; &gt; &#39;+SRCDIR^&#39;dbstatus.txt 2&gt;&amp;1&#39;;
+    // Execute the script associated with the given component in database
+    nResult=LaunchAppAndWait(sCMD, sOPT, WAIT|LAAW_OPTION_HIDDEN);
+    if (nResult &lt; 0) then
+        MessageBox(&#39;Failed installing &#39;+szComponent+&#39; !&#39;, SEVERE);
+        abort;
+    endif;
+    // 关闭安装提示
+    SdShowMsg(&#39;&#39;, FALSE);
+    // Read dbstatus.txt
+    OpenFileMode(FILE_MODE_NORMAL);
+    if (OpenFile(nvFileHandle, SRCDIR, &#39;dbstatus.txt&#39;)&lt;0) then
+        MessageBox(&#39;Failed checking the status of installing &#39;+szComponent+&#39; !&#39;, SEVERE);
+        abort;
+    endif;
+    listStatus = ListCreate(STRINGLIST);
+    while GetLine(nvFileHandle, svLine) = 0
+        ListAddString(listStatus, svLine, AFTER);
+    endwhile;
+    CloseFile(nvFileHandle);
+    // Count how many lines fetched from dbstatus.txt
+    nvCount = ListCount(listStatus);
+    if nvCount &gt; 0 then
+        sMsg = &#34;更新数据库出错，点“是”打开日志文件并退出安装，点“否”直接退出安装。\n&#34;;
+        sMsg = sMsg+&#34;若错误可忽略，可选择数据库类型“none”以跳过数据库更新并直接更新程序，\n&#34;;
+        sMsg = sMsg+&#34;然后在数据库中手工执行SQL脚本（安装后保存在script目录下）&#34;;
+        nResult = AskYesNo(sMsg, YES);
+        if (nResult = YES) then
+            LaunchApp(WINSYSDIR^&#39;notepad.exe&#39;, SRCDIR^&#39;dbstatus.txt&#39;);
+	endif;                   
+        abort;
+    endif;
+end;
+</code></pre></td></tr></table>
 </div>
--->
-<div class="well">
-  <!--
-  原创文章，转载请注明： 转载自<a href="http://52binge.github.io"> Blair Chan's Blog</a>，作者：
-  <a href="/about">Blair Chan</a> <br>
-  -->
-  本文基于<a target="_blank" title="Creative Commons Attribution 4.0 international License" href="https://creativecommons.org/licenses/by-nc/4.0/">署名4.0国际许可协议</a>发布，转载请保留本文署名和文章链接。 如您有任何授权方面的协商，请联系我。
+</div><h2>Oracle</h2><br>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">function InstallOracleComponent(szComponent)  
+    NUMBER nResult,nvFileHandle,nIndex,nvCount;
+    STRING sMsg,szServer,szDB,szUser,szPassword,sCMD,sOPT,sInstance,sTmp,svLine;
+    LIST listStatus;
+begin
+    sMsg = &#39;安装&#39;+szComponent+&#39; ...&#39;;
+    SdShowMsg(sMsg, TRUE);
+    // Fetch database connection information
+    SQLRTGetConnectionInfo( &#39;oracle&#39;, szServer, szDB, szUser, szPassword );
+    nIndex = StrFind(szServer, &#39;:&#39;);
+    nIndex = StrFindEx(szServer, &#39;/&#39;, nIndex);
+    StrSub(sInstance, szServer, nIndex+1, 100);
+    sCMD = WINSYSDIR^&#39;cmd.exe&#39;;
+    sOPT = &#39; /c &#39;+&#39;sqlplus.exe -L -S &#39;+szUser+&#39;/&#39;+szPassword+&#39;@&#39;+sInstance;
+    sOPT = sOPT+&#39; @&#39;+SRCDIR^szComponent+&#39;.sql &gt; &#39;+SRCDIR^&#39;dbstatus.txt 2&gt;&amp;1&#39;;
+    // Execute the script associated with the given component in database
+    nResult=LaunchAppAndWait(sCMD, sOPT, WAIT|LAAW_OPTION_HIDDEN);
+    if (nResult &lt; 0) then
+        MessageBox(&#39;Failed installing &#39;+szComponent+&#39; !&#39;, SEVERE);
+        abort;
+    endif;               
+    // 关闭安装提示
+    SdShowMsg(&#39;&#39;, FALSE);
+    // 在dbstatus.txt中查询字符串holytail，如果存在，说明脚本已执行完
+    if (FileGrep(SRCDIR^&#39;dbstatus.txt&#39;, &#39;holytail&#39;, svLine, nIndex, RESTART) = 0) then
+        // 在dbstatus.txt中查询字符串ORA-，如果存在，说明脚本执行出现错误
+        if (FileGrep(SRCDIR^&#39;dbstatus.txt&#39;, &#39;ORA-&#39;, svLine, nIndex, RESTART) = 0) then
+            sMsg = &#34;更新数据库出错，点“是”打开日志文件并退出安装，点“否”直接退出安装。\n&#34;;
+            sMsg = sMsg+&#34;若错误可忽略，可选择数据库类型“none”以跳过数据库更新并直接更新程序，\n&#34;;
+            sMsg = sMsg+&#34;然后在数据库中手工执行SQL脚本（安装后保存在script目录下）&#34;;
+            nResult = AskYesNo(sMsg, YES);
+            if (nResult = YES) then
+                LaunchApp(WINSYSDIR^&#39;notepad.exe&#39;, SRCDIR^&#39;dbstatus.txt&#39;);
+            endif;                   
+            abort;
+        endif;
+    else
+        sMsg = &#34;更新数据库出错，点“是”打开日志文件并退出安装，点“否”直接退出安装。\n&#34;;
+        sMsg = sMsg+&#34;若错误可忽略，可选择数据库类型“none”以跳过数据库更新并直接更新程序，\n&#34;;
+        sMsg = sMsg+&#34;然后在数据库中手工执行SQL脚本（安装后保存在script目录下）&#34;;
+        nResult = AskYesNo(sMsg, YES);
+        if (nResult = YES) then
+            LaunchApp(WINSYSDIR^&#39;notepad.exe&#39;, SRCDIR^&#39;dbstatus.txt&#39;);
+        endif;                   
+        abort;
+    endif;
+end;
+</code></pre></td></tr></table>
 </div>
- <!-- by blair add 160724-->
-    
+</div><h2>总结</h2>
+<ol>
+	<li>为便于获取脚本在数据库中的执行结果，故通过官方客户端执行脚本时通过符号“<strong>></strong>”将客户端的输出信息重定向到<strong>dbstatus.txt</strong>中；同时，使用“<strong>2>&1</strong>”将标准错误输出重定向到标准输出设备上，当然，会进一步重定向到dbstatus.txt文件中，否则，无法获取出错信息。</li>
+	<li>sqlplus执行SQL脚本后不会自动退出，故应在Oracle的脚本后加上语句“<strong>exit;</strong>”。</li>
+	<li>重载<strong>OnSQLComponentInstalled()</strong>函数，并在其中禁止MySQL和Oracle的SQL脚本对应的Component被执行安装，然后通过以上两个函数更新数据库。</li>
+</ol>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2020-06-17&nbsp;<a class="git-hash" href="https://github.com/dillonzq/LoveIt/commit/b6b131fb549d1c33b519bbe9910a7c0b426257fd" target="_blank" title="commit by Donie Leigh(donie.leigh@gmail.com) b6b131fb549d1c33b519bbe9910a7c0b426257fd: URL地址改为用slug生成；为所有文章追加slug matter">
+                                    <i class="fas fa-hashtag fa-fw"></i>b6b131fb</a></span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/post/howto-run-sql-scripts-in-mysql-oracle-within-installshield/index.md" target="_blank">阅读原始文档</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="http://0x3f.org/post/howto-run-sql-scripts-in-mysql-oracle-within-installshield/" data-title="InstallShield在MySQL和Oracle中执行SQL脚本的方法" data-hashtags="InstallShield,MySQL,oracle,SQL,安装,客户端,数据库,编程"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="http://0x3f.org/post/howto-run-sql-scripts-in-mysql-oracle-within-installshield/" data-hashtag="InstallShield"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="http://0x3f.org/post/howto-run-sql-scripts-in-mysql-oracle-within-installshield/" data-title="InstallShield在MySQL和Oracle中执行SQL脚本的方法"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="http://0x3f.org/post/howto-run-sql-scripts-in-mysql-oracle-within-installshield/" data-title="InstallShield在MySQL和Oracle中执行SQL脚本的方法"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="http://0x3f.org/post/howto-run-sql-scripts-in-mysql-oracle-within-installshield/" data-title="InstallShield在MySQL和Oracle中执行SQL脚本的方法"><i class="fab fa-weibo fa-fw"></i></a></span>
+            </div>
+        </div>
     </div>
-    
-      <div class="article-toc">
-        <h3>Contents</h3>
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-text">简述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-text">MySQL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-text">Oracle</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-text">总结</span></a></li></ol>
-      </div>
-    
-    
-      <footer class="article-footer">
-        <!-- <div class="well" style="width:100px; height:30px;"></div>  by blair-->
-        
- <!-- by blair add 160724-->
-        <!--
-        <div style="width:100px; height:30px;"></div> by blair add 160724
-        -->
-        
-  <div class="article-tag">
-    <a class="article-tag-link" href="/tags/installshield/">InstallShield</a><span></span><a class="article-tag-link" href="/tags/mysql/">MySQL</a><span></span><a class="article-tag-link" href="/tags/sql/">SQL</a><span></span><a class="article-tag-link" href="/tags/oracle/">oracle</a><span></span><a class="article-tag-link" href="/tags/安装/">安装</a><span></span><a class="article-tag-link" href="/tags/客户端/">客户端</a><span></span><a class="article-tag-link" href="/tags/数据库/">数据库</a><span></span><a class="article-tag-link" href="/tags/编程/">编程</a>
-  </div>
 
-
-      </footer>
-    
-  </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/post/howto-auto-maximize-gvim-at-startup/" id="article-nav-newer" class="article-nav-link-wrap">
-      <div class="article-nav-title"><span>&lt;</span>&nbsp;
-        
-          启动GVim时自动最大化窗口的方法
-        
-      </div>
-    </a>
-  
-  
-    <a href="/post/howto-make-thinkpad-mute-button-detected-on-linux/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">使Thinkpad的静音按钮能被识别的方法&nbsp;<span>&gt;</span></div>
-    </a>
-  
-</nav>
-
-  
-</article>
-
-<section id="comments">
-  <div id="disqus_thread">
-    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-  </div>
-</section>
-
-</section>
-    <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2020 晴耕雨讀&nbsp;
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/52binge/hexo-theme-blairos">blairos</a>
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/installshield/">InstallShield</a>,&nbsp;<a href="/tags/mysql/">MySQL</a>,&nbsp;<a href="/tags/oracle/">oracle</a>,&nbsp;<a href="/tags/sql/">SQL</a>,&nbsp;<a href="/tags/%E5%AE%89%E8%A3%85/">安装</a>,&nbsp;<a href="/tags/%E5%AE%A2%E6%88%B7%E7%AB%AF/">客户端</a>,&nbsp;<a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>,&nbsp;<a href="/tags/%E7%BC%96%E7%A8%8B/">编程</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
     </div>
-  </div>
-</footer>
 
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    extensions: ["tex2jax.js"],
-    jax: ["input/TeX"],
-    tex2jax: {
-      inlineMath: [ ['$','$'], ['\\(','\\)'] ],
-      displayMath: [ ['$$','$$']],
-      processEscapes: true
-    }
-  });
-</script>
-<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML,http://myserver.com/MathJax/config/local/local.js">
-</script>
+    <div class="post-nav"><a href="/post/howto-make-thinkpad-mute-button-detected-on-linux/" class="prev" rel="prev" title="使Thinkpad的静音按钮能被识别的方法"><i class="fas fa-angle-left fa-fw"></i>使Thinkpad的静音按钮能被识别的方法</a>
+            <a href="/post/howto-auto-maximize-gvim-at-startup/" class="next" rel="next" title="启动GVim时自动最大化窗口的方法">启动GVim时自动最大化窗口的方法<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+<div id="comments"><div id="utterances"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://utteranc.es/">Utterances</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.72.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2006 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">淘气</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
 
-    
-<script type="text/javascript"> <!-- add by blair 0724 type=text/javascript -->
-  var disqus_shortname = '0x3f';
-  
-  var disqus_url = 'http://0x3f.org/post/howto-run-sql-scripts-in-mysql-oracle-within-installshield/';
-  
-  (function(){
-    var dsq = document.createElement('script');
-    dsq.type = 'text/javascript';
-    dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
-
-
-<script src="/js/jquery.min.js"></script>
-
-
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
-
-
-<script src="/js/script.js"></script>
-
-  </div>
-</body>
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"utterances":{"darkTheme":"github-dark","issueTerm":"pathname","label":"","lightTheme":"github-light","repo":"xbot/blog-comments"}},"search":{"algoliaAppID":"PASDMWALPK","algoliaIndex":"index.zh-cn","algoliaSearchKey":"b42948e51daaa93df92381c8e2ac0f93","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
 </html>

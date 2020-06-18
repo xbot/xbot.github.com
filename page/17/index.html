@@ -1,1153 +1,172 @@
 <!DOCTYPE html>
-<html>
-<head><meta name="generator" content="Hexo 3.8.0">
-  <meta charset="utf-8">
-  
-  <title>晴耕雨讀</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="晴耕雨讀">
-<meta property="og:url" content="http://0x3f.org/page/17/index.html">
-<meta property="og:site_name" content="晴耕雨讀">
-<meta property="og:locale" content="zh-TW">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="晴耕雨讀">
-  
-  
-    <link rel="icon" href="/favicon.png">
-  
-  <link href="/webfonts/ptserif/main.css" rel="stylesheet" type="text/css">
-  <link href="/webfonts/source-code-pro/main.css" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="/css/style.css">
-  
-<!-- Google Analytics -->
-<script type="text/javascript">
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-ga('create', 'UA-93233020-1', 'auto');
-ga('send', 'pageview');
-
-</script>
-<!-- End Google Analytics -->
-
-
-</head>
-</html>
-<body>
-  <div id="container">
-    <!-- blair add baidu tongji start... @2017.10.03 -->
-<!-- blair add baidu tongji end ! @2017.10.03 -->
-
-<header id="header">
-  <div id="header-outer" class="outer">
-    <div id="header-inner" class="inner">
-      <a id="main-nav-toggle" class="nav-icon" href="javascript:;"></a>
-      <a id="logo" class="logo" href="/"></a>
-      <nav id="main-nav">
-        
-          <a class="main-nav-link" href="/archives">目录</a>
-        
-          <a class="main-nav-link" href="/categories">分类</a>
-        
-          <a class="main-nav-link" href="/tags">标签</a>
-        
-          <a class="main-nav-link" href="https://t.me/s/blingings">不灵</a>
-        
-          <a class="main-nav-link" href="/about">关于</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        <div id="search-form-wrap">
-          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://0x3f.org"></form>
-        </div>
-      </nav>
-    </div>
-  </div>
-</header>
-
-    <br>
-    <section id="main" class="outer">
-      <article id="post-simplify-vim-addon-installation-issues" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/simplify-vim-addon-installation-issues/"><strong>简化Vim Addons Manager安装扩展的操作</strong></a>
-      <small class="article-date-index">&nbsp; 2016-01-20</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/simplify-vim-addon-installation-issues/" class="article-date">
-  <time datetime="2016-01-20T10:05:00.000Z" itemprop="datePublished">2016-01-20</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/simplify-vim-addon-installation-issues/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>相对Sublime的Package Control，VAM安装和卸载扩展的操作很烦琐。以下脚本在安装完扩展后自动注册，无须手工添加到vimrc，另外增加命令:UninstallAddons，从注册表中删除扩展。</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span> runtimepath+=~/.<span class="keyword">vim</span>/addons/<span class="keyword">vim</span>-addon-manager</span><br><span class="line"><span class="keyword">let</span> active_addons = []</span><br><span class="line"><span class="keyword">let</span> <span class="variable">s:vamRegistryFile</span> = <span class="built_in">expand</span>(<span class="string">'~'</span>).<span class="string">'/.vim/vam_registry'</span></span><br><span class="line"><span class="keyword">if</span> <span class="built_in">filereadable</span>(<span class="variable">s:vamRegistryFile</span>)</span><br><span class="line">    <span class="keyword">let</span> active_addons += <span class="built_in">readfile</span>(<span class="variable">s:vamRegistryFile</span>)</span><br><span class="line"><span class="keyword">endif</span></span><br><span class="line"><span class="keyword">call</span> vam#ActivateAddons(active_addons)</span><br><span class="line"><span class="comment">" Addon post-install hook.</span></span><br><span class="line">fun! MyAddonPostActivateHook(info, repository, pluginDir, opts)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">filereadable</span>(<span class="variable">s:vamRegistryFile</span>)</span><br><span class="line">        <span class="keyword">let</span> regLines = <span class="built_in">readfile</span>(<span class="variable">s:vamRegistryFile</span>)</span><br><span class="line">        <span class="keyword">call</span> <span class="built_in">add</span>(regLines, <span class="variable">a:repository</span>.name)</span><br><span class="line">        <span class="keyword">call</span> <span class="keyword">sort</span>(regLines)</span><br><span class="line">        <span class="keyword">call</span> uniq(regLines)</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">let</span> regLines = [<span class="variable">a:repository</span>.name]</span><br><span class="line">    <span class="keyword">endif</span></span><br><span class="line">    <span class="keyword">call</span> <span class="built_in">writefile</span>(regLines, <span class="variable">s:vamRegistryFile</span>)</span><br><span class="line">endfun</span><br><span class="line"><span class="keyword">let</span> <span class="variable">g:vim_addon_manager</span>.post_install_hook_functions = [<span class="string">'MyAddonPostActivateHook'</span>]</span><br><span class="line"><span class="comment">" Complete the addon name.</span></span><br><span class="line">fun! MyDoActivatedAddonsCompete(...)</span><br><span class="line">    <span class="keyword">let</span> fullList = <span class="built_in">keys</span>(<span class="variable">g:vim_addon_manager</span>.activated_plugins)</span><br><span class="line">    <span class="keyword">call</span> <span class="built_in">filter</span>(fullList, <span class="string">'v:val =~ ".*'</span>.<span class="variable">a:1</span>.<span class="string">'.*"'</span>)</span><br><span class="line">    <span class="keyword">return</span> fullList</span><br><span class="line">endfun</span><br><span class="line"><span class="comment">" Remove records of addons from the registry.</span></span><br><span class="line">fun! MyUninstallAddons(...)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">filereadable</span>(<span class="variable">s:vamRegistryFile</span>)</span><br><span class="line">        <span class="keyword">let</span> regLines = <span class="built_in">readfile</span>(<span class="variable">s:vamRegistryFile</span>)</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"Registry is empty."</span></span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    <span class="keyword">endif</span></span><br><span class="line">    <span class="keyword">for</span> addonName in <span class="variable">a:000</span></span><br><span class="line">        <span class="keyword">let</span> idx = <span class="built_in">index</span>(regLines, addonName)</span><br><span class="line">        <span class="keyword">if</span> idx &gt;= <span class="number">0</span></span><br><span class="line">            <span class="keyword">call</span> <span class="built_in">remove</span>(regLines, idx)</span><br><span class="line">            <span class="keyword">echo</span> addonName.<span class="string">' is removed from the registry.'</span></span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">echo</span> addonName.<span class="string">' cannot be found in the registry.'</span></span><br><span class="line">        <span class="keyword">endif</span></span><br><span class="line">    <span class="keyword">endfor</span></span><br><span class="line">    <span class="keyword">call</span> <span class="built_in">writefile</span>(regLines, <span class="variable">s:vamRegistryFile</span>)</span><br><span class="line">endfun</span><br><span class="line">command! -<span class="built_in">complete</span>=customlist,MyDoActivatedAddonsCompete -nargs=* UninstallAddons :<span class="keyword">call</span> MyUninstallAddons(<span class="symbol">&lt;f-args&gt;</span>)</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-chrome-extension-biubiu" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/chrome-extension-biubiu/"><strong>BiuBiu: A Chrome Extension Blocking AJAX Requests</strong></a>
-      <small class="article-date-index">&nbsp; 2015-12-31</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/chrome-extension-biubiu/" class="article-date">
-  <time datetime="2015-12-31T06:19:00.000Z" itemprop="datePublished">2015-12-31</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/chrome-extension-biubiu/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="BiuBiu"><a href="#BiuBiu" class="headerlink" title="BiuBiu"></a>BiuBiu</h1><p><strong>BiuBiu</strong> is an extension for Google Chrome Browser which intends to make life easier for debugging and profiling.</p>
-<p>For now, it only blocks AJAX requests made by JQuery, more features may be added in the future.</p>
-<h2 id="Features"><a href="#Features" class="headerlink" title="Features"></a>Features</h2><ul>
-<li>Toggle to enable or disable BiuBiu.</li>
-<li>Block requests made by JQuery by URL.</li>
-</ul>
-<h2 id="Author"><a href="#Author" class="headerlink" title="Author"></a>Author</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Donie Leigh &lt;donie.leigh at gmail.com&gt;</span><br></pre></td></tr></table></figure>
-<h2 id="Links"><a href="#Links" class="headerlink" title="Links"></a>Links</h2><ul>
-<li>Project:      <a href="https://github.com/xbot/chrome-biubiu" target="_blank" rel="noopener">https://github.com/xbot/chrome-biubiu</a></li>
-</ul>
-<h2 id="FAQ"><a href="#FAQ" class="headerlink" title="FAQ"></a>FAQ</h2><ul>
-<li><strong>–</strong><ul>
-<li>–</li>
-</ul>
-</li>
-</ul>
-<h2 id="Change-Log"><a href="#Change-Log" class="headerlink" title="Change Log"></a>Change Log</h2><p><strong>version 1.0.1 (2015-12-31)</strong></p>
-<ul>
-<li>Fix the complaining when there is no jQuery or jQuery.cookie.js loaded in the injected page.</li>
-</ul>
-<p><strong>version 1.0.0 (2015-12-30)</strong></p>
-<ul>
-<li>Initial release.</li>
-</ul>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-after-reading-zuo-zhuan" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/after-reading-zuo-zhuan/"><strong>读完《春秋左传注》</strong></a>
-      <small class="article-date-index">&nbsp; 2015-11-15</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/after-reading-zuo-zhuan/" class="article-date">
-  <time datetime="2015-11-15T10:24:00.000Z" itemprop="datePublished">2015-11-15</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/青梅煮酒/">青梅煮酒</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/after-reading-zuo-zhuan/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <img src="http://pic.yupoo.com/leninlee/F6y8YsUg/medish.jpg">
-<p>读这本书，用了一年时间。前面读《通鉴》，用了四年，平均一年五本书的节奏，读尽相斫书的伟大理想不知道这辈子能不能实现了。汉以后的书都好读，也不一定。</p>
-<p>总结一下，主要有两个心得吧。一个是梳理了一下春秋的脉络，把以前知道的片断都连了起来，抓住“蛮夷与戎狄交，中国不绝若线”的大背景，整个春秋时代大家都忙啥呢就清楚了，然后分成三段看，齐桓始霸、晋楚争霸、吴越争霸，比从五巨头切入清晰。第二个是加深了对礼乐文化的认识，贵族时代干啥都跟闹著玩似的，反映出我们屌丝的世界太低俗，整本《诗经》就是贵族圈的黑话，搞得我老想叉开去读《诗经原始》，剁手剁手，不然更看不完了。</p>
-<p>读《通鉴》算是用通史贯穿一下脉络，《左传》是第一本读完的断代史，本来想接著读《战国策》，看了一眼，文章写得太烂，又是纵横家的书，所以直接读《史记》，司马迁的小说写得还是不错的，迁儿哥，我来了！</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-a-trip-to-tongwan-city" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/a-trip-to-tongwan-city/"><strong>寻找失落的匈奴（201409）</strong></a>
-      <small class="article-date-index">&nbsp; 2015-08-20</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/a-trip-to-tongwan-city/" class="article-date">
-  <time datetime="2015-08-20T15:07:00.000Z" itemprop="datePublished">2015-08-20</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/行见/">行见</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/a-trip-to-tongwan-city/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="行程"><a href="#行程" class="headerlink" title="行程"></a>行程</h2><img src="http://pic.yupoo.com/leninlee/ETlvkFOn/medish.jpg">
-<h2 id="D1-AM-失落的匈奴"><a href="#D1-AM-失落的匈奴" class="headerlink" title="D1.AM 失落的匈奴"></a>D1.AM 失落的匈奴</h2><p>匈奴是中国统一后的第一个大敌，极盛时号称控弦四十万，以至于汉武帝穷高、文、景三代积蓄，鏖战数十年，延及元帝，郅支授首，才终于换来一句“犯强汉者，虽远必诛”。</p>
-<p>东汉招引外族入居内地，想同化并加以利用，至于魏晋，欺压各族，又不加防备。</p>
-<p>西晋初年，由封建制的复兴导致的八王之乱，纷纭十六年，耗尽了皇族势力。被压制已久的民族矛盾于是爆发，匈奴、鲜卑、羯、氐、羌五族先后建立十六个国家，混战一百三十多年，史称五胡十六国。</p>
-<p>其中，匈奴铁弗部赫连勃勃建立大夏国，横行秦晋，役民十万蒸土筑城，号统万城。蒸土就是在土中混入生石灰，然后浇水夯筑，所以城墙是白色的，当地人至今都叫白城子。筑城要求极为严格，工程验收人以铁锥刺墙，刺入一寸杀筑者，尸体填入城墙，所以城墙极为坚固，是夯土建筑的巅峰之作。后来北魏太武帝拓跋焘灭夏入城，说“统驭万邦，在德不在险”。</p>
-<p>统万城遗址在陕西靖边。我喜欢去这种没有被过度商业化开发的地方，再过几年，也许就再也见不到这种荒草孤城的景象了。</p>
-<p>早上四点火车到站，车站门口有很多黑车，会漫天要价，事先做好功课就不会被宰，议定一百五，要说明白包往返，到地方等两个小时。</p>
-<p>路上停车吃洋芋擦擦，就是炒土豆丝……</p>
-<p>火车站到统万城大概三十公里，所以不会用太长时间，五点多到的时候，天还没有亮，这个时候没人收费，可以直接开进去。</p>
-<p>天色微亮，从停车场走向统万城还是条土路。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvl0fd/medish.jpg">
-<p>遗址正在进行小规模的修复。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvllZw/medish.jpg">
-<p>城墩填充的外表被刻画成砖的样子，而夯土建筑的轮廓应该是一层一层的。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvm6r1/medish.jpg">
-<p>像这样：</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvldId/medish.jpg">
-<p>走在质地坚硬的城墙上，可以想象当年它曾是怎样的坚不可摧。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvkzhJ/medish.jpg">
-<p>凸出的城墩和城墙形成有纵深的防御体系，可以分割敌人的阵形，将攻城者置于被三面夹击的死地。残存的城墙尚且这么高，不知道当年是如何雄伟的一座城！</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvlIDl/medish.jpg">
-<p>荒原晨露，日出统万。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvlUtR/medish.jpg">
-<p>沿着小路走向城中的高台，沙深露重，很不好走。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvmi41/medish.jpg">
-<p>土墩离外城城门不远，可能是内城的一部分。高处的洞里，栖满了野鸽子。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvnx9o/medish.jpg">
-<p>城的中部，据说是宫殿遗址。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvmz3v/medish.jpg">
-<p>城北一处正在发掘的现场。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvn3QQ/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ETlvneNw/medish.jpg">
-<p>北角的城墩，淹没在一望无际的荒草中。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvmaU4/medish.jpg">
-<p>我在这里休息，读完了《晋书·赫连勃勃载记》。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvmzWn/medish.jpg">
-<p>东角的城墩已经破坏得快消失了。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvnUug/medish.jpg">
-<p>回望城内。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvnwvY/medish.jpg">
-<p>东南城墙已经快消失在荒草中了。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvoha5/medish.jpg">
-<p>南角墩曾被挖做窑洞。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvo0as/medish.jpg">
-<p>只有西角残存的遗迹最完整。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvokDG/medish.jpg">
-<p>因为去得早，而且遗址少有人去，所以整个早上只有我一个人，不紧不慢地走遍全城，用了三个小时，好在司机没有催我，如果能带着帐篷来这里扎营，重读通鉴永嘉南渡后三百年的烽火狼烟，一定很刺激，不过可能再也没有机会了。</p>
-<h2 id="D1-PM-龙洲丹霞（波浪谷）"><a href="#D1-PM-龙洲丹霞（波浪谷）" class="headerlink" title="D1.PM 龙洲丹霞（波浪谷）"></a>D1.PM 龙洲丹霞（波浪谷）</h2><p>从统万城出来，时间还很早，上车直奔龙洲丹霞，车上议价，往返加等待，100￥。</p>
-<p>路上还有一段长城的遗迹，只剩下垄起的一条痕迹，可能是汉长城。</p>
-<p>景区已经修了观景台和公路，不过还没有收费。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvowH1/medish.jpg">
-<p>看这个就知道为什么叫波浪谷了。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvp1kO/medish.jpg">
-<p>下面是深沟，岩石表面是风化的沙土，走在上面很惊险。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvoS6y/medish.jpg">
-<p>靖边有石油，能看到远方油井喷出的火。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvqhys/medish.jpg">
-<p>其它地方见到的丹霞都是在地上的，这里是在地下，要从公路边的野路下去，所以找个知道路口在哪的司机很重要。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvq1Sq/medish.jpg">
-<p>有的小路不好走，只能手脚屁股并用。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvpYcF/medish.jpg">
-<p>下到谷底。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvqTNE/medish.jpg">
-<p>很美，真的很美。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvqwT5/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ETlvqRVU/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ETlvp0fP/medish.jpg">
-<p>中间有一段很窄，一只脚都插不下。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvppGC/medish.jpg">
-<p>像什么，我当时自然地想到了大地的菊花……</p>
-<img src="http://pic.yupoo.com/leninlee/ETlGojMj/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ETlvrgBL/medish.jpg">
-<p>下面这一段更难走，顺着沟再往前是悬崖，只能从左手边的崖壁上绕过去。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvrlX1/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ETlGoHDJ/medish.jpg">
-<p>这段很危险，旁边就是悬崖，石头风化严重，我爬得很慢、很纠结。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvs9ZP/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ETlvrYAG/medish.jpg">
-<p>过了这段就好了，前面谷底别有洞天。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvrONj/medish.jpg">
-<p>谷里的水是从这个谷口里流出来的，水源是人工的，源头有只死猫，恶心死我了，因为溯源前用溪水洗了手，还挺凉。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvsKX6/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ETlvrUMx/medish.jpg">
-<p>前面这个山包就是传说中的土匪窝，山体已经被挖空了，在前朝是土匪的藏身之地。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvsE3G/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ETlvt6sj/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ETlvtMsZ/medish.jpg">
-<p>谷底再多些草和野花就好了。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvsscy/medish.jpg">
-<p>水流经过的地方倒是水草丰茂。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvtlmg/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ETlIKtOw/medish.jpg">
-<p>土匪窝下的人工湖可以坐船。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvsR2E/medish.jpg">
-<p>从土匪窝旁的土路上到公路路口就很容易了，在路口吃了碗荞麦凉粉，挺好吃的。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvtGnC/medish.jpg">
-<p>波浪谷不大，不过确实很漂亮，据说雨后初晴时来更好看，丹霞会呈现通红的颜色。由于野路不好走，而且我慢慢玩儿、拍照多，用了大概三个小时。</p>
-<p>大概下午两三点的样子，时间还早，所以让司机把我拉到县城里的电影院，看了场《猩球崛起2》，小县城因为有石油，居然就可以看3D，而且是眼镜夹片，真是我大四眼党的福音，比3D眼镜舒服多了。只是小县城的影院不打折，于是看了自《阿凡达》以来最贵的电影。</p>
-<p>看完电影，步行去之前司机推荐的“乔沟湾老婆风干羊肉剁荞面”馆吃剁荞面（23￥），离电影院不远。然后就酱紫了：</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvtBhT/medish.jpg">
-<p>没想到吃面可以这么铺张，不知道从哪开始发动，恬着脸问了服务员，吃得好爽，也很撑。</p>
-<p>出门边散步边打车，时间还早，慢慢讲价，这小县城的出租车死贵，到火车站没多远，要价20￥，后来终于找到一个15￥的。</p>
-<h2 id="D2-AM-晋祠"><a href="#D2-AM-晋祠" class="headerlink" title="D2.AM 晋祠"></a>D2.AM 晋祠</h2><p>一夜火车，早上4点到太原，在车站门口等804路公交到晋祠，大概七点多到的。</p>
-<p>相机没电了，只拍了这一张。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvtVHg/medish.jpg">
-<p>剩下的只能用手机拍了，效果很差。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvwPIY/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ETlvtNYd/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ETlvu01W/medish.jpg">
-<p>李世民和其功臣塑像。李唐以国号始自周成王弟叔虞所封的唐国，所以大修晋祠。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvuLH2/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ETlvuUUF/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ETlvvA8n/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ETlvvBmv/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ETlvw9kh/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ETlvvREf/medish.jpg">
-<p>难老泉，就是奔它来的。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvvVYc/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ETlvwFRj/medish.jpg">
-<p>从晋祠出来大概十一点，吃完饭坐公交到山西博物馆。</p>
-<h2 id="D2-PM-山西省博物馆"><a href="#D2-PM-山西省博物馆" class="headerlink" title="D2.PM 山西省博物馆"></a>D2.PM 山西省博物馆</h2><p>博物馆最能看出一个地方的底蕴。山西省博在国内算是一流的，不可不看。</p>
-<img src="http://pic.yupoo.com/leninlee/ETlvx7uj/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ETlvwyIr/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ETlvx5rY/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ETlvxxJF/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ETlvy3x5/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ETlvywg6/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ETlvywQE/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ETlvxWKX/medish.jpg">
-<p>山西省博东西很多，走马观花也没看完，到闭馆时还有一个展厅没看。</p>
-<p>出门打车奔火车站，差一点没赶上高铁。</p>
-<h2 id="费用"><a href="#费用" class="headerlink" title="费用"></a>费用</h2><p>火车：北京到靖边215￥，靖边到太原114.5￥，太原到北京197￥<br>包车：靖边250￥<br>打车：靖边县城到火车站15￥，山西省博到火车南站35￥<br>公交：太原火车站到晋祠2.5￥，晋祠到山西省博2.5￥<br>门票：晋祠75￥<br>导游：山西省博自动讲解器10￥<br>旅游保险：3￥  </p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-a-drive-to-jimingyi-and-caoyantianlu" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/a-drive-to-jimingyi-and-caoyantianlu/"><strong>自驾鸡鸣驿、草沿天路（201507）</strong></a>
-      <small class="article-date-index">&nbsp; 2015-08-12</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/a-drive-to-jimingyi-and-caoyantianlu/" class="article-date">
-  <time datetime="2015-08-12T13:05:00.000Z" itemprop="datePublished">2015-08-12</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/行见/">行见</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/a-drive-to-jimingyi-and-caoyantianlu/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="行程"><a href="#行程" class="headerlink" title="行程"></a>行程</h2><p>D1：上午，北京到怀来，土木之变战场遗址和鸡鸣驿；下午，宣化，清远楼、镇朔楼、时恩寺、辽代古墓壁画群。</p>
-<p>D2：草沿天路，张北野狐岭入，崇礼桦皮岭出。</p>
-<img src="http://pic.yupoo.com/leninlee/ES7gAVZI/medish.jpg">
-<h2 id="D1-AM-土木堡、鸡鸣驿"><a href="#D1-AM-土木堡、鸡鸣驿" class="headerlink" title="D1.AM 土木堡、鸡鸣驿"></a>D1.AM 土木堡、鸡鸣驿</h2><p>虽然起得很早，上京藏线也七点多了，赶上草原音乐节，出城的车巨多，在居庸关前面一段堵了半小时。</p>
-<p>到土木堡的时候已经十点多了，唯一的标志物就是这个路边的牌楼。</p>
-<img src="http://pic.yupoo.com/leninlee/ES79NHiK/medish.jpg">
-<p>里面是一片荒地，可能是土木之变的战场遗址。当年一战，二十万大军覆没，大明精锐尽丧，英宗北狩，瓦剌围城。可惜于谦，打赢了北京保卫战，却输掉了夺门之变。所以老子说：“持而盈之，不若其已。揣而群之，不可长保也。金玉盈室，莫能守也。富贵而骄，自遗咎也。功遂身退，天之道也。”，实在是金玉良言，不过知进易，知退难，几千年来，有几个张良？</p>
-<img src="http://pic.yupoo.com/leninlee/ES79OfPX/medish.jpg">
-<p>数百年的烽火狼烟，劫波度尽，谁能想到土木堡真正的被毁发生在本朝。路的另一边就是土木村，据说还有土木堡残存的遗迹，时间关系，没有去看。</p>
-<p>事实证明，沿G110奔鸡鸣驿不是个好选择，路况不太好，大货车很多，应该走高速的。</p>
-<p>城门被修成这样也是醉了，我头回见城门口横着一影壁墙的。</p>
-<img src="http://pic.yupoo.com/leninlee/ES79OrNs/medish.jpg">
-<p>反而从城内看城门，才有点儿意思。</p>
-<img src="http://pic.yupoo.com/leninlee/ES79RCp8/medish.jpg">
-<p>城门口的塑像，后面是驿城博物馆，主要介绍一下驿城的历史。</p>
-<img src="http://pic.yupoo.com/leninlee/ES79R7Ys/medish.jpg">
-<p>城门要远看才有意境。</p>
-<img src="http://pic.yupoo.com/leninlee/ES79Pjev/medish.jpg">
-<p>城中主干道旁的戏台，其它地方还有两个，小小的驿城，修那么多戏台干嘛，规划有问题。</p>
-<img src="http://pic.yupoo.com/leninlee/ES7gBfya/medish.jpg">
-<p>多久没见这种风格的房子了。</p>
-<img src="http://pic.yupoo.com/leninlee/ES79PQg2/medish.jpg">
-<p>驿城署，现在是一家人的住处，可以进去参观，有人剪票，不过里面什么都没有。</p>
-<img src="http://pic.yupoo.com/leninlee/ES79PEKD/medish.jpg">
-<p>文昌宫，当年是驿城的学校。</p>
-<img src="http://pic.yupoo.com/leninlee/ES7gBzkj/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ES7gCefk/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ES7gCA3P/medish.jpg">
-<p>晴耕雨读，用的残体字……</p>
-<img src="http://pic.yupoo.com/leninlee/ES79QVTE/medish.jpg">
-<p>龙神庙里也有个戏台，得是多喜欢看戏！</p>
-<img src="http://pic.yupoo.com/leninlee/ES7gCYi2/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ES7gCPGw/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ES7gDp9U/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ES7gDFPM/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ES7gDWvv/medish.jpg">
-<p>范家大院，庚子国变慈禧逃跑时曾在这住了一宿，现在也就剩这么一进。敢向全世界宣战的只有两个人，一个是天朝圣母皇太后，一个是巴格达迪。</p>
-<img src="http://pic.yupoo.com/leninlee/ES79Rc4U/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ES79WPrE/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ES79X088/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ES79Y5Dx/medish.jpg">
-<p>伏瞰驿城，怀疑原来真有这么大么，似乎和西夏黑水城和统万城差不多。</p>
-<img src="http://pic.yupoo.com/leninlee/ES79RmQX/medish.jpg">
-<p>坐在城头等日落。</p>
-<img src="http://pic.yupoo.com/leninlee/ES79VLis/medish.jpg">
-<p>我怀疑这城墙是做旧，明朝以后，大多数城墙已经换用砖石结构，应该不会用这种过时的夯土建筑了吧。</p>
-<img src="http://pic.yupoo.com/leninlee/ES7gER7v/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ES79VdOs/medish.jpg">
-<p>城外的鸡鸣山形态突兀，很显眼，如果是下雨的天气，真有“风雨如晦，鸡鸣不已”的感觉。</p>
-<img src="http://pic.yupoo.com/leninlee/ES79UKXP/medish.jpg">
-<p>城外不知道为什么弄了几截绿皮火车，很不搭。</p>
-<img src="http://pic.yupoo.com/leninlee/ES7gEvHp/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ES7gEU73/medish.jpg">
-<h2 id="D1-PM-宣化古城、辽代古墓壁画"><a href="#D1-PM-宣化古城、辽代古墓壁画" class="headerlink" title="D1.PM 宣化古城、辽代古墓壁画"></a>D1.PM 宣化古城、辽代古墓壁画</h2><p>从鸡鸣驿出来奔宣化，三点多到，吃莜面窝窝，又叫栲姥姥，据说是当地特色，在电视上见过。蘸着羊肉臊子，味道很不错。</p>
-<img src="http://pic.yupoo.com/leninlee/ES79W3Md/medish.jpg">
-<p>清远楼和镇朔楼是宣化古城的标志性建筑，始建于明朝，气势恢宏，不可不看。</p>
-<p>清远楼是钟楼，在维修。</p>
-<img src="http://pic.yupoo.com/leninlee/ES7gFvcj/medish.jpg">
-<p>镇朔楼是鼓楼，门票5￥，我包场。</p>
-<img src="http://pic.yupoo.com/leninlee/ES79Yayj/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ES7r6M4C/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ES79YOt6/medish.jpg">
-<p>一层是个展厅，居然是介绍宣化当代发展的。</p>
-<img src="http://pic.yupoo.com/leninlee/ES79YHMf/medish.jpg">
-<p>二楼很空，只有一面大鼓。</p>
-<img src="http://pic.yupoo.com/leninlee/ES79Zcoi/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ES79ZiWR/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ES7a0AYT/medish.jpg">
-<p>楼外就是时恩寺。</p>
-<img src="http://pic.yupoo.com/leninlee/ES7a08uO/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ES7gFREm/medish.jpg">
-<p>殿里正在做法事，很多人，顺时针转圈，口宣佛号，净土宗的路子。</p>
-<img src="http://pic.yupoo.com/leninlee/ES7gGaE0/medish.jpg">
-<p>就是奔这块匾来的。</p>
-<img src="http://pic.yupoo.com/leninlee/ES7a0XW9/medish.jpg">
-<p>从寺里出来，开始下雨，赶紧钻到车里，奔辽代古墓壁画群，路经大新门，这是一排新修的城墙，今天已经逛够城墙了，时间也不够，于是继续赶路。</p>
-<img src="http://pic.yupoo.com/leninlee/ES7a1k6d/medish.jpg">
-<p>穿过又窄又烂的土路，深入下八里村，就是辽代古墓壁画群，如果不是导航，谁能找到这鬼地方。时间已经是5点后，售票处没有人，墓道锁门了，只能看看园子，看售票处的标价，票价要50￥，比满城汉墓黑多了。不过这种地方游人很少，即便白天来，一个人逛古墓是一种什么样的体验？或者如何优雅的和古人神交？这是知乎看多了。</p>
-<img src="http://pic.yupoo.com/leninlee/ES7a1M1A/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ES7a23ZR/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ES7a2s5y/medish.jpg">
-<h2 id="D2-草沿天路"><a href="#D2-草沿天路" class="headerlink" title="D2 草沿天路"></a>D2 草沿天路</h2><p>第二天，早五点起床，奔天路东线，从张北野狐岭入，崇礼桦皮岭出。</p>
-<p>现在这条路知名度越来越高，来的人很多，七点多到的时候，野狐岭入口的一段路，车就已经一辆接一辆了。路的两边越来越多地被开发旅游项目，中国旅游模式正在再次被复制，草原旅游就那么几项，烧烤、骑马、射箭、沙滩摩托，毫无新意，而且同质化严重。使天路出名的原生态自然风光，正在慢慢消退。</p>
-<img src="http://pic.yupoo.com/leninlee/ES7vTfpz/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ES7vTwgv/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ES7vUvJX/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ES7vU4nm/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ES7vVHt6/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ES7vUJir/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ES7vVhWb/medish.jpg">
-<h2 id="费用"><a href="#费用" class="headerlink" title="费用"></a>费用</h2><p>北京到宣化过路费：65￥<br>鸡鸣驿门票：35￥<br>镇朔楼门票：5￥<br>宣化经天路回北京过路费：120￥<br>加油：416￥  </p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-tf-m4-leader-class-bumble-bee" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/tf-m4-leader-class-bumble-bee/"><strong>变形金刚：电影4领袖级大黄蜂</strong></a>
-      <small class="article-date-index">&nbsp; 2015-08-01</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/tf-m4-leader-class-bumble-bee/" class="article-date">
-  <time datetime="2015-08-01T10:30:00.000Z" itemprop="datePublished">2015-08-01</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/青梅煮酒/">青梅煮酒</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/tf-m4-leader-class-bumble-bee/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>当电影2那堆玩具已经成为神物，入个4的L级大黄蜂也未尝不是一种自我安慰。</p>
-<p>电影4的L级BB是3的同模异涂，但是阉割了武器背包，也就是说，这货没有声光效果！虽然3的背包很鸡肋，但是本著先看有没有，再看好不好的原则，4的玩具再一次见证了大缩水时代，我不敢想下一代会做成什么样。多么怀念那个连D级玩具都远超现在L级的时代。</p>
-<img src="http://pic.yupoo.com/leninlee/ER427t8F/medish.jpg">
-<p>虽然电影2的U级和战刃是公认最经典的BB模具，退而求其次，3的模具也不错。人形很有层次感和曲线感。涂装较3有改进的地方，黑色部件的引入增强了色彩对比，比3的非灰即黄要好很多；最大的亮点是脸和触角的银柒涂装，3的灰脸看著像骷髅头，很恐怖。不过退步和进步一样明显，首先面具改成了V形描边，远不如之前的面部横描好看，现在一点都不想把面具拉下来了；此外，脚尖没有涂色也是个败笔。</p>
-<img src="http://pic.yupoo.com/leninlee/ER428In6/medish.jpg">
-<p>头雕的细节刻画不错，还是BB一贯的嗪奶嘴的骷髅头，面具的涂装也很差，银柒涂装是唯一能挽回点儿颜面的地方。</p>
-<img src="http://pic.yupoo.com/leninlee/ER428Z3G/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/ER429Aqn/medish.jpg">
-<p>手臂采用非对称设计，右手手炮，左手是个半假手，只有大拇指可动，什么都握不住，只是个摆设，看看当年电影2的D级的战刃，完全不能比啊。</p>
-<img src="http://pic.yupoo.com/leninlee/ER428D01/medish.jpg">
-<p>脚的设计很漂亮，不过虽然看起来支撑面很大，但由于踝关节不可左右摆动，导致接地性不好。</p>
-<img src="http://pic.yupoo.com/leninlee/ER429gLn/medish.jpg">
-<p>所有BB模具都不能解决的大背包，现在似乎已经成为BB的特征了，好吧，即便接受这一点，这一整块棺材板好意思跟战刃的两级背板比么？</p>
-<p>关节的松紧度没有问题，可动性也不错，不过腰部不能转，头部只能左右转，不能抬头、低头。</p>
-<p>武器就是右手手炮，这货没有任何配件，如果说噱头的话，也就是手炮可以拉长和缩短，这点连D级玩具都不如啊。</p>
-<p>载具形态也不错，滚动性良好，可以摆出3的武装爆甲的形态，但是武装呢？！</p>
-<p>底部隐藏度一般，似乎电影系所有BB都有头无法隐藏的问题。</p>
-<p>最后放一张3的武装爆甲照，缅怀BB入宫前的峥嵘岁月。</p>
-<img src="http://pic.yupoo.com/leninlee/ER44HJDK/medish.jpg">
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-a-drive-to-baishi-mountain-and-a-kings-tomb-of-han" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/a-drive-to-baishi-mountain-and-a-kings-tomb-of-han/"><strong>自驾白石山、满城汉墓（201507）</strong></a>
-      <small class="article-date-index">&nbsp; 2015-07-29</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/a-drive-to-baishi-mountain-and-a-kings-tomb-of-han/" class="article-date">
-  <time datetime="2015-07-29T12:15:00.000Z" itemprop="datePublished">2015-07-29</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/行见/">行见</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/a-drive-to-baishi-mountain-and-a-kings-tomb-of-han/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="行程"><a href="#行程" class="headerlink" title="行程"></a>行程</h2><p>D1：北京到白石山，爬山，到满城住宿。<br>D2：看满城汉墓，回京。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZaPbLj/medish.jpg">
-<h2 id="D1-白石山"><a href="#D1-白石山" class="headerlink" title="D1 白石山"></a>D1 白石山</h2><p>原计划早上6点出发，该死的拖延症，收拾东西花了点时间，七点多才走。</p>
-<p>途径南六环、京石高速、廊涿高速、张石高速。易县以后进入山区，隧道又多又长，本着不超速、不随意变道、做中国好司机的原则，走得比较慢，十点多才到涞源。涞源出口很窄，堵了二十分钟。出高速到景区已经不远了，在东门停车场停好车。</p>
-<p>来前天气预报说有小雨，心说很好啊，我就喜欢下着小雨爬山，所以没带速干帽，结果是个闷热天儿，我去。</p>
-<p>十点四十，出发。我的艺名叫不逃票不舒服斯基，因为走正门太low了。不过逃票要早上四五点走野路，时间紧，任务重，还是low吧。头一天同程订的门票，比现买便宜十块，据说发表评价再退十块。坐摆渡车到祥云门，也可以坐索道。然后顺时针走环线。</p>
-<p>山里大部分路口都是局部路标，带张完整的路线图还是有必要的。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZaP9T6/medish.jpg">
-<p>我对所有以“传说”开头介绍的东西不感冒，总之这个塑像是环线的起点和终点。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZaPQq7/medish.jpg">
-<p>一开始就走下坡，沿着峡壁的栈道下到飞狐峡，这一线主要是峡谷半山的栈道，是全环线最好的一段，我喜欢峡谷。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZaQQZj/medish.jpg">
-<p>飞狐峡走的人少，多数时间太阳不直晒，风吹着，凉快。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZaRttP/medish.jpg">
-<p>我喜欢峡谷。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZaRYSZ/medish.jpg">
-<p>每个山谷都应该有一条河，可惜。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZaSCeW/medish.jpg">
-<p>逆风如解意，容易莫摧残。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZaT6Td/medish.jpg">
-<p>仙人晒靴。不喜欢这种附会的东西。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZaTCqU/medish.jpg">
-<p>太行之神。这货跟神有一毛钱关系么。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZaULWh/medish.jpg">
-<p>好吧，这才是重点，玻璃栈道。一点儿都不吓银，而且很短，而且收费，看我的斯卡帕美不美。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZaV9pl/medish.jpg">
-<p>回望走过的栈道，敢问路在何方。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZaVIyf/medish.jpg">
-<p>过了玻璃栈道就是双雄石，好内涵的名字，剩下的路已经不多了，而且都是平路。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZaW6zQ/medish.jpg">
-<p>猪八戒背媳妇儿。虽然附会，确实比较像，就是这媳妇儿砢碜了点儿。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZaWrFX/medish.jpg">
-<p>走一圈环线用了4个小时。刚下山，到停车场，毫无征兆的一场暴雨，这酸爽，山里的天气真是孩子脸。</p>
-<p>驱车奔满城，走高速要绕很远，于是奔S332，看地图只有一百多公里。结果又干了三个多小时，天落黑才到酒店。</p>
-<p>刚开始的一段路还可以。小公路在太行山里蜿蜒，重山夹路，车少，路况也不错，偶尔掠过几个石筑的村落，甚至有牧人和羊群镶嵌在陡峭的青山上，恍如隔世。</p>
-<p>中间一段路况很差，再往下走，人烟逐渐增多，更多的是成群结队的重卡，很耽误时间，有时候走着走着停了，还以为前面堵车了，哪知道这孙子站路中间嘘嘘呢，知道燕赵民风骠悍，没想到这么骠悍。省道真练技术。</p>
-<h2 id="D2-满城汉墓"><a href="#D2-满城汉墓" class="headerlink" title="D2 满城汉墓"></a>D2 满城汉墓</h2><p>我喜欢破破烂烂的地方，满城汉墓早在我的怨念单里。汉墓十墓九空，唯独这个是极少没被盗过的之一，光这个墓的陪葬，撑起了整个河北省博物馆。另外墓主人很有名，中山靖王，汉景帝庶子，汉武帝异母兄，刘备号称的祖宗。平生三大爱好，喝酒、吃肉、叮叮当当造小人儿。《史记》载其有子百二十人，按照正态分布，女儿也得有百二十人，刘营长辛苦。</p>
-<p>景区大门，我喜欢人少的地方。头一天在同程上订好的园区门票、窦绾墓、刘胜墓的联票，比现买便宜十块，一个景点分段收费，旅游业非常黑。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZaXBGL/medish.jpg">
-<p>石像生和翁仲应该不是汉墓的原物。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZaYlwl/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/EPZaZDpx/medish.jpg">
-<p>有索道，不过山不高，没必要。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZaZRzF/medish.jpg">
-<p>夫人窦绾墓在靖王墓北一百多米处，容积比靖王墓大，大概是靖王死在先，窦绾墓多施工了几年。</p>
-<p>墓门用砖砌墙，然后注入熔铁封死。倒这样的斗确实不容易。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZb03TW/medish.jpg">
-<p>窦绾墓平面图。仿宫殿式布局，两个耳室一存车马，一存饮食。中室是客厅。侧室是带浴室的主卧。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZb1g5N/medish.jpg">
-<p>墓道里非常凉快，和外面完全两个世界。两千年前的人，先用火灼烧石壁，再用水激，最后用铁器凿掉碎石，这样的工艺也算是巧夺天工了。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZb0yci/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/EPZb1xhm/medish.jpg">
-<p>南耳室是车库。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZb1hLc/medish.jpg">
-<p>北耳室存放饮食。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZb1D6u/medish.jpg">
-<p>中室灰常大。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZb2wJB/medish.jpg">
-<p>渗水井和室内排水沟相连，组成很完善的排水系统。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZb2QMD/medish.jpg">
-<p>金缕玉衣，仿品。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZb2Xv0/medish.jpg">
-<p>侧室，窦绾的金缕玉衣和传说中的长信宫灯原本停放在这里。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZb4Cio/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/EPZb3VxW/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/EPZb5bS7/medish.jpg">
-<p>靖王墓的容积虽然比窦绾墓小，不过规制似乎更大。中室有木瓦结构的建筑，卧室在中室正后方，卧室后甚至有回廊。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZb5kuE/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/EPZb5mdJ/medish.jpg">
-<p>中室内的木瓦建筑，象征宴会厅。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZb6jdy/medish.jpg">
-<p>南耳室，车库。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZb6jdy/medish.jpg">
-<p>北耳室，仓库。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZb72EZ/medish.jpg">
-<p>中室，宴会厅。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZb76pe/medish.jpg">
-<p>后室回廊。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZb7LbK/medish.jpg">
-<p>后室，刘胜的金缕玉衣和传说中的错金博山炉原本停放在这里。</p>
-<img src="http://pic.yupoo.com/leninlee/EPZb86WF/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/EPZb9vvc/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/EPZbafBF/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/EPZbaC0C/medish.jpg">
-<img src="http://pic.yupoo.com/leninlee/EPZbb7dQ/medish.jpg">
-<h2 id="费用"><a href="#费用" class="headerlink" title="费用"></a>费用</h2><p>北京到白石山高速过路费：95￥<br>白石山门票：140￥<br>白石山停车费：20￥<br>白石山摆渡车票：20￥×2<br>满城汉墓门票：65￥<br>满城汉墓停车费：10￥<br>加油：233￥<br>保定到北京高速过路费：75￥  </p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-swoole-vs-php-fpm" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/swoole-vs-php-fpm/"><strong>Swoole与PHP-FPM性能对比</strong></a>
-      <small class="article-date-index">&nbsp; 2015-07-14</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/swoole-vs-php-fpm/" class="article-date">
-  <time datetime="2015-07-14T08:40:00.000Z" itemprop="datePublished">2015-07-14</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/swoole-vs-php-fpm/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>测试环境：</p>
-<ul>
-<li>CPU: Intel(R) Core(TM) i5-3470 CPU @ 3.20GHz</li>
-<li>MEM: 4G</li>
-<li>OS:  Archlinux 64bit</li>
-</ul>
-<p>测试命令：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ab -c 200 -n 200000 -k http://127.0.0.1/<span class="built_in">test</span></span><br></pre></td></tr></table></figure>
-<h2 id="NGINX-PHP-FPM"><a href="#NGINX-PHP-FPM" class="headerlink" title="NGINX + PHP-FPM"></a>NGINX + PHP-FPM</h2><p>Requests per second:    16240.50 [#/sec] (mean)<br>Time per request:       12.315 [ms] (mean)</p>
-<h2 id="NGINX-Swoole"><a href="#NGINX-Swoole" class="headerlink" title="NGINX + Swoole"></a>NGINX + Swoole</h2><p>Requests per second:    31284.57 [#/sec] (mean)<br>Time per request:       6.393 [ms] (mean)</p>
-<h2 id="Swoole"><a href="#Swoole" class="headerlink" title="Swoole"></a>Swoole</h2><p>Requests per second:    99926.55 [#/sec] (mean)<br>Time per request:       2.001 [ms] (mean)</p>
-<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>对一个最简单的PHP脚本做测试，排除业务逻辑的消耗的影响。Swoole威武。</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-transformers-optimus-prime-ko-edition" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/transformers-optimus-prime-ko-edition/"><strong>变形金刚：KO电镀嘴炮OP</strong></a>
-      <small class="article-date-index">&nbsp; 2015-06-22</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/transformers-optimus-prime-ko-edition/" class="article-date">
-  <time datetime="2015-06-22T12:35:00.000Z" itemprop="datePublished">2015-06-22</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/青梅煮酒/">青梅煮酒</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/transformers-optimus-prime-ko-edition/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>嘴炮OP这个模具应该是电影系列十年来最好的模具，经典到一再复刻和改模，和原色双刀、DA28一起都属同模或改模版本。相比之下，这款模具在涂装上胜过同模其它版本，电镀件和银柒使人形、车形在色彩上对比鲜明，和银色飞翼搭配很自然。</p>
-<img src="http://pic.yupoo.com/leninlee/EKm5Xn5y/medish.jpg">
-<p>人形正面比例协调，领袖级的大小更显霸气。腰部和小腿部的两对轮子太累赘，腰部的轮子完全可以设计成收纳到腰里。</p>
-<p>涂装上，除红蓝主色调外，其它位置主要填充银色金属柒，对比鲜明，很有质感。</p>
-<p>上下肢都采用齿轮关节，关节的松紧度方面表现很好。除了腰部不能转动，四肢和头部的转动辐度都很大。</p>
-<p>作为一款经典的L级模具，手居然是假手，很不可理解。</p>
-<p>踝关节可以左右摆动，所以脚的接地性没有问题，不过全身最大的两块电镀件居然踩在脚底板当鞋垫，真是无语了。</p>
-<img src="http://pic.yupoo.com/leninlee/EKmcV5LK/medish.jpg">
-<p>这款模具之所以叫嘴炮OP，就是因为有嘴有炮。一般OP的模具的头雕都是带口罩的，而这款是露嘴的。其实我更喜欢带口罩的形象，机器人要嘴没什么用，尤其像大黄蜂那种嗪奶头的嘴，见一次吐一次。</p>
-<p>头雕很精细，细节的刻画和涂装都很到位，只是这长了鳃的OP是要配合天火马甲搞个海陆空三栖么。</p>
-<img src="http://pic.yupoo.com/leninlee/EKmdnv02/medish.jpg">
-<p>背包不算大，不过还是过于突兀，尤其是这交叉的造型个人觉得很难看。</p>
-<img src="http://pic.yupoo.com/leninlee/EKmd8JC8/medish.jpg">
-<p>炮是由两个油箱组合变形而成，虽然炮形比较奇葩，但是构思确实很新颖。</p>
-<img src="http://pic.yupoo.com/leninlee/EKm4Xluq/medish.jpg">
-<p>受G1动画的影响，我觉得朴实无华的平头卡车更能显现OP的威严，电影版的狗头卡车多少有点浮夸。不过从还原电影的角度来说，这款模具的载具形态还是很不错的。尤其是两部分电镀件，遮光板和进气面板，非常闪亮。白色描边的火焰纹的刻画也很到位。</p>
-<p>由于车轮没有卡扣固定，并且有的车轮不能著地，所以载具形态的滚动性不好。</p>
-<p>L级模具的噱头一般是声光效果。这款模具有三个，一是人形状态下，扳下腹部机关，胸甲耸起的同时，胸部和眼睛会亮，OP喊：“I am Optimus Prime !”（<strong>其实不如喊那句最经典的：“Autobots, transform and roll out !”，向G1致敬会让很多人丧失抵抗力……</strong>）；第二个是人形变车形时，上半身和下半身分离时，发出叽叽咔叽的变形音效；第三个是在车形状态下，扳动车头背部的开关，发出机枪扫射的声音。平心而论，这款模具的声光效果设计得还是不错的，人形、变形、车形三种状态都有照顾，不像变3的L级大黄蜂，所有声光效果都在那个巨大无比的鸡肋背包上。</p>
-<p>把玩性方面，由于体形较大，变形复杂度高，把玩起来流畅度并不高，不过这是L级模具的通病。</p>
-<p>此外，KO版的普遍问题都有，像左遮光板卡不紧、胸甲滑动不流畅。</p>
-<p>总之，这款KO双刀电镀嘴炮OP在模具、涂装、做工、用料等各方面的表现都不错，非神物而神物，压箱底还是可以胜任的。</p>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <article id="post-create-php-extension-skeleton" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <myh11 itemprop="name">
-      <a class="article-title-index" href="/post/create-php-extension-skeleton/"><strong>PHP扩展框架的创建</strong></a>
-      <small class="article-date-index">&nbsp; 2015-06-18</small>
-      <!--<a>
-      <div = post.date  </div>
-      </a>-->
-      <br>
-      <br> <!-- blair add -->
-    </myh11>
-  
-
-
-      </header>
-    
-    <div class="article-meta">
-      <!--<a href="/post/create-php-extension-skeleton/" class="article-date">
-  <time datetime="2015-06-18T06:15:00.000Z" itemprop="datePublished">2015-06-18</time>
-</a>-->
-      <!--
-  <div class="article-category-index">
-    <a class="article-category-index-link" href="/categories/计算机/">计算机</a>
-  </div>
-
--->
-      <!--
-      
-        <div class="article-comment-link-wrap">
-          <a href="http://0x3f.org/post/create-php-extension-skeleton/#disqus_thread" class="article-comment-link">Comments</a>
-        </div>
-      
-      -->
-    </div>
-	
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h2><p>在PHP源码目录下的ext目录下执行：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./ext_skel --extname=foobar</span><br></pre></td></tr></table></figure>
-<p>修改foobar/config.m4，移除以下三行前的dnl：</p>
-<blockquote>
-<p>dnl PHP_ARG_WITH(foobar, for foobar support,<br>dnl Make sure that the comment is aligned:<br>dnl [  –with-foobar             Include foobar support])</p>
-</blockquote>
-<h2 id="编译与安装"><a href="#编译与安装" class="headerlink" title="编译与安装"></a>编译与安装</h2><p>在foobar目录下执行以下命令，生成configure脚本：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/bin/phpize</span><br></pre></td></tr></table></figure>
-<p>执行configure：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./configure --with-php-config=/usr/bin/php-config</span><br></pre></td></tr></table></figure>
-<p>编译安装：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
-<p>修改php.ini，启用扩展：</p>
-<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">extension</span>=foobar.so</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-	
-    <!--
-	
-    -->
-    <!--
-    
-      <footer class="article-footer">
-      </footer>
-    
-    -->
-  </div>
-  
-</article>
-
-
-
-    
-      <nav id="page-nav">
-        <a class="extend prev" rel="prev" href="/page/16/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="page-number" href="/page/16/">16</a><span class="page-number current">17</span><a class="page-number" href="/page/18/">18</a><a class="page-number" href="/page/19/">19</a><span class="space">&hellip;</span><a class="page-number" href="/page/41/">41</a><a class="extend next" rel="next" href="/page/18/">Next &raquo;</a>
-      </nav>
-    
-
-</section>
-    <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2020 晴耕雨讀&nbsp;
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, theme by <a href="http://github.com/52binge/hexo-theme-blairos">blairos</a>
-    </div>
-  </div>
-</footer>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    extensions: ["tex2jax.js"],
-    jax: ["input/TeX"],
-    tex2jax: {
-      inlineMath: [ ['$','$'], ['\\(','\\)'] ],
-      displayMath: [ ['$$','$$']],
-      processEscapes: true
+<html lang="zh-CN">
+    <head>
+	<meta name="generator" content="Hugo 0.72.0" />
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>晴耕雨讀</title><meta name="Description" content="Donie&#39;s blog."><meta property="og:title" content="晴耕雨讀" />
+<meta property="og:description" content="Donie&#39;s blog." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="http://0x3f.org/" />
+<meta property="og:image" content="http://0x3f.org/logo.png"/>
+<meta property="og:updated_time" content="2020-06-17T17:28:11+08:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://0x3f.org/logo.png"/>
+
+<meta name="twitter:title" content="晴耕雨讀"/>
+<meta name="twitter:description" content="Donie&#39;s blog."/>
+<meta name="application-name" content="晴耕雨讀">
+<meta name="apple-mobile-web-app-title" content="晴耕雨讀"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://0x3f.org/" /><link rel="alternate" href="/index.xml" type="application/rss+xml" title="晴耕雨讀">
+    <link rel="feed" href="/index.xml" type="application/rss+xml" title="晴耕雨讀"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "WebSite",
+        "url": "http:\/\/0x3f.org\/","inLanguage": "zh-CN","author": {
+                "@type": "Person",
+                "name": "淘气"
+            },"description": "Donie's blog.","image": "http:\/\/0x3f.org\/images\/Apple-Devices-Preview.png","thumbnailUrl": "http:\/\/0x3f.org\/images\/screenshot.png","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","name": "晴耕雨讀"
     }
-  });
-</script>
-<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML,http://myserver.com/MathJax/config/local/local.js">
-</script>
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
 
-    
-<script type="text/javascript"> <!-- add by blair 0724 type=text/javascript -->
-  var disqus_shortname = '0x3f';
-  
-  (function(){
-    var dsq = document.createElement('script');
-    dsq.type = 'text/javascript';
-    dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
-</script>
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="page home" posts><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/post/introduction-of-json-web-token/">JSON Web Token简介</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class="post-publish">发布于 <time datetime="2017-04-23">2017-04-23</time></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"><i class="far fa-folder fa-fw"></i>计算机</a></span></div><div class="content">什么是JWT？ JSON Web Token（简称JWT）是一种token格式，通常用来解决身份认证的问题，和会话（session）作用相同，常用在REST</div><div class="post-footer">
+        <a href="/post/introduction-of-json-web-token/">阅读全文</a><div class="post-tags">
+                <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/%E7%AC%94%E8%AE%B0/">笔记</a>,&nbsp;<a href="/tags/%E7%BC%96%E7%A8%8B/">编程</a></div></div>
+</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/post/get-the-inferior-class-get-the-throne/">得草根者得天下</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class="post-publish">发布于 <time datetime="2017-04-21">2017-04-21</time></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E9%9D%92%E6%A2%85%E7%85%AE%E9%85%92/"><i class="far fa-folder fa-fw"></i>青梅煮酒</a></span></div><div class="content">国内移动支付是劣质的繁荣，量很大，但是水平低。 我个人对移动支付偏爱的程度依次是：Apple Pay &gt; 支付宝 &gt; 微信。Apple Pay的体验最好，后两</div><div class="post-footer">
+        <a href="/post/get-the-inferior-class-get-the-throne/">阅读全文</a><div class="post-tags">
+                <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/%E9%9A%8F%E7%AC%94/">随笔</a>,&nbsp;<a href="/tags/%E4%BA%92%E8%81%94%E7%BD%91/">互联网</a></div></div>
+</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/post/some-principles-on-designing-restful-api/">设计RESTful API的几个原则</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class="post-publish">发布于 <time datetime="2017-04-21">2017-04-21</time></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"><i class="far fa-folder fa-fw"></i>计算机</a></span></div><div class="content">REST不是一项技术，而是一种设计风格。它的核心思想是实现一种清晰明确的语义，用来描述Web操作。包含两个主要因素：HTTP动词和资源地址。</div><div class="post-footer">
+        <a href="/post/some-principles-on-designing-restful-api/">阅读全文</a><div class="post-tags">
+                <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/%E7%BC%96%E7%A8%8B/">编程</a></div></div>
+</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/post/pre-request-script-and-tests-in-postman/">Postman的Pre-request Script和Tests</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class="post-publish">发布于 <time datetime="2017-04-19">2017-04-19</time></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"><i class="far fa-folder fa-fw"></i>计算机</a></span></div><div class="content">Pre-request Script和Tests都是Javascript代码块。前者在请求发起前执行，通常用来生成请求数据，例如对用户注册接口随机生成用户名。后者</div><div class="post-footer">
+        <a href="/post/pre-request-script-and-tests-in-postman/">阅读全文</a><div class="post-tags">
+                <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/%E6%B5%8B%E8%AF%95/">测试</a>,&nbsp;<a href="/tags/%E7%BC%96%E7%A8%8B/">编程</a></div></div>
+</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/post/implement-airplay-with-raspberry-pi/">用Raspberry Pi实现音频Airplay</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class="post-publish">发布于 <time datetime="2017-04-17">2017-04-17</time></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"><i class="far fa-folder fa-fw"></i>计算机</a></span></div><div class="content">用树莓派做音频airplay效果不错，老书架音箱又可以用起来了。 实现方式是shairplay-sync，利用HDMI转VGA线上的3.5mm</div><div class="post-footer">
+        <a href="/post/implement-airplay-with-raspberry-pi/">阅读全文</a><div class="post-tags">
+                <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/%E6%A0%91%E8%8E%93%E6%B4%BE/">树莓派</a>,&nbsp;<a href="/tags/%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">最佳实践</a></div></div>
+</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/post/the-best-practice-of-writing-api-documents/">编写接口文档的最佳实践</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class="post-publish">发布于 <time datetime="2017-04-10">2017-04-10</time></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"><i class="far fa-folder fa-fw"></i>计算机</a></span></div><div class="content">前言 传统的做法是用office写接口文档，这种方式的缺点很多： 格式混乱 事实上，所有的传统富文本文档都存在这个问题，富文本的跨平台兼容性很差，</div><div class="post-footer">
+        <a href="/post/the-best-practice-of-writing-api-documents/">阅读全文</a><div class="post-tags">
+                <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">最佳实践</a>,&nbsp;<a href="/tags/markdown/">Markdown</a>,&nbsp;<a href="/tags/wiki/">wiki</a></div></div>
+</article><ul class="pagination"><li class="page-item ">
+                    <span class="page-link">
+                        <a href="/">1</a>
+                    </span>
+                </li><li class="page-item ">
+                    <span class="page-link" aria-hidden="true">&hellip;</span>
+                </li><li class="page-item ">
+                    <span class="page-link">
+                        <a href="/page/15/">15</a>
+                    </span>
+                </li><li class="page-item ">
+                    <span class="page-link">
+                        <a href="/page/16/">16</a>
+                    </span>
+                </li><li class="page-item active">
+                    <span class="page-link">
+                        <a href="/page/17/">17</a>
+                    </span>
+                </li><li class="page-item ">
+                    <span class="page-link">
+                        <a href="/page/18/">18</a>
+                    </span>
+                </li><li class="page-item ">
+                    <span class="page-link">
+                        <a href="/page/19/">19</a>
+                    </span>
+                </li><li class="page-item ">
+                    <span class="page-link" aria-hidden="true">&hellip;</span>
+                </li><li class="page-item ">
+                    <span class="page-link">
+                        <a href="/page/69/">69</a>
+                    </span>
+                </li></ul></div></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.72.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2006 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">淘气</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
 
-
-<script src="/js/jquery.min.js"></script>
-
-
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
-
-
-<script src="/js/script.js"></script>
-
-  </div>
-</body>
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"search":{"algoliaAppID":"PASDMWALPK","algoliaIndex":"index.zh-cn","algoliaSearchKey":"b42948e51daaa93df92381c8e2ac0f93","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
 </html>
