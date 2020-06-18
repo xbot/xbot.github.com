@@ -1,1034 +1,822 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="robots" content="noodp" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-        <title>PHP框架实战（五）：ORM与ActiveRecord - 晴耕雨讀</title><meta name="Description" content="Donie&#39;s blog."><meta property="og:title" content="PHP框架实战（五）：ORM与ActiveRecord" />
-<meta property="og:description" content="简述 Model是MVC框架中最复杂的部分，它要提供与业务逻辑相关的数据及数据处理方法的封装，一般要提供数据对象、数据库连接、事务管理、SQL" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="http://0x3f.org/post/flamework-active-record/" />
-<meta property="og:image" content="http://0x3f.org/logo.png"/>
-<meta property="article:published_time" content="2014-01-01T20:45:00+00:00" />
-<meta property="article:modified_time" content="2020-06-17T17:28:11+08:00" />
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="http://0x3f.org/logo.png"/>
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><meta http-equiv=x-ua-compatible content="IE=edge, chrome=1"><title>PHP框架实战（五）：ORM与ActiveRecord - 晴耕雨讀</title><meta name=Description content="Donie's blog."><meta property="og:title" content="PHP框架实战（五）：ORM与ActiveRecord"><meta property="og:description" content="简述 Model是MVC框架中最复杂的部分，它要提供与业务逻辑相关的数据及数据处理方法的封装，一般要提供数据对象、数据库连接、事务管理、SQL"><meta property="og:type" content="article"><meta property="og:url" content="http://0x3f.org/post/flamework-active-record/"><meta property="og:image" content="http://0x3f.org/logo.png"><meta property="article:published_time" content="2014-01-01T20:45:00+00:00"><meta property="article:modified_time" content="2020-06-17T17:28:11+08:00"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="http://0x3f.org/logo.png"><meta name=twitter:title content="PHP框架实战（五）：ORM与ActiveRecord"><meta name=twitter:description content="简述 Model是MVC框架中最复杂的部分，它要提供与业务逻辑相关的数据及数据处理方法的封装，一般要提供数据对象、数据库连接、事务管理、SQL"><meta name=application-name content="晴耕雨讀"><meta name=apple-mobile-web-app-title content="晴耕雨讀"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=http://0x3f.org/post/flamework-active-record/><link rel=prev href=http://0x3f.org/post/flamework-view-rendering/><link rel=next href=http://0x3f.org/post/flamework-summary/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"PHP框架实战（五）：ORM与ActiveRecord","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/0x3f.org\/post\/flamework-active-record\/"},"image":["http:\/\/0x3f.org\/images\/Apple-Devices-Preview.png"],"genre":"posts","keywords":"PHP, Flamework, 框架, 编程","wordcount":3017,"url":"http:\/\/0x3f.org\/post\/flamework-active-record\/","datePublished":"2014-01-01T20:45:00+00:00","dateModified":"2020-06-17T17:28:11+08:00","license":"This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher":{"@type":"Organization","name":"xxxx","logo":"http:\/\/0x3f.org\/images\/avatar.png"},"author":{"@type":"Person","name":"淘气"},"description":""}</script></head><body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':('auto'==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:'auto'==='dark'))&&document.body.setAttribute('theme','dark');</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title=晴耕雨讀><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw"></i></span>晴耕雨讀</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/posts/>所有文章 </a><a class=menu-item href=/tags/>标签 </a><a class=menu-item href=/categories/>分类 </a><a class=menu-item href=/about/>关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop><input type=text placeholder=搜索文章标题或内容... id=search-input-desktop>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=搜索><i class="fas fa-search fa-fw"></i></a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=清空><i class="fas fa-times-circle fa-fw"></i></a><span class="search-button search-loading" id=search-loading-desktop><i class="fas fa-spinner fa-fw fa-spin"></i></span></span><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题><i class="fas fa-adjust fa-fw"></i></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title=晴耕雨讀><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw"></i></span>晴耕雨讀</a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><div class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder=搜索文章标题或内容... id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=搜索><i class="fas fa-search fa-fw"></i></a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=清空><i class="fas fa-times-circle fa-fw"></i></a><span class="search-button search-loading" id=search-loading-mobile><i class="fas fa-spinner fa-fw fa-spin"></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>取消</a></div><a class=menu-item href=/posts/>所有文章</a><a class=menu-item href=/tags/>标签</a><a class=menu-item href=/categories/>分类</a><a class=menu-item href=/about/>关于</a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>目录</h2><div class=toc-content id=toc-content-auto></div></div><article class="page single"><h1 class="single-title animated flipInX">PHP框架实战（五）：ORM与ActiveRecord</h1><div class=post-meta><div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class=post-category>收录于 <a href=/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/><i class="far fa-folder fa-fw"></i>计算机</a></span></div><div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2014-01-01>2014-01-01</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3017 字&nbsp;
+<i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 7 分钟&nbsp;</div></div><div class="details toc" id=toc-static kept><div class="details-summary toc-title"><span>目录</span>
+<span><i class="details-icon fas fa-angle-right"></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#简述>简述</a></li><li><a href=#orm对象关系映射>ORM：对象关系映射</a></li><li><a href=#activerecord>ActiveRecord</a></li><li><a href=#activerecord的使用>ActiveRecord的使用</a></li><li><a href=#总结>总结</a></li></ul></nav></div></div><div class=content id=content><h2 id=简述>简述</h2><p>Model是MVC框架中最复杂的部分，它要提供与业务逻辑相关的数据及数据处理方法的封装，一般要提供数据对象、数据库连接、事务管理、SQL语句构造、数据CRUD、高级通用业务逻辑等一系列功能。由于Model与Controller和View是解耦的，并且本身具备很高的通用性和复杂性，所以有很多独立的实现。本文希望能通过开发一个简单的ActiveRecord，验证这种Model实现方案的原理和过程。</p><h2 id=orm对象关系映射>ORM：对象关系映射</h2><p>ORM的全称是Object Relational Mapping，即对象关系映射。它是为了解决关系数据库的数学模型和编程语言的对象模型之间的阻抗不匹配问题而提出的解决方案。</p><p>阻抗不匹配是个逼格很高的词。</p><p>阻抗是指电路中的电容、电感、电阻对交流电的障碍作用，就像电阻对直流电的障碍作用。两个系统传递信号可以形象地看成电压的传递，公式为：</p><blockquote><p>                <strong>U</strong>(out) * <strong>Z</strong>(in)<br><strong>U</strong>(in) = &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;<br>                <strong>Z</strong>(in) + <strong>Z</strong>(out)</p></blockquote><p>即输入电压等于输出电压与输入阻抗的积除以输入阻抗与输出阻抗的和。</p><p>理想情况肯定是输入电压等于输出电压，这时信号是没有失真的，也就是要求Z(in)与Z(in)+Z(out)之商无限逼近1，这个过程就叫阻抗匹配。关系型数据库是建立在数学模型的基础上，而编程语言中的对象是建立在人对客观世界认知的具象模型上。说白了，阻抗不匹配问题就是说因这两种模型不一致而导致的问题。</p><p>ORM通过建立表与对象、列与属性（<em>这只是一般情况</em>）之间的映射关系而解决问题，这可以实现像操作对象一样对数据库中的数据进行增删改查，简化了开发过程。不过ORM的缺点是不能很好地处理复杂数据关系，会出现效率低下的问题，因此必要时仍然需要直接使用SQL。</p><h2 id=activerecord>ActiveRecord</h2><p>ActiveRecord是Ruby on Rails提出的一个概念，其实就是ORM的一种实现，它是对象类型、数据、CRUD方法的合体，使对数据的操作以更具象化的方式实现。下面介绍在Flamework中实现一个简单的ActiveRecord的过程。</p><p>首先实现数据库的接口，提供数据库连接、查询、执行SQL语句、事务管理等基本功能。这里使用PDO实现：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>  1
+</span><span class=lnt>  2
+</span><span class=lnt>  3
+</span><span class=lnt>  4
+</span><span class=lnt>  5
+</span><span class=lnt>  6
+</span><span class=lnt>  7
+</span><span class=lnt>  8
+</span><span class=lnt>  9
+</span><span class=lnt> 10
+</span><span class=lnt> 11
+</span><span class=lnt> 12
+</span><span class=lnt> 13
+</span><span class=lnt> 14
+</span><span class=lnt> 15
+</span><span class=lnt> 16
+</span><span class=lnt> 17
+</span><span class=lnt> 18
+</span><span class=lnt> 19
+</span><span class=lnt> 20
+</span><span class=lnt> 21
+</span><span class=lnt> 22
+</span><span class=lnt> 23
+</span><span class=lnt> 24
+</span><span class=lnt> 25
+</span><span class=lnt> 26
+</span><span class=lnt> 27
+</span><span class=lnt> 28
+</span><span class=lnt> 29
+</span><span class=lnt> 30
+</span><span class=lnt> 31
+</span><span class=lnt> 32
+</span><span class=lnt> 33
+</span><span class=lnt> 34
+</span><span class=lnt> 35
+</span><span class=lnt> 36
+</span><span class=lnt> 37
+</span><span class=lnt> 38
+</span><span class=lnt> 39
+</span><span class=lnt> 40
+</span><span class=lnt> 41
+</span><span class=lnt> 42
+</span><span class=lnt> 43
+</span><span class=lnt> 44
+</span><span class=lnt> 45
+</span><span class=lnt> 46
+</span><span class=lnt> 47
+</span><span class=lnt> 48
+</span><span class=lnt> 49
+</span><span class=lnt> 50
+</span><span class=lnt> 51
+</span><span class=lnt> 52
+</span><span class=lnt> 53
+</span><span class=lnt> 54
+</span><span class=lnt> 55
+</span><span class=lnt> 56
+</span><span class=lnt> 57
+</span><span class=lnt> 58
+</span><span class=lnt> 59
+</span><span class=lnt> 60
+</span><span class=lnt> 61
+</span><span class=lnt> 62
+</span><span class=lnt> 63
+</span><span class=lnt> 64
+</span><span class=lnt> 65
+</span><span class=lnt> 66
+</span><span class=lnt> 67
+</span><span class=lnt> 68
+</span><span class=lnt> 69
+</span><span class=lnt> 70
+</span><span class=lnt> 71
+</span><span class=lnt> 72
+</span><span class=lnt> 73
+</span><span class=lnt> 74
+</span><span class=lnt> 75
+</span><span class=lnt> 76
+</span><span class=lnt> 77
+</span><span class=lnt> 78
+</span><span class=lnt> 79
+</span><span class=lnt> 80
+</span><span class=lnt> 81
+</span><span class=lnt> 82
+</span><span class=lnt> 83
+</span><span class=lnt> 84
+</span><span class=lnt> 85
+</span><span class=lnt> 86
+</span><span class=lnt> 87
+</span><span class=lnt> 88
+</span><span class=lnt> 89
+</span><span class=lnt> 90
+</span><span class=lnt> 91
+</span><span class=lnt> 92
+</span><span class=lnt> 93
+</span><span class=lnt> 94
+</span><span class=lnt> 95
+</span><span class=lnt> 96
+</span><span class=lnt> 97
+</span><span class=lnt> 98
+</span><span class=lnt> 99
+</span><span class=lnt>100
+</span><span class=lnt>101
+</span><span class=lnt>102
+</span><span class=lnt>103
+</span><span class=lnt>104
+</span><span class=lnt>105
+</span><span class=lnt>106
+</span><span class=lnt>107
+</span><span class=lnt>108
+</span><span class=lnt>109
+</span><span class=lnt>110
+</span><span class=lnt>111
+</span><span class=lnt>112
+</span><span class=lnt>113
+</span><span class=lnt>114
+</span><span class=lnt>115
+</span><span class=lnt>116
+</span><span class=lnt>117
+</span><span class=lnt>118
+</span><span class=lnt>119
+</span><span class=lnt>120
+</span><span class=lnt>121
+</span><span class=lnt>122
+</span><span class=lnt>123
+</span><span class=lnt>124
+</span><span class=lnt>125
+</span><span class=lnt>126
+</span><span class=lnt>127
+</span><span class=lnt>128
+</span><span class=lnt>129
+</span><span class=lnt>130
+</span><span class=lnt>131
+</span><span class=lnt>132
+</span><span class=lnt>133
+</span><span class=lnt>134
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-php data-lang=php><span class=cp>&lt;?php</span>
+<span class=k>namespace</span> <span class=nx>org\x3f\flamework\base</span><span class=p>;</span>
 
-<meta name="twitter:title" content="PHP框架实战（五）：ORM与ActiveRecord"/>
-<meta name="twitter:description" content="简述 Model是MVC框架中最复杂的部分，它要提供与业务逻辑相关的数据及数据处理方法的封装，一般要提供数据对象、数据库连接、事务管理、SQL"/>
-<meta name="application-name" content="晴耕雨讀">
-<meta name="apple-mobile-web-app-title" content="晴耕雨讀"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://0x3f.org/post/flamework-active-record/" /><link rel="prev" href="http://0x3f.org/post/flamework-view-rendering/" /><link rel="next" href="http://0x3f.org/post/flamework-summary/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
-    {
-        "@context": "http://schema.org",
-        "@type": "BlogPosting",
-        "headline": "PHP框架实战（五）：ORM与ActiveRecord",
-        "inLanguage": "zh-CN",
-        "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": "http:\/\/0x3f.org\/post\/flamework-active-record\/"
-        },"image": ["http:\/\/0x3f.org\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "PHP, Flamework, 框架, 编程","wordcount":  3017 ,
-        "url": "http:\/\/0x3f.org\/post\/flamework-active-record\/","datePublished": "2014-01-01T20:45:00+00:00","dateModified": "2020-06-17T17:28:11+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
-            "@type": "Organization",
-            "name": "xxxx","logo": "http:\/\/0x3f.org\/images\/avatar.png"},"author": {
-                "@type": "Person",
-                "name": "淘气"
-            },"description": ""
-    }
-    </script></head>
-    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+<span class=sd>/**
+</span><span class=sd> * Database connection above PDO
+</span><span class=sd> *
+</span><span class=sd> * @author Donie Leigh &lt;donie.leigh@gmail.com&gt;
+</span><span class=sd> * @link http://0x3f.org
+</span><span class=sd> * @copyright Copyright &amp;copy; 2013-2014 Donie Leigh
+</span><span class=sd> * @license BSD (3-terms)
+</span><span class=sd> * @since 1.0
+</span><span class=sd> */</span>
+<span class=k>class</span> <span class=nc>DBConnection</span>
+<span class=p>{</span>
+    <span class=sd>/**
+</span><span class=sd>     * @var PDO Database connection 
+</span><span class=sd>     * @since 1.0
+</span><span class=sd>     */</span>
+    <span class=k>private</span> <span class=nv>$_c</span><span class=p>;</span>
+    <span class=sd>/**
+</span><span class=sd>     * @var array PDO options 
+</span><span class=sd>     * @since 1.0
+</span><span class=sd>     */</span>
+    <span class=k>private</span> <span class=nv>$_options</span> <span class=o>=</span> <span class=k>array</span><span class=p>(</span>
+        <span class=s1>&#39;connection_string&#39;</span> <span class=o>=&gt;</span> <span class=s1>&#39;sqlite::memory:&#39;</span><span class=p>,</span>
+        <span class=s1>&#39;username&#39;</span> <span class=o>=&gt;</span> <span class=k>null</span><span class=p>,</span>
+        <span class=s1>&#39;password&#39;</span> <span class=o>=&gt;</span> <span class=k>null</span><span class=p>,</span>
+        <span class=s1>&#39;pdo_options&#39;</span> <span class=o>=&gt;</span> <span class=k>null</span><span class=p>,</span>
+    <span class=p>);</span>
+    <span class=sd>/**
+</span><span class=sd>     * @var PDOStatement Last PDO statement 
+</span><span class=sd>     * @since 1.0
+</span><span class=sd>     */</span>
+    <span class=k>private</span> <span class=nv>$_lastStmt</span><span class=p>;</span>
 
-        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
-    <div class="header-wrapper">
-        <div class="header-title">
-            <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
-        </div>
-        <div class="menu">
-            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
-                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
-                            <i class="fas fa-search fa-fw"></i>
-                        </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
-                            <i class="fas fa-times-circle fa-fw"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-desktop">
-                            <i class="fas fa-spinner fa-fw fa-spin"></i>
-                        </span>
-                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
-                    <i class="fas fa-adjust fa-fw"></i>
-                </a>
-            </div>
-        </div>
-    </div>
-</header><header class="mobile" id="header-mobile">
-    <div class="header-container">
-        <div class="header-wrapper">
-            <div class="header-title">
-                <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
-            </div>
-            <div class="menu-toggle" id="menu-toggle-mobile">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-        <div class="menu" id="menu-mobile"><div class="search-wrapper">
-                    <div class="search mobile" id="search-mobile">
-                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
-                            <i class="fas fa-search fa-fw"></i>
-                        </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
-                            <i class="fas fa-times-circle fa-fw"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-mobile">
-                            <i class="fas fa-spinner fa-fw fa-spin"></i>
-                        </span>
-                    </div>
-                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
-                        取消
-                    </a>
-                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
-                <i class="fas fa-adjust fa-fw"></i>
-            </a></div>
-    </div>
-</header>
-<div class="search-dropdown desktop">
-    <div id="search-dropdown-desktop"></div>
-</div>
-<div class="search-dropdown mobile">
-    <div id="search-dropdown-mobile"></div>
-</div>
-<main class="main">
-                <div class="container"><div class="toc" id="toc-auto">
-            <h2 class="toc-title">目录</h2>
-            <div class="toc-content" id="toc-content-auto"></div>
-        </div><article class="page single"><h1 class="single-title animated flipInX">PHP框架实战（五）：ORM与ActiveRecord</h1><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"><i class="far fa-folder fa-fw"></i>计算机</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2014-01-01">2014-01-01</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 3017 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 7 分钟&nbsp;</div>
-        </div><div class="details toc" id="toc-static"  kept="">
-                <div class="details-summary toc-title">
-                    <span>目录</span>
-                    <span><i class="details-icon fas fa-angle-right"></i></span>
-                </div>
-                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
-  <ul>
-    <li><a href="#简述">简述</a></li>
-    <li><a href="#orm对象关系映射">ORM：对象关系映射</a></li>
-    <li><a href="#activerecord">ActiveRecord</a></li>
-    <li><a href="#activerecord的使用">ActiveRecord的使用</a></li>
-    <li><a href="#总结">总结</a></li>
-  </ul>
-</nav></div>
-            </div><div class="content" id="content"><h2 id="简述">简述</h2>
-<p>Model是MVC框架中最复杂的部分，它要提供与业务逻辑相关的数据及数据处理方法的封装，一般要提供数据对象、数据库连接、事务管理、SQL语句构造、数据CRUD、高级通用业务逻辑等一系列功能。由于Model与Controller和View是解耦的，并且本身具备很高的通用性和复杂性，所以有很多独立的实现。本文希望能通过开发一个简单的ActiveRecord，验证这种Model实现方案的原理和过程。</p>
-<h2 id="orm对象关系映射">ORM：对象关系映射</h2>
-<p>ORM的全称是Object Relational Mapping，即对象关系映射。它是为了解决关系数据库的数学模型和编程语言的对象模型之间的阻抗不匹配问题而提出的解决方案。</p>
-<p>阻抗不匹配是个逼格很高的词。</p>
-<p>阻抗是指电路中的电容、电感、电阻对交流电的障碍作用，就像电阻对直流电的障碍作用。两个系统传递信号可以形象地看成电压的传递，公式为：</p>
-<blockquote>
-<p>                <strong>U</strong>(out) * <strong>Z</strong>(in)<br>
-<strong>U</strong>(in) =  &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;<br>
-                <strong>Z</strong>(in) + <strong>Z</strong>(out)</p>
-</blockquote>
-<p>即输入电压等于输出电压与输入阻抗的积除以输入阻抗与输出阻抗的和。</p>
-<p>理想情况肯定是输入电压等于输出电压，这时信号是没有失真的，也就是要求Z(in)与Z(in)+Z(out)之商无限逼近1，这个过程就叫阻抗匹配。关系型数据库是建立在数学模型的基础上，而编程语言中的对象是建立在人对客观世界认知的具象模型上。说白了，阻抗不匹配问题就是说因这两种模型不一致而导致的问题。</p>
-<p>ORM通过建立表与对象、列与属性（<em>这只是一般情况</em>）之间的映射关系而解决问题，这可以实现像操作对象一样对数据库中的数据进行增删改查，简化了开发过程。不过ORM的缺点是不能很好地处理复杂数据关系，会出现效率低下的问题，因此必要时仍然需要直接使用SQL。</p>
-<h2 id="activerecord">ActiveRecord</h2>
-<p>ActiveRecord是Ruby on Rails提出的一个概念，其实就是ORM的一种实现，它是对象类型、数据、CRUD方法的合体，使对数据的操作以更具象化的方式实现。下面介绍在Flamework中实现一个简单的ActiveRecord的过程。</p>
-<p>首先实现数据库的接口，提供数据库连接、查询、执行SQL语句、事务管理等基本功能。这里使用PDO实现：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">  1
-</span><span class="lnt">  2
-</span><span class="lnt">  3
-</span><span class="lnt">  4
-</span><span class="lnt">  5
-</span><span class="lnt">  6
-</span><span class="lnt">  7
-</span><span class="lnt">  8
-</span><span class="lnt">  9
-</span><span class="lnt"> 10
-</span><span class="lnt"> 11
-</span><span class="lnt"> 12
-</span><span class="lnt"> 13
-</span><span class="lnt"> 14
-</span><span class="lnt"> 15
-</span><span class="lnt"> 16
-</span><span class="lnt"> 17
-</span><span class="lnt"> 18
-</span><span class="lnt"> 19
-</span><span class="lnt"> 20
-</span><span class="lnt"> 21
-</span><span class="lnt"> 22
-</span><span class="lnt"> 23
-</span><span class="lnt"> 24
-</span><span class="lnt"> 25
-</span><span class="lnt"> 26
-</span><span class="lnt"> 27
-</span><span class="lnt"> 28
-</span><span class="lnt"> 29
-</span><span class="lnt"> 30
-</span><span class="lnt"> 31
-</span><span class="lnt"> 32
-</span><span class="lnt"> 33
-</span><span class="lnt"> 34
-</span><span class="lnt"> 35
-</span><span class="lnt"> 36
-</span><span class="lnt"> 37
-</span><span class="lnt"> 38
-</span><span class="lnt"> 39
-</span><span class="lnt"> 40
-</span><span class="lnt"> 41
-</span><span class="lnt"> 42
-</span><span class="lnt"> 43
-</span><span class="lnt"> 44
-</span><span class="lnt"> 45
-</span><span class="lnt"> 46
-</span><span class="lnt"> 47
-</span><span class="lnt"> 48
-</span><span class="lnt"> 49
-</span><span class="lnt"> 50
-</span><span class="lnt"> 51
-</span><span class="lnt"> 52
-</span><span class="lnt"> 53
-</span><span class="lnt"> 54
-</span><span class="lnt"> 55
-</span><span class="lnt"> 56
-</span><span class="lnt"> 57
-</span><span class="lnt"> 58
-</span><span class="lnt"> 59
-</span><span class="lnt"> 60
-</span><span class="lnt"> 61
-</span><span class="lnt"> 62
-</span><span class="lnt"> 63
-</span><span class="lnt"> 64
-</span><span class="lnt"> 65
-</span><span class="lnt"> 66
-</span><span class="lnt"> 67
-</span><span class="lnt"> 68
-</span><span class="lnt"> 69
-</span><span class="lnt"> 70
-</span><span class="lnt"> 71
-</span><span class="lnt"> 72
-</span><span class="lnt"> 73
-</span><span class="lnt"> 74
-</span><span class="lnt"> 75
-</span><span class="lnt"> 76
-</span><span class="lnt"> 77
-</span><span class="lnt"> 78
-</span><span class="lnt"> 79
-</span><span class="lnt"> 80
-</span><span class="lnt"> 81
-</span><span class="lnt"> 82
-</span><span class="lnt"> 83
-</span><span class="lnt"> 84
-</span><span class="lnt"> 85
-</span><span class="lnt"> 86
-</span><span class="lnt"> 87
-</span><span class="lnt"> 88
-</span><span class="lnt"> 89
-</span><span class="lnt"> 90
-</span><span class="lnt"> 91
-</span><span class="lnt"> 92
-</span><span class="lnt"> 93
-</span><span class="lnt"> 94
-</span><span class="lnt"> 95
-</span><span class="lnt"> 96
-</span><span class="lnt"> 97
-</span><span class="lnt"> 98
-</span><span class="lnt"> 99
-</span><span class="lnt">100
-</span><span class="lnt">101
-</span><span class="lnt">102
-</span><span class="lnt">103
-</span><span class="lnt">104
-</span><span class="lnt">105
-</span><span class="lnt">106
-</span><span class="lnt">107
-</span><span class="lnt">108
-</span><span class="lnt">109
-</span><span class="lnt">110
-</span><span class="lnt">111
-</span><span class="lnt">112
-</span><span class="lnt">113
-</span><span class="lnt">114
-</span><span class="lnt">115
-</span><span class="lnt">116
-</span><span class="lnt">117
-</span><span class="lnt">118
-</span><span class="lnt">119
-</span><span class="lnt">120
-</span><span class="lnt">121
-</span><span class="lnt">122
-</span><span class="lnt">123
-</span><span class="lnt">124
-</span><span class="lnt">125
-</span><span class="lnt">126
-</span><span class="lnt">127
-</span><span class="lnt">128
-</span><span class="lnt">129
-</span><span class="lnt">130
-</span><span class="lnt">131
-</span><span class="lnt">132
-</span><span class="lnt">133
-</span><span class="lnt">134
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-<span class="k">namespace</span> <span class="nx">org\x3f\flamework\base</span><span class="p">;</span>
+    <span class=k>public</span> <span class=k>function</span> <span class=fm>__construct</span><span class=p>(</span><span class=nv>$options</span><span class=p>)</span>
+    <span class=p>{</span>
+        <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_options</span> <span class=o>=</span> <span class=nx>array_merge</span><span class=p>(</span><span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_options</span><span class=p>,</span> <span class=nv>$options</span><span class=p>);</span>
+    <span class=p>}</span>
 
-<span class="sd">/**
-</span><span class="sd"> * Database connection above PDO
-</span><span class="sd"> *
-</span><span class="sd"> * @author Donie Leigh &lt;donie.leigh@gmail.com&gt;
-</span><span class="sd"> * @link http://0x3f.org
-</span><span class="sd"> * @copyright Copyright &amp;copy; 2013-2014 Donie Leigh
-</span><span class="sd"> * @license BSD (3-terms)
-</span><span class="sd"> * @since 1.0
-</span><span class="sd"> */</span>
-<span class="k">class</span> <span class="nc">DBConnection</span>
-<span class="p">{</span>
-    <span class="sd">/**
-</span><span class="sd">     * @var PDO Database connection 
-</span><span class="sd">     * @since 1.0
-</span><span class="sd">     */</span>
-    <span class="k">private</span> <span class="nv">$_c</span><span class="p">;</span>
-    <span class="sd">/**
-</span><span class="sd">     * @var array PDO options 
-</span><span class="sd">     * @since 1.0
-</span><span class="sd">     */</span>
-    <span class="k">private</span> <span class="nv">$_options</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
-        <span class="s1">&#39;connection_string&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;sqlite::memory:&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;username&#39;</span> <span class="o">=&gt;</span> <span class="k">null</span><span class="p">,</span>
-        <span class="s1">&#39;password&#39;</span> <span class="o">=&gt;</span> <span class="k">null</span><span class="p">,</span>
-        <span class="s1">&#39;pdo_options&#39;</span> <span class="o">=&gt;</span> <span class="k">null</span><span class="p">,</span>
-    <span class="p">);</span>
-    <span class="sd">/**
-</span><span class="sd">     * @var PDOStatement Last PDO statement 
-</span><span class="sd">     * @since 1.0
-</span><span class="sd">     */</span>
-    <span class="k">private</span> <span class="nv">$_lastStmt</span><span class="p">;</span>
-
-    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="nv">$options</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_options</span> <span class="o">=</span> <span class="nx">array_merge</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_options</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
-    <span class="p">}</span>
-
-    <span class="sd">/**
-</span><span class="sd">     * Init DB connection
-</span><span class="sd">     * @param string $dsn DB connection string
-</span><span class="sd">     * @param string $user DB user name
-</span><span class="sd">     * @param string $password DB password
-</span><span class="sd">     * @param array $options PDO options
-</span><span class="sd">     * @return void
-</span><span class="sd">     * @since 1.0
-</span><span class="sd">     */</span>
-    <span class="k">private</span> <span class="k">function</span> <span class="nf">_connectDB</span><span class="p">(</span><span class="nv">$dsn</span><span class="p">,</span> <span class="nv">$user</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nv">$password</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nv">$options</span><span class="o">=</span><span class="k">array</span><span class="p">())</span>
-    <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_c</span> <span class="o">==</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_c</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">\PDO</span><span class="p">(</span><span class="nv">$dsn</span><span class="p">,</span> <span class="nv">$user</span><span class="p">,</span> <span class="nv">$password</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+    <span class=sd>/**
+</span><span class=sd>     * Init DB connection
+</span><span class=sd>     * @param string $dsn DB connection string
+</span><span class=sd>     * @param string $user DB user name
+</span><span class=sd>     * @param string $password DB password
+</span><span class=sd>     * @param array $options PDO options
+</span><span class=sd>     * @return void
+</span><span class=sd>     * @since 1.0
+</span><span class=sd>     */</span>
+    <span class=k>private</span> <span class=k>function</span> <span class=nf>_connectDB</span><span class=p>(</span><span class=nv>$dsn</span><span class=p>,</span> <span class=nv>$user</span><span class=o>=</span><span class=s1>&#39;&#39;</span><span class=p>,</span> <span class=nv>$password</span><span class=o>=</span><span class=s1>&#39;&#39;</span><span class=p>,</span> <span class=nv>$options</span><span class=o>=</span><span class=k>array</span><span class=p>())</span>
+    <span class=p>{</span>
+        <span class=k>if</span> <span class=p>(</span><span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_c</span> <span class=o>==</span> <span class=k>null</span><span class=p>)</span> <span class=p>{</span>
+            <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_c</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>\PDO</span><span class=p>(</span><span class=nv>$dsn</span><span class=p>,</span> <span class=nv>$user</span><span class=p>,</span> <span class=nv>$password</span><span class=p>,</span> <span class=nv>$options</span><span class=p>);</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
    
-    <span class="sd">/**
-</span><span class="sd">     * Execute sql statement
-</span><span class="sd">     * @param mixed $sql SQL statement or template
-</span><span class="sd">     * @param array $params Parameters for SQL template
-</span><span class="sd">     * @return bool
-</span><span class="sd">     * @since 1.0
-</span><span class="sd">     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">execute</span><span class="p">(</span><span class="nv">$sql</span><span class="p">,</span> <span class="nv">$params</span><span class="o">=</span><span class="k">array</span><span class="p">())</span>
-    <span class="p">{</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_connectDB</span><span class="p">(</span>
-            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_options</span><span class="p">[</span><span class="s1">&#39;connection_string&#39;</span><span class="p">],</span>
-            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_options</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">],</span>
-            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_options</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">],</span>
-            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_options</span><span class="p">[</span><span class="s1">&#39;driver_options&#39;</span><span class="p">]</span>
-        <span class="p">);</span>
-        <span class="nv">$stmt</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_c</span><span class="o">-&gt;</span><span class="na">prepare</span><span class="p">(</span><span class="nv">$sql</span><span class="p">);</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_lastStmt</span> <span class="o">=</span> <span class="nv">$stmt</span><span class="p">;</span>
-        <span class="k">return</span> <span class="nv">$stmt</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$params</span><span class="p">);</span>
-    <span class="p">}</span>
+    <span class=sd>/**
+</span><span class=sd>     * Execute sql statement
+</span><span class=sd>     * @param mixed $sql SQL statement or template
+</span><span class=sd>     * @param array $params Parameters for SQL template
+</span><span class=sd>     * @return bool
+</span><span class=sd>     * @since 1.0
+</span><span class=sd>     */</span>
+    <span class=k>public</span> <span class=k>function</span> <span class=nf>execute</span><span class=p>(</span><span class=nv>$sql</span><span class=p>,</span> <span class=nv>$params</span><span class=o>=</span><span class=k>array</span><span class=p>())</span>
+    <span class=p>{</span>
+        <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_connectDB</span><span class=p>(</span>
+            <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_options</span><span class=p>[</span><span class=s1>&#39;connection_string&#39;</span><span class=p>],</span>
+            <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_options</span><span class=p>[</span><span class=s1>&#39;username&#39;</span><span class=p>],</span>
+            <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_options</span><span class=p>[</span><span class=s1>&#39;password&#39;</span><span class=p>],</span>
+            <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_options</span><span class=p>[</span><span class=s1>&#39;driver_options&#39;</span><span class=p>]</span>
+        <span class=p>);</span>
+        <span class=nv>$stmt</span> <span class=o>=</span> <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_c</span><span class=o>-&gt;</span><span class=na>prepare</span><span class=p>(</span><span class=nv>$sql</span><span class=p>);</span>
+        <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_lastStmt</span> <span class=o>=</span> <span class=nv>$stmt</span><span class=p>;</span>
+        <span class=k>return</span> <span class=nv>$stmt</span><span class=o>-&gt;</span><span class=na>execute</span><span class=p>(</span><span class=nv>$params</span><span class=p>);</span>
+    <span class=p>}</span>
     
-    <span class="sd">/**
-</span><span class="sd">     * Fetch rows
-</span><span class="sd">     * @return array Associative array holding data rows
-</span><span class="sd">     * @since 1.0
-</span><span class="sd">     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">rows</span><span class="p">(</span><span class="nv">$sql</span><span class="p">,</span> <span class="nv">$params</span><span class="o">=</span><span class="k">array</span><span class="p">())</span>
-    <span class="p">{</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$sql</span><span class="p">,</span> <span class="nv">$params</span><span class="p">);</span>
-        <span class="nv">$stmt</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getLastStmt</span><span class="p">();</span>
-        <span class="nv">$rows</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
-        <span class="k">while</span> <span class="p">(</span><span class="nv">$row</span> <span class="o">=</span> <span class="nv">$stmt</span><span class="o">-&gt;</span><span class="na">fetch</span><span class="p">(</span><span class="nx">\PDO</span><span class="o">::</span><span class="na">FETCH_ASSOC</span><span class="p">))</span> <span class="p">{</span>
-            <span class="nv">$rows</span><span class="p">[]</span> <span class="o">=</span> <span class="nv">$row</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="k">return</span> <span class="nv">$rows</span><span class="p">;</span>
-    <span class="p">}</span>
+    <span class=sd>/**
+</span><span class=sd>     * Fetch rows
+</span><span class=sd>     * @return array Associative array holding data rows
+</span><span class=sd>     * @since 1.0
+</span><span class=sd>     */</span>
+    <span class=k>public</span> <span class=k>function</span> <span class=nf>rows</span><span class=p>(</span><span class=nv>$sql</span><span class=p>,</span> <span class=nv>$params</span><span class=o>=</span><span class=k>array</span><span class=p>())</span>
+    <span class=p>{</span>
+        <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>execute</span><span class=p>(</span><span class=nv>$sql</span><span class=p>,</span> <span class=nv>$params</span><span class=p>);</span>
+        <span class=nv>$stmt</span> <span class=o>=</span> <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>getLastStmt</span><span class=p>();</span>
+        <span class=nv>$rows</span> <span class=o>=</span> <span class=k>array</span><span class=p>();</span>
+        <span class=k>while</span> <span class=p>(</span><span class=nv>$row</span> <span class=o>=</span> <span class=nv>$stmt</span><span class=o>-&gt;</span><span class=na>fetch</span><span class=p>(</span><span class=nx>\PDO</span><span class=o>::</span><span class=na>FETCH_ASSOC</span><span class=p>))</span> <span class=p>{</span>
+            <span class=nv>$rows</span><span class=p>[]</span> <span class=o>=</span> <span class=nv>$row</span><span class=p>;</span>
+        <span class=p>}</span>
+        <span class=k>return</span> <span class=nv>$rows</span><span class=p>;</span>
+    <span class=p>}</span>
     
-    <span class="sd">/**
-</span><span class="sd">     * Return the last PDO statement
-</span><span class="sd">     * @return PDOStatement
-</span><span class="sd">     * @since 1.0
-</span><span class="sd">     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">getLastStmt</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_lastStmt</span><span class="p">;</span>
-    <span class="p">}</span>
+    <span class=sd>/**
+</span><span class=sd>     * Return the last PDO statement
+</span><span class=sd>     * @return PDOStatement
+</span><span class=sd>     * @since 1.0
+</span><span class=sd>     */</span>
+    <span class=k>public</span> <span class=k>function</span> <span class=nf>getLastStmt</span><span class=p>()</span>
+    <span class=p>{</span>
+        <span class=k>return</span> <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_lastStmt</span><span class=p>;</span>
+    <span class=p>}</span>
     
-    <span class="sd">/**
-</span><span class="sd">     * Begin transaction
-</span><span class="sd">     * @return void
-</span><span class="sd">     * @since 1.0
-</span><span class="sd">     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">beginTransaction</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_c</span><span class="o">-&gt;</span><span class="na">beginTransaction</span><span class="p">();</span>
-    <span class="p">}</span>
+    <span class=sd>/**
+</span><span class=sd>     * Begin transaction
+</span><span class=sd>     * @return void
+</span><span class=sd>     * @since 1.0
+</span><span class=sd>     */</span>
+    <span class=k>public</span> <span class=k>function</span> <span class=nf>beginTransaction</span><span class=p>()</span>
+    <span class=p>{</span>
+        <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_c</span><span class=o>-&gt;</span><span class=na>beginTransaction</span><span class=p>();</span>
+    <span class=p>}</span>
     
-    <span class="sd">/**
-</span><span class="sd">     * Commit the current transaction
-</span><span class="sd">     * @return void
-</span><span class="sd">     * @since 1.0
-</span><span class="sd">     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">commit</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_c</span><span class="o">-&gt;</span><span class="na">commit</span><span class="p">();</span>
-    <span class="p">}</span>
+    <span class=sd>/**
+</span><span class=sd>     * Commit the current transaction
+</span><span class=sd>     * @return void
+</span><span class=sd>     * @since 1.0
+</span><span class=sd>     */</span>
+    <span class=k>public</span> <span class=k>function</span> <span class=nf>commit</span><span class=p>()</span>
+    <span class=p>{</span>
+        <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_c</span><span class=o>-&gt;</span><span class=na>commit</span><span class=p>();</span>
+    <span class=p>}</span>
     
-    <span class="sd">/**
-</span><span class="sd">     * Rollback the current transaction
-</span><span class="sd">     * @return void
-</span><span class="sd">     * @since 1.0
-</span><span class="sd">     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">rollback</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_c</span><span class="o">-&gt;</span><span class="na">rollBack</span><span class="p">();</span>
-    <span class="p">}</span>
+    <span class=sd>/**
+</span><span class=sd>     * Rollback the current transaction
+</span><span class=sd>     * @return void
+</span><span class=sd>     * @since 1.0
+</span><span class=sd>     */</span>
+    <span class=k>public</span> <span class=k>function</span> <span class=nf>rollback</span><span class=p>()</span>
+    <span class=p>{</span>
+        <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_c</span><span class=o>-&gt;</span><span class=na>rollBack</span><span class=p>();</span>
+    <span class=p>}</span>
     
-<span class="p">}</span>
-<span class="cp">?&gt;</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>然后实现ActiveRecord类：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">  1
-</span><span class="lnt">  2
-</span><span class="lnt">  3
-</span><span class="lnt">  4
-</span><span class="lnt">  5
-</span><span class="lnt">  6
-</span><span class="lnt">  7
-</span><span class="lnt">  8
-</span><span class="lnt">  9
-</span><span class="lnt"> 10
-</span><span class="lnt"> 11
-</span><span class="lnt"> 12
-</span><span class="lnt"> 13
-</span><span class="lnt"> 14
-</span><span class="lnt"> 15
-</span><span class="lnt"> 16
-</span><span class="lnt"> 17
-</span><span class="lnt"> 18
-</span><span class="lnt"> 19
-</span><span class="lnt"> 20
-</span><span class="lnt"> 21
-</span><span class="lnt"> 22
-</span><span class="lnt"> 23
-</span><span class="lnt"> 24
-</span><span class="lnt"> 25
-</span><span class="lnt"> 26
-</span><span class="lnt"> 27
-</span><span class="lnt"> 28
-</span><span class="lnt"> 29
-</span><span class="lnt"> 30
-</span><span class="lnt"> 31
-</span><span class="lnt"> 32
-</span><span class="lnt"> 33
-</span><span class="lnt"> 34
-</span><span class="lnt"> 35
-</span><span class="lnt"> 36
-</span><span class="lnt"> 37
-</span><span class="lnt"> 38
-</span><span class="lnt"> 39
-</span><span class="lnt"> 40
-</span><span class="lnt"> 41
-</span><span class="lnt"> 42
-</span><span class="lnt"> 43
-</span><span class="lnt"> 44
-</span><span class="lnt"> 45
-</span><span class="lnt"> 46
-</span><span class="lnt"> 47
-</span><span class="lnt"> 48
-</span><span class="lnt"> 49
-</span><span class="lnt"> 50
-</span><span class="lnt"> 51
-</span><span class="lnt"> 52
-</span><span class="lnt"> 53
-</span><span class="lnt"> 54
-</span><span class="lnt"> 55
-</span><span class="lnt"> 56
-</span><span class="lnt"> 57
-</span><span class="lnt"> 58
-</span><span class="lnt"> 59
-</span><span class="lnt"> 60
-</span><span class="lnt"> 61
-</span><span class="lnt"> 62
-</span><span class="lnt"> 63
-</span><span class="lnt"> 64
-</span><span class="lnt"> 65
-</span><span class="lnt"> 66
-</span><span class="lnt"> 67
-</span><span class="lnt"> 68
-</span><span class="lnt"> 69
-</span><span class="lnt"> 70
-</span><span class="lnt"> 71
-</span><span class="lnt"> 72
-</span><span class="lnt"> 73
-</span><span class="lnt"> 74
-</span><span class="lnt"> 75
-</span><span class="lnt"> 76
-</span><span class="lnt"> 77
-</span><span class="lnt"> 78
-</span><span class="lnt"> 79
-</span><span class="lnt"> 80
-</span><span class="lnt"> 81
-</span><span class="lnt"> 82
-</span><span class="lnt"> 83
-</span><span class="lnt"> 84
-</span><span class="lnt"> 85
-</span><span class="lnt"> 86
-</span><span class="lnt"> 87
-</span><span class="lnt"> 88
-</span><span class="lnt"> 89
-</span><span class="lnt"> 90
-</span><span class="lnt"> 91
-</span><span class="lnt"> 92
-</span><span class="lnt"> 93
-</span><span class="lnt"> 94
-</span><span class="lnt"> 95
-</span><span class="lnt"> 96
-</span><span class="lnt"> 97
-</span><span class="lnt"> 98
-</span><span class="lnt"> 99
-</span><span class="lnt">100
-</span><span class="lnt">101
-</span><span class="lnt">102
-</span><span class="lnt">103
-</span><span class="lnt">104
-</span><span class="lnt">105
-</span><span class="lnt">106
-</span><span class="lnt">107
-</span><span class="lnt">108
-</span><span class="lnt">109
-</span><span class="lnt">110
-</span><span class="lnt">111
-</span><span class="lnt">112
-</span><span class="lnt">113
-</span><span class="lnt">114
-</span><span class="lnt">115
-</span><span class="lnt">116
-</span><span class="lnt">117
-</span><span class="lnt">118
-</span><span class="lnt">119
-</span><span class="lnt">120
-</span><span class="lnt">121
-</span><span class="lnt">122
-</span><span class="lnt">123
-</span><span class="lnt">124
-</span><span class="lnt">125
-</span><span class="lnt">126
-</span><span class="lnt">127
-</span><span class="lnt">128
-</span><span class="lnt">129
-</span><span class="lnt">130
-</span><span class="lnt">131
-</span><span class="lnt">132
-</span><span class="lnt">133
-</span><span class="lnt">134
-</span><span class="lnt">135
-</span><span class="lnt">136
-</span><span class="lnt">137
-</span><span class="lnt">138
-</span><span class="lnt">139
-</span><span class="lnt">140
-</span><span class="lnt">141
-</span><span class="lnt">142
-</span><span class="lnt">143
-</span><span class="lnt">144
-</span><span class="lnt">145
-</span><span class="lnt">146
-</span><span class="lnt">147
-</span><span class="lnt">148
-</span><span class="lnt">149
-</span><span class="lnt">150
-</span><span class="lnt">151
-</span><span class="lnt">152
-</span><span class="lnt">153
-</span><span class="lnt">154
-</span><span class="lnt">155
-</span><span class="lnt">156
-</span><span class="lnt">157
-</span><span class="lnt">158
-</span><span class="lnt">159
-</span><span class="lnt">160
-</span><span class="lnt">161
-</span><span class="lnt">162
-</span><span class="lnt">163
-</span><span class="lnt">164
-</span><span class="lnt">165
-</span><span class="lnt">166
-</span><span class="lnt">167
-</span><span class="lnt">168
-</span><span class="lnt">169
-</span><span class="lnt">170
-</span><span class="lnt">171
-</span><span class="lnt">172
-</span><span class="lnt">173
-</span><span class="lnt">174
-</span><span class="lnt">175
-</span><span class="lnt">176
-</span><span class="lnt">177
-</span><span class="lnt">178
-</span><span class="lnt">179
-</span><span class="lnt">180
-</span><span class="lnt">181
-</span><span class="lnt">182
-</span><span class="lnt">183
-</span><span class="lnt">184
-</span><span class="lnt">185
-</span><span class="lnt">186
-</span><span class="lnt">187
-</span><span class="lnt">188
-</span><span class="lnt">189
-</span><span class="lnt">190
-</span><span class="lnt">191
-</span><span class="lnt">192
-</span><span class="lnt">193
-</span><span class="lnt">194
-</span><span class="lnt">195
-</span><span class="lnt">196
-</span><span class="lnt">197
-</span><span class="lnt">198
-</span><span class="lnt">199
-</span><span class="lnt">200
-</span><span class="lnt">201
-</span><span class="lnt">202
-</span><span class="lnt">203
-</span><span class="lnt">204
-</span><span class="lnt">205
-</span><span class="lnt">206
-</span><span class="lnt">207
-</span><span class="lnt">208
-</span><span class="lnt">209
-</span><span class="lnt">210
-</span><span class="lnt">211
-</span><span class="lnt">212
-</span><span class="lnt">213
-</span><span class="lnt">214
-</span><span class="lnt">215
-</span><span class="lnt">216
-</span><span class="lnt">217
-</span><span class="lnt">218
-</span><span class="lnt">219
-</span><span class="lnt">220
-</span><span class="lnt">221
-</span><span class="lnt">222
-</span><span class="lnt">223
-</span><span class="lnt">224
-</span><span class="lnt">225
-</span><span class="lnt">226
-</span><span class="lnt">227
-</span><span class="lnt">228
-</span><span class="lnt">229
-</span><span class="lnt">230
-</span><span class="lnt">231
-</span><span class="lnt">232
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-<span class="k">namespace</span> <span class="nx">org\x3f\flamework\base</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">org\x3f\flamework\Flame</span><span class="p">;</span>
+<span class=p>}</span>
+<span class=cp>?&gt;</span>
+</code></pre></td></tr></table></div></div><p>然后实现ActiveRecord类：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>  1
+</span><span class=lnt>  2
+</span><span class=lnt>  3
+</span><span class=lnt>  4
+</span><span class=lnt>  5
+</span><span class=lnt>  6
+</span><span class=lnt>  7
+</span><span class=lnt>  8
+</span><span class=lnt>  9
+</span><span class=lnt> 10
+</span><span class=lnt> 11
+</span><span class=lnt> 12
+</span><span class=lnt> 13
+</span><span class=lnt> 14
+</span><span class=lnt> 15
+</span><span class=lnt> 16
+</span><span class=lnt> 17
+</span><span class=lnt> 18
+</span><span class=lnt> 19
+</span><span class=lnt> 20
+</span><span class=lnt> 21
+</span><span class=lnt> 22
+</span><span class=lnt> 23
+</span><span class=lnt> 24
+</span><span class=lnt> 25
+</span><span class=lnt> 26
+</span><span class=lnt> 27
+</span><span class=lnt> 28
+</span><span class=lnt> 29
+</span><span class=lnt> 30
+</span><span class=lnt> 31
+</span><span class=lnt> 32
+</span><span class=lnt> 33
+</span><span class=lnt> 34
+</span><span class=lnt> 35
+</span><span class=lnt> 36
+</span><span class=lnt> 37
+</span><span class=lnt> 38
+</span><span class=lnt> 39
+</span><span class=lnt> 40
+</span><span class=lnt> 41
+</span><span class=lnt> 42
+</span><span class=lnt> 43
+</span><span class=lnt> 44
+</span><span class=lnt> 45
+</span><span class=lnt> 46
+</span><span class=lnt> 47
+</span><span class=lnt> 48
+</span><span class=lnt> 49
+</span><span class=lnt> 50
+</span><span class=lnt> 51
+</span><span class=lnt> 52
+</span><span class=lnt> 53
+</span><span class=lnt> 54
+</span><span class=lnt> 55
+</span><span class=lnt> 56
+</span><span class=lnt> 57
+</span><span class=lnt> 58
+</span><span class=lnt> 59
+</span><span class=lnt> 60
+</span><span class=lnt> 61
+</span><span class=lnt> 62
+</span><span class=lnt> 63
+</span><span class=lnt> 64
+</span><span class=lnt> 65
+</span><span class=lnt> 66
+</span><span class=lnt> 67
+</span><span class=lnt> 68
+</span><span class=lnt> 69
+</span><span class=lnt> 70
+</span><span class=lnt> 71
+</span><span class=lnt> 72
+</span><span class=lnt> 73
+</span><span class=lnt> 74
+</span><span class=lnt> 75
+</span><span class=lnt> 76
+</span><span class=lnt> 77
+</span><span class=lnt> 78
+</span><span class=lnt> 79
+</span><span class=lnt> 80
+</span><span class=lnt> 81
+</span><span class=lnt> 82
+</span><span class=lnt> 83
+</span><span class=lnt> 84
+</span><span class=lnt> 85
+</span><span class=lnt> 86
+</span><span class=lnt> 87
+</span><span class=lnt> 88
+</span><span class=lnt> 89
+</span><span class=lnt> 90
+</span><span class=lnt> 91
+</span><span class=lnt> 92
+</span><span class=lnt> 93
+</span><span class=lnt> 94
+</span><span class=lnt> 95
+</span><span class=lnt> 96
+</span><span class=lnt> 97
+</span><span class=lnt> 98
+</span><span class=lnt> 99
+</span><span class=lnt>100
+</span><span class=lnt>101
+</span><span class=lnt>102
+</span><span class=lnt>103
+</span><span class=lnt>104
+</span><span class=lnt>105
+</span><span class=lnt>106
+</span><span class=lnt>107
+</span><span class=lnt>108
+</span><span class=lnt>109
+</span><span class=lnt>110
+</span><span class=lnt>111
+</span><span class=lnt>112
+</span><span class=lnt>113
+</span><span class=lnt>114
+</span><span class=lnt>115
+</span><span class=lnt>116
+</span><span class=lnt>117
+</span><span class=lnt>118
+</span><span class=lnt>119
+</span><span class=lnt>120
+</span><span class=lnt>121
+</span><span class=lnt>122
+</span><span class=lnt>123
+</span><span class=lnt>124
+</span><span class=lnt>125
+</span><span class=lnt>126
+</span><span class=lnt>127
+</span><span class=lnt>128
+</span><span class=lnt>129
+</span><span class=lnt>130
+</span><span class=lnt>131
+</span><span class=lnt>132
+</span><span class=lnt>133
+</span><span class=lnt>134
+</span><span class=lnt>135
+</span><span class=lnt>136
+</span><span class=lnt>137
+</span><span class=lnt>138
+</span><span class=lnt>139
+</span><span class=lnt>140
+</span><span class=lnt>141
+</span><span class=lnt>142
+</span><span class=lnt>143
+</span><span class=lnt>144
+</span><span class=lnt>145
+</span><span class=lnt>146
+</span><span class=lnt>147
+</span><span class=lnt>148
+</span><span class=lnt>149
+</span><span class=lnt>150
+</span><span class=lnt>151
+</span><span class=lnt>152
+</span><span class=lnt>153
+</span><span class=lnt>154
+</span><span class=lnt>155
+</span><span class=lnt>156
+</span><span class=lnt>157
+</span><span class=lnt>158
+</span><span class=lnt>159
+</span><span class=lnt>160
+</span><span class=lnt>161
+</span><span class=lnt>162
+</span><span class=lnt>163
+</span><span class=lnt>164
+</span><span class=lnt>165
+</span><span class=lnt>166
+</span><span class=lnt>167
+</span><span class=lnt>168
+</span><span class=lnt>169
+</span><span class=lnt>170
+</span><span class=lnt>171
+</span><span class=lnt>172
+</span><span class=lnt>173
+</span><span class=lnt>174
+</span><span class=lnt>175
+</span><span class=lnt>176
+</span><span class=lnt>177
+</span><span class=lnt>178
+</span><span class=lnt>179
+</span><span class=lnt>180
+</span><span class=lnt>181
+</span><span class=lnt>182
+</span><span class=lnt>183
+</span><span class=lnt>184
+</span><span class=lnt>185
+</span><span class=lnt>186
+</span><span class=lnt>187
+</span><span class=lnt>188
+</span><span class=lnt>189
+</span><span class=lnt>190
+</span><span class=lnt>191
+</span><span class=lnt>192
+</span><span class=lnt>193
+</span><span class=lnt>194
+</span><span class=lnt>195
+</span><span class=lnt>196
+</span><span class=lnt>197
+</span><span class=lnt>198
+</span><span class=lnt>199
+</span><span class=lnt>200
+</span><span class=lnt>201
+</span><span class=lnt>202
+</span><span class=lnt>203
+</span><span class=lnt>204
+</span><span class=lnt>205
+</span><span class=lnt>206
+</span><span class=lnt>207
+</span><span class=lnt>208
+</span><span class=lnt>209
+</span><span class=lnt>210
+</span><span class=lnt>211
+</span><span class=lnt>212
+</span><span class=lnt>213
+</span><span class=lnt>214
+</span><span class=lnt>215
+</span><span class=lnt>216
+</span><span class=lnt>217
+</span><span class=lnt>218
+</span><span class=lnt>219
+</span><span class=lnt>220
+</span><span class=lnt>221
+</span><span class=lnt>222
+</span><span class=lnt>223
+</span><span class=lnt>224
+</span><span class=lnt>225
+</span><span class=lnt>226
+</span><span class=lnt>227
+</span><span class=lnt>228
+</span><span class=lnt>229
+</span><span class=lnt>230
+</span><span class=lnt>231
+</span><span class=lnt>232
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-php data-lang=php><span class=cp>&lt;?php</span>
+<span class=k>namespace</span> <span class=nx>org\x3f\flamework\base</span><span class=p>;</span>
+<span class=k>use</span> <span class=nx>org\x3f\flamework\Flame</span><span class=p>;</span>
 
-<span class="sd">/**
-</span><span class="sd"> * Ancestor class for active records
-</span><span class="sd"> *
-</span><span class="sd"> * @abstract
-</span><span class="sd"> * @author Donie Leigh &lt;donie.leigh@gmail.com&gt;
-</span><span class="sd"> * @link http://0x3f.org
-</span><span class="sd"> * @copyright Copyright &amp;copy; 2013-2014 Donie Leigh
-</span><span class="sd"> * @license BSD (3-terms)
-</span><span class="sd"> * @since 1.0
-</span><span class="sd"> */</span>
-<span class="k">abstract</span> <span class="k">class</span> <span class="nc">ActiveRecord</span>
-<span class="p">{</span>
-    <span class="sd">/**
-</span><span class="sd">     * @var array Models 
-</span><span class="sd">     * @since 1.0
-</span><span class="sd">     */</span>
-    <span class="k">private</span> <span class="k">static</span> <span class="nv">$_models</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
-    <span class="sd">/**
-</span><span class="sd">     * @var array Attributes and values
-</span><span class="sd">     * @since 1.0
-</span><span class="sd">     */</span>
-    <span class="k">private</span> <span class="nv">$_data</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
-    <span class="sd">/**
-</span><span class="sd">     * @var array Attributes and values which are changed
-</span><span class="sd">     * @since 1.0
-</span><span class="sd">     */</span>
-    <span class="k">private</span> <span class="nv">$_dirtyData</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
-    <span class="sd">/**
-</span><span class="sd">     * @var bool Whether this record is a new one 
-</span><span class="sd">     * @since 1.0
-</span><span class="sd">     */</span>
-    <span class="k">private</span> <span class="nv">$_isNew</span> <span class="o">=</span> <span class="k">true</span><span class="p">;</span>
+<span class=sd>/**
+</span><span class=sd> * Ancestor class for active records
+</span><span class=sd> *
+</span><span class=sd> * @abstract
+</span><span class=sd> * @author Donie Leigh &lt;donie.leigh@gmail.com&gt;
+</span><span class=sd> * @link http://0x3f.org
+</span><span class=sd> * @copyright Copyright &amp;copy; 2013-2014 Donie Leigh
+</span><span class=sd> * @license BSD (3-terms)
+</span><span class=sd> * @since 1.0
+</span><span class=sd> */</span>
+<span class=k>abstract</span> <span class=k>class</span> <span class=nc>ActiveRecord</span>
+<span class=p>{</span>
+    <span class=sd>/**
+</span><span class=sd>     * @var array Models 
+</span><span class=sd>     * @since 1.0
+</span><span class=sd>     */</span>
+    <span class=k>private</span> <span class=k>static</span> <span class=nv>$_models</span> <span class=o>=</span> <span class=k>array</span><span class=p>();</span>
+    <span class=sd>/**
+</span><span class=sd>     * @var array Attributes and values
+</span><span class=sd>     * @since 1.0
+</span><span class=sd>     */</span>
+    <span class=k>private</span> <span class=nv>$_data</span> <span class=o>=</span> <span class=k>array</span><span class=p>();</span>
+    <span class=sd>/**
+</span><span class=sd>     * @var array Attributes and values which are changed
+</span><span class=sd>     * @since 1.0
+</span><span class=sd>     */</span>
+    <span class=k>private</span> <span class=nv>$_dirtyData</span> <span class=o>=</span> <span class=k>array</span><span class=p>();</span>
+    <span class=sd>/**
+</span><span class=sd>     * @var bool Whether this record is a new one 
+</span><span class=sd>     * @since 1.0
+</span><span class=sd>     */</span>
+    <span class=k>private</span> <span class=nv>$_isNew</span> <span class=o>=</span> <span class=k>true</span><span class=p>;</span>
 
-    <span class="sd">/**
-</span><span class="sd">     * Get model instance
-</span><span class="sd">     * @param string $className
-</span><span class="sd">     * @return ActiveRecord
-</span><span class="sd">     * @since 1.0
-</span><span class="sd">     */</span>
-    <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">getModel</span><span class="p">(</span><span class="nv">$className</span> <span class="o">=</span> <span class="no">__CLASS__</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">isset</span><span class="p">(</span><span class="nx">self</span><span class="o">::</span><span class="nv">$_models</span><span class="p">[</span><span class="nv">$className</span><span class="p">]))</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nx">self</span><span class="o">::</span><span class="nv">$_models</span><span class="p">[</span><span class="nv">$className</span><span class="p">];</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="nv">$model</span> <span class="o">=</span> <span class="nx">self</span><span class="o">::</span><span class="nv">$_models</span><span class="p">[</span><span class="nv">$className</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nv">$className</span><span class="p">;</span>
-            <span class="k">return</span> <span class="nv">$model</span><span class="p">;</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+    <span class=sd>/**
+</span><span class=sd>     * Get model instance
+</span><span class=sd>     * @param string $className
+</span><span class=sd>     * @return ActiveRecord
+</span><span class=sd>     * @since 1.0
+</span><span class=sd>     */</span>
+    <span class=k>public</span> <span class=k>static</span> <span class=k>function</span> <span class=nf>getModel</span><span class=p>(</span><span class=nv>$className</span> <span class=o>=</span> <span class=no>__CLASS__</span><span class=p>)</span>
+    <span class=p>{</span>
+        <span class=k>if</span> <span class=p>(</span><span class=nx>isset</span><span class=p>(</span><span class=nx>self</span><span class=o>::</span><span class=nv>$_models</span><span class=p>[</span><span class=nv>$className</span><span class=p>]))</span> <span class=p>{</span>
+            <span class=k>return</span> <span class=nx>self</span><span class=o>::</span><span class=nv>$_models</span><span class=p>[</span><span class=nv>$className</span><span class=p>];</span>
+        <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+            <span class=nv>$model</span> <span class=o>=</span> <span class=nx>self</span><span class=o>::</span><span class=nv>$_models</span><span class=p>[</span><span class=nv>$className</span><span class=p>]</span> <span class=o>=</span> <span class=k>new</span> <span class=nv>$className</span><span class=p>;</span>
+            <span class=k>return</span> <span class=nv>$model</span><span class=p>;</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
     
-    <span class="sd">/**
-</span><span class="sd">     * Get table name of this ActiveRecord
-</span><span class="sd">     * @return string Table name
-</span><span class="sd">     * @since 1.0
-</span><span class="sd">     */</span>
-    <span class="k">abstract</span> <span class="k">public</span> <span class="k">function</span> <span class="nf">getTableName</span><span class="p">();</span>
+    <span class=sd>/**
+</span><span class=sd>     * Get table name of this ActiveRecord
+</span><span class=sd>     * @return string Table name
+</span><span class=sd>     * @since 1.0
+</span><span class=sd>     */</span>
+    <span class=k>abstract</span> <span class=k>public</span> <span class=k>function</span> <span class=nf>getTableName</span><span class=p>();</span>
 
-    <span class="sd">/**
-</span><span class="sd">     * Get the name of the primary key column
-</span><span class="sd">     * @return string Column name
-</span><span class="sd">     * @since 1.0
-</span><span class="sd">     */</span>
-    <span class="k">abstract</span> <span class="k">public</span> <span class="k">function</span> <span class="nf">getPrimaryKey</span><span class="p">();</span>
+    <span class=sd>/**
+</span><span class=sd>     * Get the name of the primary key column
+</span><span class=sd>     * @return string Column name
+</span><span class=sd>     * @since 1.0
+</span><span class=sd>     */</span>
+    <span class=k>abstract</span> <span class=k>public</span> <span class=k>function</span> <span class=nf>getPrimaryKey</span><span class=p>();</span>
     
-    <span class="sd">/**
-</span><span class="sd">     * Magic method for accessing model attributes
-</span><span class="sd">     * @param string $attr Attribute name
-</span><span class="sd">     * @return mixed Attribute value
-</span><span class="sd">     * @since 1.0
-</span><span class="sd">     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="fm">__get</span><span class="p">(</span><span class="nv">$attr</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_data</span><span class="p">[</span><span class="nv">$attr</span><span class="p">]))</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_data</span><span class="p">[</span><span class="nv">$attr</span><span class="p">];</span>
-        <span class="p">}</span>
-        <span class="k">return</span> <span class="k">null</span><span class="p">;</span>
-    <span class="p">}</span>
+    <span class=sd>/**
+</span><span class=sd>     * Magic method for accessing model attributes
+</span><span class=sd>     * @param string $attr Attribute name
+</span><span class=sd>     * @return mixed Attribute value
+</span><span class=sd>     * @since 1.0
+</span><span class=sd>     */</span>
+    <span class=k>public</span> <span class=k>function</span> <span class=fm>__get</span><span class=p>(</span><span class=nv>$attr</span><span class=p>)</span>
+    <span class=p>{</span>
+        <span class=k>if</span> <span class=p>(</span><span class=nx>isset</span><span class=p>(</span><span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_data</span><span class=p>[</span><span class=nv>$attr</span><span class=p>]))</span> <span class=p>{</span>
+            <span class=k>return</span> <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_data</span><span class=p>[</span><span class=nv>$attr</span><span class=p>];</span>
+        <span class=p>}</span>
+        <span class=k>return</span> <span class=k>null</span><span class=p>;</span>
+    <span class=p>}</span>
     
-    <span class="sd">/**
-</span><span class="sd">     * Magic method for setting attribute value
-</span><span class="sd">     * @param string $attr Attribute name
-</span><span class="sd">     * @param mixed $val Attribute value
-</span><span class="sd">     * @return void
-</span><span class="sd">     * @since 1.0
-</span><span class="sd">     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="fm">__set</span><span class="p">(</span><span class="nv">$attr</span><span class="p">,</span> <span class="nv">$val</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_data</span><span class="p">[</span><span class="nv">$attr</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$val</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getIsNew</span><span class="p">())</span> <span class="p">{</span>
-            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_dirtyData</span><span class="p">[</span><span class="nv">$attr</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$val</span><span class="p">;</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+    <span class=sd>/**
+</span><span class=sd>     * Magic method for setting attribute value
+</span><span class=sd>     * @param string $attr Attribute name
+</span><span class=sd>     * @param mixed $val Attribute value
+</span><span class=sd>     * @return void
+</span><span class=sd>     * @since 1.0
+</span><span class=sd>     */</span>
+    <span class=k>public</span> <span class=k>function</span> <span class=fm>__set</span><span class=p>(</span><span class=nv>$attr</span><span class=p>,</span> <span class=nv>$val</span><span class=p>)</span>
+    <span class=p>{</span>
+        <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_data</span><span class=p>[</span><span class=nv>$attr</span><span class=p>]</span> <span class=o>=</span> <span class=nv>$val</span><span class=p>;</span>
+        <span class=k>if</span> <span class=p>(</span><span class=o>!</span><span class=nv>$this</span><span class=o>-&gt;</span><span class=na>getIsNew</span><span class=p>())</span> <span class=p>{</span>
+            <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_dirtyData</span><span class=p>[</span><span class=nv>$attr</span><span class=p>]</span> <span class=o>=</span> <span class=nv>$val</span><span class=p>;</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
     
-    <span class="sd">/**
-</span><span class="sd">     * Magic method for checking if an attribute is set
-</span><span class="sd">     * @param string $attr Attribute name
-</span><span class="sd">     * @return bool
-</span><span class="sd">     * @since 1.0
-</span><span class="sd">     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="fm">__isset</span><span class="p">(</span><span class="nv">$attr</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_data</span><span class="p">[</span><span class="nv">$attr</span><span class="p">]);</span>
-    <span class="p">}</span>
+    <span class=sd>/**
+</span><span class=sd>     * Magic method for checking if an attribute is set
+</span><span class=sd>     * @param string $attr Attribute name
+</span><span class=sd>     * @return bool
+</span><span class=sd>     * @since 1.0
+</span><span class=sd>     */</span>
+    <span class=k>public</span> <span class=k>function</span> <span class=fm>__isset</span><span class=p>(</span><span class=nv>$attr</span><span class=p>)</span>
+    <span class=p>{</span>
+        <span class=k>return</span> <span class=nx>isset</span><span class=p>(</span><span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_data</span><span class=p>[</span><span class=nv>$attr</span><span class=p>]);</span>
+    <span class=p>}</span>
     
-    <span class="sd">/**
-</span><span class="sd">     * Magic method for unsetting an attribute
-</span><span class="sd">     * @param string $attr Attribute name
-</span><span class="sd">     * @return void
-</span><span class="sd">     * @since 1.0
-</span><span class="sd">     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="fm">__unset</span><span class="p">(</span><span class="nv">$attr</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="nx">unset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_data</span><span class="p">[</span><span class="nv">$attr</span><span class="p">]);</span>
-    <span class="p">}</span>
+    <span class=sd>/**
+</span><span class=sd>     * Magic method for unsetting an attribute
+</span><span class=sd>     * @param string $attr Attribute name
+</span><span class=sd>     * @return void
+</span><span class=sd>     * @since 1.0
+</span><span class=sd>     */</span>
+    <span class=k>public</span> <span class=k>function</span> <span class=fm>__unset</span><span class=p>(</span><span class=nv>$attr</span><span class=p>)</span>
+    <span class=p>{</span>
+        <span class=nx>unset</span><span class=p>(</span><span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_data</span><span class=p>[</span><span class=nv>$attr</span><span class=p>]);</span>
+    <span class=p>}</span>
     
-    <span class="sd">/**
-</span><span class="sd">     * Set this record to be $isNew
-</span><span class="sd">     * @param bool $isNew
-</span><span class="sd">     * @return void
-</span><span class="sd">     * @since 1.0
-</span><span class="sd">     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">setIsNew</span><span class="p">(</span><span class="nv">$isNew</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_isNew</span> <span class="o">=</span> <span class="nv">$isNew</span><span class="p">;</span>
-    <span class="p">}</span>
+    <span class=sd>/**
+</span><span class=sd>     * Set this record to be $isNew
+</span><span class=sd>     * @param bool $isNew
+</span><span class=sd>     * @return void
+</span><span class=sd>     * @since 1.0
+</span><span class=sd>     */</span>
+    <span class=k>public</span> <span class=k>function</span> <span class=nf>setIsNew</span><span class=p>(</span><span class=nv>$isNew</span><span class=p>)</span>
+    <span class=p>{</span>
+        <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_isNew</span> <span class=o>=</span> <span class=nv>$isNew</span><span class=p>;</span>
+    <span class=p>}</span>
     
-    <span class="sd">/**
-</span><span class="sd">     * Whether this record is new
-</span><span class="sd">     * @return bool
-</span><span class="sd">     * @since 1.0
-</span><span class="sd">     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">getIsNew</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_isNew</span><span class="p">;</span>
-    <span class="p">}</span>
+    <span class=sd>/**
+</span><span class=sd>     * Whether this record is new
+</span><span class=sd>     * @return bool
+</span><span class=sd>     * @since 1.0
+</span><span class=sd>     */</span>
+    <span class=k>public</span> <span class=k>function</span> <span class=nf>getIsNew</span><span class=p>()</span>
+    <span class=p>{</span>
+        <span class=k>return</span> <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_isNew</span><span class=p>;</span>
+    <span class=p>}</span>
     
-    <span class="sd">/**
-</span><span class="sd">     * Find a record by primary key
-</span><span class="sd">     * @param mixed $val Primary key value
-</span><span class="sd">     * @return ActiveRecord
-</span><span class="sd">     * @since 1.0
-</span><span class="sd">     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">findByPk</span><span class="p">(</span><span class="nv">$val</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="nv">$sql</span> <span class="o">=</span> <span class="s2">&#34;select * from &#34;</span><span class="o">.</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getTableName</span><span class="p">()</span><span class="o">.</span><span class="s2">&#34; where &#34;</span><span class="o">.</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getPrimaryKey</span><span class="p">()</span><span class="o">.</span><span class="s2">&#34;=?&#34;</span><span class="p">;</span>
-        <span class="nv">$rows</span> <span class="o">=</span> <span class="nx">Flame</span><span class="o">::</span><span class="na">app</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getDBConnection</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">rows</span><span class="p">(</span><span class="nv">$sql</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="nv">$val</span><span class="p">));</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">count</span><span class="p">(</span><span class="nv">$rows</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">createInstance</span><span class="p">(</span><span class="nv">$rows</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
-        <span class="p">}</span>
-        <span class="k">return</span> <span class="k">null</span><span class="p">;</span>
-    <span class="p">}</span>
+    <span class=sd>/**
+</span><span class=sd>     * Find a record by primary key
+</span><span class=sd>     * @param mixed $val Primary key value
+</span><span class=sd>     * @return ActiveRecord
+</span><span class=sd>     * @since 1.0
+</span><span class=sd>     */</span>
+    <span class=k>public</span> <span class=k>function</span> <span class=nf>findByPk</span><span class=p>(</span><span class=nv>$val</span><span class=p>)</span>
+    <span class=p>{</span>
+        <span class=nv>$sql</span> <span class=o>=</span> <span class=s2>&#34;select * from &#34;</span><span class=o>.</span><span class=nv>$this</span><span class=o>-&gt;</span><span class=na>getTableName</span><span class=p>()</span><span class=o>.</span><span class=s2>&#34; where &#34;</span><span class=o>.</span><span class=nv>$this</span><span class=o>-&gt;</span><span class=na>getPrimaryKey</span><span class=p>()</span><span class=o>.</span><span class=s2>&#34;=?&#34;</span><span class=p>;</span>
+        <span class=nv>$rows</span> <span class=o>=</span> <span class=nx>Flame</span><span class=o>::</span><span class=na>app</span><span class=p>()</span><span class=o>-&gt;</span><span class=na>getDBConnection</span><span class=p>()</span><span class=o>-&gt;</span><span class=na>rows</span><span class=p>(</span><span class=nv>$sql</span><span class=p>,</span> <span class=k>array</span><span class=p>(</span><span class=nv>$val</span><span class=p>));</span>
+        <span class=k>if</span> <span class=p>(</span><span class=nx>count</span><span class=p>(</span><span class=nv>$rows</span><span class=p>)</span> <span class=o>&gt;</span> <span class=mi>0</span><span class=p>)</span> <span class=p>{</span>
+            <span class=k>return</span> <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>createInstance</span><span class=p>(</span><span class=nv>$rows</span><span class=p>[</span><span class=mi>0</span><span class=p>]);</span>
+        <span class=p>}</span>
+        <span class=k>return</span> <span class=k>null</span><span class=p>;</span>
+    <span class=p>}</span>
     
-    <span class="sd">/**
-</span><span class="sd">     * Create an instance with given data
-</span><span class="sd">     * @param array $row Associative array
-</span><span class="sd">     * @return ActiveRecord
-</span><span class="sd">     * @since 1.0
-</span><span class="sd">     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">createInstance</span><span class="p">(</span><span class="nv">$row</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="nv">$className</span> <span class="o">=</span> <span class="nx">get_class</span><span class="p">(</span><span class="nv">$this</span><span class="p">);</span>
-        <span class="nv">$instance</span> <span class="o">=</span> <span class="k">new</span> <span class="nv">$className</span><span class="p">;</span>
-        <span class="k">foreach</span> <span class="p">(</span><span class="nv">$row</span> <span class="k">as</span> <span class="nv">$col</span><span class="o">=&gt;</span><span class="nv">$val</span><span class="p">){</span>
-            <span class="nv">$instance</span><span class="o">-&gt;</span><span class="nv">$col</span> <span class="o">=</span> <span class="nv">$val</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="nv">$instance</span><span class="o">-&gt;</span><span class="na">setIsNew</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
-        <span class="k">return</span> <span class="nv">$instance</span><span class="p">;</span>
-    <span class="p">}</span>
+    <span class=sd>/**
+</span><span class=sd>     * Create an instance with given data
+</span><span class=sd>     * @param array $row Associative array
+</span><span class=sd>     * @return ActiveRecord
+</span><span class=sd>     * @since 1.0
+</span><span class=sd>     */</span>
+    <span class=k>public</span> <span class=k>function</span> <span class=nf>createInstance</span><span class=p>(</span><span class=nv>$row</span><span class=p>)</span>
+    <span class=p>{</span>
+        <span class=nv>$className</span> <span class=o>=</span> <span class=nx>get_class</span><span class=p>(</span><span class=nv>$this</span><span class=p>);</span>
+        <span class=nv>$instance</span> <span class=o>=</span> <span class=k>new</span> <span class=nv>$className</span><span class=p>;</span>
+        <span class=k>foreach</span> <span class=p>(</span><span class=nv>$row</span> <span class=k>as</span> <span class=nv>$col</span><span class=o>=&gt;</span><span class=nv>$val</span><span class=p>){</span>
+            <span class=nv>$instance</span><span class=o>-&gt;</span><span class=nv>$col</span> <span class=o>=</span> <span class=nv>$val</span><span class=p>;</span>
+        <span class=p>}</span>
+        <span class=nv>$instance</span><span class=o>-&gt;</span><span class=na>setIsNew</span><span class=p>(</span><span class=k>false</span><span class=p>);</span>
+        <span class=k>return</span> <span class=nv>$instance</span><span class=p>;</span>
+    <span class=p>}</span>
     
-    <span class="sd">/**
-</span><span class="sd">     * Save this record
-</span><span class="sd">     * @return void
-</span><span class="sd">     * @since 1.0
-</span><span class="sd">     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">save</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getIsNew</span><span class="p">())</span> <span class="p">{</span>
-            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_insert</span><span class="p">();</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_update</span><span class="p">();</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+    <span class=sd>/**
+</span><span class=sd>     * Save this record
+</span><span class=sd>     * @return void
+</span><span class=sd>     * @since 1.0
+</span><span class=sd>     */</span>
+    <span class=k>public</span> <span class=k>function</span> <span class=nf>save</span><span class=p>()</span>
+    <span class=p>{</span>
+        <span class=k>if</span> <span class=p>(</span><span class=nv>$this</span><span class=o>-&gt;</span><span class=na>getIsNew</span><span class=p>())</span> <span class=p>{</span>
+            <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_insert</span><span class=p>();</span>
+        <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+            <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_update</span><span class=p>();</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
     
-    <span class="sd">/**
-</span><span class="sd">     * Save this record into the database as a new row
-</span><span class="sd">     * @return void
-</span><span class="sd">     * @since 1.0
-</span><span class="sd">     */</span>
-    <span class="k">private</span> <span class="k">function</span> <span class="nf">_insert</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">count</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nv">$cols</span> <span class="o">=</span> <span class="nx">implode</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">,</span> <span class="nx">array_keys</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_data</span><span class="p">));</span>
-            <span class="nv">$placeHolders</span> <span class="o">=</span> <span class="nx">implode</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">,</span> <span class="nx">array_fill</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">count</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_data</span><span class="p">),</span> <span class="s1">&#39;?&#39;</span><span class="p">));</span>
-            <span class="nv">$sql</span> <span class="o">=</span> <span class="s2">&#34;insert into &#34;</span><span class="o">.</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getTableName</span><span class="p">()</span><span class="o">.</span> <span class="s2">&#34; (</span><span class="si">$cols</span><span class="s2">) values (</span><span class="si">$placeHolders</span><span class="s2">)&#34;</span><span class="p">;</span>
-            <span class="nx">Flame</span><span class="o">::</span><span class="na">app</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getDBConnection</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$sql</span><span class="p">,</span> <span class="nx">array_values</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_data</span><span class="p">));</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+    <span class=sd>/**
+</span><span class=sd>     * Save this record into the database as a new row
+</span><span class=sd>     * @return void
+</span><span class=sd>     * @since 1.0
+</span><span class=sd>     */</span>
+    <span class=k>private</span> <span class=k>function</span> <span class=nf>_insert</span><span class=p>()</span>
+    <span class=p>{</span>
+        <span class=k>if</span> <span class=p>(</span><span class=nx>count</span><span class=p>(</span><span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_data</span><span class=p>)</span> <span class=o>&gt;</span> <span class=mi>0</span><span class=p>)</span> <span class=p>{</span>
+            <span class=nv>$cols</span> <span class=o>=</span> <span class=nx>implode</span><span class=p>(</span><span class=s1>&#39;, &#39;</span><span class=p>,</span> <span class=nx>array_keys</span><span class=p>(</span><span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_data</span><span class=p>));</span>
+            <span class=nv>$placeHolders</span> <span class=o>=</span> <span class=nx>implode</span><span class=p>(</span><span class=s1>&#39;, &#39;</span><span class=p>,</span> <span class=nx>array_fill</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=nx>count</span><span class=p>(</span><span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_data</span><span class=p>),</span> <span class=s1>&#39;?&#39;</span><span class=p>));</span>
+            <span class=nv>$sql</span> <span class=o>=</span> <span class=s2>&#34;insert into &#34;</span><span class=o>.</span><span class=nv>$this</span><span class=o>-&gt;</span><span class=na>getTableName</span><span class=p>()</span><span class=o>.</span> <span class=s2>&#34; (</span><span class=si>$cols</span><span class=s2>) values (</span><span class=si>$placeHolders</span><span class=s2>)&#34;</span><span class=p>;</span>
+            <span class=nx>Flame</span><span class=o>::</span><span class=na>app</span><span class=p>()</span><span class=o>-&gt;</span><span class=na>getDBConnection</span><span class=p>()</span><span class=o>-&gt;</span><span class=na>execute</span><span class=p>(</span><span class=nv>$sql</span><span class=p>,</span> <span class=nx>array_values</span><span class=p>(</span><span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_data</span><span class=p>));</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
     
-    <span class="sd">/**
-</span><span class="sd">     * Save this record
-</span><span class="sd">     * @return void
-</span><span class="sd">     * @since 1.0
-</span><span class="sd">     */</span>
-    <span class="k">private</span> <span class="k">function</span> <span class="nf">_update</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">count</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_dirtyData</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nv">$pairs</span> <span class="o">=</span> <span class="nx">implode</span><span class="p">(</span><span class="s1">&#39;=?, &#39;</span><span class="p">,</span> <span class="nx">array_keys</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_dirtyData</span><span class="p">))</span><span class="o">.</span><span class="s1">&#39;=?&#39;</span><span class="p">;</span>
-            <span class="nv">$sql</span> <span class="o">=</span> <span class="s1">&#39;update &#39;</span><span class="o">.</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getTableName</span><span class="p">()</span><span class="o">.</span><span class="s2">&#34; set </span><span class="si">$pairs</span><span class="s2"> where &#34;</span><span class="o">.</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getPrimaryKey</span><span class="p">()</span><span class="o">.</span><span class="s1">&#39;=?&#39;</span><span class="p">;</span>
-            <span class="nv">$pk</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getPrimaryKey</span><span class="p">();</span>
-            <span class="nx">Flame</span><span class="o">::</span><span class="na">app</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getDBConnection</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$sql</span><span class="p">,</span> <span class="nx">array_merge</span><span class="p">(</span><span class="nx">array_values</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_dirtyData</span><span class="p">),</span> <span class="k">array</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="nv">$pk</span><span class="p">)));</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+    <span class=sd>/**
+</span><span class=sd>     * Save this record
+</span><span class=sd>     * @return void
+</span><span class=sd>     * @since 1.0
+</span><span class=sd>     */</span>
+    <span class=k>private</span> <span class=k>function</span> <span class=nf>_update</span><span class=p>()</span>
+    <span class=p>{</span>
+        <span class=k>if</span> <span class=p>(</span><span class=nx>count</span><span class=p>(</span><span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_dirtyData</span><span class=p>)</span> <span class=o>&gt;</span> <span class=mi>0</span><span class=p>)</span> <span class=p>{</span>
+            <span class=nv>$pairs</span> <span class=o>=</span> <span class=nx>implode</span><span class=p>(</span><span class=s1>&#39;=?, &#39;</span><span class=p>,</span> <span class=nx>array_keys</span><span class=p>(</span><span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_dirtyData</span><span class=p>))</span><span class=o>.</span><span class=s1>&#39;=?&#39;</span><span class=p>;</span>
+            <span class=nv>$sql</span> <span class=o>=</span> <span class=s1>&#39;update &#39;</span><span class=o>.</span><span class=nv>$this</span><span class=o>-&gt;</span><span class=na>getTableName</span><span class=p>()</span><span class=o>.</span><span class=s2>&#34; set </span><span class=si>$pairs</span><span class=s2> where &#34;</span><span class=o>.</span><span class=nv>$this</span><span class=o>-&gt;</span><span class=na>getPrimaryKey</span><span class=p>()</span><span class=o>.</span><span class=s1>&#39;=?&#39;</span><span class=p>;</span>
+            <span class=nv>$pk</span> <span class=o>=</span> <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>getPrimaryKey</span><span class=p>();</span>
+            <span class=nx>Flame</span><span class=o>::</span><span class=na>app</span><span class=p>()</span><span class=o>-&gt;</span><span class=na>getDBConnection</span><span class=p>()</span><span class=o>-&gt;</span><span class=na>execute</span><span class=p>(</span><span class=nv>$sql</span><span class=p>,</span> <span class=nx>array_merge</span><span class=p>(</span><span class=nx>array_values</span><span class=p>(</span><span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_dirtyData</span><span class=p>),</span> <span class=k>array</span><span class=p>(</span><span class=nv>$this</span><span class=o>-&gt;</span><span class=nv>$pk</span><span class=p>)));</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
     
-    <span class="sd">/**
-</span><span class="sd">     * Delete this record
-</span><span class="sd">     * @return void
-</span><span class="sd">     * @since 1.0
-</span><span class="sd">     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">delete</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getIsNew</span><span class="p">())</span> <span class="p">{</span>
-            <span class="nv">$pk</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getPrimaryKey</span><span class="p">();</span>
-            <span class="nv">$sql</span> <span class="o">=</span> <span class="s1">&#39;delete from &#39;</span><span class="o">.</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getTableName</span><span class="p">()</span><span class="o">.</span><span class="s2">&#34; where </span><span class="si">$pk</span><span class="s2">=?&#34;</span><span class="p">;</span>
-            <span class="nx">Flame</span><span class="o">::</span><span class="na">app</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getDBConnection</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">(</span><span class="nv">$sql</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="nv">$pk</span><span class="p">));</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
+    <span class=sd>/**
+</span><span class=sd>     * Delete this record
+</span><span class=sd>     * @return void
+</span><span class=sd>     * @since 1.0
+</span><span class=sd>     */</span>
+    <span class=k>public</span> <span class=k>function</span> <span class=nf>delete</span><span class=p>()</span>
+    <span class=p>{</span>
+        <span class=k>if</span> <span class=p>(</span><span class=o>!</span><span class=nv>$this</span><span class=o>-&gt;</span><span class=na>getIsNew</span><span class=p>())</span> <span class=p>{</span>
+            <span class=nv>$pk</span> <span class=o>=</span> <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>getPrimaryKey</span><span class=p>();</span>
+            <span class=nv>$sql</span> <span class=o>=</span> <span class=s1>&#39;delete from &#39;</span><span class=o>.</span><span class=nv>$this</span><span class=o>-&gt;</span><span class=na>getTableName</span><span class=p>()</span><span class=o>.</span><span class=s2>&#34; where </span><span class=si>$pk</span><span class=s2>=?&#34;</span><span class=p>;</span>
+            <span class=nx>Flame</span><span class=o>::</span><span class=na>app</span><span class=p>()</span><span class=o>-&gt;</span><span class=na>getDBConnection</span><span class=p>()</span><span class=o>-&gt;</span><span class=na>execute</span><span class=p>(</span><span class=nv>$sql</span><span class=p>,</span> <span class=k>array</span><span class=p>(</span><span class=nv>$this</span><span class=o>-&gt;</span><span class=nv>$pk</span><span class=p>));</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
     
-<span class="p">}</span>
-<span class="cp">?&gt;</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>约定，所有子类都必须覆盖和实现getModel()、getTableName()、getPrimaryKey()这三个方法。getModel()返回不包含具体数据的ActiveRecord实例，用于执行对象类型范畴的操作，例如查询符合特定条件的对象。在包含具体数据的ActiveRecord实例中执行针对该具体对象的操作，例如保存和删除。</p>
-<p>为了更好地区分ActiveRecord的属性和对象数据，这里将对象数据存放在关联数组ActiveRecord::$_data里，然后使用__get()、__set()等魔术方法实现像使用ActiveRecord自身属性一样使用对象数据。</p>
-<p>在更新对象时，出于性能考虑，应该只更新被修改过的列。这里借助魔术方法__set()，实现向对象属性赋值时将被修改的属性和值添加到关联数组ActiveRecord::$_dirtyData中。最后构造update语句时，从该数组中取值即可。</p>
-<h2 id="activerecord的使用">ActiveRecord的使用</h2>
-<p>在Demo项目中实现一个对象，继承ActiveRecord：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-<span class="k">namespace</span> <span class="nx">org\x3f\flamedemo\model</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">org\x3f\flamework\base\ActiveRecord</span><span class="p">;</span>
+<span class=p>}</span>
+<span class=cp>?&gt;</span>
+</code></pre></td></tr></table></div></div><p>约定，所有子类都必须覆盖和实现getModel()、getTableName()、getPrimaryKey()这三个方法。getModel()返回不包含具体数据的ActiveRecord实例，用于执行对象类型范畴的操作，例如查询符合特定条件的对象。在包含具体数据的ActiveRecord实例中执行针对该具体对象的操作，例如保存和删除。</p><p>为了更好地区分ActiveRecord的属性和对象数据，这里将对象数据存放在关联数组ActiveRecord::$_data里，然后使用__get()、__set()等魔术方法实现像使用ActiveRecord自身属性一样使用对象数据。</p><p>在更新对象时，出于性能考虑，应该只更新被修改过的列。这里借助魔术方法__set()，实现向对象属性赋值时将被修改的属性和值添加到关联数组ActiveRecord::$_dirtyData中。最后构造update语句时，从该数组中取值即可。</p><h2 id=activerecord的使用>ActiveRecord的使用</h2><p>在Demo项目中实现一个对象，继承ActiveRecord：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-php data-lang=php><span class=cp>&lt;?php</span>
+<span class=k>namespace</span> <span class=nx>org\x3f\flamedemo\model</span><span class=p>;</span>
+<span class=k>use</span> <span class=nx>org\x3f\flamework\base\ActiveRecord</span><span class=p>;</span>
 
-<span class="k">class</span> <span class="nc">Post</span> <span class="k">extends</span> <span class="nx">ActiveRecord</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="nf">getModel</span><span class="p">(</span><span class="nv">$className</span><span class="o">=</span><span class="no">__CLASS__</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="k">parent</span><span class="o">::</span><span class="na">getModel</span><span class="p">(</span><span class="nv">$className</span><span class="p">);</span>
-    <span class="p">}</span>
+<span class=k>class</span> <span class=nc>Post</span> <span class=k>extends</span> <span class=nx>ActiveRecord</span>
+<span class=p>{</span>
+    <span class=k>public</span> <span class=k>static</span> <span class=k>function</span> <span class=nf>getModel</span><span class=p>(</span><span class=nv>$className</span><span class=o>=</span><span class=no>__CLASS__</span><span class=p>)</span>
+    <span class=p>{</span>
+        <span class=k>return</span> <span class=k>parent</span><span class=o>::</span><span class=na>getModel</span><span class=p>(</span><span class=nv>$className</span><span class=p>);</span>
+    <span class=p>}</span>
     
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">getTableName</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="s1">&#39;post&#39;</span><span class="p">;</span>
-    <span class="p">}</span>
+    <span class=k>public</span> <span class=k>function</span> <span class=nf>getTableName</span><span class=p>()</span>
+    <span class=p>{</span>
+        <span class=k>return</span> <span class=s1>&#39;post&#39;</span><span class=p>;</span>
+    <span class=p>}</span>
     
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">getPrimaryKey</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="s1">&#39;id&#39;</span><span class="p">;</span>
-    <span class="p">}</span>
+    <span class=k>public</span> <span class=k>function</span> <span class=nf>getPrimaryKey</span><span class=p>()</span>
+    <span class=p>{</span>
+        <span class=k>return</span> <span class=s1>&#39;id&#39;</span><span class=p>;</span>
+    <span class=p>}</span>
     
-<span class="p">}</span>
-<span class="cp">?&gt;</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>用法如下：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-<span class="c1">// 根据ID查询对象
-</span><span class="c1"></span><span class="nv">$p</span> <span class="o">=</span> <span class="nx">Post</span><span class="o">::</span><span class="na">getModel</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">findByPk</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-<span class="nx">var_dump</span><span class="p">(</span><span class="nv">$p</span><span class="p">);</span>
+<span class=p>}</span>
+<span class=cp>?&gt;</span>
+</code></pre></td></tr></table></div></div><p>用法如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-php data-lang=php><span class=cp>&lt;?php</span>
+<span class=c1>// 根据ID查询对象
+</span><span class=c1></span><span class=nv>$p</span> <span class=o>=</span> <span class=nx>Post</span><span class=o>::</span><span class=na>getModel</span><span class=p>()</span><span class=o>-&gt;</span><span class=na>findByPk</span><span class=p>(</span><span class=mi>1</span><span class=p>);</span>
+<span class=nx>var_dump</span><span class=p>(</span><span class=nv>$p</span><span class=p>);</span>
 
-<span class="c1">// 更新对象
-</span><span class="c1"></span><span class="nv">$p</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Post</span><span class="p">();</span>
-<span class="nv">$p</span><span class="o">-&gt;</span><span class="na">setIsNew</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
-<span class="nv">$p</span><span class="o">-&gt;</span><span class="na">id</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
-<span class="nv">$p</span><span class="o">-&gt;</span><span class="na">title</span> <span class="o">=</span> <span class="s1">&#39;bad name 2&#39;</span><span class="p">;</span>
-<span class="nv">$p</span><span class="o">-&gt;</span><span class="na">save</span><span class="p">();</span>
+<span class=c1>// 更新对象
+</span><span class=c1></span><span class=nv>$p</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Post</span><span class=p>();</span>
+<span class=nv>$p</span><span class=o>-&gt;</span><span class=na>setIsNew</span><span class=p>(</span><span class=k>false</span><span class=p>);</span>
+<span class=nv>$p</span><span class=o>-&gt;</span><span class=na>id</span> <span class=o>=</span> <span class=mi>3</span><span class=p>;</span>
+<span class=nv>$p</span><span class=o>-&gt;</span><span class=na>title</span> <span class=o>=</span> <span class=s1>&#39;bad name 2&#39;</span><span class=p>;</span>
+<span class=nv>$p</span><span class=o>-&gt;</span><span class=na>save</span><span class=p>();</span>
 
-<span class="c1">// 删除对象
-</span><span class="c1"></span><span class="nv">$p</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Post</span><span class="p">();</span>
-<span class="nv">$p</span><span class="o">-&gt;</span><span class="na">setIsNew</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
-<span class="nv">$p</span><span class="o">-&gt;</span><span class="na">id</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
-<span class="nv">$p</span><span class="o">-&gt;</span><span class="na">delete</span><span class="p">();</span>
-<span class="cp">?&gt;</span>
-</code></pre></td></tr></table>
-</div>
-</div><h2 id="总结">总结</h2>
-<p>ORM的根本任务是解决关系模型与对象模型的阻抗不匹配问题。而ActiveRecord是时下很流行的一种ORM的实现方式。在对ActiveRecord的实现中使用了PDO，这是PHP 5.1开始引入的一个轻量的数据访问抽象层，相比以前针对每种数据库使用不同的函数集的方式，它使PHP的数据库操作变得更简单。此外，魔术方法的使用简化了代码，使数据操作变得更灵活。</p>
-<p>本文只实现了一个最基本的ActiveRecord，实际使用时，还要包含SQL语句构造等复杂的逻辑，不过只要弄清楚了核心原理和实现方式，其它也就水到渠成了。</p>
-</div><div class="post-footer" id="post-footer">
-    <div class="post-info">
-        <div class="post-info-line">
-            <div class="post-info-mod">
-                <span>更新于 2020-06-17&nbsp;<a class="git-hash" href="https://github.com/dillonzq/LoveIt/commit/b6b131fb549d1c33b519bbe9910a7c0b426257fd" target="_blank" title="commit by Donie Leigh(donie.leigh@gmail.com) b6b131fb549d1c33b519bbe9910a7c0b426257fd: URL地址改为用slug生成；为所有文章追加slug matter">
-                                    <i class="fas fa-hashtag fa-fw"></i>b6b131fb</a></span>
-            </div>
-            <div class="post-info-license"></div>
-        </div>
-        <div class="post-info-line">
-            <div class="post-info-md"><span>
-                            <a class="link-to-markdown" href="/post/flamework-active-record/index.md" target="_blank">阅读原始文档</a>
-                        </span></div>
-            <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="http://0x3f.org/post/flamework-active-record/" data-title="PHP框架实战（五）：ORM与ActiveRecord" data-hashtags="PHP,Flamework,框架,编程"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="http://0x3f.org/post/flamework-active-record/" data-hashtag="PHP"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="http://0x3f.org/post/flamework-active-record/" data-title="PHP框架实战（五）：ORM与ActiveRecord"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="http://0x3f.org/post/flamework-active-record/" data-title="PHP框架实战（五）：ORM与ActiveRecord"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="http://0x3f.org/post/flamework-active-record/" data-title="PHP框架实战（五）：ORM与ActiveRecord"><i class="fab fa-weibo fa-fw"></i></a></span>
-            </div>
-        </div>
-    </div>
-
-    <div class="post-info-more">
-        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/php/">PHP</a>,&nbsp;<a href="/tags/flamework/">Flamework</a>,&nbsp;<a href="/tags/%E6%A1%86%E6%9E%B6/">框架</a>,&nbsp;<a href="/tags/%E7%BC%96%E7%A8%8B/">编程</a></section>
-        <section>
-            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
-        </section>
-    </div>
-
-    <div class="post-nav"><a href="/post/flamework-view-rendering/" class="prev" rel="prev" title="PHP框架实战（四）：View的模板与渲染"><i class="fas fa-angle-left fa-fw"></i>PHP框架实战（四）：View的模板与渲染</a>
-            <a href="/post/flamework-summary/" class="next" rel="next" title="PHP框架实战（∝）：烈焰之终章">PHP框架实战（∝）：烈焰之终章<i class="fas fa-angle-right fa-fw"></i></a></div>
-</div>
-<div id="comments"><div id="utterances"></div><noscript>
-                Please enable JavaScript to view the comments powered by <a href="https://utteranc.es/">Utterances</a>.
-            </noscript></div></article></div>
-            </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.72.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
-                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2006 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">淘气</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
-        </div>
-    </footer></div>
-
-        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
-                <i class="fas fa-arrow-up fa-fw"></i>
-            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
-                <i class="fas fa-comment fa-fw"></i>
-            </a>
-        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"utterances":{"darkTheme":"github-dark","issueTerm":"pathname","label":"","lightTheme":"github-light","repo":"xbot/blog-comments"}},"search":{"algoliaAppID":"PASDMWALPK","algoliaIndex":"index.zh-cn","algoliaSearchKey":"b42948e51daaa93df92381c8e2ac0f93","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
-</html>
+<span class=c1>// 删除对象
+</span><span class=c1></span><span class=nv>$p</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>Post</span><span class=p>();</span>
+<span class=nv>$p</span><span class=o>-&gt;</span><span class=na>setIsNew</span><span class=p>(</span><span class=k>false</span><span class=p>);</span>
+<span class=nv>$p</span><span class=o>-&gt;</span><span class=na>id</span> <span class=o>=</span> <span class=mi>3</span><span class=p>;</span>
+<span class=nv>$p</span><span class=o>-&gt;</span><span class=na>delete</span><span class=p>();</span>
+<span class=cp>?&gt;</span>
+</code></pre></td></tr></table></div></div><h2 id=总结>总结</h2><p>ORM的根本任务是解决关系模型与对象模型的阻抗不匹配问题。而ActiveRecord是时下很流行的一种ORM的实现方式。在对ActiveRecord的实现中使用了PDO，这是PHP 5.1开始引入的一个轻量的数据访问抽象层，相比以前针对每种数据库使用不同的函数集的方式，它使PHP的数据库操作变得更简单。此外，魔术方法的使用简化了代码，使数据操作变得更灵活。</p><p>本文只实现了一个最基本的ActiveRecord，实际使用时，还要包含SQL语句构造等复杂的逻辑，不过只要弄清楚了核心原理和实现方式，其它也就水到渠成了。</p></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>更新于 2020-06-17&nbsp;<a class=git-hash href=https://github.com/dillonzq/LoveIt/commit/b6b131fb549d1c33b519bbe9910a7c0b426257fd target=_blank title="commit by Donie Leigh(donie.leigh@gmail.com) b6b131fb549d1c33b519bbe9910a7c0b426257fd: URL地址改为用slug生成；为所有文章追加slug matter">
+<i class="fas fa-hashtag fa-fw"></i>b6b131fb</a></span></div><div class=post-info-license></div></div><div class=post-info-line><div class=post-info-md><span><a class=link-to-markdown href=/post/flamework-active-record/index.md target=_blank>阅读原始文档</a></span></div><div class=post-info-share><span><a href=javascript:void(0); title="分享到 Twitter" data-sharer=twitter data-url=http://0x3f.org/post/flamework-active-record/ data-title=PHP框架实战（五）：ORM与ActiveRecord data-hashtags=PHP,Flamework,框架,编程><i class="fab fa-twitter fa-fw"></i></a><a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=http://0x3f.org/post/flamework-active-record/ data-hashtag=PHP><i class="fab fa-facebook-square fa-fw"></i></a><a href=javascript:void(0); title="分享到 Hacker News" data-sharer=hackernews data-url=http://0x3f.org/post/flamework-active-record/ data-title=PHP框架实战（五）：ORM与ActiveRecord><i class="fab fa-hacker-news fa-fw"></i></a><a href=javascript:void(0); title="分享到 Line" data-sharer=line data-url=http://0x3f.org/post/flamework-active-record/ data-title=PHP框架实战（五）：ORM与ActiveRecord><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg></i></a><a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=http://0x3f.org/post/flamework-active-record/ data-title=PHP框架实战（五）：ORM与ActiveRecord><i class="fab fa-weibo fa-fw"></i></a></span></div></div></div><div class=post-info-more><section class=post-tags><i class="fas fa-tags fa-fw"></i>&nbsp;<a href=/tags/php/>PHP</a>,&nbsp;<a href=/tags/flamework/>Flamework</a>,&nbsp;<a href=/tags/%E6%A1%86%E6%9E%B6/>框架</a>,&nbsp;<a href=/tags/%E7%BC%96%E7%A8%8B/>编程</a></section><section><span><a href=javascript:void(0); onclick=window.history.back();>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span></section></div><div class=post-nav><a href=/post/flamework-view-rendering/ class=prev rel=prev title=PHP框架实战（四）：View的模板与渲染><i class="fas fa-angle-left fa-fw"></i>PHP框架实战（四）：View的模板与渲染</a>
+<a href=/post/flamework-summary/ class=next rel=next title=PHP框架实战（∝）：烈焰之终章>PHP框架实战（∝）：烈焰之终章<i class="fas fa-angle-right fa-fw"></i></a></div></div><div id=comments><div id=utterances></div><noscript>Please enable JavaScript to view the comments powered by <a href=https://utteranc.es/>Utterances</a>.</noscript></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line>由 <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.72.0">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i>LoveIt</a></div><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2006 - 2020</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>淘气</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部><i class="fas fa-arrow-up fa-fw"></i></a><a href=# id=view-comments class=fixed-button title=查看评论><i class="fas fa-comment fa-fw"></i></a></div><script type=text/javascript src=https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js></script><script type=text/javascript>window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"utterances":{"darkTheme":"github-dark","issueTerm":"pathname","label":"","lightTheme":"github-light","repo":"xbot/blog-comments"}},"search":{"algoliaAppID":"PASDMWALPK","algoliaIndex":"index.zh-cn","algoliaSearchKey":"b42948e51daaa93df92381c8e2ac0f93","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type=text/javascript src=/js/theme.min.js></script></body></html>

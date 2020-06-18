@@ -1,607 +1,396 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="robots" content="noodp" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-        <title>PHP流的实现 - 晴耕雨讀</title><meta name="Description" content="Donie&#39;s blog."><meta property="og:title" content="PHP流的实现" />
-<meta property="og:description" content="流的概念 流是一系列概念的集合，包括流包装器、流资源、流操作、上下文等内容。流是对不同资源进行操作的抽象，允许线性地从指定位置读取或写入数据，" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="http://0x3f.org/post/stream-implementation-in-php/" />
-<meta property="og:image" content="http://0x3f.org/logo.png"/>
-<meta property="article:published_time" content="2015-05-29T17:33:00+00:00" />
-<meta property="article:modified_time" content="2020-06-17T17:28:11+08:00" />
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="http://0x3f.org/logo.png"/>
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><meta http-equiv=x-ua-compatible content="IE=edge, chrome=1"><title>PHP流的实现 - 晴耕雨讀</title><meta name=Description content="Donie's blog."><meta property="og:title" content="PHP流的实现"><meta property="og:description" content="流的概念 流是一系列概念的集合，包括流包装器、流资源、流操作、上下文等内容。流是对不同资源进行操作的抽象，允许线性地从指定位置读取或写入数据，"><meta property="og:type" content="article"><meta property="og:url" content="http://0x3f.org/post/stream-implementation-in-php/"><meta property="og:image" content="http://0x3f.org/logo.png"><meta property="article:published_time" content="2015-05-29T17:33:00+00:00"><meta property="article:modified_time" content="2020-06-17T17:28:11+08:00"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="http://0x3f.org/logo.png"><meta name=twitter:title content="PHP流的实现"><meta name=twitter:description content="流的概念 流是一系列概念的集合，包括流包装器、流资源、流操作、上下文等内容。流是对不同资源进行操作的抽象，允许线性地从指定位置读取或写入数据，"><meta name=application-name content="晴耕雨讀"><meta name=apple-mobile-web-app-title content="晴耕雨讀"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=http://0x3f.org/post/stream-implementation-in-php/><link rel=prev href=http://0x3f.org/post/setup-ds18b20-on-archlinux/><link rel=next href=http://0x3f.org/post/hound-of-transformers-4/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"PHP流的实现","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/0x3f.org\/post\/stream-implementation-in-php\/"},"image":["http:\/\/0x3f.org\/images\/Apple-Devices-Preview.png"],"genre":"posts","keywords":"PHP, 源码","wordcount":1944,"url":"http:\/\/0x3f.org\/post\/stream-implementation-in-php\/","datePublished":"2015-05-29T17:33:00+00:00","dateModified":"2020-06-17T17:28:11+08:00","license":"This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher":{"@type":"Organization","name":"xxxx","logo":"http:\/\/0x3f.org\/images\/avatar.png"},"author":{"@type":"Person","name":"淘气"},"description":""}</script></head><body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':('auto'==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:'auto'==='dark'))&&document.body.setAttribute('theme','dark');</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title=晴耕雨讀><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw"></i></span>晴耕雨讀</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/posts/>所有文章 </a><a class=menu-item href=/tags/>标签 </a><a class=menu-item href=/categories/>分类 </a><a class=menu-item href=/about/>关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop><input type=text placeholder=搜索文章标题或内容... id=search-input-desktop>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=搜索><i class="fas fa-search fa-fw"></i></a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=清空><i class="fas fa-times-circle fa-fw"></i></a><span class="search-button search-loading" id=search-loading-desktop><i class="fas fa-spinner fa-fw fa-spin"></i></span></span><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题><i class="fas fa-adjust fa-fw"></i></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title=晴耕雨讀><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw"></i></span>晴耕雨讀</a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><div class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder=搜索文章标题或内容... id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=搜索><i class="fas fa-search fa-fw"></i></a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=清空><i class="fas fa-times-circle fa-fw"></i></a><span class="search-button search-loading" id=search-loading-mobile><i class="fas fa-spinner fa-fw fa-spin"></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>取消</a></div><a class=menu-item href=/posts/>所有文章</a><a class=menu-item href=/tags/>标签</a><a class=menu-item href=/categories/>分类</a><a class=menu-item href=/about/>关于</a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>目录</h2><div class=toc-content id=toc-content-auto></div></div><article class="page single"><h1 class="single-title animated flipInX">PHP流的实现</h1><div class=post-meta><div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class=post-category>收录于 <a href=/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/><i class="far fa-folder fa-fw"></i>计算机</a></span></div><div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2015-05-29>2015-05-29</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1944 字&nbsp;
+<i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 4 分钟&nbsp;</div></div><div class="details toc" id=toc-static kept><div class="details-summary toc-title"><span>目录</span>
+<span><i class="details-icon fas fa-angle-right"></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#流的概念>流的概念</a></li><li><a href=#流的实现>流的实现</a><ul><li><a href=#存储结构>存储结构</a></li><li><a href=#实现>实现</a></li></ul></li><li><a href=#包装器的实现>包装器的实现</a><ul><li><a href=#存储结构-1>存储结构</a></li><li><a href=#实现-1>实现</a></li></ul></li></ul></nav></div></div><div class=content id=content><h2 id=流的概念>流的概念</h2><p>流是一系列概念的集合，包括流包装器、流资源、流操作、上下文等内容。流是对不同资源进行操作的抽象，允许线性地从指定位置读取或写入数据，通过一套统一的API简化对资源操作的实现。</p><p>流由scheme://target指代，scheme是包装器（Wrapper）的名字，target是流的目标地址。</p><p>PHP的流的实现较Java简单，后者可以通过嵌套实现更灵活的应用。</p><h2 id=流的实现>流的实现</h2><h3 id=存储结构>存储结构</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=k>struct</span> <span class=n>_php_stream</span>  <span class=p>{</span>
+	<span class=n>php_stream_ops</span> <span class=o>*</span><span class=n>ops</span><span class=p>;</span>
+	<span class=kt>void</span> <span class=o>*</span><span class=n>abstract</span><span class=p>;</span>			<span class=cm>/* convenience pointer for abstraction */</span>
+	<span class=n>php_stream_filter_chain</span> <span class=n>readfilters</span><span class=p>,</span> <span class=n>writefilters</span><span class=p>;</span>
+	<span class=n>php_stream_wrapper</span> <span class=o>*</span><span class=n>wrapper</span><span class=p>;</span> <span class=cm>/* which wrapper was used to open the stream */</span>
+	<span class=kt>void</span> <span class=o>*</span><span class=n>wrapperthis</span><span class=p>;</span>		<span class=cm>/* convenience pointer for a instance of a wrapper */</span>
+	<span class=n>zval</span> <span class=o>*</span><span class=n>wrapperdata</span><span class=p>;</span>		<span class=cm>/* fgetwrapperdata retrieves this */</span>
+	<span class=kt>int</span> <span class=n>fgetss_state</span><span class=p>;</span>		<span class=cm>/* for fgetss to handle multiline tags */</span>
+	<span class=kt>int</span> <span class=n>is_persistent</span><span class=p>;</span>
+	<span class=kt>char</span> <span class=n>mode</span><span class=p>[</span><span class=mi>16</span><span class=p>];</span>			<span class=cm>/* &#34;rwb&#34; etc. ala stdio */</span>
+	<span class=kt>int</span> <span class=n>rsrc_id</span><span class=p>;</span>			<span class=cm>/* used for auto-cleanup */</span>
+	<span class=kt>int</span> <span class=n>in_free</span><span class=p>;</span>			<span class=cm>/* to prevent recursion during free */</span>
+	<span class=cm>/* so we know how to clean it up correctly.  This should be set to
+</span><span class=cm>	 * PHP_STREAM_FCLOSE_XXX as appropriate */</span>
+	<span class=kt>int</span> <span class=n>fclose_stdiocast</span><span class=p>;</span>
+	<span class=n>FILE</span> <span class=o>*</span><span class=n>stdiocast</span><span class=p>;</span>    <span class=cm>/* cache this, otherwise we might leak! */</span>
+<span class=cp>#if ZEND_DEBUG
+</span><span class=cp></span>	<span class=kt>int</span> <span class=n>__exposed</span><span class=p>;</span>	<span class=cm>/* non-zero if exposed as a zval somewhere */</span>
+<span class=cp>#endif
+</span><span class=cp></span>	<span class=kt>char</span> <span class=o>*</span><span class=n>orig_path</span><span class=p>;</span>
+	<span class=n>php_stream_context</span> <span class=o>*</span><span class=n>context</span><span class=p>;</span>
+	<span class=kt>int</span> <span class=n>flags</span><span class=p>;</span>	<span class=cm>/* PHP_STREAM_FLAG_XXX */</span>
+	<span class=cm>/* buffer */</span>
+	<span class=n>off_t</span> <span class=n>position</span><span class=p>;</span> <span class=cm>/* of underlying stream */</span>
+	<span class=kt>unsigned</span> <span class=kt>char</span> <span class=o>*</span><span class=n>readbuf</span><span class=p>;</span>
+	<span class=n>size_t</span> <span class=n>readbuflen</span><span class=p>;</span>
+	<span class=n>off_t</span> <span class=n>readpos</span><span class=p>;</span>
+	<span class=n>off_t</span> <span class=n>writepos</span><span class=p>;</span>
+	<span class=cm>/* how much data to read when filling buffer */</span>
+	<span class=n>size_t</span> <span class=n>chunk_size</span><span class=p>;</span>
+	<span class=kt>int</span> <span class=n>eof</span><span class=p>;</span>
+<span class=cp>#if ZEND_DEBUG
+</span><span class=cp></span>	<span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>open_filename</span><span class=p>;</span>
+	<span class=n>uint</span> <span class=n>open_lineno</span><span class=p>;</span>
+<span class=cp>#endif
+</span><span class=cp></span>	<span class=k>struct</span> <span class=n>_php_stream</span> <span class=o>*</span><span class=n>enclosing_stream</span><span class=p>;</span> <span class=cm>/* this is a private stream owned by enclosing_stream */</span>
+<span class=p>};</span> <span class=cm>/* php_stream */</span>
 
-<meta name="twitter:title" content="PHP流的实现"/>
-<meta name="twitter:description" content="流的概念 流是一系列概念的集合，包括流包装器、流资源、流操作、上下文等内容。流是对不同资源进行操作的抽象，允许线性地从指定位置读取或写入数据，"/>
-<meta name="application-name" content="晴耕雨讀">
-<meta name="apple-mobile-web-app-title" content="晴耕雨讀"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://0x3f.org/post/stream-implementation-in-php/" /><link rel="prev" href="http://0x3f.org/post/setup-ds18b20-on-archlinux/" /><link rel="next" href="http://0x3f.org/post/hound-of-transformers-4/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
-    {
-        "@context": "http://schema.org",
-        "@type": "BlogPosting",
-        "headline": "PHP流的实现",
-        "inLanguage": "zh-CN",
-        "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": "http:\/\/0x3f.org\/post\/stream-implementation-in-php\/"
-        },"image": ["http:\/\/0x3f.org\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "PHP, 源码","wordcount":  1944 ,
-        "url": "http:\/\/0x3f.org\/post\/stream-implementation-in-php\/","datePublished": "2015-05-29T17:33:00+00:00","dateModified": "2020-06-17T17:28:11+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
-            "@type": "Organization",
-            "name": "xxxx","logo": "http:\/\/0x3f.org\/images\/avatar.png"},"author": {
-                "@type": "Person",
-                "name": "淘气"
-            },"description": ""
-    }
-    </script></head>
-    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+<span class=k>typedef</span> <span class=k>struct</span> <span class=n>_php_stream_ops</span>  <span class=p>{</span>
+	<span class=cm>/* stdio like functions - these are mandatory! */</span>
+	<span class=n>size_t</span> <span class=p>(</span><span class=o>*</span><span class=n>write</span><span class=p>)(</span><span class=n>php_stream</span> <span class=o>*</span><span class=n>stream</span><span class=p>,</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>buf</span><span class=p>,</span> <span class=n>size_t</span> <span class=n>count</span> <span class=n>TSRMLS_DC</span><span class=p>);</span>
+	<span class=n>size_t</span> <span class=p>(</span><span class=o>*</span><span class=n>read</span><span class=p>)(</span><span class=n>php_stream</span> <span class=o>*</span><span class=n>stream</span><span class=p>,</span> <span class=kt>char</span> <span class=o>*</span><span class=n>buf</span><span class=p>,</span> <span class=n>size_t</span> <span class=n>count</span> <span class=n>TSRMLS_DC</span><span class=p>);</span>
+	<span class=kt>int</span>    <span class=p>(</span><span class=o>*</span><span class=n>close</span><span class=p>)(</span><span class=n>php_stream</span> <span class=o>*</span><span class=n>stream</span><span class=p>,</span> <span class=kt>int</span> <span class=n>close_handle</span> <span class=n>TSRMLS_DC</span><span class=p>);</span>
+	<span class=kt>int</span>    <span class=p>(</span><span class=o>*</span><span class=n>flush</span><span class=p>)(</span><span class=n>php_stream</span> <span class=o>*</span><span class=n>stream</span> <span class=n>TSRMLS_DC</span><span class=p>);</span>
+	<span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>label</span><span class=p>;</span> <span class=cm>/* label for this ops structure */</span>
+	<span class=cm>/* these are optional */</span>
+	<span class=kt>int</span> <span class=p>(</span><span class=o>*</span><span class=n>seek</span><span class=p>)(</span><span class=n>php_stream</span> <span class=o>*</span><span class=n>stream</span><span class=p>,</span> <span class=n>off_t</span> <span class=n>offset</span><span class=p>,</span> <span class=kt>int</span> <span class=n>whence</span><span class=p>,</span> <span class=n>off_t</span> <span class=o>*</span><span class=n>newoffset</span> <span class=n>TSRMLS_DC</span><span class=p>);</span>
+	<span class=kt>int</span> <span class=p>(</span><span class=o>*</span><span class=n>cast</span><span class=p>)(</span><span class=n>php_stream</span> <span class=o>*</span><span class=n>stream</span><span class=p>,</span> <span class=kt>int</span> <span class=n>castas</span><span class=p>,</span> <span class=kt>void</span> <span class=o>**</span><span class=n>ret</span> <span class=n>TSRMLS_DC</span><span class=p>);</span>
+	<span class=kt>int</span> <span class=p>(</span><span class=o>*</span><span class=n>stat</span><span class=p>)(</span><span class=n>php_stream</span> <span class=o>*</span><span class=n>stream</span><span class=p>,</span> <span class=n>php_stream_statbuf</span> <span class=o>*</span><span class=n>ssb</span> <span class=n>TSRMLS_DC</span><span class=p>);</span>
+	<span class=kt>int</span> <span class=p>(</span><span class=o>*</span><span class=n>set_option</span><span class=p>)(</span><span class=n>php_stream</span> <span class=o>*</span><span class=n>stream</span><span class=p>,</span> <span class=kt>int</span> <span class=n>option</span><span class=p>,</span> <span class=kt>int</span> <span class=n>value</span><span class=p>,</span> <span class=kt>void</span> <span class=o>*</span><span class=n>ptrparam</span> <span class=n>TSRMLS_DC</span><span class=p>);</span>
+<span class=p>}</span> <span class=n>php_stream_ops</span><span class=p>;</span>
+</code></pre></td></tr></table></div></div><p>php_stream结构体最重要的成员是ops和abstract。ops包含了流实例的所有操作逻辑，特别地，php_stream_ops->close在php_stream结构被回收前提供了回收与该流实例相关的资源的机会。abstract用来存储一个自定义结构的数据，在流的操作逻辑里可以方便的访问。</p><h3 id=实现>实现</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cp>#define PHP_DONIESTREAM_STREAMTYPE &#34;doniestream&#34;
+</span><span class=cp></span>
+<span class=k>static</span> <span class=n>size_t</span> <span class=nf>php_doniestream_write</span><span class=p>(</span><span class=n>php_stream</span> <span class=o>*</span><span class=n>stream</span><span class=p>,</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>buf</span><span class=p>,</span> <span class=n>size_t</span> <span class=n>count</span> <span class=n>TSRMLS_DC</span><span class=p>)</span>
+<span class=p>{</span>
+	<span class=n>donie_stream_data</span> <span class=o>*</span><span class=n>data</span> <span class=o>=</span> <span class=n>stream</span><span class=o>-&gt;</span><span class=n>abstract</span><span class=p>;</span>
 
-        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
-    <div class="header-wrapper">
-        <div class="header-title">
-            <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
-        </div>
-        <div class="menu">
-            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
-                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
-                            <i class="fas fa-search fa-fw"></i>
-                        </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
-                            <i class="fas fa-times-circle fa-fw"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-desktop">
-                            <i class="fas fa-spinner fa-fw fa-spin"></i>
-                        </span>
-                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
-                    <i class="fas fa-adjust fa-fw"></i>
-                </a>
-            </div>
-        </div>
-    </div>
-</header><header class="mobile" id="header-mobile">
-    <div class="header-container">
-        <div class="header-wrapper">
-            <div class="header-title">
-                <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
-            </div>
-            <div class="menu-toggle" id="menu-toggle-mobile">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-        <div class="menu" id="menu-mobile"><div class="search-wrapper">
-                    <div class="search mobile" id="search-mobile">
-                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
-                            <i class="fas fa-search fa-fw"></i>
-                        </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
-                            <i class="fas fa-times-circle fa-fw"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-mobile">
-                            <i class="fas fa-spinner fa-fw fa-spin"></i>
-                        </span>
-                    </div>
-                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
-                        取消
-                    </a>
-                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
-                <i class="fas fa-adjust fa-fw"></i>
-            </a></div>
-    </div>
-</header>
-<div class="search-dropdown desktop">
-    <div id="search-dropdown-desktop"></div>
-</div>
-<div class="search-dropdown mobile">
-    <div id="search-dropdown-mobile"></div>
-</div>
-<main class="main">
-                <div class="container"><div class="toc" id="toc-auto">
-            <h2 class="toc-title">目录</h2>
-            <div class="toc-content" id="toc-content-auto"></div>
-        </div><article class="page single"><h1 class="single-title animated flipInX">PHP流的实现</h1><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"><i class="far fa-folder fa-fw"></i>计算机</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2015-05-29">2015-05-29</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1944 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 4 分钟&nbsp;</div>
-        </div><div class="details toc" id="toc-static"  kept="">
-                <div class="details-summary toc-title">
-                    <span>目录</span>
-                    <span><i class="details-icon fas fa-angle-right"></i></span>
-                </div>
-                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
-  <ul>
-    <li><a href="#流的概念">流的概念</a></li>
-    <li><a href="#流的实现">流的实现</a>
-      <ul>
-        <li><a href="#存储结构">存储结构</a></li>
-        <li><a href="#实现">实现</a></li>
-      </ul>
-    </li>
-    <li><a href="#包装器的实现">包装器的实现</a>
-      <ul>
-        <li><a href="#存储结构-1">存储结构</a></li>
-        <li><a href="#实现-1">实现</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav></div>
-            </div><div class="content" id="content"><h2 id="流的概念">流的概念</h2>
-<p>流是一系列概念的集合，包括流包装器、流资源、流操作、上下文等内容。流是对不同资源进行操作的抽象，允许线性地从指定位置读取或写入数据，通过一套统一的API简化对资源操作的实现。</p>
-<p>流由scheme://target指代，scheme是包装器（Wrapper）的名字，target是流的目标地址。</p>
-<p>PHP的流的实现较Java简单，后者可以通过嵌套实现更灵活的应用。</p>
-<h2 id="流的实现">流的实现</h2>
-<h3 id="存储结构">存储结构</h3>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span><span class="lnt">39
-</span><span class="lnt">40
-</span><span class="lnt">41
-</span><span class="lnt">42
-</span><span class="lnt">43
-</span><span class="lnt">44
-</span><span class="lnt">45
-</span><span class="lnt">46
-</span><span class="lnt">47
-</span><span class="lnt">48
-</span><span class="lnt">49
-</span><span class="lnt">50
-</span><span class="lnt">51
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">struct</span> <span class="n">_php_stream</span>  <span class="p">{</span>
-	<span class="n">php_stream_ops</span> <span class="o">*</span><span class="n">ops</span><span class="p">;</span>
-	<span class="kt">void</span> <span class="o">*</span><span class="n">abstract</span><span class="p">;</span>			<span class="cm">/* convenience pointer for abstraction */</span>
-	<span class="n">php_stream_filter_chain</span> <span class="n">readfilters</span><span class="p">,</span> <span class="n">writefilters</span><span class="p">;</span>
-	<span class="n">php_stream_wrapper</span> <span class="o">*</span><span class="n">wrapper</span><span class="p">;</span> <span class="cm">/* which wrapper was used to open the stream */</span>
-	<span class="kt">void</span> <span class="o">*</span><span class="n">wrapperthis</span><span class="p">;</span>		<span class="cm">/* convenience pointer for a instance of a wrapper */</span>
-	<span class="n">zval</span> <span class="o">*</span><span class="n">wrapperdata</span><span class="p">;</span>		<span class="cm">/* fgetwrapperdata retrieves this */</span>
-	<span class="kt">int</span> <span class="n">fgetss_state</span><span class="p">;</span>		<span class="cm">/* for fgetss to handle multiline tags */</span>
-	<span class="kt">int</span> <span class="n">is_persistent</span><span class="p">;</span>
-	<span class="kt">char</span> <span class="n">mode</span><span class="p">[</span><span class="mi">16</span><span class="p">];</span>			<span class="cm">/* &#34;rwb&#34; etc. ala stdio */</span>
-	<span class="kt">int</span> <span class="n">rsrc_id</span><span class="p">;</span>			<span class="cm">/* used for auto-cleanup */</span>
-	<span class="kt">int</span> <span class="n">in_free</span><span class="p">;</span>			<span class="cm">/* to prevent recursion during free */</span>
-	<span class="cm">/* so we know how to clean it up correctly.  This should be set to
-</span><span class="cm">	 * PHP_STREAM_FCLOSE_XXX as appropriate */</span>
-	<span class="kt">int</span> <span class="n">fclose_stdiocast</span><span class="p">;</span>
-	<span class="n">FILE</span> <span class="o">*</span><span class="n">stdiocast</span><span class="p">;</span>    <span class="cm">/* cache this, otherwise we might leak! */</span>
-<span class="cp">#if ZEND_DEBUG
-</span><span class="cp"></span>	<span class="kt">int</span> <span class="n">__exposed</span><span class="p">;</span>	<span class="cm">/* non-zero if exposed as a zval somewhere */</span>
-<span class="cp">#endif
-</span><span class="cp"></span>	<span class="kt">char</span> <span class="o">*</span><span class="n">orig_path</span><span class="p">;</span>
-	<span class="n">php_stream_context</span> <span class="o">*</span><span class="n">context</span><span class="p">;</span>
-	<span class="kt">int</span> <span class="n">flags</span><span class="p">;</span>	<span class="cm">/* PHP_STREAM_FLAG_XXX */</span>
-	<span class="cm">/* buffer */</span>
-	<span class="n">off_t</span> <span class="n">position</span><span class="p">;</span> <span class="cm">/* of underlying stream */</span>
-	<span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">readbuf</span><span class="p">;</span>
-	<span class="n">size_t</span> <span class="n">readbuflen</span><span class="p">;</span>
-	<span class="n">off_t</span> <span class="n">readpos</span><span class="p">;</span>
-	<span class="n">off_t</span> <span class="n">writepos</span><span class="p">;</span>
-	<span class="cm">/* how much data to read when filling buffer */</span>
-	<span class="n">size_t</span> <span class="n">chunk_size</span><span class="p">;</span>
-	<span class="kt">int</span> <span class="n">eof</span><span class="p">;</span>
-<span class="cp">#if ZEND_DEBUG
-</span><span class="cp"></span>	<span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">open_filename</span><span class="p">;</span>
-	<span class="n">uint</span> <span class="n">open_lineno</span><span class="p">;</span>
-<span class="cp">#endif
-</span><span class="cp"></span>	<span class="k">struct</span> <span class="n">_php_stream</span> <span class="o">*</span><span class="n">enclosing_stream</span><span class="p">;</span> <span class="cm">/* this is a private stream owned by enclosing_stream */</span>
-<span class="p">};</span> <span class="cm">/* php_stream */</span>
+	<span class=n>php_printf</span><span class=p>(</span><span class=s>&#34;Write to stream: %s</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>buf</span><span class=p>);</span>
 
-<span class="k">typedef</span> <span class="k">struct</span> <span class="n">_php_stream_ops</span>  <span class="p">{</span>
-	<span class="cm">/* stdio like functions - these are mandatory! */</span>
-	<span class="n">size_t</span> <span class="p">(</span><span class="o">*</span><span class="n">write</span><span class="p">)(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">count</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
-	<span class="n">size_t</span> <span class="p">(</span><span class="o">*</span><span class="n">read</span><span class="p">)(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">count</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
-	<span class="kt">int</span>    <span class="p">(</span><span class="o">*</span><span class="n">close</span><span class="p">)(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="kt">int</span> <span class="n">close_handle</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
-	<span class="kt">int</span>    <span class="p">(</span><span class="o">*</span><span class="n">flush</span><span class="p">)(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
-	<span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">label</span><span class="p">;</span> <span class="cm">/* label for this ops structure */</span>
-	<span class="cm">/* these are optional */</span>
-	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">seek</span><span class="p">)(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="n">off_t</span> <span class="n">offset</span><span class="p">,</span> <span class="kt">int</span> <span class="n">whence</span><span class="p">,</span> <span class="n">off_t</span> <span class="o">*</span><span class="n">newoffset</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
-	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">cast</span><span class="p">)(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="kt">int</span> <span class="n">castas</span><span class="p">,</span> <span class="kt">void</span> <span class="o">**</span><span class="n">ret</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
-	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">stat</span><span class="p">)(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="n">php_stream_statbuf</span> <span class="o">*</span><span class="n">ssb</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
-	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">set_option</span><span class="p">)(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="kt">int</span> <span class="n">option</span><span class="p">,</span> <span class="kt">int</span> <span class="n">value</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">ptrparam</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
-<span class="p">}</span> <span class="n">php_stream_ops</span><span class="p">;</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>php_stream结构体最重要的成员是ops和abstract。ops包含了流实例的所有操作逻辑，特别地，php_stream_ops-&gt;close在php_stream结构被回收前提供了回收与该流实例相关的资源的机会。abstract用来存储一个自定义结构的数据，在流的操作逻辑里可以方便的访问。</p>
-<h3 id="实现">实现</h3>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define PHP_DONIESTREAM_STREAMTYPE &#34;doniestream&#34;
-</span><span class="cp"></span>
-<span class="k">static</span> <span class="n">size_t</span> <span class="nf">php_doniestream_write</span><span class="p">(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">count</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
-<span class="p">{</span>
-	<span class="n">donie_stream_data</span> <span class="o">*</span><span class="n">data</span> <span class="o">=</span> <span class="n">stream</span><span class="o">-&gt;</span><span class="n">abstract</span><span class="p">;</span>
+	<span class=k>return</span> <span class=n>count</span><span class=p>;</span>
+<span class=p>}</span>
+<span class=k>static</span> <span class=n>size_t</span> <span class=nf>php_doniestream_read</span><span class=p>(</span><span class=n>php_stream</span> <span class=o>*</span><span class=n>stream</span><span class=p>,</span> <span class=kt>char</span> <span class=o>*</span><span class=n>buf</span><span class=p>,</span> <span class=n>size_t</span> <span class=n>count</span> <span class=n>TSRMLS_DC</span><span class=p>)</span>
+<span class=p>{</span>
+	<span class=n>donie_stream_data</span> <span class=o>*</span><span class=n>data</span> <span class=o>=</span> <span class=n>stream</span><span class=o>-&gt;</span><span class=n>abstract</span><span class=p>;</span>
+	<span class=n>zval</span> <span class=o>**</span><span class=n>val</span><span class=p>;</span>
+	<span class=n>size_t</span> <span class=n>read_size</span> <span class=o>=</span> <span class=n>count</span><span class=p>;</span>
 
-	<span class="n">php_printf</span><span class="p">(</span><span class="s">&#34;Write to stream: %s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">buf</span><span class="p">);</span>
+	<span class=n>php_printf</span><span class=p>(</span><span class=s>&#34;Read from stream: %s</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>data</span><span class=o>-&gt;</span><span class=n>key</span><span class=p>);</span>
 
-	<span class="k">return</span> <span class="n">count</span><span class="p">;</span>
-<span class="p">}</span>
-<span class="k">static</span> <span class="n">size_t</span> <span class="nf">php_doniestream_read</span><span class="p">(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">count</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
-<span class="p">{</span>
-	<span class="n">donie_stream_data</span> <span class="o">*</span><span class="n">data</span> <span class="o">=</span> <span class="n">stream</span><span class="o">-&gt;</span><span class="n">abstract</span><span class="p">;</span>
-	<span class="n">zval</span> <span class="o">**</span><span class="n">val</span><span class="p">;</span>
-	<span class="n">size_t</span> <span class="n">read_size</span> <span class="o">=</span> <span class="n">count</span><span class="p">;</span>
+	<span class=k>return</span> <span class=n>read_size</span><span class=p>;</span>
+<span class=p>}</span>
+<span class=k>static</span> <span class=kt>int</span> <span class=nf>php_doniestream_close</span><span class=p>(</span><span class=n>php_stream</span> <span class=o>*</span><span class=n>stream</span><span class=p>,</span> <span class=kt>int</span> <span class=n>close_handle</span> <span class=n>TSRMLS_DC</span><span class=p>)</span>
+<span class=p>{</span>
+	<span class=n>donie_stream_data</span> <span class=o>*</span><span class=n>data</span> <span class=o>=</span> <span class=n>stream</span><span class=o>-&gt;</span><span class=n>abstract</span><span class=p>;</span>
+	<span class=n>efree</span><span class=p>(</span><span class=n>data</span><span class=o>-&gt;</span><span class=n>key</span><span class=p>);</span>
+	<span class=n>efree</span><span class=p>(</span><span class=n>data</span><span class=p>);</span>
+	<span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+<span class=p>}</span>
+<span class=k>static</span> <span class=n>php_stream_ops</span> <span class=n>php_doniestream_ops</span> <span class=o>=</span> <span class=p>{</span>
+	<span class=n>php_doniestream_write</span><span class=p>,</span>
+	<span class=n>php_doniestream_read</span><span class=p>,</span>
+	<span class=n>php_doniestream_close</span><span class=p>,</span>
+	<span class=nb>NULL</span><span class=p>,</span> <span class=cm>/* flush */</span>
+	<span class=n>PHP_DONIESTREAM_STREAMTYPE</span><span class=p>,</span>
+	<span class=nb>NULL</span><span class=p>,</span> <span class=cm>/* seek */</span>
+	<span class=nb>NULL</span><span class=p>,</span> <span class=cm>/* cast */</span>
+	<span class=nb>NULL</span><span class=p>,</span> <span class=cm>/* stat */</span>
+	<span class=nb>NULL</span><span class=p>,</span> <span class=cm>/* set_option */</span>
+<span class=p>};</span>
+</code></pre></td></tr></table></div></div><p>主要是流的操作逻辑的实现，最后构建的php_stream_ops结构用于后面流包装器中初始化流实例时赋给php_stream->ops。</p><h2 id=包装器的实现>包装器的实现</h2><p>Wrapper是对某一协议的封装，主要包含对该类型的流的一系列操作逻辑的实现。</p><h3 id=存储结构-1>存储结构</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=k>struct</span> <span class=n>_php_stream_wrapper</span>	<span class=p>{</span>
+	<span class=n>php_stream_wrapper_ops</span> <span class=o>*</span><span class=n>wops</span><span class=p>;</span>	<span class=cm>/* operations the wrapper can perform */</span>
+	<span class=kt>void</span> <span class=o>*</span><span class=n>abstract</span><span class=p>;</span>			<span class=cm>/* context for the wrapper */</span>
+	<span class=kt>int</span> <span class=n>is_url</span><span class=p>;</span>			<span class=cm>/* so that PG(allow_url_fopen) can be respected */</span>
+<span class=p>};</span>
 
-	<span class="n">php_printf</span><span class="p">(</span><span class="s">&#34;Read from stream: %s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">key</span><span class="p">);</span>
+<span class=k>typedef</span> <span class=k>struct</span> <span class=n>_php_stream_wrapper_ops</span> <span class=p>{</span>
+	<span class=cm>/* open/create a wrapped stream */</span>
+	<span class=n>php_stream</span> <span class=o>*</span><span class=p>(</span><span class=o>*</span><span class=n>stream_opener</span><span class=p>)(</span><span class=n>php_stream_wrapper</span> <span class=o>*</span><span class=n>wrapper</span><span class=p>,</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>filename</span><span class=p>,</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>mode</span><span class=p>,</span> <span class=kt>int</span> <span class=n>options</span><span class=p>,</span> <span class=kt>char</span> <span class=o>**</span><span class=n>opened_path</span><span class=p>,</span> <span class=n>php_stream_context</span> <span class=o>*</span><span class=n>context</span> <span class=n>STREAMS_DC</span> <span class=n>TSRMLS_DC</span><span class=p>);</span>
+	<span class=cm>/* close/destroy a wrapped stream */</span>
+	<span class=kt>int</span> <span class=p>(</span><span class=o>*</span><span class=n>stream_closer</span><span class=p>)(</span><span class=n>php_stream_wrapper</span> <span class=o>*</span><span class=n>wrapper</span><span class=p>,</span> <span class=n>php_stream</span> <span class=o>*</span><span class=n>stream</span> <span class=n>TSRMLS_DC</span><span class=p>);</span>
+	<span class=cm>/* stat a wrapped stream */</span>
+	<span class=kt>int</span> <span class=p>(</span><span class=o>*</span><span class=n>stream_stat</span><span class=p>)(</span><span class=n>php_stream_wrapper</span> <span class=o>*</span><span class=n>wrapper</span><span class=p>,</span> <span class=n>php_stream</span> <span class=o>*</span><span class=n>stream</span><span class=p>,</span> <span class=n>php_stream_statbuf</span> <span class=o>*</span><span class=n>ssb</span> <span class=n>TSRMLS_DC</span><span class=p>);</span>
+	<span class=cm>/* stat a URL */</span>
+	<span class=kt>int</span> <span class=p>(</span><span class=o>*</span><span class=n>url_stat</span><span class=p>)(</span><span class=n>php_stream_wrapper</span> <span class=o>*</span><span class=n>wrapper</span><span class=p>,</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>url</span><span class=p>,</span> <span class=kt>int</span> <span class=n>flags</span><span class=p>,</span> <span class=n>php_stream_statbuf</span> <span class=o>*</span><span class=n>ssb</span><span class=p>,</span> <span class=n>php_stream_context</span> <span class=o>*</span><span class=n>context</span> <span class=n>TSRMLS_DC</span><span class=p>);</span>
+	<span class=cm>/* open a &#34;directory&#34; stream */</span>
+	<span class=n>php_stream</span> <span class=o>*</span><span class=p>(</span><span class=o>*</span><span class=n>dir_opener</span><span class=p>)(</span><span class=n>php_stream_wrapper</span> <span class=o>*</span><span class=n>wrapper</span><span class=p>,</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>filename</span><span class=p>,</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>mode</span><span class=p>,</span> <span class=kt>int</span> <span class=n>options</span><span class=p>,</span> <span class=kt>char</span> <span class=o>**</span><span class=n>opened_path</span><span class=p>,</span> <span class=n>php_stream_context</span> <span class=o>*</span><span class=n>context</span> <span class=n>STREAMS_DC</span> <span class=n>TSRMLS_DC</span><span class=p>);</span>
+	<span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>label</span><span class=p>;</span>
+	<span class=cm>/* delete a file */</span>
+	<span class=kt>int</span> <span class=p>(</span><span class=o>*</span><span class=n>unlink</span><span class=p>)(</span><span class=n>php_stream_wrapper</span> <span class=o>*</span><span class=n>wrapper</span><span class=p>,</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>url</span><span class=p>,</span> <span class=kt>int</span> <span class=n>options</span><span class=p>,</span> <span class=n>php_stream_context</span> <span class=o>*</span><span class=n>context</span> <span class=n>TSRMLS_DC</span><span class=p>);</span>
+	<span class=cm>/* rename a file */</span>
+	<span class=kt>int</span> <span class=p>(</span><span class=o>*</span><span class=n>rename</span><span class=p>)(</span><span class=n>php_stream_wrapper</span> <span class=o>*</span><span class=n>wrapper</span><span class=p>,</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>url_from</span><span class=p>,</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>url_to</span><span class=p>,</span> <span class=kt>int</span> <span class=n>options</span><span class=p>,</span> <span class=n>php_stream_context</span> <span class=o>*</span><span class=n>context</span> <span class=n>TSRMLS_DC</span><span class=p>);</span>
+	<span class=cm>/* Create/Remove directory */</span>
+	<span class=kt>int</span> <span class=p>(</span><span class=o>*</span><span class=n>stream_mkdir</span><span class=p>)(</span><span class=n>php_stream_wrapper</span> <span class=o>*</span><span class=n>wrapper</span><span class=p>,</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>url</span><span class=p>,</span> <span class=kt>int</span> <span class=n>mode</span><span class=p>,</span> <span class=kt>int</span> <span class=n>options</span><span class=p>,</span> <span class=n>php_stream_context</span> <span class=o>*</span><span class=n>context</span> <span class=n>TSRMLS_DC</span><span class=p>);</span>
+	<span class=kt>int</span> <span class=p>(</span><span class=o>*</span><span class=n>stream_rmdir</span><span class=p>)(</span><span class=n>php_stream_wrapper</span> <span class=o>*</span><span class=n>wrapper</span><span class=p>,</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>url</span><span class=p>,</span> <span class=kt>int</span> <span class=n>options</span><span class=p>,</span> <span class=n>php_stream_context</span> <span class=o>*</span><span class=n>context</span> <span class=n>TSRMLS_DC</span><span class=p>);</span>
+	<span class=cm>/* Metadata handling */</span>
+	<span class=kt>int</span> <span class=p>(</span><span class=o>*</span><span class=n>stream_metadata</span><span class=p>)(</span><span class=n>php_stream_wrapper</span> <span class=o>*</span><span class=n>wrapper</span><span class=p>,</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>url</span><span class=p>,</span> <span class=kt>int</span> <span class=n>options</span><span class=p>,</span> <span class=kt>void</span> <span class=o>*</span><span class=n>value</span><span class=p>,</span> <span class=n>php_stream_context</span> <span class=o>*</span><span class=n>context</span> <span class=n>TSRMLS_DC</span><span class=p>);</span>
+<span class=p>}</span> <span class=n>php_stream_wrapper_ops</span><span class=p>;</span>
+</code></pre></td></tr></table></div></div><p>php_stream_wrapper中最重要的是ops成员，它包含了所有该类型的流的操作逻辑的实现。其中最重要的是stream_opener和stream_closer，前者是流的实例化逻辑，后者是流的析构逻辑。特别的，stream_closer主要是用来销毁php_stream结构，而php_stream_ops->close是用来回收所有和该流实例相关的资源。</p><h3 id=实现-1>实现</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
+</span><span class=lnt>61
+</span><span class=lnt>62
+</span><span class=lnt>63
+</span><span class=lnt>64
+</span><span class=lnt>65
+</span><span class=lnt>66
+</span><span class=lnt>67
+</span><span class=lnt>68
+</span><span class=lnt>69
+</span><span class=lnt>70
+</span><span class=lnt>71
+</span><span class=lnt>72
+</span><span class=lnt>73
+</span><span class=lnt>74
+</span><span class=lnt>75
+</span><span class=lnt>76
+</span><span class=lnt>77
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cp>#define PHP_DONIESTREAM_WRAPPER &#34;donie&#34;
+</span><span class=cp></span><span class=k>typedef</span> <span class=k>struct</span> <span class=n>_donie_stream_data</span> <span class=p>{</span>
+	<span class=n>off_t</span> <span class=n>position</span><span class=p>;</span>
+	<span class=kt>char</span> <span class=o>*</span><span class=n>key</span><span class=p>;</span>
+	<span class=kt>int</span> <span class=n>key_len</span><span class=p>;</span>
+<span class=p>}</span> <span class=n>donie_stream_data</span><span class=p>;</span>
 
-	<span class="k">return</span> <span class="n">read_size</span><span class="p">;</span>
-<span class="p">}</span>
-<span class="k">static</span> <span class="kt">int</span> <span class="nf">php_doniestream_close</span><span class="p">(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="kt">int</span> <span class="n">close_handle</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
-<span class="p">{</span>
-	<span class="n">donie_stream_data</span> <span class="o">*</span><span class="n">data</span> <span class="o">=</span> <span class="n">stream</span><span class="o">-&gt;</span><span class="n">abstract</span><span class="p">;</span>
-	<span class="n">efree</span><span class="p">(</span><span class="n">data</span><span class="o">-&gt;</span><span class="n">key</span><span class="p">);</span>
-	<span class="n">efree</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
-	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span>
-<span class="k">static</span> <span class="n">php_stream_ops</span> <span class="n">php_doniestream_ops</span> <span class="o">=</span> <span class="p">{</span>
-	<span class="n">php_doniestream_write</span><span class="p">,</span>
-	<span class="n">php_doniestream_read</span><span class="p">,</span>
-	<span class="n">php_doniestream_close</span><span class="p">,</span>
-	<span class="nb">NULL</span><span class="p">,</span> <span class="cm">/* flush */</span>
-	<span class="n">PHP_DONIESTREAM_STREAMTYPE</span><span class="p">,</span>
-	<span class="nb">NULL</span><span class="p">,</span> <span class="cm">/* seek */</span>
-	<span class="nb">NULL</span><span class="p">,</span> <span class="cm">/* cast */</span>
-	<span class="nb">NULL</span><span class="p">,</span> <span class="cm">/* stat */</span>
-	<span class="nb">NULL</span><span class="p">,</span> <span class="cm">/* set_option */</span>
-<span class="p">};</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>主要是流的操作逻辑的实现，最后构建的php_stream_ops结构用于后面流包装器中初始化流实例时赋给php_stream-&gt;ops。</p>
-<h2 id="包装器的实现">包装器的实现</h2>
-<p>Wrapper是对某一协议的封装，主要包含对该类型的流的一系列操作逻辑的实现。</p>
-<h3 id="存储结构-1">存储结构</h3>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">struct</span> <span class="n">_php_stream_wrapper</span>	<span class="p">{</span>
-	<span class="n">php_stream_wrapper_ops</span> <span class="o">*</span><span class="n">wops</span><span class="p">;</span>	<span class="cm">/* operations the wrapper can perform */</span>
-	<span class="kt">void</span> <span class="o">*</span><span class="n">abstract</span><span class="p">;</span>			<span class="cm">/* context for the wrapper */</span>
-	<span class="kt">int</span> <span class="n">is_url</span><span class="p">;</span>			<span class="cm">/* so that PG(allow_url_fopen) can be respected */</span>
-<span class="p">};</span>
+<span class=k>static</span> <span class=n>php_stream</span> <span class=o>*</span><span class=nf>php_doniestream_wrapper_open</span><span class=p>(</span>
+		<span class=n>php_stream_wrapper</span> <span class=o>*</span><span class=n>wrapper</span><span class=p>,</span>
+		<span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>filename</span><span class=p>,</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>mode</span><span class=p>,</span> <span class=kt>int</span> <span class=n>options</span><span class=p>,</span>
+		<span class=kt>char</span> <span class=o>**</span><span class=n>opened_path</span><span class=p>,</span> <span class=n>php_stream_context</span> <span class=o>*</span><span class=n>context</span>
+		<span class=n>STREAMS_DC</span> <span class=n>TSRMLS_DC</span><span class=p>)</span>
+<span class=p>{</span>
+	<span class=n>donie_stream_data</span> <span class=o>*</span><span class=n>data</span><span class=p>;</span>
+	<span class=n>php_url</span> <span class=o>*</span><span class=n>url</span><span class=p>;</span>
 
-<span class="k">typedef</span> <span class="k">struct</span> <span class="n">_php_stream_wrapper_ops</span> <span class="p">{</span>
-	<span class="cm">/* open/create a wrapped stream */</span>
-	<span class="n">php_stream</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="n">stream_opener</span><span class="p">)(</span><span class="n">php_stream_wrapper</span> <span class="o">*</span><span class="n">wrapper</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">filename</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">mode</span><span class="p">,</span> <span class="kt">int</span> <span class="n">options</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">opened_path</span><span class="p">,</span> <span class="n">php_stream_context</span> <span class="o">*</span><span class="n">context</span> <span class="n">STREAMS_DC</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
-	<span class="cm">/* close/destroy a wrapped stream */</span>
-	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">stream_closer</span><span class="p">)(</span><span class="n">php_stream_wrapper</span> <span class="o">*</span><span class="n">wrapper</span><span class="p">,</span> <span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
-	<span class="cm">/* stat a wrapped stream */</span>
-	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">stream_stat</span><span class="p">)(</span><span class="n">php_stream_wrapper</span> <span class="o">*</span><span class="n">wrapper</span><span class="p">,</span> <span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="n">php_stream_statbuf</span> <span class="o">*</span><span class="n">ssb</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
-	<span class="cm">/* stat a URL */</span>
-	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">url_stat</span><span class="p">)(</span><span class="n">php_stream_wrapper</span> <span class="o">*</span><span class="n">wrapper</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">url</span><span class="p">,</span> <span class="kt">int</span> <span class="n">flags</span><span class="p">,</span> <span class="n">php_stream_statbuf</span> <span class="o">*</span><span class="n">ssb</span><span class="p">,</span> <span class="n">php_stream_context</span> <span class="o">*</span><span class="n">context</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
-	<span class="cm">/* open a &#34;directory&#34; stream */</span>
-	<span class="n">php_stream</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="n">dir_opener</span><span class="p">)(</span><span class="n">php_stream_wrapper</span> <span class="o">*</span><span class="n">wrapper</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">filename</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">mode</span><span class="p">,</span> <span class="kt">int</span> <span class="n">options</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">opened_path</span><span class="p">,</span> <span class="n">php_stream_context</span> <span class="o">*</span><span class="n">context</span> <span class="n">STREAMS_DC</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
-	<span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">label</span><span class="p">;</span>
-	<span class="cm">/* delete a file */</span>
-	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">unlink</span><span class="p">)(</span><span class="n">php_stream_wrapper</span> <span class="o">*</span><span class="n">wrapper</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">url</span><span class="p">,</span> <span class="kt">int</span> <span class="n">options</span><span class="p">,</span> <span class="n">php_stream_context</span> <span class="o">*</span><span class="n">context</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
-	<span class="cm">/* rename a file */</span>
-	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">rename</span><span class="p">)(</span><span class="n">php_stream_wrapper</span> <span class="o">*</span><span class="n">wrapper</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">url_from</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">url_to</span><span class="p">,</span> <span class="kt">int</span> <span class="n">options</span><span class="p">,</span> <span class="n">php_stream_context</span> <span class="o">*</span><span class="n">context</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
-	<span class="cm">/* Create/Remove directory */</span>
-	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">stream_mkdir</span><span class="p">)(</span><span class="n">php_stream_wrapper</span> <span class="o">*</span><span class="n">wrapper</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">url</span><span class="p">,</span> <span class="kt">int</span> <span class="n">mode</span><span class="p">,</span> <span class="kt">int</span> <span class="n">options</span><span class="p">,</span> <span class="n">php_stream_context</span> <span class="o">*</span><span class="n">context</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
-	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">stream_rmdir</span><span class="p">)(</span><span class="n">php_stream_wrapper</span> <span class="o">*</span><span class="n">wrapper</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">url</span><span class="p">,</span> <span class="kt">int</span> <span class="n">options</span><span class="p">,</span> <span class="n">php_stream_context</span> <span class="o">*</span><span class="n">context</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
-	<span class="cm">/* Metadata handling */</span>
-	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">stream_metadata</span><span class="p">)(</span><span class="n">php_stream_wrapper</span> <span class="o">*</span><span class="n">wrapper</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">url</span><span class="p">,</span> <span class="kt">int</span> <span class="n">options</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">value</span><span class="p">,</span> <span class="n">php_stream_context</span> <span class="o">*</span><span class="n">context</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
-<span class="p">}</span> <span class="n">php_stream_wrapper_ops</span><span class="p">;</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>php_stream_wrapper中最重要的是ops成员，它包含了所有该类型的流的操作逻辑的实现。其中最重要的是stream_opener和stream_closer，前者是流的实例化逻辑，后者是流的析构逻辑。特别的，stream_closer主要是用来销毁php_stream结构，而php_stream_ops-&gt;close是用来回收所有和该流实例相关的资源。</p>
-<h3 id="实现-1">实现</h3>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span><span class="lnt">39
-</span><span class="lnt">40
-</span><span class="lnt">41
-</span><span class="lnt">42
-</span><span class="lnt">43
-</span><span class="lnt">44
-</span><span class="lnt">45
-</span><span class="lnt">46
-</span><span class="lnt">47
-</span><span class="lnt">48
-</span><span class="lnt">49
-</span><span class="lnt">50
-</span><span class="lnt">51
-</span><span class="lnt">52
-</span><span class="lnt">53
-</span><span class="lnt">54
-</span><span class="lnt">55
-</span><span class="lnt">56
-</span><span class="lnt">57
-</span><span class="lnt">58
-</span><span class="lnt">59
-</span><span class="lnt">60
-</span><span class="lnt">61
-</span><span class="lnt">62
-</span><span class="lnt">63
-</span><span class="lnt">64
-</span><span class="lnt">65
-</span><span class="lnt">66
-</span><span class="lnt">67
-</span><span class="lnt">68
-</span><span class="lnt">69
-</span><span class="lnt">70
-</span><span class="lnt">71
-</span><span class="lnt">72
-</span><span class="lnt">73
-</span><span class="lnt">74
-</span><span class="lnt">75
-</span><span class="lnt">76
-</span><span class="lnt">77
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define PHP_DONIESTREAM_WRAPPER &#34;donie&#34;
-</span><span class="cp"></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">_donie_stream_data</span> <span class="p">{</span>
-	<span class="n">off_t</span> <span class="n">position</span><span class="p">;</span>
-	<span class="kt">char</span> <span class="o">*</span><span class="n">key</span><span class="p">;</span>
-	<span class="kt">int</span> <span class="n">key_len</span><span class="p">;</span>
-<span class="p">}</span> <span class="n">donie_stream_data</span><span class="p">;</span>
+	<span class=k>if</span> <span class=p>(</span><span class=n>options</span> <span class=o>&amp;</span> <span class=n>STREAM_OPEN_PERSISTENT</span><span class=p>)</span>
+	<span class=p>{</span>
+		<span class=n>php_stream_wrapper_log_error</span><span class=p>(</span><span class=n>wrapper</span><span class=p>,</span> <span class=n>options</span> <span class=n>TSRMLS_CC</span><span class=p>,</span> <span class=s>&#34;Unable to open %s persistently.&#34;</span><span class=p>,</span> <span class=n>filename</span><span class=p>);</span>
+		<span class=k>return</span> <span class=nb>NULL</span><span class=p>;</span>
+	<span class=p>}</span>
 
-<span class="k">static</span> <span class="n">php_stream</span> <span class="o">*</span><span class="nf">php_doniestream_wrapper_open</span><span class="p">(</span>
-		<span class="n">php_stream_wrapper</span> <span class="o">*</span><span class="n">wrapper</span><span class="p">,</span>
-		<span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">filename</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">mode</span><span class="p">,</span> <span class="kt">int</span> <span class="n">options</span><span class="p">,</span>
-		<span class="kt">char</span> <span class="o">**</span><span class="n">opened_path</span><span class="p">,</span> <span class="n">php_stream_context</span> <span class="o">*</span><span class="n">context</span>
-		<span class="n">STREAMS_DC</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
-<span class="p">{</span>
-	<span class="n">donie_stream_data</span> <span class="o">*</span><span class="n">data</span><span class="p">;</span>
-	<span class="n">php_url</span> <span class="o">*</span><span class="n">url</span><span class="p">;</span>
+	<span class=n>url</span> <span class=o>=</span> <span class=n>php_url_parse</span><span class=p>(</span><span class=n>filename</span><span class=p>);</span>
+	<span class=k>if</span> <span class=p>(</span><span class=o>!</span><span class=n>url</span><span class=p>)</span>
+	<span class=p>{</span>
+		<span class=n>php_stream_wrapper_log_error</span><span class=p>(</span><span class=n>wrapper</span><span class=p>,</span> <span class=n>options</span> <span class=n>TSRMLS_CC</span><span class=p>,</span> <span class=s>&#34;Unable to parse url %s.&#34;</span><span class=p>,</span> <span class=n>filename</span><span class=p>);</span>
+		<span class=k>return</span> <span class=nb>NULL</span><span class=p>;</span>
+	<span class=p>}</span>
 
-	<span class="k">if</span> <span class="p">(</span><span class="n">options</span> <span class="o">&amp;</span> <span class="n">STREAM_OPEN_PERSISTENT</span><span class="p">)</span>
-	<span class="p">{</span>
-		<span class="n">php_stream_wrapper_log_error</span><span class="p">(</span><span class="n">wrapper</span><span class="p">,</span> <span class="n">options</span> <span class="n">TSRMLS_CC</span><span class="p">,</span> <span class="s">&#34;Unable to open %s persistently.&#34;</span><span class="p">,</span> <span class="n">filename</span><span class="p">);</span>
-		<span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
-	<span class="p">}</span>
+	<span class=n>data</span> <span class=o>=</span> <span class=n>emalloc</span><span class=p>(</span><span class=k>sizeof</span><span class=p>(</span><span class=n>donie_stream_data</span><span class=p>));</span>
+	<span class=n>data</span><span class=o>-&gt;</span><span class=n>position</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
+	<span class=n>data</span><span class=o>-&gt;</span><span class=n>key_len</span> <span class=o>=</span> <span class=n>strlen</span><span class=p>(</span><span class=n>url</span><span class=o>-&gt;</span><span class=n>host</span><span class=p>);</span>
+	<span class=n>data</span><span class=o>-&gt;</span><span class=n>key</span> <span class=o>=</span> <span class=n>estrndup</span><span class=p>(</span><span class=n>url</span><span class=o>-&gt;</span><span class=n>host</span><span class=p>,</span> <span class=n>data</span><span class=o>-&gt;</span><span class=n>key_len</span><span class=o>+</span><span class=mi>1</span><span class=p>);</span>
+	<span class=n>php_url_free</span><span class=p>(</span><span class=n>url</span><span class=p>);</span>
 
-	<span class="n">url</span> <span class="o">=</span> <span class="n">php_url_parse</span><span class="p">(</span><span class="n">filename</span><span class="p">);</span>
-	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">url</span><span class="p">)</span>
-	<span class="p">{</span>
-		<span class="n">php_stream_wrapper_log_error</span><span class="p">(</span><span class="n">wrapper</span><span class="p">,</span> <span class="n">options</span> <span class="n">TSRMLS_CC</span><span class="p">,</span> <span class="s">&#34;Unable to parse url %s.&#34;</span><span class="p">,</span> <span class="n">filename</span><span class="p">);</span>
-		<span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
-	<span class="p">}</span>
+	<span class=k>return</span> <span class=n>php_stream_alloc</span><span class=p>(</span><span class=o>&amp;</span><span class=n>php_doniestream_ops</span><span class=p>,</span> <span class=n>data</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=n>mode</span><span class=p>);</span>
+<span class=p>}</span>
+<span class=k>static</span> <span class=n>php_stream_wrapper_ops</span> <span class=n>php_doniestream_wrapper_ops</span> <span class=o>=</span> <span class=p>{</span>
+	<span class=n>php_doniestream_wrapper_open</span><span class=p>,</span>
+	<span class=nb>NULL</span><span class=p>,</span> <span class=cm>/* stream_closer */</span>
+	<span class=nb>NULL</span><span class=p>,</span> <span class=cm>/* stream_stat */</span>
+	<span class=nb>NULL</span><span class=p>,</span> <span class=cm>/* url_stat */</span>
+	<span class=nb>NULL</span><span class=p>,</span> <span class=cm>/* dir_opener */</span>
+	<span class=n>PHP_DONIESTREAM_WRAPPER</span><span class=p>,</span>
+	<span class=nb>NULL</span><span class=p>,</span> <span class=cm>/* unlink */</span>
+	<span class=nb>NULL</span><span class=p>,</span> <span class=cm>/* rename */</span>
+	<span class=nb>NULL</span><span class=p>,</span> <span class=cm>/* mkdir */</span>
+	<span class=nb>NULL</span><span class=p>,</span> <span class=cm>/* rmdir */</span>
+	<span class=nb>NULL</span>  <span class=cm>/* stream_metadata */</span>
+<span class=p>};</span>
+<span class=k>static</span> <span class=n>php_stream_wrapper</span> <span class=n>php_doniestream_wrapper</span> <span class=o>=</span> <span class=p>{</span>
+	<span class=o>&amp;</span><span class=n>php_doniestream_wrapper_ops</span><span class=p>,</span>
+	<span class=nb>NULL</span><span class=p>,</span> <span class=cm>/* abstract */</span>
+	<span class=mi>0</span><span class=p>,</span> <span class=cm>/* is_url */</span>
+<span class=p>};</span>
 
-	<span class="n">data</span> <span class="o">=</span> <span class="n">emalloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">donie_stream_data</span><span class="p">));</span>
-	<span class="n">data</span><span class="o">-&gt;</span><span class="n">position</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-	<span class="n">data</span><span class="o">-&gt;</span><span class="n">key_len</span> <span class="o">=</span> <span class="n">strlen</span><span class="p">(</span><span class="n">url</span><span class="o">-&gt;</span><span class="n">host</span><span class="p">);</span>
-	<span class="n">data</span><span class="o">-&gt;</span><span class="n">key</span> <span class="o">=</span> <span class="n">estrndup</span><span class="p">(</span><span class="n">url</span><span class="o">-&gt;</span><span class="n">host</span><span class="p">,</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">key_len</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
-	<span class="n">php_url_free</span><span class="p">(</span><span class="n">url</span><span class="p">);</span>
+<span class=n>PHP_MINIT_FUNCTION</span><span class=p>(</span><span class=n>donie</span><span class=p>)</span>
+<span class=p>{</span>
+	<span class=cm>/* register stream wrapper */</span>
+	<span class=k>if</span> <span class=p>(</span><span class=n>php_register_url_stream_wrapper</span><span class=p>(</span><span class=n>PHP_DONIESTREAM_WRAPPER</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>php_doniestream_wrapper</span> <span class=n>TSRMLS_CC</span><span class=p>)</span> <span class=o>==</span> <span class=n>FAILURE</span><span class=p>)</span>
+	<span class=p>{</span>
+		<span class=k>return</span> <span class=n>FAILURE</span><span class=p>;</span>
+	<span class=p>}</span>
 
-	<span class="k">return</span> <span class="n">php_stream_alloc</span><span class="p">(</span><span class="o">&amp;</span><span class="n">php_doniestream_ops</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">mode</span><span class="p">);</span>
-<span class="p">}</span>
-<span class="k">static</span> <span class="n">php_stream_wrapper_ops</span> <span class="n">php_doniestream_wrapper_ops</span> <span class="o">=</span> <span class="p">{</span>
-	<span class="n">php_doniestream_wrapper_open</span><span class="p">,</span>
-	<span class="nb">NULL</span><span class="p">,</span> <span class="cm">/* stream_closer */</span>
-	<span class="nb">NULL</span><span class="p">,</span> <span class="cm">/* stream_stat */</span>
-	<span class="nb">NULL</span><span class="p">,</span> <span class="cm">/* url_stat */</span>
-	<span class="nb">NULL</span><span class="p">,</span> <span class="cm">/* dir_opener */</span>
-	<span class="n">PHP_DONIESTREAM_WRAPPER</span><span class="p">,</span>
-	<span class="nb">NULL</span><span class="p">,</span> <span class="cm">/* unlink */</span>
-	<span class="nb">NULL</span><span class="p">,</span> <span class="cm">/* rename */</span>
-	<span class="nb">NULL</span><span class="p">,</span> <span class="cm">/* mkdir */</span>
-	<span class="nb">NULL</span><span class="p">,</span> <span class="cm">/* rmdir */</span>
-	<span class="nb">NULL</span>  <span class="cm">/* stream_metadata */</span>
-<span class="p">};</span>
-<span class="k">static</span> <span class="n">php_stream_wrapper</span> <span class="n">php_doniestream_wrapper</span> <span class="o">=</span> <span class="p">{</span>
-	<span class="o">&amp;</span><span class="n">php_doniestream_wrapper_ops</span><span class="p">,</span>
-	<span class="nb">NULL</span><span class="p">,</span> <span class="cm">/* abstract */</span>
-	<span class="mi">0</span><span class="p">,</span> <span class="cm">/* is_url */</span>
-<span class="p">};</span>
+	<span class=k>return</span> <span class=n>SUCCESS</span><span class=p>;</span>
+<span class=p>}</span>
 
-<span class="n">PHP_MINIT_FUNCTION</span><span class="p">(</span><span class="n">donie</span><span class="p">)</span>
-<span class="p">{</span>
-	<span class="cm">/* register stream wrapper */</span>
-	<span class="k">if</span> <span class="p">(</span><span class="n">php_register_url_stream_wrapper</span><span class="p">(</span><span class="n">PHP_DONIESTREAM_WRAPPER</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">php_doniestream_wrapper</span> <span class="n">TSRMLS_CC</span><span class="p">)</span> <span class="o">==</span> <span class="n">FAILURE</span><span class="p">)</span>
-	<span class="p">{</span>
-		<span class="k">return</span> <span class="n">FAILURE</span><span class="p">;</span>
-	<span class="p">}</span>
+<span class=n>PHP_MSHUTDOWN_FUNCTION</span><span class=p>(</span><span class=n>donie</span><span class=p>)</span>
+<span class=p>{</span>
+	<span class=cm>/* unregister stream wrapper */</span>
+	<span class=k>if</span> <span class=p>(</span><span class=n>php_unregister_url_stream_wrapper</span><span class=p>(</span><span class=n>PHP_DONIESTREAM_WRAPPER</span> <span class=n>TSRMLS_CC</span><span class=p>)</span> <span class=o>==</span> <span class=n>FAILURE</span><span class=p>)</span>
+	<span class=p>{</span>
+		<span class=k>return</span> <span class=n>FAILURE</span><span class=p>;</span>
+	<span class=p>}</span>
 
-	<span class="k">return</span> <span class="n">SUCCESS</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="n">PHP_MSHUTDOWN_FUNCTION</span><span class="p">(</span><span class="n">donie</span><span class="p">)</span>
-<span class="p">{</span>
-	<span class="cm">/* unregister stream wrapper */</span>
-	<span class="k">if</span> <span class="p">(</span><span class="n">php_unregister_url_stream_wrapper</span><span class="p">(</span><span class="n">PHP_DONIESTREAM_WRAPPER</span> <span class="n">TSRMLS_CC</span><span class="p">)</span> <span class="o">==</span> <span class="n">FAILURE</span><span class="p">)</span>
-	<span class="p">{</span>
-		<span class="k">return</span> <span class="n">FAILURE</span><span class="p">;</span>
-	<span class="p">}</span>
-
-	<span class="k">return</span> <span class="n">SUCCESS</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>PHP_DONIESTREAM_WRAPPER定义了协议名“donie”，所有对格式为“donie://XXX”地址的操作将由这个流实现。</p>
-<p>donie_stream_data是一个自定义的结构体，在创建流实例的时候初始化并赋给php_stream-&gt;abstract，为以后对流的操作提供方便。</p>
-<p>这里只实现了最关键的stream_opener函数，其中，用php_stream_alloc()创建新的流实例。</p>
-<p>最后在模块的MINIT中用php_register_url_stream_wrapper()注册包装器，并在MSHUTDOWN中用php_unregister_url_stream_wrapper()注销。</p>
-</div><div class="post-footer" id="post-footer">
-    <div class="post-info">
-        <div class="post-info-line">
-            <div class="post-info-mod">
-                <span>更新于 2020-06-17&nbsp;<a class="git-hash" href="https://github.com/dillonzq/LoveIt/commit/b6b131fb549d1c33b519bbe9910a7c0b426257fd" target="_blank" title="commit by Donie Leigh(donie.leigh@gmail.com) b6b131fb549d1c33b519bbe9910a7c0b426257fd: URL地址改为用slug生成；为所有文章追加slug matter">
-                                    <i class="fas fa-hashtag fa-fw"></i>b6b131fb</a></span>
-            </div>
-            <div class="post-info-license"></div>
-        </div>
-        <div class="post-info-line">
-            <div class="post-info-md"><span>
-                            <a class="link-to-markdown" href="/post/stream-implementation-in-php/index.md" target="_blank">阅读原始文档</a>
-                        </span></div>
-            <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="http://0x3f.org/post/stream-implementation-in-php/" data-title="PHP流的实现" data-hashtags="PHP,源码"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="http://0x3f.org/post/stream-implementation-in-php/" data-hashtag="PHP"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="http://0x3f.org/post/stream-implementation-in-php/" data-title="PHP流的实现"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="http://0x3f.org/post/stream-implementation-in-php/" data-title="PHP流的实现"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="http://0x3f.org/post/stream-implementation-in-php/" data-title="PHP流的实现"><i class="fab fa-weibo fa-fw"></i></a></span>
-            </div>
-        </div>
-    </div>
-
-    <div class="post-info-more">
-        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/php/">PHP</a>,&nbsp;<a href="/tags/%E6%BA%90%E7%A0%81/">源码</a></section>
-        <section>
-            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
-        </section>
-    </div>
-
-    <div class="post-nav"><a href="/post/setup-ds18b20-on-archlinux/" class="prev" rel="prev" title="在Archlinux ARM上使用DS18B20温度传感器"><i class="fas fa-angle-left fa-fw"></i>在Archlinux ARM上使用DS18B20温度传感器</a>
-            <a href="/post/hound-of-transformers-4/" class="next" rel="next" title="变形金刚：祖国合金放大版探长">变形金刚：祖国合金放大版探长<i class="fas fa-angle-right fa-fw"></i></a></div>
-</div>
-<div id="comments"><div id="utterances"></div><noscript>
-                Please enable JavaScript to view the comments powered by <a href="https://utteranc.es/">Utterances</a>.
-            </noscript></div></article></div>
-            </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.72.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
-                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2006 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">淘气</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
-        </div>
-    </footer></div>
-
-        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
-                <i class="fas fa-arrow-up fa-fw"></i>
-            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
-                <i class="fas fa-comment fa-fw"></i>
-            </a>
-        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"utterances":{"darkTheme":"github-dark","issueTerm":"pathname","label":"","lightTheme":"github-light","repo":"xbot/blog-comments"}},"search":{"algoliaAppID":"PASDMWALPK","algoliaIndex":"index.zh-cn","algoliaSearchKey":"b42948e51daaa93df92381c8e2ac0f93","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
-</html>
+	<span class=k>return</span> <span class=n>SUCCESS</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>PHP_DONIESTREAM_WRAPPER定义了协议名“donie”，所有对格式为“donie://XXX”地址的操作将由这个流实现。</p><p>donie_stream_data是一个自定义的结构体，在创建流实例的时候初始化并赋给php_stream->abstract，为以后对流的操作提供方便。</p><p>这里只实现了最关键的stream_opener函数，其中，用php_stream_alloc()创建新的流实例。</p><p>最后在模块的MINIT中用php_register_url_stream_wrapper()注册包装器，并在MSHUTDOWN中用php_unregister_url_stream_wrapper()注销。</p></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>更新于 2020-06-17&nbsp;<a class=git-hash href=https://github.com/dillonzq/LoveIt/commit/b6b131fb549d1c33b519bbe9910a7c0b426257fd target=_blank title="commit by Donie Leigh(donie.leigh@gmail.com) b6b131fb549d1c33b519bbe9910a7c0b426257fd: URL地址改为用slug生成；为所有文章追加slug matter">
+<i class="fas fa-hashtag fa-fw"></i>b6b131fb</a></span></div><div class=post-info-license></div></div><div class=post-info-line><div class=post-info-md><span><a class=link-to-markdown href=/post/stream-implementation-in-php/index.md target=_blank>阅读原始文档</a></span></div><div class=post-info-share><span><a href=javascript:void(0); title="分享到 Twitter" data-sharer=twitter data-url=http://0x3f.org/post/stream-implementation-in-php/ data-title=PHP流的实现 data-hashtags=PHP,源码><i class="fab fa-twitter fa-fw"></i></a><a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=http://0x3f.org/post/stream-implementation-in-php/ data-hashtag=PHP><i class="fab fa-facebook-square fa-fw"></i></a><a href=javascript:void(0); title="分享到 Hacker News" data-sharer=hackernews data-url=http://0x3f.org/post/stream-implementation-in-php/ data-title=PHP流的实现><i class="fab fa-hacker-news fa-fw"></i></a><a href=javascript:void(0); title="分享到 Line" data-sharer=line data-url=http://0x3f.org/post/stream-implementation-in-php/ data-title=PHP流的实现><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg></i></a><a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=http://0x3f.org/post/stream-implementation-in-php/ data-title=PHP流的实现><i class="fab fa-weibo fa-fw"></i></a></span></div></div></div><div class=post-info-more><section class=post-tags><i class="fas fa-tags fa-fw"></i>&nbsp;<a href=/tags/php/>PHP</a>,&nbsp;<a href=/tags/%E6%BA%90%E7%A0%81/>源码</a></section><section><span><a href=javascript:void(0); onclick=window.history.back();>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span></section></div><div class=post-nav><a href=/post/setup-ds18b20-on-archlinux/ class=prev rel=prev title="在Archlinux ARM上使用DS18B20温度传感器"><i class="fas fa-angle-left fa-fw"></i>在Archlinux ARM上使用DS18B20温度传感器</a>
+<a href=/post/hound-of-transformers-4/ class=next rel=next title=变形金刚：祖国合金放大版探长>变形金刚：祖国合金放大版探长<i class="fas fa-angle-right fa-fw"></i></a></div></div><div id=comments><div id=utterances></div><noscript>Please enable JavaScript to view the comments powered by <a href=https://utteranc.es/>Utterances</a>.</noscript></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line>由 <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.72.0">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i>LoveIt</a></div><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2006 - 2020</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>淘气</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部><i class="fas fa-arrow-up fa-fw"></i></a><a href=# id=view-comments class=fixed-button title=查看评论><i class="fas fa-comment fa-fw"></i></a></div><script type=text/javascript src=https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js></script><script type=text/javascript>window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"utterances":{"darkTheme":"github-dark","issueTerm":"pathname","label":"","lightTheme":"github-light","repo":"xbot/blog-comments"}},"search":{"algoliaAppID":"PASDMWALPK","algoliaIndex":"index.zh-cn","algoliaSearchKey":"b42948e51daaa93df92381c8e2ac0f93","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type=text/javascript src=/js/theme.min.js></script></body></html>

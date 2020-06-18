@@ -1,178 +1,43 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="robots" content="noodp" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-        <title>基于Laravel的项目的单元测试规范 - 晴耕雨讀</title><meta name="Description" content="Donie&#39;s blog."><meta property="og:title" content="基于Laravel的项目的单元测试规范" />
-<meta property="og:description" content="单元测试是个好东西，解决了我很多问题，不论开发效率还是代码质量，都给我助益良多。最近想在团队内部推广，就拟了个规范草稿：" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="http://0x3f.org/post/unit-testing-standard-for-laravel-based-projects/" />
-<meta property="og:image" content="http://0x3f.org/logo.png"/>
-<meta property="article:published_time" content="2019-03-24T22:42:08+00:00" />
-<meta property="article:modified_time" content="2020-06-17T17:28:11+08:00" />
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="http://0x3f.org/logo.png"/>
-
-<meta name="twitter:title" content="基于Laravel的项目的单元测试规范"/>
-<meta name="twitter:description" content="单元测试是个好东西，解决了我很多问题，不论开发效率还是代码质量，都给我助益良多。最近想在团队内部推广，就拟了个规范草稿："/>
-<meta name="application-name" content="晴耕雨讀">
-<meta name="apple-mobile-web-app-title" content="晴耕雨讀"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://0x3f.org/post/unit-testing-standard-for-laravel-based-projects/" /><link rel="prev" href="http://0x3f.org/post/replace-syntastic-with-ale/" /><link rel="next" href="http://0x3f.org/post/investigation-report-of-git-flows/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
-    {
-        "@context": "http://schema.org",
-        "@type": "BlogPosting",
-        "headline": "基于Laravel的项目的单元测试规范",
-        "inLanguage": "zh-CN",
-        "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": "http:\/\/0x3f.org\/post\/unit-testing-standard-for-laravel-based-projects\/"
-        },"image": ["http:\/\/0x3f.org\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "编程, 单元测试, php, Laravel\/Lumen","wordcount":  1492 ,
-        "url": "http:\/\/0x3f.org\/post\/unit-testing-standard-for-laravel-based-projects\/","datePublished": "2019-03-24T22:42:08+00:00","dateModified": "2020-06-17T17:28:11+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
-            "@type": "Organization",
-            "name": "xxxx","logo": "http:\/\/0x3f.org\/images\/avatar.png"},"author": {
-                "@type": "Person",
-                "name": "淘气"
-            },"description": ""
-    }
-    </script></head>
-    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
-
-        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
-    <div class="header-wrapper">
-        <div class="header-title">
-            <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
-        </div>
-        <div class="menu">
-            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
-                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
-                            <i class="fas fa-search fa-fw"></i>
-                        </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
-                            <i class="fas fa-times-circle fa-fw"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-desktop">
-                            <i class="fas fa-spinner fa-fw fa-spin"></i>
-                        </span>
-                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
-                    <i class="fas fa-adjust fa-fw"></i>
-                </a>
-            </div>
-        </div>
-    </div>
-</header><header class="mobile" id="header-mobile">
-    <div class="header-container">
-        <div class="header-wrapper">
-            <div class="header-title">
-                <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
-            </div>
-            <div class="menu-toggle" id="menu-toggle-mobile">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-        <div class="menu" id="menu-mobile"><div class="search-wrapper">
-                    <div class="search mobile" id="search-mobile">
-                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
-                            <i class="fas fa-search fa-fw"></i>
-                        </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
-                            <i class="fas fa-times-circle fa-fw"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-mobile">
-                            <i class="fas fa-spinner fa-fw fa-spin"></i>
-                        </span>
-                    </div>
-                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
-                        取消
-                    </a>
-                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
-                <i class="fas fa-adjust fa-fw"></i>
-            </a></div>
-    </div>
-</header>
-<div class="search-dropdown desktop">
-    <div id="search-dropdown-desktop"></div>
-</div>
-<div class="search-dropdown mobile">
-    <div id="search-dropdown-mobile"></div>
-</div>
-<main class="main">
-                <div class="container"><div class="toc" id="toc-auto">
-            <h2 class="toc-title">目录</h2>
-            <div class="toc-content" id="toc-content-auto"></div>
-        </div><article class="page single"><h1 class="single-title animated flipInX">基于Laravel的项目的单元测试规范</h1><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"><i class="far fa-folder fa-fw"></i>计算机</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2019-03-24">2019-03-24</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1492 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 3 分钟&nbsp;</div>
-        </div><div class="details toc" id="toc-static"  kept="">
-                <div class="details-summary toc-title">
-                    <span>目录</span>
-                    <span><i class="details-icon fas fa-angle-right"></i></span>
-                </div>
-                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
-  <ul>
-    <li><a href="#目录结构">目录结构</a></li>
-    <li><a href="#继承关系">继承关系</a></li>
-    <li><a href="#接口测试">接口测试</a></li>
-    <li><a href="#单元测试">单元测试</a>
-      <ul>
-        <li><a href="#service">Service</a></li>
-        <li><a href="#repository">Repository</a></li>
-        <li><a href="#helper-functions">Helper Functions</a></li>
-      </ul>
-    </li>
-    <li><a href="#辅助方法">辅助方法</a></li>
-  </ul>
-</nav></div>
-            </div><div class="content" id="content"><p>单元测试是个好东西，解决了我很多问题，不论开发效率还是代码质量，都给我助益良多。最近想在团队内部推广，就拟了个规范草稿：</p>
-<h1 id="什么是单元">什么是单元？</h1>
-<p>单元是逻辑的最小单位，是函数或方法。</p>
-<p>单元测试意味着只测试单元本身，单元内部调用的其它接口、函数和方法等均称为依赖关系。依赖关系自有它们对应的单元测试负责，不在本单元的测试范围内。</p>
-<h1 id="怎么测试单元stub--mock">怎么测试单元？（Stub &amp; Mock）</h1>
-<p>依赖关系是脆弱的，它会导致单元测试的编写和运行效率低下，甚至易于失败。以下是项目中的一个测试用例，由于依赖了用户服务，且该服务在我家无法访问，导致测试失败：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">  donie@Donies &gt; ~/Projects/app/service-biz &gt;&gt; master &gt; phpunitat57                                  -- INSERT --
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><meta http-equiv=x-ua-compatible content="IE=edge, chrome=1"><title>基于Laravel的项目的单元测试规范 - 晴耕雨讀</title><meta name=Description content="Donie's blog."><meta property="og:title" content="基于Laravel的项目的单元测试规范"><meta property="og:description" content="单元测试是个好东西，解决了我很多问题，不论开发效率还是代码质量，都给我助益良多。最近想在团队内部推广，就拟了个规范草稿："><meta property="og:type" content="article"><meta property="og:url" content="http://0x3f.org/post/unit-testing-standard-for-laravel-based-projects/"><meta property="og:image" content="http://0x3f.org/logo.png"><meta property="article:published_time" content="2019-03-24T22:42:08+00:00"><meta property="article:modified_time" content="2020-06-17T17:28:11+08:00"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="http://0x3f.org/logo.png"><meta name=twitter:title content="基于Laravel的项目的单元测试规范"><meta name=twitter:description content="单元测试是个好东西，解决了我很多问题，不论开发效率还是代码质量，都给我助益良多。最近想在团队内部推广，就拟了个规范草稿："><meta name=application-name content="晴耕雨讀"><meta name=apple-mobile-web-app-title content="晴耕雨讀"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=http://0x3f.org/post/unit-testing-standard-for-laravel-based-projects/><link rel=prev href=http://0x3f.org/post/replace-syntastic-with-ale/><link rel=next href=http://0x3f.org/post/investigation-report-of-git-flows/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"基于Laravel的项目的单元测试规范","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/0x3f.org\/post\/unit-testing-standard-for-laravel-based-projects\/"},"image":["http:\/\/0x3f.org\/images\/Apple-Devices-Preview.png"],"genre":"posts","keywords":"编程, 单元测试, php, Laravel\/Lumen","wordcount":1492,"url":"http:\/\/0x3f.org\/post\/unit-testing-standard-for-laravel-based-projects\/","datePublished":"2019-03-24T22:42:08+00:00","dateModified":"2020-06-17T17:28:11+08:00","license":"This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher":{"@type":"Organization","name":"xxxx","logo":"http:\/\/0x3f.org\/images\/avatar.png"},"author":{"@type":"Person","name":"淘气"},"description":""}</script></head><body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':('auto'==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:'auto'==='dark'))&&document.body.setAttribute('theme','dark');</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title=晴耕雨讀><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw"></i></span>晴耕雨讀</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/posts/>所有文章 </a><a class=menu-item href=/tags/>标签 </a><a class=menu-item href=/categories/>分类 </a><a class=menu-item href=/about/>关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop><input type=text placeholder=搜索文章标题或内容... id=search-input-desktop>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=搜索><i class="fas fa-search fa-fw"></i></a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=清空><i class="fas fa-times-circle fa-fw"></i></a><span class="search-button search-loading" id=search-loading-desktop><i class="fas fa-spinner fa-fw fa-spin"></i></span></span><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题><i class="fas fa-adjust fa-fw"></i></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title=晴耕雨讀><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw"></i></span>晴耕雨讀</a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><div class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder=搜索文章标题或内容... id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=搜索><i class="fas fa-search fa-fw"></i></a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=清空><i class="fas fa-times-circle fa-fw"></i></a><span class="search-button search-loading" id=search-loading-mobile><i class="fas fa-spinner fa-fw fa-spin"></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>取消</a></div><a class=menu-item href=/posts/>所有文章</a><a class=menu-item href=/tags/>标签</a><a class=menu-item href=/categories/>分类</a><a class=menu-item href=/about/>关于</a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>目录</h2><div class=toc-content id=toc-content-auto></div></div><article class="page single"><h1 class="single-title animated flipInX">基于Laravel的项目的单元测试规范</h1><div class=post-meta><div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class=post-category>收录于 <a href=/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/><i class="far fa-folder fa-fw"></i>计算机</a></span></div><div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2019-03-24>2019-03-24</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1492 字&nbsp;
+<i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 3 分钟&nbsp;</div></div><div class="details toc" id=toc-static kept><div class="details-summary toc-title"><span>目录</span>
+<span><i class="details-icon fas fa-angle-right"></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#目录结构>目录结构</a></li><li><a href=#继承关系>继承关系</a></li><li><a href=#接口测试>接口测试</a></li><li><a href=#单元测试>单元测试</a><ul><li><a href=#service>Service</a></li><li><a href=#repository>Repository</a></li><li><a href=#helper-functions>Helper Functions</a></li></ul></li><li><a href=#辅助方法>辅助方法</a></li></ul></nav></div></div><div class=content id=content><p>单元测试是个好东西，解决了我很多问题，不论开发效率还是代码质量，都给我助益良多。最近想在团队内部推广，就拟了个规范草稿：</p><h1 id=什么是单元>什么是单元？</h1><p>单元是逻辑的最小单位，是函数或方法。</p><p>单元测试意味着只测试单元本身，单元内部调用的其它接口、函数和方法等均称为依赖关系。依赖关系自有它们对应的单元测试负责，不在本单元的测试范围内。</p><h1 id=怎么测试单元stub--mock>怎么测试单元？（Stub & Mock）</h1><p>依赖关系是脆弱的，它会导致单元测试的编写和运行效率低下，甚至易于失败。以下是项目中的一个测试用例，由于依赖了用户服务，且该服务在我家无法访问，导致测试失败：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-fallback data-lang=fallback>  donie@Donies &gt; ~/Projects/app/service-biz &gt;&gt; master &gt; phpunitat57                                  -- INSERT --
   PHPUnit 5.7.26 by Sebastian Bergmann and contributors.
   
   ......E.                                                            8 / 8 (100%)
@@ -206,152 +71,99 @@
   
   ERRORS!
   Tests: 8, Assertions: 8, Errors: 1.
-</code></pre></td></tr></table>
-</div>
-</div><p>要实现真正的单元测试，不可避免地要对单元内部的依赖关系进行伪造，即Mock。</p>
-<h1 id="规范">规范</h1>
-<h2 id="目录结构">目录结构</h2>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">tests/
+</code></pre></td></tr></table></div></div><p>要实现真正的单元测试，不可避免地要对单元内部的依赖关系进行伪造，即Mock。</p><h1 id=规范>规范</h1><h2 id=目录结构>目录结构</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-fallback data-lang=fallback>tests/
     ↳ Api/
     ↳ Services/
     ↳ Repositories/
     ↳ Helpers/
     ↳ TestCase.php
     ↳ TransactionalTestCase.php
-</code></pre></td></tr></table>
-</div>
-</div><h2 id="继承关系">继承关系</h2>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">App\Tests\TestCase
+</code></pre></td></tr></table></div></div><h2 id=继承关系>继承关系</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-fallback data-lang=fallback>App\Tests\TestCase
     ↳Tests\TestCase
         ↳Tests\Api\TagTest
         ...
     ↳Tests\TransactionalTestCase
         ↳Tests\Services\TagTest
         ...
-</code></pre></td></tr></table>
-</div>
-</div><h2 id="接口测试">接口测试</h2>
-<ul>
-<li>所有接口都必须有测试用例，代码覆盖率100%</li>
-<li>位于<code>tests/Api</code>下，命名空间是<code>Tests/Api</code></li>
-<li>和被测试的Controller对应</li>
-<li>只测试路由和Action本单元的代码，不测试具体业务逻辑</li>
-<li>具体业务逻辑封装在Service层，由该层的单元测试负责</li>
-<li>测试代码中通过Facade实现对Service层的Mock</li>
-</ul>
-<h2 id="单元测试">单元测试</h2>
-<h3 id="service">Service</h3>
-<ul>
-<li>所有Service层的方法都必须有测试用例，代码覆盖率不低于90%</li>
-<li>位于<code>tests/Services</code>目录下，命名空间是<code>Tests/Services</code></li>
-<li>和被测试的Service对应</li>
-<li>通过Facade调用Service层并实现对被测试单元依赖关系的Mock</li>
-</ul>
-<h3 id="repository">Repository</h3>
-<ul>
-<li>复杂的或有必要的方法要有测试用例，其余可以通过Service层的单元测试覆盖到，代码覆盖率不低于90%</li>
-<li>位于<code>tests/Repositories</code>目录下，命名空间是<code>Tests/Repositories</code></li>
-<li>和被测试的Repository对应</li>
-</ul>
-<h3 id="helper-functions">Helper Functions</h3>
-<ul>
-<li>复杂的或有必要的函数要有测试用例，其余可以通过其它层的单元测试覆盖到，代码覆盖率100%</li>
-<li>位于<code>tests/Helpers</code>目录下，命名空间是<code>Tests/Helpers</code></li>
-<li>每个测试用例和被测试的helper函数对应</li>
-</ul>
-<h2 id="辅助方法">辅助方法</h2>
-<p>基类中封装如下辅助方法：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span><span class="lnt">39
-</span><span class="lnt">40
-</span><span class="lnt">41
-</span><span class="lnt">42
-</span><span class="lnt">43
-</span><span class="lnt">44
-</span><span class="lnt">45
-</span><span class="lnt">46
-</span><span class="lnt">47
-</span><span class="lnt">48
-</span><span class="lnt">49
-</span><span class="lnt">50
-</span><span class="lnt">51
-</span><span class="lnt">52
-</span><span class="lnt">53
-</span><span class="lnt">54
-</span><span class="lnt">55
-</span><span class="lnt">56
-</span><span class="lnt">57
-</span><span class="lnt">58
-</span><span class="lnt">59
-</span><span class="lnt">60
-</span><span class="lnt">61
-</span><span class="lnt">62
-</span><span class="lnt">63
-</span><span class="lnt">64
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-php" data-lang="php">/**
+</code></pre></td></tr></table></div></div><h2 id=接口测试>接口测试</h2><ul><li>所有接口都必须有测试用例，代码覆盖率100%</li><li>位于<code>tests/Api</code>下，命名空间是<code>Tests/Api</code></li><li>和被测试的Controller对应</li><li>只测试路由和Action本单元的代码，不测试具体业务逻辑</li><li>具体业务逻辑封装在Service层，由该层的单元测试负责</li><li>测试代码中通过Facade实现对Service层的Mock</li></ul><h2 id=单元测试>单元测试</h2><h3 id=service>Service</h3><ul><li>所有Service层的方法都必须有测试用例，代码覆盖率不低于90%</li><li>位于<code>tests/Services</code>目录下，命名空间是<code>Tests/Services</code></li><li>和被测试的Service对应</li><li>通过Facade调用Service层并实现对被测试单元依赖关系的Mock</li></ul><h3 id=repository>Repository</h3><ul><li>复杂的或有必要的方法要有测试用例，其余可以通过Service层的单元测试覆盖到，代码覆盖率不低于90%</li><li>位于<code>tests/Repositories</code>目录下，命名空间是<code>Tests/Repositories</code></li><li>和被测试的Repository对应</li></ul><h3 id=helper-functions>Helper Functions</h3><ul><li>复杂的或有必要的函数要有测试用例，其余可以通过其它层的单元测试覆盖到，代码覆盖率100%</li><li>位于<code>tests/Helpers</code>目录下，命名空间是<code>Tests/Helpers</code></li><li>每个测试用例和被测试的helper函数对应</li></ul><h2 id=辅助方法>辅助方法</h2><p>基类中封装如下辅助方法：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
+</span><span class=lnt>61
+</span><span class=lnt>62
+</span><span class=lnt>63
+</span><span class=lnt>64
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-php data-lang=php>/**
  * Mock一个对象并返回伪造的实例
  *
  * 可通过回调匿名函数定制Mock的实例的行为特征。
@@ -408,57 +220,13 @@ protected function mockSingleton($class, callable $handler = null): void
   *
   * @return mixed 被触发方法的返回值
   */
-protected function invokeMethod(<span class="err">&amp;</span>$object, $methodName, array $parameters = [])
+protected function invokeMethod(<span class=err>&amp;</span>$object, $methodName, array $parameters = [])
 {
     $reflection = new \ReflectionClass(get_class($object));
     $method = $reflection-&gt;getMethod($methodName);
     $method-&gt;setAccessible(true);
     return $method-&gt;invokeArgs($object, $parameters);
 }
-</code></pre></td></tr></table>
-</div>
-</div></div><div class="post-footer" id="post-footer">
-    <div class="post-info">
-        <div class="post-info-line">
-            <div class="post-info-mod">
-                <span>更新于 2020-06-17&nbsp;<a class="git-hash" href="https://github.com/dillonzq/LoveIt/commit/b6b131fb549d1c33b519bbe9910a7c0b426257fd" target="_blank" title="commit by Donie Leigh(donie.leigh@gmail.com) b6b131fb549d1c33b519bbe9910a7c0b426257fd: URL地址改为用slug生成；为所有文章追加slug matter">
-                                    <i class="fas fa-hashtag fa-fw"></i>b6b131fb</a></span>
-            </div>
-            <div class="post-info-license"></div>
-        </div>
-        <div class="post-info-line">
-            <div class="post-info-md"><span>
-                            <a class="link-to-markdown" href="/post/unit-testing-standard-for-laravel-based-projects/index.md" target="_blank">阅读原始文档</a>
-                        </span></div>
-            <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="http://0x3f.org/post/unit-testing-standard-for-laravel-based-projects/" data-title="基于Laravel的项目的单元测试规范" data-hashtags="编程,单元测试,php,Laravel/Lumen"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="http://0x3f.org/post/unit-testing-standard-for-laravel-based-projects/" data-hashtag="编程"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="http://0x3f.org/post/unit-testing-standard-for-laravel-based-projects/" data-title="基于Laravel的项目的单元测试规范"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="http://0x3f.org/post/unit-testing-standard-for-laravel-based-projects/" data-title="基于Laravel的项目的单元测试规范"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="http://0x3f.org/post/unit-testing-standard-for-laravel-based-projects/" data-title="基于Laravel的项目的单元测试规范"><i class="fab fa-weibo fa-fw"></i></a></span>
-            </div>
-        </div>
-    </div>
-
-    <div class="post-info-more">
-        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/%E7%BC%96%E7%A8%8B/">编程</a>,&nbsp;<a href="/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/">单元测试</a>,&nbsp;<a href="/tags/php/">PHP</a>,&nbsp;<a href="/tags/laravel/lumen/">Laravel/Lumen</a></section>
-        <section>
-            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
-        </section>
-    </div>
-
-    <div class="post-nav"><a href="/post/replace-syntastic-with-ale/" class="prev" rel="prev" title="用ALE替换了Syntastic"><i class="fas fa-angle-left fa-fw"></i>用ALE替换了Syntastic</a>
-            <a href="/post/investigation-report-of-git-flows/" class="next" rel="next" title="Git工作流调研报告">Git工作流调研报告<i class="fas fa-angle-right fa-fw"></i></a></div>
-</div>
-<div id="comments"><div id="utterances"></div><noscript>
-                Please enable JavaScript to view the comments powered by <a href="https://utteranc.es/">Utterances</a>.
-            </noscript></div></article></div>
-            </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.72.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
-                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2006 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">淘气</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
-        </div>
-    </footer></div>
-
-        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
-                <i class="fas fa-arrow-up fa-fw"></i>
-            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
-                <i class="fas fa-comment fa-fw"></i>
-            </a>
-        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"utterances":{"darkTheme":"github-dark","issueTerm":"pathname","label":"","lightTheme":"github-light","repo":"xbot/blog-comments"}},"search":{"algoliaAppID":"PASDMWALPK","algoliaIndex":"index.zh-cn","algoliaSearchKey":"b42948e51daaa93df92381c8e2ac0f93","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
-</html>
+</code></pre></td></tr></table></div></div></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>更新于 2020-06-17&nbsp;<a class=git-hash href=https://github.com/dillonzq/LoveIt/commit/b6b131fb549d1c33b519bbe9910a7c0b426257fd target=_blank title="commit by Donie Leigh(donie.leigh@gmail.com) b6b131fb549d1c33b519bbe9910a7c0b426257fd: URL地址改为用slug生成；为所有文章追加slug matter">
+<i class="fas fa-hashtag fa-fw"></i>b6b131fb</a></span></div><div class=post-info-license></div></div><div class=post-info-line><div class=post-info-md><span><a class=link-to-markdown href=/post/unit-testing-standard-for-laravel-based-projects/index.md target=_blank>阅读原始文档</a></span></div><div class=post-info-share><span><a href=javascript:void(0); title="分享到 Twitter" data-sharer=twitter data-url=http://0x3f.org/post/unit-testing-standard-for-laravel-based-projects/ data-title=基于Laravel的项目的单元测试规范 data-hashtags=编程,单元测试,php,Laravel/Lumen><i class="fab fa-twitter fa-fw"></i></a><a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=http://0x3f.org/post/unit-testing-standard-for-laravel-based-projects/ data-hashtag=编程><i class="fab fa-facebook-square fa-fw"></i></a><a href=javascript:void(0); title="分享到 Hacker News" data-sharer=hackernews data-url=http://0x3f.org/post/unit-testing-standard-for-laravel-based-projects/ data-title=基于Laravel的项目的单元测试规范><i class="fab fa-hacker-news fa-fw"></i></a><a href=javascript:void(0); title="分享到 Line" data-sharer=line data-url=http://0x3f.org/post/unit-testing-standard-for-laravel-based-projects/ data-title=基于Laravel的项目的单元测试规范><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg></i></a><a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=http://0x3f.org/post/unit-testing-standard-for-laravel-based-projects/ data-title=基于Laravel的项目的单元测试规范><i class="fab fa-weibo fa-fw"></i></a></span></div></div></div><div class=post-info-more><section class=post-tags><i class="fas fa-tags fa-fw"></i>&nbsp;<a href=/tags/%E7%BC%96%E7%A8%8B/>编程</a>,&nbsp;<a href=/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/>单元测试</a>,&nbsp;<a href=/tags/php/>PHP</a>,&nbsp;<a href=/tags/laravel/lumen/>Laravel/Lumen</a></section><section><span><a href=javascript:void(0); onclick=window.history.back();>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span></section></div><div class=post-nav><a href=/post/replace-syntastic-with-ale/ class=prev rel=prev title=用ALE替换了Syntastic><i class="fas fa-angle-left fa-fw"></i>用ALE替换了Syntastic</a>
+<a href=/post/investigation-report-of-git-flows/ class=next rel=next title=Git工作流调研报告>Git工作流调研报告<i class="fas fa-angle-right fa-fw"></i></a></div></div><div id=comments><div id=utterances></div><noscript>Please enable JavaScript to view the comments powered by <a href=https://utteranc.es/>Utterances</a>.</noscript></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line>由 <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.72.0">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i>LoveIt</a></div><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2006 - 2020</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>淘气</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部><i class="fas fa-arrow-up fa-fw"></i></a><a href=# id=view-comments class=fixed-button title=查看评论><i class="fas fa-comment fa-fw"></i></a></div><script type=text/javascript src=https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js></script><script type=text/javascript>window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"utterances":{"darkTheme":"github-dark","issueTerm":"pathname","label":"","lightTheme":"github-light","repo":"xbot/blog-comments"}},"search":{"algoliaAppID":"PASDMWALPK","algoliaIndex":"index.zh-cn","algoliaSearchKey":"b42948e51daaa93df92381c8e2ac0f93","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type=text/javascript src=/js/theme.min.js></script></body></html>

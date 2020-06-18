@@ -1,183 +1,52 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="robots" content="noodp" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-        <title>利用依赖注入Mock PHP的内建函数 - 晴耕雨讀</title><meta name="Description" content="Donie&#39;s blog."><meta property="og:title" content="利用依赖注入Mock PHP的内建函数" />
-<meta property="og:description" content="简述 上篇文章讨论了如何利用命名空间实现对PHP内建函数的mocking，本文介绍另一种实现方法——依赖注入。 出于编写可测试代码的需要，依赖注" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="http://0x3f.org/post/mock-php-built-in-functions-using-dependency-injection/" />
-<meta property="og:image" content="http://0x3f.org/logo.png"/>
-<meta property="article:published_time" content="2017-04-30T09:57:50+00:00" />
-<meta property="article:modified_time" content="2020-06-17T17:28:11+08:00" />
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="http://0x3f.org/logo.png"/>
-
-<meta name="twitter:title" content="利用依赖注入Mock PHP的内建函数"/>
-<meta name="twitter:description" content="简述 上篇文章讨论了如何利用命名空间实现对PHP内建函数的mocking，本文介绍另一种实现方法——依赖注入。 出于编写可测试代码的需要，依赖注"/>
-<meta name="application-name" content="晴耕雨讀">
-<meta name="apple-mobile-web-app-title" content="晴耕雨讀"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://0x3f.org/post/mock-php-built-in-functions-using-dependency-injection/" /><link rel="prev" href="http://0x3f.org/post/mock-php-built-in-functions-using-namespace/" /><link rel="next" href="http://0x3f.org/post/how-to-count-code-coverage-of-phpunit/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
-    {
-        "@context": "http://schema.org",
-        "@type": "BlogPosting",
-        "headline": "利用依赖注入Mock PHP的内建函数",
-        "inLanguage": "zh-CN",
-        "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": "http:\/\/0x3f.org\/post\/mock-php-built-in-functions-using-dependency-injection\/"
-        },"image": ["http:\/\/0x3f.org\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "php, 编程, 测试","wordcount":  745 ,
-        "url": "http:\/\/0x3f.org\/post\/mock-php-built-in-functions-using-dependency-injection\/","datePublished": "2017-04-30T09:57:50+00:00","dateModified": "2020-06-17T17:28:11+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
-            "@type": "Organization",
-            "name": "xxxx","logo": "http:\/\/0x3f.org\/images\/avatar.png"},"author": {
-                "@type": "Person",
-                "name": "淘气"
-            },"description": ""
-    }
-    </script></head>
-    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
-
-        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
-    <div class="header-wrapper">
-        <div class="header-title">
-            <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
-        </div>
-        <div class="menu">
-            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
-                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
-                            <i class="fas fa-search fa-fw"></i>
-                        </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
-                            <i class="fas fa-times-circle fa-fw"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-desktop">
-                            <i class="fas fa-spinner fa-fw fa-spin"></i>
-                        </span>
-                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
-                    <i class="fas fa-adjust fa-fw"></i>
-                </a>
-            </div>
-        </div>
-    </div>
-</header><header class="mobile" id="header-mobile">
-    <div class="header-container">
-        <div class="header-wrapper">
-            <div class="header-title">
-                <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
-            </div>
-            <div class="menu-toggle" id="menu-toggle-mobile">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-        <div class="menu" id="menu-mobile"><div class="search-wrapper">
-                    <div class="search mobile" id="search-mobile">
-                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
-                            <i class="fas fa-search fa-fw"></i>
-                        </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
-                            <i class="fas fa-times-circle fa-fw"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-mobile">
-                            <i class="fas fa-spinner fa-fw fa-spin"></i>
-                        </span>
-                    </div>
-                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
-                        取消
-                    </a>
-                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
-                <i class="fas fa-adjust fa-fw"></i>
-            </a></div>
-    </div>
-</header>
-<div class="search-dropdown desktop">
-    <div id="search-dropdown-desktop"></div>
-</div>
-<div class="search-dropdown mobile">
-    <div id="search-dropdown-mobile"></div>
-</div>
-<main class="main">
-                <div class="container"><div class="toc" id="toc-auto">
-            <h2 class="toc-title">目录</h2>
-            <div class="toc-content" id="toc-content-auto"></div>
-        </div><article class="page single"><h1 class="single-title animated flipInX">利用依赖注入Mock PHP的内建函数</h1><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"><i class="far fa-folder fa-fw"></i>计算机</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2017-04-30">2017-04-30</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 745 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 2 分钟&nbsp;</div>
-        </div><div class="details toc" id="toc-static"  kept="">
-                <div class="details-summary toc-title">
-                    <span>目录</span>
-                    <span><i class="details-icon fas fa-angle-right"></i></span>
-                </div>
-                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
-  <ul>
-    <li><a href="#简述">简述</a></li>
-    <li><a href="#实现">实现</a>
-      <ul>
-        <li><a href="#对原有代码的重构">对原有代码的重构</a></li>
-        <li><a href="#测试类的实现">测试类的实现</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav></div>
-            </div><div class="content" id="content"><h2 id="简述">简述</h2>
-<p><a href="/post/mock-php-built-in-functions-using-namespace/" rel="">上篇文章</a>讨论了如何利用命名空间实现对PHP内建函数的mocking，本文介绍另一种实现方法——依赖注入。</p>
-<p>出于编写可测试代码的需要，依赖注入是经常使用的一种技术。通过把代码中依赖的其它数据获取服务提取出来、和原有逻辑解耦，提高代码的可测试性。只需mock这些依赖并注入到测试对象中即可。</p>
-<h2 id="实现">实现</h2>
-<h3 id="对原有代码的重构">对原有代码的重构</h3>
-<p>先把原有代码用依赖注入的方式重构（<em>为突出重点，省略了和上篇文章中重复的部分</em>）：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span><span class="lnt">39
-</span><span class="lnt">40
-</span><span class="lnt">41
-</span><span class="lnt">42
-</span><span class="lnt">43
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-php" data-lang="php">
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><meta http-equiv=x-ua-compatible content="IE=edge, chrome=1"><title>利用依赖注入Mock PHP的内建函数 - 晴耕雨讀</title><meta name=Description content="Donie's blog."><meta property="og:title" content="利用依赖注入Mock PHP的内建函数"><meta property="og:description" content="简述 上篇文章讨论了如何利用命名空间实现对PHP内建函数的mocking，本文介绍另一种实现方法——依赖注入。 出于编写可测试代码的需要，依赖注"><meta property="og:type" content="article"><meta property="og:url" content="http://0x3f.org/post/mock-php-built-in-functions-using-dependency-injection/"><meta property="og:image" content="http://0x3f.org/logo.png"><meta property="article:published_time" content="2017-04-30T09:57:50+00:00"><meta property="article:modified_time" content="2020-06-17T17:28:11+08:00"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="http://0x3f.org/logo.png"><meta name=twitter:title content="利用依赖注入Mock PHP的内建函数"><meta name=twitter:description content="简述 上篇文章讨论了如何利用命名空间实现对PHP内建函数的mocking，本文介绍另一种实现方法——依赖注入。 出于编写可测试代码的需要，依赖注"><meta name=application-name content="晴耕雨讀"><meta name=apple-mobile-web-app-title content="晴耕雨讀"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=http://0x3f.org/post/mock-php-built-in-functions-using-dependency-injection/><link rel=prev href=http://0x3f.org/post/mock-php-built-in-functions-using-namespace/><link rel=next href=http://0x3f.org/post/how-to-count-code-coverage-of-phpunit/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"利用依赖注入Mock PHP的内建函数","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/0x3f.org\/post\/mock-php-built-in-functions-using-dependency-injection\/"},"image":["http:\/\/0x3f.org\/images\/Apple-Devices-Preview.png"],"genre":"posts","keywords":"php, 编程, 测试","wordcount":745,"url":"http:\/\/0x3f.org\/post\/mock-php-built-in-functions-using-dependency-injection\/","datePublished":"2017-04-30T09:57:50+00:00","dateModified":"2020-06-17T17:28:11+08:00","license":"This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher":{"@type":"Organization","name":"xxxx","logo":"http:\/\/0x3f.org\/images\/avatar.png"},"author":{"@type":"Person","name":"淘气"},"description":""}</script></head><body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':('auto'==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:'auto'==='dark'))&&document.body.setAttribute('theme','dark');</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title=晴耕雨讀><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw"></i></span>晴耕雨讀</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/posts/>所有文章 </a><a class=menu-item href=/tags/>标签 </a><a class=menu-item href=/categories/>分类 </a><a class=menu-item href=/about/>关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop><input type=text placeholder=搜索文章标题或内容... id=search-input-desktop>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=搜索><i class="fas fa-search fa-fw"></i></a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=清空><i class="fas fa-times-circle fa-fw"></i></a><span class="search-button search-loading" id=search-loading-desktop><i class="fas fa-spinner fa-fw fa-spin"></i></span></span><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题><i class="fas fa-adjust fa-fw"></i></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title=晴耕雨讀><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw"></i></span>晴耕雨讀</a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><div class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder=搜索文章标题或内容... id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=搜索><i class="fas fa-search fa-fw"></i></a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=清空><i class="fas fa-times-circle fa-fw"></i></a><span class="search-button search-loading" id=search-loading-mobile><i class="fas fa-spinner fa-fw fa-spin"></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>取消</a></div><a class=menu-item href=/posts/>所有文章</a><a class=menu-item href=/tags/>标签</a><a class=menu-item href=/categories/>分类</a><a class=menu-item href=/about/>关于</a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>目录</h2><div class=toc-content id=toc-content-auto></div></div><article class="page single"><h1 class="single-title animated flipInX">利用依赖注入Mock PHP的内建函数</h1><div class=post-meta><div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class=post-category>收录于 <a href=/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/><i class="far fa-folder fa-fw"></i>计算机</a></span></div><div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2017-04-30>2017-04-30</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 745 字&nbsp;
+<i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 2 分钟&nbsp;</div></div><div class="details toc" id=toc-static kept><div class="details-summary toc-title"><span>目录</span>
+<span><i class="details-icon fas fa-angle-right"></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#简述>简述</a></li><li><a href=#实现>实现</a><ul><li><a href=#对原有代码的重构>对原有代码的重构</a></li><li><a href=#测试类的实现>测试类的实现</a></li></ul></li></ul></nav></div></div><div class=content id=content><h2 id=简述>简述</h2><p><a href=/post/mock-php-built-in-functions-using-namespace/ rel>上篇文章</a>讨论了如何利用命名空间实现对PHP内建函数的mocking，本文介绍另一种实现方法——依赖注入。</p><p>出于编写可测试代码的需要，依赖注入是经常使用的一种技术。通过把代码中依赖的其它数据获取服务提取出来、和原有逻辑解耦，提高代码的可测试性。只需mock这些依赖并注入到测试对象中即可。</p><h2 id=实现>实现</h2><h3 id=对原有代码的重构>对原有代码的重构</h3><p>先把原有代码用依赖注入的方式重构（<em>为突出重点，省略了和上篇文章中重复的部分</em>）：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-php data-lang=php>
 // ...
 
 use Ox3f\LaravelUtils\Services\Builtins;
@@ -220,283 +89,222 @@ class Log
     // ...
     
 }
-</code></pre></td></tr></table>
-</div>
-</div><p><code>Builtins</code>类的实现：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-<span class="k">namespace</span> <span class="nx">Ox3f\LaravelUtils\Services</span><span class="p">;</span>
+</code></pre></td></tr></table></div></div><p><code>Builtins</code>类的实现：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-php data-lang=php><span class=cp>&lt;?php</span>
+<span class=k>namespace</span> <span class=nx>Ox3f\LaravelUtils\Services</span><span class=p>;</span>
 
-<span class="sd">/**
-</span><span class="sd"> * Class Builtins
-</span><span class="sd"> * @author donie
-</span><span class="sd"> */</span>
-<span class="k">class</span> <span class="nc">Builtins</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">debug_backtrace</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">call_user_func_array</span><span class="p">(</span><span class="s1">&#39;debug_backtrace&#39;</span><span class="p">,</span> <span class="nx">func_get_args</span><span class="p">());</span>
-    <span class="p">}</span>
+<span class=sd>/**
+</span><span class=sd> * Class Builtins
+</span><span class=sd> * @author donie
+</span><span class=sd> */</span>
+<span class=k>class</span> <span class=nc>Builtins</span>
+<span class=p>{</span>
+    <span class=k>public</span> <span class=k>function</span> <span class=nf>debug_backtrace</span><span class=p>()</span>
+    <span class=p>{</span>
+        <span class=k>return</span> <span class=nx>call_user_func_array</span><span class=p>(</span><span class=s1>&#39;debug_backtrace&#39;</span><span class=p>,</span> <span class=nx>func_get_args</span><span class=p>());</span>
+    <span class=p>}</span>
     
-<span class="p">}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>把<code>debug_backtrace()</code>封装进了<code>Builtins</code>类，并在测试对象中通过这个类调用内建函数。<code>inject()</code>用于注入依赖，这样可以在测试类中把mock注入到测试对象中。</p>
-<h3 id="测试类的实现">测试类的实现</h3>
-<p>代码如下：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span><span class="lnt">39
-</span><span class="lnt">40
-</span><span class="lnt">41
-</span><span class="lnt">42
-</span><span class="lnt">43
-</span><span class="lnt">44
-</span><span class="lnt">45
-</span><span class="lnt">46
-</span><span class="lnt">47
-</span><span class="lnt">48
-</span><span class="lnt">49
-</span><span class="lnt">50
-</span><span class="lnt">51
-</span><span class="lnt">52
-</span><span class="lnt">53
-</span><span class="lnt">54
-</span><span class="lnt">55
-</span><span class="lnt">56
-</span><span class="lnt">57
-</span><span class="lnt">58
-</span><span class="lnt">59
-</span><span class="lnt">60
-</span><span class="lnt">61
-</span><span class="lnt">62
-</span><span class="lnt">63
-</span><span class="lnt">64
-</span><span class="lnt">65
-</span><span class="lnt">66
-</span><span class="lnt">67
-</span><span class="lnt">68
-</span><span class="lnt">69
-</span><span class="lnt">70
-</span><span class="lnt">71
-</span><span class="lnt">72
-</span><span class="lnt">73
-</span><span class="lnt">74
-</span><span class="lnt">75
-</span><span class="lnt">76
-</span><span class="lnt">77
-</span><span class="lnt">78
-</span><span class="lnt">79
-</span><span class="lnt">80
-</span><span class="lnt">81
-</span><span class="lnt">82
-</span><span class="lnt">83
-</span><span class="lnt">84
-</span><span class="lnt">85
-</span><span class="lnt">86
-</span><span class="lnt">87
-</span><span class="lnt">88
-</span><span class="lnt">89
-</span><span class="lnt">90
-</span><span class="lnt">91
-</span><span class="lnt">92
-</span><span class="lnt">93
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-<span class="k">use</span> <span class="nx">PHPUnit\Framework\TestCase</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Auth</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Request</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Log</span> <span class="k">as</span> <span class="nx">LaravelLog</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">Ox3f\LaravelUtils\Log\Log</span><span class="p">;</span>
-<span class="k">use</span> <span class="nx">\Mockery</span> <span class="k">as</span> <span class="nx">m</span><span class="p">;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>把<code>debug_backtrace()</code>封装进了<code>Builtins</code>类，并在测试对象中通过这个类调用内建函数。<code>inject()</code>用于注入依赖，这样可以在测试类中把mock注入到测试对象中。</p><h3 id=测试类的实现>测试类的实现</h3><p>代码如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
+</span><span class=lnt>61
+</span><span class=lnt>62
+</span><span class=lnt>63
+</span><span class=lnt>64
+</span><span class=lnt>65
+</span><span class=lnt>66
+</span><span class=lnt>67
+</span><span class=lnt>68
+</span><span class=lnt>69
+</span><span class=lnt>70
+</span><span class=lnt>71
+</span><span class=lnt>72
+</span><span class=lnt>73
+</span><span class=lnt>74
+</span><span class=lnt>75
+</span><span class=lnt>76
+</span><span class=lnt>77
+</span><span class=lnt>78
+</span><span class=lnt>79
+</span><span class=lnt>80
+</span><span class=lnt>81
+</span><span class=lnt>82
+</span><span class=lnt>83
+</span><span class=lnt>84
+</span><span class=lnt>85
+</span><span class=lnt>86
+</span><span class=lnt>87
+</span><span class=lnt>88
+</span><span class=lnt>89
+</span><span class=lnt>90
+</span><span class=lnt>91
+</span><span class=lnt>92
+</span><span class=lnt>93
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-php data-lang=php><span class=cp>&lt;?php</span>
+<span class=k>use</span> <span class=nx>PHPUnit\Framework\TestCase</span><span class=p>;</span>
+<span class=k>use</span> <span class=nx>Illuminate\Support\Facades\Auth</span><span class=p>;</span>
+<span class=k>use</span> <span class=nx>Illuminate\Support\Facades\Request</span><span class=p>;</span>
+<span class=k>use</span> <span class=nx>Illuminate\Support\Facades\Log</span> <span class=k>as</span> <span class=nx>LaravelLog</span><span class=p>;</span>
+<span class=k>use</span> <span class=nx>Ox3f\LaravelUtils\Log\Log</span><span class=p>;</span>
+<span class=k>use</span> <span class=nx>\Mockery</span> <span class=k>as</span> <span class=nx>m</span><span class=p>;</span>
 
-<span class="k">class</span> <span class="nc">LogTest</span> <span class="k">extends</span> <span class="nx">TestCase</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">setUp</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="nx">Auth</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">)</span>
-            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
-            <span class="o">-&gt;</span><span class="na">andReturn</span><span class="p">((</span><span class="nx">object</span><span class="p">)[</span><span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;jim&#39;</span><span class="p">,]);</span>
-    <span class="p">}</span>
+<span class=k>class</span> <span class=nc>LogTest</span> <span class=k>extends</span> <span class=nx>TestCase</span>
+<span class=p>{</span>
+    <span class=k>public</span> <span class=k>function</span> <span class=nf>setUp</span><span class=p>()</span>
+    <span class=p>{</span>
+        <span class=nx>Auth</span><span class=o>::</span><span class=na>shouldReceive</span><span class=p>(</span><span class=s1>&#39;user&#39;</span><span class=p>)</span>
+            <span class=o>-&gt;</span><span class=na>once</span><span class=p>()</span>
+            <span class=o>-&gt;</span><span class=na>andReturn</span><span class=p>((</span><span class=nx>object</span><span class=p>)[</span><span class=s1>&#39;name&#39;</span> <span class=o>=&gt;</span> <span class=s1>&#39;jim&#39;</span><span class=p>,]);</span>
+    <span class=p>}</span>
 
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">tearDown</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="nx">m</span><span class="o">::</span><span class="na">close</span><span class="p">();</span>
-    <span class="p">}</span>
+    <span class=k>public</span> <span class=k>function</span> <span class=nf>tearDown</span><span class=p>()</span>
+    <span class=p>{</span>
+        <span class=nx>m</span><span class=o>::</span><span class=na>close</span><span class=p>();</span>
+    <span class=p>}</span>
 
-    <span class="sd">/**
-</span><span class="sd">     * @covers Ox3f\LaravelUtils\Log\Log::saveInput
-</span><span class="sd">     * @covers Ox3f\LaravelUtils\Log\Log::saveOutput
-</span><span class="sd">     * @covers Ox3f\LaravelUtils\Log\Log::parseCallStack
-</span><span class="sd">     * @covers Ox3f\LaravelUtils\Log\Log::getInstance
-</span><span class="sd">     * @covers Ox3f\LaravelUtils\Log\Log::__construct
-</span><span class="sd">     * @covers Ox3f\LaravelUtils\Log\Log::__callStatic
-</span><span class="sd">     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">testAll</span><span class="p">()</span>
-    <span class="p">{</span>
-        <span class="nv">$mock</span> <span class="o">=</span> <span class="nx">m</span><span class="o">::</span><span class="na">mock</span><span class="p">(</span><span class="s1">&#39;Ox3f\LaravelUtils\Services\Builtins&#39;</span><span class="p">);</span>
-        <span class="nv">$mock</span><span class="o">-&gt;</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;debug_backtrace&#39;</span><span class="p">)</span>
-            <span class="o">-&gt;</span><span class="na">andReturnUsing</span><span class="p">(</span><span class="k">function</span><span class="p">()</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$mock</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nv">$mock</span><span class="o">-&gt;</span><span class="na">calledInController</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">return</span> <span class="nx">json_decode</span><span class="p">(</span><span class="s1">&#39;[{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/vendor\/xbot\/laravel-utils\/src\/Log\/Log.php&#34;,&#34;line&#34;:85,&#34;function&#34;:&#34;parseCallStack&#34;,&#34;class&#34;:&#34;Ox3f\\\LaravelUtils\\\Log\\\Log&#34;,&#34;object&#34;:{},&#34;type&#34;:&#34;-&gt;&#34;},{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/app\/Api\/V1\/Controllers\/WorkController.php&#34;,&#34;line&#34;:29,&#34;function&#34;:&#34;saveInput&#34;,&#34;class&#34;:&#34;Ox3f\\\LaravelUtils\\\Log\\\Log&#34;,&#34;type&#34;:&#34;::&#34;},{&#34;function&#34;:&#34;save&#34;,&#34;class&#34;:&#34;App\\\Api\\\V1\\\Controllers\\\WorkController&#34;,&#34;object&#34;:{},&#34;type&#34;:&#34;-&gt;&#34;},{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Controller.php&#34;,&#34;line&#34;:55,&#34;function&#34;:&#34;call_user_func_array&#34;},{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/ControllerDispatcher.php&#34;,&#34;line&#34;:44,&#34;function&#34;:&#34;callAction&#34;,&#34;class&#34;:&#34;Illuminate\\\Routing\\\Controller&#34;,&#34;object&#34;:{},&#34;type&#34;:&#34;-&gt;&#34;}]&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
-                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                    <span class="k">return</span> <span class="nx">json_decode</span><span class="p">(</span><span class="s1">&#39;[{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/vendor\/xbot\/laravel-utils\/src\/Log\/Log.php&#34;,&#34;line&#34;:85,&#34;function&#34;:&#34;parseCallStack&#34;,&#34;class&#34;:&#34;Ox3f\\\LaravelUtils\\\Log\\\Log&#34;,&#34;object&#34;:{},&#34;type&#34;:&#34;-&gt;&#34;},{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/app\/Notation.php&#34;,&#34;line&#34;:21,&#34;function&#34;:&#34;saveInput&#34;,&#34;class&#34;:&#34;Ox3f\\\LaravelUtils\\\Log\\\Log&#34;,&#34;type&#34;:&#34;::&#34;},{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/app\/Api\/V1\/Controllers\/NotationController.php&#34;,&#34;line&#34;:32,&#34;function&#34;:&#34;incrNo&#34;,&#34;class&#34;:&#34;App\\\Notation&#34;,&#34;type&#34;:&#34;::&#34;},{&#34;function&#34;:&#34;save&#34;,&#34;class&#34;:&#34;App\\\Api\\\V1\\\Controllers\\\NotationController&#34;,&#34;object&#34;:{},&#34;type&#34;:&#34;-&gt;&#34;},{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Controller.php&#34;,&#34;line&#34;:55,&#34;function&#34;:&#34;call_user_func_array&#34;}]&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
-                <span class="p">}</span>
-            <span class="p">});</span>
-        <span class="nx">Log</span><span class="o">::</span><span class="na">inject</span><span class="p">(</span><span class="s1">&#39;builtins&#39;</span><span class="p">,</span> <span class="nv">$mock</span><span class="p">);</span>
+    <span class=sd>/**
+</span><span class=sd>     * @covers Ox3f\LaravelUtils\Log\Log::saveInput
+</span><span class=sd>     * @covers Ox3f\LaravelUtils\Log\Log::saveOutput
+</span><span class=sd>     * @covers Ox3f\LaravelUtils\Log\Log::parseCallStack
+</span><span class=sd>     * @covers Ox3f\LaravelUtils\Log\Log::getInstance
+</span><span class=sd>     * @covers Ox3f\LaravelUtils\Log\Log::__construct
+</span><span class=sd>     * @covers Ox3f\LaravelUtils\Log\Log::__callStatic
+</span><span class=sd>     */</span>
+    <span class=k>public</span> <span class=k>function</span> <span class=nf>testAll</span><span class=p>()</span>
+    <span class=p>{</span>
+        <span class=nv>$mock</span> <span class=o>=</span> <span class=nx>m</span><span class=o>::</span><span class=na>mock</span><span class=p>(</span><span class=s1>&#39;Ox3f\LaravelUtils\Services\Builtins&#39;</span><span class=p>);</span>
+        <span class=nv>$mock</span><span class=o>-&gt;</span><span class=na>shouldReceive</span><span class=p>(</span><span class=s1>&#39;debug_backtrace&#39;</span><span class=p>)</span>
+            <span class=o>-&gt;</span><span class=na>andReturnUsing</span><span class=p>(</span><span class=k>function</span><span class=p>()</span> <span class=k>use</span> <span class=p>(</span><span class=nv>$mock</span><span class=p>)</span> <span class=p>{</span>
+                <span class=k>if</span> <span class=p>(</span><span class=nv>$mock</span><span class=o>-&gt;</span><span class=na>calledInController</span><span class=p>)</span> <span class=p>{</span>
+                    <span class=k>return</span> <span class=nx>json_decode</span><span class=p>(</span><span class=s1>&#39;[{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/vendor\/xbot\/laravel-utils\/src\/Log\/Log.php&#34;,&#34;line&#34;:85,&#34;function&#34;:&#34;parseCallStack&#34;,&#34;class&#34;:&#34;Ox3f\\\LaravelUtils\\\Log\\\Log&#34;,&#34;object&#34;:{},&#34;type&#34;:&#34;-&gt;&#34;},{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/app\/Api\/V1\/Controllers\/WorkController.php&#34;,&#34;line&#34;:29,&#34;function&#34;:&#34;saveInput&#34;,&#34;class&#34;:&#34;Ox3f\\\LaravelUtils\\\Log\\\Log&#34;,&#34;type&#34;:&#34;::&#34;},{&#34;function&#34;:&#34;save&#34;,&#34;class&#34;:&#34;App\\\Api\\\V1\\\Controllers\\\WorkController&#34;,&#34;object&#34;:{},&#34;type&#34;:&#34;-&gt;&#34;},{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Controller.php&#34;,&#34;line&#34;:55,&#34;function&#34;:&#34;call_user_func_array&#34;},{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/ControllerDispatcher.php&#34;,&#34;line&#34;:44,&#34;function&#34;:&#34;callAction&#34;,&#34;class&#34;:&#34;Illuminate\\\Routing\\\Controller&#34;,&#34;object&#34;:{},&#34;type&#34;:&#34;-&gt;&#34;}]&#39;</span><span class=p>,</span> <span class=k>true</span><span class=p>);</span>
+                <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+                    <span class=k>return</span> <span class=nx>json_decode</span><span class=p>(</span><span class=s1>&#39;[{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/vendor\/xbot\/laravel-utils\/src\/Log\/Log.php&#34;,&#34;line&#34;:85,&#34;function&#34;:&#34;parseCallStack&#34;,&#34;class&#34;:&#34;Ox3f\\\LaravelUtils\\\Log\\\Log&#34;,&#34;object&#34;:{},&#34;type&#34;:&#34;-&gt;&#34;},{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/app\/Notation.php&#34;,&#34;line&#34;:21,&#34;function&#34;:&#34;saveInput&#34;,&#34;class&#34;:&#34;Ox3f\\\LaravelUtils\\\Log\\\Log&#34;,&#34;type&#34;:&#34;::&#34;},{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/app\/Api\/V1\/Controllers\/NotationController.php&#34;,&#34;line&#34;:32,&#34;function&#34;:&#34;incrNo&#34;,&#34;class&#34;:&#34;App\\\Notation&#34;,&#34;type&#34;:&#34;::&#34;},{&#34;function&#34;:&#34;save&#34;,&#34;class&#34;:&#34;App\\\Api\\\V1\\\Controllers\\\NotationController&#34;,&#34;object&#34;:{},&#34;type&#34;:&#34;-&gt;&#34;},{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Controller.php&#34;,&#34;line&#34;:55,&#34;function&#34;:&#34;call_user_func_array&#34;}]&#39;</span><span class=p>,</span> <span class=k>true</span><span class=p>);</span>
+                <span class=p>}</span>
+            <span class=p>});</span>
+        <span class=nx>Log</span><span class=o>::</span><span class=na>inject</span><span class=p>(</span><span class=s1>&#39;builtins&#39;</span><span class=p>,</span> <span class=nv>$mock</span><span class=p>);</span>
 
-        <span class="c1">// test being called in a plain method
-</span><span class="c1"></span>        <span class="nv">$mock</span><span class="o">-&gt;</span><span class="na">calledInController</span> <span class="o">=</span> <span class="k">false</span><span class="p">;</span>
-        <span class="nx">LaravelLog</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;debug&#39;</span><span class="p">)</span>
-            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
-            <span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;jim | App\Notation::incrNo | Input:1&#39;</span><span class="p">);</span>
+        <span class=c1>// test being called in a plain method
+</span><span class=c1></span>        <span class=nv>$mock</span><span class=o>-&gt;</span><span class=na>calledInController</span> <span class=o>=</span> <span class=k>false</span><span class=p>;</span>
+        <span class=nx>LaravelLog</span><span class=o>::</span><span class=na>shouldReceive</span><span class=p>(</span><span class=s1>&#39;debug&#39;</span><span class=p>)</span>
+            <span class=o>-&gt;</span><span class=na>once</span><span class=p>()</span>
+            <span class=o>-&gt;</span><span class=na>with</span><span class=p>(</span><span class=s1>&#39;jim | App\Notation::incrNo | Input:1&#39;</span><span class=p>);</span>
 
-        <span class="nx">Log</span><span class="o">::</span><span class="na">saveInput</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+        <span class=nx>Log</span><span class=o>::</span><span class=na>saveInput</span><span class=p>(</span><span class=mi>1</span><span class=p>);</span>
 
-        <span class="nx">LaravelLog</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;debug&#39;</span><span class="p">)</span>
-            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
-            <span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;jim | App\Notation::incrNo | Output:2&#39;</span><span class="p">);</span>
+        <span class=nx>LaravelLog</span><span class=o>::</span><span class=na>shouldReceive</span><span class=p>(</span><span class=s1>&#39;debug&#39;</span><span class=p>)</span>
+            <span class=o>-&gt;</span><span class=na>once</span><span class=p>()</span>
+            <span class=o>-&gt;</span><span class=na>with</span><span class=p>(</span><span class=s1>&#39;jim | App\Notation::incrNo | Output:2&#39;</span><span class=p>);</span>
 
-        <span class="nx">Log</span><span class="o">::</span><span class="na">saveOutput</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+        <span class=nx>Log</span><span class=o>::</span><span class=na>saveOutput</span><span class=p>(</span><span class=mi>2</span><span class=p>);</span>
 
-        <span class="c1">// test being called in a controller action
-</span><span class="c1"></span>        <span class="nv">$mock</span><span class="o">-&gt;</span><span class="na">calledInController</span> <span class="o">=</span> <span class="k">true</span><span class="p">;</span>
-        <span class="nx">Request</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">)</span>
-            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
-            <span class="o">-&gt;</span><span class="na">andReturn</span><span class="p">(</span><span class="s1">&#39;api/user&#39;</span><span class="p">);</span>
-        <span class="nx">Request</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;except&#39;</span><span class="p">)</span>
-            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
-            <span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;_url&#39;</span><span class="p">)</span>
-            <span class="o">-&gt;</span><span class="na">andReturn</span><span class="p">([</span><span class="s1">&#39;id&#39;</span> <span class="o">=&gt;</span> <span class="mi">18</span><span class="p">,]);</span>
-        <span class="nx">LaravelLog</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;debug&#39;</span><span class="p">)</span>
-            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
-            <span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;jim | api/user | Input:{&#34;id&#34;:18}&#39;</span><span class="p">);</span>
+        <span class=c1>// test being called in a controller action
+</span><span class=c1></span>        <span class=nv>$mock</span><span class=o>-&gt;</span><span class=na>calledInController</span> <span class=o>=</span> <span class=k>true</span><span class=p>;</span>
+        <span class=nx>Request</span><span class=o>::</span><span class=na>shouldReceive</span><span class=p>(</span><span class=s1>&#39;path&#39;</span><span class=p>)</span>
+            <span class=o>-&gt;</span><span class=na>once</span><span class=p>()</span>
+            <span class=o>-&gt;</span><span class=na>andReturn</span><span class=p>(</span><span class=s1>&#39;api/user&#39;</span><span class=p>);</span>
+        <span class=nx>Request</span><span class=o>::</span><span class=na>shouldReceive</span><span class=p>(</span><span class=s1>&#39;except&#39;</span><span class=p>)</span>
+            <span class=o>-&gt;</span><span class=na>once</span><span class=p>()</span>
+            <span class=o>-&gt;</span><span class=na>with</span><span class=p>(</span><span class=s1>&#39;_url&#39;</span><span class=p>)</span>
+            <span class=o>-&gt;</span><span class=na>andReturn</span><span class=p>([</span><span class=s1>&#39;id&#39;</span> <span class=o>=&gt;</span> <span class=mi>18</span><span class=p>,]);</span>
+        <span class=nx>LaravelLog</span><span class=o>::</span><span class=na>shouldReceive</span><span class=p>(</span><span class=s1>&#39;debug&#39;</span><span class=p>)</span>
+            <span class=o>-&gt;</span><span class=na>once</span><span class=p>()</span>
+            <span class=o>-&gt;</span><span class=na>with</span><span class=p>(</span><span class=s1>&#39;jim | api/user | Input:{&#34;id&#34;:18}&#39;</span><span class=p>);</span>
 
-        <span class="nx">Log</span><span class="o">::</span><span class="na">saveInput</span><span class="p">();</span>
+        <span class=nx>Log</span><span class=o>::</span><span class=na>saveInput</span><span class=p>();</span>
 
-        <span class="nx">Request</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">)</span>
-            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
-            <span class="o">-&gt;</span><span class="na">andReturn</span><span class="p">(</span><span class="s1">&#39;api/user&#39;</span><span class="p">);</span>
-        <span class="nx">LaravelLog</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;debug&#39;</span><span class="p">)</span>
-            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
-            <span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;jim | api/user | Output:2&#39;</span><span class="p">);</span>
+        <span class=nx>Request</span><span class=o>::</span><span class=na>shouldReceive</span><span class=p>(</span><span class=s1>&#39;path&#39;</span><span class=p>)</span>
+            <span class=o>-&gt;</span><span class=na>once</span><span class=p>()</span>
+            <span class=o>-&gt;</span><span class=na>andReturn</span><span class=p>(</span><span class=s1>&#39;api/user&#39;</span><span class=p>);</span>
+        <span class=nx>LaravelLog</span><span class=o>::</span><span class=na>shouldReceive</span><span class=p>(</span><span class=s1>&#39;debug&#39;</span><span class=p>)</span>
+            <span class=o>-&gt;</span><span class=na>once</span><span class=p>()</span>
+            <span class=o>-&gt;</span><span class=na>with</span><span class=p>(</span><span class=s1>&#39;jim | api/user | Output:2&#39;</span><span class=p>);</span>
 
-        <span class="nx">Log</span><span class="o">::</span><span class="na">saveOutput</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+        <span class=nx>Log</span><span class=o>::</span><span class=na>saveOutput</span><span class=p>(</span><span class=mi>2</span><span class=p>);</span>
 
-        <span class="nx">Request</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">)</span>
-            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
-            <span class="o">-&gt;</span><span class="na">andReturn</span><span class="p">(</span><span class="s1">&#39;api/user&#39;</span><span class="p">);</span>
-        <span class="nx">LaravelLog</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">)</span>
-            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
-            <span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;jim | api/user | this is an error&#39;</span><span class="p">);</span>
+        <span class=nx>Request</span><span class=o>::</span><span class=na>shouldReceive</span><span class=p>(</span><span class=s1>&#39;path&#39;</span><span class=p>)</span>
+            <span class=o>-&gt;</span><span class=na>once</span><span class=p>()</span>
+            <span class=o>-&gt;</span><span class=na>andReturn</span><span class=p>(</span><span class=s1>&#39;api/user&#39;</span><span class=p>);</span>
+        <span class=nx>LaravelLog</span><span class=o>::</span><span class=na>shouldReceive</span><span class=p>(</span><span class=s1>&#39;error&#39;</span><span class=p>)</span>
+            <span class=o>-&gt;</span><span class=na>once</span><span class=p>()</span>
+            <span class=o>-&gt;</span><span class=na>with</span><span class=p>(</span><span class=s1>&#39;jim | api/user | this is an error&#39;</span><span class=p>);</span>
 
-        <span class="nx">Log</span><span class="o">::</span><span class="na">error</span><span class="p">(</span><span class="s1">&#39;this is an error&#39;</span><span class="p">);</span>
+        <span class=nx>Log</span><span class=o>::</span><span class=na>error</span><span class=p>(</span><span class=s1>&#39;this is an error&#39;</span><span class=p>);</span>
         
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">assertEquals</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p><code>Builtins</code>是个普通类，很容易mock。</p>
-</div><div class="post-footer" id="post-footer">
-    <div class="post-info">
-        <div class="post-info-line">
-            <div class="post-info-mod">
-                <span>更新于 2020-06-17&nbsp;<a class="git-hash" href="https://github.com/dillonzq/LoveIt/commit/b6b131fb549d1c33b519bbe9910a7c0b426257fd" target="_blank" title="commit by Donie Leigh(donie.leigh@gmail.com) b6b131fb549d1c33b519bbe9910a7c0b426257fd: URL地址改为用slug生成；为所有文章追加slug matter">
-                                    <i class="fas fa-hashtag fa-fw"></i>b6b131fb</a></span>
-            </div>
-            <div class="post-info-license"></div>
-        </div>
-        <div class="post-info-line">
-            <div class="post-info-md"><span>
-                            <a class="link-to-markdown" href="/post/mock-php-built-in-functions-using-dependency-injection/index.md" target="_blank">阅读原始文档</a>
-                        </span></div>
-            <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="http://0x3f.org/post/mock-php-built-in-functions-using-dependency-injection/" data-title="利用依赖注入Mock PHP的内建函数" data-hashtags="php,编程,测试"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="http://0x3f.org/post/mock-php-built-in-functions-using-dependency-injection/" data-hashtag="php"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="http://0x3f.org/post/mock-php-built-in-functions-using-dependency-injection/" data-title="利用依赖注入Mock PHP的内建函数"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="http://0x3f.org/post/mock-php-built-in-functions-using-dependency-injection/" data-title="利用依赖注入Mock PHP的内建函数"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="http://0x3f.org/post/mock-php-built-in-functions-using-dependency-injection/" data-title="利用依赖注入Mock PHP的内建函数"><i class="fab fa-weibo fa-fw"></i></a></span>
-            </div>
-        </div>
-    </div>
-
-    <div class="post-info-more">
-        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/php/">PHP</a>,&nbsp;<a href="/tags/%E7%BC%96%E7%A8%8B/">编程</a>,&nbsp;<a href="/tags/%E6%B5%8B%E8%AF%95/">测试</a></section>
-        <section>
-            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
-        </section>
-    </div>
-
-    <div class="post-nav"><a href="/post/mock-php-built-in-functions-using-namespace/" class="prev" rel="prev" title="利用命名空间Mock PHP的内建函数"><i class="fas fa-angle-left fa-fw"></i>利用命名空间Mock PHP的内建函数</a>
-            <a href="/post/how-to-count-code-coverage-of-phpunit/" class="next" rel="next" title="PHPUnit代码覆盖率的统计方法">PHPUnit代码覆盖率的统计方法<i class="fas fa-angle-right fa-fw"></i></a></div>
-</div>
-<div id="comments"><div id="utterances"></div><noscript>
-                Please enable JavaScript to view the comments powered by <a href="https://utteranc.es/">Utterances</a>.
-            </noscript></div></article></div>
-            </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.72.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
-                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2006 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">淘气</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
-        </div>
-    </footer></div>
-
-        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
-                <i class="fas fa-arrow-up fa-fw"></i>
-            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
-                <i class="fas fa-comment fa-fw"></i>
-            </a>
-        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"utterances":{"darkTheme":"github-dark","issueTerm":"pathname","label":"","lightTheme":"github-light","repo":"xbot/blog-comments"}},"search":{"algoliaAppID":"PASDMWALPK","algoliaIndex":"index.zh-cn","algoliaSearchKey":"b42948e51daaa93df92381c8e2ac0f93","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
-</html>
+        <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>assertEquals</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=mi>0</span><span class=p>);</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p><code>Builtins</code>是个普通类，很容易mock。</p></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>更新于 2020-06-17&nbsp;<a class=git-hash href=https://github.com/dillonzq/LoveIt/commit/b6b131fb549d1c33b519bbe9910a7c0b426257fd target=_blank title="commit by Donie Leigh(donie.leigh@gmail.com) b6b131fb549d1c33b519bbe9910a7c0b426257fd: URL地址改为用slug生成；为所有文章追加slug matter">
+<i class="fas fa-hashtag fa-fw"></i>b6b131fb</a></span></div><div class=post-info-license></div></div><div class=post-info-line><div class=post-info-md><span><a class=link-to-markdown href=/post/mock-php-built-in-functions-using-dependency-injection/index.md target=_blank>阅读原始文档</a></span></div><div class=post-info-share><span><a href=javascript:void(0); title="分享到 Twitter" data-sharer=twitter data-url=http://0x3f.org/post/mock-php-built-in-functions-using-dependency-injection/ data-title="利用依赖注入Mock PHP的内建函数" data-hashtags=php,编程,测试><i class="fab fa-twitter fa-fw"></i></a><a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=http://0x3f.org/post/mock-php-built-in-functions-using-dependency-injection/ data-hashtag=php><i class="fab fa-facebook-square fa-fw"></i></a><a href=javascript:void(0); title="分享到 Hacker News" data-sharer=hackernews data-url=http://0x3f.org/post/mock-php-built-in-functions-using-dependency-injection/ data-title="利用依赖注入Mock PHP的内建函数"><i class="fab fa-hacker-news fa-fw"></i></a><a href=javascript:void(0); title="分享到 Line" data-sharer=line data-url=http://0x3f.org/post/mock-php-built-in-functions-using-dependency-injection/ data-title="利用依赖注入Mock PHP的内建函数"><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg></i></a><a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=http://0x3f.org/post/mock-php-built-in-functions-using-dependency-injection/ data-title="利用依赖注入Mock PHP的内建函数"><i class="fab fa-weibo fa-fw"></i></a></span></div></div></div><div class=post-info-more><section class=post-tags><i class="fas fa-tags fa-fw"></i>&nbsp;<a href=/tags/php/>PHP</a>,&nbsp;<a href=/tags/%E7%BC%96%E7%A8%8B/>编程</a>,&nbsp;<a href=/tags/%E6%B5%8B%E8%AF%95/>测试</a></section><section><span><a href=javascript:void(0); onclick=window.history.back();>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span></section></div><div class=post-nav><a href=/post/mock-php-built-in-functions-using-namespace/ class=prev rel=prev title="利用命名空间Mock PHP的内建函数"><i class="fas fa-angle-left fa-fw"></i>利用命名空间Mock PHP的内建函数</a>
+<a href=/post/how-to-count-code-coverage-of-phpunit/ class=next rel=next title=PHPUnit代码覆盖率的统计方法>PHPUnit代码覆盖率的统计方法<i class="fas fa-angle-right fa-fw"></i></a></div></div><div id=comments><div id=utterances></div><noscript>Please enable JavaScript to view the comments powered by <a href=https://utteranc.es/>Utterances</a>.</noscript></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line>由 <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.72.0">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i>LoveIt</a></div><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2006 - 2020</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>淘气</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部><i class="fas fa-arrow-up fa-fw"></i></a><a href=# id=view-comments class=fixed-button title=查看评论><i class="fas fa-comment fa-fw"></i></a></div><script type=text/javascript src=https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js></script><script type=text/javascript>window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"utterances":{"darkTheme":"github-dark","issueTerm":"pathname","label":"","lightTheme":"github-light","repo":"xbot/blog-comments"}},"search":{"algoliaAppID":"PASDMWALPK","algoliaIndex":"index.zh-cn","algoliaSearchKey":"b42948e51daaa93df92381c8e2ac0f93","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type=text/javascript src=/js/theme.min.js></script></body></html>

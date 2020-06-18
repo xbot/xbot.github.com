@@ -1,318 +1,106 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="robots" content="noodp" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-        <title>怎样为红帽系Linux发行版写系统服务脚本 - 晴耕雨讀</title><meta name="Description" content="Donie&#39;s blog."><meta property="og:title" content="怎样为红帽系Linux发行版写系统服务脚本" />
-<meta property="og:description" content="##阅读说明 阅读本文要求有基本的Linux系统使用经验和Bash脚本编程能力。 本文所述的内容适用于RHEL、CentOS等红帽系Linux发" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="http://0x3f.org/post/how-to-write-service-scripts-for-redhat-distros/" />
-<meta property="og:image" content="http://0x3f.org/logo.png"/>
-<meta property="article:published_time" content="2012-06-19T00:14:00+00:00" />
-<meta property="article:modified_time" content="2020-06-17T17:28:11+08:00" />
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="http://0x3f.org/logo.png"/>
-
-<meta name="twitter:title" content="怎样为红帽系Linux发行版写系统服务脚本"/>
-<meta name="twitter:description" content="##阅读说明 阅读本文要求有基本的Linux系统使用经验和Bash脚本编程能力。 本文所述的内容适用于RHEL、CentOS等红帽系Linux发"/>
-<meta name="application-name" content="晴耕雨讀">
-<meta name="apple-mobile-web-app-title" content="晴耕雨讀"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://0x3f.org/post/how-to-write-service-scripts-for-redhat-distros/" /><link rel="prev" href="http://0x3f.org/post/after-reading-three-body-long-live-the-king-of-terrors/" /><link rel="next" href="http://0x3f.org/post/after-reading-zk-ajax-without-the-javascript-framework/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
-    {
-        "@context": "http://schema.org",
-        "@type": "BlogPosting",
-        "headline": "怎样为红帽系Linux发行版写系统服务脚本",
-        "inLanguage": "zh-CN",
-        "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": "http:\/\/0x3f.org\/post\/how-to-write-service-scripts-for-redhat-distros\/"
-        },"image": ["http:\/\/0x3f.org\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "Linux, Redhat, CentOS, Bash, 编程","wordcount":  1065 ,
-        "url": "http:\/\/0x3f.org\/post\/how-to-write-service-scripts-for-redhat-distros\/","datePublished": "2012-06-19T00:14:00+00:00","dateModified": "2020-06-17T17:28:11+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
-            "@type": "Organization",
-            "name": "xxxx","logo": "http:\/\/0x3f.org\/images\/avatar.png"},"author": {
-                "@type": "Person",
-                "name": "淘气"
-            },"description": ""
-    }
-    </script></head>
-    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
-
-        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
-    <div class="header-wrapper">
-        <div class="header-title">
-            <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
-        </div>
-        <div class="menu">
-            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
-                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
-                            <i class="fas fa-search fa-fw"></i>
-                        </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
-                            <i class="fas fa-times-circle fa-fw"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-desktop">
-                            <i class="fas fa-spinner fa-fw fa-spin"></i>
-                        </span>
-                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
-                    <i class="fas fa-adjust fa-fw"></i>
-                </a>
-            </div>
-        </div>
-    </div>
-</header><header class="mobile" id="header-mobile">
-    <div class="header-container">
-        <div class="header-wrapper">
-            <div class="header-title">
-                <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
-            </div>
-            <div class="menu-toggle" id="menu-toggle-mobile">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-        <div class="menu" id="menu-mobile"><div class="search-wrapper">
-                    <div class="search mobile" id="search-mobile">
-                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
-                            <i class="fas fa-search fa-fw"></i>
-                        </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
-                            <i class="fas fa-times-circle fa-fw"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-mobile">
-                            <i class="fas fa-spinner fa-fw fa-spin"></i>
-                        </span>
-                    </div>
-                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
-                        取消
-                    </a>
-                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
-                <i class="fas fa-adjust fa-fw"></i>
-            </a></div>
-    </div>
-</header>
-<div class="search-dropdown desktop">
-    <div id="search-dropdown-desktop"></div>
-</div>
-<div class="search-dropdown mobile">
-    <div id="search-dropdown-mobile"></div>
-</div>
-<main class="main">
-                <div class="container"><div class="toc" id="toc-auto">
-            <h2 class="toc-title">目录</h2>
-            <div class="toc-content" id="toc-content-auto"></div>
-        </div><article class="page single"><h1 class="single-title animated flipInX">怎样为红帽系Linux发行版写系统服务脚本</h1><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"><i class="far fa-folder fa-fw"></i>计算机</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2012-06-19">2012-06-19</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1065 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 3 分钟&nbsp;</div>
-        </div><div class="details toc" id="toc-static"  kept="">
-                <div class="details-summary toc-title">
-                    <span>目录</span>
-                    <span><i class="details-icon fas fa-angle-right"></i></span>
-                </div>
-                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
-            </div><div class="content" id="content"><p>##阅读说明</p>
-<p>阅读本文要求有基本的Linux系统使用经验和Bash脚本编程能力。</p>
-<p>本文所述的内容适用于RHEL、CentOS等红帽系Linux发行版。</p>
-<p>##系统服务简介</p>
-<p>###常用命令</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># 启动MySQL</span>
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><meta http-equiv=x-ua-compatible content="IE=edge, chrome=1"><title>怎样为红帽系Linux发行版写系统服务脚本 - 晴耕雨讀</title><meta name=Description content="Donie's blog."><meta property="og:title" content="怎样为红帽系Linux发行版写系统服务脚本"><meta property="og:description" content="##阅读说明 阅读本文要求有基本的Linux系统使用经验和Bash脚本编程能力。 本文所述的内容适用于RHEL、CentOS等红帽系Linux发"><meta property="og:type" content="article"><meta property="og:url" content="http://0x3f.org/post/how-to-write-service-scripts-for-redhat-distros/"><meta property="og:image" content="http://0x3f.org/logo.png"><meta property="article:published_time" content="2012-06-19T00:14:00+00:00"><meta property="article:modified_time" content="2020-06-17T17:28:11+08:00"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="http://0x3f.org/logo.png"><meta name=twitter:title content="怎样为红帽系Linux发行版写系统服务脚本"><meta name=twitter:description content="##阅读说明 阅读本文要求有基本的Linux系统使用经验和Bash脚本编程能力。 本文所述的内容适用于RHEL、CentOS等红帽系Linux发"><meta name=application-name content="晴耕雨讀"><meta name=apple-mobile-web-app-title content="晴耕雨讀"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=http://0x3f.org/post/how-to-write-service-scripts-for-redhat-distros/><link rel=prev href=http://0x3f.org/post/after-reading-three-body-long-live-the-king-of-terrors/><link rel=next href=http://0x3f.org/post/after-reading-zk-ajax-without-the-javascript-framework/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"怎样为红帽系Linux发行版写系统服务脚本","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/0x3f.org\/post\/how-to-write-service-scripts-for-redhat-distros\/"},"image":["http:\/\/0x3f.org\/images\/Apple-Devices-Preview.png"],"genre":"posts","keywords":"Linux, Redhat, CentOS, Bash, 编程","wordcount":1065,"url":"http:\/\/0x3f.org\/post\/how-to-write-service-scripts-for-redhat-distros\/","datePublished":"2012-06-19T00:14:00+00:00","dateModified":"2020-06-17T17:28:11+08:00","license":"This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher":{"@type":"Organization","name":"xxxx","logo":"http:\/\/0x3f.org\/images\/avatar.png"},"author":{"@type":"Person","name":"淘气"},"description":""}</script></head><body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':('auto'==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:'auto'==='dark'))&&document.body.setAttribute('theme','dark');</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title=晴耕雨讀><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw"></i></span>晴耕雨讀</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/posts/>所有文章 </a><a class=menu-item href=/tags/>标签 </a><a class=menu-item href=/categories/>分类 </a><a class=menu-item href=/about/>关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop><input type=text placeholder=搜索文章标题或内容... id=search-input-desktop>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=搜索><i class="fas fa-search fa-fw"></i></a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=清空><i class="fas fa-times-circle fa-fw"></i></a><span class="search-button search-loading" id=search-loading-desktop><i class="fas fa-spinner fa-fw fa-spin"></i></span></span><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题><i class="fas fa-adjust fa-fw"></i></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title=晴耕雨讀><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw"></i></span>晴耕雨讀</a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><div class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder=搜索文章标题或内容... id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=搜索><i class="fas fa-search fa-fw"></i></a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=清空><i class="fas fa-times-circle fa-fw"></i></a><span class="search-button search-loading" id=search-loading-mobile><i class="fas fa-spinner fa-fw fa-spin"></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>取消</a></div><a class=menu-item href=/posts/>所有文章</a><a class=menu-item href=/tags/>标签</a><a class=menu-item href=/categories/>分类</a><a class=menu-item href=/about/>关于</a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>目录</h2><div class=toc-content id=toc-content-auto></div></div><article class="page single"><h1 class="single-title animated flipInX">怎样为红帽系Linux发行版写系统服务脚本</h1><div class=post-meta><div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class=post-category>收录于 <a href=/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/><i class="far fa-folder fa-fw"></i>计算机</a></span></div><div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2012-06-19>2012-06-19</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1065 字&nbsp;
+<i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 3 分钟&nbsp;</div></div><div class="details toc" id=toc-static kept><div class="details-summary toc-title"><span>目录</span>
+<span><i class="details-icon fas fa-angle-right"></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents></nav></div></div><div class=content id=content><p>##阅读说明</p><p>阅读本文要求有基本的Linux系统使用经验和Bash脚本编程能力。</p><p>本文所述的内容适用于RHEL、CentOS等红帽系Linux发行版。</p><p>##系统服务简介</p><p>###常用命令</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-bash data-lang=bash><span class=c1># 启动MySQL</span>
 service mysqld start
 
-<span class="c1"># 关闭MySQL</span>
+<span class=c1># 关闭MySQL</span>
 service mysqld stop
 
-<span class="c1"># 重启MySQL</span>
+<span class=c1># 重启MySQL</span>
 service mysqld restart
 
-<span class="c1"># 查看MySQL服务运行状态</span>
+<span class=c1># 查看MySQL服务运行状态</span>
 service mysqld status
 
-<span class="c1"># 查看MySQL服务是否开机自动运行</span>
+<span class=c1># 查看MySQL服务是否开机自动运行</span>
 chkconfig --list mysqld
 
-<span class="c1"># 设置MySQL服务开机自动运行</span>
-chkconfig --level <span class="m">345</span> mysqld on
+<span class=c1># 设置MySQL服务开机自动运行</span>
+chkconfig --level <span class=m>345</span> mysqld on
 
-<span class="c1"># 取消MySQL服务开机自动运行</span>
-chkconfig --level <span class="m">345</span> mysqld off
-</code></pre></td></tr></table>
-</div>
-</div><p>###运行级别</p>
-<p>泛UNIX派系操作系统使用运行级别标识使用何种模式初始化。理论上，不同的发行版各级别代表的意义不同。红帽系发行版使用以下七个运行级别：</p>
-<ul>
-<li>0：关机</li>
-<li>1：单用户模式</li>
-<li>2：多用户模式，无网络服务</li>
-<li>3：多用户模式，有网络服务</li>
-<li>4：未使用/用户自定义</li>
-<li>5：带图形界面的多用户模式</li>
-<li>6：重启</li>
-</ul>
-<p>最常用的是0、3、5、6四种模式。其中，0和6表示关闭和重启操作系统，所以，执行命令<strong>init 0</strong>和<strong>shutdown</strong>是一个效果，同样，执行命令<strong>init 6</strong>和<strong>reboot</strong>是一个效果。模式3即普通的命令行用户界面，模式5即普通的图形界面用户界面。</p>
-<p>模式1在个别情景下会用到，例如忘记root用户的密码时，需要进入模式1修改密码。</p>
-<p>##系统服务脚本格式</p>
-<p>###示例</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="cp">#!/bin/bash
-</span><span class="cp"></span>
-<span class="c1"># chkconfig: 345 99 12</span>
-<span class="c1"># description: This is a sample service script</span>
+<span class=c1># 取消MySQL服务开机自动运行</span>
+chkconfig --level <span class=m>345</span> mysqld off
+</code></pre></td></tr></table></div></div><p>###运行级别</p><p>泛UNIX派系操作系统使用运行级别标识使用何种模式初始化。理论上，不同的发行版各级别代表的意义不同。红帽系发行版使用以下七个运行级别：</p><ul><li>0：关机</li><li>1：单用户模式</li><li>2：多用户模式，无网络服务</li><li>3：多用户模式，有网络服务</li><li>4：未使用/用户自定义</li><li>5：带图形界面的多用户模式</li><li>6：重启</li></ul><p>最常用的是0、3、5、6四种模式。其中，0和6表示关闭和重启操作系统，所以，执行命令<strong>init 0</strong>和<strong>shutdown</strong>是一个效果，同样，执行命令<strong>init 6</strong>和<strong>reboot</strong>是一个效果。模式3即普通的命令行用户界面，模式5即普通的图形界面用户界面。</p><p>模式1在个别情景下会用到，例如忘记root用户的密码时，需要进入模式1修改密码。</p><p>##系统服务脚本格式</p><p>###示例</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-bash data-lang=bash><span class=cp>#!/bin/bash
+</span><span class=cp></span>
+<span class=c1># chkconfig: 345 99 12</span>
+<span class=c1># description: This is a sample service script</span>
 
-<span class="k">case</span> <span class="s2">&#34;</span><span class="nv">$1</span><span class="s2">&#34;</span> in
-    start<span class="o">)</span>
-        <span class="c1"># Start something.</span>
+<span class=k>case</span> <span class=s2>&#34;</span><span class=nv>$1</span><span class=s2>&#34;</span> in
+    start<span class=o>)</span>
+        <span class=c1># Start something.</span>
         touch /var/lock/subsys/sample
-        <span class="p">;;</span>
-    stop<span class="o">)</span>
-        <span class="c1"># Stop something.</span>
+        <span class=p>;;</span>
+    stop<span class=o>)</span>
+        <span class=c1># Stop something.</span>
         /bin/rm -f /var/lock/subsys/sample
-        <span class="p">;;</span>
-    restart<span class="p">|</span>reload<span class="o">)</span>
-        <span class="c1"># Restart something.</span>
-        <span class="p">;;</span>
-    status<span class="o">)</span>
-        <span class="c1"># Report the running status of something.</span>
-        <span class="p">;;</span>
-    *<span class="o">)</span>
-        <span class="c1"># Invalid command, complain an error.</span>
-        <span class="p">;;</span>
-<span class="k">esac</span>
+        <span class=p>;;</span>
+    restart<span class=p>|</span>reload<span class=o>)</span>
+        <span class=c1># Restart something.</span>
+        <span class=p>;;</span>
+    status<span class=o>)</span>
+        <span class=c1># Report the running status of something.</span>
+        <span class=p>;;</span>
+    *<span class=o>)</span>
+        <span class=c1># Invalid command, complain an error.</span>
+        <span class=p>;;</span>
+<span class=k>esac</span>
 
-<span class="nb">exit</span> <span class="m">0</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>###解释</p>
-<p>假设本服务脚本文件的文件名为<strong>sample</strong>。</p>
-<p>整个服务脚本是一个普通的Bash脚本。主体是一个case语句，定义了四个命令start、stop、restart或reload、status，顾名思义，四个命令分别用来启动、停止、重启该服务，以及获取服务的运行状态。</p>
-<p>红帽系发行版使用chkconfig命令设置服务自动在哪个运行级别被自动执行。要使服务脚本支持chkconfig命令，需要加入注释行：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># chkconfig: 345 99 12</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>其中，<strong>345</strong>表示缺省的运行级别，使用如下命令添加服务时：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">chkconfig --add sample
-</code></pre></td></tr></table>
-</div>
-</div><p>将和使用如下命令一个效果：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">chkconfig --level <span class="m">345</span> sample on
-</code></pre></td></tr></table>
-</div>
-</div><p><strong>99</strong>表示启动序号，例如若希望服务B在服务A启动后启动，且服务A的启动序号是98，则服务B的启动序号应设为大于98的一个整数。</p>
-<p><strong>12</strong>表示停止序号，作用与启动序号相同。</p>
-<p>此外，若希望在操作系统关闭前先自动执行服务的关闭命令，需要在**/var/lock/subsys/**目录中存在与服务名同名的空文件，因此，应在**start**命令中创建一个这样的文件，并在**stop**命令中删除之。</p>
-</div><div class="post-footer" id="post-footer">
-    <div class="post-info">
-        <div class="post-info-line">
-            <div class="post-info-mod">
-                <span>更新于 2020-06-17&nbsp;<a class="git-hash" href="https://github.com/dillonzq/LoveIt/commit/b6b131fb549d1c33b519bbe9910a7c0b426257fd" target="_blank" title="commit by Donie Leigh(donie.leigh@gmail.com) b6b131fb549d1c33b519bbe9910a7c0b426257fd: URL地址改为用slug生成；为所有文章追加slug matter">
-                                    <i class="fas fa-hashtag fa-fw"></i>b6b131fb</a></span>
-            </div>
-            <div class="post-info-license"></div>
-        </div>
-        <div class="post-info-line">
-            <div class="post-info-md"><span>
-                            <a class="link-to-markdown" href="/post/how-to-write-service-scripts-for-redhat-distros/index.md" target="_blank">阅读原始文档</a>
-                        </span></div>
-            <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="http://0x3f.org/post/how-to-write-service-scripts-for-redhat-distros/" data-title="怎样为红帽系Linux发行版写系统服务脚本" data-hashtags="Linux,Redhat,CentOS,Bash,编程"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="http://0x3f.org/post/how-to-write-service-scripts-for-redhat-distros/" data-hashtag="Linux"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="http://0x3f.org/post/how-to-write-service-scripts-for-redhat-distros/" data-title="怎样为红帽系Linux发行版写系统服务脚本"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="http://0x3f.org/post/how-to-write-service-scripts-for-redhat-distros/" data-title="怎样为红帽系Linux发行版写系统服务脚本"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="http://0x3f.org/post/how-to-write-service-scripts-for-redhat-distros/" data-title="怎样为红帽系Linux发行版写系统服务脚本"><i class="fab fa-weibo fa-fw"></i></a></span>
-            </div>
-        </div>
-    </div>
-
-    <div class="post-info-more">
-        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/linux/">Linux</a>,&nbsp;<a href="/tags/redhat/">Redhat</a>,&nbsp;<a href="/tags/centos/">CentOS</a>,&nbsp;<a href="/tags/bash/">BASH</a>,&nbsp;<a href="/tags/%E7%BC%96%E7%A8%8B/">编程</a></section>
-        <section>
-            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
-        </section>
-    </div>
-
-    <div class="post-nav"><a href="/post/after-reading-three-body-long-live-the-king-of-terrors/" class="prev" rel="prev" title="读完《三体——死神永生》"><i class="fas fa-angle-left fa-fw"></i>读完《三体——死神永生》</a>
-            <a href="/post/after-reading-zk-ajax-without-the-javascript-framework/" class="next" rel="next" title="读过&#34;ZK: AJAX without the JavaScript Framework&#34;">读过&#34;ZK: AJAX without the JavaScript Framework&#34;<i class="fas fa-angle-right fa-fw"></i></a></div>
-</div>
-<div id="comments"><div id="utterances"></div><noscript>
-                Please enable JavaScript to view the comments powered by <a href="https://utteranc.es/">Utterances</a>.
-            </noscript></div></article></div>
-            </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.72.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
-                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2006 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">淘气</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
-        </div>
-    </footer></div>
-
-        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
-                <i class="fas fa-arrow-up fa-fw"></i>
-            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
-                <i class="fas fa-comment fa-fw"></i>
-            </a>
-        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"utterances":{"darkTheme":"github-dark","issueTerm":"pathname","label":"","lightTheme":"github-light","repo":"xbot/blog-comments"}},"search":{"algoliaAppID":"PASDMWALPK","algoliaIndex":"index.zh-cn","algoliaSearchKey":"b42948e51daaa93df92381c8e2ac0f93","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
-</html>
+<span class=nb>exit</span> <span class=m>0</span>
+</code></pre></td></tr></table></div></div><p>###解释</p><p>假设本服务脚本文件的文件名为<strong>sample</strong>。</p><p>整个服务脚本是一个普通的Bash脚本。主体是一个case语句，定义了四个命令start、stop、restart或reload、status，顾名思义，四个命令分别用来启动、停止、重启该服务，以及获取服务的运行状态。</p><p>红帽系发行版使用chkconfig命令设置服务自动在哪个运行级别被自动执行。要使服务脚本支持chkconfig命令，需要加入注释行：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-bash data-lang=bash><span class=c1># chkconfig: 345 99 12</span>
+</code></pre></td></tr></table></div></div><p>其中，<strong>345</strong>表示缺省的运行级别，使用如下命令添加服务时：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-bash data-lang=bash>chkconfig --add sample
+</code></pre></td></tr></table></div></div><p>将和使用如下命令一个效果：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-bash data-lang=bash>chkconfig --level <span class=m>345</span> sample on
+</code></pre></td></tr></table></div></div><p><strong>99</strong>表示启动序号，例如若希望服务B在服务A启动后启动，且服务A的启动序号是98，则服务B的启动序号应设为大于98的一个整数。</p><p><strong>12</strong>表示停止序号，作用与启动序号相同。</p><p>此外，若希望在操作系统关闭前先自动执行服务的关闭命令，需要在**/var/lock/subsys/**目录中存在与服务名同名的空文件，因此，应在**start**命令中创建一个这样的文件，并在**stop**命令中删除之。</p></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>更新于 2020-06-17&nbsp;<a class=git-hash href=https://github.com/dillonzq/LoveIt/commit/b6b131fb549d1c33b519bbe9910a7c0b426257fd target=_blank title="commit by Donie Leigh(donie.leigh@gmail.com) b6b131fb549d1c33b519bbe9910a7c0b426257fd: URL地址改为用slug生成；为所有文章追加slug matter">
+<i class="fas fa-hashtag fa-fw"></i>b6b131fb</a></span></div><div class=post-info-license></div></div><div class=post-info-line><div class=post-info-md><span><a class=link-to-markdown href=/post/how-to-write-service-scripts-for-redhat-distros/index.md target=_blank>阅读原始文档</a></span></div><div class=post-info-share><span><a href=javascript:void(0); title="分享到 Twitter" data-sharer=twitter data-url=http://0x3f.org/post/how-to-write-service-scripts-for-redhat-distros/ data-title=怎样为红帽系Linux发行版写系统服务脚本 data-hashtags=Linux,Redhat,CentOS,Bash,编程><i class="fab fa-twitter fa-fw"></i></a><a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=http://0x3f.org/post/how-to-write-service-scripts-for-redhat-distros/ data-hashtag=Linux><i class="fab fa-facebook-square fa-fw"></i></a><a href=javascript:void(0); title="分享到 Hacker News" data-sharer=hackernews data-url=http://0x3f.org/post/how-to-write-service-scripts-for-redhat-distros/ data-title=怎样为红帽系Linux发行版写系统服务脚本><i class="fab fa-hacker-news fa-fw"></i></a><a href=javascript:void(0); title="分享到 Line" data-sharer=line data-url=http://0x3f.org/post/how-to-write-service-scripts-for-redhat-distros/ data-title=怎样为红帽系Linux发行版写系统服务脚本><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg></i></a><a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=http://0x3f.org/post/how-to-write-service-scripts-for-redhat-distros/ data-title=怎样为红帽系Linux发行版写系统服务脚本><i class="fab fa-weibo fa-fw"></i></a></span></div></div></div><div class=post-info-more><section class=post-tags><i class="fas fa-tags fa-fw"></i>&nbsp;<a href=/tags/linux/>Linux</a>,&nbsp;<a href=/tags/redhat/>Redhat</a>,&nbsp;<a href=/tags/centos/>CentOS</a>,&nbsp;<a href=/tags/bash/>BASH</a>,&nbsp;<a href=/tags/%E7%BC%96%E7%A8%8B/>编程</a></section><section><span><a href=javascript:void(0); onclick=window.history.back();>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span></section></div><div class=post-nav><a href=/post/after-reading-three-body-long-live-the-king-of-terrors/ class=prev rel=prev title=读完《三体——死神永生》><i class="fas fa-angle-left fa-fw"></i>读完《三体——死神永生》</a>
+<a href=/post/after-reading-zk-ajax-without-the-javascript-framework/ class=next rel=next title='读过"ZK: AJAX without the JavaScript Framework"'>读过"ZK: AJAX without the JavaScript Framework"<i class="fas fa-angle-right fa-fw"></i></a></div></div><div id=comments><div id=utterances></div><noscript>Please enable JavaScript to view the comments powered by <a href=https://utteranc.es/>Utterances</a>.</noscript></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line>由 <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.72.0">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i>LoveIt</a></div><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2006 - 2020</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>淘气</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部><i class="fas fa-arrow-up fa-fw"></i></a><a href=# id=view-comments class=fixed-button title=查看评论><i class="fas fa-comment fa-fw"></i></a></div><script type=text/javascript src=https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js></script><script type=text/javascript>window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"utterances":{"darkTheme":"github-dark","issueTerm":"pathname","label":"","lightTheme":"github-light","repo":"xbot/blog-comments"}},"search":{"algoliaAppID":"PASDMWALPK","algoliaIndex":"index.zh-cn","algoliaSearchKey":"b42948e51daaa93df92381c8e2ac0f93","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type=text/javascript src=/js/theme.min.js></script></body></html>

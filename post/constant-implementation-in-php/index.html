@@ -1,251 +1,31 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="robots" content="noodp" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-        <title>PHP常量的实现和操作 - 晴耕雨讀</title><meta name="Description" content="Donie&#39;s blog."><meta property="og:title" content="PHP常量的实现和操作" />
-<meta property="og:description" content="存储结构 常量存储在哈希表EG(zend_constants)中。 常量的结构定义为： 1 2 3 4 5 6 7 typedef struct _zend_constant { zval value; int flags; char *name; uint name_len; int module_number; } zend_constant; value是" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="http://0x3f.org/post/constant-implementation-in-php/" />
-<meta property="og:image" content="http://0x3f.org/logo.png"/>
-<meta property="article:published_time" content="2015-05-07T16:29:00+00:00" />
-<meta property="article:modified_time" content="2020-06-17T17:28:11+08:00" />
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="http://0x3f.org/logo.png"/>
-
-<meta name="twitter:title" content="PHP常量的实现和操作"/>
-<meta name="twitter:description" content="存储结构 常量存储在哈希表EG(zend_constants)中。 常量的结构定义为： 1 2 3 4 5 6 7 typedef struct _zend_constant { zval value; int flags; char *name; uint name_len; int module_number; } zend_constant; value是"/>
-<meta name="application-name" content="晴耕雨讀">
-<meta name="apple-mobile-web-app-title" content="晴耕雨讀"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://0x3f.org/post/constant-implementation-in-php/" /><link rel="prev" href="http://0x3f.org/post/resource-implementation-in-php/" /><link rel="next" href="http://0x3f.org/post/globals-implementation-in-php/" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css"><script type="application/ld+json">
-    {
-        "@context": "http://schema.org",
-        "@type": "BlogPosting",
-        "headline": "PHP常量的实现和操作",
-        "inLanguage": "zh-CN",
-        "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": "http:\/\/0x3f.org\/post\/constant-implementation-in-php\/"
-        },"image": ["http:\/\/0x3f.org\/images\/Apple-Devices-Preview.png"],"genre": "posts","keywords": "PHP, 源码","wordcount":  1036 ,
-        "url": "http:\/\/0x3f.org\/post\/constant-implementation-in-php\/","datePublished": "2015-05-07T16:29:00+00:00","dateModified": "2020-06-17T17:28:11+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
-            "@type": "Organization",
-            "name": "xxxx","logo": "http:\/\/0x3f.org\/images\/avatar.png"},"author": {
-                "@type": "Person",
-                "name": "淘气"
-            },"description": ""
-    }
-    </script></head>
-    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
-
-        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
-    <div class="header-wrapper">
-        <div class="header-title">
-            <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
-        </div>
-        <div class="menu">
-            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/about/"> 关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
-                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
-                            <i class="fas fa-search fa-fw"></i>
-                        </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
-                            <i class="fas fa-times-circle fa-fw"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-desktop">
-                            <i class="fas fa-spinner fa-fw fa-spin"></i>
-                        </span>
-                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
-                    <i class="fas fa-adjust fa-fw"></i>
-                </a>
-            </div>
-        </div>
-    </div>
-</header><header class="mobile" id="header-mobile">
-    <div class="header-container">
-        <div class="header-wrapper">
-            <div class="header-title">
-                <a href="/" title="晴耕雨讀"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>晴耕雨讀</a>
-            </div>
-            <div class="menu-toggle" id="menu-toggle-mobile">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-        <div class="menu" id="menu-mobile"><div class="search-wrapper">
-                    <div class="search mobile" id="search-mobile">
-                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
-                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
-                            <i class="fas fa-search fa-fw"></i>
-                        </a>
-                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
-                            <i class="fas fa-times-circle fa-fw"></i>
-                        </a>
-                        <span class="search-button search-loading" id="search-loading-mobile">
-                            <i class="fas fa-spinner fa-fw fa-spin"></i>
-                        </span>
-                    </div>
-                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
-                        取消
-                    </a>
-                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/about/" title="">关于</a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
-                <i class="fas fa-adjust fa-fw"></i>
-            </a></div>
-    </div>
-</header>
-<div class="search-dropdown desktop">
-    <div id="search-dropdown-desktop"></div>
-</div>
-<div class="search-dropdown mobile">
-    <div id="search-dropdown-mobile"></div>
-</div>
-<main class="main">
-                <div class="container"><div class="toc" id="toc-auto">
-            <h2 class="toc-title">目录</h2>
-            <div class="toc-content" id="toc-content-auto"></div>
-        </div><article class="page single"><h1 class="single-title animated flipInX">PHP常量的实现和操作</h1><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/"><i class="far fa-folder fa-fw"></i>计算机</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2015-05-07">2015-05-07</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1036 字&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 3 分钟&nbsp;</div>
-        </div><div class="details toc" id="toc-static"  kept="">
-                <div class="details-summary toc-title">
-                    <span>目录</span>
-                    <span><i class="details-icon fas fa-angle-right"></i></span>
-                </div>
-                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
-  <ul>
-    <li><a href="#存储结构">存储结构</a></li>
-    <li><a href="#常量的声明">常量的声明</a></li>
-    <li><a href="#define和const">define()和const</a></li>
-    <li><a href="#魔术常量">魔术常量</a></li>
-  </ul>
-</nav></div>
-            </div><div class="content" id="content"><h2 id="存储结构">存储结构</h2>
-<p>常量存储在哈希表EG(zend_constants)中。</p>
-<p>常量的结构定义为：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">_zend_constant</span> <span class="p">{</span>
-	<span class="n">zval</span> <span class="n">value</span><span class="p">;</span>
-	<span class="kt">int</span> <span class="n">flags</span><span class="p">;</span>
-	<span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">;</span>
-	<span class="n">uint</span> <span class="n">name_len</span><span class="p">;</span>
-	<span class="kt">int</span> <span class="n">module_number</span><span class="p">;</span>
-<span class="p">}</span> <span class="n">zend_constant</span><span class="p">;</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>value是常量的值，是一个zval。name是常量名。module_number是模块被加载时，PHP内核在MINIT和RINIT方法的原型里默认传递的一个值，作为模块清理时的线索，在注册常量的接口里直接传递即可。</p>
-<p>flags是常量的标识或标识组合：</p>
-<ul>
-<li>CONST_CS</li>
-<li>CONST_PERSISTENT</li>
-<li>CONST_CT_SUBST</li>
-</ul>
-<p>CONST_CS表示常量名对大小写敏感，对应PHP函数define()的第三个参数，TRUE、FALSE、NULL这些常量名对大小写是不敏感的。CONST_PERSISTENT表示常量在请求结束后被保存，只在PHP进程结束时才销毁，一般在MINIT中定义的常量应该指定此参数，RINIT中定义的不指定。CONST_CT_SUBST表示在编译时可替换，TRUE、FALSE、NULL、ZEND_THREAD_SAFE、ZEND_DEBUG_BUILD属于此类。</p>
-<h2 id="常量的声明">常量的声明</h2>
-<p>常量的声明方法有两种，简单的使用宏函数族REGISTER_*_CONSTANT()：</p>
-<blockquote>
-<p>REGISTER_NULL_CONSTANT(name, flags)
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><meta http-equiv=x-ua-compatible content="IE=edge, chrome=1"><title>PHP常量的实现和操作 - 晴耕雨讀</title><meta name=Description content="Donie's blog."><meta property="og:title" content="PHP常量的实现和操作"><meta property="og:description" content="存储结构 常量存储在哈希表EG(zend_constants)中。 常量的结构定义为： 1 2 3 4 5 6 7 typedef struct _zend_constant { zval value; int flags; char *name; uint name_len; int module_number; } zend_constant; value是"><meta property="og:type" content="article"><meta property="og:url" content="http://0x3f.org/post/constant-implementation-in-php/"><meta property="og:image" content="http://0x3f.org/logo.png"><meta property="article:published_time" content="2015-05-07T16:29:00+00:00"><meta property="article:modified_time" content="2020-06-17T17:28:11+08:00"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="http://0x3f.org/logo.png"><meta name=twitter:title content="PHP常量的实现和操作"><meta name=twitter:description content="存储结构 常量存储在哈希表EG(zend_constants)中。 常量的结构定义为： 1 2 3 4 5 6 7 typedef struct _zend_constant { zval value; int flags; char *name; uint name_len; int module_number; } zend_constant; value是"><meta name=application-name content="晴耕雨讀"><meta name=apple-mobile-web-app-title content="晴耕雨讀"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=http://0x3f.org/post/constant-implementation-in-php/><link rel=prev href=http://0x3f.org/post/resource-implementation-in-php/><link rel=next href=http://0x3f.org/post/globals-implementation-in-php/><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@3.7.2/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"PHP常量的实现和操作","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/0x3f.org\/post\/constant-implementation-in-php\/"},"image":["http:\/\/0x3f.org\/images\/Apple-Devices-Preview.png"],"genre":"posts","keywords":"PHP, 源码","wordcount":1036,"url":"http:\/\/0x3f.org\/post\/constant-implementation-in-php\/","datePublished":"2015-05-07T16:29:00+00:00","dateModified":"2020-06-17T17:28:11+08:00","license":"This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher":{"@type":"Organization","name":"xxxx","logo":"http:\/\/0x3f.org\/images\/avatar.png"},"author":{"@type":"Person","name":"淘气"},"description":""}</script></head><body header-desktop=fixed header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem('theme')?localStorage.getItem('theme')==='dark':('auto'==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:'auto'==='dark'))&&document.body.setAttribute('theme','dark');</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title=晴耕雨讀><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw"></i></span>晴耕雨讀</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/posts/>所有文章 </a><a class=menu-item href=/tags/>标签 </a><a class=menu-item href=/categories/>分类 </a><a class=menu-item href=/about/>关于 </a><span class="menu-item delimiter"></span><span class="menu-item search" id=search-desktop><input type=text placeholder=搜索文章标题或内容... id=search-input-desktop>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=搜索><i class="fas fa-search fa-fw"></i></a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=清空><i class="fas fa-times-circle fa-fw"></i></a><span class="search-button search-loading" id=search-loading-desktop><i class="fas fa-spinner fa-fw fa-spin"></i></span></span><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题><i class="fas fa-adjust fa-fw"></i></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title=晴耕雨讀><span class=header-title-pre><i class="far fa-kiss-wink-heart fa-fw"></i></span>晴耕雨讀</a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><div class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder=搜索文章标题或内容... id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=搜索><i class="fas fa-search fa-fw"></i></a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=清空><i class="fas fa-times-circle fa-fw"></i></a><span class="search-button search-loading" id=search-loading-mobile><i class="fas fa-spinner fa-fw fa-spin"></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>取消</a></div><a class=menu-item href=/posts/>所有文章</a><a class=menu-item href=/tags/>标签</a><a class=menu-item href=/categories/>分类</a><a class=menu-item href=/about/>关于</a><a href=javascript:void(0); class="menu-item theme-switch" title=切换主题>
+<i class="fas fa-adjust fa-fw"></i></a></div></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>目录</h2><div class=toc-content id=toc-content-auto></div></div><article class="page single"><h1 class="single-title animated flipInX">PHP常量的实现和操作</h1><div class=post-meta><div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw"></i>淘气</a></span>&nbsp;<span class=post-category>收录于 <a href=/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/><i class="far fa-folder fa-fw"></i>计算机</a></span></div><div class=post-meta-line><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime=2015-05-07>2015-05-07</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;约 1036 字&nbsp;
+<i class="far fa-clock fa-fw"></i>&nbsp;预计阅读 3 分钟&nbsp;</div></div><div class="details toc" id=toc-static kept><div class="details-summary toc-title"><span>目录</span>
+<span><i class="details-icon fas fa-angle-right"></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#存储结构>存储结构</a></li><li><a href=#常量的声明>常量的声明</a></li><li><a href=#define和const>define()和const</a></li><li><a href=#魔术常量>魔术常量</a></li></ul></nav></div></div><div class=content id=content><h2 id=存储结构>存储结构</h2><p>常量存储在哈希表EG(zend_constants)中。</p><p>常量的结构定义为：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=k>typedef</span> <span class=k>struct</span> <span class=n>_zend_constant</span> <span class=p>{</span>
+	<span class=n>zval</span> <span class=n>value</span><span class=p>;</span>
+	<span class=kt>int</span> <span class=n>flags</span><span class=p>;</span>
+	<span class=kt>char</span> <span class=o>*</span><span class=n>name</span><span class=p>;</span>
+	<span class=n>uint</span> <span class=n>name_len</span><span class=p>;</span>
+	<span class=kt>int</span> <span class=n>module_number</span><span class=p>;</span>
+<span class=p>}</span> <span class=n>zend_constant</span><span class=p>;</span>
+</code></pre></td></tr></table></div></div><p>value是常量的值，是一个zval。name是常量名。module_number是模块被加载时，PHP内核在MINIT和RINIT方法的原型里默认传递的一个值，作为模块清理时的线索，在注册常量的接口里直接传递即可。</p><p>flags是常量的标识或标识组合：</p><ul><li>CONST_CS</li><li>CONST_PERSISTENT</li><li>CONST_CT_SUBST</li></ul><p>CONST_CS表示常量名对大小写敏感，对应PHP函数define()的第三个参数，TRUE、FALSE、NULL这些常量名对大小写是不敏感的。CONST_PERSISTENT表示常量在请求结束后被保存，只在PHP进程结束时才销毁，一般在MINIT中定义的常量应该指定此参数，RINIT中定义的不指定。CONST_CT_SUBST表示在编译时可替换，TRUE、FALSE、NULL、ZEND_THREAD_SAFE、ZEND_DEBUG_BUILD属于此类。</p><h2 id=常量的声明>常量的声明</h2><p>常量的声明方法有两种，简单的使用宏函数族REGISTER_*_CONSTANT()：</p><blockquote><p>REGISTER_NULL_CONSTANT(name, flags)
 REGISTER_BOOL_CONSTANT(name, bval, flags)
 REGISTER_LONG_CONSTANT(name, lval, flags)
 REGISTER_DOUBLE_CONSTANT(name, dval, flags)
 REGISTER_STRING_CONSTANT(name, str, flags)
-REGISTER_STRINGL_CONSTANT(name, str, len, flags)</p>
-</blockquote>
-<p>由于不需指定常量名长度，所以name参数应直接使用字符串，而不是char*。</p>
-<p>如需使用变量作为name参数，使用zend_register_*_constant()函数族，并指定变量名长度（sizeof(name)）。上面的宏函数其实是对这族函数的封装。</p>
-<blockquote>
-<p>void zend_register_long_constant(char *name, uint name_len, long lval, int flags, int module_number TSRMLS_DC)
+REGISTER_STRINGL_CONSTANT(name, str, len, flags)</p></blockquote><p>由于不需指定常量名长度，所以name参数应直接使用字符串，而不是char*。</p><p>如需使用变量作为name参数，使用zend_register_*_constant()函数族，并指定变量名长度（sizeof(name)）。上面的宏函数其实是对这族函数的封装。</p><blockquote><p>void zend_register_long_constant(char *name, uint name_len, long lval, int flags, int module_number TSRMLS_DC)
 void zend_register_double_constant(char *name, uint name_len, double dval, int flags, int module_number TSRMLS_DC)
 void zend_register_bool_constant(const char *name, uint name_len, zend_bool bval, int flags, int module_number TSRMLS_DC)
 void zend_register_string_constant(char *name, uint name_len, char *strval, int flags, int module_number TSRMLS_DC)
-void zend_register_stringl_constant(char *name, uint name_len, char *strval, uint strlen, int flags, int module_number TSRMLS_DC)</p>
-</blockquote>
-<p>除此之外，还有REGISTER_MAIN_*_CONSTANT和REGISTER_NS_*_CONSTANT两组宏函数。前者用于定义像E_ERROR这样的PHP标准常量，后者定义有命令空间的常量。</p>
-<h2 id="define和const">define()和const</h2>
-<ul>
-<li>define()是函数，在运行时定义常量
-<ul>
-<li>不能定义类常量</li>
-<li>可以在条件语句中使用</li>
-<li>可以指定常量是否对大小写敏感</li>
-<li>可以用表达式作为常量值</li>
-<li>只定义全局常量，不支持命名空间</li>
-</ul>
-</li>
-<li>const是语句，在编译时定义常量
-<ul>
-<li>可以定义类常量</li>
-<li>不能在条件语句中使用</li>
-<li>定义的常量对大小写敏感</li>
-<li>不支持表达式作为常量值</li>
-<li>若脚本定义了命名空间，声明的常量属于该命名空间</li>
-</ul>
-</li>
-</ul>
-<h2 id="魔术常量">魔术常量</h2>
-<blockquote>
-<p>__LINE__<br>
-__FILE__<br>
-__DIR__<br>
-__FUNCTION__<br>
-__CLASS__<br>
-__METHOD__<br>
-__NAMESPACE__</p>
-</blockquote>
-<p>魔术常量是在编译时（具体地说是词法分析时，见Zend/zend_language_scanner.l）被替换，确切地说，这些不是真正意义上的常量，只是个模板占位符。</p>
-</div><div class="post-footer" id="post-footer">
-    <div class="post-info">
-        <div class="post-info-line">
-            <div class="post-info-mod">
-                <span>更新于 2020-06-17&nbsp;<a class="git-hash" href="https://github.com/dillonzq/LoveIt/commit/b6b131fb549d1c33b519bbe9910a7c0b426257fd" target="_blank" title="commit by Donie Leigh(donie.leigh@gmail.com) b6b131fb549d1c33b519bbe9910a7c0b426257fd: URL地址改为用slug生成；为所有文章追加slug matter">
-                                    <i class="fas fa-hashtag fa-fw"></i>b6b131fb</a></span>
-            </div>
-            <div class="post-info-license"></div>
-        </div>
-        <div class="post-info-line">
-            <div class="post-info-md"><span>
-                            <a class="link-to-markdown" href="/post/constant-implementation-in-php/index.md" target="_blank">阅读原始文档</a>
-                        </span></div>
-            <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="http://0x3f.org/post/constant-implementation-in-php/" data-title="PHP常量的实现和操作" data-hashtags="PHP,源码"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="http://0x3f.org/post/constant-implementation-in-php/" data-hashtag="PHP"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="http://0x3f.org/post/constant-implementation-in-php/" data-title="PHP常量的实现和操作"><i class="fab fa-hacker-news fa-fw"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="http://0x3f.org/post/constant-implementation-in-php/" data-title="PHP常量的实现和操作"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="http://0x3f.org/post/constant-implementation-in-php/" data-title="PHP常量的实现和操作"><i class="fab fa-weibo fa-fw"></i></a></span>
-            </div>
-        </div>
-    </div>
-
-    <div class="post-info-more">
-        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/php/">PHP</a>,&nbsp;<a href="/tags/%E6%BA%90%E7%A0%81/">源码</a></section>
-        <section>
-            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
-        </section>
-    </div>
-
-    <div class="post-nav"><a href="/post/resource-implementation-in-php/" class="prev" rel="prev" title="PHP资源的实现和操作"><i class="fas fa-angle-left fa-fw"></i>PHP资源的实现和操作</a>
-            <a href="/post/globals-implementation-in-php/" class="next" rel="next" title="PHP全局变量的实现和操作">PHP全局变量的实现和操作<i class="fas fa-angle-right fa-fw"></i></a></div>
-</div>
-<div id="comments"><div id="utterances"></div><noscript>
-                Please enable JavaScript to view the comments powered by <a href="https://utteranc.es/">Utterances</a>.
-            </noscript></div></article></div>
-            </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.72.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
-                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2006 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">淘气</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
-        </div>
-    </footer></div>
-
-        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
-                <i class="fas fa-arrow-up fa-fw"></i>
-            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
-                <i class="fas fa-comment fa-fw"></i>
-            </a>
-        </div><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"utterances":{"darkTheme":"github-dark","issueTerm":"pathname","label":"","lightTheme":"github-light","repo":"xbot/blog-comments"}},"search":{"algoliaAppID":"PASDMWALPK","algoliaIndex":"index.zh-cn","algoliaSearchKey":"b42948e51daaa93df92381c8e2ac0f93","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
-</html>
+void zend_register_stringl_constant(char *name, uint name_len, char *strval, uint strlen, int flags, int module_number TSRMLS_DC)</p></blockquote><p>除此之外，还有REGISTER_MAIN_*_CONSTANT和REGISTER_NS_*_CONSTANT两组宏函数。前者用于定义像E_ERROR这样的PHP标准常量，后者定义有命令空间的常量。</p><h2 id=define和const>define()和const</h2><ul><li>define()是函数，在运行时定义常量<ul><li>不能定义类常量</li><li>可以在条件语句中使用</li><li>可以指定常量是否对大小写敏感</li><li>可以用表达式作为常量值</li><li>只定义全局常量，不支持命名空间</li></ul></li><li>const是语句，在编译时定义常量<ul><li>可以定义类常量</li><li>不能在条件语句中使用</li><li>定义的常量对大小写敏感</li><li>不支持表达式作为常量值</li><li>若脚本定义了命名空间，声明的常量属于该命名空间</li></ul></li></ul><h2 id=魔术常量>魔术常量</h2><blockquote><p>__LINE__<br>__FILE__<br>__DIR__<br>__FUNCTION__<br>__CLASS__<br>__METHOD__<br>__NAMESPACE__</p></blockquote><p>魔术常量是在编译时（具体地说是词法分析时，见Zend/zend_language_scanner.l）被替换，确切地说，这些不是真正意义上的常量，只是个模板占位符。</p></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>更新于 2020-06-17&nbsp;<a class=git-hash href=https://github.com/dillonzq/LoveIt/commit/b6b131fb549d1c33b519bbe9910a7c0b426257fd target=_blank title="commit by Donie Leigh(donie.leigh@gmail.com) b6b131fb549d1c33b519bbe9910a7c0b426257fd: URL地址改为用slug生成；为所有文章追加slug matter">
+<i class="fas fa-hashtag fa-fw"></i>b6b131fb</a></span></div><div class=post-info-license></div></div><div class=post-info-line><div class=post-info-md><span><a class=link-to-markdown href=/post/constant-implementation-in-php/index.md target=_blank>阅读原始文档</a></span></div><div class=post-info-share><span><a href=javascript:void(0); title="分享到 Twitter" data-sharer=twitter data-url=http://0x3f.org/post/constant-implementation-in-php/ data-title=PHP常量的实现和操作 data-hashtags=PHP,源码><i class="fab fa-twitter fa-fw"></i></a><a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=http://0x3f.org/post/constant-implementation-in-php/ data-hashtag=PHP><i class="fab fa-facebook-square fa-fw"></i></a><a href=javascript:void(0); title="分享到 Hacker News" data-sharer=hackernews data-url=http://0x3f.org/post/constant-implementation-in-php/ data-title=PHP常量的实现和操作><i class="fab fa-hacker-news fa-fw"></i></a><a href=javascript:void(0); title="分享到 Line" data-sharer=line data-url=http://0x3f.org/post/constant-implementation-in-php/ data-title=PHP常量的实现和操作><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@2.14.0/icons/line.svg></i></a><a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=http://0x3f.org/post/constant-implementation-in-php/ data-title=PHP常量的实现和操作><i class="fab fa-weibo fa-fw"></i></a></span></div></div></div><div class=post-info-more><section class=post-tags><i class="fas fa-tags fa-fw"></i>&nbsp;<a href=/tags/php/>PHP</a>,&nbsp;<a href=/tags/%E6%BA%90%E7%A0%81/>源码</a></section><section><span><a href=javascript:void(0); onclick=window.history.back();>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span></section></div><div class=post-nav><a href=/post/resource-implementation-in-php/ class=prev rel=prev title=PHP资源的实现和操作><i class="fas fa-angle-left fa-fw"></i>PHP资源的实现和操作</a>
+<a href=/post/globals-implementation-in-php/ class=next rel=next title=PHP全局变量的实现和操作>PHP全局变量的实现和操作<i class="fas fa-angle-right fa-fw"></i></a></div></div><div id=comments><div id=utterances></div><noscript>Please enable JavaScript to view the comments powered by <a href=https://utteranc.es/>Utterances</a>.</noscript></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line>由 <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.72.0">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i>LoveIt</a></div><div class=footer-line><i class="far fa-copyright fa-fw"></i><span itemprop=copyrightYear>2006 - 2020</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>淘气</a></span>&nbsp;|&nbsp;<span class=license><a rel="license external nofollow noopener noreffer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title=回到顶部><i class="fas fa-arrow-up fa-fw"></i></a><a href=# id=view-comments class=fixed-button title=查看评论><i class="fas fa-comment fa-fw"></i></a></div><script type=text/javascript src=https://cdn.jsdelivr.net/npm/smooth-scroll@16.1.3/dist/smooth-scroll.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/autocomplete.js@0.37.1/dist/autocomplete.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/algoliasearch@4.2.0/dist/algoliasearch-lite.umd.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.2.2/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/sharer.js@0.4.0/sharer.min.js></script><script type=text/javascript>window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":10},"comment":{"utterances":{"darkTheme":"github-dark","issueTerm":"pathname","label":"","lightTheme":"github-light","repo":"xbot/blog-comments"}},"search":{"algoliaAppID":"PASDMWALPK","algoliaIndex":"index.zh-cn","algoliaSearchKey":"b42948e51daaa93df92381c8e2ac0f93","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type=text/javascript src=/js/theme.min.js></script></body></html>
