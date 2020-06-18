@@ -1,5 +1,5 @@
 ---
-title: 改变Vim模式时自动切换输入法的方法
+title: 改变 Vim 模式时自动切换输入法的方法
 slug: auto switch input method while changing vim mode
 date: 2020-02-19 21:48:15
 categories:
