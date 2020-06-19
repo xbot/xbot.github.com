@@ -1,18 +1,15 @@
 ---
-layout: post
-title: "迁移到octopress"
+title: "迁移到 Octopress"
 slug: migrate blog to octopress
 date: 2012-06-23 23:13:00
-comments: true
 categories:
 - 青梅煮酒
 tags:
-- 生活
-- 牧码志
-- wordpress
-- octopress
-- github
-- git
+- 博客
+- Wordpress
+- Octopress
+- Github
+- Git
 ---
 ##关于迁移
 

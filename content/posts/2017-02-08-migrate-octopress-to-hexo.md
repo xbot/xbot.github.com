@@ -1,14 +1,14 @@
 ---
-title: 从Octopress迁移到Hexo
+title: 从 Octopress 迁移到 Hexo
 slug: migrate octopress to hexo
 date: 2017-02-08 20:24:16
 tags:
-- octopress
-- hexo
-- blog
+- Octopress
+- Hexo
+- 博客
 - 随笔
 categories:
-- 计算机
+- 青梅煮酒
 ---
 
 因为原来的主题没有针对中文优化，显示效果不太好，在搜索新主题的时候顺便了解了一下其它几个静态博客生成工具，发现Hexo比Octopress有很大的优势，就迁移了过来。
