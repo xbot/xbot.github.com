@@ -12,7 +12,7 @@ tags:
 - 读书
 ---
 
-![](/image/20161021001.png)
+![2020-06-19-16-16-10-20161021001](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2020-06-19-16-16-10-20161021001.png)
 
 汉书卷四十一：「樊哙，沛人也，以屠狗为事。」
 
@@ -34,4 +34,4 @@ tags:
 
 *本文最早发布在公众号：__两司马门下走狗__*
 
-![](/asset/qrcode_zougou.jpg)
+![](/images/qrcode_zougou.jpg)

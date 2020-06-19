@@ -49,4 +49,4 @@ tags:
 
 *本文最早发布在公众号：__两司马门下走狗__*
 
-![](/asset/qrcode_zougou.jpg)
+![](/images/qrcode_zougou.jpg)

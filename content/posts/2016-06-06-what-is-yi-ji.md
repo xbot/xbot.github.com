@@ -12,7 +12,7 @@ tags:
 - 公众号
 ---
 
-![](/image/20160606001.jpg)
+![2020-06-19-16-07-23-20160606001](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2020-06-19-16-07-23-20160606001.jpg)
 
 「食其」音「异基」，人名。
 
@@ -34,4 +34,4 @@ tags:
 
 *本文最早发布在公众号：__两司马门下走狗__*
 
-![](/asset/qrcode_zougou.jpg)
+![](/images/qrcode_zougou.jpg)

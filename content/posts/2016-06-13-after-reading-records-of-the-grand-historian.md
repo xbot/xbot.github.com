@@ -11,7 +11,7 @@ tags:
 - 历史
 ---
 
-![](/image/20160613001.jpg)
+![2020-06-19-16-14-59-20160613001](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2020-06-19-16-14-59-20160613001.jpg)
 
 之前读通鉴，用了四年，这次用了七个月。终于是名正言顺的两司马门下走狗了，哦耶。
 
@@ -33,4 +33,4 @@ tags:
 
 *本文最早发布在公众号：__两司马门下走狗__*
 
-![](/asset/qrcode_zougou.jpg)
+![](/images/qrcode_zougou.jpg)
