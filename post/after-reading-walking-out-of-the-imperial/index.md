@@ -1,7 +1,7 @@
 # 读完《走出帝制》
 
 
-![](/image/20160630001.jpg)
+![2020-06-19-16-18-58-20160630001](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2020-06-19-16-18-58-20160630001.jpg)
 
 用了四天时间，读完了这本书。之所以叫「这本书」，是因为这是本在豆瓣里都找不到记录的书，去年上市不久即被下架，通常意义上，叫禁书。
 
@@ -13,5 +13,5 @@
 
 *本文最早发布在公众号：__两司马门下走狗__*
 
-![](/asset/qrcode_zougou.jpg)
+![](/images/qrcode_zougou.jpg)
 

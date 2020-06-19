@@ -1,7 +1,7 @@
 # Kindle Paperwhite 1代与3代白色版对比
 
 
-![](/image/20160613002.jpg)
+![2020-06-19-16-19-55-20160613002](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2020-06-19-16-19-55-20160613002.jpg)
 
 如果说2代相对于1代的改进微乎其微，3代在屏幕和配置上的升级是效果显著的。
 
@@ -17,5 +17,5 @@
 
 *本文最早发布在公众号：__两司马门下走狗__*
 
-![](/asset/qrcode_zougou.jpg)
+![](/images/qrcode_zougou.jpg)
 
