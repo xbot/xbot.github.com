@@ -27,9 +27,7 @@ function handle_file($filePath)
 
     convert_hexo_tags($lines);
 
-    // var_dump($filePath); die();
     file_put_contents($filePath, implode("\n", $lines));
-    // echo implode("\n", $lines);
 }
 
 function append_date($filePath, &$lines)
@@ -86,7 +84,6 @@ function convert_hexo_tags(&$lines)
             || preg_match('/(?<={%\scodeblock\slang:).*(?=\s%})/', $line, $matches)
             || preg_match('/(?<={%\scodeblock).*(?=\s%})/', $line, $matches)
         ) {
-            // var_dump($matches); die();
             $lines[$idx] = "```{$matches[0]}";
         }
 
