@@ -11,7 +11,8 @@ tags:
 - Github
 - Git
 ---
-##关于迁移
+
+## 关于迁移
 
 前段时间，用了五年的虚拟主机突然限制了PHP内存上限，导致Wordpress只能启用有限的几个插件，根本不能满足需要。
 
@@ -22,9 +23,9 @@ tags:
 - 本博客聚合输出：http://feeds.feedburner.com/sinolog
 - 我的全部资讯聚合：http://feeds.feedburner.com/leninlee
 
-##迁移那点事
+## 迁移那点事
 
-###Python版本的问题
+### Python 版本的问题
 
 Archlinux很激进，早已把Python的缺省版本进化到了3.x，octopress会用到2.x，结果在生成全站的时候，会报如下错误：
 
@@ -45,6 +46,6 @@ if !!RUBY_PLATFORM['linux']
 end
 ```
 
-###不足
+### 不足
 
 用了这段时间octopress，感觉缺点也不小，每次修改后都要重新生成全站，占用系统资源不小，而且理论上以后会越来越慢。
