@@ -294,7 +294,7 @@ jobs:
       - name: Update Algolia Index
         env:
           ALGOLIA_APP_ID: XXXXXX
-          ALGOLIA_ADMIN_KEY: XXXXXX
+          ALGOLIA_ADMIN_KEY: ${{ secrets.ALGOLIA_ADMIN_KEY }}
           ALGOLIA_INDEX_NAME: 0x3f.org
           ALGOLIA_INDEX_FILE: public/index.json
         run: |
@@ -304,7 +304,7 @@ jobs:
 
 ```
 
-注意替换 `ALGOLIA_APP_ID` 和 `ALGOLIA_ADMIN_KEY` 的真实值。
+注意替换 `ALGOLIA_APP_ID` 的真实值，并把 Algolia 的“Admin API Key”添加到 Github 项目设置中的“Secrets”里，名称为“ALGOLIA_ADMIN_KEY”。
 
 以后再在 hugo 分支推送新的提交时，Github Actions 就会自动执行部署操作。
 
