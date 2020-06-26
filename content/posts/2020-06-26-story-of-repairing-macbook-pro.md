@@ -1,5 +1,6 @@
 ---
 title: "MacBook Pro 维修记"
+slug: story of repairing macbook pro
 date: 2020-06-26T23:29:24+08:00
 
 categories:
