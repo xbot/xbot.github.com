@@ -1,1 +1,62 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>CLI - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/cli/</link><description>CLI - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Mon, 26 Dec 2016 11:58:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/cli/" rel="self" type="application/rss+xml"/><item><title>小确幸，用Vim编辑当前命令行</title><link>http://0x3f.org/post/edit-command-with-vim/</link><pubDate>Mon, 26 Dec 2016 11:58:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/edit-command-with-vim/</guid><description>修改很长的命令是件痛苦的事，在Linux下，可以通过快捷键Ctrl+X Ctrl+E调用$EDITOR快速编辑当前命令行的内容，保存退出后，结</description></item><item><title>使用存取控制表在Linux用户间共享文件</title><link>http://0x3f.org/post/share-file-using-access-control-lists/</link><pubDate>Wed, 19 Mar 2014 22:38:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/share-file-using-access-control-lists/</guid><description>我用Dropbox在两台电脑间同步个人维基数据，将数据目录从Web Server下软连接到Dropbox里，而对Dropbox目录的备份实际上</description></item><item><title>phpsh：PHP的交互式解释器</title><link>http://0x3f.org/post/phpsh/</link><pubDate>Mon, 29 Mar 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/phpsh/</guid><description>时常需要测试一些简短的代码是否能得到需要的结果，如果去写测试脚本再执行，显然太麻烦。虽然PHP自身也支持通过-a参数启动交互模式，但功能较为</description></item></channel></rss>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>CLI - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/cli/</link><description>CLI - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Mon, 26 Dec 2016 11:58:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/cli/" rel="self" type="application/rss+xml"/><item><title>小确幸，用Vim编辑当前命令行</title><link>http://0x3f.org/post/edit-command-with-vim/</link><pubDate>Mon, 26 Dec 2016 11:58:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/edit-command-with-vim/</guid><description><![CDATA[<p>修改很长的命令是件痛苦的事，在Linux下，可以通过快捷键<code>Ctrl+X Ctrl+E</code>调用<code>$EDITOR</code>快速编辑当前命令行的内容，保存退出后，结果会呈现在光标下。</p>
+<p>不过在Mac OS的iTerm2下，似乎是因为<code>Ctrl+X</code>被占用而不能生效。误打误撞地发现了另外一个方法，使用oh-my-zsh并且开启了vi mode的话，先进入vi mode，然后输入<code>v</code>，同样可以实现这样的功能。</p>
+]]></description></item><item><title>使用存取控制表在Linux用户间共享文件</title><link>http://0x3f.org/post/share-file-using-access-control-lists/</link><pubDate>Wed, 19 Mar 2014 22:38:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/share-file-using-access-control-lists/</guid><description><![CDATA[<p>我用Dropbox在两台电脑间同步个人维基数据，将数据目录从Web Server下软连接到Dropbox里，而对Dropbox目录的备份实际上只包含那个软连接，没有内容，结果当把备份拷贝到另一台电脑上并打开Dropbox后，维基数据被清空了！我积累多年的笔记差一点儿完蛋，幸亏单独备份过维基。然后改将维基数据放到Dropbox里，然后软连接到Web Server下，新问题出现了，Web Server是以http身份运行的，对用户主目录没有权限，当然也不能访问主目录下的Dropbox目录。</p>
+<p>最简单的办法是将主目录、Dropbox、维基目录的权限全部设成777，显然，这样做太不安全。另一种方法是把Dropbox用NFS输出，然后挂载到Web Server下，这么做太蛋疼。最合适的解决方案是Access Control List（存取控制表），它可以为文件和目录设置具体到单个用户或用户组的存取权限，实现像Windows下的文件（目录）共享权限设置那样的效果，而且比后者更强大、灵活。</p>
+<p>使用ACL首先需要目录的挂载选项中包含acl，不过一般缺省都包含这一项。</p>
+<p>ACL包含两个命令：getfacl和setfacl，前者用来查看目录或文件的存取控制表，后者用来操作它。</p>
+<p>首先，把维基目录的所有者改成http，并设置目录权限为770：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">chown -R http:http ~/Dropbox/wiki
+chmod -R <span class="m">770</span> ~/Dropbox/wiki
+</code></pre></td></tr></table>
+</div>
+</div><p>这时Web Server还是不能访问维基目录，使用getfacl查看用户主目录的ACL：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">getfacl ~
+</code></pre></td></tr></table>
+</div>
+</div><p>显示结果如下：</p>
+<blockquote>
+<p>getfacl: Removing leading &lsquo;/&rsquo; from absolute path names<br>
+# file: home/taoqi<br>
+# owner: taoqi<br>
+# group: users<br>
+user::rwx<br>
+user:root:&ndash;x<br>
+group::&mdash;<br>
+mask::&ndash;x<br>
+other::&mdash;</p>
+</blockquote>
+<p>显然，要给http用户访问该目录的权限：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">setfacl -m u:http:x ~
+</code></pre></td></tr></table>
+</div>
+</div><p>再查看ACL，发现增加了一条：</p>
+<blockquote>
+<p>user:http:&ndash;x</p>
+</blockquote>
+<p>同理，给Dropbox目录也加上这一条规则之后，Web Server就可以访问维基数据目录了。</p>
+]]></description></item><item><title>phpsh：PHP的交互式解释器</title><link>http://0x3f.org/post/phpsh/</link><pubDate>Mon, 29 Mar 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/phpsh/</guid><description><![CDATA[<p>时常需要测试一些简短的代码是否能得到需要的结果，如果去写测试脚本再执行，显然太麻烦。虽然PHP自身也支持通过<strong><em>-a</em></strong>参数启动交互模式，但功能较为局限。如果PHP有像<a href="http://bpython-interpreter.org/">bpython</a>那样的交互式解释器，就太好了。</p>
+
+<p><a href="http://www.phpsh.org/">phpsh</a>就是这样一个工具，它是由<a href="http://zh.wikipedia.org/wiki/Facebook">facebook</a>的开发者用Python实现的PHP的交互式解释器，并具备以下特性：</p>
+
+<ol>
+<li>命令行历史回溯</li>
+<li>tab键自动补全</li>
+<li>快速文档索引</li>
+</ol>
+]]></description></item></channel></rss>

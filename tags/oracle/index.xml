@@ -1,1 +1,487 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>oracle - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/oracle/</link><description>oracle - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Fri, 07 Jan 2011 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/oracle/" rel="self" type="application/rss+xml"/><item><title>Oracle中对LOB字段的操作方法</title><link>http://0x3f.org/post/oracle-lob-operations/</link><pubDate>Fri, 07 Jan 2011 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/oracle-lob-operations/</guid><description>在Oracle中插入或更新LOB字段时，可以将字符串以如下方式写入SQL语句： 1 insert tbl_lob (fld_lob) values (utl_raw.cast_to_raw(&amp;#39;hello world&amp;#39;)); 这样做的限制是： Oracle中单条SQL语句有长</description></item><item><title>中秋后记</title><link>http://0x3f.org/post/note-after-the-mid-autumn-day/</link><pubDate>Sun, 26 Sep 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/note-after-the-mid-autumn-day/</guid><description>可以让回忆放肆一些。 中秋的晚上公司餐厅放电影，《邻家特工》和《越光宝盒》，本来打算看完《越光》就走，结果先放的是《特工》。也好，复习一下，好</description></item><item><title>InstallShield在MySQL和Oracle中执行SQL脚本的方法</title><link>http://0x3f.org/post/howto-run-sql-scripts-in-mysql-oracle-within-installshield/</link><pubDate>Tue, 24 Aug 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/howto-run-sql-scripts-in-mysql-oracle-within-installshield/</guid><description>简述 InstallShield已经内建了对MySQL和Oracle的支持。但是这个功能是通过ODBC实现的，它对SQL脚本的格式要求非常严格</description></item><item><title>Inno Setup执行SQL脚本的方法</title><link>http://0x3f.org/post/howto-execute-sql-scripts-in-inno-setup/</link><pubDate>Mon, 17 May 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/howto-execute-sql-scripts-in-inno-setup/</guid><description>作为和NSIS并立的、两个最流行的免费Windows应用程序安装包制作工具之一，Inno在学习难度上相对要低一些，非常适合对一些简单的桌面程</description></item></channel></rss>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>oracle - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/oracle/</link><description>oracle - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Fri, 07 Jan 2011 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/oracle/" rel="self" type="application/rss+xml"/><item><title>Oracle中对LOB字段的操作方法</title><link>http://0x3f.org/post/oracle-lob-operations/</link><pubDate>Fri, 07 Jan 2011 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/oracle-lob-operations/</guid><description><![CDATA[<p>在Oracle中插入或更新LOB字段时，可以将字符串以如下方式写入SQL语句：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">insert</span> <span class="n">tbl_lob</span> <span class="p">(</span><span class="n">fld_lob</span><span class="p">)</span> <span class="k">values</span> <span class="p">(</span><span class="n">utl_raw</span><span class="p">.</span><span class="n">cast_to_raw</span><span class="p">(</span><span class="s1">&#39;hello world&#39;</span><span class="p">));</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这样做的限制是：</p>
+<ol>
+	<li>Oracle中单条SQL语句有长度限制</li>
+	<li>cast_to_raw()对字符串有长度限制</li>
+</ol>
+<p>因此如果要插入或更新的字符串过长，会导致执行失败。此时应该使用dbms_lob处理LOB相关字段。下面是利用dbms_lob更新一个BLOB字段的存储过程，对CLOB的操作同理：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">create</span> <span class="k">or</span> <span class="k">replace</span> <span class="k">procedure</span> <span class="n">updateblob</span><span class="p">(</span>
+    <span class="n">ctbl</span> <span class="k">in</span> <span class="n">varchar2</span><span class="p">,</span>
+    <span class="n">cfld</span> <span class="k">in</span> <span class="n">varchar2</span><span class="p">,</span>
+    <span class="n">cstr</span> <span class="k">in</span> <span class="n">varchar2</span><span class="p">,</span>
+    <span class="n">ccond</span> <span class="k">in</span> <span class="n">varchar2</span>
+<span class="p">)</span>
+<span class="k">is</span>
+    <span class="n">vqry</span> <span class="n">varchar2</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span>
+    <span class="n">vblob</span> <span class="nb">blob</span><span class="p">;</span>
+    <span class="n">vbatch</span> <span class="n">varchar2</span><span class="p">(</span><span class="mi">2000</span><span class="p">);</span>
+    <span class="n">vstrlen</span> <span class="nb">number</span><span class="p">;</span>
+    <span class="n">voffset</span> <span class="nb">number</span> <span class="p">:</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+    <span class="n">vamt</span> <span class="nb">number</span> <span class="p">:</span><span class="o">=</span><span class="mi">2000</span><span class="p">;</span>
+<span class="k">begin</span>
+    <span class="n">vstrlen</span> <span class="p">:</span><span class="o">=</span> <span class="k">length</span><span class="p">(</span><span class="n">cstr</span><span class="p">);</span>
+
+    <span class="n">vqry</span> <span class="p">:</span><span class="o">=</span> <span class="s1">&#39;update &#39;</span><span class="o">||</span><span class="n">ctbl</span><span class="o">||</span><span class="s1">&#39; set &#39;</span><span class="o">||</span><span class="n">cfld</span><span class="o">||</span><span class="s1">&#39;=empty_blob() where &#39;</span><span class="o">||</span><span class="n">ccond</span><span class="p">;</span>
+    <span class="k">execute</span> <span class="k">immediate</span> <span class="n">vqry</span><span class="p">;</span>
+
+    <span class="n">vqry</span> <span class="p">:</span><span class="o">=</span> <span class="s1">&#39;select &#39;</span><span class="o">||</span><span class="n">cfld</span><span class="o">||</span><span class="s1">&#39; from &#39;</span><span class="o">||</span><span class="n">ctbl</span><span class="o">||</span><span class="s1">&#39; where &#39;</span><span class="o">||</span><span class="n">ccond</span><span class="o">||</span><span class="s1">&#39; for update&#39;</span><span class="p">;</span>
+    <span class="k">execute</span> <span class="k">immediate</span> <span class="n">vqry</span> <span class="k">into</span> <span class="n">vblob</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="n">vstrlen</span><span class="o">&gt;</span><span class="n">vamt</span> <span class="k">then</span>
+        <span class="n">while</span> <span class="n">vstrlen</span><span class="o">&gt;</span><span class="n">voffset</span> <span class="n">loop</span>
+            <span class="n">vbatch</span> <span class="p">:</span><span class="o">=</span> <span class="n">substr</span><span class="p">(</span><span class="n">cstr</span><span class="p">,</span> <span class="n">voffset</span><span class="p">,</span> <span class="n">vamt</span><span class="p">);</span>
+            <span class="n">voffset</span> <span class="p">:</span><span class="o">=</span> <span class="n">voffset</span><span class="o">+</span><span class="n">vamt</span><span class="p">;</span>
+            <span class="n">dbms_lob</span><span class="p">.</span><span class="n">writeappend</span><span class="p">(</span><span class="n">vblob</span><span class="p">,</span> <span class="k">length</span><span class="p">(</span><span class="n">vbatch</span><span class="p">),</span> <span class="n">utl_raw</span><span class="p">.</span><span class="n">cast_to_raw</span><span class="p">(</span><span class="n">vbatch</span><span class="p">));</span>
+        <span class="k">end</span> <span class="n">loop</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="n">dbms_lob</span><span class="p">.</span><span class="n">writeappend</span><span class="p">(</span><span class="n">vblob</span><span class="p">,</span> <span class="k">length</span><span class="p">(</span><span class="n">cstr</span><span class="p">),</span> <span class="n">utl_raw</span><span class="p">.</span><span class="n">cast_to_raw</span><span class="p">(</span><span class="n">cstr</span><span class="p">));</span>
+    <span class="k">end</span> <span class="k">if</span><span class="p">;</span>
+    <span class="k">commit</span><span class="p">;</span>
+<span class="k">end</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="c1">-- 将tbl_lob表的fld_lob字段的值改为“hello lob !”，要求被更改的行满足条件：
+</span><span class="c1">-- 1. fld_code字段的值以“2011”开头
+</span><span class="c1">-- 2. fld_name字段的值等于“Hell”
+</span><span class="c1"></span>
+<span class="k">declare</span>
+    <span class="n">vcond</span> <span class="n">varchar2</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span>
+<span class="k">begin</span>
+    <span class="n">vcond</span> <span class="p">:</span><span class="o">=</span> <span class="s1">&#39;fld_code like &#39;&#39;2011%&#39;&#39; and fld_name=&#39;&#39;Hell&#39;&#39;&#39;</span><span class="p">;</span>
+    <span class="n">updateblob</span><span class="p">(</span><span class="s1">&#39;tbl_lob&#39;</span><span class="p">,</span> <span class="s1">&#39;fld_lob&#39;</span><span class="p">,</span> <span class="s1">&#39;hello lob !&#39;</span><span class="p">,</span> <span class="n">vcond</span><span class="p">);</span>
+<span class="k">end</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div>]]></description></item><item><title>中秋后记</title><link>http://0x3f.org/post/note-after-the-mid-autumn-day/</link><pubDate>Sun, 26 Sep 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/note-after-the-mid-autumn-day/</guid><description><![CDATA[<p>可以让回忆放肆一些。</p>
+<p>中秋的晚上公司餐厅放电影，《邻家特工》和《越光宝盒》，本来打算看完《越光》就走，结果先放的是《特工》。也好，复习一下，好在这片子不错，再看也挺有意思。《越光》纯属烂片，但是如今看看这种不费脑子的东西也变得无可无不可。免费的零食很烘托气氛，唯一的惊喜是居然还有罐装啤酒。</p>
+<p>回到住处的当夜就发布了Dumperor。其实这个东西很早就开始做了，起初的目的是为了判断数据库脚本从SQL Server迁移到Oracle和MySQL是否成功。单纯的迁移只能保证修改后的脚本在这两个数据库中执行不会报错，但究竟是不是该执行的东西都成功执行了，一般很难判断，尤其是那帮家伙总是在发版前一两天才告诉我要迁移脚本，那么多不规范的语句，能保证不报错就已经不错了，遑论没有遗漏。所以就著手做一个数据库表结构和数据的导出工具，这样只需用diff工具比较标准数据库和测试数据库导出的脚本就可以了。</p>
+<p>从一开始我就决定不使用公司产品的一行代码。其实做这个东西最大的麻烦不是来自来自于如何查询不同的数据库的表结构，而是数据库抽象层。如果要白手起家搞个抽象层的话，我想可能代码量比Dumperor本身都大，于是选择了Yii框架。后来在Dumperor基本成型时又觉得为了仅仅使用最基本的数据库查询功能就捆绑这么大一个框架，有点搞笑，谢天谢地，我终于花时间学了PDO。</p>
+<p>中秋节放假的第二天，开始读Google Code上关于Chrome扩展开发的官方文档。这事源于本尊被另一个Chrome扩展作者无视了。</p>
+<p>一直强迫自己喜欢上Firefox，但都败了。本来对Opera充满希望，但是从10.0起它带给我的除了失望就是更多的失望，这个东西的发展就像它的国家的位置一样怪异，你永远不能以常人的思维去臆测Opera的开发者，他们就像一群母系氏族社会的娘们儿一样整天跟著感觉走。</p>
+<p>于是不知道什么时候我就开始经常用Chrome了，前段时间开始用一个扩展辅助MLDonkey下载。这个东西会在工具栏里添加一个图标，唯一的作用就是打开选项设置页面设置那个也许这辈子都只需要设置一次的MLDonkey的URL地址。于是我给那个扩展的作者写了封邮件，那家伙居然到现在都没有回复。</p>
+<p>所以本尊决定无视他了。太祖武皇帝的那句丰衣足食的圣谕真是至理名言，读完文档我就发现这个扩展完全应该用Chrome的Page Action取代Browser Action，简单地说就是当且仅当本页面中包含有可下载的资源时才在地址栏中显示一个图标，而不应该总是在工具栏占用一个图标的位置。</p>
+<p>随后要做的就是用AJAX请求取代弹出新窗口的方式添加下载任务，我嫌每次添加一个下载任务后都要关闭一个弹出窗口太麻烦。我的目标是用AJAX请求将要下载的任务在后台传递给MLDonkey，并用Chrome的Desktop Notification功能弹出桌面提示对话框显示结果状态。这样很优雅。</p>
+<p>但是实际去做的时候问题来了，虽然Chrome本身允许扩展使用跨域的AJAX，但是至少在和MLDonkey进行通讯时，无论成功与否，得到的返回信息都是空的，状态码也都是0。这个问题浪费了我几乎一整天的时间，最终我决定用AJAX的请求响应时间来判断失败或成功，因为一次AJAX请求响应过程在MLDonkey没启动的时候耗费的时间一般会比正在运行时要长。这就要求每个用户都要根据自己的情况设定合适的超时时间。为了避免麻烦，最后还是实现了通过弹窗添加下载任务的模式，毕竟这个东西总是可靠的。</p>
+<p>要发布的时候发现如今在Chrome Extension Gallery中发布扩展居然要收费了，虽然只是一次性的。最后花了八两银子注册了Google Checkout账户，又付了五刀美帝币，才把DonkeyBuddy传上去。发布个免费扩展还得倒贴，本尊也太背了吧。</p>
+<p>节后收到了Dell sk8115键盘、HP百灵无线鼠标和Nokia BH-105蓝牙耳机，sk8115是用来让我的纤纤玉手撒野的，百灵鼠是用来接替即将退役的雷柏7100的，而BH-105和我的小七搭配得天衣无缝。</p>
+<p>很久没有安静地整理一下头绪了，感谢我那价值四十两银子的Dell sk8115，它让我显得如此的语无伦次。</p>
+]]></description></item><item><title>InstallShield在MySQL和Oracle中执行SQL脚本的方法</title><link>http://0x3f.org/post/howto-run-sql-scripts-in-mysql-oracle-within-installshield/</link><pubDate>Tue, 24 Aug 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/howto-run-sql-scripts-in-mysql-oracle-within-installshield/</guid><description><![CDATA[<h2>简述</h2>
+<p>InstallShield已经内建了对MySQL和Oracle的支持。但是这个功能是通过ODBC实现的，它对SQL脚本的格式要求非常严格，因此已经通过官方客户端测试的脚本在IS中执行时往往就会报错。</p>
+<p>一般来说，数据库脚本只保证通过官方客户端测试即可，同时维护一份供IS执行的脚本费时费力。因此，考虑安装程序对两数据库的支持通过官方客户端实现。</p>
+<h2>MySQL</h2><br>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">function InstallMySQLComponent(szComponent)
+    NUMBER nResult;
+    STRING szServer,szDB,szUser,szPassword,sCMD,sOPT,sResult1,sResult2,svLine,sMsg,sPath;
+    NUMBER nvFileHandle,nvCount;
+    LIST listStatus;
+begin
+    sMsg = &#39;安装&#39;+szComponent+&#39; ...&#39;;
+    SdShowMsg(sMsg, TRUE);
+    // source命令不认识windows路径中的反斜杠，故将SRCDIR中的反斜杠替换成斜杠
+    sPath = SRCDIR;
+    StrReplace(sPath, &#39;\\&#39;, &#39;/&#39;, 0);
+    // Fetch database connection information
+    SQLRTGetConnectionInfo( &#39;mysql&#39;, szServer, szDB, szUser, szPassword );
+    sCMD = WINSYSDIR^&#39;cmd.exe&#39;;
+    sOPT = &#39; /c &#39;+SRCDIR^&#39;mysql.exe -h&#39;+szServer+&#39; -u&#39;+szUser+&#39; -p&#39;+szPassword+&#39; -D&#39;+szDB;
+    sOPT = sOPT+&#39; -e &#34;source &#39;+sPath^szComponent+&#39;.sql&#34; &gt; &#39;+SRCDIR^&#39;dbstatus.txt 2&gt;&amp;1&#39;;
+    // Execute the script associated with the given component in database
+    nResult=LaunchAppAndWait(sCMD, sOPT, WAIT|LAAW_OPTION_HIDDEN);
+    if (nResult &lt; 0) then
+        MessageBox(&#39;Failed installing &#39;+szComponent+&#39; !&#39;, SEVERE);
+        abort;
+    endif;
+    // 关闭安装提示
+    SdShowMsg(&#39;&#39;, FALSE);
+    // Read dbstatus.txt
+    OpenFileMode(FILE_MODE_NORMAL);
+    if (OpenFile(nvFileHandle, SRCDIR, &#39;dbstatus.txt&#39;)&lt;0) then
+        MessageBox(&#39;Failed checking the status of installing &#39;+szComponent+&#39; !&#39;, SEVERE);
+        abort;
+    endif;
+    listStatus = ListCreate(STRINGLIST);
+    while GetLine(nvFileHandle, svLine) = 0
+        ListAddString(listStatus, svLine, AFTER);
+    endwhile;
+    CloseFile(nvFileHandle);
+    // Count how many lines fetched from dbstatus.txt
+    nvCount = ListCount(listStatus);
+    if nvCount &gt; 0 then
+        sMsg = &#34;更新数据库出错，点“是”打开日志文件并退出安装，点“否”直接退出安装。\n&#34;;
+        sMsg = sMsg+&#34;若错误可忽略，可选择数据库类型“none”以跳过数据库更新并直接更新程序，\n&#34;;
+        sMsg = sMsg+&#34;然后在数据库中手工执行SQL脚本（安装后保存在script目录下）&#34;;
+        nResult = AskYesNo(sMsg, YES);
+        if (nResult = YES) then
+            LaunchApp(WINSYSDIR^&#39;notepad.exe&#39;, SRCDIR^&#39;dbstatus.txt&#39;);
+	endif;                   
+        abort;
+    endif;
+end;
+</code></pre></td></tr></table>
+</div>
+</div><h2>Oracle</h2><br>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">function InstallOracleComponent(szComponent)  
+    NUMBER nResult,nvFileHandle,nIndex,nvCount;
+    STRING sMsg,szServer,szDB,szUser,szPassword,sCMD,sOPT,sInstance,sTmp,svLine;
+    LIST listStatus;
+begin
+    sMsg = &#39;安装&#39;+szComponent+&#39; ...&#39;;
+    SdShowMsg(sMsg, TRUE);
+    // Fetch database connection information
+    SQLRTGetConnectionInfo( &#39;oracle&#39;, szServer, szDB, szUser, szPassword );
+    nIndex = StrFind(szServer, &#39;:&#39;);
+    nIndex = StrFindEx(szServer, &#39;/&#39;, nIndex);
+    StrSub(sInstance, szServer, nIndex+1, 100);
+    sCMD = WINSYSDIR^&#39;cmd.exe&#39;;
+    sOPT = &#39; /c &#39;+&#39;sqlplus.exe -L -S &#39;+szUser+&#39;/&#39;+szPassword+&#39;@&#39;+sInstance;
+    sOPT = sOPT+&#39; @&#39;+SRCDIR^szComponent+&#39;.sql &gt; &#39;+SRCDIR^&#39;dbstatus.txt 2&gt;&amp;1&#39;;
+    // Execute the script associated with the given component in database
+    nResult=LaunchAppAndWait(sCMD, sOPT, WAIT|LAAW_OPTION_HIDDEN);
+    if (nResult &lt; 0) then
+        MessageBox(&#39;Failed installing &#39;+szComponent+&#39; !&#39;, SEVERE);
+        abort;
+    endif;               
+    // 关闭安装提示
+    SdShowMsg(&#39;&#39;, FALSE);
+    // 在dbstatus.txt中查询字符串holytail，如果存在，说明脚本已执行完
+    if (FileGrep(SRCDIR^&#39;dbstatus.txt&#39;, &#39;holytail&#39;, svLine, nIndex, RESTART) = 0) then
+        // 在dbstatus.txt中查询字符串ORA-，如果存在，说明脚本执行出现错误
+        if (FileGrep(SRCDIR^&#39;dbstatus.txt&#39;, &#39;ORA-&#39;, svLine, nIndex, RESTART) = 0) then
+            sMsg = &#34;更新数据库出错，点“是”打开日志文件并退出安装，点“否”直接退出安装。\n&#34;;
+            sMsg = sMsg+&#34;若错误可忽略，可选择数据库类型“none”以跳过数据库更新并直接更新程序，\n&#34;;
+            sMsg = sMsg+&#34;然后在数据库中手工执行SQL脚本（安装后保存在script目录下）&#34;;
+            nResult = AskYesNo(sMsg, YES);
+            if (nResult = YES) then
+                LaunchApp(WINSYSDIR^&#39;notepad.exe&#39;, SRCDIR^&#39;dbstatus.txt&#39;);
+            endif;                   
+            abort;
+        endif;
+    else
+        sMsg = &#34;更新数据库出错，点“是”打开日志文件并退出安装，点“否”直接退出安装。\n&#34;;
+        sMsg = sMsg+&#34;若错误可忽略，可选择数据库类型“none”以跳过数据库更新并直接更新程序，\n&#34;;
+        sMsg = sMsg+&#34;然后在数据库中手工执行SQL脚本（安装后保存在script目录下）&#34;;
+        nResult = AskYesNo(sMsg, YES);
+        if (nResult = YES) then
+            LaunchApp(WINSYSDIR^&#39;notepad.exe&#39;, SRCDIR^&#39;dbstatus.txt&#39;);
+        endif;                   
+        abort;
+    endif;
+end;
+</code></pre></td></tr></table>
+</div>
+</div><h2>总结</h2>
+<ol>
+	<li>为便于获取脚本在数据库中的执行结果，故通过官方客户端执行脚本时通过符号“<strong>></strong>”将客户端的输出信息重定向到<strong>dbstatus.txt</strong>中；同时，使用“<strong>2>&1</strong>”将标准错误输出重定向到标准输出设备上，当然，会进一步重定向到dbstatus.txt文件中，否则，无法获取出错信息。</li>
+	<li>sqlplus执行SQL脚本后不会自动退出，故应在Oracle的脚本后加上语句“<strong>exit;</strong>”。</li>
+	<li>重载<strong>OnSQLComponentInstalled()</strong>函数，并在其中禁止MySQL和Oracle的SQL脚本对应的Component被执行安装，然后通过以上两个函数更新数据库。</li>
+</ol>
+]]></description></item><item><title>Inno Setup执行SQL脚本的方法</title><link>http://0x3f.org/post/howto-execute-sql-scripts-in-inno-setup/</link><pubDate>Mon, 17 May 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/howto-execute-sql-scripts-in-inno-setup/</guid><description><![CDATA[<p>作为和<a href="http://zh.wikipedia.org/zh-cn/Nullsoft%E8%85%B3%E6%9C%AC%E5%AE%89%E8%A3%9D%E7%B3%BB%E7%B5%B1">NSIS</a>并立的、两个最流行的免费Windows应用程序安装包制作工具之一，<a href="http://en.wikipedia.org/wiki/Inno_Setup">Inno</a>在学习难度上相对要低一些，非常适合对一些简单的桌面程序打包。但对于较复杂的安装过程，或者Web应用程序来说，我个人觉得不是Inno的强项。当然，既然Inno内嵌了<a href="http://zh.wikipedia.org/zh-cn/Pascal">Pascal</a>语言用以扩展功能，理论上不是不可以应付复杂的安装过程，但实现起来要复杂一些。</p>
+
+<p>比如对于在安装过程中连接数据库并执行SQL脚本这样的需求，使用<a href="http://en.wikipedia.org/wiki/InstallShield">InstallShield</a>应该会简单地多，而Inno却不支持直接操作数据库，并且相关的资料说明少之又少，还不如NSIS丰富，以至于我踏破铁鞋无觅处，最终却在NSIS的资料中找到了思路。</p>
+
+<p>主要的思路是，在安装过程中，调用数据库客户端连接数据库并执行SQL脚本，然后将执行结果或错误信息输出到文件中，最后通过分析这个文件来判断命令执行的结果。但是，既然是调用特定的客户端，那么对不同数据库的操作自然就有所区别，具体情况如下所述。</p>
+
+<p>首先在打包脚本的<strong>[Files]</strong>段将必需的文件包含进来：</p>
+
+```ini
+[Files]
+Source: "D:\Development\MyDemoApp\code\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "D:\Development\MyDemoApp\sqlcmd.exe"; Flags: dontcopy
+Source: "D:\Development\MyDemoApp\sqlcmd.rll"; Flags: dontcopy
+Source: "D:\Development\MyDemoApp\mysql.exe"; Flags: dontcopy
+Source: "D:\Development\MyDemoApp\script_mssql.sql"; Flags: dontcopy
+Source: "D:\Development\MyDemoApp\script_mysql.sql"; Flags: dontcopy
+Source: "D:\Development\MyDemoApp\script_oracle.sql"; Flags: dontcopy
+```
+
+<p>在SQL Server中执行脚本的代码片断：</p>
+
+```pascal
+function ExecScriptInMSSQL(DBHost, DBLogin, DBPass, DBName: String): Boolean;
+var
+    ConnectExe: String;
+    ConnectParam: String;
+begin
+    {解压临时文件}
+    ExtractTemporaryFile('sqlcmd.exe');
+    ExtractTemporaryFile('sqlcmd.rll');
+    ExtractTemporaryFile('script_mssql.sql');
+    {构造数据库连接字符串}
+    ConnectExe := ExpandConstant('{tmp}') + '\sqlcmd.exe';
+    ConnectParam := ' -S ' + DBHost
+        + ' -U ' + DBLogin
+        + ' -P ' + DBPass
+        + ' -d ' + DBName
+        + ' -i script_mssql.sql -o '
+        + ExpandConstant('{tmp}') + '\dbstatus.txt';
+    {建立数据库连接并执行脚本}
+    if Exec(ConnectExe, ConnectParam, '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then begin
+        Result := ResultCode = 0;
+        LoadStringFromFile(ExpandConstant('{tmp}') + '\dbstatus.txt', StatusString);
+        if StatusString <> '' then begin
+            MsgBox(StatusString, mbError, MB_OK);
+            Result := False;
+        end else begin
+            Result := True;
+        end;
+    end else begin
+        MsgBox('Database update failed:'#10#10 + SysErrorMessage(ResultCode), mbError, MB_OK);
+        Result := False;
+    end;
+end;
+```
+
+<p>在MySQL中执行脚本的代码片断：</p>
+
+```pascal
+function ExecScriptInMYSQL(DBHost, DBLogin, DBPass, DBName: String): Boolean;
+var
+    ConnectExe: String;
+    ConnectParam: String;
+begin
+    {解压临时文件}
+    ExtractTemporaryFile('mysql.exe');
+    ExtractTemporaryFile('script_mysql.sql');
+    {构造数据库连接字符串}
+    ConnectExe := ExpandConstant('cmd');
+    ConnectParam := ' /c "' + ExpandConstant('{tmp}') + '\mysql.exe'
+        + ' -h' + DBHost
+        + ' -u' + DBLogin
+        + ' -p' + DBPass
+        + ' -D' + DBName
+        + ' -e "source ' + ExpandConstant('{tmp}') + '\script_mysql.sql"" > ' + ExpandConstant('{tmp}') + '\dbstatus.txt 2>&1';
+    {建立数据库连接并执行脚本}
+    if Exec(ConnectExe, ConnectParam, '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then begin
+        Result := ResultCode = 0;
+        LoadStringFromFile(ExpandConstant('{tmp}') + '\dbstatus.txt', StatusString);
+        if StatusString <> '' then begin
+            MsgBox(StatusString, mbError, MB_OK);
+            Result := False;
+        end else begin
+            Result := True;
+        end;
+    end else begin
+        MsgBox('Database update failed:'#10#10 + SysErrorMessage(ResultCode), mbError, MB_OK);
+        Result := False;
+    end;
+end;
+```
+
+<p>由于mysql.exe没有输出结果到文件的参数，故需要使用cmd.exe来运行mysql.exe以便将其输出重定向到文件dbstatus.txt中。此外，在命令的最后加上参数<strong>2&gt;&amp;1</strong>，将标准错误输出设备也重定向到文件上，否则命令执行的错误信息不会输出到文件中。</p>
+
+<p>在Oracle中执行脚本的代码片断：</p>
+
+```pascal
+function ExecScriptInORACLE(ClientPath, DBInstance, DBLogin, DBPass: String): Boolean;
+begin
+    {解压临时文件}
+    ExtractTemporaryFile('script_oracle.sql');
+    {连接数据库并执行脚本}
+    if Exec(ExpandConstant('cmd'), ' /c "' + ClientPath + ' -L -S ' + DBLogin
+        + '/' + DBPass
+        + '@' + DBInstance
+        + ' @' + ExpandConstant('{tmp}') + '\script_oracle.sql > ' + ExpandConstant('{tmp}') + '\dbstatus.txt 2>&1',
+        '',
+        SW_HIDE, ewWaitUntilTerminated, ResultCode)
+    then begin
+        Result := ResultCode = 0;
+        LoadStringFromFile(ExpandConstant('{tmp}') + '\dbstatus.txt', StatusString);
+        if Pos('holytail', StatusString) <> 0 then begin
+            {若输出信息中有“holytail”的子串，则表示脚本成功执行}
+            {若执行有误，提示用户打开日志文件}
+            if Pos('ORA-', StatusString) <> 0 then begin
+                {提示用户脚本执行出错}
+                if MsgBox('数据库更新出错，是否打开日志文件？', mbConfirmation, MB_YESNO) = IDYES then begin
+                    {打开日志}
+                    if not ShellExec('', ExpandConstant('{tmp}') + '\dbstatus.txt', '', '', SW_SHOW, ewNoWait, ErrorCode) then begin
+                        MsgBox('日志文件打开错误！', mbError, MB_OK);
+                    end;
+                end;
+                Result := False;
+            {若执行无误，返回True}
+            end else begin
+                Result := True;
+            end;
+        end else if StatusString <> '' then begin
+            MsgBox(StatusString, mbError, MB_OK);
+            Result := False;
+        end else begin
+            Result := True;
+        end;
+    end else begin
+        MsgBox('Database update failed:'#10#10 + SysErrorMessage(ResultCode), mbError, MB_OK);
+        Result := False;
+    end;
+end;
+```
+
+<p>Oracle的客户端太大，不能集成到安装包中，应使用一个<strong>TInputFileWizardPage</strong>由用户选择sqlplus.exe的安装位置。同时，由于sqlplus.exe也没有输出结果到文件的参数，也须使用cmd.exe来运行它并重定向输出到文件。此外，由于sqlplus.exe执行脚本时无论成功还是失败，都会输出信息，故无法像使用sqlcmd.exe和mysql.exe那样简单地判断脚本是否执行成功，需要在脚本的最后通过select语句输出一个特殊的字符串到文件中，然后通过判断dbstatus.txt中是否存在该字符串来判断脚本的执行情况；且由于sqlplus.exe执行完脚本后不会自动退出，还要在脚本最后加上exit语句；故<strong>script_oracle.sql</strong>的最后必须是如下内容：</p>
+
+```sql
+SELECT 'holytail' FROM dual;
+exit;
+```
+]]></description></item></channel></rss>

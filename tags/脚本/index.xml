@@ -1,1 +1,271 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>脚本 - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/%E8%84%9A%E6%9C%AC/</link><description>脚本 - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Wed, 04 Apr 2012 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/%E8%84%9A%E6%9C%AC/" rel="self" type="application/rss+xml"/><item><title>禁止屏幕在播放视频时自动关闭</title><link>http://0x3f.org/post/how-to-keep-monitor-active-while-watching-flv/</link><pubDate>Wed, 04 Apr 2012 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/how-to-keep-monitor-active-while-watching-flv/</guid><description>貌似Lose系统下看在线视频的时候不会超时自动关闭屏幕，但是我在Arch下就一直晃鼠标、按键盘来著，这严重违反了DRY原则。于是昨天终于写了</description></item><item><title>YYeTs.py：人人影视BT种子下载辅助脚本</title><link>http://0x3f.org/post/yyets-torrents-download-script/</link><pubDate>Mon, 14 Nov 2011 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/yyets-torrents-download-script/</guid><description>这是最好的时代，这是最坏的时代。现在还有像人人影视的BT种子FTP这样的站点，实在不容易。但是所有种子列在一块，想看看最近几天都更新了甚么都</description></item><item><title>中秋后记</title><link>http://0x3f.org/post/note-after-the-mid-autumn-day/</link><pubDate>Sun, 26 Sep 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/note-after-the-mid-autumn-day/</guid><description>可以让回忆放肆一些。 中秋的晚上公司餐厅放电影，《邻家特工》和《越光宝盒》，本来打算看完《越光》就走，结果先放的是《特工》。也好，复习一下，好</description></item><item><title>批量下载视频的BASH脚本</title><link>http://0x3f.org/post/a-bash-script-downloading-videos-in-batch/</link><pubDate>Sat, 28 Aug 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/a-bash-script-downloading-videos-in-batch/</guid><description>两周前为了批量下载某视频网站中的电视剧，写了个BASH脚本。将电视剧列表页面的URL地址作为唯一参数传给脚本，然后就会把所有视频下载到当前目</description></item></channel></rss>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>脚本 - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/%E8%84%9A%E6%9C%AC/</link><description>脚本 - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Wed, 04 Apr 2012 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/%E8%84%9A%E6%9C%AC/" rel="self" type="application/rss+xml"/><item><title>禁止屏幕在播放视频时自动关闭</title><link>http://0x3f.org/post/how-to-keep-monitor-active-while-watching-flv/</link><pubDate>Wed, 04 Apr 2012 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/how-to-keep-monitor-active-while-watching-flv/</guid><description><![CDATA[<p>貌似Lose系统下看在线视频的时候不会超时自动关闭屏幕，但是我在Arch下就一直晃鼠标、按键盘来著，这严重违反了DRY原则。于是昨天终于写了这个脚本，当全屏播放视频的时候，关闭屏保和显示器的节能特性，否则则激活它们。由于是在X的级别实现，理论上应当适合所有桌面环境。</p>
+
+```bash
+#!/bin/bash
+# Baby-sitter of the monitor's DPMS
+
+idle_period=60
+ss_switch_off=0
+ss_is_off=0
+
+while true; do
+    # Read DPMS state
+    xset -q|grep "DPMS is Disabled" > /dev/null && ss_is_off=1 || ss_is_off=0
+    # Get pid of the current window
+    active_window_id=`xprop -root | grep "_NET_ACTIVE_WINDOW(WINDOW)" | cut -d" " -f5`
+    decimal_id=`xprop -id $active_window_id | grep PID | cut -d" " -f3`
+    # Traverse all libflashplayer.so
+    for pid in `ps -ef|grep -v grep|grep libflashplayer.so|awk '{print $2}'`; do
+        # If the current window is libflashplayer.so
+        if [ "$pid" -eq "$decimal_id" ]; then
+            ss_switch_off=1
+            break
+        else
+            ss_switch_off=0
+        fi
+    done
+    if [ $ss_switch_off -eq 1 ]; then
+        # Turn off DPMS
+        echo Turn off DPMS
+        if [ $ss_is_off -eq 0 ]; then
+            echo Action
+            xset s off
+            xset -dpms
+        fi
+    else
+        # Turn on DPMS
+        echo Turn on DPMS
+        if [ $ss_is_off -eq 1 ]; then
+            echo Action
+            xset +dpms
+            xset s on
+        fi
+    fi
+    sleep $idle_period
+done
+```
+
+<p>似乎对非全屏播放的情况没有什么好方法。</p>
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
+]]></description></item><item><title>YYeTs.py：人人影视BT种子下载辅助脚本</title><link>http://0x3f.org/post/yyets-torrents-download-script/</link><pubDate>Mon, 14 Nov 2011 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/yyets-torrents-download-script/</guid><description><![CDATA[<p>这是最好的时代，这是最坏的时代。现在还有像<a href="ftp://zhongzi.yyets.net">人人影视的BT种子FTP</a>这样的站点，实在不容易。但是所有种子列在一块，想看看最近几天都更新了甚么都很困难，于是早想写个脚本省时省力。这周末终于实现了这个想法。</p>
+
+<h2>主要功能</h2>
+
+<ul>
+<li>按关键词查询种子</li>
+<li>限制查询范围为最近几天新增的</li>
+<li>下载符合查询条件的种子，允许下载前编辑任务列表</li>
+</ul>
+
+<h2>使用说明</h2>
+
+<h3>环境</h3>
+
+<ul>
+<li>Python 2.7，不支持Python3</li>
+<li>Mac OS X Lion，Archlinux测试通过，理论上支持Windows</li>
+</ul>
+
+<h3>配置</h3>
+
+<p>如果需要编辑下载任务列表（<em>即使用-s选项</em>），应事先配置环境变量<strong>YYETS_EDITOR</strong>，将值设定为一个文本编辑器的路径，或者修改脚本的私有属性<strong>__editor__</strong>也一样。如果这两个位置都没有设置，则使用环境变量<strong>EDITOR</strong>。否则，将报“<strong>Command not found</strong>”的错误。</p>
+
+<p>有一点提示，如果使用GVim或MacVim，需要加上选项<strong>-f</strong>，以阻塞的方式启动它，否则会导致下载结果不能达到预期。例如对于MacVim，可配置<strong>YYETS_EDITOR</strong>为：</p>
+
+<blockquote>
+  <p>mvim -f</p>
+</blockquote>
+
+<h3>使用举例</h3>
+
+```bash
+# 列出所有种子
+./yyets.py
+
+# 搜索关键词
+./yyets.py 猩球崛起 1080p
+
+# 搜索最近三天新增的种子
+./yyets.py --past=3
+
+# 搜索最近七天内新增的、满足关键词条件的种子
+./yyets.py --past=7 蓝精灵
+
+# 下载满足查询条件的种子
+./yyets.py -d --past=30 1080p
+
+# 下载满足查询条件的种子，下载前编辑任务列表
+./yyets.py -d -p --past=30 1080p
+
+# 更多详细信息，参阅帮助
+./yyets.py -h
+./yyets.py --help
+```
+
+<h3>下载</h3>
+
+<p>移步GitHub获取最新版本：</p>
+
+<p><a href="https://github.com/xbot/shell">https://github.com/xbot/shell</a></p>
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
+]]></description></item><item><title>中秋后记</title><link>http://0x3f.org/post/note-after-the-mid-autumn-day/</link><pubDate>Sun, 26 Sep 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/note-after-the-mid-autumn-day/</guid><description><![CDATA[<p>可以让回忆放肆一些。</p>
+<p>中秋的晚上公司餐厅放电影，《邻家特工》和《越光宝盒》，本来打算看完《越光》就走，结果先放的是《特工》。也好，复习一下，好在这片子不错，再看也挺有意思。《越光》纯属烂片，但是如今看看这种不费脑子的东西也变得无可无不可。免费的零食很烘托气氛，唯一的惊喜是居然还有罐装啤酒。</p>
+<p>回到住处的当夜就发布了Dumperor。其实这个东西很早就开始做了，起初的目的是为了判断数据库脚本从SQL Server迁移到Oracle和MySQL是否成功。单纯的迁移只能保证修改后的脚本在这两个数据库中执行不会报错，但究竟是不是该执行的东西都成功执行了，一般很难判断，尤其是那帮家伙总是在发版前一两天才告诉我要迁移脚本，那么多不规范的语句，能保证不报错就已经不错了，遑论没有遗漏。所以就著手做一个数据库表结构和数据的导出工具，这样只需用diff工具比较标准数据库和测试数据库导出的脚本就可以了。</p>
+<p>从一开始我就决定不使用公司产品的一行代码。其实做这个东西最大的麻烦不是来自来自于如何查询不同的数据库的表结构，而是数据库抽象层。如果要白手起家搞个抽象层的话，我想可能代码量比Dumperor本身都大，于是选择了Yii框架。后来在Dumperor基本成型时又觉得为了仅仅使用最基本的数据库查询功能就捆绑这么大一个框架，有点搞笑，谢天谢地，我终于花时间学了PDO。</p>
+<p>中秋节放假的第二天，开始读Google Code上关于Chrome扩展开发的官方文档。这事源于本尊被另一个Chrome扩展作者无视了。</p>
+<p>一直强迫自己喜欢上Firefox，但都败了。本来对Opera充满希望，但是从10.0起它带给我的除了失望就是更多的失望，这个东西的发展就像它的国家的位置一样怪异，你永远不能以常人的思维去臆测Opera的开发者，他们就像一群母系氏族社会的娘们儿一样整天跟著感觉走。</p>
+<p>于是不知道什么时候我就开始经常用Chrome了，前段时间开始用一个扩展辅助MLDonkey下载。这个东西会在工具栏里添加一个图标，唯一的作用就是打开选项设置页面设置那个也许这辈子都只需要设置一次的MLDonkey的URL地址。于是我给那个扩展的作者写了封邮件，那家伙居然到现在都没有回复。</p>
+<p>所以本尊决定无视他了。太祖武皇帝的那句丰衣足食的圣谕真是至理名言，读完文档我就发现这个扩展完全应该用Chrome的Page Action取代Browser Action，简单地说就是当且仅当本页面中包含有可下载的资源时才在地址栏中显示一个图标，而不应该总是在工具栏占用一个图标的位置。</p>
+<p>随后要做的就是用AJAX请求取代弹出新窗口的方式添加下载任务，我嫌每次添加一个下载任务后都要关闭一个弹出窗口太麻烦。我的目标是用AJAX请求将要下载的任务在后台传递给MLDonkey，并用Chrome的Desktop Notification功能弹出桌面提示对话框显示结果状态。这样很优雅。</p>
+<p>但是实际去做的时候问题来了，虽然Chrome本身允许扩展使用跨域的AJAX，但是至少在和MLDonkey进行通讯时，无论成功与否，得到的返回信息都是空的，状态码也都是0。这个问题浪费了我几乎一整天的时间，最终我决定用AJAX的请求响应时间来判断失败或成功，因为一次AJAX请求响应过程在MLDonkey没启动的时候耗费的时间一般会比正在运行时要长。这就要求每个用户都要根据自己的情况设定合适的超时时间。为了避免麻烦，最后还是实现了通过弹窗添加下载任务的模式，毕竟这个东西总是可靠的。</p>
+<p>要发布的时候发现如今在Chrome Extension Gallery中发布扩展居然要收费了，虽然只是一次性的。最后花了八两银子注册了Google Checkout账户，又付了五刀美帝币，才把DonkeyBuddy传上去。发布个免费扩展还得倒贴，本尊也太背了吧。</p>
+<p>节后收到了Dell sk8115键盘、HP百灵无线鼠标和Nokia BH-105蓝牙耳机，sk8115是用来让我的纤纤玉手撒野的，百灵鼠是用来接替即将退役的雷柏7100的，而BH-105和我的小七搭配得天衣无缝。</p>
+<p>很久没有安静地整理一下头绪了，感谢我那价值四十两银子的Dell sk8115，它让我显得如此的语无伦次。</p>
+]]></description></item><item><title>批量下载视频的BASH脚本</title><link>http://0x3f.org/post/a-bash-script-downloading-videos-in-batch/</link><pubDate>Sat, 28 Aug 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/a-bash-script-downloading-videos-in-batch/</guid><description><![CDATA[<p>两周前为了批量下载某视频网站中的电视剧，写了个BASH脚本。将电视剧列表页面的URL地址作为唯一参数传给脚本，然后就会把所有视频下载到当前目录下，并自动重命名，同时生成一个M3U格式的播放列表。</p>
+<p>由于在线视频不支持断点续传，所以对于单个视频来说无法实现。但对于整个批量下载任务来说，实现了宏观上的断点续传，已经下载的视频不会被重复下载。由于有些视频网站会在午夜更改视频地址，所以这一点很有用。</p>
+<p>主流视频网站应该是都支持的，我只测试了我下载电视剧的网站，<strong>不支持的都是非主流的！</strong></p>
+<p>唯一可能需要注意的依赖是PHP，必须安装后才能使用。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="cp">#!/bin/bash
+</span><span class="cp"></span>
+print_help_msg <span class="o">()</span> <span class="o">{</span>
+    <span class="nb">echo</span> <span class="s2">&#34;You see, I&#39;m nothing .&#34;</span>
+    <span class="nb">exit</span> <span class="m">0</span>
+<span class="o">}</span>
+
+check_param <span class="o">()</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">[</span> <span class="nv">$#</span> -ne <span class="m">1</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+        print_help_msg
+    <span class="k">fi</span>
+<span class="o">}</span>
+
+check_m3u <span class="o">()</span> <span class="o">{</span>
+    <span class="k">if</span> ! <span class="o">[</span> -a p.m3u <span class="o">]</span> <span class="o">||</span> <span class="o">[</span> <span class="sb">`</span>wc -l p.m3u<span class="p">|</span>awk <span class="s1">&#39;{ print $1 }&#39;</span><span class="sb">`</span> -eq <span class="m">0</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+        <span class="nb">echo</span> <span class="s1">&#39;#EXTM3U&#39;</span> &gt; p.m3u
+    <span class="k">fi</span>
+<span class="o">}</span>
+
+check_param <span class="nv">$*</span>
+check_m3u
+
+<span class="nb">export</span> <span class="nv">LC_ALL</span><span class="o">=</span>en_US.UTF-8
+
+<span class="nv">ue</span><span class="o">=</span><span class="k">$(</span>php -r <span class="s2">&#34;echo urlencode(&#39;</span><span class="nv">$1</span><span class="s2">&#39;);&#34;</span><span class="k">)</span>
+<span class="nv">parser</span><span class="o">=</span><span class="s2">&#34;http://www.flvcd.com/parse.php?flag=&amp;format=&amp;kw=</span><span class="nv">$ue</span><span class="s2">&amp;sbt=%BF%AA%CA%BCGO%21&#34;</span>
+<span class="k">if</span> ! wget <span class="nv">$parser</span> -U mozilla -O meta.html <span class="p">;</span> <span class="k">then</span>
+    <span class="nb">echo</span> <span class="s2">&#34;Unable to touch the parser, check network status for the cause .&#34;</span>
+    <span class="nb">exit</span> <span class="m">0</span>
+<span class="k">fi</span>
+
+grep <span class="s2">&#34;&lt;N&gt;&#34;</span> meta.html &gt; title.lst
+grep <span class="s2">&#34;&lt;U&gt;&#34;</span> meta.html &gt; url.lst
+iconv -f gbk -t utf-8 title.lst -o title.lst
+sed -i <span class="s1">&#39;s/&lt;N&gt;//g&#39;</span> title.lst
+sed -i <span class="s1">&#39;s/ //g&#39;</span> title.lst
+sed -i <span class="s1">&#39;s/&lt;U&gt;//g&#39;</span> url.lst
+
+<span class="nv">l1</span><span class="o">=</span><span class="sb">`</span>wc -l title.lst<span class="p">|</span>awk <span class="s1">&#39;{ print $1 }&#39;</span><span class="sb">`</span>
+<span class="nv">l2</span><span class="o">=</span><span class="sb">`</span>wc -l url.lst<span class="p">|</span>awk <span class="s1">&#39;{ print $1 }&#39;</span><span class="sb">`</span>
+<span class="k">if</span> <span class="o">[</span> <span class="s2">&#34;</span><span class="nv">$l1</span><span class="s2">&#34;</span> !<span class="o">=</span> <span class="s2">&#34;</span><span class="nv">$l2</span><span class="s2">&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+    <span class="nb">echo</span> <span class="s2">&#34;Title.lst has </span><span class="nv">$l1</span><span class="s2"> lines, but url.lst got </span><span class="nv">$l2</span><span class="s2">.&#34;</span>
+    <span class="nb">exit</span> <span class="m">0</span>
+<span class="k">fi</span>
+<span class="k">if</span> <span class="o">[</span> <span class="nv">$l1</span> -eq <span class="m">0</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+    <span class="nb">echo</span> <span class="s2">&#34;Nothing got from the parser, check meta.html for detail info.&#34;</span>
+    <span class="nb">exit</span> <span class="m">0</span>
+<span class="k">fi</span>
+
+<span class="nv">arrTitle</span><span class="o">=(</span><span class="sb">`</span>cat title.lst<span class="sb">`</span><span class="o">)</span>
+<span class="nv">arrURL</span><span class="o">=(</span><span class="sb">`</span>cat url.lst<span class="sb">`</span><span class="o">)</span>
+
+<span class="nv">idx</span><span class="o">=</span><span class="k">$((</span><span class="sb">`</span>wc -l p.m3u<span class="p">|</span>awk <span class="s1">&#39;{ print $1 }&#39;</span><span class="sb">`</span><span class="o">-</span><span class="m">1</span><span class="k">))</span>
+<span class="k">while</span> <span class="o">[</span> <span class="nv">$idx</span> -lt <span class="nv">$l1</span> <span class="o">]</span><span class="p">;</span> <span class="k">do</span>
+    <span class="nv">title</span><span class="o">=</span><span class="si">${</span><span class="nv">arrTitle</span><span class="p">[</span><span class="nv">$idx</span><span class="p">]</span><span class="si">}</span>
+    <span class="nv">url</span><span class="o">=</span><span class="si">${</span><span class="nv">arrURL</span><span class="p">[</span><span class="nv">$idx</span><span class="p">]</span><span class="si">}</span>
+    <span class="nv">idx</span><span class="o">=</span><span class="k">$((</span>idx+1<span class="k">))</span>
+    <span class="k">if</span> ! wget <span class="nv">$url</span> -U mozilla -O <span class="s2">&#34;</span><span class="si">${</span><span class="nv">title</span><span class="si">}</span><span class="s2">.flv&#34;</span> <span class="p">;</span> <span class="k">then</span>
+        <span class="nb">echo</span> <span class="s2">&#34;Failed fetching </span><span class="si">${</span><span class="nv">title</span><span class="si">}</span><span class="s2">.flv, maybe its URL has been changed !&#34;</span>
+        <span class="nb">exit</span> <span class="m">0</span>
+    <span class="k">fi</span>
+    <span class="nv">cmd</span><span class="o">=</span><span class="s2">&#34;sed -i &#39;\$a\\</span><span class="si">${</span><span class="nv">title</span><span class="si">}</span><span class="s2">.flv&#39; p.m3u&#34;</span>
+    <span class="nb">eval</span> <span class="nv">$cmd</span>
+<span class="k">done</span>
+
+<span class="nb">echo</span> <span class="s1">&#39;done !&#39;</span>
+<span class="nb">exit</span> <span class="m">0</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>另外，使用VLC执行播放列表效果灰常不错，视频之间衔接平滑流畅。</p>
+]]></description></item></channel></rss>

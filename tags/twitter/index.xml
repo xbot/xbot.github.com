@@ -1,1 +1,55 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Twitter - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/twitter/</link><description>Twitter - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 05 Apr 2011 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/twitter/" rel="self" type="application/rss+xml"/><item><title>在非GNOME环境中使用TweetDeck</title><link>http://0x3f.org/post/howto-use-tweetdeck-out-of-gnome/</link><pubDate>Tue, 05 Apr 2011 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/howto-use-tweetdeck-out-of-gnome/</guid><description>在非GNOME桌面环境中，运行TweetDeck会报如下错误： Ooops, TweetDeck can't find your data TweetDeck is having trouble using some of your passwords that are stored securely on your machine. Clicking submit will clear this data so that you continue to use TweetDeck. 原因是A</description></item><item><title>搭建自己的Twitter API</title><link>http://0x3f.org/post/howto-setup-twitter-api-of-your-own/</link><pubDate>Fri, 01 Oct 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/howto-setup-twitter-api-of-your-own/</guid><description>创建Twitter应用程序 从2010年9月起，twitter只支持第三方应用程序使用oauth方式登录。要使用第三方API程序，就必须先在t</description></item></channel></rss>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Twitter - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/twitter/</link><description>Twitter - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 05 Apr 2011 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/twitter/" rel="self" type="application/rss+xml"/><item><title>在非GNOME环境中使用TweetDeck</title><link>http://0x3f.org/post/howto-use-tweetdeck-out-of-gnome/</link><pubDate>Tue, 05 Apr 2011 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/howto-use-tweetdeck-out-of-gnome/</guid><description><![CDATA[<p>在非GNOME桌面环境中，运行TweetDeck会报如下错误：</p>
+
+<blockquote>
+  <p>Ooops, TweetDeck can't find your data
+  TweetDeck is having trouble using some of your passwords that are stored securely on your machine. Clicking submit will clear this data so that you continue to use TweetDeck.</p>
+</blockquote>
+
+<p>原因是Adobe Air将密码保存在GNOME的Keyring里，而此时Air找不到GNOME的相关守护进程<strong>gnome-keyring-daemon</strong>。</p>
+
+<p>使用如下脚本启动之：</p>
+
+<p>
+```bash
+#!/bin/bash
+GNOME_KEYRING=`pidof gnome-keyring-daemon`
+GNOME_DESKTOP_SESSION_ID=$GNOME_KEYRING /usr/bin/tweetdeck &
+```
+</p>
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
+]]></description></item><item><title>搭建自己的Twitter API</title><link>http://0x3f.org/post/howto-setup-twitter-api-of-your-own/</link><pubDate>Fri, 01 Oct 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/howto-setup-twitter-api-of-your-own/</guid><description><![CDATA[<h2> 创建Twitter应用程序 </h2>
+<p>从2010年9月起，twitter只支持第三方应用程序使用oauth方式登录。要使用第三方API程序，就必须先在twitter中创建应用程序。</p>
+<p>申请地址如下：</p>
+<p><a href="https://twitter.com/apps/">https://twitter.com/apps/</a></p>
+<p>填写信息时，<b>Application Type</b>应该选<b>Browser</b>，<b>Default Access type</b>应选<b>Read &amp; Write</b>，<b>User Twitter for login</b>不选，其它随便。</p>
+<p>创建成功后，该应用程序的<b>Consumer key</b>和<b>Consumer secret</b>在部署API时一般都要用到。</p>
+<h2> 第三方API程序 </h2>
+<h3> gtap </h3>
+<p><a href="http://code.google.com/p/gtap/">gtap</a>使用python开发，可部署在appspot上。</p>
+<p>部署前，先修改<b>app.yaml</b>，填写在appspot上创建的应用程序的ID，并使用符号#注释掉<b>secure: always</b>，因为GFW屏蔽了appspot的https。</p>
+<p>然后修改<b>main.py</b>，填写Consumer key和Consumer secret。</p>
+<p>最后安装<a href="http://code.google.com/intl/zh-CN/appengine/downloads.html">App Engine SDK</a>，使用其中的<b>appcfg.py</b>上传gtap文件夹：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">appcfg.py update gtap
+</code></pre></td></tr></table>
+</div>
+</div><p>在浏览器中（此时应使用可以翻墙的代理）访问在appspot上创建的应用程序的URL地址（如：http://xxx.appspot.com ），在打开的页面中点击<b>Sign in with Twitter</b>，然后在跳转到的页面中点击<b>Allow</b>按钮。在跳转到的页面上修改API的密码（据说有些客户端要求API的密码与Twitter的密码一致）。</p>
+<p>在客户端中使用API的地址如下：</p>
+<blockquote>
+http://xxx.appspot.com/
+</blockquote>
+<p>其中，<b>xxx</b>是appspot应用程序的ID，末尾的斜杠必不可少。</p>
+<h3> twip </h3>
+<p><a href="http://code.google.com/p/twip/">twip</a>使用php开发，应部署在支持PHP的服务器上。</p>
+<p>首先将<b>config-example.php</b>改名为<b>config.php</b>，然后修改其中的OAUTH_KEY/OAUTH_SECRET/BASE_URL三项内容，前两项分别是Consumer key和Consumer secret，base_url应该是twip部署到服务器上后的URL地址（如http://myblog.com/twip/ ，最后的斜杠必不可少）。</p>
+<p>然后在浏览器中访问上面的base_url，选择使用o模式，API地址会在最后的页面中输出。</p>
+<h2> 补充说明 </h2>
+<ol>
+<li>当前版本的Google App Engine SDK要求使用python 2.5，但如果只是用来上传应用程序到appspot，2.5以上版本的python也可以用，只是在上传时会报某些模块已不推荐使用。如果使用appcfg.py时报找不到2.5版本的python，可以强制使用已安装的新版本的python执行之，即：python appcfg.py update gtap</li>
+</ol>
+]]></description></item></channel></rss>

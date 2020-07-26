@@ -1,1 +1,147 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>ThinkPad - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/thinkpad/</link><description>ThinkPad - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sat, 14 Apr 2012 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/thinkpad/" rel="self" type="application/rss+xml"/><item><title>在Archlinux下使用thinkfan控制Thinkpad x220的风扇转速</title><link>http://0x3f.org/post/how-to-control-fan-speed-with-thinkfan/</link><pubDate>Sat, 14 Apr 2012 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/how-to-control-fan-speed-with-thinkfan/</guid><description>Archlinux目前对Thinkpad风扇的自动控制效果并不好，气温上升后很容易出现一直在三千多转一直跑的问题。thinkfan是目前用的</description></item><item><title>Mac，江湖再见！</title><link>http://0x3f.org/post/bye-mac/</link><pubDate>Mon, 12 Mar 2012 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/bye-mac/</guid><description>零八年底，我用半年的差补收了当时Thinkpad X200顶配的FN3。三年的时间，几乎每天都要用很久，竟然从没掉过链子。虽说是这样，但毕竟用</description></item><item><title>收入AOC E2343F</title><link>http://0x3f.org/post/got-aoc-e2343f/</link><pubDate>Sun, 24 Jul 2011 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/got-aoc-e2343f/</guid><description>当初在深圳被公司的Dell Inspiron 1300吓怕了，所以不惜重金收入了高配的Thinkpad X200 FN3。最近越来越觉得12寸的屏幕看代码实在是太局促了</description></item><item><title>使Thinkpad的静音按钮能被识别的方法</title><link>http://0x3f.org/post/howto-make-thinkpad-mute-button-detected-on-linux/</link><pubDate>Mon, 09 Aug 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/howto-make-thinkpad-mute-button-detected-on-linux/</guid><description>我的型号是X200，问题表现为在GNOME或XFCE下静音按钮无效，使用xev也捕获不到输入信号，而音量增加和减小按钮可以正常使用且有OSD</description></item><item><title>被迫弃UMS而用KMS</title><link>http://0x3f.org/post/switching-from-ums-to-kms/</link><pubDate>Sat, 13 Feb 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/switching-from-ums-to-kms/</guid><description>昨天更新了一下系统，今天开机就白屏了。于是先关掉Compiz，看了一下Archlinux的新闻，发现新的xf86-video-intel中已</description></item></channel></rss>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>ThinkPad - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/thinkpad/</link><description>ThinkPad - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sat, 14 Apr 2012 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/thinkpad/" rel="self" type="application/rss+xml"/><item><title>在Archlinux下使用thinkfan控制Thinkpad x220的风扇转速</title><link>http://0x3f.org/post/how-to-control-fan-speed-with-thinkfan/</link><pubDate>Sat, 14 Apr 2012 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/how-to-control-fan-speed-with-thinkfan/</guid><description><![CDATA[<p>Archlinux目前对Thinkpad风扇的自动控制效果并不好，气温上升后很容易出现一直在三千多转一直跑的问题。thinkfan是目前用的比较多的自动控制风扇转速的程序，但Google到的配置thinkfan的文章大多语焉不详，可能是跟具体的发行版有关，因为貌似有些发行版中安装了thinkfan后会自动生成缺省的配置文件，但在目前的AUR中的包被安装后却没有生成任何配置文件。</p>
+
+<p>下面是我在Archlinux下配置的步骤，实际效果很好，现在只要不看视频、不编译程序、不启动Chromium，一般是两千九百转的速度，安静多了。</p>
+
+<h2>lm_sensors</h2>
+
+<p>安装lm_sensors并执行命令初始化：</p>
+
+```bash
+# 一路回车
+sudo sensors-detect
+```
+
+<p>将sensors加入rc.conf中DAEMONS中，开机启动。</p>
+
+<p>启动sensors服务：</p>
+
+```bash
+sudo rc.d start sensors
+```
+
+<h2>thinkpad_acpi</h2>
+
+<p>修改文件“<strong>/etc/modprobe.d/thinkpad_acpi.conf</strong>”：</p>
+
+```
+options thinkpad_acpi fan_control=1
+```
+
+<p>我这里虽没有把thinkpad_acpi加到rc.conf的MODULES中，但lsmod也是可以看到它的，说明还是自动启用了。要使上面这项配置生效，必须重启电脑，我这里重启thinkpad_acpi模块时报错说该模块正在被使用。</p>
+
+<h2>thinkfan</h2>
+
+<p>安装thinkfan并修改文件“<strong>/etc/default/thinkfan</strong>”：</p>
+
+```
+START=yes
+```
+
+<p>修改文件“<strong>/etc/thinkfan.conf</strong>”：</p>
+
+```
+sensor /sys/class/hwmon/hwmon0/temp1_input
+
+(0,  0, 55)
+(1, 48, 60)
+(2, 50, 61)
+(3, 52, 63)
+(4, 56, 65)
+(5, 59, 66)
+(7, 63, 32767)
+```
+
+<p>将thinkfan加入rc.conf的DAEMONS中，开机自动启动。</p>
+
+<p>启动thinkfan：</p>
+
+```bash
+sudo thinkfan
+```
+
+<h2>查看状态</h2>
+
+```bash
+# 看CPU温度和风扇转速
+sensors
+
+# 看风扇详细信息
+cat /proc/acpi/ibm/fan
+```
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
+]]></description></item><item><title>Mac，江湖再见！</title><link>http://0x3f.org/post/bye-mac/</link><pubDate>Mon, 12 Mar 2012 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/bye-mac/</guid><description><![CDATA[<p>零八年底，我用半年的差补收了当时Thinkpad X200顶配的FN3。三年的时间，几乎每天都要用很久，竟然从没掉过链子。虽说是这样，但毕竟用的强度大、时间长，屏幕已经远不如当初清晰，亮度也差了，即使调到最高亮度都觉著暗。</p>
+
+<p>于是打算趁著还能发挥余热，趁早处理掉，省得将来砸手里。</p>
+
+<p>既然要换，不如玩儿得折腾一点儿，于是小手一抖，Mac到手。</p>
+
+<p>我对Mac的OS只是有点小好奇，主要是奔著Mac的外观和做工去的，还是打算回头装Arch。玩儿了四个月，平心而论，Mac OS X确实是个不错的OS，美观程度无与伦比，结合Mac硬件的外观和做工，真是天作之合；易用性之高，确实让我有点小惊讶，多点触摸得心应手，软件安装一拖而就，相比之下，Windows显得拙劣不堪。</p>
+
+<p>如果只是作为办公和娱乐的工具，Mac可挑剔的地方确实不多。但是易用性往往和灵活性成反比，灵活性高意味著你可以随心所欲地制定自己的游戏规则，而易用性高则往往意味著你只能接受它的方式、认可它的价值观，易用并不代表顺手。</p>
+
+<p>除此之外就是软件资源的问题，Mac的免费软件相对很少，而且和Windows一样，需要先下载，再安装。虽然也有MacPorts、Homebrew，和Linux的软件仓库比起来还是差得太远。</p>
+
+<p>做惯了Archer，是可忍，孰不可忍。</p>
+
+<p>还是要装Arch。但是在制作安装介质这一步就遇著麻烦了，USB启动安装盘死活都不认，试了几种方法，无果。此外还有不少未知的问题，比如驱动等等。</p>
+
+<p>如果在几年前，在学校，有大把的时间可以糟蹋，我就跟丫死掐了。现在不行了，伤不起了。果断入手Thinkpad X220 A45，上周六把Mac出手了。</p>
+
+<p>小黑和Arch不愧是天作之合，比起当初在X200上装的时候还容易。只是小黑的多点触摸板啊，东施效颦，我想不到更贴切的词形容了，太TMD坑爹了！</p>
+
+<p>鉴于X200上4G内存被Chromium吃光光的苦逼经历，这次果断入手两根4G的三星金条，都是党的政策好啊，最近内存白菜价，两根金条才300粮票。</p>
+
+<p>从宣和八年秋十月到宣和九年春王三月，我的短暂的小白史告一段落，MacBook Pro MC700CH/A，江湖再见！</p>
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
+]]></description></item><item><title>收入AOC E2343F</title><link>http://0x3f.org/post/got-aoc-e2343f/</link><pubDate>Sun, 24 Jul 2011 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/got-aoc-e2343f/</guid><description><![CDATA[<p>当初在深圳被公司的Dell Inspiron 1300吓怕了，所以不惜重金<a href="http://0x3f.org/?p=819">收入</a>了高配的Thinkpad X200 FN3。最近越来越觉得12寸的屏幕看代码实在是太局促了。</p>
+
+<p>今天中午收到AOC E2343F，979￥，23寸屏里算是价位很低的了，不算是很好的屏，不过看看代码、电影足够了。外接到X200上，人品不错，完美屏，没坏点，桌面环境下可以使用最大1920x1080x32分辨率，但是不知道为什么，<code>hwinfo --framebuffer</code>列出的结果中没有这个最佳分辨率，<a href="http://0x3f.org/?p=1377">KMS</a>自动选用了1280x1024x32，可惜不能在<a href="http://linuxtoy.org/archives/fbterm.html">fbterm</a>下撒野了。</p>
+
+<p>下午复习了一下<a href="http://zh.wikipedia.org/wiki/阿凡达">AVATAR</a>，720P，有点儿冲动，<a href="http://0x3f.org/?p=970">Intel GMA X4500</a>还是很坚挺的。打开Vim，分割窗口，豁然开朗，对于这个根本目的，结果相当冲动。</p>
+
+<p><a href="https://picasaweb.google.com/lh/photo/4HIWgaUq4G0PV4MnMapZ1Q?feat=embedwebsite"></a></p>
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
+]]></description></item><item><title>使Thinkpad的静音按钮能被识别的方法</title><link>http://0x3f.org/post/howto-make-thinkpad-mute-button-detected-on-linux/</link><pubDate>Mon, 09 Aug 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/howto-make-thinkpad-mute-button-detected-on-linux/</guid><description><![CDATA[<p>我的型号是X200，问题表现为在GNOME或XFCE下静音按钮无效，使用xev也捕获不到输入信号，而音量增加和减小按钮可以正常使用且有OSD。</p>
+<p>解决办法是在grub的启动菜单中，给内核加上参数<strong>acpi_osi=“Linux”</strong>，如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># (0) Arch Linux</span>
+title  Arch Linux
+root   <span class="o">(</span>hd0,2<span class="o">)</span>
+kernel /boot/vmlinuz26 <span class="nv">root</span><span class="o">=</span>/dev/sda3 <span class="nv">resume</span><span class="o">=</span>/dev/sda4 ro <span class="nv">acpi_osi</span><span class="o">=</span><span class="s2">&#34;Linux&#34;</span>
+initrd /boot/kernel26.img
+</code></pre></td></tr></table>
+</div>
+</div><p>从查到的资料看，<strong>acpi_osi</strong>参数是用来指定操作系统接口的，据说有些硬件都只针对Windows做了测试或优化，对于这些硬件，如果将内核的操作系统接口指定为Linux，则有可能会出问题。所以内核从2.6.23版本开始，此参数的默认值被改成了“<strong>!Linux</strong>”，以保证更广泛的兼容性和稳定性。</p>
+<p>而根据<a href="http://www.thinkwiki.org/wiki/Mute_button">这里</a>的说法，thinkpad一直以来在对Linux的兼容程度上有很好的口碑，故可以放心添加这个参数。</p>
+<p>另外，xfce下使用OSD需要安装xfce4-volumed。</p>
+]]></description></item><item><title>被迫弃UMS而用KMS</title><link>http://0x3f.org/post/switching-from-ums-to-kms/</link><pubDate>Sat, 13 Feb 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/switching-from-ums-to-kms/</guid><description><![CDATA[<p>昨天更新了一下系统，今天开机就白屏了。于是先关掉Compiz，看了一下Archlinux的<a href="http://www.archlinux.org/news/484/">新闻</a>，发现新的<strong>xf86-video-intel</strong>中已经移除了UMS，也就意味着只能使用KMS做3D加速了。</p>
+
+<p><a href="http://www.thinkwiki.org/wiki/Intel_Graphics_Media_Accelerator_950#User_mode_setting_.28UMS.29">UMS</a>的全称是<strong>User Mode-Setting</strong>，是一种传统的图形界面初始化方案，即在X加载之后由它初始化图形界面。这种方案的弊端是虚拟终端不具备显示和处理图形的能力，同时虚拟终端和图形界面之间的切换显得缓慢并带有闪烁。</p>
+
+<p><a href="http://wiki.archlinux.org/index.php/KMS">KMS</a>的全称是<strong>Kernel Mode-Setting</strong>，是新一代图形界面初始化方案，它将图形界面的初始化由X加载之后由X负责进行改为在内核初始化时由内核进行。KMS的好处不仅仅是解决了上面UMS的问题，同时也使得Linux具备了在启动时显示漂亮的开机图示的能力。另外，在3D加速性能和低功耗方面，KMS也较UMS更胜一筹。</p>
+
+<p>我的<a href="http://0x3f.org/?p=819">Thinkpad X200</a>使用的是Intel GMA 945的芯片组，而Archlinux的<a href="http://wiki.archlinux.org/index.php/Intel_(简体中文)#KMS_.28Kernel_Mode_Setting.29">Wiki</a>上仍以915为例，所以尝试着做如下内容：</p>
+
+<p>一、去除/boot/grub/menu.lst中Kernel启动参数中的<a href="http://0x3f.org/?p=866">vga参数</a>；</p>
+
+<p>二、加入以下内容到/etc/modprobe.d/modprobe.conf：</p>
+
+<blockquote>
+  <p>options i945 modeset=1</p>
+</blockquote>
+
+<p>三、在/etc/rc.conf中的<strong>MODULES</strong>行加入<strong>intel_agp</strong>和<strong>i945</strong>；</p>
+
+<p>重启系统后，Compiz白屏问题解决，3D加速性能似乎有所上升。</p>
+]]></description></item></channel></rss>

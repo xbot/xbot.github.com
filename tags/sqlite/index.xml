@@ -1,1 +1,362 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>SQLite - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/sqlite/</link><description>SQLite - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Mon, 11 Apr 2011 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/sqlite/" rel="self" type="application/rss+xml"/><item><title>UltraBlog.vim开发手记</title><link>http://0x3f.org/post/ultrablog-development-note/</link><pubDate>Mon, 11 Apr 2011 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/ultrablog-development-note/</guid><description>对于博客已死的说法，我一点都不感到奇怪。早在几年前博客还比较火的时候我就表达过对博客泡沫的看法。 经历了短暂的tumblog的风头，微博成为现</description></item><item><title>UltraBlog.vim: Ultimate Vim Blogging Plugin</title><link>http://0x3f.org/post/ultrablog-as-an-ultimate-vim-blogging-plugin/</link><pubDate>Sat, 02 Apr 2011 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/ultrablog-as-an-ultimate-vim-blogging-plugin/</guid><description>Introduction UltraBlog.vim is yet another Vim blogging script for Wordpress. The biggest difference between UB and other similar scripts is that UB is an ultimate client, which stores posts locally in an SQLite database, while others just operate remotely. In this way, many things can be done easily by the advantage of local storage and many other utilities, for example, you can search for posts stored in the database with</description></item></channel></rss>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>SQLite - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/sqlite/</link><description>SQLite - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Mon, 11 Apr 2011 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/sqlite/" rel="self" type="application/rss+xml"/><item><title>UltraBlog.vim开发手记</title><link>http://0x3f.org/post/ultrablog-development-note/</link><pubDate>Mon, 11 Apr 2011 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/ultrablog-development-note/</guid><description><![CDATA[<p>对于<a href="http://blog.sina.com.cn/s/blog_694377f90100rmko.html">博客已死</a>的说法，我一点都不感到奇怪。早在几年前博客还比较火的时候我就表达过对博客泡沫的<a href="http://0x3f.org/?p=209">看法</a>。</p>
+
+<p>经历了短暂的<a href="http://0x3f.org/?p=354">tumblog</a>的风头，微博成为现在最火的媒介。说博客已死，无非就是说微博将成为个人信息传播的主流。好吧，现在我知道那时候我所说的不懂什么是博客的人都去干什么了。</p>
+
+<p>但是博客还是会继续发展，微博的兴起只会减少滥竽充数。因为微博突出的是时效性，最缺乏的是系统性和可重复更新的能力。微博的短处，正是博客的长处。这让我对博客有了一个新的、迟到了很久的认识──一个好的博客，它的文章不应该是写掉就忘的，而应该是不断地更新著的。</p>
+
+<p><a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>就是出于这个需要而写的。</p>
+
+<p>我对博客客户端的使用大概可以追溯到四五年前，那时候博客正火，在比较了几个<a href="http://en.wikipedia.org/wiki/Blog_service_provider">BSP</a>后选择了<a href="http://www.blogcn.com/">中国博客网</a>，就是因为他们提供桌面客户端。后来独博之后也试用过几个通用的客户端，但都没坚持多久，最根本的原因是它们几乎无一例外地都是<a href="http://zh.wikipedia.org/wiki/%E6%89%80%E8%A6%8B%E5%8D%B3%E6%89%80%E5%BE%97">WYSIWYG</a>。而WYSIWYG的编辑器生成的HTML源码几乎都使用inline的样式，这就导致文章的排版布局很难控制，我对WYSIWYG其实是很抵触的，至今都不怎么用Office这类东西。</p>
+
+<p>后来我意识到，我所需要的是样式与内容分离，于是准备自己写一个<a href="http://0x3f.org/?p=331">客户端</a>，后来由于工作的原因不了了之。与此同时，我自定义了一套文章格式并用Java写了一个转换文章到HTML的<a href="http://0x3f.org/?p=342">工具</a>，直到后来发现<a href="http://0x3f.org/?p=383">Markdown</a>，我才知道我其实是需要一个轻量标记语言。</p>
+
+<p>使用Markdown之后，写博客开始变得轻松愉快。我一度用过一段时间<a href="http://www.scintilla.org/SciTE.html">SciTE</a>，还用<a href="http://zh.wikipedia.org/wiki/Lua">Lua</a>写了个<a href="http://0x3f.org/?p=499">辅助脚本</a>。但是我需要一个完整的客户端来管理文章，而这是一个编辑器所不能胜任的，所以就著手实现一个支持Markdown的<a href="http://0x3f.org/?p=812">客户端</a>。这一次走得比较远，<a href="http://0x3f.org/?p=812">ForeverFantasy</a>最终达到了可用的程度，我一度用它写过一段时间的博客。但是作为一个Vim重症患者，wxPython的编辑器部件是远远达不到我需要的水平的。虽然后来还<a href="http://0x3f.org/?p=1409">实现</a>了调用外部程序处理文章内容（<em>当然也可以调用Vim</em>），但总归觉得不舒服，至今已经一年没更新了。</p>
+
+<p>直到前段时间试用了一下<a href="http://0x3f.org/?p=1861">VimRepress</a>，在修改这个插件的时候突然受到启发，我这几年的需求原来是可以这么简单地解决的。</p>
+
+<p>其实在几年前<a href="http://www.vim.org/scripts/script.php?script_id=1953">vimpress</a>刚刚发布的时候我就了解过这个东西，包括此后接连发布的几个Vim写博客的插件，它们和我原来写的SciTE的那个辅助脚本没有本质的区别，都是博客编辑器。与完整的客户端相比，编辑器缺少对本地文章源码的管理，而且它们不记录文章源码和发布的文章的关联关系，简单地说是无状态的。这不符合博客文章持续更新的观点。</p>
+
+<p>UltraBlog.vim使用<a href="http://www.sqlalchemy.org/">SQLAlchemy</a>做数据库抽象层，将所有文章的源码及其状态保存在本地的一个SQLite数据库中，并且以此为基础，通过<a href="http://en.wikipedia.org/wiki/XML-RPC">XMLRPC</a>接口实现对博客文章、页面的<a href="http://en.wikipedia.org/wiki/Create,_read,_update_and_delete">CRUD</a>操作。同时利用Vim分模式的特点实现了可分页的文章列表和文章编辑视图。</p>
+
+<p>UltraBlog.vim目前支持Markdown和HTML两种格式的文章，它最大的特点是在Markdown格式的源码和发布到博客中的文章之间建立联系，你可以随时修改本地数据库中的Markdown源码并更新博客中对应的文章。</p>
+
+<p>新的功能还会不断地加入。</p>
+
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
+]]></description></item><item><title>UltraBlog.vim: Ultimate Vim Blogging Plugin</title><link>http://0x3f.org/post/ultrablog-as-an-ultimate-vim-blogging-plugin/</link><pubDate>Sat, 02 Apr 2011 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/ultrablog-as-an-ultimate-vim-blogging-plugin/</guid><description><![CDATA[<h2>Introduction</h2>
+<p>UltraBlog.vim is yet another Vim blogging script for Wordpress.</p>
+<p>The biggest difference between UB and other similar scripts is that UB is an ultimate client, which stores posts locally in an SQLite database, while others just operate remotely. In this way, many things can be done easily by the advantage of local storage and many other utilities, for example, you can search for posts stored in the database with a few keywords by typing a simple command, also you can preview drafts with any of your favorite templates as soon as you want to.</p>
+<p>For those who just needs a lightweight blog editor similar as other Vim blogging scripts, UB also comes with an Editor Mode, which doesn&rsquo;t create a database and store data in it.</p>
+<p>In addition, UB is tending to make life easier for writing posts with many kinds of lightweight markup languages, currently the following kinds are supported: Markdown, reStructuredText, LaTeX, Textile and of cause HTML.</p>
+<p>Enjoy Vim blogging !</p>
+<p><a href="/post/ultrablog-development-note/" rel="">Here</a> is a post written in Chinese describing the motion for which I wrote UltraBlog.vim.</p>
+<h2>Features</h2>
+<ul>
+<li>Multiple syntax support: Markdown, HTML, reStructuredText, LaTeX, Textile.</li>
+<li>Editor mode and client mode.</li>
+<li>Data is stored in a local SQLite database in client mode.</li>
+<li>Full-text search with keywords highlighted.</li>
+<li>Full-text search by using regular expressions.</li>
+<li>Full-text substitutions.</li>
+<li>Full-text substitutions using regular expressions.</li>
+<li>Templates for previewing posts.</li>
+<li>Built-in web browser, much faster to preview items.</li>
+<li>Event-driven system.</li>
+<li>I18N.</li>
+</ul>
+<h2>Tutorial</h2>
+<h3>Requirement</h3>
+<p>UltraBlog.vim takes advantages from the following techs:</p>
+<ul>
+<li>Vim with python support</li>
+<li><a href="http://www.sqlalchemy.org" target="_blank" rel="noopener noreffer">SQLAlchemy</a> v0.7 or newer</li>
+<li><a href="http://www.freewisdom.org/projects/python-markdown/" target="_blank" rel="noopener noreffer">python-markdown</a> or <a href="https://github.com/trentm/python-markdown2" target="_blank" rel="noopener noreffer">python-markdown2</a></li>
+<li><a href="http://johnmacfarlane.net/pandoc/" target="_blank" rel="noopener noreffer">pandoc</a></li>
+</ul>
+<p>You must have these prerequisites met before using UltraBlog.vim. For more information, refer to <strong>UltraBlog_Prerequisites</strong> in the help file.</p>
+<h3>Installation</h3>
+<p>Download UltraBlog.vim from <a href="http://www.vim.org/scripts/script.php?script_id=3532" target="_blank" rel="noopener noreffer">Vim.org</a> or retrieve the latest source from Github:</p>
+<p><a href="https://github.com/xbot/UltraBlog.vim">https://github.com/xbot/UltraBlog.vim</a></p>
+<p>Install UltraBlog.vim to your plugin folder and put the following lines in your vimrc file:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-vim" data-lang="vim"><span class="k">let</span> <span class="nx">ub_blog</span> <span class="p">=</span> {<span class="s1">&#39;login_name&#39;</span>:<span class="s1">&#39;admin&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>            \<span class="s1">&#39;password&#39;</span>:<span class="s1">&#39;pass2011&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>            \<span class="s1">&#39;url&#39;</span>:<span class="s1">&#39;http://www.sample.com&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>            \<span class="s1">&#39;xmlrpc_uri&#39;</span>:<span class="s1">&#39;xmlrpc.php&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>            \<span class="s1">&#39;db&#39;</span>:<span class="s1">&#39;~/.vim/UltraBlog.db&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>            \<span class="s1">&#39;categories&#39;</span>:<span class="s1">&#39;News|Computer|Image&#39;</span><span class="err">
+</span><span class="err"></span>            \}<span class="err">
+</span><span class="err"></span><span class="c">
+</span><span class="c">&#34; Set this option to 1 if you want to enable debug mode, see :help ub_debug for more information</span><span class="err">
+</span><span class="err"></span><span class="k">let</span> <span class="nx">ub_debug</span> <span class="p">=</span> <span class="m">0</span><span class="err">
+</span><span class="err"></span><span class="c">
+</span><span class="c">&#34; Set this option to 0 if you prefer using firefox or chromium to preview items.</span><span class="err">
+</span><span class="err"></span><span class="k">let</span> <span class="nx">ub_use_ubviewer</span> <span class="p">=</span> <span class="m">1</span><span class="err">
+</span><span class="err"></span><span class="c">
+</span><span class="c">&#34; Default timeout period of xmlrpc operations, see :help ub_socket_timeout for more information</span><span class="err">
+</span><span class="err"></span><span class="k">let</span> <span class="nx">ub_socket_timeout</span> <span class="p">=</span> <span class="m">10</span><span class="err">
+</span><span class="err"></span><span class="c">
+</span><span class="c">&#34; Default page size of local post list, see :help ub_local_pagesize for more information</span><span class="err">
+</span><span class="err"></span><span class="k">let</span> <span class="nx">ub_local_pagesize</span> <span class="p">=</span> <span class="m">30</span><span class="err">
+</span><span class="err"></span><span class="c">
+</span><span class="c">&#34; Default page size of remote post list, see :help ub_remote_pagesize for more information</span><span class="err">
+</span><span class="err"></span><span class="k">let</span> <span class="nx">ub_remote_pagesize</span> <span class="p">=</span> <span class="m">15</span><span class="err">
+</span><span class="err"></span><span class="c">
+</span><span class="c">&#34; Default page size of search result list, see :help ub_search_pagesize for more information</span><span class="err">
+</span><span class="err"></span><span class="k">let</span> <span class="nx">ub_search_pagesize</span> <span class="p">=</span> <span class="m">30</span><span class="err">
+</span><span class="err"></span><span class="c">
+</span><span class="c">&#34; Proudly show your visitors that you are blogging with the world&#39;s most powerful editor</span><span class="err">
+</span><span class="err"></span><span class="k">let</span> <span class="nx">ub_append_promotion_link</span> <span class="p">=</span> <span class="m">1</span><span class="err">
+</span><span class="err"></span><span class="c">
+</span><span class="c">&#34; Set width of the local id column in post or page lists</span><span class="err">
+</span><span class="err"></span><span class="k">let</span> <span class="nx">ub_list_col1_width</span> <span class="p">=</span> <span class="m">7</span><span class="err">
+</span><span class="err"></span><span class="c">
+</span><span class="c">&#34; Set width of the remote id column in post or page lists</span><span class="err">
+</span><span class="err"></span><span class="k">let</span> <span class="nx">ub_list_col2_width</span> <span class="p">=</span> <span class="m">8</span><span class="err">
+</span><span class="err"></span><span class="c">
+</span><span class="c">&#34; Set width of the status column in post or page lists</span><span class="err">
+</span><span class="err"></span><span class="k">let</span> <span class="nx">ub_list_col3_width</span> <span class="p">=</span> <span class="m">11</span><span class="err">
+</span><span class="err"></span><span class="c">
+</span><span class="c">&#34; Set this value to 1 if you want to use editor mode.</span><span class="err">
+</span><span class="err"></span><span class="k">let</span> <span class="nx">ub_editor_mode</span> <span class="p">=</span> <span class="m">0</span><span class="err">
+</span><span class="err"></span><span class="c">
+</span><span class="c">&#34; Set this value to 1 if you want to save posts/pages immediately after they are fetched from the blog.</span><span class="err">
+</span><span class="err"></span><span class="k">let</span> <span class="nx">ub_save_after_opened</span> <span class="p">=</span> <span class="m">0</span><span class="err">
+</span><span class="err"></span><span class="c">
+</span><span class="c">&#34; Set this value to 0 if you do not want to save posts/pages immediately after they are sent to the blog.</span><span class="err">
+</span><span class="err"></span><span class="k">let</span> <span class="nx">ub_save_after_sent</span> <span class="p">=</span> <span class="m">1</span><span class="err">
+</span><span class="err"></span><span class="c">
+</span><span class="c">&#34; Set the following options to use a custom extenal command as the converter.</span><span class="err">
+</span><span class="err"></span><span class="k">let</span> <span class="nx">ub_converter_command</span> <span class="p">=</span> <span class="s1">&#39;pandoc&#39;</span><span class="err">
+</span><span class="err"></span><span class="k">let</span> <span class="nx">ub_converter_options</span> <span class="p">=</span> [<span class="s1">&#39;--reference-links&#39;</span>]<span class="err">
+</span><span class="err"></span><span class="k">let</span> <span class="nx">ub_converter_option_from</span> <span class="p">=</span> <span class="s1">&#39;--from=%s&#39;</span><span class="err">
+</span><span class="err"></span><span class="k">let</span> <span class="nx">ub_converter_option_to</span> <span class="p">=</span> <span class="s1">&#39;--to=%s&#39;</span><span class="err">
+</span><span class="err"></span><span class="c">
+</span><span class="c">&#34; Customize hotkeys</span><span class="err">
+</span><span class="err"></span><span class="k">let</span> <span class="nx">ub_hotkey_open_item_in_current_view</span><span class="p">=</span><span class="s1">&#39;&lt;enter&gt;&#39;</span><span class="err">
+</span><span class="err"></span><span class="k">let</span> <span class="nx">ub_hotkey_open_item_in_splitted_view</span><span class="p">=</span><span class="s1">&#39;&lt;s-enter&gt;&#39;</span><span class="err">
+</span><span class="err"></span><span class="k">let</span> <span class="nx">ub_hotkey_open_item_in_tabbed_view</span><span class="p">=</span><span class="s1">&#39;&lt;c-enter&gt;&#39;</span><span class="err">
+</span><span class="err"></span><span class="k">let</span> <span class="nx">ub_hotkey_delete_item</span><span class="p">=</span><span class="s1">&#39;&lt;del&gt;&#39;</span><span class="err">
+</span><span class="err"></span><span class="k">let</span> <span class="nx">ub_hotkey_save_current_item</span><span class="p">=</span><span class="s1">&#39;&lt;C-S&gt;&#39;</span><span class="err">
+</span><span class="err"></span><span class="c">
+</span><span class="c">&#34; Set the link template string for images uploaded by :UBUpload</span><span class="err">
+</span><span class="err"></span><span class="k">let</span> <span class="nx">ub_tmpl_img_url</span><span class="p">=</span><span class="s2">&#34;markdown###![$(file)s][]\n[$(file)s]:%(url)s&#34;</span><span class="err">
+</span><span class="err"></span><span class="c">
+</span><span class="c">&#34; Set the default template to use when previewing posts/pages locally</span><span class="err">
+</span><span class="err"></span><span class="k">let</span> <span class="nx">ub_default_template</span><span class="p">=</span><span class="s2">&#34;default&#34;</span><span class="err">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>Change values of the upper options to yours. Restart Vim and a database file will be created in the path you specified above.</p>
+<h3>Concepts</h3>
+<p>It is important to understand some basic concepts of UltraBlog.vim.</p>
+<h4>Modes</h4>
+<p>UltraBlog.vim makes life easier while writing or updating blogs. It stores posts/pages in a local SQLite database. You can also set it to editor mode, in which UltraBlog.vim does not store data locally, just like other Vim blogging scripts.</p>
+<p>By default, UltraBlog.vim is in client mode. You can set it to use editor mode by adding the fallowing line to the vimrc file:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-vim" data-lang="vim"><span class="k">let</span> <span class="nx">ub_editor_mode</span> <span class="p">=</span> <span class="m">1</span><span class="err">
+</span></code></pre></td></tr></table>
+</div>
+</div><h4>Items</h4>
+<p>Currently, UltraBlog.vim manages three items: post, page and tmpl. &ldquo;tmpl&rdquo; is the shorthand of &ldquo;template&rdquo;.</p>
+<p>Templates are used to preview the current post/page in the browser locally. This feature is a reparation for the remote previewing, due to the limit of the API, users cannot send a post to Wordpress as draft and preview it without affecting the post status if the post has been published.</p>
+<p>With templates, users can preview posts/pages directly in the browser in a pre-defined style. They can create as many templates as they like and customize the look with CSS and HTML, or even Javascript.</p>
+<p>Templates should be formatted as a valid python template string, that is, use the following avaliable placeholders and escape any literal &lsquo;%&rsquo; with another &lsquo;%':</p>
+<blockquote>
+<ol>
+<li>%(title)s<br />
+   The title of the current post/page.</li>
+<li>%(content)s<br />
+   The content of the current post/page.</li>
+<li>%%<br />
+   A literal '%'.</li>
+</ol>
+</blockquote>
+<p>There is a default template in the database, whose name is &lsquo;default&rsquo;, which can be used as an example of template.</p>
+<p>Users can specify the default template to use with the option <strong>ub_default_template</strong>.</p>
+<h4>Syntaxes</h4>
+<p>The syntaxes supported by UltraBlog.vim currently are:</p>
+<blockquote>
+<p>markdown, html, rst, textile, latex.</p>
+</blockquote>
+<h4>Statuses</h4>
+<p>The available statuses are:</p>
+<blockquote>
+<p>publish, private, draft, pending.</p>
+</blockquote>
+<h4>Scopes</h4>
+<p>Scopes tells UltraBlog.vim to operate on items in which place, &ldquo;local&rdquo; stands for items stored in the database, and &ldquo;remote&rdquo; stands for the blog.</p>
+<h2>Usage</h2>
+<h4>Create a new item</h4>
+<p><code>:UBNew [item [syntax/template_name]]</code></p>
+<p>Create a new item.</p>
+<p>For the first parameter, refer to <strong>UltraBlog_Items</strong>. The default value is &ldquo;post&rdquo;.</p>
+<p>If &ldquo;item&rdquo; is either &ldquo;post&rdquo; or &ldquo;page&rdquo;, the second parameter must be a syntax name, refer to <strong>UltraBlog_Syntaxes</strong>. The default value is &ldquo;markdown&rdquo;.</p>
+<p>If &ldquo;item&rdquo; is &ldquo;tmpl&rdquo;, the second parameter should be the name of the new template.</p>
+<p>When the cursor is focused in the metadata line of categories, press <strong><C-X><C-U></strong> to do auto-completion. This will use the data set by option ub_blog[&lsquo;categories&rsquo;], if it is not set, categories will be fetched from your blog.</p>
+<h4>Save a modified post</h4>
+<p><code>:UBSave</code></p>
+<p>After executing this command, the current buffer is saved into database.</p>
+<h4>Send a post to blog</h4>
+<p><code>:UBSend [status]</code></p>
+<p>Post an item.</p>
+<p>If no parameter is given, UltraBlog.vim will send the item to blog and set it to be the value stored in the meta information area.</p>
+<p>Refer to <strong>UltraBlog_Statuses</strong>.</p>
+<h4>List posts</h4>
+<p><code>:UBList [item [scope [page_size [page_no]]]]</code></p>
+<p>List items.</p>
+<p>Refer to <strong>UltraBlog_Items</strong> for the first parameter. The default value of this parameter is &ldquo;post&rdquo;.</p>
+<p>The second parameter &ldquo;scope&rdquo; is only available when &ldquo;item&rdquo; is either &ldquo;post&rdquo; or &ldquo;page&rdquo;. Refer to <strong>UltraBlog_Scopes</strong>.</p>
+<p>&ldquo;page_size&rdquo; and &ldquo;page_no&rdquo; are both for the situation when &ldquo;item&rdquo; is &ldquo;post&rdquo; and &ldquo;scope&rdquo; is &ldquo;local&rdquo;. The former stands for how many item will be listed a page. The latter stands for the page number.</p>
+<p>For example:</p>
+<p><code>:UBList</code></p>
+<p>This command lists the first page of local posts, by default, posts which have not been posted to blog are listed before the posted ones, and there are <strong>ub_local_pagesize</strong> posts a page.</p>
+<p><code>:UBList post local 20 3</code></p>
+<p>This command lists the third page of local posts, 20 posts a page. As you see, you can use this command to scroll forward or back between pages. As a matter of fact, there are two key mappings within local post list:</p>
+<ul>
+<li>CTRL+PageDown</li>
+<li>CTRL+PageUp</li>
+</ul>
+<p><code>:UBList post remote 50</code></p>
+<p>This command lists the latest 50 posts in the blog.</p>
+<p>Pressing the ENTER key in a remote post list will open the post under cursor and save it to the local database if it is not in it, otherwise, the local copy will be opened instead of the remote one. This enables users to modify markdown source and update the remote post.</p>
+<p>The remote post list doesn&rsquo;t support paging.</p>
+<h4>Open a single post</h4>
+<p><code>:UBOpen {item} {post_id/template_name} [scope]</code></p>
+<p>Open an item.</p>
+<p>For the first parameter, refer to <strong>UltraBlog_Items</strong>.</p>
+<p>If &ldquo;item&rdquo; is either &ldquo;post&rdquo; or &ldquo;page&rdquo;, the second parameter should be value of its id. If it&rsquo;s &ldquo;tmpl&rdquo;, the name.</p>
+<p>For &ldquo;scope&rdquo;, refer to <strong>UltraBlog_Scopes</strong>. The default value is &ldquo;local&rdquo;.</p>
+<h4>Upload a media</h4>
+<p><code>:UBUpload {file_path}</code></p>
+<p>This command can only be executed in a post edit view, and the URL of the uploaed file will be appended in that buffer.</p>
+<h4>Preview the changes</h4>
+<p><code>:UBPreview [status/template name]</code></p>
+<p>Preview the content of the current buffer.</p>
+<p>If any of the <strong>UltraBlog_Statuses</strong> is given, the current buffer will be sent to the blog and then opened in the browser with a parameter &ldquo;preview&rdquo; appended to the URL.</p>
+<p>If the given parameter is not a post status, a pre-defined template whose name is the same with the parameter will be used to preview the buffer locally.</p>
+<p>If none is given, the default template is used.</p>
+<p>You do not have to care for which syntax you use, markdown source will be translated into html automatically before a browser window is opened to display it.</p>
+<p>The matter that whether to use the built-in web browser or the system default ones is controlled by the option <strong>ub_use_ubviewer</strong>.</p>
+<h4>Delete a post/page</h4>
+<p><code>:UBDel {item} {post_id/template_name} [scope]</code></p>
+<p>Delete an item.</p>
+<p>Refer to <strong>UBOpen</strong> for the usage of these options.</p>
+<p>You can also delete items in the list by pressing the DELETE button on the target. In a local post list, if the post to be deleted has been posted to the blog, a confirmation will be prompted for you to decide whether to delete the remote copy cascadly.</p>
+<h4>Create a post/page using content of the current buffer</h4>
+<p><code>:UBThis [item [to_syntax [from_syntax]]]</code></p>
+<p>Create a new post or page which is filled with content in the current buffer.</p>
+<p>If no parameter is specified, the first parameter will be default to &ldquo;post&rdquo;; for the second and the third one, the syntax of the current buffer is used.</p>
+<p>Content of the current buffer will be automatically converted from the <strong>from_syntax</strong> to the <strong>to_syntax</strong>.</p>
+<h4>Convert a post/page buffer between the available syntaxes</h4>
+<p><code>:UBConv {to_syntax} [from_syntax]</code></p>
+<p>Convert the current buffer from &lsquo;from_syntax&rsquo; to &lsquo;to_syntax&rsquo;.</p>
+<p>Refer to <strong>UltraBlog_Syntaxes</strong>.</p>
+<p>If you only need to convert from Markdown to HTML, only python-markdown or python-markdown2 module is required. For other conversion scenarios, you must install pacdoc or use the options: <strong>ub_converter_command</strong>, <strong>ub_converter_options</strong>, <strong>ub_converter_option_from</strong>, <strong>ub_converter_option_to</strong> to specify a valid external command.</p>
+<h4>Refresh the current buffer</h4>
+<p><code>:UBRefresh</code></p>
+<h4>Full-text search</h4>
+<p><code>:UBFind keyword1 [keyword2 &hellip;]</code></p>
+<p>Doing full-text searches for both posts and pages by keywords, all keywords will be highlighted. Page size of the search result list is controlled by option <strong>ub_search_pagesize</strong>.</p>
+<p><code>:UBRegexSearch regexp1 [regexp2 &hellip;]</code></p>
+<p>Doing full-text searches for both posts and pages by regular expressions, all strings that match the regular expressions will be highlighted. Page size of the search result list is controlled by <strong>ub_search_pagesize</strong>.</p>
+<h4>Full-text substitutions</h4>
+<p><strong>Attention:</strong> Full-text substitutions will change contents of all matched posts/pages immediately when executed. You may need to backup your database file first.</p>
+<p><code>:UBReplace needle replacement</code></p>
+<p>Do full-text substitutions.</p>
+<p><code>:UBRegexReplace regexp replacement</code></p>
+<p>Do full-text substitutions using regular expressions.</p>
+<h4>Debug</h4>
+<p>In debug mode, SQL statements being executed will be displayed and so are all stack traces of exceptions raised.</p>
+<p><code>:UBEnableDebug</code></p>
+<p>Enable debugging.</p>
+<p><code>:UBDisableDebug</code></p>
+<p>Disable debugging.</p>
+<p><code>:UBToggleDebug</code></p>
+<p>Toggle debugging status.</p>
+<h3>Options</h3>
+<p>For more detail information on tweaking UltraBlog.vim, refer to the documentation.</p>
+<h2>Tips</h2>
+<ul>
+<li>Install syntax files for any light weight markup language you use to highlight the posts/pages.</li>
+<li><a href="/post/enable-code-snippet-highlighting-for-ultrablog-vim-templates/" rel="">Enable Code Snippet Highlighting For UltraBlog.vim Templates</a></li>
+</ul>
+<h2>News</h2>
+<ul>
+<li>2014-04-20 v3.6.1 released. <a href="https://github.com/xbot/UltraBlog.vim/wiki/Changelog" target="_blank" rel="noopener noreffer">Changes</a></li>
+<li>2012-04-30 v3.5.0 released. <a href="https://github.com/xbot/UltraBlog.vim/wiki/Changelog" target="_blank" rel="noopener noreffer">Changes</a></li>
+<li>2012-04-29 v3.4.0 released. <a href="https://github.com/xbot/UltraBlog.vim/wiki/Changelog" target="_blank" rel="noopener noreffer">Changes</a></li>
+<li>2012-04-15 v3.3.0 released. <a href="https://github.com/xbot/UltraBlog.vim/wiki/Changelog" target="_blank" rel="noopener noreffer">Changes</a></li>
+<li>2012-01-05 v3.2.0 released. <a href="https://github.com/xbot/UltraBlog.vim/wiki/Changelog" target="_blank" rel="noopener noreffer">Changes</a></li>
+<li>2011-11-01 v3.1.0 released. <a href="https://github.com/xbot/UltraBlog.vim/wiki/Changelog" target="_blank" rel="noopener noreffer">Changes</a></li>
+<li>2011-07-24 v3.0.0 released. <a href="https://github.com/xbot/UltraBlog.vim/wiki/Changelog" target="_blank" rel="noopener noreffer">Changes</a></li>
+<li>2011-06-15 v2.3.1 released. <a href="https://github.com/xbot/UltraBlog.vim/wiki/Changelog" target="_blank" rel="noopener noreffer">Changes</a></li>
+<li>2011-06-10 v2.3.0 released. <a href="https://github.com/xbot/UltraBlog.vim/wiki/Changelog" target="_blank" rel="noopener noreffer">Changes</a></li>
+<li>2011-05-30 v2.2.0 released. <a href="https://github.com/xbot/UltraBlog.vim/wiki/Changelog" target="_blank" rel="noopener noreffer">Changes</a></li>
+<li>2011-05-28 v2.1.0 released. <a href="https://github.com/xbot/UltraBlog.vim/wiki/Changelog" target="_blank" rel="noopener noreffer">Changes</a></li>
+<li>2011-05-12 v2.0.1 released. <a href="https://github.com/xbot/UltraBlog.vim/wiki/Changelog" target="_blank" rel="noopener noreffer">Changes</a></li>
+<li>2011-04-14 v2.0.0 released. <a href="https://github.com/xbot/UltraBlog.vim/wiki/Changelog" target="_blank" rel="noopener noreffer">Changes</a></li>
+<li>2011-04-12 v1.4.0 released. <a href="https://github.com/xbot/UltraBlog.vim/wiki/Changelog" target="_blank" rel="noopener noreffer">Changes</a></li>
+<li>2011-04-09 v1.3.0 released. <a href="https://github.com/xbot/UltraBlog.vim/wiki/Changelog" target="_blank" rel="noopener noreffer">Changes</a></li>
+<li>2011-04-07 v1.2.0 released. <a href="https://github.com/xbot/UltraBlog.vim/wiki/Changelog" target="_blank" rel="noopener noreffer">Changes</a></li>
+<li>2011-04-05 v1.1.0 released. <a href="https://github.com/xbot/UltraBlog.vim/wiki/Changelog" target="_blank" rel="noopener noreffer">Changes</a></li>
+<li>2011-04-04 v1.0.5 released. <a href="https://github.com/xbot/UltraBlog.vim/wiki/Changelog" target="_blank" rel="noopener noreffer">Changes</a></li>
+<li>2011-04-02 v1.0.4 released. <a href="https://github.com/xbot/UltraBlog.vim/wiki/Changelog" target="_blank" rel="noopener noreffer">Changes</a></li>
+<li>2011-04-02 v1.0.3 released. <a href="https://github.com/xbot/UltraBlog.vim/wiki/Changelog" target="_blank" rel="noopener noreffer">Changes</a></li>
+<li>2011-04-02 v1.0.2 released. <a href="https://github.com/xbot/UltraBlog.vim/wiki/Changelog" target="_blank" rel="noopener noreffer">Changes</a></li>
+<li>2011-04-01 v1.0.1 released. <a href="https://github.com/xbot/UltraBlog.vim/wiki/Changelog" target="_blank" rel="noopener noreffer">Changes</a></li>
+<li>2011-04-01 v1.0.0 released. <a href="https://github.com/xbot/UltraBlog.vim/wiki/Changelog" target="_blank" rel="noopener noreffer">Changes</a></li>
+</ul>
+<p>Posted via <a href="/post/ultrablog-as-an-ultimate-vim-blogging-plugin/" rel="">UltraBlog.vim</a>.</p>
+]]></description></item></channel></rss>

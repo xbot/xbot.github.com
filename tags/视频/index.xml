@@ -1,1 +1,146 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>视频 - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/%E8%A7%86%E9%A2%91/</link><description>视频 - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sat, 28 Aug 2010 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/%E8%A7%86%E9%A2%91/" rel="self" type="application/rss+xml"/><item><title>批量下载视频的BASH脚本</title><link>http://0x3f.org/post/a-bash-script-downloading-videos-in-batch/</link><pubDate>Sat, 28 Aug 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/a-bash-script-downloading-videos-in-batch/</guid><description>两周前为了批量下载某视频网站中的电视剧，写了个BASH脚本。将电视剧列表页面的URL地址作为唯一参数传给脚本，然后就会把所有视频下载到当前目</description></item></channel></rss>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>视频 - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/%E8%A7%86%E9%A2%91/</link><description>视频 - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sat, 28 Aug 2010 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/%E8%A7%86%E9%A2%91/" rel="self" type="application/rss+xml"/><item><title>批量下载视频的BASH脚本</title><link>http://0x3f.org/post/a-bash-script-downloading-videos-in-batch/</link><pubDate>Sat, 28 Aug 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/a-bash-script-downloading-videos-in-batch/</guid><description><![CDATA[<p>两周前为了批量下载某视频网站中的电视剧，写了个BASH脚本。将电视剧列表页面的URL地址作为唯一参数传给脚本，然后就会把所有视频下载到当前目录下，并自动重命名，同时生成一个M3U格式的播放列表。</p>
+<p>由于在线视频不支持断点续传，所以对于单个视频来说无法实现。但对于整个批量下载任务来说，实现了宏观上的断点续传，已经下载的视频不会被重复下载。由于有些视频网站会在午夜更改视频地址，所以这一点很有用。</p>
+<p>主流视频网站应该是都支持的，我只测试了我下载电视剧的网站，<strong>不支持的都是非主流的！</strong></p>
+<p>唯一可能需要注意的依赖是PHP，必须安装后才能使用。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="cp">#!/bin/bash
+</span><span class="cp"></span>
+print_help_msg <span class="o">()</span> <span class="o">{</span>
+    <span class="nb">echo</span> <span class="s2">&#34;You see, I&#39;m nothing .&#34;</span>
+    <span class="nb">exit</span> <span class="m">0</span>
+<span class="o">}</span>
+
+check_param <span class="o">()</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">[</span> <span class="nv">$#</span> -ne <span class="m">1</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+        print_help_msg
+    <span class="k">fi</span>
+<span class="o">}</span>
+
+check_m3u <span class="o">()</span> <span class="o">{</span>
+    <span class="k">if</span> ! <span class="o">[</span> -a p.m3u <span class="o">]</span> <span class="o">||</span> <span class="o">[</span> <span class="sb">`</span>wc -l p.m3u<span class="p">|</span>awk <span class="s1">&#39;{ print $1 }&#39;</span><span class="sb">`</span> -eq <span class="m">0</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+        <span class="nb">echo</span> <span class="s1">&#39;#EXTM3U&#39;</span> &gt; p.m3u
+    <span class="k">fi</span>
+<span class="o">}</span>
+
+check_param <span class="nv">$*</span>
+check_m3u
+
+<span class="nb">export</span> <span class="nv">LC_ALL</span><span class="o">=</span>en_US.UTF-8
+
+<span class="nv">ue</span><span class="o">=</span><span class="k">$(</span>php -r <span class="s2">&#34;echo urlencode(&#39;</span><span class="nv">$1</span><span class="s2">&#39;);&#34;</span><span class="k">)</span>
+<span class="nv">parser</span><span class="o">=</span><span class="s2">&#34;http://www.flvcd.com/parse.php?flag=&amp;format=&amp;kw=</span><span class="nv">$ue</span><span class="s2">&amp;sbt=%BF%AA%CA%BCGO%21&#34;</span>
+<span class="k">if</span> ! wget <span class="nv">$parser</span> -U mozilla -O meta.html <span class="p">;</span> <span class="k">then</span>
+    <span class="nb">echo</span> <span class="s2">&#34;Unable to touch the parser, check network status for the cause .&#34;</span>
+    <span class="nb">exit</span> <span class="m">0</span>
+<span class="k">fi</span>
+
+grep <span class="s2">&#34;&lt;N&gt;&#34;</span> meta.html &gt; title.lst
+grep <span class="s2">&#34;&lt;U&gt;&#34;</span> meta.html &gt; url.lst
+iconv -f gbk -t utf-8 title.lst -o title.lst
+sed -i <span class="s1">&#39;s/&lt;N&gt;//g&#39;</span> title.lst
+sed -i <span class="s1">&#39;s/ //g&#39;</span> title.lst
+sed -i <span class="s1">&#39;s/&lt;U&gt;//g&#39;</span> url.lst
+
+<span class="nv">l1</span><span class="o">=</span><span class="sb">`</span>wc -l title.lst<span class="p">|</span>awk <span class="s1">&#39;{ print $1 }&#39;</span><span class="sb">`</span>
+<span class="nv">l2</span><span class="o">=</span><span class="sb">`</span>wc -l url.lst<span class="p">|</span>awk <span class="s1">&#39;{ print $1 }&#39;</span><span class="sb">`</span>
+<span class="k">if</span> <span class="o">[</span> <span class="s2">&#34;</span><span class="nv">$l1</span><span class="s2">&#34;</span> !<span class="o">=</span> <span class="s2">&#34;</span><span class="nv">$l2</span><span class="s2">&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+    <span class="nb">echo</span> <span class="s2">&#34;Title.lst has </span><span class="nv">$l1</span><span class="s2"> lines, but url.lst got </span><span class="nv">$l2</span><span class="s2">.&#34;</span>
+    <span class="nb">exit</span> <span class="m">0</span>
+<span class="k">fi</span>
+<span class="k">if</span> <span class="o">[</span> <span class="nv">$l1</span> -eq <span class="m">0</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+    <span class="nb">echo</span> <span class="s2">&#34;Nothing got from the parser, check meta.html for detail info.&#34;</span>
+    <span class="nb">exit</span> <span class="m">0</span>
+<span class="k">fi</span>
+
+<span class="nv">arrTitle</span><span class="o">=(</span><span class="sb">`</span>cat title.lst<span class="sb">`</span><span class="o">)</span>
+<span class="nv">arrURL</span><span class="o">=(</span><span class="sb">`</span>cat url.lst<span class="sb">`</span><span class="o">)</span>
+
+<span class="nv">idx</span><span class="o">=</span><span class="k">$((</span><span class="sb">`</span>wc -l p.m3u<span class="p">|</span>awk <span class="s1">&#39;{ print $1 }&#39;</span><span class="sb">`</span><span class="o">-</span><span class="m">1</span><span class="k">))</span>
+<span class="k">while</span> <span class="o">[</span> <span class="nv">$idx</span> -lt <span class="nv">$l1</span> <span class="o">]</span><span class="p">;</span> <span class="k">do</span>
+    <span class="nv">title</span><span class="o">=</span><span class="si">${</span><span class="nv">arrTitle</span><span class="p">[</span><span class="nv">$idx</span><span class="p">]</span><span class="si">}</span>
+    <span class="nv">url</span><span class="o">=</span><span class="si">${</span><span class="nv">arrURL</span><span class="p">[</span><span class="nv">$idx</span><span class="p">]</span><span class="si">}</span>
+    <span class="nv">idx</span><span class="o">=</span><span class="k">$((</span>idx+1<span class="k">))</span>
+    <span class="k">if</span> ! wget <span class="nv">$url</span> -U mozilla -O <span class="s2">&#34;</span><span class="si">${</span><span class="nv">title</span><span class="si">}</span><span class="s2">.flv&#34;</span> <span class="p">;</span> <span class="k">then</span>
+        <span class="nb">echo</span> <span class="s2">&#34;Failed fetching </span><span class="si">${</span><span class="nv">title</span><span class="si">}</span><span class="s2">.flv, maybe its URL has been changed !&#34;</span>
+        <span class="nb">exit</span> <span class="m">0</span>
+    <span class="k">fi</span>
+    <span class="nv">cmd</span><span class="o">=</span><span class="s2">&#34;sed -i &#39;\$a\\</span><span class="si">${</span><span class="nv">title</span><span class="si">}</span><span class="s2">.flv&#39; p.m3u&#34;</span>
+    <span class="nb">eval</span> <span class="nv">$cmd</span>
+<span class="k">done</span>
+
+<span class="nb">echo</span> <span class="s1">&#39;done !&#39;</span>
+<span class="nb">exit</span> <span class="m">0</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>另外，使用VLC执行播放列表效果灰常不错，视频之间衔接平滑流畅。</p>
+]]></description></item></channel></rss>

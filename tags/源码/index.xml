@@ -1,1 +1,2248 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>源码 - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/%E6%BA%90%E7%A0%81/</link><description>源码 - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Thu, 18 Jun 2015 14:15:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/%E6%BA%90%E7%A0%81/" rel="self" type="application/rss+xml"/><item><title>PHP扩展框架的创建</title><link>http://0x3f.org/post/create-php-extension-skeleton/</link><pubDate>Thu, 18 Jun 2015 14:15:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/create-php-extension-skeleton/</guid><description>创建项目 在PHP源码目录下的ext目录下执行： 1 ./ext_skel --extname=foobar 修改foobar/config.m4，移除以下三行前的dnl： dnl PHP_ARG_WITH(foobar, for foobar support, dnl Make sure that the comment is aligned:</description></item><item><title>PHP流的上下文和过滤器的实现</title><link>http://0x3f.org/post/contexts-and-filters-implementation-of-php/</link><pubDate>Mon, 15 Jun 2015 19:15:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/contexts-and-filters-implementation-of-php/</guid><description>上下文的实现和应用 上下文包含流的选项和流的参数两部分内容。 1 php_stream_context *php_stream_context_alloc(void); 流的选项是一系列键值对。 1 2 3 int php_stream_context_set_option(php_stream_context *context, const char *wrappername, const char *optionname, zval *optionvalue); int php_stream_context_get_option(php_stream_context *context, const char *wrappername, const char *optionname, zval ***optionvalue); 流</description></item><item><title>PHP流的操作</title><link>http://0x3f.org/post/stream-operations-of-php/</link><pubDate>Mon, 01 Jun 2015 15:33:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/stream-operations-of-php/</guid><description><![CDATA[实现 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 /* reimplement fopen using stream */ ZEND_FUNCTION(donie_stream_fopen) { php_stream *stream; char *path, *mode; int path_len, mode_len; int options = ENFORCE_SAFE_MODE|REPORT_ERRORS; if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, &#34;ss&#34;, &amp;path, &amp;path_len, &amp;mode, &amp;mode_len) == FAILURE) { return; } stream = php_stream_open_wrapper(path, mode, options, NULL); if (!stream) { RETURN_FALSE; } php_stream_to_zval(stream, return_value); }]]></description></item><item><title>PHP流的实现</title><link>http://0x3f.org/post/stream-implementation-in-php/</link><pubDate>Fri, 29 May 2015 17:33:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/stream-implementation-in-php/</guid><description>流的概念 流是一系列概念的集合，包括流包装器、流资源、流操作、上下文等内容。流是对不同资源进行操作的抽象，允许线性地从指定位置读取或写入数据，</description></item><item><title>PHP全局变量的实现和操作</title><link>http://0x3f.org/post/globals-implementation-in-php/</link><pubDate>Fri, 08 May 2015 17:23:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/globals-implementation-in-php/</guid><description><![CDATA[扩展内部的全局变量 1 2 3 4 ZEND_BEGIN_MODULE_GLOBALS(donie) unsigned long global_long; char *global_string; ZEND_END_MODULE_GLOBALS(donie) 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 ZEND_DECLARE_MODULE_GLOBALS(donie); static void php_donie_init_globals(zend_donie_globals *donie_globals) { donie_globals-&gt;global_long = 2015; donie_globals-&gt;global_string = &#34;Long live Donie Leigh !&#34;; }]]></description></item><item><title>PHP常量的实现和操作</title><link>http://0x3f.org/post/constant-implementation-in-php/</link><pubDate>Thu, 07 May 2015 16:29:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/constant-implementation-in-php/</guid><description>存储结构 常量存储在哈希表EG(zend_constants)中。 常量的结构定义为： 1 2 3 4 5 6 7 typedef struct _zend_constant { zval value; int flags; char *name; uint name_len; int module_number; } zend_constant; value是</description></item><item><title>PHP资源的实现和操作</title><link>http://0x3f.org/post/resource-implementation-in-php/</link><pubDate>Tue, 05 May 2015 18:53:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/resource-implementation-in-php/</guid><description>存储结构 资源变量也是一个zval结构，zval-&amp;gt;type == IS_RESOURCE，zval-&amp;gt;value-&amp;gt;lval存储</description></item><item><title>PHP对象的实现和操作</title><link>http://0x3f.org/post/object-implementation-in-php/</link><pubDate>Wed, 29 Apr 2015 23:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/object-implementation-in-php/</guid><description>Object的存储结构 对象实例用zval存储。zval-&amp;gt;type == IS_OBJECT，zval-&amp;gt;value-&amp;gt;obj存</description></item><item><title>PHP类和接口的实现</title><link>http://0x3f.org/post/class-interface-implementation-in-php/</link><pubDate>Tue, 28 Apr 2015 18:38:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/class-interface-implementation-in-php/</guid><description>Class的实现 类的注册是在扩展的MINIT方法里。 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44</description></item><item><title>PHP数组的实现与操作</title><link>http://0x3f.org/post/array-implementation-in-php/</link><pubDate>Fri, 24 Apr 2015 12:09:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/array-implementation-in-php/</guid><description>存储结构 和其它变量一样，PHP的数组也是一个zval。存储数据的哈希表存放在zval-&amp;gt;value-&amp;gt;ht中。 符号表操作 为实现可</description></item></channel></rss>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>源码 - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/%E6%BA%90%E7%A0%81/</link><description>源码 - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Thu, 18 Jun 2015 14:15:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/%E6%BA%90%E7%A0%81/" rel="self" type="application/rss+xml"/><item><title>PHP扩展框架的创建</title><link>http://0x3f.org/post/create-php-extension-skeleton/</link><pubDate>Thu, 18 Jun 2015 14:15:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/create-php-extension-skeleton/</guid><description><![CDATA[<h2 id="创建项目">创建项目</h2>
+<p>在PHP源码目录下的ext目录下执行：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="p">.</span><span class="o">/</span><span class="n">ext_skel</span> <span class="o">--</span><span class="n">extname</span><span class="o">=</span><span class="n">foobar</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>修改foobar/config.m4，移除以下三行前的dnl：</p>
+<blockquote>
+<p>dnl PHP_ARG_WITH(foobar, for foobar support,<br>
+dnl Make sure that the comment is aligned:<br>
+dnl [  &ndash;with-foobar             Include foobar support])</p>
+</blockquote>
+<h2 id="编译与安装">编译与安装</h2>
+<p>在foobar目录下执行以下命令，生成configure脚本：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">/usr/bin/phpize
+</code></pre></td></tr></table>
+</div>
+</div><p>执行configure：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">./configure --with-php-config<span class="o">=</span>/usr/bin/php-config
+</code></pre></td></tr></table>
+</div>
+</div><p>编译安装：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">sudo make install
+</code></pre></td></tr></table>
+</div>
+</div><p>修改php.ini，启用扩展：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-ini" data-lang="ini"><span class="na">extension</span><span class="o">=</span><span class="s">foobar.so</span>
+</code></pre></td></tr></table>
+</div>
+</div>]]></description></item><item><title>PHP流的上下文和过滤器的实现</title><link>http://0x3f.org/post/contexts-and-filters-implementation-of-php/</link><pubDate>Mon, 15 Jun 2015 19:15:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/contexts-and-filters-implementation-of-php/</guid><description><![CDATA[<h2 id="上下文的实现和应用">上下文的实现和应用</h2>
+<p>上下文包含流的选项和流的参数两部分内容。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="n">php_stream_context</span> <span class="o">*</span><span class="nf">php_stream_context_alloc</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>流的选项是一系列键值对。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">int</span> <span class="nf">php_stream_context_set_option</span><span class="p">(</span><span class="n">php_stream_context</span> <span class="o">*</span><span class="n">context</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">wrappername</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">optionname</span><span class="p">,</span> <span class="n">zval</span> <span class="o">*</span><span class="n">optionvalue</span><span class="p">);</span>
+
+<span class="kt">int</span> <span class="nf">php_stream_context_get_option</span><span class="p">(</span><span class="n">php_stream_context</span> <span class="o">*</span><span class="n">context</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">wrappername</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">optionname</span><span class="p">,</span> <span class="n">zval</span> <span class="o">***</span><span class="n">optionvalue</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>流的参数目前只实现对流的事件的回调，php_stream_context-&gt;notifier存储如下结构：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+    <span class="n">php_stream_notification_func</span> <span class="n">func</span><span class="p">;</span>
+    <span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">dtor</span><span class="p">)(</span><span class="n">php_stream_notifier</span> <span class="o">*</span><span class="n">notifier</span><span class="p">);</span>
+    <span class="kt">void</span> <span class="o">*</span><span class="n">ptr</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">mask</span><span class="p">;</span>
+    <span class="n">size_t</span> <span class="n">progress</span><span class="p">,</span> <span class="n">progress_max</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">php_stream_notifier</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>回调函数的原型为：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="nf">void</span> <span class="p">(</span><span class="o">*</span><span class="n">php_stream_notification_func</span><span class="p">)(</span><span class="n">php_stream_context</span> <span class="o">*</span><span class="n">context</span><span class="p">,</span>
+		<span class="kt">int</span> <span class="n">notifycode</span><span class="p">,</span> <span class="kt">int</span> <span class="n">severity</span><span class="p">,</span>
+		<span class="kt">char</span> <span class="o">*</span><span class="n">xmsg</span><span class="p">,</span> <span class="kt">int</span> <span class="n">xcode</span><span class="p">,</span>
+		<span class="n">size_t</span> <span class="n">bytes_sofar</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">bytes_max</span><span class="p">,</span>
+		<span class="kt">void</span> <span class="o">*</span> <span class="n">ptr</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>notifycode包含如下：</p>
+<ul>
+<li>PHP_STREAM_NOTIFY_RESOLVE：主机名解析完成</li>
+<li>PHP_STREAM_NOTIFY_CONNECT：socket连接建立</li>
+<li>PHP_STREAM_NOTIFY_AUTH_REQUIRED：需要验证</li>
+<li>PHP_STREAM_NOTIFY_MIME_TYPE_IS：远程资源的MIME-Type可用</li>
+<li>PHP_STREAM_NOTIFY_FILE_SIZE_IS：远程资源的大小可用</li>
+<li>PHP_STREAM_NOTIFY_REDIRECTED：原始地址被跳转</li>
+<li>PHP_STREAM_NOTIFY_PROGRESS：php_stream_notifier-&gt;progress和progress_max（可能的）已更新</li>
+<li>PHP_STREAM_NOTIFY_COMPLETED：流中已无可用数据</li>
+<li>PHP_STREAM_NOTIFY_FAILURE：请求失败</li>
+<li>PHP_STREAM_NOTIFY_AUTH_RESULT：远程验证已完成，并且可能是成功的</li>
+</ul>
+<p>severity包含如下：</p>
+<ul>
+<li>PHP_STREAM_NOTIFY_SEVERITY_INFO</li>
+<li>PHP_STREAM_NOTIFY_SEVERITY_WARN</li>
+<li>PHP_STREAM_NOTIFY_SEVERITY_ERR</li>
+</ul>
+<p>php_stream_notifier-&gt;ptr用于存储附加数据，如果该数据需要手工回收，需指定php_stream_notifier-&gt;dtor。</p>
+<p>php_stream_notifier-&gt;mask如果被赋值severity，其它severity的事件将不会触发回调函数。</p>
+<h2 id="过滤器的实现和应用">过滤器的实现和应用</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#include</span> <span class="cpf">&#34;ext/standard/php_string.h&#34;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="kt">char</span> <span class="n">is_persistent</span><span class="p">;</span>
+	<span class="kt">char</span> <span class="o">*</span><span class="n">from_chars</span><span class="p">;</span>
+	<span class="kt">char</span> <span class="o">*</span><span class="n">to_chars</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">tr_len</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">php_donie_filter_data</span><span class="p">;</span>
+
+<span class="k">static</span> <span class="n">php_stream_filter_status_t</span> <span class="nf">php_donie_stream_filter</span><span class="p">(</span>
+	<span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="n">php_stream_filter</span> <span class="o">*</span><span class="n">thisfilter</span><span class="p">,</span>
+	<span class="n">php_stream_bucket_brigade</span> <span class="o">*</span><span class="n">buckets_in</span><span class="p">,</span>
+	<span class="n">php_stream_bucket_brigade</span> <span class="o">*</span><span class="n">buckets_out</span><span class="p">,</span>
+	<span class="n">size_t</span> <span class="o">*</span><span class="n">bytes_consumed</span><span class="p">,</span> <span class="kt">int</span> <span class="n">flags</span> <span class="n">TSRMLS_DC</span>
+<span class="p">)</span> <span class="p">{</span>
+	<span class="n">php_donie_filter_data</span> <span class="o">*</span><span class="n">data</span> <span class="o">=</span> <span class="n">thisfilter</span><span class="o">-&gt;</span><span class="n">abstract</span><span class="p">;</span>
+	<span class="n">php_stream_bucket</span> <span class="o">*</span><span class="n">bucket</span><span class="p">;</span>
+	<span class="n">size_t</span> <span class="n">consumed</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+	<span class="k">while</span><span class="p">(</span><span class="n">buckets_in</span><span class="o">-&gt;</span><span class="n">head</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">bucket</span> <span class="o">=</span> <span class="n">php_stream_bucket_make_writeable</span><span class="p">(</span><span class="n">buckets_in</span><span class="o">-&gt;</span><span class="n">head</span> <span class="n">TSRMLS_CC</span><span class="p">);</span>
+		<span class="n">php_strtr</span><span class="p">(</span><span class="n">bucket</span><span class="o">-&gt;</span><span class="n">buf</span><span class="p">,</span> <span class="n">bucket</span><span class="o">-&gt;</span><span class="n">buflen</span><span class="p">,</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">from_chars</span><span class="p">,</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">to_chars</span><span class="p">,</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">tr_len</span><span class="p">);</span>
+		<span class="n">consumed</span> <span class="o">+=</span> <span class="n">bucket</span><span class="o">-&gt;</span><span class="n">buflen</span><span class="p">;</span>
+		<span class="n">php_stream_bucket_append</span><span class="p">(</span><span class="n">buckets_out</span><span class="p">,</span> <span class="n">bucket</span> <span class="n">TSRMLS_CC</span><span class="p">);</span>
+	<span class="p">}</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="n">bytes_consumed</span><span class="p">)</span> <span class="p">{</span>
+		<span class="o">*</span><span class="n">bytes_consumed</span> <span class="o">=</span> <span class="n">consumed</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="k">return</span> <span class="n">PSFS_PASS_ON</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">php_donie_stream_filter_dtor</span><span class="p">(</span>
+	<span class="n">php_stream_filter</span> <span class="o">*</span><span class="n">thisfilter</span> <span class="n">TSRMLS_DC</span>
+<span class="p">)</span> <span class="p">{</span>
+	<span class="n">php_donie_filter_data</span> <span class="o">*</span><span class="n">data</span> <span class="o">=</span> <span class="n">thisfilter</span><span class="o">-&gt;</span><span class="n">abstract</span><span class="p">;</span>
+	<span class="n">pefree</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">is_persistent</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">static</span> <span class="n">php_stream_filter_ops</span> <span class="n">php_donie_stream_filter_ops</span> <span class="o">=</span> <span class="p">{</span>
+	<span class="n">php_donie_stream_filter</span><span class="p">,</span>
+	<span class="n">php_donie_stream_filter_dtor</span><span class="p">,</span>
+	<span class="s">&#34;donie.to_upper_case&#34;</span>
+<span class="p">};</span>
+
+<span class="k">static</span> <span class="n">php_stream_filter</span> <span class="o">*</span><span class="nf">php_donie_stream_filter_create</span><span class="p">(</span>
+	<span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="n">zval</span> <span class="o">*</span><span class="n">param</span><span class="p">,</span> <span class="kt">int</span> <span class="n">persistent</span> <span class="n">TSRMLS_DC</span>
+<span class="p">)</span> <span class="p">{</span>
+	<span class="n">php_donie_filter_data</span> <span class="o">*</span><span class="n">data</span><span class="p">;</span>
+
+	<span class="n">data</span> <span class="o">=</span> <span class="n">pemalloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">php_donie_filter_data</span><span class="p">),</span> <span class="n">persistent</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">data</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="n">data</span><span class="o">-&gt;</span><span class="n">is_persistent</span> <span class="o">=</span> <span class="n">persistent</span><span class="p">;</span>
+	<span class="n">data</span><span class="o">-&gt;</span><span class="n">from_chars</span> <span class="o">=</span> <span class="s">&#34;abcdefghijklmnopqrstuvwxyz&#34;</span><span class="p">;</span>
+	<span class="n">data</span><span class="o">-&gt;</span><span class="n">to_chars</span> <span class="o">=</span> <span class="s">&#34;ABCDEFGHIJKLMNOPQRSTUVWXYZ&#34;</span><span class="p">;</span>
+	<span class="n">data</span><span class="o">-&gt;</span><span class="n">tr_len</span> <span class="o">=</span> <span class="n">strlen</span><span class="p">(</span><span class="n">data</span><span class="o">-&gt;</span><span class="n">from_chars</span><span class="p">);</span>
+
+	<span class="k">return</span> <span class="n">php_stream_filter_alloc</span><span class="p">(</span><span class="o">&amp;</span><span class="n">php_donie_stream_filter_ops</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">persistent</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">static</span> <span class="n">php_stream_filter_factory</span> <span class="n">php_donie_stream_uppercase_factory</span> <span class="o">=</span> <span class="p">{</span>
+	<span class="n">php_donie_stream_filter_create</span>
+<span class="p">};</span>
+
+<span class="n">PHP_MINIT_FUNCTION</span><span class="p">(</span><span class="n">donie</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="cm">/* register a filter */</span>
+	<span class="n">php_stream_filter_register_factory</span><span class="p">(</span><span class="s">&#34;donie.to_upper_case&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">php_donie_stream_uppercase_factory</span> <span class="n">TSRMLS_CC</span><span class="p">);</span>
+
+	<span class="k">return</span> <span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">PHP_MSHUTDOWN_FUNCTION</span><span class="p">(</span><span class="n">donie</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="cm">/* unregister the filter */</span>
+	<span class="n">php_stream_filter_unregister_factory</span><span class="p">(</span><span class="s">&#34;donie.to_upper_case&#34;</span> <span class="n">TSRMLS_CC</span><span class="p">);</span>
+
+	<span class="k">return</span> <span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="注册和注销">注册和注销</h3>
+<p>分别在MINIT和MSHUTDOWN函数中调用php_stream_filter_register_factory()和php_stream_filter_unregister_factory()注册和注销过滤器。</p>
+<h3 id="过滤器的执行过程">过滤器的执行过程</h3>
+<p>当过滤器被调用时，调用方将使用php_donie_stream_filter_create()函数创建过滤器的实例。该函数在被执行时初始化过滤器的相关数据，并指定过滤器的相关操作。</p>
+<p>调用方然后将过滤器实例添加到对应的流的读过滤器链或写过滤器链中，当流中发生读或写的操作时，过滤器链将数据放到一或多个php_stream_bucket结构中，并传递给过滤器处理。</p>
+<h3 id="业务逻辑">业务逻辑</h3>
+<p>结构体php_donie_stream_filter_ops指定了过滤器的名称和相关业务逻辑。php_donie_stream_filter_ops-&gt;php_donie_stream_filter_dtor是过滤器的析构函数。php_donie_stream_filter_ops-&gt;php_donie_stream_filter是过滤器的主要业务逻辑。</p>
+<p>在php_donie_stream_filter()中，函数接收一个php_stream_bucket链表buckets_in，并将处理后的php_stream_bucket追加到链表buckets_out中输出。</p>
+<p>php_stream_bucket_make_writeable()将一个bucket从链表中移除，如果必要，复制其内部缓冲数据，以获得对内容的写权限。此外，对bucket的相关操作还有：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="n">php_stream_bucket</span> <span class="o">*</span><span class="nf">php_stream_bucket_new</span><span class="p">(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">buflen</span><span class="p">,</span> <span class="kt">int</span> <span class="n">own_buf</span><span class="p">,</span> <span class="kt">int</span> <span class="n">buf_persistent</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
+
+<span class="kt">int</span> <span class="nf">php_stream_bucket_split</span><span class="p">(</span><span class="n">php_stream_bucket</span> <span class="o">*</span><span class="n">in</span><span class="p">,</span> <span class="n">php_stream_bucket</span> <span class="o">**</span><span class="n">left</span><span class="p">,</span> <span class="n">php_stream_bucket</span> <span class="o">**</span><span class="n">right</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">length</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
+
+<span class="kt">void</span> <span class="nf">php_stream_bucket_delref</span><span class="p">(</span><span class="n">php_stream_bucket</span> <span class="o">*</span><span class="n">bucket</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">php_stream_bucket_addref</span><span class="p">(</span><span class="n">php_stream_bucket</span> <span class="o">*</span><span class="n">bucket</span><span class="p">);</span>
+
+<span class="kt">void</span> <span class="nf">php_stream_bucket_prepend</span><span class="p">(</span><span class="n">php_stream_bucket_brigade</span> <span class="o">*</span><span class="n">brigade</span><span class="p">,</span> <span class="n">php_stream_bucket</span> <span class="o">*</span><span class="n">bucket</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">php_stream_bucket_append</span><span class="p">(</span><span class="n">php_stream_bucket_brigade</span> <span class="o">*</span><span class="n">brigade</span><span class="p">,</span> <span class="n">php_stream_bucket</span> <span class="o">*</span><span class="n">bucket</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
+
+<span class="kt">void</span> <span class="nf">php_stream_bucket_unlink</span><span class="p">(</span><span class="n">php_stream_bucket</span> <span class="o">*</span><span class="n">bucket</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>若过滤器已准备好输出的数据，返回PSFS_PASS_ON；若还需要更多数据才能结束过滤操作，返回PSFS_FEED_ME；若遇到严重问题，返回PSFS_ERR_FATAL。</p>
+]]></description></item><item><title>PHP流的操作</title><link>http://0x3f.org/post/stream-operations-of-php/</link><pubDate>Mon, 01 Jun 2015 15:33:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/stream-operations-of-php/</guid><description><![CDATA[<h2 id="实现">实现</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="cm">/* reimplement fopen using stream */</span>
+<span class="n">ZEND_FUNCTION</span><span class="p">(</span><span class="n">donie_stream_fopen</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">;</span>
+	<span class="kt">char</span> <span class="o">*</span><span class="n">path</span><span class="p">,</span> <span class="o">*</span><span class="n">mode</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">path_len</span><span class="p">,</span> <span class="n">mode_len</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">options</span> <span class="o">=</span> <span class="n">ENFORCE_SAFE_MODE</span><span class="o">|</span><span class="n">REPORT_ERRORS</span><span class="p">;</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="n">zend_parse_parameters</span><span class="p">(</span><span class="n">ZEND_NUM_ARGS</span><span class="p">()</span> <span class="n">TSRMLS_CC</span><span class="p">,</span> <span class="s">&#34;ss&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">path</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">path_len</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">mode</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">mode_len</span><span class="p">)</span> <span class="o">==</span> <span class="n">FAILURE</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="k">return</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="n">stream</span> <span class="o">=</span> <span class="n">php_stream_open_wrapper</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">stream</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">RETURN_FALSE</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="n">php_stream_to_zval</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">return_value</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>php_stream_open_wrapper()是对文件类型资源创建流的方法，此外还有基于socket的流、目录流和特殊流三种。php_stream_to_zval()用于把流实例转换成zval结构。</p>
+<h2 id="创建文件类型的流">创建文件类型的流</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define php_stream_open_wrapper(path, mode, options, opened)	_php_stream_open_wrapper_ex((path), (mode), (options), (opened), NULL STREAMS_CC TSRMLS_CC)
+</span><span class="cp">#define php_stream_open_wrapper_ex(path, mode, options, opened, context)	_php_stream_open_wrapper_ex((path), (mode), (options), (opened), (context) STREAMS_CC TSRMLS_CC)
+</span></code></pre></td></tr></table>
+</div>
+</div><p>参数path是文件名或URL，mode是模式字符串，options是选项组合。php_stream_open_wrapper_ex()允许指定一个流的上下文。</p>
+<p>options包含以下选项：</p>
+<ul>
+<li>USE_PATH：应用ini中的include_path到相对路径。内建的fopen()的第三个参数置True时使用此选项。</li>
+<li>STREAM_USE_URL：只有远程URL才允许打开，%%file://, php://, compress.zlib://%%这样的本地URL会报错。</li>
+<li>ENFORCE_SAFE_MODE：只有设置了此选项且ini中的safe_mode开启时，才会使safe_mode生效，不设置此选项，则不论ini中是否开启都不会生效。</li>
+<li>REPORT_ERRORS：若开启流出错，生成错误信息。</li>
+<li>STREAM_MUST_SEEK：不是所有流都允许seek，若置此选项，且流不允许seek，则包装器不会开启流。</li>
+<li>STREAM_WILL_CAST：置此参数将要求流可被转换成posix或stdio类型的文件描述符，若流不可转换，可在IO开始前失败。</li>
+<li>STREAM_ONLY_GET_HEADERS：http包装器使用此参数，只获取资源的元数据，不获取内容。</li>
+<li>STREAM_DISABLE_OPEN_BASEDIR：当ini中的open_basedir开启时，置此参数跳过open_basedir检查。</li>
+<li>STREAM_OPEN_PERSISTENT：要求流和相关资源都创建为持久数据。</li>
+<li>IGNORE_PATH：不从include_path中搜索。</li>
+<li>IGNORE_URL：只有本地文件才可以被打开。</li>
+</ul>
+<h2 id="创建传输类型的流">创建传输类型的流</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="n">php_stream</span> <span class="o">*</span><span class="n">_php_stream_xport_create</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">namelen</span><span class="p">,</span> <span class="kt">int</span> <span class="n">options</span><span class="p">,</span> <span class="kt">int</span> <span class="n">flags</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">persistent_id</span><span class="p">,</span> <span class="k">struct</span> <span class="n">timeval</span> <span class="o">*</span><span class="n">timeout</span><span class="p">,</span> <span class="n">php_stream_context</span> <span class="o">*</span><span class="n">context</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">error_string</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="n">error_code</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>参数：</p>
+<ul>
+<li>name：URL。</li>
+<li>options：参数，与php_stream_open_wrapper()的相同。</li>
+<li>flags：STREAM_XPORT_CLIENT或STREAM_XPORT_SERVER与其它STREAM_XPORT_*常量的组合。</li>
+<li>persistent_id：键值，置此参数将使流在多次请求间持久存在。</li>
+<li>timeout：置NULL将使用ini中设置的值。</li>
+<li>errstr：用于向外传递错误信息，初始应置为NULL，若有错误信息传出，调用方有责任释放错误信息占用的内存。</li>
+<li>errcode：错误码。</li>
+</ul>
+<p>flags：</p>
+<ul>
+<li>STREAM_XPORT_CLIENT：工作为客户端，向远程发起连接。</li>
+<li>STREAM_XPORT_SERVER：工作为服务器，接受连接。</li>
+<li>STREAM_XPORT_CONNECT：传输建立的同时发起对远程的连接，否则，需手动调用php_stream_xport_connect()。</li>
+<li>STREAM_XPORT_CONNECT_ASYNC：发起异步远程连接。</li>
+<li>STREAM_XPORT_BIND：将传输流绑定到本地资源. 用在服务端传输流时,这将使得accept连接的传输流准备端口, 路径或特定的端点标识符等信息。</li>
+<li>STREAM_XPORT_LISTEN：%%Listen for inbound connections on the bound transport endpoint. This is typically used with stream-based transports such as tcp://, ssl://, and unix://%%.</li>
+</ul>
+<h2 id="创建目录类型的流">创建目录类型的流</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="n">php_stream</span> <span class="n">php_stream_opendir</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">path</span><span class="p">,</span> <span class="kt">int</span> <span class="n">options</span><span class="p">,</span> <span class="n">php_stream_context</span> <span class="o">*</span><span class="n">context</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="创建特殊类型的流">创建特殊类型的流</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="n">php_stream</span> <span class="o">*</span><span class="nf">php_stream_fopen_tmpfile</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+<span class="n">php_stream</span> <span class="o">*</span><span class="nf">php_stream_fopen_temporary_file</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">dir</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">pfx</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">opened_path</span><span class="p">);</span>
+<span class="n">php_stream</span> <span class="o">*</span><span class="nf">php_stream_fopen_from_fd</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">mode</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">persistent_id</span><span class="p">);</span>
+<span class="n">php_stream</span> <span class="o">*</span><span class="nf">php_stream_fopen_from_file</span><span class="p">(</span><span class="n">FILE</span> <span class="o">*</span><span class="n">file</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">mode</span><span class="p">);</span>
+<span class="n">php_stream</span> <span class="o">*</span><span class="nf">php_stream_fopen_from_pipe</span><span class="p">(</span><span class="n">FILE</span> <span class="o">*</span><span class="n">file</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">mode</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="读流">读流</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 读一个字符
+</span><span class="c1"></span><span class="kt">int</span> <span class="nf">php_stream_getc</span><span class="p">(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">);</span>
+
+<span class="c1">// 读取指定数量的字符
+</span><span class="c1"></span><span class="n">size_t</span> <span class="nf">php_stream_read</span><span class="p">(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">count</span><span class="p">);</span>
+
+<span class="c1">// 读取直到行末、或流末、或最多maxlen个字符
+</span><span class="c1"></span><span class="kt">char</span> <span class="o">*</span><span class="nf">php_stream_get_line</span><span class="p">(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">maxlen</span><span class="p">,</span> <span class="n">size_t</span> <span class="o">*</span><span class="n">returned_len</span><span class="p">);</span>
+<span class="kt">char</span> <span class="o">*</span><span class="nf">php_stream_gets</span><span class="p">(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">maxlen</span><span class="p">);</span>
+
+<span class="c1">// 与php_stream_get_line相同，可指定截止标记
+</span><span class="c1"></span><span class="kt">char</span> <span class="o">*</span><span class="nf">php_stream_get_record</span><span class="p">(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">maxlen</span><span class="p">,</span> <span class="n">size_t</span> <span class="o">*</span><span class="n">returned_len</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">delim</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">delim_len</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
+
+<span class="c1">// 读取一个目录项
+</span><span class="c1"></span><span class="n">php_stream_dirent</span> <span class="o">*</span><span class="nf">php_stream_readdir</span><span class="p">(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">dirstream</span><span class="p">,</span> <span class="n">php_stream_dirent</span> <span class="o">*</span><span class="n">entry</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="写流">写流</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 写非阻塞流可能写入的数据比传入的短；_string要求传入的字符串以NULL结尾
+</span><span class="c1"></span><span class="n">size_t</span> <span class="nf">php_stream_write</span><span class="p">(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">count</span><span class="p">);</span>
+<span class="n">size_t</span> <span class="nf">php_stream_write_string</span><span class="p">(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">stf</span><span class="p">);</span>
+
+<span class="kt">int</span> <span class="nf">php_stream_putc</span><span class="p">(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="kt">int</span> <span class="n">c</span><span class="p">);</span>
+<span class="c1">// 与_string不同的是会自动追加一个换行符到字符串末尾
+</span><span class="c1"></span><span class="kt">int</span> <span class="nf">php_stream_puts</span><span class="p">(</span><span class="n">php_string</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">buf</span><span class="p">);</span>
+
+<span class="n">size_t</span> <span class="nf">php_stream_printf</span><span class="p">(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span> <span class="n">TSRMLS_DC</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">format</span><span class="p">,</span> <span class="p">...);</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">int</span> <span class="nf">php_stream_flush</span><span class="p">(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在关闭流的时候，flush会被自动调用，并且大部分无过滤的流因无内部缓冲而不需flush，所以单独flush一般是不需要的。</p>
+<h2 id="寻址">寻址</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">int</span> <span class="nf">php_stream_seek</span><span class="p">(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="n">off_t</span> <span class="n">offset</span><span class="p">,</span> <span class="kt">int</span> <span class="n">whence</span><span class="p">);</span>
+<span class="kt">int</span> <span class="nf">php_stream_rewind</span><span class="p">(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">);</span>
+<span class="kt">int</span> <span class="nf">php_stream_rewinddir</span><span class="p">(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">dirstream</span><span class="p">);</span>
+<span class="n">off_t</span> <span class="nf">php_stream_tell</span><span class="p">(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>offset是相对于whence的位移量，whence包含：</p>
+<ul>
+<li>SEEK_SET：文件开头。置offet为负值被认为是个错误并导致不可预料的行为。offset超出文件范围会导致一个错误，或文件被增大。</li>
+<li>SEEK_CUR：当前位置。</li>
+<li>SEEK_END：文件末尾。offset一般为负，正值的行为因流的实现而异。</li>
+</ul>
+<h2 id="获取额外信息">获取额外信息</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">int</span> <span class="nf">php_stream_stat</span><span class="p">(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="n">php_stream_statbuf</span> <span class="o">*</span><span class="n">ssb</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="关闭流">关闭流</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define php_stream_close(stream) php_stream_free((stream), PHP_STREAM_FREE_CLOSE)
+</span><span class="cp">#define php_stream_pclose(stream) php_stream_free((stream), PHP_STREAM_FREE_CLOSE_PERSISTENT)
+</span></code></pre></td></tr></table>
+</div>
+</div><p>包含以下选项：</p>
+<ul>
+<li>PHP_STREAM_FREE_CALL_DTOR：销毁流时调用php_stream-&gt;ops-&gt;close</li>
+<li>PHP_STREAM_FREE_RELEASE_STREAM：销毁流时调用php_stream_wrapper-&gt;ops-&gt;stream_close</li>
+<li>PHP_STREAM_FREE_PRESERVE_HANDLE：php_stream-&gt;ops-&gt;close不销毁句柄</li>
+<li>PHP_STREAM_FREE_RSRC_DTOR：用于流内部资源列表垃圾回收</li>
+<li>PHP_STREAM_FREE_PERSISTENT：用于持久流，所有操作的结果在多次请求间持久有效</li>
+<li>PHP_STREAM_FREE_CLOSE：CALL_DTOR和RELEASE_STREAM的组合，用于非持久流的常规选项</li>
+<li>PHP_STREAM_FREE_CLOSE_CASTED：CLOSE和PRESERVE_HANDLE的组合</li>
+<li>PHP_STREAM_FREE_CLOSE_PERSISTENT：CLOSE和PERSISTENT的组合，用于持久流的常规选项</li>
+</ul>
+]]></description></item><item><title>PHP流的实现</title><link>http://0x3f.org/post/stream-implementation-in-php/</link><pubDate>Fri, 29 May 2015 17:33:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/stream-implementation-in-php/</guid><description><![CDATA[<h2 id="流的概念">流的概念</h2>
+<p>流是一系列概念的集合，包括流包装器、流资源、流操作、上下文等内容。流是对不同资源进行操作的抽象，允许线性地从指定位置读取或写入数据，通过一套统一的API简化对资源操作的实现。</p>
+<p>流由scheme://target指代，scheme是包装器（Wrapper）的名字，target是流的目标地址。</p>
+<p>PHP的流的实现较Java简单，后者可以通过嵌套实现更灵活的应用。</p>
+<h2 id="流的实现">流的实现</h2>
+<h3 id="存储结构">存储结构</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">struct</span> <span class="n">_php_stream</span>  <span class="p">{</span>
+	<span class="n">php_stream_ops</span> <span class="o">*</span><span class="n">ops</span><span class="p">;</span>
+	<span class="kt">void</span> <span class="o">*</span><span class="n">abstract</span><span class="p">;</span>			<span class="cm">/* convenience pointer for abstraction */</span>
+	<span class="n">php_stream_filter_chain</span> <span class="n">readfilters</span><span class="p">,</span> <span class="n">writefilters</span><span class="p">;</span>
+	<span class="n">php_stream_wrapper</span> <span class="o">*</span><span class="n">wrapper</span><span class="p">;</span> <span class="cm">/* which wrapper was used to open the stream */</span>
+	<span class="kt">void</span> <span class="o">*</span><span class="n">wrapperthis</span><span class="p">;</span>		<span class="cm">/* convenience pointer for a instance of a wrapper */</span>
+	<span class="n">zval</span> <span class="o">*</span><span class="n">wrapperdata</span><span class="p">;</span>		<span class="cm">/* fgetwrapperdata retrieves this */</span>
+	<span class="kt">int</span> <span class="n">fgetss_state</span><span class="p">;</span>		<span class="cm">/* for fgetss to handle multiline tags */</span>
+	<span class="kt">int</span> <span class="n">is_persistent</span><span class="p">;</span>
+	<span class="kt">char</span> <span class="n">mode</span><span class="p">[</span><span class="mi">16</span><span class="p">];</span>			<span class="cm">/* &#34;rwb&#34; etc. ala stdio */</span>
+	<span class="kt">int</span> <span class="n">rsrc_id</span><span class="p">;</span>			<span class="cm">/* used for auto-cleanup */</span>
+	<span class="kt">int</span> <span class="n">in_free</span><span class="p">;</span>			<span class="cm">/* to prevent recursion during free */</span>
+	<span class="cm">/* so we know how to clean it up correctly.  This should be set to
+</span><span class="cm">	 * PHP_STREAM_FCLOSE_XXX as appropriate */</span>
+	<span class="kt">int</span> <span class="n">fclose_stdiocast</span><span class="p">;</span>
+	<span class="n">FILE</span> <span class="o">*</span><span class="n">stdiocast</span><span class="p">;</span>    <span class="cm">/* cache this, otherwise we might leak! */</span>
+<span class="cp">#if ZEND_DEBUG
+</span><span class="cp"></span>	<span class="kt">int</span> <span class="n">__exposed</span><span class="p">;</span>	<span class="cm">/* non-zero if exposed as a zval somewhere */</span>
+<span class="cp">#endif
+</span><span class="cp"></span>	<span class="kt">char</span> <span class="o">*</span><span class="n">orig_path</span><span class="p">;</span>
+	<span class="n">php_stream_context</span> <span class="o">*</span><span class="n">context</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">flags</span><span class="p">;</span>	<span class="cm">/* PHP_STREAM_FLAG_XXX */</span>
+	<span class="cm">/* buffer */</span>
+	<span class="n">off_t</span> <span class="n">position</span><span class="p">;</span> <span class="cm">/* of underlying stream */</span>
+	<span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">readbuf</span><span class="p">;</span>
+	<span class="n">size_t</span> <span class="n">readbuflen</span><span class="p">;</span>
+	<span class="n">off_t</span> <span class="n">readpos</span><span class="p">;</span>
+	<span class="n">off_t</span> <span class="n">writepos</span><span class="p">;</span>
+	<span class="cm">/* how much data to read when filling buffer */</span>
+	<span class="n">size_t</span> <span class="n">chunk_size</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">eof</span><span class="p">;</span>
+<span class="cp">#if ZEND_DEBUG
+</span><span class="cp"></span>	<span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">open_filename</span><span class="p">;</span>
+	<span class="n">uint</span> <span class="n">open_lineno</span><span class="p">;</span>
+<span class="cp">#endif
+</span><span class="cp"></span>	<span class="k">struct</span> <span class="n">_php_stream</span> <span class="o">*</span><span class="n">enclosing_stream</span><span class="p">;</span> <span class="cm">/* this is a private stream owned by enclosing_stream */</span>
+<span class="p">};</span> <span class="cm">/* php_stream */</span>
+
+<span class="k">typedef</span> <span class="k">struct</span> <span class="n">_php_stream_ops</span>  <span class="p">{</span>
+	<span class="cm">/* stdio like functions - these are mandatory! */</span>
+	<span class="n">size_t</span> <span class="p">(</span><span class="o">*</span><span class="n">write</span><span class="p">)(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">count</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
+	<span class="n">size_t</span> <span class="p">(</span><span class="o">*</span><span class="n">read</span><span class="p">)(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">count</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
+	<span class="kt">int</span>    <span class="p">(</span><span class="o">*</span><span class="n">close</span><span class="p">)(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="kt">int</span> <span class="n">close_handle</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
+	<span class="kt">int</span>    <span class="p">(</span><span class="o">*</span><span class="n">flush</span><span class="p">)(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
+	<span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">label</span><span class="p">;</span> <span class="cm">/* label for this ops structure */</span>
+	<span class="cm">/* these are optional */</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">seek</span><span class="p">)(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="n">off_t</span> <span class="n">offset</span><span class="p">,</span> <span class="kt">int</span> <span class="n">whence</span><span class="p">,</span> <span class="n">off_t</span> <span class="o">*</span><span class="n">newoffset</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">cast</span><span class="p">)(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="kt">int</span> <span class="n">castas</span><span class="p">,</span> <span class="kt">void</span> <span class="o">**</span><span class="n">ret</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">stat</span><span class="p">)(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="n">php_stream_statbuf</span> <span class="o">*</span><span class="n">ssb</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">set_option</span><span class="p">)(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="kt">int</span> <span class="n">option</span><span class="p">,</span> <span class="kt">int</span> <span class="n">value</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">ptrparam</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
+<span class="p">}</span> <span class="n">php_stream_ops</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>php_stream结构体最重要的成员是ops和abstract。ops包含了流实例的所有操作逻辑，特别地，php_stream_ops-&gt;close在php_stream结构被回收前提供了回收与该流实例相关的资源的机会。abstract用来存储一个自定义结构的数据，在流的操作逻辑里可以方便的访问。</p>
+<h3 id="实现">实现</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define PHP_DONIESTREAM_STREAMTYPE &#34;doniestream&#34;
+</span><span class="cp"></span>
+<span class="k">static</span> <span class="n">size_t</span> <span class="nf">php_doniestream_write</span><span class="p">(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">count</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">donie_stream_data</span> <span class="o">*</span><span class="n">data</span> <span class="o">=</span> <span class="n">stream</span><span class="o">-&gt;</span><span class="n">abstract</span><span class="p">;</span>
+
+	<span class="n">php_printf</span><span class="p">(</span><span class="s">&#34;Write to stream: %s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">buf</span><span class="p">);</span>
+
+	<span class="k">return</span> <span class="n">count</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">static</span> <span class="n">size_t</span> <span class="nf">php_doniestream_read</span><span class="p">(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">buf</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">count</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">donie_stream_data</span> <span class="o">*</span><span class="n">data</span> <span class="o">=</span> <span class="n">stream</span><span class="o">-&gt;</span><span class="n">abstract</span><span class="p">;</span>
+	<span class="n">zval</span> <span class="o">**</span><span class="n">val</span><span class="p">;</span>
+	<span class="n">size_t</span> <span class="n">read_size</span> <span class="o">=</span> <span class="n">count</span><span class="p">;</span>
+
+	<span class="n">php_printf</span><span class="p">(</span><span class="s">&#34;Read from stream: %s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">key</span><span class="p">);</span>
+
+	<span class="k">return</span> <span class="n">read_size</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">static</span> <span class="kt">int</span> <span class="nf">php_doniestream_close</span><span class="p">(</span><span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="kt">int</span> <span class="n">close_handle</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">donie_stream_data</span> <span class="o">*</span><span class="n">data</span> <span class="o">=</span> <span class="n">stream</span><span class="o">-&gt;</span><span class="n">abstract</span><span class="p">;</span>
+	<span class="n">efree</span><span class="p">(</span><span class="n">data</span><span class="o">-&gt;</span><span class="n">key</span><span class="p">);</span>
+	<span class="n">efree</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">static</span> <span class="n">php_stream_ops</span> <span class="n">php_doniestream_ops</span> <span class="o">=</span> <span class="p">{</span>
+	<span class="n">php_doniestream_write</span><span class="p">,</span>
+	<span class="n">php_doniestream_read</span><span class="p">,</span>
+	<span class="n">php_doniestream_close</span><span class="p">,</span>
+	<span class="nb">NULL</span><span class="p">,</span> <span class="cm">/* flush */</span>
+	<span class="n">PHP_DONIESTREAM_STREAMTYPE</span><span class="p">,</span>
+	<span class="nb">NULL</span><span class="p">,</span> <span class="cm">/* seek */</span>
+	<span class="nb">NULL</span><span class="p">,</span> <span class="cm">/* cast */</span>
+	<span class="nb">NULL</span><span class="p">,</span> <span class="cm">/* stat */</span>
+	<span class="nb">NULL</span><span class="p">,</span> <span class="cm">/* set_option */</span>
+<span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>主要是流的操作逻辑的实现，最后构建的php_stream_ops结构用于后面流包装器中初始化流实例时赋给php_stream-&gt;ops。</p>
+<h2 id="包装器的实现">包装器的实现</h2>
+<p>Wrapper是对某一协议的封装，主要包含对该类型的流的一系列操作逻辑的实现。</p>
+<h3 id="存储结构-1">存储结构</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">struct</span> <span class="n">_php_stream_wrapper</span>	<span class="p">{</span>
+	<span class="n">php_stream_wrapper_ops</span> <span class="o">*</span><span class="n">wops</span><span class="p">;</span>	<span class="cm">/* operations the wrapper can perform */</span>
+	<span class="kt">void</span> <span class="o">*</span><span class="n">abstract</span><span class="p">;</span>			<span class="cm">/* context for the wrapper */</span>
+	<span class="kt">int</span> <span class="n">is_url</span><span class="p">;</span>			<span class="cm">/* so that PG(allow_url_fopen) can be respected */</span>
+<span class="p">};</span>
+
+<span class="k">typedef</span> <span class="k">struct</span> <span class="n">_php_stream_wrapper_ops</span> <span class="p">{</span>
+	<span class="cm">/* open/create a wrapped stream */</span>
+	<span class="n">php_stream</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="n">stream_opener</span><span class="p">)(</span><span class="n">php_stream_wrapper</span> <span class="o">*</span><span class="n">wrapper</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">filename</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">mode</span><span class="p">,</span> <span class="kt">int</span> <span class="n">options</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">opened_path</span><span class="p">,</span> <span class="n">php_stream_context</span> <span class="o">*</span><span class="n">context</span> <span class="n">STREAMS_DC</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
+	<span class="cm">/* close/destroy a wrapped stream */</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">stream_closer</span><span class="p">)(</span><span class="n">php_stream_wrapper</span> <span class="o">*</span><span class="n">wrapper</span><span class="p">,</span> <span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
+	<span class="cm">/* stat a wrapped stream */</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">stream_stat</span><span class="p">)(</span><span class="n">php_stream_wrapper</span> <span class="o">*</span><span class="n">wrapper</span><span class="p">,</span> <span class="n">php_stream</span> <span class="o">*</span><span class="n">stream</span><span class="p">,</span> <span class="n">php_stream_statbuf</span> <span class="o">*</span><span class="n">ssb</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
+	<span class="cm">/* stat a URL */</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">url_stat</span><span class="p">)(</span><span class="n">php_stream_wrapper</span> <span class="o">*</span><span class="n">wrapper</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">url</span><span class="p">,</span> <span class="kt">int</span> <span class="n">flags</span><span class="p">,</span> <span class="n">php_stream_statbuf</span> <span class="o">*</span><span class="n">ssb</span><span class="p">,</span> <span class="n">php_stream_context</span> <span class="o">*</span><span class="n">context</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
+	<span class="cm">/* open a &#34;directory&#34; stream */</span>
+	<span class="n">php_stream</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="n">dir_opener</span><span class="p">)(</span><span class="n">php_stream_wrapper</span> <span class="o">*</span><span class="n">wrapper</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">filename</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">mode</span><span class="p">,</span> <span class="kt">int</span> <span class="n">options</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">opened_path</span><span class="p">,</span> <span class="n">php_stream_context</span> <span class="o">*</span><span class="n">context</span> <span class="n">STREAMS_DC</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
+	<span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">label</span><span class="p">;</span>
+	<span class="cm">/* delete a file */</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">unlink</span><span class="p">)(</span><span class="n">php_stream_wrapper</span> <span class="o">*</span><span class="n">wrapper</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">url</span><span class="p">,</span> <span class="kt">int</span> <span class="n">options</span><span class="p">,</span> <span class="n">php_stream_context</span> <span class="o">*</span><span class="n">context</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
+	<span class="cm">/* rename a file */</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">rename</span><span class="p">)(</span><span class="n">php_stream_wrapper</span> <span class="o">*</span><span class="n">wrapper</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">url_from</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">url_to</span><span class="p">,</span> <span class="kt">int</span> <span class="n">options</span><span class="p">,</span> <span class="n">php_stream_context</span> <span class="o">*</span><span class="n">context</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
+	<span class="cm">/* Create/Remove directory */</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">stream_mkdir</span><span class="p">)(</span><span class="n">php_stream_wrapper</span> <span class="o">*</span><span class="n">wrapper</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">url</span><span class="p">,</span> <span class="kt">int</span> <span class="n">mode</span><span class="p">,</span> <span class="kt">int</span> <span class="n">options</span><span class="p">,</span> <span class="n">php_stream_context</span> <span class="o">*</span><span class="n">context</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">stream_rmdir</span><span class="p">)(</span><span class="n">php_stream_wrapper</span> <span class="o">*</span><span class="n">wrapper</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">url</span><span class="p">,</span> <span class="kt">int</span> <span class="n">options</span><span class="p">,</span> <span class="n">php_stream_context</span> <span class="o">*</span><span class="n">context</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
+	<span class="cm">/* Metadata handling */</span>
+	<span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">stream_metadata</span><span class="p">)(</span><span class="n">php_stream_wrapper</span> <span class="o">*</span><span class="n">wrapper</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">url</span><span class="p">,</span> <span class="kt">int</span> <span class="n">options</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">value</span><span class="p">,</span> <span class="n">php_stream_context</span> <span class="o">*</span><span class="n">context</span> <span class="n">TSRMLS_DC</span><span class="p">);</span>
+<span class="p">}</span> <span class="n">php_stream_wrapper_ops</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>php_stream_wrapper中最重要的是ops成员，它包含了所有该类型的流的操作逻辑的实现。其中最重要的是stream_opener和stream_closer，前者是流的实例化逻辑，后者是流的析构逻辑。特别的，stream_closer主要是用来销毁php_stream结构，而php_stream_ops-&gt;close是用来回收所有和该流实例相关的资源。</p>
+<h3 id="实现-1">实现</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="cp">#define PHP_DONIESTREAM_WRAPPER &#34;donie&#34;
+</span><span class="cp"></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">_donie_stream_data</span> <span class="p">{</span>
+	<span class="n">off_t</span> <span class="n">position</span><span class="p">;</span>
+	<span class="kt">char</span> <span class="o">*</span><span class="n">key</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">key_len</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">donie_stream_data</span><span class="p">;</span>
+
+<span class="k">static</span> <span class="n">php_stream</span> <span class="o">*</span><span class="nf">php_doniestream_wrapper_open</span><span class="p">(</span>
+		<span class="n">php_stream_wrapper</span> <span class="o">*</span><span class="n">wrapper</span><span class="p">,</span>
+		<span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">filename</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">mode</span><span class="p">,</span> <span class="kt">int</span> <span class="n">options</span><span class="p">,</span>
+		<span class="kt">char</span> <span class="o">**</span><span class="n">opened_path</span><span class="p">,</span> <span class="n">php_stream_context</span> <span class="o">*</span><span class="n">context</span>
+		<span class="n">STREAMS_DC</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">donie_stream_data</span> <span class="o">*</span><span class="n">data</span><span class="p">;</span>
+	<span class="n">php_url</span> <span class="o">*</span><span class="n">url</span><span class="p">;</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="n">options</span> <span class="o">&amp;</span> <span class="n">STREAM_OPEN_PERSISTENT</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">php_stream_wrapper_log_error</span><span class="p">(</span><span class="n">wrapper</span><span class="p">,</span> <span class="n">options</span> <span class="n">TSRMLS_CC</span><span class="p">,</span> <span class="s">&#34;Unable to open %s persistently.&#34;</span><span class="p">,</span> <span class="n">filename</span><span class="p">);</span>
+		<span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="n">url</span> <span class="o">=</span> <span class="n">php_url_parse</span><span class="p">(</span><span class="n">filename</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">url</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">php_stream_wrapper_log_error</span><span class="p">(</span><span class="n">wrapper</span><span class="p">,</span> <span class="n">options</span> <span class="n">TSRMLS_CC</span><span class="p">,</span> <span class="s">&#34;Unable to parse url %s.&#34;</span><span class="p">,</span> <span class="n">filename</span><span class="p">);</span>
+		<span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="n">data</span> <span class="o">=</span> <span class="n">emalloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">donie_stream_data</span><span class="p">));</span>
+	<span class="n">data</span><span class="o">-&gt;</span><span class="n">position</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="n">data</span><span class="o">-&gt;</span><span class="n">key_len</span> <span class="o">=</span> <span class="n">strlen</span><span class="p">(</span><span class="n">url</span><span class="o">-&gt;</span><span class="n">host</span><span class="p">);</span>
+	<span class="n">data</span><span class="o">-&gt;</span><span class="n">key</span> <span class="o">=</span> <span class="n">estrndup</span><span class="p">(</span><span class="n">url</span><span class="o">-&gt;</span><span class="n">host</span><span class="p">,</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">key_len</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+	<span class="n">php_url_free</span><span class="p">(</span><span class="n">url</span><span class="p">);</span>
+
+	<span class="k">return</span> <span class="n">php_stream_alloc</span><span class="p">(</span><span class="o">&amp;</span><span class="n">php_doniestream_ops</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">mode</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="k">static</span> <span class="n">php_stream_wrapper_ops</span> <span class="n">php_doniestream_wrapper_ops</span> <span class="o">=</span> <span class="p">{</span>
+	<span class="n">php_doniestream_wrapper_open</span><span class="p">,</span>
+	<span class="nb">NULL</span><span class="p">,</span> <span class="cm">/* stream_closer */</span>
+	<span class="nb">NULL</span><span class="p">,</span> <span class="cm">/* stream_stat */</span>
+	<span class="nb">NULL</span><span class="p">,</span> <span class="cm">/* url_stat */</span>
+	<span class="nb">NULL</span><span class="p">,</span> <span class="cm">/* dir_opener */</span>
+	<span class="n">PHP_DONIESTREAM_WRAPPER</span><span class="p">,</span>
+	<span class="nb">NULL</span><span class="p">,</span> <span class="cm">/* unlink */</span>
+	<span class="nb">NULL</span><span class="p">,</span> <span class="cm">/* rename */</span>
+	<span class="nb">NULL</span><span class="p">,</span> <span class="cm">/* mkdir */</span>
+	<span class="nb">NULL</span><span class="p">,</span> <span class="cm">/* rmdir */</span>
+	<span class="nb">NULL</span>  <span class="cm">/* stream_metadata */</span>
+<span class="p">};</span>
+<span class="k">static</span> <span class="n">php_stream_wrapper</span> <span class="n">php_doniestream_wrapper</span> <span class="o">=</span> <span class="p">{</span>
+	<span class="o">&amp;</span><span class="n">php_doniestream_wrapper_ops</span><span class="p">,</span>
+	<span class="nb">NULL</span><span class="p">,</span> <span class="cm">/* abstract */</span>
+	<span class="mi">0</span><span class="p">,</span> <span class="cm">/* is_url */</span>
+<span class="p">};</span>
+
+<span class="n">PHP_MINIT_FUNCTION</span><span class="p">(</span><span class="n">donie</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="cm">/* register stream wrapper */</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">php_register_url_stream_wrapper</span><span class="p">(</span><span class="n">PHP_DONIESTREAM_WRAPPER</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">php_doniestream_wrapper</span> <span class="n">TSRMLS_CC</span><span class="p">)</span> <span class="o">==</span> <span class="n">FAILURE</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="k">return</span> <span class="n">FAILURE</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="k">return</span> <span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">PHP_MSHUTDOWN_FUNCTION</span><span class="p">(</span><span class="n">donie</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="cm">/* unregister stream wrapper */</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">php_unregister_url_stream_wrapper</span><span class="p">(</span><span class="n">PHP_DONIESTREAM_WRAPPER</span> <span class="n">TSRMLS_CC</span><span class="p">)</span> <span class="o">==</span> <span class="n">FAILURE</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="k">return</span> <span class="n">FAILURE</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="k">return</span> <span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>PHP_DONIESTREAM_WRAPPER定义了协议名“donie”，所有对格式为“donie://XXX”地址的操作将由这个流实现。</p>
+<p>donie_stream_data是一个自定义的结构体，在创建流实例的时候初始化并赋给php_stream-&gt;abstract，为以后对流的操作提供方便。</p>
+<p>这里只实现了最关键的stream_opener函数，其中，用php_stream_alloc()创建新的流实例。</p>
+<p>最后在模块的MINIT中用php_register_url_stream_wrapper()注册包装器，并在MSHUTDOWN中用php_unregister_url_stream_wrapper()注销。</p>
+]]></description></item><item><title>PHP全局变量的实现和操作</title><link>http://0x3f.org/post/globals-implementation-in-php/</link><pubDate>Fri, 08 May 2015 17:23:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/globals-implementation-in-php/</guid><description><![CDATA[<h2 id="扩展内部的全局变量">扩展内部的全局变量</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="n">ZEND_BEGIN_MODULE_GLOBALS</span><span class="p">(</span><span class="n">donie</span><span class="p">)</span>
+	<span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">global_long</span><span class="p">;</span>
+	<span class="kt">char</span> <span class="o">*</span><span class="n">global_string</span><span class="p">;</span>
+<span class="n">ZEND_END_MODULE_GLOBALS</span><span class="p">(</span><span class="n">donie</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="n">ZEND_DECLARE_MODULE_GLOBALS</span><span class="p">(</span><span class="n">donie</span><span class="p">);</span>
+
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">php_donie_init_globals</span><span class="p">(</span><span class="n">zend_donie_globals</span> <span class="o">*</span><span class="n">donie_globals</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">donie_globals</span><span class="o">-&gt;</span><span class="n">global_long</span> <span class="o">=</span> <span class="mi">2015</span><span class="p">;</span>
+	<span class="n">donie_globals</span><span class="o">-&gt;</span><span class="n">global_string</span> <span class="o">=</span> <span class="s">&#34;Long live Donie Leigh !&#34;</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">php_donie_globals_dtor</span><span class="p">(</span><span class="n">zend_donie_globals</span> <span class="o">*</span><span class="n">donie_globals</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">php_printf</span><span class="p">(</span><span class="s">&#34;php_donie_globals_dtor triggered.&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">PHP_MINIT_FUNCTION</span><span class="p">(</span><span class="n">donie</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="cm">/* init extension globals */</span>
+	<span class="n">ZEND_INIT_MODULE_GLOBALS</span><span class="p">(</span><span class="n">donie</span><span class="p">,</span> <span class="n">php_donie_init_globals</span><span class="p">,</span> <span class="n">php_donie_globals_dtor</span><span class="p">);</span>
+
+	<span class="k">return</span> <span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">PHP_RSHUTDOWN_FUNCTION</span><span class="p">(</span><span class="n">donie</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="cp">#ifndef ZTS
+</span><span class="cp"></span>	<span class="n">php_donie_globals_dtor</span><span class="p">(</span><span class="o">&amp;</span><span class="n">donie_globals</span><span class="p">);</span>
+<span class="cp">#endif
+</span><span class="cp"></span>
+	<span class="k">return</span> <span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">ZEND_FUNCTION</span><span class="p">(</span><span class="n">donie_test_ext_globals</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">php_printf</span><span class="p">(</span><span class="s">&#34;%s&#34;</span><span class="p">,</span> <span class="n">DONIE_G</span><span class="p">(</span><span class="n">global_string</span><span class="p">));</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="声明">声明</h3>
+<p>ZEND_BEGIN_MODULE_GLOBALS和ZEND_END_MODULE_GLOBALS及其间的内容实际上声明了一个结构体zend_donie_globals。</p>
+<p>根据是否开启线程安全的情况，ZEND_DECLARE_MODULE_GLOBALS做不同的事：未开启线程安全，直接声明zend_donie_globals类型的变量；已开启线程安全，声明一个整形变量donie_globals_id。</p>
+<h3 id="初始化">初始化</h3>
+<p>在未开启线程安全时，ZEND_INIT_MODULE_GLOBALS调用第二个参数指定的函数初始化全局变量；已开启线程安全时，调用ts_allocate_id()分配一个资源ID，并调用第二个参数代表的函数。</p>
+<h3 id="访问">访问</h3>
+<p>DONIE_G在扩展的头文件里，生成扩展框架时默认就有。</p>
+<h3 id="销毁">销毁</h3>
+<p>开启线程安全时，ZEND_INIT_MODULE_GLOBALS的第三个参数指定的析构函数会自动被调用。未开启线程安全时，由于该宏只调用第二个参数初始化全局变量，第三个参数没有用，所以需要在MSHUTDOWN中手工调用析构函数。</p>
+<h2 id="用户空间的超级全局变量">用户空间的超级全局变量</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="n">zend_bool</span> <span class="nf">php_donie_autoglobal_callback</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="n">uint</span> <span class="n">name_len</span> <span class="n">TSRMLS_DC</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">zval</span> <span class="o">*</span><span class="n">donie_val</span><span class="p">;</span>
+	<span class="n">MAKE_STD_ZVAL</span><span class="p">(</span><span class="n">donie_val</span><span class="p">);</span>
+	<span class="n">array_init</span><span class="p">(</span><span class="n">donie_val</span><span class="p">);</span>
+	<span class="n">add_next_index_string</span><span class="p">(</span><span class="n">donie_val</span><span class="p">,</span> <span class="s">&#34;Hello autoglobals !&#34;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+	<span class="n">ZEND_SET_SYMBOL</span><span class="p">(</span><span class="o">&amp;</span><span class="n">EG</span><span class="p">(</span><span class="n">symbol_table</span><span class="p">),</span> <span class="s">&#34;_DONIE&#34;</span><span class="p">,</span> <span class="n">donie_val</span><span class="p">);</span>
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">PHP_MINIT_FUNCTION</span><span class="p">(</span><span class="n">donie</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="cm">/* declare userspace super globals */</span>
+	<span class="n">zend_register_auto_global</span><span class="p">(</span><span class="s">&#34;_DONIE&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="s">&#34;_DONIE&#34;</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">php_donie_autoglobal_callback</span> <span class="n">TSRMLS_CC</span><span class="p">);</span>
+
+	<span class="k">return</span> <span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>zend_register_auto_global()注册了$_DONIE这样一个全局变量。在代码的编译时，如果PHP内核发现代码中没有使用这个全局变量，不会进行初始化；若有使用，会调用php_donie_autoglobal_callback进行初始化。PHP4中没有php_donie_autoglobal_callback这个参数。</p>
+<p>php_donie_autoglobal_callback做的事就是初始化一个zval并加入符号表。如果此函数返回0，则只会被调用一次，如果返回非0，在代码编译时，每发现一次该全局变量，就调用一次这个函数。</p>
+]]></description></item><item><title>PHP常量的实现和操作</title><link>http://0x3f.org/post/constant-implementation-in-php/</link><pubDate>Thu, 07 May 2015 16:29:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/constant-implementation-in-php/</guid><description><![CDATA[<h2 id="存储结构">存储结构</h2>
+<p>常量存储在哈希表EG(zend_constants)中。</p>
+<p>常量的结构定义为：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">_zend_constant</span> <span class="p">{</span>
+	<span class="n">zval</span> <span class="n">value</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">flags</span><span class="p">;</span>
+	<span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">;</span>
+	<span class="n">uint</span> <span class="n">name_len</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">module_number</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">zend_constant</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>value是常量的值，是一个zval。name是常量名。module_number是模块被加载时，PHP内核在MINIT和RINIT方法的原型里默认传递的一个值，作为模块清理时的线索，在注册常量的接口里直接传递即可。</p>
+<p>flags是常量的标识或标识组合：</p>
+<ul>
+<li>CONST_CS</li>
+<li>CONST_PERSISTENT</li>
+<li>CONST_CT_SUBST</li>
+</ul>
+<p>CONST_CS表示常量名对大小写敏感，对应PHP函数define()的第三个参数，TRUE、FALSE、NULL这些常量名对大小写是不敏感的。CONST_PERSISTENT表示常量在请求结束后被保存，只在PHP进程结束时才销毁，一般在MINIT中定义的常量应该指定此参数，RINIT中定义的不指定。CONST_CT_SUBST表示在编译时可替换，TRUE、FALSE、NULL、ZEND_THREAD_SAFE、ZEND_DEBUG_BUILD属于此类。</p>
+<h2 id="常量的声明">常量的声明</h2>
+<p>常量的声明方法有两种，简单的使用宏函数族REGISTER_*_CONSTANT()：</p>
+<blockquote>
+<p>REGISTER_NULL_CONSTANT(name, flags)
+REGISTER_BOOL_CONSTANT(name, bval, flags)
+REGISTER_LONG_CONSTANT(name, lval, flags)
+REGISTER_DOUBLE_CONSTANT(name, dval, flags)
+REGISTER_STRING_CONSTANT(name, str, flags)
+REGISTER_STRINGL_CONSTANT(name, str, len, flags)</p>
+</blockquote>
+<p>由于不需指定常量名长度，所以name参数应直接使用字符串，而不是char*。</p>
+<p>如需使用变量作为name参数，使用zend_register_*_constant()函数族，并指定变量名长度（sizeof(name)）。上面的宏函数其实是对这族函数的封装。</p>
+<blockquote>
+<p>void zend_register_long_constant(char *name, uint name_len, long lval, int flags, int module_number TSRMLS_DC)
+void zend_register_double_constant(char *name, uint name_len, double dval, int flags, int module_number TSRMLS_DC)
+void zend_register_bool_constant(const char *name, uint name_len, zend_bool bval, int flags, int module_number TSRMLS_DC)
+void zend_register_string_constant(char *name, uint name_len, char *strval, int flags, int module_number TSRMLS_DC)
+void zend_register_stringl_constant(char *name, uint name_len, char *strval, uint strlen, int flags, int module_number TSRMLS_DC)</p>
+</blockquote>
+<p>除此之外，还有REGISTER_MAIN_*_CONSTANT和REGISTER_NS_*_CONSTANT两组宏函数。前者用于定义像E_ERROR这样的PHP标准常量，后者定义有命令空间的常量。</p>
+<h2 id="define和const">define()和const</h2>
+<ul>
+<li>define()是函数，在运行时定义常量
+<ul>
+<li>不能定义类常量</li>
+<li>可以在条件语句中使用</li>
+<li>可以指定常量是否对大小写敏感</li>
+<li>可以用表达式作为常量值</li>
+<li>只定义全局常量，不支持命名空间</li>
+</ul>
+</li>
+<li>const是语句，在编译时定义常量
+<ul>
+<li>可以定义类常量</li>
+<li>不能在条件语句中使用</li>
+<li>定义的常量对大小写敏感</li>
+<li>不支持表达式作为常量值</li>
+<li>若脚本定义了命名空间，声明的常量属于该命名空间</li>
+</ul>
+</li>
+</ul>
+<h2 id="魔术常量">魔术常量</h2>
+<blockquote>
+<p>__LINE__<br>
+__FILE__<br>
+__DIR__<br>
+__FUNCTION__<br>
+__CLASS__<br>
+__METHOD__<br>
+__NAMESPACE__</p>
+</blockquote>
+<p>魔术常量是在编译时（具体地说是词法分析时，见Zend/zend_language_scanner.l）被替换，确切地说，这些不是真正意义上的常量，只是个模板占位符。</p>
+]]></description></item><item><title>PHP资源的实现和操作</title><link>http://0x3f.org/post/resource-implementation-in-php/</link><pubDate>Tue, 05 May 2015 18:53:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/resource-implementation-in-php/</guid><description><![CDATA[<h2 id="存储结构">存储结构</h2>
+<p>资源变量也是一个zval结构，zval-&gt;type == IS_RESOURCE，zval-&gt;value-&gt;lval存储一个整数，此整数为资源数据在存储资源的哈希表中的索引。</p>
+<p>资源数据的结构为：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">_zend_rsrc_list_entry</span>
+<span class="p">{</span>
+    <span class="kt">void</span> <span class="o">*</span><span class="n">ptr</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">type</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">refcount</span><span class="p">;</span>
+<span class="p">}</span><span class="n">zend_rsrc_list_entry</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="常规资源与持久资源">常规资源与持久资源</h3>
+<p>有两个存储资源数据的哈希表。EG(regular_list)存储常规资源，EG(persistent_list)存储持久资源。</p>
+<p>常规资源对应的变量在作用域结束后会被内核回收，对应的资源数据也会被销毁。持久资源可以保持并被多次请求使用。持久资源的自动析构发生在PHP进程退出时。</p>
+<h2 id="实现">实现</h2>
+<p>重新实现基本的文件句柄和相关操作。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span><span class="lnt">115
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 资源名称
+</span><span class="c1"></span><span class="cp">#define PHP_DONIE_RES_NAME_FILE &#34;Donie&#39;s File Descriptor&#34;
+</span><span class="cp"></span>
+<span class="c1">// 资源类型
+</span><span class="c1"></span><span class="k">static</span> <span class="kt">int</span> <span class="n">le_donie_file_descriptor</span><span class="p">;</span>
+<span class="k">static</span> <span class="kt">int</span> <span class="n">le_donie_file_descriptor_persist</span><span class="p">;</span>
+
+<span class="c1">// 资源析构函数
+</span><span class="c1"></span><span class="k">static</span> <span class="kt">void</span> <span class="nf">php_donie_file_descriptor_dtor</span><span class="p">(</span><span class="n">zend_rsrc_list_entry</span> <span class="o">*</span><span class="n">rsrc</span> <span class="n">TSRMLS_CC</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">FILE</span> <span class="o">*</span><span class="n">fp</span> <span class="o">=</span> <span class="p">(</span><span class="n">FILE</span><span class="o">*</span><span class="p">)</span><span class="n">rsrc</span><span class="o">-&gt;</span><span class="n">ptr</span><span class="p">;</span>
+	<span class="n">fclose</span><span class="p">(</span><span class="n">fp</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// 在扩展的MINIT方法里创建资源类型
+</span><span class="c1"></span><span class="n">PHP_MINIT_FUNCTION</span><span class="p">(</span><span class="n">donie</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="cm">/* create a new resource type */</span>
+	<span class="n">le_donie_file_descriptor</span> <span class="o">=</span> <span class="n">zend_register_list_destructors_ex</span><span class="p">(</span>
+		<span class="n">php_donie_file_descriptor_dtor</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">PHP_DONIE_RES_NAME_FILE</span><span class="p">,</span> <span class="n">module_number</span>
+	<span class="p">);</span>
+
+	<span class="cm">/* create a persistent resource type */</span>
+	<span class="n">le_donie_file_descriptor_persist</span> <span class="o">=</span> <span class="n">zend_register_list_destructors_ex</span><span class="p">(</span>
+		<span class="nb">NULL</span><span class="p">,</span> <span class="n">php_donie_file_descriptor_dtor</span><span class="p">,</span> <span class="n">PHP_DONIE_RES_NAME_FILE</span><span class="p">,</span> <span class="n">module_number</span>
+	<span class="p">);</span>
+
+	<span class="k">return</span> <span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// 文件打开操作
+</span><span class="c1"></span><span class="n">PHP_FUNCTION</span><span class="p">(</span><span class="n">donie_fopen</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">FILE</span> <span class="o">*</span><span class="n">fp</span><span class="p">;</span>
+	<span class="kt">char</span> <span class="o">*</span><span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">mode</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">filename_len</span><span class="p">,</span> <span class="n">mode_len</span><span class="p">;</span>
+	<span class="n">zend_bool</span> <span class="n">persist</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="kt">char</span> <span class="o">*</span><span class="n">hash_key</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">hash_key_len</span><span class="p">;</span>
+	<span class="n">list_entry</span> <span class="o">*</span><span class="n">persist_file</span><span class="p">;</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="n">zend_parse_parameters</span><span class="p">(</span><span class="n">ZEND_NUM_ARGS</span><span class="p">()</span> <span class="n">TSRMLS_CC</span><span class="p">,</span> <span class="s">&#34;ss|b&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">filename</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">filename_len</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">mode</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">mode_len</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">persist</span><span class="p">)</span> <span class="o">==</span> <span class="n">FAILURE</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">RETURN_NULL</span><span class="p">();</span>
+	<span class="p">}</span>
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">filename_len</span> <span class="o">||</span> <span class="o">!</span><span class="n">mode_len</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">php_error_docref</span><span class="p">(</span><span class="nb">NULL</span> <span class="n">TSRMLS_CC</span><span class="p">,</span> <span class="n">E_WARNING</span><span class="p">,</span> <span class="s">&#34;Invalid file name or mode.&#34;</span><span class="p">);</span>
+		<span class="n">RETURN_FALSE</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="cm">/* reuse persistent resource if exists */</span>
+	<span class="n">hash_key_len</span> <span class="o">=</span> <span class="n">spprintf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">hash_key</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#34;php_donie_file_descriptor:%s-%s&#34;</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">zend_hash_find</span><span class="p">(</span><span class="o">&amp;</span><span class="n">EG</span><span class="p">(</span><span class="n">persistent_list</span><span class="p">),</span> <span class="n">hash_key</span><span class="p">,</span> <span class="n">hash_key_len</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="kt">void</span> <span class="o">**</span><span class="p">)</span><span class="o">&amp;</span><span class="n">persist_file</span><span class="p">)</span> <span class="o">==</span> <span class="n">SUCCESS</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">ZEND_REGISTER_RESOURCE</span><span class="p">(</span><span class="n">return_value</span><span class="p">,</span> <span class="n">persist_file</span><span class="o">-&gt;</span><span class="n">ptr</span><span class="p">,</span> <span class="n">le_donie_file_descriptor_persist</span><span class="p">);</span>
+		<span class="n">efree</span><span class="p">(</span><span class="n">hash_key</span><span class="p">);</span>
+		<span class="k">return</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="n">fp</span> <span class="o">=</span> <span class="n">fopen</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">fp</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">php_error_docref</span><span class="p">(</span><span class="nb">NULL</span> <span class="n">TSRMLS_CC</span><span class="p">,</span> <span class="n">E_WARNING</span><span class="p">,</span> <span class="s">&#34;Failed opening %s with mode %s.&#34;</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="p">);</span>
+		<span class="n">RETURN_FALSE</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="cm">/* this is the key point for registering resources */</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">persist</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">ZEND_REGISTER_RESOURCE</span><span class="p">(</span><span class="n">return_value</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">le_donie_file_descriptor_persist</span><span class="p">);</span>
+		<span class="n">list_entry</span> <span class="n">le</span><span class="p">;</span>
+		<span class="n">le</span><span class="p">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">le_donie_file_descriptor_persist</span><span class="p">;</span>
+		<span class="n">le</span><span class="p">.</span><span class="n">ptr</span> <span class="o">=</span> <span class="n">fp</span><span class="p">;</span>
+		<span class="n">zend_hash_update</span><span class="p">(</span><span class="o">&amp;</span><span class="n">EG</span><span class="p">(</span><span class="n">persistent_list</span><span class="p">),</span> <span class="n">hash_key</span><span class="p">,</span> <span class="n">hash_key_len</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">le</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">list_entry</span><span class="p">),</span> <span class="nb">NULL</span><span class="p">);</span>
+	<span class="p">}</span>
+	<span class="k">else</span>
+	<span class="p">{</span>
+		<span class="n">ZEND_REGISTER_RESOURCE</span><span class="p">(</span><span class="n">return_value</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">le_donie_file_descriptor</span><span class="p">);</span>
+	<span class="p">}</span>
+	<span class="n">efree</span><span class="p">(</span><span class="n">hash_key</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// 文件写操作
+</span><span class="c1"></span><span class="n">PHP_FUNCTION</span><span class="p">(</span><span class="n">donie_fwrite</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">FILE</span> <span class="o">*</span><span class="n">fp</span><span class="p">;</span>
+	<span class="n">zval</span> <span class="o">*</span><span class="n">file_resource</span><span class="p">;</span>
+	<span class="kt">char</span> <span class="o">*</span><span class="n">data</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">data_len</span><span class="p">;</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="n">zend_parse_parameters</span><span class="p">(</span><span class="n">ZEND_NUM_ARGS</span><span class="p">()</span> <span class="n">TSRMLS_CC</span><span class="p">,</span> <span class="s">&#34;rs&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">file_resource</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">data</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">data_len</span><span class="p">)</span> <span class="o">==</span> <span class="n">FAILURE</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">RETURN_NULL</span><span class="p">();</span>
+	<span class="p">}</span>
+
+	<span class="n">ZEND_FETCH_RESOURCE2</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="n">FILE</span><span class="o">*</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">file_resource</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">PHP_DONIE_RES_NAME_FILE</span><span class="p">,</span> <span class="n">le_donie_file_descriptor</span><span class="p">,</span> <span class="n">le_donie_file_descriptor_persist</span><span class="p">);</span>
+	<span class="n">RETURN_LONG</span><span class="p">(</span><span class="n">fwrite</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">data_len</span><span class="p">,</span> <span class="n">fp</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="c1">// 文件关闭操作
+</span><span class="c1"></span><span class="n">PHP_FUNCTION</span><span class="p">(</span><span class="n">donie_fclose</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">FILE</span> <span class="o">*</span><span class="n">fp</span><span class="p">;</span>
+	<span class="n">zval</span> <span class="o">*</span><span class="n">file_resource</span><span class="p">;</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="n">zend_parse_parameters</span><span class="p">(</span><span class="n">ZEND_NUM_ARGS</span><span class="p">()</span> <span class="n">TSRMLS_CC</span><span class="p">,</span> <span class="s">&#34;r&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">file_resource</span><span class="p">)</span> <span class="o">==</span> <span class="n">FAILURE</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">RETURN_NULL</span><span class="p">();</span>
+	<span class="p">}</span>
+
+	<span class="n">ZEND_FETCH_RESOURCE2</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="n">FILE</span><span class="o">*</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">file_resource</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">PHP_DONIE_RES_NAME_FILE</span><span class="p">,</span> <span class="n">le_donie_file_descriptor</span><span class="p">,</span> <span class="n">le_donie_file_descriptor_persist</span><span class="p">);</span>
+	<span class="n">zend_hash_index_del</span><span class="p">(</span><span class="o">&amp;</span><span class="n">EG</span><span class="p">(</span><span class="n">regular_list</span><span class="p">),</span> <span class="n">Z_RESVAL_P</span><span class="p">(</span><span class="n">file_resource</span><span class="p">));</span>
+	<span class="n">RETURN_TRUE</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="创建新资源类型">创建新资源类型</h3>
+<p>zend_register_list_destructors_ex()创建新资源类型，并注册该资源类型的析构函数、资源名称。第一个参数是常规资源的析构函数，第二个是持久资源的析构函数，此处创建的是常规资源类型，故第二个参数不指定。</p>
+<h3 id="注册资源">注册资源</h3>
+<p>宏函数ZEND_REGISTER_RESOURCE()注册新生成的资源到EG(regular_list)，并保存资源的索引到zval-&gt;value-&gt;lval中。</p>
+<h3 id="双重引用计数">双重引用计数</h3>
+<p>资源变量zval中存在一个引用计数，资源数据zend_rsrc_list_entry中也存在一个。前者遵循与其它变量一致的计数原则，后者取决于资源数据被几个资源变量zval引用。</p>
+<p>例如对于以下场景：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="nv">$a</span> <span class="o">=</span> <span class="nx">donie_fopen</span><span class="p">(</span><span class="s1">&#39;/tmp/donie.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">);</span>
+<span class="nv">$b</span> <span class="o">=</span> <span class="nv">$a</span><span class="p">;</span>
+<span class="nv">$c</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nv">$a</span><span class="p">;</span>
+<span class="cp">?&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>a赋值给b时，zval的引用计数加一。a的引用赋值给c时，发生zval的拆分，b获得新的zval，引用计数是1，a和c共用一个zval，引用计数是2。此时，资源数据的引用计数加一。</p>
+<h3 id="获取资源">获取资源</h3>
+<p>ZEND_FETCH_RESOURCE()根据资源变量zval取出资源数据的ptr并验证资源类型。ZEND_FETCH_RESOURCE2()可以同时指定两个资源类型，任一类型匹配成功都可以。</p>
+<h3 id="销毁资源">销毁资源</h3>
+<p>根据上述二重计数原则，只有当资源数据的引用计数为0时，资源的析构函数才会被调用，而销毁资源变量不一定能销毁资源，所以需要手工强制销毁资源。</p>
+<p>zend_hash_index_del()从EG(regular_list)中删除资源时，该资源类型注册的dtor会被自动调用，从而析构资源。</p>
+<h3 id="持久资源">持久资源</h3>
+<h4 id="存储">存储</h4>
+<p>EG(persistent_list)是个用字符串索引的哈希表。需要自行定义键的命名规则，做到全局唯一。</p>
+<h4 id="创建持久资源类型">创建持久资源类型</h4>
+<p>zend_register_list_destructors_ex()注册资源类型时，将析构函数指定为第二个参数，第一个参数为NULL。析构持久资源时，会自动调用该函数。</p>
+<h4 id="注册持久资源">注册持久资源</h4>
+<p>EG(persistent_list)中的资源数据并不被直接使用，对资源的操作仍然使用EG(regular_list)。故在注册持久资源时，两个哈希表中都需要保存一份。</p>
+<p>往EG(persistent_list)中存资源数据：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">char</span> <span class="o">*</span><span class="n">hash_key</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">hash_key_len</span><span class="p">;</span>
+<span class="n">zend_rsrc_list_entry</span> <span class="n">le</span><span class="p">;</span>
+<span class="n">le</span><span class="p">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">le_donie_file_descriptor_persist</span><span class="p">;</span>
+<span class="n">le</span><span class="p">.</span><span class="n">ptr</span> <span class="o">=</span> <span class="n">fp</span><span class="p">;</span>
+<span class="n">hash_key_len</span> <span class="o">=</span> <span class="n">spprintf</span><span class="p">(</span><span class="o">&amp;</span><span class="n">hash_key</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#34;php_donie_file_descriptor:%s-%s&#34;</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="p">);</span>
+<span class="n">zend_hash_update</span><span class="p">(</span><span class="o">&amp;</span><span class="n">EG</span><span class="p">(</span><span class="n">persistent_list</span><span class="p">),</span> <span class="n">hash_key</span><span class="p">,</span> <span class="n">hash_key_len</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">le</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">list_entry</span><span class="p">),</span> <span class="nb">NULL</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="获取持久资源">获取持久资源</h4>
+<p>对持久资源的常规操作和操作常规资源一样，仍使用EG(regular_list)，因为变量zval中存储的是EG(regular_list)中的索引。所以需要先在EG(persistent_list)中查询，若资源存在，先注册到EG(regular_list)中，再进行后续操作。</p>
+<h4 id="手动析构持久资源">手动析构持久资源</h4>
+<p>用zend_hash_del()从EG(persistent_list)中删除资源数据即可自动触发析构函数。</p>
+]]></description></item><item><title>PHP对象的实现和操作</title><link>http://0x3f.org/post/object-implementation-in-php/</link><pubDate>Wed, 29 Apr 2015 23:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/object-implementation-in-php/</guid><description><![CDATA[<h2 id="object的存储结构">Object的存储结构</h2>
+<p>对象实例用zval存储。zval-&gt;type == IS_OBJECT，zval-&gt;value-&gt;obj存储zend_object_value类型的结构体变量。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">_zend_object_value</span> <span class="p">{</span>
+    <span class="n">zend_object_handle</span> <span class="n">handle</span><span class="p">;</span>
+    <span class="k">const</span> <span class="n">zend_object_handlers</span> <span class="o">*</span><span class="n">handlers</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">zend_object_value</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>zend_object_handle是一个unsigned int，是对象的ID。zend_object_handlers存储对象所有的行为。</p>
+<h2 id="object的实例化过程">Object的实例化过程</h2>
+<p>Object的初始化用以下几个宏函数：</p>
+<ul>
+<li>object_init(zval *arg)</li>
+<li>object_init_ex(zval *arg, zend_class_entry *class_type)</li>
+<li>object_and_properties_init(zval *arg, zend_class_entry *class_type, HashTable *properties)</li>
+</ul>
+<p>底层都是调用_object_and_properties_init(zval *arg, zend_class_entry *class_type, HashTable *properties)实现。这个函数做以下几件事：</p>
+<ul>
+<li>检查类是否可实例化（例如接口、抽象类等不允许初始化）</li>
+<li>处理类常量</li>
+<li>检查类是否存在自定义实例化逻辑
+<ul>
+<li>若存在，调用自定义实例化逻辑</li>
+<li>若不存在，调用缺省的函数zend_objects_new(zend_object **object, zend_class_entry *class_type)</li>
+</ul>
+</li>
+<li>把实例化的zend_object类型的数据存入zval中</li>
+</ul>
+<p>zend_objects_new()做这些事：</p>
+<ul>
+<li>分配一个zend_object类型的内存空间</li>
+<li>初始化zend_object类型数据</li>
+<li>把zend_object类型数据存入对象仓库（Objects Store）
+<ul>
+<li>zend_objects_store_put(void *object, zend_objects_store_dtor_t dtor, zend_objects_free_object_storage_t free_storage, zend_objects_store_clone_t clone）</li>
+</ul>
+</li>
+</ul>
+<h2 id="zend_object的存储结构">zend_object的存储结构</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">_zend_object</span> <span class="p">{</span>
+    <span class="n">zend_class_entry</span> <span class="o">*</span><span class="n">ce</span><span class="p">;</span>
+    <span class="n">HashTable</span> <span class="o">*</span><span class="n">properties</span><span class="p">;</span>
+    <span class="n">zval</span> <span class="o">**</span><span class="n">properties_table</span><span class="p">;</span>
+    <span class="n">HashTable</span> <span class="o">*</span><span class="n">guards</span><span class="p">;</span> <span class="cm">/* protects from __get/__set ... recursion */</span>
+<span class="p">}</span> <span class="n">zend_object</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>ce是类的定义。properties_table存储类里预定义的属性。properties存储非预定义属性。</p>
+<p>guards存储属性名到zend_guard结构的映射关系。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">_zend_guard</span> <span class="p">{</span>
+    <span class="n">zend_bool</span> <span class="n">in_get</span><span class="p">;</span>
+    <span class="n">zend_bool</span> <span class="n">in_set</span><span class="p">;</span>
+    <span class="n">zend_bool</span> <span class="n">in_unset</span><span class="p">;</span>
+    <span class="n">zend_bool</span> <span class="n">in_isset</span><span class="p">;</span>
+    <span class="n">zend_bool</span> <span class="n">dummy</span><span class="p">;</span> <span class="cm">/* sizeof(zend_guard) must not be equal to sizeof(void*) */</span>
+<span class="p">}</span> <span class="n">zend_guard</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>此结构用于在操作属性时，防止递归调用。例如给对象一个新属性赋值时，__set()函数理论上会递归调用自己，所以此结构用于判断该属性是否已在__set()中。</p>
+<h2 id="属性的存储结构">属性的存储结构</h2>
+<p>在zend_object的存储结构里，哈希表properties存储类的非预定义属性的名称和值。</p>
+<p>对于预定义的属性，由于PHP的哈希表的存储开销很大，所以把属性信息（即下面的zend_property_info结构体）存储在zend_class_entry里，对象里用C的数组存储所有预定义属性的zval的指针，并把偏移量记录在属性信息里，这就是properties_table。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">_zend_property_info</span> <span class="p">{</span>
+    <span class="n">zend_uint</span> <span class="n">flags</span><span class="p">;</span>
+    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">name_length</span><span class="p">;</span>
+    <span class="n">ulong</span> <span class="n">h</span><span class="p">;</span>                 <span class="cm">/* hash of name */</span>
+    <span class="kt">int</span> <span class="n">offset</span><span class="p">;</span>              <span class="cm">/* storage offset */</span>
+    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">doc_comment</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">doc_comment_len</span><span class="p">;</span>
+    <span class="n">zend_class_entry</span> <span class="o">*</span><span class="n">ce</span><span class="p">;</span>    <span class="cm">/* CE of declaring class */</span>
+<span class="p">}</span> <span class="n">zend_property_info</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="属性名的编码">属性名的编码</h3>
+<p>在类的继承关系中，同名不同类型（public，private等）的属性各自单独存储，所以属性名在底层是经过编码的，规则如下：</p>
+<blockquote>
+<p>class Foo { private $prop;   } =&gt; &ldquo;\0Foo\0prop&rdquo;<br>
+class Bar { private $prop;   } =&gt; &ldquo;\0Bar\0prop&rdquo;<br>
+class Rab { protected $prop; } =&gt; &ldquo;\0*\0prop&rdquo;<br>
+class Oof { public $prop;    } =&gt; &ldquo;prop&rdquo;</p>
+</blockquote>
+<p>大部分情况下，对属性操作的API自动处理属性名的编码。只有当需要直接访问property_info-&gt;name或zobj-&gt;properties时才需要自行处理，此时使用zend_(un)mangle_property_name()函数。</p>
+<h2 id="objects-store的存储结构">Objects Store的存储结构</h2>
+<p>对象仓库是一个可变数组，存储多个zend_object_store_bucket结构。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">_zend_objects_store</span> <span class="p">{</span>
+    <span class="n">zend_object_store_bucket</span> <span class="o">*</span><span class="n">object_buckets</span><span class="p">;</span>
+    <span class="n">zend_uint</span> <span class="n">top</span><span class="p">;</span>
+    <span class="n">zend_uint</span> <span class="n">size</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">free_list_head</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">zend_objects_store</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>size是对象仓库的容量。top是下一个可用的对象句柄，对象句柄从1开始，以保证所有句柄都为真。对象仓库通过每个Bucket的free_list结构维护一个可用的Bucket链表，free_list_head记录链表的头部。</p>
+<h3 id="zend_object_store_bucket的存储结构">zend_object_store_bucket的存储结构</h3>
+<p>每个对象的信息存储在一个bucket里。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">_zend_object_store_bucket</span> <span class="p">{</span>
+    <span class="n">zend_bool</span> <span class="n">destructor_called</span><span class="p">;</span>
+    <span class="n">zend_bool</span> <span class="n">valid</span><span class="p">;</span>
+    <span class="k">union</span> <span class="n">_store_bucket</span> <span class="p">{</span>
+        <span class="k">struct</span> <span class="n">_store_object</span> <span class="p">{</span>
+            <span class="kt">void</span> <span class="o">*</span><span class="n">object</span><span class="p">;</span>
+            <span class="n">zend_objects_store_dtor_t</span> <span class="n">dtor</span><span class="p">;</span>
+            <span class="n">zend_objects_free_object_storage_t</span> <span class="n">free_storage</span><span class="p">;</span>
+            <span class="n">zend_objects_store_clone_t</span> <span class="n">clone</span><span class="p">;</span>
+            <span class="k">const</span> <span class="n">zend_object_handlers</span> <span class="o">*</span><span class="n">handlers</span><span class="p">;</span>
+            <span class="n">zend_uint</span> <span class="n">refcount</span><span class="p">;</span>
+            <span class="n">gc_root_buffer</span> <span class="o">*</span><span class="n">buffered</span><span class="p">;</span>
+        <span class="p">}</span> <span class="n">obj</span><span class="p">;</span>
+        <span class="k">struct</span> <span class="p">{</span>
+            <span class="kt">int</span> <span class="n">next</span><span class="p">;</span>
+        <span class="p">}</span> <span class="n">free_list</span><span class="p">;</span>
+    <span class="p">}</span> <span class="n">bucket</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">zend_object_store_bucket</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>桶被占用的时候，valid为1，否则为0。</p>
+<p>对象被销毁时，dtor被调用后，destructor_called被置为1，防止在被free时重复调用dtor，具体见<strong>Object的二阶销毁逻辑</strong>。</p>
+<p>_store_object里存储对象的主要信息。zend_objects_store_put()传入的zend_object结构体存储在object里。dtor和free_storage见<strong>Object的二阶销毁逻辑</strong>。clone是对象的克隆函数。handlers存储对象的一系列操作函数，缺省为std_object_handlers。refcount是对象的引用计数。buffered是垃圾回收需要用到的数据。</p>
+<p>free_list记录对象仓库中可用的Bucket链表中下一个可用的Bucket。</p>
+<h3 id="object-store的操作">Object Store的操作</h3>
+<ul>
+<li>zend_objects_store_put()：注册对象到仓库</li>
+<li>zend_object_store_get_object_by_handle()：通过对象句柄取对象</li>
+<li>zend_object_store_get_object()：通过zval取对象，返回void*</li>
+<li>zend_objects_get_address()：和zend_object_store_get_object()一样，但返回zend_object*</li>
+</ul>
+<h2 id="object的二阶销毁逻辑">Object的二阶销毁逻辑</h2>
+<p>对象的销毁分两个步骤，一是对象的析构，一是内存的释放。前者调用对象的dtor，后者调用free_storage。一般先析构，再释放内存，但两者可各自分开执行。</p>
+<p>dtor中可以执行用户空间的PHP代码，主要是PHP类的__destruct()。PHP脚本执行完成后销毁对象并结束进程（executor shutdown），在这个过程进行到一半的时候执行用户空间代码可能会出问题，所以这么区别主要是为了在进程结束过程中不会调用用户空间代码。</p>
+<p>此外，dtor并不是必须执行的，如果一个对象的dtor调用的用户空间代码里执行了die()，后续对象的dtor不会被执行。所以大部分情况下，开发者可以自定义free_storage函数，而使用缺省的zend_objects_destroy_object作为dtor。</p>
+]]></description></item><item><title>PHP类和接口的实现</title><link>http://0x3f.org/post/class-interface-implementation-in-php/</link><pubDate>Tue, 28 Apr 2015 18:38:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/class-interface-implementation-in-php/</guid><description><![CDATA[<h2 id="class的实现">Class的实现</h2>
+<p>类的注册是在扩展的MINIT方法里。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span><span class="lnt">115
+</span><span class="lnt">116
+</span><span class="lnt">117
+</span><span class="lnt">118
+</span><span class="lnt">119
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="cm">/*
+</span><span class="cm"> * this pointer should be put into the header file,
+</span><span class="cm"> * so other modules can access this class.
+</span><span class="cm"> */</span>
+<span class="n">zend_class_entry</span> <span class="o">*</span><span class="n">c_leigh</span><span class="p">;</span>
+
+<span class="cm">/* just a simple method. */</span>
+<span class="n">PHP_METHOD</span><span class="p">(</span><span class="n">Leigh</span><span class="p">,</span> <span class="n">helloWorld</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">zend_parse_parameters_none</span><span class="p">()</span> <span class="o">==</span> <span class="n">FAILURE</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">php_printf</span><span class="p">(</span><span class="s">&#34;Hello World !</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/* getting handle of this object. */</span>
+<span class="n">PHP_METHOD</span><span class="p">(</span><span class="n">Leigh</span><span class="p">,</span> <span class="n">getObjectHandle</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">zval</span> <span class="o">*</span><span class="n">obj</span><span class="p">;</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="n">zend_parse_parameters_none</span><span class="p">()</span> <span class="o">==</span> <span class="n">FAILURE</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="k">return</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="n">obj</span> <span class="o">=</span> <span class="n">getThis</span><span class="p">();</span>
+
+	<span class="n">RETURN_LONG</span><span class="p">(</span><span class="n">Z_OBJ_HANDLE_P</span><span class="p">(</span><span class="n">obj</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="cm">/* get value of the property &#39;bloodType&#39; */</span>
+<span class="n">PHP_METHOD</span><span class="p">(</span><span class="n">Leigh</span><span class="p">,</span> <span class="n">getBloodType</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">zval</span> <span class="o">*</span><span class="n">obj</span><span class="p">,</span> <span class="o">*</span><span class="n">blood_type</span><span class="p">;</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="n">zend_parse_parameters_none</span><span class="p">()</span> <span class="o">==</span> <span class="n">FAILURE</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+
+	<span class="n">obj</span> <span class="o">=</span> <span class="n">getThis</span><span class="p">();</span>
+
+    <span class="n">blood_type</span> <span class="o">=</span> <span class="n">zend_read_property</span><span class="p">(</span><span class="n">c_leigh</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="s">&#34;bloodType&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="s">&#34;bloodType&#34;</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span> <span class="n">TSRMLS_CC</span><span class="p">);</span>
+
+    <span class="n">RETURN_ZVAL</span><span class="p">(</span><span class="n">blood_type</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/* set value of the property &#39;bloodType&#39; */</span>
+<span class="n">PHP_METHOD</span><span class="p">(</span><span class="n">Leigh</span><span class="p">,</span> <span class="n">setBloodType</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">zval</span> <span class="o">*</span><span class="n">obj</span><span class="p">,</span> <span class="o">*</span><span class="n">new_value</span><span class="p">;</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="n">zend_parse_parameters</span><span class="p">(</span><span class="n">ZEND_NUM_ARGS</span><span class="p">()</span> <span class="n">TSRMLS_CC</span><span class="p">,</span> <span class="s">&#34;z&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">new_value</span><span class="p">)</span> <span class="o">==</span> <span class="n">FAILURE</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="k">return</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="n">obj</span> <span class="o">=</span> <span class="n">getThis</span><span class="p">();</span>
+
+	<span class="n">zend_update_property</span><span class="p">(</span><span class="n">c_leigh</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="s">&#34;bloodType&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="s">&#34;bloodType&#34;</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">new_value</span> <span class="n">TSRMLS_CC</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">const</span> <span class="n">zend_function_entry</span> <span class="n">leigh_functions</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+	<span class="n">PHP_ME</span><span class="p">(</span><span class="n">Leigh</span><span class="p">,</span> <span class="n">helloWorld</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">ZEND_ACC_PUBLIC</span><span class="p">)</span>
+	<span class="n">PHP_ME</span><span class="p">(</span><span class="n">Leigh</span><span class="p">,</span> <span class="n">getObjectHandle</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">ZEND_ACC_PUBLIC</span><span class="p">)</span>
+	<span class="n">PHP_ME</span><span class="p">(</span><span class="n">Leigh</span><span class="p">,</span> <span class="n">getBloodType</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">ZEND_ACC_PUBLIC</span><span class="p">)</span>
+	<span class="n">PHP_ME</span><span class="p">(</span><span class="n">Leigh</span><span class="p">,</span> <span class="n">setBloodType</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">ZEND_ACC_PUBLIC</span><span class="p">)</span>
+	<span class="cm">/* PHP_ABSTRACT_ME(Leigh, abstractMethod, NULL)      // abstract method */</span>
+	<span class="n">PHP_FE_END</span>
+<span class="p">};</span>
+
+<span class="cm">/*
+</span><span class="cm"> * create a new class inheriting Leigh
+</span><span class="cm"> */</span>
+<span class="n">zend_class_entry</span> <span class="o">*</span><span class="n">c_hero</span><span class="p">;</span>
+
+<span class="cm">/*
+</span><span class="cm"> * create an interface
+</span><span class="cm"> */</span>
+<span class="n">zend_class_entry</span> <span class="o">*</span><span class="n">i_superman</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="n">zend_function_entry</span> <span class="n">superman_functions</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+	<span class="n">PHP_ABSTRACT_ME</span><span class="p">(</span><span class="n">ISuperman</span><span class="p">,</span> <span class="n">saveEarth</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">)</span>
+	<span class="n">PHP_FE_END</span>
+<span class="p">};</span>
+
+<span class="cm">/*  PHP_MINIT_FUNCTION
+</span><span class="cm"> */</span>
+<span class="n">PHP_MINIT_FUNCTION</span><span class="p">(</span><span class="n">donie</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="cm">/* If you have INI entries, uncomment these lines
+</span><span class="cm">	REGISTER_INI_ENTRIES();
+</span><span class="cm">	*/</span>
+
+	<span class="n">time_of_minit</span> <span class="o">=</span> <span class="n">time</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+
+	<span class="cm">/* register a class */</span>
+	<span class="n">zend_class_entry</span> <span class="n">tmp_leigh</span><span class="p">;</span>
+	<span class="n">INIT_CLASS_ENTRY</span><span class="p">(</span><span class="n">tmp_leigh</span><span class="p">,</span> <span class="s">&#34;Leigh&#34;</span><span class="p">,</span> <span class="n">leigh_functions</span><span class="p">);</span>
+	<span class="n">c_leigh</span> <span class="o">=</span> <span class="n">zend_register_internal_class</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tmp_leigh</span> <span class="n">TSRMLS_CC</span><span class="p">);</span>
+
+	<span class="cm">/* declare a property initialized as null */</span>
+	<span class="n">zend_declare_property_null</span><span class="p">(</span><span class="n">c_leigh</span><span class="p">,</span> <span class="s">&#34;bloodType&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="s">&#34;bloodType&#34;</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">ZEND_ACC_PUBLIC</span> <span class="n">TSRMLS_CC</span><span class="p">);</span>
+	<span class="cm">/* declare a class constant */</span>
+	<span class="n">zend_declare_class_constant_double</span><span class="p">(</span><span class="n">c_leigh</span><span class="p">,</span> <span class="s">&#34;PI&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="s">&#34;PI&#34;</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">3.1415926</span> <span class="n">TSRMLS_CC</span><span class="p">);</span>
+
+	<span class="cm">/* declare an interface */</span>
+	<span class="n">zend_class_entry</span> <span class="n">tmp_superman</span><span class="p">;</span>
+	<span class="n">INIT_CLASS_ENTRY</span><span class="p">(</span><span class="n">tmp_superman</span><span class="p">,</span> <span class="s">&#34;ISuperman&#34;</span><span class="p">,</span> <span class="n">superman_functions</span><span class="p">);</span>
+	<span class="n">i_superman</span> <span class="o">=</span> <span class="n">zend_register_internal_interface</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tmp_superman</span> <span class="n">TSRMLS_CC</span><span class="p">);</span>
+
+	<span class="cm">/* inherit a class and implement an interface*/</span>
+	<span class="n">zend_class_entry</span> <span class="n">tmp_hero</span><span class="p">;</span>
+	<span class="n">INIT_CLASS_ENTRY</span><span class="p">(</span><span class="n">tmp_hero</span><span class="p">,</span> <span class="s">&#34;Hero&#34;</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+	<span class="n">c_hero</span> <span class="o">=</span> <span class="n">zend_register_internal_class_ex</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tmp_hero</span><span class="p">,</span> <span class="n">c_leigh</span><span class="p">,</span> <span class="nb">NULL</span> <span class="n">TSRMLS_CC</span><span class="p">);</span>
+	<span class="n">zend_class_implements</span><span class="p">(</span><span class="n">c_hero</span> <span class="n">TSRMLS_CC</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i_superman</span><span class="p">);</span>
+
+	<span class="k">return</span> <span class="n">SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="方法修饰符">方法修饰符</h4>
+<blockquote>
+<p>ZEND_ACC_PUBLIC<br>
+ZEND_ACC_PROTECTED<br>
+ZEND_ACC_PRIVATE<br>
+ZEND_ACC_STATIC<br>
+ZEND_ACC_FINAL<br>
+ZEND_ACC_ABSTRACT</p>
+</blockquote>
+<p>不直接在PHP_ME里使用ZEND_ACC_ABSTRACT定义抽象方法，用PHP_ABSTRACT_ME()。</p>
+<h4 id="取对象句柄">取对象句柄</h4>
+<p>在方法的定义里使用getThis()拿当前对象的句柄。</p>
+<h4 id="属性的声明和存取">属性的声明和存取</h4>
+<blockquote>
+<p>zend_declare_property_null(&hellip; TSRMLS_DC)<br>
+zend_declare_property_bool(&hellip;, long value TSRMLS_DC)<br>
+zend_declare_property_long(&hellip;, long value TSRMLS_DC)<br>
+zend_declare_property_double(&hellip;, double value TSRMLS_DC)<br>
+zend_declare_property_string(&hellip;, const char *value TSRMLS_DC)<br>
+zend_declare_property_stringl(&hellip;, const char *value, int value_len TSRMLS_DC)</p>
+</blockquote>
+<p>属性的修饰符和方法相同。</p>
+<p>属性的获取使用zend_read_property_*()这组函数。</p>
+<p>属性的更新使用zend_update_property_*()这组函数。</p>
+<p>静态属性的获取和更新分别使用zend_read_static_property_*()函数组和zend_update_static_property_*()函数组。与以上不同的是，参数中不需要对象句柄。</p>
+<p>类常量的声明使用zend_declare_class_constant_*()函数组，参数与声明属性相同，只是不需要修饰符。</p>
+<h4 id="继承类">继承类</h4>
+<p>用zend_register_internal_class_ex()。</p>
+<h4 id="声明接口">声明接口</h4>
+<p>和声明类一样，先声明一组抽象方法，然后用zend_register_internal_interface()注册。</p>
+<h4 id="实现接口">实现接口</h4>
+<p>用zend_class_implements()。</p>
+]]></description></item><item><title>PHP数组的实现与操作</title><link>http://0x3f.org/post/array-implementation-in-php/</link><pubDate>Fri, 24 Apr 2015 12:09:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/array-implementation-in-php/</guid><description><![CDATA[<h2 id="存储结构">存储结构</h2>
+<p>和其它变量一样，PHP的数组也是一个zval。存储数据的哈希表存放在zval-&gt;value-&gt;ht中。</p>
+<h2 id="符号表操作">符号表操作</h2>
+<p>为实现可转换成整数的字符串键与整数键指向同一个元素，在哈希表操作的基础上封装了一层，对可转换成整数的字符串键转换成整数，然后调用zend_hash_index_*操作，否则调用zend_hash_*操作。这就是符号表操作。</p>
+<p>用ZEND_HANDLE_NUMERIC处理整数字符串键：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="kr">inline</span> <span class="kt">int</span> <span class="nf">zend_symtable_find</span><span class="p">(</span>
+    <span class="n">HashTable</span> <span class="o">*</span><span class="n">ht</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">arKey</span><span class="p">,</span> <span class="n">uint</span> <span class="n">nKeyLength</span><span class="p">,</span> <span class="kt">void</span> <span class="o">**</span><span class="n">pData</span>
+<span class="p">)</span> <span class="p">{</span>
+    <span class="n">ZEND_HANDLE_NUMERIC</span><span class="p">(</span><span class="n">arKey</span><span class="p">,</span> <span class="n">nKeyLength</span><span class="p">,</span> <span class="n">zend_hash_index_find</span><span class="p">(</span><span class="n">ht</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">pData</span><span class="p">));</span>
+    <span class="k">return</span> <span class="n">zend_hash_find</span><span class="p">(</span><span class="n">ht</span><span class="p">,</span> <span class="n">arKey</span><span class="p">,</span> <span class="n">nKeyLength</span><span class="p">,</span> <span class="n">pData</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>其它符号表操作函数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="k">static</span> <span class="kr">inline</span> <span class="kt">int</span> <span class="nf">zend_symtable_exists</span><span class="p">(</span><span class="n">HashTable</span> <span class="o">*</span><span class="n">ht</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">arKey</span><span class="p">,</span> <span class="n">uint</span> <span class="n">nKeyLength</span><span class="p">);</span>
+<span class="k">static</span> <span class="kr">inline</span> <span class="kt">int</span> <span class="nf">zend_symtable_del</span><span class="p">(</span><span class="n">HashTable</span> <span class="o">*</span><span class="n">ht</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">arKey</span><span class="p">,</span> <span class="n">uint</span> <span class="n">nKeyLength</span><span class="p">);</span>
+<span class="k">static</span> <span class="kr">inline</span> <span class="kt">int</span> <span class="nf">zend_symtable_update</span><span class="p">(</span>
+    <span class="n">HashTable</span> <span class="o">*</span><span class="n">ht</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">arKey</span><span class="p">,</span> <span class="n">uint</span> <span class="n">nKeyLength</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">pData</span><span class="p">,</span> <span class="n">uint</span> <span class="n">nDataSize</span><span class="p">,</span> <span class="kt">void</span> <span class="o">**</span><span class="n">pDest</span>
+<span class="p">);</span>
+<span class="k">static</span> <span class="kr">inline</span> <span class="kt">int</span> <span class="nf">zend_symtable_update_current_key_ex</span><span class="p">(</span>
+    <span class="n">HashTable</span> <span class="o">*</span><span class="n">ht</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">arKey</span><span class="p">,</span> <span class="n">uint</span> <span class="n">nKeyLength</span><span class="p">,</span> <span class="kt">int</span> <span class="n">mode</span><span class="p">,</span> <span class="n">HashPosition</span> <span class="o">*</span><span class="n">pos</span>
+<span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="数组操作">数组操作</h2>
+<h3 id="初始化">初始化</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 初始化数组
+</span><span class="c1"></span><span class="n">zval</span> <span class="o">*</span><span class="n">zv1</span><span class="p">;</span>
+<span class="n">array_init</span><span class="p">(</span><span class="n">zv1</span><span class="p">);</span>
+
+<span class="c1">// 初始化数组并指定哈希表nTableSize的值
+</span><span class="c1"></span><span class="n">array_init_size</span><span class="p">(</span><span class="n">zv1</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
+
+<span class="c1">// 在函数中返回数组：把返回值初始化为数组
+</span><span class="c1"></span><span class="n">array_init</span><span class="p">(</span><span class="n">return_value</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="插入和更新">插入和更新</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="cm">/* Insert at next index */</span>
+<span class="kt">int</span> <span class="n">add_next_index_</span><span class="o">*</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">arg</span><span class="p">,</span> <span class="p">...);</span>
+<span class="cm">/* Insert at specific index */</span>
+<span class="kt">int</span> <span class="n">add_index_</span><span class="o">*</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">arg</span><span class="p">,</span> <span class="n">ulong</span> <span class="n">idx</span><span class="p">,</span> <span class="p">...);</span>
+<span class="cm">/* Insert at specific key */</span>
+<span class="kt">int</span> <span class="n">add_assoc_</span><span class="o">*</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">arg</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">key</span><span class="p">,</span> <span class="p">...);</span>
+<span class="cm">/* Insert at specific key of length key_len (for binary safety) */</span>
+<span class="kt">int</span> <span class="n">add_assoc_</span><span class="o">*</span><span class="nf">_ex</span><span class="p">(</span><span class="n">zval</span> <span class="o">*</span><span class="n">arg</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">key</span><span class="p">,</span> <span class="n">uint</span> <span class="n">key_len</span><span class="p">,</span> <span class="p">...);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>星号表示类型名，可用类型名如下：</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Additional arguments</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>null</td>
+<td>none</td>
+</tr>
+<tr>
+<td>bool</td>
+<td>int b</td>
+</tr>
+<tr>
+<td>long</td>
+<td>long n</td>
+</tr>
+<tr>
+<td>double</td>
+<td>double d</td>
+</tr>
+<tr>
+<td>string</td>
+<td>const char *str, int duplicate</td>
+</tr>
+<tr>
+<td>stringl</td>
+<td>const char *str, uint length, int duplicate</td>
+</tr>
+<tr>
+<td>resource</td>
+<td>int r</td>
+</tr>
+<tr>
+<td>zval</td>
+<td>zval *value</td>
+</tr>
+</tbody>
+</table>
+<h4 id="字符串长度的处理">字符串长度的处理</h4>
+<p>上述操作对字符串键和字符串值的长度的要求不同。_ex函数要求传入字符串键的长度，此长度包含NUL字节。_stringl函数要求传入字符串值的长度，此长度不包含NUL字节。</p>
+<h3 id="栗子">栗子</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="n">PHP_FUNCTION</span><span class="p">(</span><span class="n">donie_get_arr</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">array_init</span><span class="p">(</span><span class="n">return_value</span><span class="p">);</span>
+
+	<span class="c1">// add an integer to the given position
+</span><span class="c1"></span>	<span class="n">add_index_long</span><span class="p">(</span><span class="n">return_value</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2015</span><span class="p">);</span>
+
+	<span class="c1">// append a string to the array
+</span><span class="c1"></span>	<span class="n">add_next_index_string</span><span class="p">(</span><span class="n">return_value</span><span class="p">,</span> <span class="s">&#34;dummy string&#34;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+
+	<span class="c1">// add a boolean value to the given key
+</span><span class="c1"></span>	<span class="n">add_assoc_bool</span><span class="p">(</span><span class="n">return_value</span><span class="p">,</span> <span class="s">&#34;rightOrWrong&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+	<span class="c1">// take care of string lengths
+</span><span class="c1"></span>	<span class="n">add_assoc_stringl_ex</span><span class="p">(</span><span class="n">return_value</span><span class="p">,</span> <span class="s">&#34;keyStringL</span><span class="se">\0</span><span class="s">&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="s">&#34;keyStringL</span><span class="se">\0</span><span class="s">&#34;</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#34;valueEx</span><span class="se">\0</span><span class="s">&#34;</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="s">&#34;valueEx</span><span class="se">\0</span><span class="s">&#34;</span><span class="p">),</span> <span class="mi">1</span><span class="p">);</span>
+
+	<span class="c1">// store an object in the array
+</span><span class="c1"></span>	<span class="n">zval</span> <span class="o">*</span><span class="n">obj</span><span class="p">;</span>
+	<span class="n">MAKE_STD_ZVAL</span><span class="p">(</span><span class="n">obj</span><span class="p">);</span>
+	<span class="n">object_init</span><span class="p">(</span><span class="n">obj</span><span class="p">);</span>
+	<span class="n">add_next_index_zval</span><span class="p">(</span><span class="n">return_value</span><span class="p">,</span> <span class="n">obj</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div>]]></description></item></channel></rss>

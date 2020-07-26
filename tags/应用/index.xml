@@ -1,1 +1,59 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>应用 - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/%E5%BA%94%E7%94%A8/</link><description>应用 - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Wed, 18 Jun 2014 14:03:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/%E5%BA%94%E7%94%A8/" rel="self" type="application/rss+xml"/><item><title>使用lsyncd同步文件</title><link>http://0x3f.org/post/live-syncing-daemon/</link><pubDate>Wed, 18 Jun 2014 14:03:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/live-syncing-daemon/</guid><description>lsyncd全称“Live Syncing Daemon”，是Linux下的文件自动同步工具，同时支持SSH、rsync的实现方式。相对于rsync+ino</description></item></channel></rss>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>应用 - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/%E5%BA%94%E7%94%A8/</link><description>应用 - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Wed, 18 Jun 2014 14:03:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/%E5%BA%94%E7%94%A8/" rel="self" type="application/rss+xml"/><item><title>使用lsyncd同步文件</title><link>http://0x3f.org/post/live-syncing-daemon/</link><pubDate>Wed, 18 Jun 2014 14:03:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/live-syncing-daemon/</guid><description><![CDATA[<p>lsyncd全称“Live Syncing Daemon”，是Linux下的文件自动同步工具，同时支持SSH、rsync的实现方式。相对于rsync+inotify，它速度更快，也更稳定。</p>
+<p>对于SSH的方式，需要目标机器中已启动SSHD，并把源机器上的公钥加到目标机器root用户的authorized_keys中，私钥应放在源机器上运行lsyncd的用户的.ssh目录中，密钥放错了用户，会导致无法同步。</p>
+<p>然后就是在源机器上创建配置文件，lsyncd的配置文件是个lua脚本：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="n">settings</span><span class="p">{</span>
+    <span class="n">pidfile</span> <span class="o">=</span> <span class="s2">&#34;/var/log/lsyncd/lsyncd.pid&#34;</span><span class="p">,</span>
+    <span class="n">logfile</span> <span class="o">=</span> <span class="s2">&#34;/var/log/lsyncd/lsyncd.log&#34;</span><span class="p">,</span>
+    <span class="n">statusFile</span> <span class="o">=</span> <span class="s2">&#34;/var/log/lsyncd/lsyncd-status.log&#34;</span><span class="p">,</span>
+    <span class="n">statusInterval</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">maxDelays</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="c1">-- nodaemon = true,</span>
+<span class="p">}</span>
+
+<span class="n">sync</span><span class="p">{</span>
+    <span class="n">default.rsyncssh</span><span class="p">,</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="s2">&#34;/home/monk/workspace&#34;</span><span class="p">,</span>
+    <span class="n">host</span> <span class="o">=</span> <span class="s2">&#34;192.168.1.3&#34;</span><span class="p">,</span>
+    <span class="n">targetdir</span> <span class="o">=</span> <span class="s2">&#34;/var/www/workspace&#34;</span><span class="p">,</span>
+    <span class="n">exclude</span><span class="o">=</span><span class="p">{</span> <span class="s2">&#34;.*&#34;</span><span class="p">,</span> <span class="s2">&#34;*.tmp&#34;</span> <span class="p">},</span>
+    <span class="n">rsync</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">compress</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="n">_extra</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&#34;--bwlimit=50000&#34;</span><span class="p">},</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>然后启动lsyncd：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">sudo lsyncd /etc/lsyncd.conf
+</code></pre></td></tr></table>
+</div>
+</div>]]></description></item></channel></rss>

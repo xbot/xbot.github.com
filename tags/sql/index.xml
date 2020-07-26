@@ -1,1 +1,774 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>SQL - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/sql/</link><description>SQL - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Fri, 27 Jan 2017 17:51:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/sql/" rel="self" type="application/rss+xml"/><item><title>两条分组的SQL语句</title><link>http://0x3f.org/post/two-grouping-sql-statements/</link><pubDate>Fri, 27 Jan 2017 17:51:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/two-grouping-sql-statements/</guid><description><![CDATA[最近做访问统计解决的两个问题： 根据日期分组 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 select ( case when visit_at &gt;= 1485014400 then from_unixtime(visit_at, &#39;%Y-%m-%d&#39;) when visit_at &gt;= 1484928000 and visit_at &lt; 1485014400 then from_unixtime(visit_at, &#39;%Y-%m-%d&#39;) else 0 end ) col, count(*) as pv, count(distinct session_id)]]></description></item><item><title>Dumperor v1.0.0 Released</title><link>http://0x3f.org/post/dumperor-v100-released/</link><pubDate>Tue, 15 Mar 2011 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/dumperor-v100-released/</guid><description>Changelog 2011-03-14 Now Dumperor is stable enough. Add the abillity to export table structures or data to a human readable format, which is suit for comparing. Add the abillity to manage multiple configurations. Add a desktop application to sort the human readable output file of table structures, written in python and tk. Check the main page for more information.</description></item><item><title>Oracle中对LOB字段的操作方法</title><link>http://0x3f.org/post/oracle-lob-operations/</link><pubDate>Fri, 07 Jan 2011 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/oracle-lob-operations/</guid><description>在Oracle中插入或更新LOB字段时，可以将字符串以如下方式写入SQL语句： 1 insert tbl_lob (fld_lob) values (utl_raw.cast_to_raw(&amp;#39;hello world&amp;#39;)); 这样做的限制是： Oracle中单条SQL语句有长</description></item><item><title>中秋后记</title><link>http://0x3f.org/post/note-after-the-mid-autumn-day/</link><pubDate>Sun, 26 Sep 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/note-after-the-mid-autumn-day/</guid><description>可以让回忆放肆一些。 中秋的晚上公司餐厅放电影，《邻家特工》和《越光宝盒》，本来打算看完《越光》就走，结果先放的是《特工》。也好，复习一下，好</description></item><item><title>Dumperor: Multi-Database Dumping Toolkit</title><link>http://0x3f.org/post/dumperor-as-a-multidb-dumping-tool/</link><pubDate>Thu, 23 Sep 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/dumperor-as-a-multidb-dumping-tool/</guid><description>Dumperor is a multi-database dumping toolkit. It dumps table structures and data from databases, and generates CREATE-TABLE SQL statements for table structures or INSERT SQL statements for data. Part of the original intention for developing Dumperor is to check whether a migration of SQL scripts from one database to another is successful, you know, by comparing the differences between two files, one dumped before executing scripts and the other after.</description></item><item><title>InstallShield在MySQL和Oracle中执行SQL脚本的方法</title><link>http://0x3f.org/post/howto-run-sql-scripts-in-mysql-oracle-within-installshield/</link><pubDate>Tue, 24 Aug 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/howto-run-sql-scripts-in-mysql-oracle-within-installshield/</guid><description>简述 InstallShield已经内建了对MySQL和Oracle的支持。但是这个功能是通过ODBC实现的，它对SQL脚本的格式要求非常严格</description></item><item><title>SQL Server的自定义函数：统计两日期之间工作日的数量</title><link>http://0x3f.org/post/counting-days-between-dates-in-sqlserver/</link><pubDate>Sat, 13 Mar 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/counting-days-between-dates-in-sqlserver/</guid><description>前段时间工作中遇到的一个需求，要求计算两个日期之间工作日的数量，即排除期间所有的周六和周日之后的天数。 在网上找到一个自定义函数，原函数有些小</description></item><item><title>SQLAlchemy操作SQL Server的中文问题</title><link>http://0x3f.org/post/chinese-problem-of-sqlalchemy-with-sqlserver/</link><pubDate>Wed, 24 Feb 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/chinese-problem-of-sqlalchemy-with-sqlserver/</guid><description>最初将脚本的文件编码和coding行都设定为UTF-8，在windows下执行时，中文无法保存，报编码错误。将上述两个编码改为GBK后，保存</description></item></channel></rss>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>SQL - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/sql/</link><description>SQL - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Fri, 27 Jan 2017 17:51:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/sql/" rel="self" type="application/rss+xml"/><item><title>两条分组的SQL语句</title><link>http://0x3f.org/post/two-grouping-sql-statements/</link><pubDate>Fri, 27 Jan 2017 17:51:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/two-grouping-sql-statements/</guid><description><![CDATA[<p>最近做访问统计解决的两个问题：</p>
+<h2 id="根据日期分组">根据日期分组</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">select</span> <span class="p">(</span>
+           <span class="k">case</span>
+           <span class="k">when</span> <span class="n">visit_at</span> <span class="o">&gt;=</span> <span class="mi">1485014400</span> <span class="k">then</span> <span class="n">from_unixtime</span><span class="p">(</span><span class="n">visit_at</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-%d&#39;</span><span class="p">)</span>
+           <span class="k">when</span> <span class="n">visit_at</span> <span class="o">&gt;=</span> <span class="mi">1484928000</span>
+       <span class="k">and</span> <span class="n">visit_at</span> <span class="o">&lt;</span> <span class="mi">1485014400</span> <span class="k">then</span> <span class="n">from_unixtime</span><span class="p">(</span><span class="n">visit_at</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-%d&#39;</span><span class="p">)</span>
+           <span class="k">else</span> <span class="mi">0</span>
+       <span class="k">end</span>
+       <span class="p">)</span> <span class="n">col</span><span class="p">,</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">as</span> <span class="n">pv</span><span class="p">,</span> <span class="k">count</span><span class="p">(</span><span class="k">distinct</span> <span class="n">session_id</span><span class="p">)</span> <span class="k">as</span> <span class="n">uv</span>
+  <span class="k">from</span> <span class="o">`</span><span class="k">statistics</span><span class="o">`</span>
+ <span class="k">where</span> <span class="o">`</span><span class="n">visit_at</span><span class="o">`</span>    <span class="o">&gt;=</span> <span class="mi">1484496000</span>
+ <span class="k">group</span> <span class="k">by</span> <span class="p">(</span>
+           <span class="k">case</span>
+           <span class="k">when</span> <span class="n">visit_at</span> <span class="o">&gt;=</span> <span class="mi">1485014400</span> <span class="k">then</span> <span class="n">from_unixtime</span><span class="p">(</span><span class="n">visit_at</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-%d&#39;</span><span class="p">)</span>
+           <span class="k">when</span> <span class="n">visit_at</span> <span class="o">&gt;=</span> <span class="mi">1484928000</span>
+       <span class="k">and</span> <span class="n">visit_at</span>      <span class="o">&lt;</span>  <span class="mi">1485014400</span> <span class="k">then</span> <span class="n">from_unixtime</span><span class="p">(</span><span class="n">visit_at</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-%d&#39;</span><span class="p">)</span>
+           <span class="k">else</span> <span class="mi">0</span>
+       <span class="k">end</span>
+       <span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="选择每组数据的第一条">选择每组数据的第一条</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">select</span> <span class="n">a</span><span class="p">.</span><span class="n">session_id</span><span class="p">,</span><span class="n">a</span><span class="p">.</span><span class="n">created_at</span><span class="p">,</span><span class="n">a</span><span class="p">.</span><span class="n">province</span><span class="p">,</span><span class="n">a</span><span class="p">.</span><span class="n">referer</span><span class="p">,</span><span class="n">a</span><span class="p">.</span><span class="n">uri</span><span class="p">,</span><span class="n">a</span><span class="p">.</span><span class="n">ipv4</span><span class="p">,</span>
+       <span class="n">a</span><span class="p">.</span><span class="n">user_id</span><span class="p">,</span><span class="n">b</span><span class="p">.</span><span class="n">duration</span><span class="p">,</span><span class="n">b</span><span class="p">.</span><span class="n">num</span>
+  <span class="k">from</span> <span class="k">statistics</span> <span class="k">as</span> <span class="n">a</span>
+ <span class="k">inner</span> <span class="k">join</span> <span class="p">(</span>
+        <span class="k">select</span> <span class="n">session_id</span><span class="p">,</span>
+               <span class="k">max</span><span class="p">(</span><span class="n">created_at</span><span class="p">)</span> <span class="k">as</span> <span class="n">latest_time</span><span class="p">,</span>
+               <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">as</span> <span class="n">num</span><span class="p">,</span><span class="k">sum</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span> <span class="k">as</span> <span class="n">duration</span>
+          <span class="k">from</span> <span class="k">statistics</span>
+ <span class="k">group</span> <span class="k">by</span> <span class="n">session_id</span>
+       <span class="p">)</span> <span class="k">as</span> <span class="n">b</span>
+    <span class="k">on</span> <span class="n">a</span><span class="p">.</span><span class="n">session_id</span><span class="o">=</span><span class="n">b</span><span class="p">.</span><span class="n">session_id</span>
+   <span class="k">and</span> <span class="n">a</span><span class="p">.</span><span class="n">created_at</span><span class="o">=</span><span class="n">b</span><span class="p">.</span><span class="n">latest_time</span>
+ <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">a</span><span class="p">.</span><span class="n">created_at</span> <span class="k">desc</span>
+</code></pre></td></tr></table>
+</div>
+</div>]]></description></item><item><title>Dumperor v1.0.0 Released</title><link>http://0x3f.org/post/dumperor-v100-released/</link><pubDate>Tue, 15 Mar 2011 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/dumperor-v100-released/</guid><description><![CDATA[<h3>Changelog</h3>
+<blockquote>
+<strong>2011-03-14</strong>
+<ol>
+	<li>Now Dumperor is stable enough.</li>
+	<li>Add the abillity to export table structures or data to a human readable format, which is suit for comparing.</li>
+	<li>Add the abillity to manage multiple configurations.</li>
+	<li>Add a desktop application to sort the human readable output file of table structures, written in python and tk.</li>
+</ol>
+</blockquote>
+<p>Check the <a href="http://0x3f.org/?p=1617">main page</a> for more information.</p>
+]]></description></item><item><title>Oracle中对LOB字段的操作方法</title><link>http://0x3f.org/post/oracle-lob-operations/</link><pubDate>Fri, 07 Jan 2011 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/oracle-lob-operations/</guid><description><![CDATA[<p>在Oracle中插入或更新LOB字段时，可以将字符串以如下方式写入SQL语句：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">insert</span> <span class="n">tbl_lob</span> <span class="p">(</span><span class="n">fld_lob</span><span class="p">)</span> <span class="k">values</span> <span class="p">(</span><span class="n">utl_raw</span><span class="p">.</span><span class="n">cast_to_raw</span><span class="p">(</span><span class="s1">&#39;hello world&#39;</span><span class="p">));</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这样做的限制是：</p>
+<ol>
+	<li>Oracle中单条SQL语句有长度限制</li>
+	<li>cast_to_raw()对字符串有长度限制</li>
+</ol>
+<p>因此如果要插入或更新的字符串过长，会导致执行失败。此时应该使用dbms_lob处理LOB相关字段。下面是利用dbms_lob更新一个BLOB字段的存储过程，对CLOB的操作同理：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">create</span> <span class="k">or</span> <span class="k">replace</span> <span class="k">procedure</span> <span class="n">updateblob</span><span class="p">(</span>
+    <span class="n">ctbl</span> <span class="k">in</span> <span class="n">varchar2</span><span class="p">,</span>
+    <span class="n">cfld</span> <span class="k">in</span> <span class="n">varchar2</span><span class="p">,</span>
+    <span class="n">cstr</span> <span class="k">in</span> <span class="n">varchar2</span><span class="p">,</span>
+    <span class="n">ccond</span> <span class="k">in</span> <span class="n">varchar2</span>
+<span class="p">)</span>
+<span class="k">is</span>
+    <span class="n">vqry</span> <span class="n">varchar2</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span>
+    <span class="n">vblob</span> <span class="nb">blob</span><span class="p">;</span>
+    <span class="n">vbatch</span> <span class="n">varchar2</span><span class="p">(</span><span class="mi">2000</span><span class="p">);</span>
+    <span class="n">vstrlen</span> <span class="nb">number</span><span class="p">;</span>
+    <span class="n">voffset</span> <span class="nb">number</span> <span class="p">:</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+    <span class="n">vamt</span> <span class="nb">number</span> <span class="p">:</span><span class="o">=</span><span class="mi">2000</span><span class="p">;</span>
+<span class="k">begin</span>
+    <span class="n">vstrlen</span> <span class="p">:</span><span class="o">=</span> <span class="k">length</span><span class="p">(</span><span class="n">cstr</span><span class="p">);</span>
+
+    <span class="n">vqry</span> <span class="p">:</span><span class="o">=</span> <span class="s1">&#39;update &#39;</span><span class="o">||</span><span class="n">ctbl</span><span class="o">||</span><span class="s1">&#39; set &#39;</span><span class="o">||</span><span class="n">cfld</span><span class="o">||</span><span class="s1">&#39;=empty_blob() where &#39;</span><span class="o">||</span><span class="n">ccond</span><span class="p">;</span>
+    <span class="k">execute</span> <span class="k">immediate</span> <span class="n">vqry</span><span class="p">;</span>
+
+    <span class="n">vqry</span> <span class="p">:</span><span class="o">=</span> <span class="s1">&#39;select &#39;</span><span class="o">||</span><span class="n">cfld</span><span class="o">||</span><span class="s1">&#39; from &#39;</span><span class="o">||</span><span class="n">ctbl</span><span class="o">||</span><span class="s1">&#39; where &#39;</span><span class="o">||</span><span class="n">ccond</span><span class="o">||</span><span class="s1">&#39; for update&#39;</span><span class="p">;</span>
+    <span class="k">execute</span> <span class="k">immediate</span> <span class="n">vqry</span> <span class="k">into</span> <span class="n">vblob</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="n">vstrlen</span><span class="o">&gt;</span><span class="n">vamt</span> <span class="k">then</span>
+        <span class="n">while</span> <span class="n">vstrlen</span><span class="o">&gt;</span><span class="n">voffset</span> <span class="n">loop</span>
+            <span class="n">vbatch</span> <span class="p">:</span><span class="o">=</span> <span class="n">substr</span><span class="p">(</span><span class="n">cstr</span><span class="p">,</span> <span class="n">voffset</span><span class="p">,</span> <span class="n">vamt</span><span class="p">);</span>
+            <span class="n">voffset</span> <span class="p">:</span><span class="o">=</span> <span class="n">voffset</span><span class="o">+</span><span class="n">vamt</span><span class="p">;</span>
+            <span class="n">dbms_lob</span><span class="p">.</span><span class="n">writeappend</span><span class="p">(</span><span class="n">vblob</span><span class="p">,</span> <span class="k">length</span><span class="p">(</span><span class="n">vbatch</span><span class="p">),</span> <span class="n">utl_raw</span><span class="p">.</span><span class="n">cast_to_raw</span><span class="p">(</span><span class="n">vbatch</span><span class="p">));</span>
+        <span class="k">end</span> <span class="n">loop</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="n">dbms_lob</span><span class="p">.</span><span class="n">writeappend</span><span class="p">(</span><span class="n">vblob</span><span class="p">,</span> <span class="k">length</span><span class="p">(</span><span class="n">cstr</span><span class="p">),</span> <span class="n">utl_raw</span><span class="p">.</span><span class="n">cast_to_raw</span><span class="p">(</span><span class="n">cstr</span><span class="p">));</span>
+    <span class="k">end</span> <span class="k">if</span><span class="p">;</span>
+    <span class="k">commit</span><span class="p">;</span>
+<span class="k">end</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-sql" data-lang="sql"><span class="c1">-- 将tbl_lob表的fld_lob字段的值改为“hello lob !”，要求被更改的行满足条件：
+</span><span class="c1">-- 1. fld_code字段的值以“2011”开头
+</span><span class="c1">-- 2. fld_name字段的值等于“Hell”
+</span><span class="c1"></span>
+<span class="k">declare</span>
+    <span class="n">vcond</span> <span class="n">varchar2</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span>
+<span class="k">begin</span>
+    <span class="n">vcond</span> <span class="p">:</span><span class="o">=</span> <span class="s1">&#39;fld_code like &#39;&#39;2011%&#39;&#39; and fld_name=&#39;&#39;Hell&#39;&#39;&#39;</span><span class="p">;</span>
+    <span class="n">updateblob</span><span class="p">(</span><span class="s1">&#39;tbl_lob&#39;</span><span class="p">,</span> <span class="s1">&#39;fld_lob&#39;</span><span class="p">,</span> <span class="s1">&#39;hello lob !&#39;</span><span class="p">,</span> <span class="n">vcond</span><span class="p">);</span>
+<span class="k">end</span><span class="p">;</span>
+</code></pre></td></tr></table>
+</div>
+</div>]]></description></item><item><title>中秋后记</title><link>http://0x3f.org/post/note-after-the-mid-autumn-day/</link><pubDate>Sun, 26 Sep 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/note-after-the-mid-autumn-day/</guid><description><![CDATA[<p>可以让回忆放肆一些。</p>
+<p>中秋的晚上公司餐厅放电影，《邻家特工》和《越光宝盒》，本来打算看完《越光》就走，结果先放的是《特工》。也好，复习一下，好在这片子不错，再看也挺有意思。《越光》纯属烂片，但是如今看看这种不费脑子的东西也变得无可无不可。免费的零食很烘托气氛，唯一的惊喜是居然还有罐装啤酒。</p>
+<p>回到住处的当夜就发布了Dumperor。其实这个东西很早就开始做了，起初的目的是为了判断数据库脚本从SQL Server迁移到Oracle和MySQL是否成功。单纯的迁移只能保证修改后的脚本在这两个数据库中执行不会报错，但究竟是不是该执行的东西都成功执行了，一般很难判断，尤其是那帮家伙总是在发版前一两天才告诉我要迁移脚本，那么多不规范的语句，能保证不报错就已经不错了，遑论没有遗漏。所以就著手做一个数据库表结构和数据的导出工具，这样只需用diff工具比较标准数据库和测试数据库导出的脚本就可以了。</p>
+<p>从一开始我就决定不使用公司产品的一行代码。其实做这个东西最大的麻烦不是来自来自于如何查询不同的数据库的表结构，而是数据库抽象层。如果要白手起家搞个抽象层的话，我想可能代码量比Dumperor本身都大，于是选择了Yii框架。后来在Dumperor基本成型时又觉得为了仅仅使用最基本的数据库查询功能就捆绑这么大一个框架，有点搞笑，谢天谢地，我终于花时间学了PDO。</p>
+<p>中秋节放假的第二天，开始读Google Code上关于Chrome扩展开发的官方文档。这事源于本尊被另一个Chrome扩展作者无视了。</p>
+<p>一直强迫自己喜欢上Firefox，但都败了。本来对Opera充满希望，但是从10.0起它带给我的除了失望就是更多的失望，这个东西的发展就像它的国家的位置一样怪异，你永远不能以常人的思维去臆测Opera的开发者，他们就像一群母系氏族社会的娘们儿一样整天跟著感觉走。</p>
+<p>于是不知道什么时候我就开始经常用Chrome了，前段时间开始用一个扩展辅助MLDonkey下载。这个东西会在工具栏里添加一个图标，唯一的作用就是打开选项设置页面设置那个也许这辈子都只需要设置一次的MLDonkey的URL地址。于是我给那个扩展的作者写了封邮件，那家伙居然到现在都没有回复。</p>
+<p>所以本尊决定无视他了。太祖武皇帝的那句丰衣足食的圣谕真是至理名言，读完文档我就发现这个扩展完全应该用Chrome的Page Action取代Browser Action，简单地说就是当且仅当本页面中包含有可下载的资源时才在地址栏中显示一个图标，而不应该总是在工具栏占用一个图标的位置。</p>
+<p>随后要做的就是用AJAX请求取代弹出新窗口的方式添加下载任务，我嫌每次添加一个下载任务后都要关闭一个弹出窗口太麻烦。我的目标是用AJAX请求将要下载的任务在后台传递给MLDonkey，并用Chrome的Desktop Notification功能弹出桌面提示对话框显示结果状态。这样很优雅。</p>
+<p>但是实际去做的时候问题来了，虽然Chrome本身允许扩展使用跨域的AJAX，但是至少在和MLDonkey进行通讯时，无论成功与否，得到的返回信息都是空的，状态码也都是0。这个问题浪费了我几乎一整天的时间，最终我决定用AJAX的请求响应时间来判断失败或成功，因为一次AJAX请求响应过程在MLDonkey没启动的时候耗费的时间一般会比正在运行时要长。这就要求每个用户都要根据自己的情况设定合适的超时时间。为了避免麻烦，最后还是实现了通过弹窗添加下载任务的模式，毕竟这个东西总是可靠的。</p>
+<p>要发布的时候发现如今在Chrome Extension Gallery中发布扩展居然要收费了，虽然只是一次性的。最后花了八两银子注册了Google Checkout账户，又付了五刀美帝币，才把DonkeyBuddy传上去。发布个免费扩展还得倒贴，本尊也太背了吧。</p>
+<p>节后收到了Dell sk8115键盘、HP百灵无线鼠标和Nokia BH-105蓝牙耳机，sk8115是用来让我的纤纤玉手撒野的，百灵鼠是用来接替即将退役的雷柏7100的，而BH-105和我的小七搭配得天衣无缝。</p>
+<p>很久没有安静地整理一下头绪了，感谢我那价值四十两银子的Dell sk8115，它让我显得如此的语无伦次。</p>
+]]></description></item><item><title>Dumperor: Multi-Database Dumping Toolkit</title><link>http://0x3f.org/post/dumperor-as-a-multidb-dumping-tool/</link><pubDate>Thu, 23 Sep 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/dumperor-as-a-multidb-dumping-tool/</guid><description><![CDATA[<div class="illustration_left">
+    <a href="http://picasaweb.google.com/lh/photo/lR2jgtHibgYwfhCy3fJyMQ?feat=embedwebsite"></a>
+</div>
+<p><strong>Dumperor</strong> is a multi-database dumping toolkit. It dumps table structures and data from databases, and generates CREATE-TABLE SQL statements for table structures or INSERT SQL statements for data.</p>
+<p>Part of the original intention for developing Dumperor is to check whether a migration of SQL scripts from one database to another is successful, you know, by comparing the differences between two files, one dumped before executing scripts and the other after. The second part is to ensure that upgrades to table structures or data not miss anything, similarly. The last part is to take samples of databases and put up development or testing environments with them, or even replace sensitive information with fake data.</p>
+<p>Dumperor is written in PHP 5 and hosted on GitHub with the New BSD License:</p>
+<p><a href="https://github.com/xbot/Dumperor">https://github.com/xbot/Dumperor</a></p>
+<p>For the shortage of time, there must be some limitations and bugs in Dumperor. So reports from users are welcome, emails prefered. I will be very grateful if someone send their suggestions on Dumpeor to me.</p>
+<h2>Features</h2>
+<ol>
+    <li>Currently support Microsoft SQL Server, Oracle and MySQL.</li>
+    <li>Dump table structures and generate CREATE-TABLE SQL statements.</li>
+    <li>Dump data and generate INSERT SQL statements.</li>
+    <li>Dump table structures or data and output them in a human readable format.</li>
+    <li>Save dumped information to user-specified files.</li>
+    <li>Display table structures with web page tables in the web browser.</li>
+    <li>Options controlling which information should be displayed in the web browser.</li>
+    <li>Options controlling which information should be and should not be dumped from the database.</li>
+    <li>A limit number can be set to take sample of a huge database.</li>
+    <li>Needless tables or columns can be prevented from appearing in dumped results.</li>
+    <li>Only the needed tables are to be exported if you like.</li>
+    <li>Sensitive columns can be dumped with fake data.</li>
+    <li>Conditions can be added to data querying statements.</li>
+    <li>With PDO support by default but extensive to many kinds of database toolkits.</li>
+    <li>More in the future ...</li>
+</ol>
+<h2>Requirements</h2>
+<ol>
+    <li>A web server configured with PHP5 support.</li>
+    <li>PDO feature of PHP.</li>
+    <li>PHP 5.x, notice that some versions in 5.3.x series have a <a href="http://bugs.php.net/bug.php?id=47332">bug in function parse_ini_file(), which may cause trouble.</a></li>
+</ol>
+<h2>Limitations (Known Issues)</h2>
+<ol>
+    <li>Conditions for data querying only support numeric columns and equation relation.</li>
+    <li>Support for auto increment columns has not been implemented.</li>
+    <li>Sensitive columns must be prefixed with table names.</li>
+    <li>Needless columns must be specified only with column names, nothing more.</li>
+    <li>Data types which have not been tested may fail dumping.</li>
+</ol>
+<h2>Installation Instructions</h2>
+<ol>
+    <li>Download a stable release from GitHub or clone a git repo:</li>
+    <ul>
+        <li><code>git clone git://github.com/xbot/Dumperor.git</code></li>
+    </ul>
+    <li>Copy files to a folder which can be visited by the web server, e.g. www/dumperor.</li>
+    <li>Rename dumperor.ini.sample to dumperor.ini and change the settings to meet your needs.</li>
+    <li>Visit Dumperor from the web browser to start dumping.</li>
+</ol>
+<h2>News</h2>
+<ol>
+    <li>2011-03-14 v1.0.0 released. <a href="https://github.com/xbot/Dumperor/wiki/Changelog">changelog</a></li>
+    <li>2010-09-22 v0.1a released. <a href="https://github.com/xbot/Dumperor/wiki/Changelog">changelog</a></li>
+</ol>
+]]></description></item><item><title>InstallShield在MySQL和Oracle中执行SQL脚本的方法</title><link>http://0x3f.org/post/howto-run-sql-scripts-in-mysql-oracle-within-installshield/</link><pubDate>Tue, 24 Aug 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/howto-run-sql-scripts-in-mysql-oracle-within-installshield/</guid><description><![CDATA[<h2>简述</h2>
+<p>InstallShield已经内建了对MySQL和Oracle的支持。但是这个功能是通过ODBC实现的，它对SQL脚本的格式要求非常严格，因此已经通过官方客户端测试的脚本在IS中执行时往往就会报错。</p>
+<p>一般来说，数据库脚本只保证通过官方客户端测试即可，同时维护一份供IS执行的脚本费时费力。因此，考虑安装程序对两数据库的支持通过官方客户端实现。</p>
+<h2>MySQL</h2><br>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">function InstallMySQLComponent(szComponent)
+    NUMBER nResult;
+    STRING szServer,szDB,szUser,szPassword,sCMD,sOPT,sResult1,sResult2,svLine,sMsg,sPath;
+    NUMBER nvFileHandle,nvCount;
+    LIST listStatus;
+begin
+    sMsg = &#39;安装&#39;+szComponent+&#39; ...&#39;;
+    SdShowMsg(sMsg, TRUE);
+    // source命令不认识windows路径中的反斜杠，故将SRCDIR中的反斜杠替换成斜杠
+    sPath = SRCDIR;
+    StrReplace(sPath, &#39;\\&#39;, &#39;/&#39;, 0);
+    // Fetch database connection information
+    SQLRTGetConnectionInfo( &#39;mysql&#39;, szServer, szDB, szUser, szPassword );
+    sCMD = WINSYSDIR^&#39;cmd.exe&#39;;
+    sOPT = &#39; /c &#39;+SRCDIR^&#39;mysql.exe -h&#39;+szServer+&#39; -u&#39;+szUser+&#39; -p&#39;+szPassword+&#39; -D&#39;+szDB;
+    sOPT = sOPT+&#39; -e &#34;source &#39;+sPath^szComponent+&#39;.sql&#34; &gt; &#39;+SRCDIR^&#39;dbstatus.txt 2&gt;&amp;1&#39;;
+    // Execute the script associated with the given component in database
+    nResult=LaunchAppAndWait(sCMD, sOPT, WAIT|LAAW_OPTION_HIDDEN);
+    if (nResult &lt; 0) then
+        MessageBox(&#39;Failed installing &#39;+szComponent+&#39; !&#39;, SEVERE);
+        abort;
+    endif;
+    // 关闭安装提示
+    SdShowMsg(&#39;&#39;, FALSE);
+    // Read dbstatus.txt
+    OpenFileMode(FILE_MODE_NORMAL);
+    if (OpenFile(nvFileHandle, SRCDIR, &#39;dbstatus.txt&#39;)&lt;0) then
+        MessageBox(&#39;Failed checking the status of installing &#39;+szComponent+&#39; !&#39;, SEVERE);
+        abort;
+    endif;
+    listStatus = ListCreate(STRINGLIST);
+    while GetLine(nvFileHandle, svLine) = 0
+        ListAddString(listStatus, svLine, AFTER);
+    endwhile;
+    CloseFile(nvFileHandle);
+    // Count how many lines fetched from dbstatus.txt
+    nvCount = ListCount(listStatus);
+    if nvCount &gt; 0 then
+        sMsg = &#34;更新数据库出错，点“是”打开日志文件并退出安装，点“否”直接退出安装。\n&#34;;
+        sMsg = sMsg+&#34;若错误可忽略，可选择数据库类型“none”以跳过数据库更新并直接更新程序，\n&#34;;
+        sMsg = sMsg+&#34;然后在数据库中手工执行SQL脚本（安装后保存在script目录下）&#34;;
+        nResult = AskYesNo(sMsg, YES);
+        if (nResult = YES) then
+            LaunchApp(WINSYSDIR^&#39;notepad.exe&#39;, SRCDIR^&#39;dbstatus.txt&#39;);
+	endif;                   
+        abort;
+    endif;
+end;
+</code></pre></td></tr></table>
+</div>
+</div><h2>Oracle</h2><br>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">function InstallOracleComponent(szComponent)  
+    NUMBER nResult,nvFileHandle,nIndex,nvCount;
+    STRING sMsg,szServer,szDB,szUser,szPassword,sCMD,sOPT,sInstance,sTmp,svLine;
+    LIST listStatus;
+begin
+    sMsg = &#39;安装&#39;+szComponent+&#39; ...&#39;;
+    SdShowMsg(sMsg, TRUE);
+    // Fetch database connection information
+    SQLRTGetConnectionInfo( &#39;oracle&#39;, szServer, szDB, szUser, szPassword );
+    nIndex = StrFind(szServer, &#39;:&#39;);
+    nIndex = StrFindEx(szServer, &#39;/&#39;, nIndex);
+    StrSub(sInstance, szServer, nIndex+1, 100);
+    sCMD = WINSYSDIR^&#39;cmd.exe&#39;;
+    sOPT = &#39; /c &#39;+&#39;sqlplus.exe -L -S &#39;+szUser+&#39;/&#39;+szPassword+&#39;@&#39;+sInstance;
+    sOPT = sOPT+&#39; @&#39;+SRCDIR^szComponent+&#39;.sql &gt; &#39;+SRCDIR^&#39;dbstatus.txt 2&gt;&amp;1&#39;;
+    // Execute the script associated with the given component in database
+    nResult=LaunchAppAndWait(sCMD, sOPT, WAIT|LAAW_OPTION_HIDDEN);
+    if (nResult &lt; 0) then
+        MessageBox(&#39;Failed installing &#39;+szComponent+&#39; !&#39;, SEVERE);
+        abort;
+    endif;               
+    // 关闭安装提示
+    SdShowMsg(&#39;&#39;, FALSE);
+    // 在dbstatus.txt中查询字符串holytail，如果存在，说明脚本已执行完
+    if (FileGrep(SRCDIR^&#39;dbstatus.txt&#39;, &#39;holytail&#39;, svLine, nIndex, RESTART) = 0) then
+        // 在dbstatus.txt中查询字符串ORA-，如果存在，说明脚本执行出现错误
+        if (FileGrep(SRCDIR^&#39;dbstatus.txt&#39;, &#39;ORA-&#39;, svLine, nIndex, RESTART) = 0) then
+            sMsg = &#34;更新数据库出错，点“是”打开日志文件并退出安装，点“否”直接退出安装。\n&#34;;
+            sMsg = sMsg+&#34;若错误可忽略，可选择数据库类型“none”以跳过数据库更新并直接更新程序，\n&#34;;
+            sMsg = sMsg+&#34;然后在数据库中手工执行SQL脚本（安装后保存在script目录下）&#34;;
+            nResult = AskYesNo(sMsg, YES);
+            if (nResult = YES) then
+                LaunchApp(WINSYSDIR^&#39;notepad.exe&#39;, SRCDIR^&#39;dbstatus.txt&#39;);
+            endif;                   
+            abort;
+        endif;
+    else
+        sMsg = &#34;更新数据库出错，点“是”打开日志文件并退出安装，点“否”直接退出安装。\n&#34;;
+        sMsg = sMsg+&#34;若错误可忽略，可选择数据库类型“none”以跳过数据库更新并直接更新程序，\n&#34;;
+        sMsg = sMsg+&#34;然后在数据库中手工执行SQL脚本（安装后保存在script目录下）&#34;;
+        nResult = AskYesNo(sMsg, YES);
+        if (nResult = YES) then
+            LaunchApp(WINSYSDIR^&#39;notepad.exe&#39;, SRCDIR^&#39;dbstatus.txt&#39;);
+        endif;                   
+        abort;
+    endif;
+end;
+</code></pre></td></tr></table>
+</div>
+</div><h2>总结</h2>
+<ol>
+	<li>为便于获取脚本在数据库中的执行结果，故通过官方客户端执行脚本时通过符号“<strong>></strong>”将客户端的输出信息重定向到<strong>dbstatus.txt</strong>中；同时，使用“<strong>2>&1</strong>”将标准错误输出重定向到标准输出设备上，当然，会进一步重定向到dbstatus.txt文件中，否则，无法获取出错信息。</li>
+	<li>sqlplus执行SQL脚本后不会自动退出，故应在Oracle的脚本后加上语句“<strong>exit;</strong>”。</li>
+	<li>重载<strong>OnSQLComponentInstalled()</strong>函数，并在其中禁止MySQL和Oracle的SQL脚本对应的Component被执行安装，然后通过以上两个函数更新数据库。</li>
+</ol>
+]]></description></item><item><title>SQL Server的自定义函数：统计两日期之间工作日的数量</title><link>http://0x3f.org/post/counting-days-between-dates-in-sqlserver/</link><pubDate>Sat, 13 Mar 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/counting-days-between-dates-in-sqlserver/</guid><description><![CDATA[<p>前段时间工作中遇到的一个需求，要求计算两个日期之间工作日的数量，即排除期间所有的周六和周日之后的天数。</p>
+
+<p>在网上找到一个自定义函数，原函数有些小问题，例如如果传入的截止日期如果有时间且足够大，则计算结果可能出错，修正后代码如下：</p>
+
+<p>
+```sql
+--函数：类似datediff，不统计期间所有的周六和周日
+if exists (select * from dbo.sysobjects where id=object_id(N'[dbo].[f_WorkDay]') and xtype in (N'FN',N'IF',N'TF')) 
+drop function [dbo].[f_WorkDay] 
+GO
+
+CREATE FUNCTION f_WorkDay(
+@dt_begin   datetime,
+@dt_end     datetime 
+)RETURNS int 
+AS 
+BEGIN 
+    DECLARE @workday int,@i int,@bz bit,@dt datetime 
+
+    set @dt_begin = convert(datetime, convert(nvarchar(32), @dt_begin, 23))
+    set @dt_end = convert(datetime, convert(nvarchar(32), @dt_end, 23))    
+
+    IF @dt_begin>@dt_end 
+        SELECT @bz=1,@dt=@dt_begin,@dt_begin=@dt_end,@dt_end=@dt 
+    ELSE 
+        SET @bz=0 
+
+    SELECT @i=DATEDIFF(Day,@dt_begin,@dt_end),@workday=@i/7*5,@dt_begin=DATEADD(Day,@i/7*7,@dt_begin) 
+
+    WHILE @dt_begin<@dt_end 
+    BEGIN 
+        SELECT @workday=CASE WHEN (@@DATEFIRST+DATEPART(Weekday,@dt_begin)-1)%7 BETWEEN 1 AND 5 THEN @workday+1 ELSE @workday END,@dt_begin=@dt_begin+1 
+    END 
+
+    RETURN(CASE WHEN @bz=1 THEN -@workday ELSE @workday END) 
+END 
+GO
+```
+</p>
+
+<p>此函数的原理是，使用datediff计算两日期之间的差值A，然后取A与7的商，即计算期间内有几个整周。然后使用这个商与5相乘，得到所有整周内的工作日天数B。接着，使用A除以7再乘以7得到C，这就约去了A中最后不到一个整周的天数。再在起始日期的基础上加上C，得到一个新的起始日期，然后从这个新的起始日期开始遍历至截止日期的每一天，每增加一天，判断若此日期是工作日，则在C的基础上累加一。判断一个日期（假设使用@dt_begin表示）是否是工作日的方法是：<strong>(@@datefirst+datepart(Weekday, @dt_begin)-1)%7</strong>的值在1和5之间。</p>
+
+<p>此外还有一个需求是计算两个日期之间排除最后一个周六周日后的天数，仿照上面的函数实现了一个新函数，现在想来，有点儿把问题复杂化了，完全可以直接从后往前推的。</p>
+
+<p>
+```sql
+--函数：类似datediff，不统计截止日期@dt_end前最近一次的周六和周日，若dt_end是周日，则不统计其前面的那个周六。
+if exists (select * from dbo.sysobjects where id=object_id(N'[dbo].[f_WorkDayOnce]') and xtype in (N'FN',N'IF',N'TF')) 
+drop function [dbo].[f_WorkDayOnce]
+GO
+
+CREATE FUNCTION f_WorkDayOnce(
+@dt_begin   datetime,
+@dt_end     datetime 
+)RETURNS int 
+AS 
+BEGIN 
+    DECLARE @day_count int,@weekday int,@weekend_dropped int,@i int,@bz bit,@dt datetime 
+
+    set @dt_begin = convert(datetime, convert(nvarchar(32), @dt_begin, 23))
+    set @dt_end = convert(datetime, convert(nvarchar(32), @dt_end, 23))    
+
+    IF @dt_begin>@dt_end 
+        SELECT @bz=1,@dt=@dt_begin,@dt_begin=@dt_end,@dt_end=@dt 
+    ELSE 
+        SET @bz=0 
+
+    SELECT @i=DATEDIFF(Day,@dt_begin,@dt_end),@weekday=(@@datefirst+datepart(weekday,@dt_end)-1)%7,@day_count=@i,@weekend_dropped=0
+
+    if @i=0
+        set @day_count=0
+    else
+    begin
+        if @weekday=0
+            set @day_count=@i-1
+        else
+        begin
+            while @dt_begin<@dt_end and @weekend_dropped<2
+            begin
+                select @weekend_dropped=@weekend_dropped+(case when (@@datefirst+datepart(weekday,@dt_begin)-1)%7 between 1 and 5 then 0 else 1 end),@dt_begin=@dt_begin+1
+            end
+            select @day_count=@day_count-@weekend_dropped
+        end
+    end
+
+    RETURN(CASE WHEN @bz=1 THEN -@day_count ELSE @day_count END) 
+END 
+GO
+```
+</p>
+]]></description></item><item><title>SQLAlchemy操作SQL Server的中文问题</title><link>http://0x3f.org/post/chinese-problem-of-sqlalchemy-with-sqlserver/</link><pubDate>Wed, 24 Feb 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/chinese-problem-of-sqlalchemy-with-sqlserver/</guid><description><![CDATA[<p>最初将脚本的文件编码和coding行都设定为UTF-8，在windows下执行时，中文无法保存，报编码错误。将上述两个编码改为GBK后，保存正常，但查询时报错。</p>
+
+<p>Traceback内容如下：</p>
+
+```
+Traceback (most recent call last):
+File "test.py", line 36, in <code>&lt;module&gt;</code>
+&nbsp;&nbsp;&nbsp;&nbsp;for obj in session.query(User):
+File "C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\orm\query.py", line 1411, in instances
+&nbsp;&nbsp;&nbsp;&nbsp;rows = [process[0](row, None) for row in fetch]
+File "C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\orm\mapper.py", line 1788, in _instance
+&nbsp;&nbsp;&nbsp;&nbsp;populate_state(state, dict_, row, isnew, only_load_props)
+File "C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\orm\mapper.py", line 1677, in populate_state
+&nbsp;&nbsp;&nbsp;&nbsp;populator(state, dict_, row, isnew=isnew, **flags)
+File "C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\orm\strategies.py", line 118, in new_execute
+&nbsp;&nbsp;&nbsp;&nbsp;dict_[key] = row[col]
+File "C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\engine\base.py", line 1634, in __getitem__
+&nbsp;&nbsp;&nbsp;&nbsp;return self.__colfuncs[key][0](self.__row)
+File "C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\engine\base.py", line 1716, in getcol
+&nbsp;&nbsp;&nbsp;&nbsp;return processor(row[index])
+File "C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\types.py", line 568, in process
+&nbsp;&nbsp;&nbsp;&nbsp;return decoder(value)[0]
+File "C:\Python26\lib\encodings\utf_8.py", line 16, in decode
+&nbsp;&nbsp;&nbsp;&nbsp;return codecs.utf_8_decode(input, errors, True)
+UnicodeEncodeError: 'ascii' codec can't encode characters in position 0-1: ordinal not in range(128)</p>
+```
+
+<p>环境为：</p>
+
+<p>OS：Windows XP简体中文版
+DB：SQL Server 2008 Express简体中文版
+DB模块：pyodbc
+脚本文件编码：GBK
+脚本coding行：GBK</p>
+
+<p>脚本内容：</p>
+
+<p>
+```python
+#!/usr/bin/python
+# -*- encoding: gbk -*-
+
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import Column, Integer, String, Text, ForeignKey, Numeric, Unicode
+
+Base = declarative_base()
+
+class User(Base):
+    """User class"""
+
+    __tablename__ = 'users'
+
+    id = Column(Numeric(22,0), primary_key=True)
+    name = Column(Unicode(128), nullable=False, unique=True)
+
+    def __init__(self, id, name):
+        self.id = id
+        self.name = name
+
+if __name__ == '__main__':
+    db_engine = create_engine('mssql://sa:password@localhost/mydatabase', echo=True)
+    Session = sessionmaker(bind=db_engine)
+    session = Session()
+
+    Base.metadata.drop_all(db_engine)
+    Base.metadata.create_all(db_engine)
+
+    jim = User(1, '中文')
+    session.add(jim)
+    session.commit()
+
+    '''
+    for obj in session.query(User):
+        print obj.name
+    '''
+```
+</p>
+
+<p>上面的脚本执行后，数据得以正常保存，在数据库中的查询结果也正常，没有乱码。但是，当把从drop_all()到commit()行注释掉，取消for循环前后的多行字符串起止符后，即运行查询时，抛出上面的Traceback。</p>
+
+<p>Google了很长时间，没有找到有用的东西。CPyUG更没指望。</p>
+
+<p>回溯Traceback，打开sqlalchemy的types.py，UnicodeEncodeError的抛出点在String类的result_processor()方法：</p>
+
+<p>
+```python
+def result_processor(self, dialect, coltype):
+    wants_unicode = self.convert_unicode or dialect.convert_unicode
+    needs_convert = wants_unicode and \
+                    (not dialect.returns_unicode_strings or 
+                    self.convert_unicode == 'force')
+
+    if needs_convert:
+        # note we *assume* that we do not have a unicode object
+        # here, instead of an expensive isinstance() check.
+        decoder = codecs.getdecoder(dialect.encoding)
+        def process(value):
+            if value is not None:
+                # decoder returns a tuple: (value, len)
+                return decoder(value)[0]
+            else:
+                return value
+        return process
+    else:
+        return None
+```
+</p>
+
+<p>这个方法就是根据数据库方言dialect和字段类型coltype返回一个字符串的解码函数。若在if语句上面将needs_convert置为False，即不对该字段使用解码器，则再执行上面的脚本时，查询正常。</p>
+
+<p>由于前面create_engine()函数的encoding参数缺省为UTF-8，故dialect.encoding的值为“UTF-8”，故if语句中decoder实际引用的是codecs.utf_8_decode()。也就是说，result_processor()方法在实际执行过程中返回的是一个封装了utf_8_decode()函数的函数。即，UnicodeEncodeError是在对从数据库中查询出来的中文字符串进行UTF-8解码时抛出的。</p>
+
+<p>对传入process()函数的值作isinstance(value,unicode)判断，显示为True，表明从数据库中查询出来的中文本身就是unicode字节码，当对它再进行UTF-8解码时，就抛出了UnicodeEncodeError的错误。为验证以上判断，做如下实验：</p>
+
+<p>
+```python
+>>>t = '中文'
+>>>u = u'中文'
+>>>isinstance(t, str)
+True
+>>>isinstance(t, unicode)
+False
+>>>isinstance(u, str)
+False
+>>>isinstance(u, unicode)
+True
+>>>x = t.decode('utf-8')
+>>>x
+u'\u4e2d\u6587'
+>>>isinstance(x, unicode)
+True
+>>>x == u
+True
+>>> import codecs
+>>> dc = codecs.getdecoder('utf-8')
+>>> dc(u)
+Traceback (most recent call last):
+  File "<input>", line 1, in <module>
+  File "/usr/lib/python2.6/encodings/utf_8.py", line 16, in decode
+    return codecs.utf_8_decode(input, errors, True)
+UnicodeEncodeError: 'ascii' codec can't encode characters in position 0-1: ordinal not in range(128)
+```
+</p>
+
+<p>得证。</p>
+
+<p>在Python中，字符串类型str和unicode类型是两种不同的数据类型，str类型的数据可以通过指定正确的编码来转换成unicode类型，对unicode类型的数据作重复的解码操作就会抛出类似上面的错误。</p>
+
+<p>实事上，若将name字段声明为String类，则保存和查询操作均无问题。但由于我需要sqlalchemy建表时将相应字段的类型设为nvarchar，故必须使用Unicode类声明该列。</p>
+
+<p>那有没有办法使result_processor()方法不返回一个对字段值作重复解码的函数呢？</p>
+
+<p>返回result_processor()方法，self.convert_unicode对于Unicode类是True，dialect.convert_unicode由create_engine()函数的convert_unicode参数控制，缺省为False，故needs_convert变量为True，无法更改；dialect.returns_unicode_strings是由sqlalchemy.engine模块default.py中的DefaultDialect类的_check_unicode_returns()方法返回的，该方法内容为：</p>
+
+<p>
+```python
+def _check_unicode_returns(self, connection):
+    cursor = connection.connection.cursor()
+    cursor.execute(
+        str(
+            expression.select( 
+            [expression.cast(
+                expression.literal_column("'test unicode returns'"),sqltypes.VARCHAR(60))
+            ]).compile(dialect=self)
+        )
+    )
+
+    row = cursor.fetchone()
+    result = isinstance(row[0], unicode)
+    cursor.close()
+    return result
+```
+</p>
+
+<p>此方法的功能为生成一条SQL语句，在数据库中执行后，判断返回的值是否为unicode类型。由于SQL Server是ASCII编码，故此方法返回False。因此，dialect.returns_unicode_strings的值为False。最终，needs_convert只能为True。我觉得这是sqlalchemy的一个Bug。</p>
+
+<p>在此条件下，目前尚未找到较好的解决办法，只能使用硬编码强制置result_processor()方法中的needs_convert变量为False。</p>
+
+<p><strong>2010-02-25 更新：</strong></p>
+
+<p>谢谢KL童鞋指出问题原因和解决办法，使问题得以完美解决。</p>
+
+<p>1、由于Python在载入site模块时会删除setdefaultencoding()函数，故不能以在脚本开头调用此函数的方式指定默认编码；sitecustomize.py是一个python会自动导入的模块，故应当使用这个文件指定默认编码；</p>
+
+<p>2、我这里需要使用utf-8作默认编码器，sitecustomize.py的内容如下：</p>
+
+<p>
+```python
+#!/usr/bin/python
+# -*- coding: gbk -*-
+import sys
+sys.setdefaultencoding('utf-8')
+```
+</p>
+
+<p>3、将sitecustomize.py保存到python安装目录下的Lib\site-packages目录中；</p>
+
+<p>另外，在<a href="http://www.woodpecker.org.cn/diveintopython/xml_processing/unicode.html">此处</a>发现了跟本问题相关的资料，辅助治疗，效果更佳。</p>
+]]></description></item></channel></rss>

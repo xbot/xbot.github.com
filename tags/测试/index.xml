@@ -1,1 +1,615 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>测试 - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/%E6%B5%8B%E8%AF%95/</link><description>测试 - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Mon, 03 Jul 2017 13:17:30 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/%E6%B5%8B%E8%AF%95/" rel="self" type="application/rss+xml"/><item><title>怎样测试PHP的Private或Protected方法</title><link>http://0x3f.org/post/how-to-test-private-or-protected-methods-in-php/</link><pubDate>Mon, 03 Jul 2017 13:17:30 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/how-to-test-private-or-protected-methods-in-php/</guid><description>利用闭包绑定： 1 2 3 4 5 6 7 $ctrlr = new UserController; $tester = function () use ($uid) { $this-&amp;gt;getUser($uid); }; $runner = $tester-&amp;gt;bindTo($ctrlr, $ctrlr); $runner();</description></item><item><title>通过比较截图检查网页变化</title><link>http://0x3f.org/post/check-changes-of-webpage-by-comparing-screenshots/</link><pubDate>Sun, 30 Apr 2017 17:21:52 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/check-changes-of-webpage-by-comparing-screenshots/</guid><description>有时候我们希望检查代码或数据的更新对网页产生的影响，如果能把这个过程集成到git等版本控制系统中，在提交成果的同时自动批量执行，将会极大地提</description></item><item><title>利用依赖注入Mock PHP的内建函数</title><link>http://0x3f.org/post/mock-php-built-in-functions-using-dependency-injection/</link><pubDate>Sun, 30 Apr 2017 09:57:50 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/mock-php-built-in-functions-using-dependency-injection/</guid><description>简述 上篇文章讨论了如何利用命名空间实现对PHP内建函数的mocking，本文介绍另一种实现方法——依赖注入。 出于编写可测试代码的需要，依赖注</description></item><item><title>利用命名空间Mock PHP的内建函数</title><link>http://0x3f.org/post/mock-php-built-in-functions-using-namespace/</link><pubDate>Sun, 30 Apr 2017 09:06:17 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/mock-php-built-in-functions-using-namespace/</guid><description>简述 Mock PHP的内建函数一般有两种方法：命名空间法和依赖注入法。 命名空间法是利用PHP优先使用同命名空间内函数的特性，在测试对象的命名空间内重</description></item><item><title>Postman的Pre-request Script和Tests</title><link>http://0x3f.org/post/pre-request-script-and-tests-in-postman/</link><pubDate>Wed, 19 Apr 2017 17:05:55 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/pre-request-script-and-tests-in-postman/</guid><description>Pre-request Script和Tests都是Javascript代码块。前者在请求发起前执行，通常用来生成请求数据，例如对用户注册接口随机生成用户名。后者</description></item></channel></rss>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>测试 - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/%E6%B5%8B%E8%AF%95/</link><description>测试 - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Mon, 03 Jul 2017 13:17:30 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/%E6%B5%8B%E8%AF%95/" rel="self" type="application/rss+xml"/><item><title>怎样测试PHP的Private或Protected方法</title><link>http://0x3f.org/post/how-to-test-private-or-protected-methods-in-php/</link><pubDate>Mon, 03 Jul 2017 13:17:30 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/how-to-test-private-or-protected-methods-in-php/</guid><description><![CDATA[<p>利用闭包绑定：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-php" data-lang="php">$ctrlr = new UserController;
+
+$tester = function () use ($uid) {
+    $this-&gt;getUser($uid);
+};
+$runner = $tester-&gt;bindTo($ctrlr, $ctrlr);
+$runner();
+</code></pre></td></tr></table>
+</div>
+</div>]]></description></item><item><title>通过比较截图检查网页变化</title><link>http://0x3f.org/post/check-changes-of-webpage-by-comparing-screenshots/</link><pubDate>Sun, 30 Apr 2017 17:21:52 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/check-changes-of-webpage-by-comparing-screenshots/</guid><description><![CDATA[<p>有时候我们希望检查代码或数据的更新对网页产生的影响，如果能把这个过程集成到git等版本控制系统中，在提交成果的同时自动批量执行，将会极大地提高生产力。</p>
+<p>首先网页的截图可以用PhantomJS、Headless Chrome实现：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">page</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;webpage&#39;</span><span class="p">).</span><span class="nx">create</span><span class="p">();</span>
+<span class="nx">page</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s1">&#39;http://github.com/&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">page</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="s1">&#39;github.png&#39;</span><span class="p">);</span>
+  <span class="nx">phantom</span><span class="p">.</span><span class="nx">exit</span><span class="p">();</span>
+<span class="p">});</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>图片的差异比较用GraphicsMagick实现：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">gm compare old.png new.png -file diff.png -highlight-style assign
+</code></pre></td></tr></table>
+</div>
+</div><p>为方便查看，还可以把截图做成gif动图：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">gm convert -delay <span class="m">20</span> old.png diff.png new.png diff.gif
+</code></pre></td></tr></table>
+</div>
+</div>]]></description></item><item><title>利用依赖注入Mock PHP的内建函数</title><link>http://0x3f.org/post/mock-php-built-in-functions-using-dependency-injection/</link><pubDate>Sun, 30 Apr 2017 09:57:50 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/mock-php-built-in-functions-using-dependency-injection/</guid><description><![CDATA[<h2 id="简述">简述</h2>
+<p><a href="/post/mock-php-built-in-functions-using-namespace/" rel="">上篇文章</a>讨论了如何利用命名空间实现对PHP内建函数的mocking，本文介绍另一种实现方法——依赖注入。</p>
+<p>出于编写可测试代码的需要，依赖注入是经常使用的一种技术。通过把代码中依赖的其它数据获取服务提取出来、和原有逻辑解耦，提高代码的可测试性。只需mock这些依赖并注入到测试对象中即可。</p>
+<h2 id="实现">实现</h2>
+<h3 id="对原有代码的重构">对原有代码的重构</h3>
+<p>先把原有代码用依赖注入的方式重构（<em>为突出重点，省略了和上篇文章中重复的部分</em>）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-php" data-lang="php">
+// ...
+
+use Ox3f\LaravelUtils\Services\Builtins;
+
+/**
+ * Class Log
+ * @author donie
+ */
+class Log
+{
+    // ...
+    
+    private $builtins;        // Builtin functions
+
+    private function __construct() {
+        $this-&gt;builtins = new Builtins();
+        
+        // ...
+    }
+
+    // ...
+
+    public static function inject($key, $service)
+    {
+        self::getInstance()-&gt;$key = $service;
+    }
+
+    /**
+     * Parse the call stack
+     *
+     * @return void
+     */
+    private function parseCallStack() {
+        $traceInfo = $this-&gt;builtins-&gt;debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT|DEBUG_BACKTRACE_IGNORE_ARGS, 5);
+        
+        // ...
+        
+    }
+    
+    // ...
+    
+}
+</code></pre></td></tr></table>
+</div>
+</div><p><code>Builtins</code>类的实现：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">Ox3f\LaravelUtils\Services</span><span class="p">;</span>
+
+<span class="sd">/**
+</span><span class="sd"> * Class Builtins
+</span><span class="sd"> * @author donie
+</span><span class="sd"> */</span>
+<span class="k">class</span> <span class="nc">Builtins</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">debug_backtrace</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">call_user_func_array</span><span class="p">(</span><span class="s1">&#39;debug_backtrace&#39;</span><span class="p">,</span> <span class="nx">func_get_args</span><span class="p">());</span>
+    <span class="p">}</span>
+    
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>把<code>debug_backtrace()</code>封装进了<code>Builtins</code>类，并在测试对象中通过这个类调用内建函数。<code>inject()</code>用于注入依赖，这样可以在测试类中把mock注入到测试对象中。</p>
+<h3 id="测试类的实现">测试类的实现</h3>
+<p>代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span><span class="lnt">83
+</span><span class="lnt">84
+</span><span class="lnt">85
+</span><span class="lnt">86
+</span><span class="lnt">87
+</span><span class="lnt">88
+</span><span class="lnt">89
+</span><span class="lnt">90
+</span><span class="lnt">91
+</span><span class="lnt">92
+</span><span class="lnt">93
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">use</span> <span class="nx">PHPUnit\Framework\TestCase</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Auth</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Request</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Log</span> <span class="k">as</span> <span class="nx">LaravelLog</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Ox3f\LaravelUtils\Log\Log</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">\Mockery</span> <span class="k">as</span> <span class="nx">m</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">LogTest</span> <span class="k">extends</span> <span class="nx">TestCase</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">setUp</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nx">Auth</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">andReturn</span><span class="p">((</span><span class="nx">object</span><span class="p">)[</span><span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;jim&#39;</span><span class="p">,]);</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">tearDown</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nx">m</span><span class="o">::</span><span class="na">close</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**
+</span><span class="sd">     * @covers Ox3f\LaravelUtils\Log\Log::saveInput
+</span><span class="sd">     * @covers Ox3f\LaravelUtils\Log\Log::saveOutput
+</span><span class="sd">     * @covers Ox3f\LaravelUtils\Log\Log::parseCallStack
+</span><span class="sd">     * @covers Ox3f\LaravelUtils\Log\Log::getInstance
+</span><span class="sd">     * @covers Ox3f\LaravelUtils\Log\Log::__construct
+</span><span class="sd">     * @covers Ox3f\LaravelUtils\Log\Log::__callStatic
+</span><span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">testAll</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$mock</span> <span class="o">=</span> <span class="nx">m</span><span class="o">::</span><span class="na">mock</span><span class="p">(</span><span class="s1">&#39;Ox3f\LaravelUtils\Services\Builtins&#39;</span><span class="p">);</span>
+        <span class="nv">$mock</span><span class="o">-&gt;</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;debug_backtrace&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">andReturnUsing</span><span class="p">(</span><span class="k">function</span><span class="p">()</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$mock</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nv">$mock</span><span class="o">-&gt;</span><span class="na">calledInController</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">json_decode</span><span class="p">(</span><span class="s1">&#39;[{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/vendor\/xbot\/laravel-utils\/src\/Log\/Log.php&#34;,&#34;line&#34;:85,&#34;function&#34;:&#34;parseCallStack&#34;,&#34;class&#34;:&#34;Ox3f\\\LaravelUtils\\\Log\\\Log&#34;,&#34;object&#34;:{},&#34;type&#34;:&#34;-&gt;&#34;},{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/app\/Api\/V1\/Controllers\/WorkController.php&#34;,&#34;line&#34;:29,&#34;function&#34;:&#34;saveInput&#34;,&#34;class&#34;:&#34;Ox3f\\\LaravelUtils\\\Log\\\Log&#34;,&#34;type&#34;:&#34;::&#34;},{&#34;function&#34;:&#34;save&#34;,&#34;class&#34;:&#34;App\\\Api\\\V1\\\Controllers\\\WorkController&#34;,&#34;object&#34;:{},&#34;type&#34;:&#34;-&gt;&#34;},{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Controller.php&#34;,&#34;line&#34;:55,&#34;function&#34;:&#34;call_user_func_array&#34;},{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/ControllerDispatcher.php&#34;,&#34;line&#34;:44,&#34;function&#34;:&#34;callAction&#34;,&#34;class&#34;:&#34;Illuminate\\\Routing\\\Controller&#34;,&#34;object&#34;:{},&#34;type&#34;:&#34;-&gt;&#34;}]&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nx">json_decode</span><span class="p">(</span><span class="s1">&#39;[{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/vendor\/xbot\/laravel-utils\/src\/Log\/Log.php&#34;,&#34;line&#34;:85,&#34;function&#34;:&#34;parseCallStack&#34;,&#34;class&#34;:&#34;Ox3f\\\LaravelUtils\\\Log\\\Log&#34;,&#34;object&#34;:{},&#34;type&#34;:&#34;-&gt;&#34;},{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/app\/Notation.php&#34;,&#34;line&#34;:21,&#34;function&#34;:&#34;saveInput&#34;,&#34;class&#34;:&#34;Ox3f\\\LaravelUtils\\\Log\\\Log&#34;,&#34;type&#34;:&#34;::&#34;},{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/app\/Api\/V1\/Controllers\/NotationController.php&#34;,&#34;line&#34;:32,&#34;function&#34;:&#34;incrNo&#34;,&#34;class&#34;:&#34;App\\\Notation&#34;,&#34;type&#34;:&#34;::&#34;},{&#34;function&#34;:&#34;save&#34;,&#34;class&#34;:&#34;App\\\Api\\\V1\\\Controllers\\\NotationController&#34;,&#34;object&#34;:{},&#34;type&#34;:&#34;-&gt;&#34;},{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Controller.php&#34;,&#34;line&#34;:55,&#34;function&#34;:&#34;call_user_func_array&#34;}]&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">});</span>
+        <span class="nx">Log</span><span class="o">::</span><span class="na">inject</span><span class="p">(</span><span class="s1">&#39;builtins&#39;</span><span class="p">,</span> <span class="nv">$mock</span><span class="p">);</span>
+
+        <span class="c1">// test being called in a plain method
+</span><span class="c1"></span>        <span class="nv">$mock</span><span class="o">-&gt;</span><span class="na">calledInController</span> <span class="o">=</span> <span class="k">false</span><span class="p">;</span>
+        <span class="nx">LaravelLog</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;debug&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;jim | App\Notation::incrNo | Input:1&#39;</span><span class="p">);</span>
+
+        <span class="nx">Log</span><span class="o">::</span><span class="na">saveInput</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+        <span class="nx">LaravelLog</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;debug&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;jim | App\Notation::incrNo | Output:2&#39;</span><span class="p">);</span>
+
+        <span class="nx">Log</span><span class="o">::</span><span class="na">saveOutput</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+
+        <span class="c1">// test being called in a controller action
+</span><span class="c1"></span>        <span class="nv">$mock</span><span class="o">-&gt;</span><span class="na">calledInController</span> <span class="o">=</span> <span class="k">true</span><span class="p">;</span>
+        <span class="nx">Request</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">andReturn</span><span class="p">(</span><span class="s1">&#39;api/user&#39;</span><span class="p">);</span>
+        <span class="nx">Request</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;except&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;_url&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">andReturn</span><span class="p">([</span><span class="s1">&#39;id&#39;</span> <span class="o">=&gt;</span> <span class="mi">18</span><span class="p">,]);</span>
+        <span class="nx">LaravelLog</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;debug&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;jim | api/user | Input:{&#34;id&#34;:18}&#39;</span><span class="p">);</span>
+
+        <span class="nx">Log</span><span class="o">::</span><span class="na">saveInput</span><span class="p">();</span>
+
+        <span class="nx">Request</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">andReturn</span><span class="p">(</span><span class="s1">&#39;api/user&#39;</span><span class="p">);</span>
+        <span class="nx">LaravelLog</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;debug&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;jim | api/user | Output:2&#39;</span><span class="p">);</span>
+
+        <span class="nx">Log</span><span class="o">::</span><span class="na">saveOutput</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+
+        <span class="nx">Request</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">andReturn</span><span class="p">(</span><span class="s1">&#39;api/user&#39;</span><span class="p">);</span>
+        <span class="nx">LaravelLog</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;jim | api/user | this is an error&#39;</span><span class="p">);</span>
+
+        <span class="nx">Log</span><span class="o">::</span><span class="na">error</span><span class="p">(</span><span class="s1">&#39;this is an error&#39;</span><span class="p">);</span>
+        
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">assertEquals</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>Builtins</code>是个普通类，很容易mock。</p>
+]]></description></item><item><title>利用命名空间Mock PHP的内建函数</title><link>http://0x3f.org/post/mock-php-built-in-functions-using-namespace/</link><pubDate>Sun, 30 Apr 2017 09:06:17 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/mock-php-built-in-functions-using-namespace/</guid><description><![CDATA[<h2 id="简述">简述</h2>
+<p>Mock PHP的内建函数一般有两种方法：命名空间法和依赖注入法。</p>
+<p>命名空间法是利用PHP优先使用同命名空间内函数的特性，在测试对象的命名空间内重载内建函数来实现。前提是内建函数在被调用时没有使用命名空间，例如：<code>\debug_backtrace()</code>是不能使用本方法的。</p>
+<p>上篇文章<a href="/post/the-best-practice-of-logging-in-api-programming/" rel="">《接口编程中记录日志的最佳实践》</a>中实现的日志类中，核心部分调用了<code>debug_backtrace()</code>函数获取方法调用堆栈。下面讨论下如何利用命名空间法实现对此函数的mock。</p>
+<h2 id="实现">实现</h2>
+<p>先看代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span><span class="lnt">83
+</span><span class="lnt">84
+</span><span class="lnt">85
+</span><span class="lnt">86
+</span><span class="lnt">87
+</span><span class="lnt">88
+</span><span class="lnt">89
+</span><span class="lnt">90
+</span><span class="lnt">91
+</span><span class="lnt">92
+</span><span class="lnt">93
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="k">namespace</span> <span class="nx">Ox3f\LaravelUtils\Log</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">PHPUnit\Framework\TestCase</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Auth</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Request</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Illuminate\Support\Facades\Log</span> <span class="k">as</span> <span class="nx">LaravelLog</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Ox3f\LaravelUtils\Log\Log</span><span class="p">;</span>
+
+<span class="nv">$calledInController</span> <span class="o">=</span> <span class="k">false</span><span class="p">;</span>
+
+<span class="k">function</span> <span class="nf">debug_backtrace</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">global</span> <span class="nv">$calledInController</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$calledInController</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">json_decode</span><span class="p">(</span><span class="s1">&#39;[{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/vendor\/xbot\/laravel-utils\/src\/Log\/Log.php&#34;,&#34;line&#34;:85,&#34;function&#34;:&#34;parseCallStack&#34;,&#34;class&#34;:&#34;Ox3f\\\LaravelUtils\\\Log\\\Log&#34;,&#34;object&#34;:{},&#34;type&#34;:&#34;-&gt;&#34;},{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/app\/Api\/V1\/Controllers\/WorkController.php&#34;,&#34;line&#34;:29,&#34;function&#34;:&#34;saveInput&#34;,&#34;class&#34;:&#34;Ox3f\\\LaravelUtils\\\Log\\\Log&#34;,&#34;type&#34;:&#34;::&#34;},{&#34;function&#34;:&#34;save&#34;,&#34;class&#34;:&#34;App\\\Api\\\V1\\\Controllers\\\WorkController&#34;,&#34;object&#34;:{},&#34;type&#34;:&#34;-&gt;&#34;},{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Controller.php&#34;,&#34;line&#34;:55,&#34;function&#34;:&#34;call_user_func_array&#34;},{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/ControllerDispatcher.php&#34;,&#34;line&#34;:44,&#34;function&#34;:&#34;callAction&#34;,&#34;class&#34;:&#34;Illuminate\\\Routing\\\Controller&#34;,&#34;object&#34;:{},&#34;type&#34;:&#34;-&gt;&#34;}]&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">json_decode</span><span class="p">(</span><span class="s1">&#39;[{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/vendor\/xbot\/laravel-utils\/src\/Log\/Log.php&#34;,&#34;line&#34;:85,&#34;function&#34;:&#34;parseCallStack&#34;,&#34;class&#34;:&#34;Ox3f\\\LaravelUtils\\\Log\\\Log&#34;,&#34;object&#34;:{},&#34;type&#34;:&#34;-&gt;&#34;},{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/app\/Notation.php&#34;,&#34;line&#34;:21,&#34;function&#34;:&#34;saveInput&#34;,&#34;class&#34;:&#34;Ox3f\\\LaravelUtils\\\Log\\\Log&#34;,&#34;type&#34;:&#34;::&#34;},{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/app\/Api\/V1\/Controllers\/NotationController.php&#34;,&#34;line&#34;:32,&#34;function&#34;:&#34;incrNo&#34;,&#34;class&#34;:&#34;App\\\Notation&#34;,&#34;type&#34;:&#34;::&#34;},{&#34;function&#34;:&#34;save&#34;,&#34;class&#34;:&#34;App\\\Api\\\V1\\\Controllers\\\NotationController&#34;,&#34;object&#34;:{},&#34;type&#34;:&#34;-&gt;&#34;},{&#34;file&#34;:&#34;\/Users\/xbot\/Sites\/sample-project\/vendor\/laravel\/framework\/src\/Illuminate\/Routing\/Controller.php&#34;,&#34;line&#34;:55,&#34;function&#34;:&#34;call_user_func_array&#34;}]&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">LogTest</span> <span class="k">extends</span> <span class="nx">TestCase</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">setUp</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nx">Auth</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">andReturn</span><span class="p">((</span><span class="nx">object</span><span class="p">)[</span><span class="s1">&#39;name&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;jim&#39;</span><span class="p">,]);</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**
+</span><span class="sd">     * @covers Ox3f\LaravelUtils\Log\Log::saveInput
+</span><span class="sd">     * @covers Ox3f\LaravelUtils\Log\Log::saveOutput
+</span><span class="sd">     * @covers Ox3f\LaravelUtils\Log\Log::parseCallStack
+</span><span class="sd">     * @covers Ox3f\LaravelUtils\Log\Log::getInstance
+</span><span class="sd">     * @covers Ox3f\LaravelUtils\Log\Log::__construct
+</span><span class="sd">     * @covers Ox3f\LaravelUtils\Log\Log::__callStatic
+</span><span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">testAll</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">global</span> <span class="nv">$calledInController</span><span class="p">;</span>
+
+        <span class="c1">// test being called in a plain method
+</span><span class="c1"></span>        <span class="nv">$calledInController</span> <span class="o">=</span> <span class="k">false</span><span class="p">;</span>
+
+        <span class="nx">LaravelLog</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;debug&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;jim | App\Notation::incrNo | Input:1&#39;</span><span class="p">);</span>
+
+        <span class="nx">Log</span><span class="o">::</span><span class="na">saveInput</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+        <span class="nx">LaravelLog</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;debug&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;jim | App\Notation::incrNo | Output:2&#39;</span><span class="p">);</span>
+
+        <span class="nx">Log</span><span class="o">::</span><span class="na">saveOutput</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+
+        <span class="c1">// test being called in a controller action
+</span><span class="c1"></span>        <span class="nv">$calledInController</span> <span class="o">=</span> <span class="k">true</span><span class="p">;</span>
+
+        <span class="nx">Request</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">andReturn</span><span class="p">(</span><span class="s1">&#39;api/user&#39;</span><span class="p">);</span>
+        <span class="nx">Request</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;except&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;_url&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">andReturn</span><span class="p">([</span><span class="s1">&#39;id&#39;</span> <span class="o">=&gt;</span> <span class="mi">18</span><span class="p">,]);</span>
+        <span class="nx">LaravelLog</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;debug&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;jim | api/user | Input:{&#34;id&#34;:18}&#39;</span><span class="p">);</span>
+
+        <span class="nx">Log</span><span class="o">::</span><span class="na">saveInput</span><span class="p">();</span>
+
+        <span class="nx">Request</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">andReturn</span><span class="p">(</span><span class="s1">&#39;api/user&#39;</span><span class="p">);</span>
+        <span class="nx">LaravelLog</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;debug&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;jim | api/user | Output:2&#39;</span><span class="p">);</span>
+
+        <span class="nx">Log</span><span class="o">::</span><span class="na">saveOutput</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+
+        <span class="nx">Request</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">andReturn</span><span class="p">(</span><span class="s1">&#39;api/user&#39;</span><span class="p">);</span>
+        <span class="nx">LaravelLog</span><span class="o">::</span><span class="na">shouldReceive</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">once</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">with</span><span class="p">(</span><span class="s1">&#39;jim | api/user | this is an error&#39;</span><span class="p">);</span>
+            
+        <span class="nx">Log</span><span class="o">::</span><span class="na">error</span><span class="p">(</span><span class="s1">&#39;this is an error&#39;</span><span class="p">);</span>
+        
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">assertEquals</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>最重要的是第一行，这里把测试类的命名空间设置得和测试对象一致，这样在下面重载的<code>debug_backtrace()</code>函数就会在测试对象中被优先使用。</p>
+<p>在重载的函数中，通过全局变量<code>$calledInController</code>选择输出事先捕获的真实数据，从而mock出符合我们需要的函数。</p>
+]]></description></item><item><title>Postman的Pre-request Script和Tests</title><link>http://0x3f.org/post/pre-request-script-and-tests-in-postman/</link><pubDate>Wed, 19 Apr 2017 17:05:55 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/pre-request-script-and-tests-in-postman/</guid><description><![CDATA[<p>Pre-request Script和Tests都是Javascript代码块。前者在请求发起前执行，通常用来生成请求数据，例如对用户注册接口随机生成用户名。后者在请求结束后执行，通常用来测试和处理返回值。</p>
+<p>以下是随机生成用户名的Pre-request Script：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">postman</span><span class="p">.</span><span class="nx">setEnvironmentVariable</span><span class="p">(</span><span class="s2">&#34;random_username&#34;</span><span class="p">,</span> <span class="s2">&#34;测试用户&#34;</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span><span class="o">*</span><span class="mi">1000000</span><span class="p">));</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>产生的值存储在环境变量里，表单里直接引用环境变量即可。</p>
+<p>对于REST接口普遍使用的JWT，可以在登录接口的Tests里直接把返回的token更新到环境变量里，这样其它接口直接引用这个环境变量即可：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">responseBody</span><span class="p">);</span>
+<span class="nx">tests</span><span class="p">[</span><span class="s2">&#34;token is returned&#34;</span><span class="p">]</span> <span class="o">=</span> <span class="k">typeof</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">token</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&#34;string&#34;</span> <span class="o">&amp;&amp;</span> <span class="nx">data</span><span class="p">.</span><span class="nx">token</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+<span class="nx">postman</span><span class="p">.</span><span class="nx">setEnvironmentVariable</span><span class="p">(</span><span class="s2">&#34;token&#34;</span><span class="p">,</span> <span class="nx">data</span><span class="p">.</span><span class="nx">token</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div>]]></description></item></channel></rss>

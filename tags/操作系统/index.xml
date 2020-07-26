@@ -1,1 +1,28 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>操作系统 - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</link><description>操作系统 - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Mon, 17 Oct 2016 13:14:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="self" type="application/rss+xml"/><item><title>Archlinux安装过程中的几个坑</title><link>http://0x3f.org/post/pits-of-archlinux/</link><pubDate>Mon, 17 Oct 2016 13:14:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/pits-of-archlinux/</guid><description>安装方案 Archboot是比官方镜像更友好的安装媒介，此外还有AUI和Arch Anywhere，没有试过。 分区 Archboot使用parte</description></item></channel></rss>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>操作系统 - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</link><description>操作系统 - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Mon, 17 Oct 2016 13:14:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="self" type="application/rss+xml"/><item><title>Archlinux安装过程中的几个坑</title><link>http://0x3f.org/post/pits-of-archlinux/</link><pubDate>Mon, 17 Oct 2016 13:14:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/pits-of-archlinux/</guid><description><![CDATA[<h2 id="安装方案">安装方案</h2>
+<p><a href="https://mirrors.ustc.edu.cn/archlinux/iso/archboot/latest/" target="_blank" rel="noopener noreffer">Archboot</a>是比官方镜像更友好的安装媒介，此外还有<a href="https://github.com/helmuthdu/aui" target="_blank" rel="noopener noreffer">AUI</a>和<a href="https://arch-anywhere.org" target="_blank" rel="noopener noreffer">Arch Anywhere</a>，没有试过。</p>
+<h2 id="分区">分区</h2>
+<p>Archboot使用parted处理分区任务。</p>
+<p>第一个分区不能从sector 0开始，否则安装完成后系统玩法启动，报如下错误：</p>
+<blockquote>
+<p>no operating system found</p>
+</blockquote>
+<p>正确的姿势：</p>
+<blockquote>
+<p>(parted) mkpart primary 2048s 512</p>
+</blockquote>
+<p>以上假设第一个分区用来挂载/boot，分配512M。</p>
+<p>还需要设置/boot所在的分区可启动：</p>
+<blockquote>
+<p>(parted) set 1 boot on</p>
+</blockquote>
+<h2 id="启动引导器">启动引导器</h2>
+<p>GRUB的兼容性比较好。</p>
+<p>如果是syslinux，对于没有单独对/boot分区并且根分区使用ext4的情况，会无法启动，报如下错误：</p>
+<blockquote>
+<p>failed to load ldlinux.c32</p>
+</blockquote>
+<p>此时，应对/boot单独分区并使用fat格式。</p>
+<h2 id="图形界面">图形界面</h2>
+<p>安装X不会连带安装显卡驱动，要单独安装，否则启动图形界面会黑屏。</p>
+<p>在VirtualBox中安装时，驱动在「virtualbox-guest-utils」。</p>
+]]></description></item></channel></rss>

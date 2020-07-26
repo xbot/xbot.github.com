@@ -1,1 +1,48 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>cygwin - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/cygwin/</link><description>cygwin - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sat, 22 Jan 2011 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/cygwin/" rel="self" type="application/rss+xml"/><item><title>Console2：取代cmd.exe的Windows虚拟终端</title><link>http://0x3f.org/post/console2-as-an-alternative-of-cmd-exe/</link><pubDate>Sat, 22 Jan 2011 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/console2-as-an-alternative-of-cmd-exe/</guid><description>相对于鸡肋cmd.exe，Console2有以下优点： 窗口大小可调整 字体样式可选择 支持多标签 有很方便的选择、复制、粘贴等基本编辑功能 支持自定</description></item><item><title>Linux下使用freetds连接SQL Server</title><link>http://0x3f.org/post/connect-to-sqlserver-using-freetds-on-linux/</link><pubDate>Sun, 20 Jun 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/connect-to-sqlserver-using-freetds-on-linux/</guid><description>freetds是第三方、开源的数据库客户端和连接库，支持Sybase和Microsoft SQL Server，它最大的好处是允许非Windows平</description></item></channel></rss>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>cygwin - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/cygwin/</link><description>cygwin - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sat, 22 Jan 2011 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/cygwin/" rel="self" type="application/rss+xml"/><item><title>Console2：取代cmd.exe的Windows虚拟终端</title><link>http://0x3f.org/post/console2-as-an-alternative-of-cmd-exe/</link><pubDate>Sat, 22 Jan 2011 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/console2-as-an-alternative-of-cmd-exe/</guid><description><![CDATA[<p>相对于鸡肋cmd.exe，<a href="http://sourceforge.net/projects/console/">Console2</a>有以下优点：</p>
+
+<ol>
+<li>窗口大小可调整</li>
+<li>字体样式可选择</li>
+<li>支持多标签</li>
+<li>有很方便的选择、复制、粘贴等基本编辑功能</li>
+<li>支持自定义快捷键</li>
+</ol>
+
+<p>对经常不得不使用Windows虚拟终端的人来说，以上几个特性足以使人忘掉cmd.exe。其实，Console2本身只是Shell的图形前端，只是在默认情况下它会调用cmd.exe处理用户输入，因此，也可以通过设置使Console2成为Cygwin的前端，只是从这一点上讲，Console2和<a href="http://code.google.com/p/mintty/">Mintty</a>相比完全没有优势。</p>
+
+<p><a href="http://picasaweb.google.com/lh/photo/hfesI_yiNpTZ68BKIqdImA?feat=embedwebsite"></a></p>
+]]></description></item><item><title>Linux下使用freetds连接SQL Server</title><link>http://0x3f.org/post/connect-to-sqlserver-using-freetds-on-linux/</link><pubDate>Sun, 20 Jun 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/connect-to-sqlserver-using-freetds-on-linux/</guid><description><![CDATA[<p><a href="http://www.freetds.org">freetds</a>是第三方、开源的数据库客户端和连接库，支持Sybase和Microsoft SQL Server，它最大的好处是允许非Windows平台的程序连接SQL Server。</p>
+<p>freetds的编译和安装命令如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">./configure --with-tdsver<span class="o">=</span>8.0 --enable-msdblib
+make
+make install
+</code></pre></td></tr></table>
+</div>
+</div><p>configure的这两个参数是必不可少的，否则可能无法连接SQL Server。</p>
+<p>安装后修改<strong>freetds.conf</strong>（<em>一般应该在/usr/local/etc/freetds.conf</em>），添加如下内容：</p>
+<blockquote>
+[mysvr]
+        host = 10.1.29.40
+        port = 1433
+        tds version = 8.0
+        client charset = utf-8
+</blockquote>
+<p>上述参数应根据实际情况修改。</p>
+<p>最后使用如下命令测试连接：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">tsql -S mysvr -U sa -P <span class="m">123456</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>给公司产品做Linux下的安装包，把开发环境放在了Cygwin中，非常享受在全屏、半透明的mintty下敲命令。今天发现在Cygwin下也是可以编译安装Linux下的程序的，只是效率非常低下。故上述内容对Cygwin环境同样成立。</p>
+]]></description></item></channel></rss>
