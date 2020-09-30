@@ -42,7 +42,7 @@ tags:
 
 ------
 
-## 五脏具全但囿于软件的 SR101
+## 五脏俱全但囿于软件的 SR101
 
 ![讯飞智能录音笔SR101](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2020-09-30-19-01-35-b450e9378bc7479bbc038ed3861c6d1a.jpg)
 
