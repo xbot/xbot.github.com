@@ -1,4 +1,21 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>计算机 - 分类 - 晴耕雨讀</title><link>http://0x3f.org/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/</link><description>计算机 - 分类 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 21 Jul 2020 16:25:09 +0800</lastBuildDate><atom:link href="http://0x3f.org/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/" rel="self" type="application/rss+xml"/><item><title>MySQL 事务的一致性、隔离级别与幻读问题</title><link>http://0x3f.org/post/isolation-levels-and-phantom-reads-in-mysql/</link><pubDate>Tue, 21 Jul 2020 16:25:09 +0800</pubDate><author>作者</author><guid>http://0x3f.org/post/isolation-levels-and-phantom-reads-in-mysql/</guid><description><![CDATA[<h2 id="数据库事务的一致性">数据库事务的一致性</h2>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>计算机 - 分类 - 晴耕雨讀</title><link>http://0x3f.org/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/</link><description>计算机 - 分类 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sun, 04 Oct 2020 18:21:04 +0800</lastBuildDate><atom:link href="http://0x3f.org/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/" rel="self" type="application/rss+xml"/><item><title>使用 Homebrew 安装旧版程序</title><link>http://0x3f.org/post/rollback-to-old-version-with-homebrew/</link><pubDate>Sun, 04 Oct 2020 18:21:04 +0800</pubDate><author>作者</author><guid>http://0x3f.org/post/rollback-to-old-version-with-homebrew/</guid><description><![CDATA[<p>前几天发现因为 Hugo 的不兼容更新导致我在用的主题在部署时报错，所以打算装回旧版。但是网上找到的 Homebrew 回滚方法已过时，新的方法更简单，但找到具体说明也费了点功夫。</p>
+<p>以回滚 Hugo 到 0.74.3 为例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">brew uninstall hugo
+brew tap-new donie/hugo-0-74-3
+brew extract --version 0.74.3 hugo donie/hugo-0-74-3
+brew install hugo@0.74.3
+</code></pre></td></tr></table>
+</div>
+</div><p>即：先创建一个名为“donie/hugo-0-74-3”的 tap ，然后通过 extract 命令把相应版本的数据放到里面，就可以安装了。</p>
+]]></description></item><item><title>MySQL 事务的一致性、隔离级别与幻读问题</title><link>http://0x3f.org/post/isolation-levels-and-phantom-reads-in-mysql/</link><pubDate>Tue, 21 Jul 2020 16:25:09 +0800</pubDate><author>作者</author><guid>http://0x3f.org/post/isolation-levels-and-phantom-reads-in-mysql/</guid><description><![CDATA[<h2 id="数据库事务的一致性">数据库事务的一致性</h2>
 <p>数据库事务有四个特性：原子性（Atomicity）、一致性（Consistency）、隔离性（Isolation）、持久性（Durability），简称“ACID”。</p>
 <p>其中，“一致性”指的是数据库层面的一致性，与应用层面的一致性不同。</p>
 <p>数据库层面的一致性是说，事务具备把数据库从一个正确的状态迁移到另一个正确的状态的特性。所谓正确的状态，是指任何写入数据库的数据都满足数据库既定的规则，这些规则包括各种约束、级联回滚、触发器以及任何它们的组合。</p>
@@ -658,55 +675,6 @@ posts --&gt; post_logs
         return $value;
     });
 }
-</code></pre></td></tr></table>
-</div>
-</div>]]></description></item><item><title>利用单元测试为开发提效</title><link>http://0x3f.org/post/use-unit-test-as-an-efficiency-tool/</link><pubDate>Tue, 13 Aug 2019 16:38:02 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/use-unit-test-as-an-efficiency-tool/</guid><description><![CDATA[<p>单元测试可以方便地伪造和回滚测试数据，这个特性决定了它其实是一个效率工具。</p>
-<p>例如在开发退款单、发票的时候，由于这种后置的功能依赖订单、支付、库存等前置的数据，因此需要频繁地创建这些测试数据，这就导致开发的效率极低，有时甚至需要切换多个系统做诸如增加库存、下单、支付等操作。虽然在开发环境可以通过直接修改数据使之恢复可被测试的状态，但仍然存在效率很低、遗留垃圾数据和存在隐患等问题。</p>
-<p>单元测试可以完美地解决这些问题。</p>
-<h2 id="伪造测试数据">伪造测试数据</h2>
-<p>在Laravel/Lumen中，利用Model Factory、Faker可以很方便地伪造测试数据。进一步地，只需要伪造被测单元依赖的数据，不需要真实、完整的数据。这些在<a href="/phpunit-tips" rel="">《单元测试的技巧》</a>一文中有详细介绍。</p>
-<p>测试数据只是被测单元依赖关系的一种，利用Mockery框架对依赖关系做伪造和断言是非常重要的知识。Mock是单元测试的灵魂！</p>
-<h2 id="回滚数据库">回滚数据库</h2>
-<p>Laravel/Lumen提供了DatabaseTransactions和DatabaseMigrations（不同版本可能有差异）这样的Trait，可以自动在每个测试方法执行后自动回滚数据库。</p>
-<h2 id="调试代码">调试代码</h2>
-<p>不管是调试测试代码还是被测单元，调试代码在结合单元测试的开发过程中都是个强需求。通常调试代码有两种方式：打印并中断（echo &amp; die）和单步调试。这两者在单元测试中都可以很方便地实现。</p>
-<h3 id="打印并中断">打印并中断</h3>
-<p>某些版本的PHPUnit会抑制标准输出，某些配置项（<code>beStrictAboutOutputDuringTests=&quot;true&quot;</code>）也会导致在有标准输出时中断单元测试的执行。可通过把信息打印到标准错误输出设备绕过：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-php" data-lang="php">fwrite(STDERR, &#34;Behold:\n&#34; . var_export($order, true) . &#34;\n&#34;);
-</code></pre></td></tr></table>
-</div>
-</div><h3 id="单步调试">单步调试</h3>
-<p>单元测试是通过命令行执行的，因此可以利用XDebug支持CLI的特性触发单步调试：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">export</span> <span class="nv">XDEBUG_CONFIG</span><span class="o">=</span><span class="s2">&#34;idekey=VSCODE&#34;</span>
-</code></pre></td></tr></table>
-</div>
-</div><h2 id="性能调优">性能调优</h2>
-<p>和单步调试一样，可以通过环境变量实现：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">export</span> <span class="nv">XDEBUG_CONFIG</span><span class="o">=</span><span class="s2">&#34;idekey=VSCODE profiler_enable=1&#34;</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>但是性能分析会极大地降低代码执行效率，因此建议通过命令参数的方式实现：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">php -d <span class="s2">&#34;xdebug.profiler_enable=1&#34;</span> ./vendor/bin/phpunit
 </code></pre></td></tr></table>
 </div>
 </div>]]></description></item></channel></rss>
