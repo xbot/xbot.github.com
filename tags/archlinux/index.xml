@@ -1,4 +1,7 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Archlinux - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/archlinux/</link><description>Archlinux - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Mon, 17 Oct 2016 13:14:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/archlinux/" rel="self" type="application/rss+xml"/><item><title>Archlinux安装过程中的几个坑</title><link>http://0x3f.org/post/pits-of-archlinux/</link><pubDate>Mon, 17 Oct 2016 13:14:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/pits-of-archlinux/</guid><description><![CDATA[<h2 id="安装方案">安装方案</h2>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Archlinux - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/archlinux/</link><description>Archlinux - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sun, 08 Aug 2021 23:30:18 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/archlinux/" rel="self" type="application/rss+xml"/><item><title>Archlinux 下在 /var/run 下创建目录的方法</title><link>http://0x3f.org/post/create-directory-under-/var/run-in-archlinux/</link><pubDate>Sun, 08 Aug 2021 23:30:18 +0800</pubDate><author>作者</author><guid>http://0x3f.org/post/create-directory-under-/var/run-in-archlinux/</guid><description><![CDATA[<p>Archlinux 使用 <a href="https://wiki.archlinux.org/title/systemd#systemd-tmpfiles_-_temporary_files" target="_blank" rel="noopener noreffer">systemd-tmpfiles</a> 管理 <code>/var/run</code> 下的临时目录。这意味着如果我手动创建 <code>/var/run/php</code> 目录，在系统重启后将不复存在。</p>
+<p>解决的办法是修改 <code>/usr/lib/tmpfiles.d/php-fpm.conf</code> 文件，把默认的目录名 <code>php-fpm</code> 改成 <code>php</code>。</p>
+<p>但这会带来另一个问题，当 PHP 被重装或升级后，该文件会被覆盖。所以，解决的方法是复制后再修改。</p>
+]]></description></item><item><title>Archlinux安装过程中的几个坑</title><link>http://0x3f.org/post/pits-of-archlinux/</link><pubDate>Mon, 17 Oct 2016 13:14:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/pits-of-archlinux/</guid><description><![CDATA[<h2 id="安装方案">安装方案</h2>
 <p><a href="https://mirrors.ustc.edu.cn/archlinux/iso/archboot/latest/" target="_blank" rel="noopener noreffer">Archboot</a>是比官方镜像更友好的安装媒介，此外还有<a href="https://github.com/helmuthdu/aui" target="_blank" rel="noopener noreffer">AUI</a>和<a href="https://arch-anywhere.org" target="_blank" rel="noopener noreffer">Arch Anywhere</a>，没有试过。</p>
 <h2 id="分区">分区</h2>
 <p>Archboot使用parted处理分区任务。</p>
@@ -357,110 +360,4 @@ initrd /boot/kernel26.img
 </div><p>从查到的资料看，<strong>acpi_osi</strong>参数是用来指定操作系统接口的，据说有些硬件都只针对Windows做了测试或优化，对于这些硬件，如果将内核的操作系统接口指定为Linux，则有可能会出问题。所以内核从2.6.23版本开始，此参数的默认值被改成了“<strong>!Linux</strong>”，以保证更广泛的兼容性和稳定性。</p>
 <p>而根据<a href="http://www.thinkwiki.org/wiki/Mute_button">这里</a>的说法，thinkpad一直以来在对Linux的兼容程度上有很好的口碑，故可以放心添加这个参数。</p>
 <p>另外，xfce下使用OSD需要安装xfce4-volumed。</p>
-]]></description></item><item><title>Linux下pppoe连接建立后仍不能上网的问题</title><link>http://0x3f.org/post/problem-on-pppoe-connections-on-linux/</link><pubDate>Sat, 10 Jul 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/problem-on-pppoe-connections-on-linux/</guid><description><![CDATA[<p><strong>问题描述</strong></p>
-<p>pppoe可以连接，ifconfig可以看到ppp0接口，一切正常，只是不能上网。</p>
-<p><strong>解决办法</strong></p>
-<p>使用如下命令查看路由表：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">route
-</code></pre></td></tr></table>
-</div>
-</div><p>正常情况下返回的结果中应该有如下内容：</p>
-<blockquote>
-default  *  0.0.0.0   U   0   0  0 ppp0
-</blockquote>
-<p>如果没有，可手工添加：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">route add default dev ppp0
-</code></pre></td></tr></table>
-</div>
-</div><p>如果可以上网，就成功了。</p>
-<p>使用如下脚本在pppoe连接成功时自动添加路由表项：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="cp">#!/bin/sh
-</span><span class="cp"></span> 
-<span class="k">if</span> ifconfig ppp0  &gt; /dev/null 2&gt;<span class="p">&amp;</span><span class="m">1</span> <span class="p">;</span> <span class="k">then</span>
-    route del default
-    route add default dev ppp0
-<span class="k">fi</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>将上述内容保存成名为<strong>01-route.sh</strong>的文件，权限<strong>755</strong>，放到<strong>/etc/ppp/ip-up.d</strong>目录下。</p>
-<p>然后创建以下两个脚本：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="cp">#!/bin/bash
-</span><span class="cp"></span> 
-<span class="k">if</span> ifconfig ppp0  &gt; /dev/null 2&gt;<span class="p">&amp;</span><span class="m">1</span> <span class="p">;</span> <span class="k">then</span>
-    <span class="nb">echo</span> <span class="s1">&#39;PPPOE has already been switched on !&#39;</span>
-    <span class="nb">exit</span> <span class="m">0</span>
-<span class="k">fi</span>
- 
-off
- 
-sudo pon
-sleep <span class="m">5</span>
-sudo /etc/ppp/ip-up
-</code></pre></td></tr></table>
-</div>
-</div><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span><span class="lnt">9
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="cp">#!/bin/bash
-</span><span class="cp"></span> 
-<span class="k">if</span> ! ifconfig ppp0  &gt; /dev/null 2&gt;<span class="p">&amp;</span><span class="m">1</span> <span class="p">;</span> <span class="k">then</span>
-    <span class="nb">echo</span> <span class="s1">&#39;PPPOE has already been switched off !&#39;</span>
-    <span class="nb">exit</span> <span class="m">0</span>
-<span class="k">fi</span>
- 
-sudo poff
-sudo /etc/ppp/ip-down
-</code></pre></td></tr></table>
-</div>
-</div><p>分别命名为<strong>on</strong>和<strong>off</strong>并复制到环境变量PATH下，以后即可使用这两个脚本建立和注销pppoe连接。</p>
-<p><strong>原因分析</strong></p>
-<p>问题的原因是pppoe连接建立时，没有自动往路由表中添加相关路由项。</p>
-<p>一般情况下，如果使用的是<strong>ppp</strong>做pppoe连接，其配置文件中默认会开启<strong>defaultroute</strong>选项，该选项的作用就是在pppoe连接建立时自动添加路由表项，但在路由表中已经存在<strong>default</strong>项时，该操作将不会进行。</p>
-<p>一般有两种情况会使路由表中在pppoe连接建立前就存在default项。一种情况是网络接口配置中设置了route，如在archlinux下，就是rc.conf文件中的gateway项。如果使用的是静态地址，则需要做这种配置，但对于大多数使用DHCP动态分配IP地址的情况，这项配置则不需要。另一种情况就是ADSL Modem自带路由功能，在分配IP给计算机时也会自动添加一条路由表项。</p>
 ]]></description></item></channel></rss>

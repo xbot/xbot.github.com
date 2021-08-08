@@ -1,4 +1,7 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>晴耕雨讀</title><link>http://0x3f.org/</link><description>Donie's blog.</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sun, 04 Oct 2020 18:43:16 +0800</lastBuildDate><atom:link href="http://0x3f.org/index.xml" rel="self" type="application/rss+xml"/><item><title>给 Bose QC35 更换新耳罩</title><link>http://0x3f.org/post/change-muffs-for-bose-qc35/</link><pubDate>Sun, 04 Oct 2020 18:43:16 +0800</pubDate><author>作者</author><guid>http://0x3f.org/post/change-muffs-for-bose-qc35/</guid><description><![CDATA[<p>尽管我用东西很爱惜，QC35 的耳罩表面在前年也开始了剥落，并终于在今年早些时候裂开了。</p>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>晴耕雨讀</title><link>http://0x3f.org/</link><description>Donie's blog.</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sun, 08 Aug 2021 23:30:18 +0800</lastBuildDate><atom:link href="http://0x3f.org/index.xml" rel="self" type="application/rss+xml"/><item><title>Archlinux 下在 /var/run 下创建目录的方法</title><link>http://0x3f.org/post/create-directory-under-/var/run-in-archlinux/</link><pubDate>Sun, 08 Aug 2021 23:30:18 +0800</pubDate><author>作者</author><guid>http://0x3f.org/post/create-directory-under-/var/run-in-archlinux/</guid><description><![CDATA[<p>Archlinux 使用 <a href="https://wiki.archlinux.org/title/systemd#systemd-tmpfiles_-_temporary_files" target="_blank" rel="noopener noreffer">systemd-tmpfiles</a> 管理 <code>/var/run</code> 下的临时目录。这意味着如果我手动创建 <code>/var/run/php</code> 目录，在系统重启后将不复存在。</p>
+<p>解决的办法是修改 <code>/usr/lib/tmpfiles.d/php-fpm.conf</code> 文件，把默认的目录名 <code>php-fpm</code> 改成 <code>php</code>。</p>
+<p>但这会带来另一个问题，当 PHP 被重装或升级后，该文件会被覆盖。所以，解决的方法是复制后再修改。</p>
+]]></description></item><item><title>给 Bose QC35 更换新耳罩</title><link>http://0x3f.org/post/change-muffs-for-bose-qc35/</link><pubDate>Sun, 04 Oct 2020 18:43:16 +0800</pubDate><author>作者</author><guid>http://0x3f.org/post/change-muffs-for-bose-qc35/</guid><description><![CDATA[<p>尽管我用东西很爱惜，QC35 的耳罩表面在前年也开始了剥落，并终于在今年早些时候裂开了。</p>
 <p>了解到官方耳罩太贵（380￥左右），而且就这四年的使用情况而言，质量一般。所以打算买第三方的自己换。最终在淘宝上买了排序靠前、35包邮的蛋白皮款。</p>
 <p>安装过程比较简单（<a href="https://www.bose.cn/zh_cn/support/article/ear-cushion-replacement-qc25.html" target="_blank" rel="noopener noreffer">官方说明</a>），把旧耳罩扯下来，再把新的耳罩的包边逐个塞到耳机的卡扣里就行，就是容易边塞边松脱。</p>
 <p>替换前后：</p>
@@ -753,89 +756,4 @@ debug1: Connecting to gitlab.xxx.com port 8848.
 <p>设置的方法很简单。先安装<a href="https://github.com/daipeihust/im-select" target="_blank" rel="noopener noreffer">im-select</a>，然后配置如下（macOS）：</p>
 <p></p>
 <p>当然，在Vim里也可以利用im-select实现这个功能。</p>
-]]></description></item><item><title>在 VS Code 中快速创建 PHPUnit 测试类的方法</title><link>http://0x3f.org/post/quickly-create-phpunit-test-cases-with-vscode/</link><pubDate>Tue, 18 Feb 2020 22:49:45 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/quickly-create-phpunit-test-cases-with-vscode/</guid><description><![CDATA[<p>通过单元测试解决问题或者调试代码，可以避开错综复杂的依赖关系、直击问题的核心，从而极大地节约时间、提高效率。</p>
-<p>但是，当创建测试类成为一个经常发生的操作时，每次都手动创建类、引入基类、添加测试方法就显得很烦琐。我需要这样一个解决方案，让我可以立即开始着手写测试代码。</p>
-<h2 id="方案一文件模板">方案一：文件模板</h2>
-<p>通过VS Code的插件<a href="https://marketplace.visualstudio.com/items?itemName=yongwoo.template" target="_blank" rel="noopener noreffer">Template</a>，可以实现把事先准备好的一个测试类文件模板复制到工程目录下。</p>
-<p>安装完后，第一次执行<code>Template: Create New</code>命令会在当前工程根目录下创建文件“template.config.js”和目录“.templates”。</p>
-<p>在“.templates”中创建测试类模板文件，例如：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="k">namespace</span> <span class="nx">Tests</span><span class="p">;</span>
-
-<span class="k">use</span> <span class="nx">Tests\TransactionalTestCase</span><span class="p">;</span>
-
-<span class="k">class</span> <span class="nc">AnyTest</span> <span class="k">extends</span> <span class="nx">TransactionalTestCase</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">testAnything</span><span class="p">()</span>
-    <span class="p">{</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>下次再执行Template的命令或者侧边栏文件管理器中的右键菜单项时，就可以选择该模板了。</p>
-<p>Template有个很大的短板，目前的版本还不支持全局模板，每个工程下都维护一套模板还是很烦琐的。</p>
-<h2 id="方案二代码片断">方案二：代码片断</h2>
-<p>代码片断（以下统称Snippet）可能是VS Code做得最烂的一个功能，我曾无数次泪流满面地回想起有Vim和UltiSnips相伴的美好时光。</p>
-<p>解决方案是这样的：</p>
-<p>先通过插件<a href="https://marketplace.visualstudio.com/items?itemName=sleistner.vscode-fileutils" target="_blank" rel="noopener noreffer">File Utils</a>的<code>File: New File Relative to Project Root</code>命令在工程目录下创建一个空白文件（如AnyTest.php）。然后再通过Snippet快速插入测试类的脚手架代码。</p>
-<p>这里有一个问题，VS Code的PHP Snippet只有在<code>&lt;?php</code>标签之内才能生效，所以如果创建一个针对PHP语言的Snippet，在上面创建的这个空白文件里是无法触发的。</p>
-<p>VS Code的Snippet总体上分为工程和通用两类，所谓工程类（Project Snippet Scope），就是只对当前工程生效，存储在工程根目录下的“.vscode”目录中。通用类（Language Snippet Scope）是我们平时最常用的，对所有工程都会生效。它又分为语言和全局两种。语言类（Language Snippet File）是针对具体的语言定义的Snippet集合，文件名为语言名称，后缀是“.json”，如“php.json”。全局类（Global Snippet File）通常是不受限于语言的，当然也可以指定单个Snippet对哪些语言启用，文件名随意，后缀是“.code-snippets”。</p>
-<p>因此，测试类脚手架代码的Snippet不能定义在“php.json”中，而应放在“global.code-snippets”里：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-JSON" data-lang="JSON"><span class="s2">&#34;PHPUnit：新测试类&#34;</span><span class="err">:</span> <span class="p">{</span>
-    <span class="nt">&#34;prefix&#34;</span><span class="p">:</span> <span class="s2">&#34;newcase&#34;</span><span class="p">,</span>
-    <span class="nt">&#34;body&#34;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="s2">&#34;&lt;?php&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;namespace Tests${1:\\\\${2:SubNameSpace}};&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;use Tests\\\\${3|TransactionalTestCase,TestCase|};&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;class ${TM_FILENAME_BASE} extends $3&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;{&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;    $0&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;}&#34;</span>
-    <span class="p">],</span>
-    <span class="nt">&#34;description&#34;</span><span class="p">:</span> <span class="s2">&#34;PHPUnit：新测试类&#34;</span><span class="p">,</span>
-    <span class="nt">&#34;scope&#34;</span><span class="p">:</span> <span class="s2">&#34;html,php&#34;</span><span class="p">,</span>
-<span class="p">}</span><span class="err">,</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>这里通过选项“scope”设定只对“html”和“php”两种语言生效，注意如果只设定“php”也是只能在<code>&lt;?php</code>标签内才能生效的。</p>]]></description></item></channel></rss>
+]]></description></item></channel></rss>
