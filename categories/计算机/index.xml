@@ -1,4 +1,13 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>计算机 - 分类 - 晴耕雨讀</title><link>http://0x3f.org/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/</link><description>计算机 - 分类 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sun, 08 Aug 2021 23:30:18 +0800</lastBuildDate><atom:link href="http://0x3f.org/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/" rel="self" type="application/rss+xml"/><item><title>Archlinux 下在 /var/run 下创建目录的方法</title><link>http://0x3f.org/post/create-directory-under-/var/run-in-archlinux/</link><pubDate>Sun, 08 Aug 2021 23:30:18 +0800</pubDate><author>作者</author><guid>http://0x3f.org/post/create-directory-under-/var/run-in-archlinux/</guid><description><![CDATA[<p>Archlinux 使用 <a href="https://wiki.archlinux.org/title/systemd#systemd-tmpfiles_-_temporary_files" target="_blank" rel="noopener noreffer">systemd-tmpfiles</a> 管理 <code>/var/run</code> 下的临时目录。这意味着如果我手动创建 <code>/var/run/php</code> 目录，在系统重启后将不复存在。</p>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>计算机 - 分类 - 晴耕雨讀</title><link>http://0x3f.org/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/</link><description>计算机 - 分类 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Mon, 09 Aug 2021 15:27:58 +0800</lastBuildDate><atom:link href="http://0x3f.org/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA/" rel="self" type="application/rss+xml"/><item><title>Archlinux 下 PHP 不能读取 /tmp 下文件的问题</title><link>http://0x3f.org/post/php-failed-to-open-stream-under-tmp-in-archlinux/</link><pubDate>Mon, 09 Aug 2021 15:27:58 +0800</pubDate><author>作者</author><guid>http://0x3f.org/post/php-failed-to-open-stream-under-tmp-in-archlinux/</guid><description><![CDATA[<p>问题的场景是，以 http 用户运行的 FPM 进程访问 <code>/tmp</code> 下由普通用户运行的 CLI 进程创建的文件时，报如下错误：</p>
+<blockquote>
+<p>Failed to open stream.</p>
+</blockquote>
+<p>原因是 PHP-FPM 的 systemd 配置中默认对 FPM 进程单独挂载 <code>/tmp</code> 目录。</p>
+<p>具体对应：</p>
+<p><code>/etc/systemd/system/multi-user.target.wants/php-fpm.service</code></p>
+<p>中的：</p>
+<p><code>PrivateTmp=true</code></p>
+]]></description></item><item><title>Archlinux 下在 /var/run 下创建目录的方法</title><link>http://0x3f.org/post/create-directory-under-/var/run-in-archlinux/</link><pubDate>Sun, 08 Aug 2021 23:30:18 +0800</pubDate><author>作者</author><guid>http://0x3f.org/post/create-directory-under-/var/run-in-archlinux/</guid><description><![CDATA[<p>Archlinux 使用 <a href="https://wiki.archlinux.org/title/systemd#systemd-tmpfiles_-_temporary_files" target="_blank" rel="noopener noreffer">systemd-tmpfiles</a> 管理 <code>/var/run</code> 下的临时目录。这意味着如果我手动创建 <code>/var/run/php</code> 目录，在系统重启后将不复存在。</p>
 <p>解决的办法是修改 <code>/usr/lib/tmpfiles.d/php-fpm.conf</code> 文件，把默认的目录名 <code>php-fpm</code> 改成 <code>php</code>。</p>
 <p>但这会带来另一个问题，当 PHP 被重装或升级后，该文件会被覆盖。所以，解决的方法是复制后再修改。</p>
 ]]></description></item><item><title>使用 Homebrew 安装旧版程序</title><link>http://0x3f.org/post/rollback-to-old-version-with-homebrew/</link><pubDate>Sun, 04 Oct 2020 18:21:04 +0800</pubDate><author>作者</author><guid>http://0x3f.org/post/rollback-to-old-version-with-homebrew/</guid><description><![CDATA[<p>前几天发现因为 Hugo 的不兼容更新导致我在用的主题在部署时报错，所以打算装回旧版。但是网上找到的 Homebrew 回滚方法已过时，新的方法更简单，但找到具体说明也费了点功夫。</p>
@@ -375,155 +384,4 @@ debug1: Connecting to gitlab.xxx.com port 8848.
 </code></pre></td></tr></table>
 </div>
 </div><p>然后在码表配置文件的“engine/translators”下追加<code>lua_translator@date_translator</code>。</p>
-<p>最后，重新部署即可。</p>]]></description></item><item><title>用PlantUML实现ERD</title><link>http://0x3f.org/post/plantuml-erd/</link><pubDate>Fri, 03 Jan 2020 17:01:41 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/plantuml-erd/</guid><description><![CDATA[<p>很长一段时间，我们都在用MySQLWorkbench画ER图。但是这个东西有一些缺陷，导致体验很不好。</p>
-<p>首先它生成的文件是二进制的，做不了版本控制。这意味着在版本迭代的过程中做数据结构评审的体验很糟糕。其次，离线文件难以管理，不利于团队协作。第三，图形界面虽然简单，但并不等价于高效。用它画图的成本还是比较高的。</p>
-<p>PlantUML是个基于文本、灵活且强大的UML画图工具，高度可定制，而且可以集成到多种开发工具中。主流的IDE、文本编辑器都可以集成PlantUML，以便用自己最熟悉的工具画图并实时预览。基于文本的特性使得版本控制和Code Review很容易实现。如果VCS用的是Gitlab，可以更进一步，借助PlantUML Server实现实时预览。即使对于像Github这种暂时没有提供支持的Web平台，也有变通的解决方案。</p>
-<p>基于以上情况，我封装了一个用PlantUML画ER图的模板。用这个模板画图的源码如下：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span><span class="lnt">39
-</span><span class="lnt">40
-</span><span class="lnt">41
-</span><span class="lnt">42
-</span><span class="lnt">43
-</span><span class="lnt">44
-</span><span class="lnt">45
-</span><span class="lnt">46
-</span><span class="lnt">47
-</span><span class="lnt">48
-</span><span class="lnt">49
-</span><span class="lnt">50
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">@startuml
-
-!include https://raw.githubusercontent.com/xbot/plantuml-erd/master/src/Library.iuml
-
-&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;
-&#39; Entities
-&#39;
-&#39; Relationships
-&#39; one-to-one relationship
-&#39;     user -- user_profile : &#34;A user only \nhas one profile&#34;
-&#39; one to may relationship
-&#39;     user --&gt; session : &#34;A user may have\n many sessions&#34;
-&#39; many to many relationship
-&#39; Add mark if you like
-&#39;     user &#34;1&#34; --&gt; &#34;*&#34; user_group : &#34;A user may be \nin many groups&#34;
-&#39;     group &#34;1&#34; --&gt; &#34;0..N&#34; user_group : &#34;A group may \ncontain many users&#34;
-&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;
-
-Table(posts, 文章表) {
-    PRIMARY_KEY
-    TIMESTAMPS
-    Column(&#34;title&#34;, &#34;NVARCHAR[30]&#34;, 1, &#34;&#34;, &#34;标题&#34;)
-    Column(&#34;status&#34;, UN(&#34;TINYINT&#34;), 1, &#34;1&#34;, &#34;状态&#34;, &#34;1:草稿; 2:已发布&#34;)
-    Column(&#34;source&#34;, UN(&#34;TINYINT&#34;), 1, &#34;&#34;, &#34;来源：1，原创；2，转载&#34;)
-    Column(&#34;category_id&#34;, PK_TYPE, 1, &#34;&#34;, &#34;分类&#34;)
-    Column(&#34;created_by&#34;, PK_TYPE, 1, &#34;0&#34;, &#34;创建者ID&#34;)
-    Column(&#34;published_at&#34;, &#34;DATETIME&#34;, 0, &#34;&#34;, &#34;发表时间&#34;)
-    Column(&#34;content&#34;, &#34;TEXT&#34;, 1, &#34;&#34;, &#34;内容&#34;)
-}
-
-Table(comments, 评论表) {
-    PRIMARY_KEY
-    TIMESTAMPS
-    Column(&#34;post_id&#34;, PK_TYPE, 1, &#34;&#34;, &#34;文章ID&#34;)
-    Column(&#34;user_id&#34;, PK_TYPE, 1, &#34;&#34;, &#34;用户ID&#34;)
-    Column(&#34;content&#34;, &#34;NVARCHAR[255]&#34;, 1, &#34;&#34;, &#34;评论内容&#34;)
-}
-posts --&gt; comments
-
-Table(post_logs, 文章日志表) {
-    PRIMARY_KEY
-    TIMESTAMPS
-    Column(&#34;post_id&#34;, PK_TYPE, 1, &#34;&#34;, &#34;文章ID&#34;)
-    Column(&#34;user_id&#34;, PK_TYPE, 1, &#34;&#34;, &#34;操作者ID&#34;)
-    Column(&#34;action&#34;, UN(&#34;TINYINT&#34;), 1, &#34;0&#34;, &#34;操作类型&#34;, &#34;1:创建; 2:修改; 3:删除&#34;)
-    Column(&#34;data&#34;, &#34;TEXT&#34;, 0, &#34;&#34;, &#34;操作详情&#34;)
-}
-posts --&gt; post_logs
-
-@enduml
-</code></pre></td></tr></table>
-</div>
-</div><p>效果：</p>
-<p></p>
-<p>具体的源码和例子可以参考<a href="https://github.com/xbot/plantuml-erd" target="_blank" rel="noopener noreffer">Git仓库</a>。</p>
-<p>下面说说怎么集成到Gitlab。</p>
-<p>首先需要一个可用的PlantUML Server。官方提供了一个现成的、开放的服务（<code>http://www.plantuml.com/plantuml/</code>）。如果对响应速度或私密性有要求，就需要部署私有的服务了。</p>
-<p><a href="https://github.com/plantuml/plantuml-server" target="_blank" rel="noopener noreffer">官方</a>提供了多种部署方式，我用的是最简单的docker方式。</p>
-<p>首先克隆官方仓库。</p>
-<p>然后在仓库根目录下执行命令：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">docker run -d -p 18080:8080 plantuml/plantuml-server:jetty
-</code></pre></td></tr></table>
-</div>
-</div><p>其中“18080”是服务器提供对外服务的端口。</p>
-<p>最后，把上述服务地址配置到Gitlab里即可，选项路径为<code>管理区域→Settings→PlantUML</code>。</p>
-<p>之后，可以创建Markdown文件，格式为：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-markdown" data-lang="markdown"><span class="s">```plantuml
-</span><span class="s"></span>PlantUML源码
-<span class="s">```</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>当在Gitlab中点击该文件时，就会显示实时渲染的图了。</p>
-<p>对于Github这种暂时不支持集成PlantUML的平台，可以利用PlantUML Server提供的代理服务实现，拼接一个如下所示的URL并当作图片链接插入网页即可：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">http://www.plantuml.com/plantuml/proxy?cache=no&amp;src=https://raw.githubusercontent.com/xbot/plantuml-erd/master/examples/Posts.md
-</code></pre></td></tr></table>
-</div>
-</div>]]></description></item></channel></rss>
+<p>最后，重新部署即可。</p>]]></description></item></channel></rss>

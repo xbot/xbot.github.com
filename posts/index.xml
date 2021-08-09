@@ -1,4 +1,13 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>所有文章 - 晴耕雨讀</title><link>http://0x3f.org/posts/</link><description>所有文章 | 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sun, 08 Aug 2021 23:30:18 +0800</lastBuildDate><atom:link href="http://0x3f.org/posts/" rel="self" type="application/rss+xml"/><item><title>Archlinux 下在 /var/run 下创建目录的方法</title><link>http://0x3f.org/post/create-directory-under-/var/run-in-archlinux/</link><pubDate>Sun, 08 Aug 2021 23:30:18 +0800</pubDate><author>作者</author><guid>http://0x3f.org/post/create-directory-under-/var/run-in-archlinux/</guid><description><![CDATA[<p>Archlinux 使用 <a href="https://wiki.archlinux.org/title/systemd#systemd-tmpfiles_-_temporary_files" target="_blank" rel="noopener noreffer">systemd-tmpfiles</a> 管理 <code>/var/run</code> 下的临时目录。这意味着如果我手动创建 <code>/var/run/php</code> 目录，在系统重启后将不复存在。</p>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>所有文章 - 晴耕雨讀</title><link>http://0x3f.org/posts/</link><description>所有文章 | 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Mon, 09 Aug 2021 15:27:58 +0800</lastBuildDate><atom:link href="http://0x3f.org/posts/" rel="self" type="application/rss+xml"/><item><title>Archlinux 下 PHP 不能读取 /tmp 下文件的问题</title><link>http://0x3f.org/post/php-failed-to-open-stream-under-tmp-in-archlinux/</link><pubDate>Mon, 09 Aug 2021 15:27:58 +0800</pubDate><author>作者</author><guid>http://0x3f.org/post/php-failed-to-open-stream-under-tmp-in-archlinux/</guid><description><![CDATA[<p>问题的场景是，以 http 用户运行的 FPM 进程访问 <code>/tmp</code> 下由普通用户运行的 CLI 进程创建的文件时，报如下错误：</p>
+<blockquote>
+<p>Failed to open stream.</p>
+</blockquote>
+<p>原因是 PHP-FPM 的 systemd 配置中默认对 FPM 进程单独挂载 <code>/tmp</code> 目录。</p>
+<p>具体对应：</p>
+<p><code>/etc/systemd/system/multi-user.target.wants/php-fpm.service</code></p>
+<p>中的：</p>
+<p><code>PrivateTmp=true</code></p>
+]]></description></item><item><title>Archlinux 下在 /var/run 下创建目录的方法</title><link>http://0x3f.org/post/create-directory-under-/var/run-in-archlinux/</link><pubDate>Sun, 08 Aug 2021 23:30:18 +0800</pubDate><author>作者</author><guid>http://0x3f.org/post/create-directory-under-/var/run-in-archlinux/</guid><description><![CDATA[<p>Archlinux 使用 <a href="https://wiki.archlinux.org/title/systemd#systemd-tmpfiles_-_temporary_files" target="_blank" rel="noopener noreffer">systemd-tmpfiles</a> 管理 <code>/var/run</code> 下的临时目录。这意味着如果我手动创建 <code>/var/run/php</code> 目录，在系统重启后将不复存在。</p>
 <p>解决的办法是修改 <code>/usr/lib/tmpfiles.d/php-fpm.conf</code> 文件，把默认的目录名 <code>php-fpm</code> 改成 <code>php</code>。</p>
 <p>但这会带来另一个问题，当 PHP 被重装或升级后，该文件会被覆盖。所以，解决的方法是复制后再修改。</p>
 ]]></description></item><item><title>给 Bose QC35 更换新耳罩</title><link>http://0x3f.org/post/change-muffs-for-bose-qc35/</link><pubDate>Sun, 04 Oct 2020 18:43:16 +0800</pubDate><author>作者</author><guid>http://0x3f.org/post/change-muffs-for-bose-qc35/</guid><description><![CDATA[<p>尽管我用东西很爱惜，QC35 的耳罩表面在前年也开始了剥落，并终于在今年早些时候裂开了。</p>
@@ -752,8 +761,4 @@ debug1: Connecting to gitlab.xxx.com port 8848.
 <p>问题陷入绝境。</p>
 <p>绝望之际，突然想到会不会是 SSH 自身出了问题呢？<code>which ssh</code>发现是系统自带的，所以装上 Homebrew 的版本试了一下，竟然好了！</p>
 <p>bugOS !!!</p>
-]]></description></item><item><title>改变 Vim 模式时自动切换输入法的方法</title><link>http://0x3f.org/post/auto-switch-input-method-while-changing-vim-mode/</link><pubDate>Wed, 19 Feb 2020 21:48:15 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/auto-switch-input-method-while-changing-vim-mode/</guid><description><![CDATA[<p>VS Code的Vim插件有个很贴心的功能，可以在切换到普通模式时自动切换到英文输入法，而当切换回插入模式时再换到此前的输入法。</p>
-<p>设置的方法很简单。先安装<a href="https://github.com/daipeihust/im-select" target="_blank" rel="noopener noreffer">im-select</a>，然后配置如下（macOS）：</p>
-<p></p>
-<p>当然，在Vim里也可以利用im-select实现这个功能。</p>
 ]]></description></item></channel></rss>

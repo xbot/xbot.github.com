@@ -1,4 +1,13 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Archlinux - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/archlinux/</link><description>Archlinux - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sun, 08 Aug 2021 23:30:18 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/archlinux/" rel="self" type="application/rss+xml"/><item><title>Archlinux 下在 /var/run 下创建目录的方法</title><link>http://0x3f.org/post/create-directory-under-/var/run-in-archlinux/</link><pubDate>Sun, 08 Aug 2021 23:30:18 +0800</pubDate><author>作者</author><guid>http://0x3f.org/post/create-directory-under-/var/run-in-archlinux/</guid><description><![CDATA[<p>Archlinux 使用 <a href="https://wiki.archlinux.org/title/systemd#systemd-tmpfiles_-_temporary_files" target="_blank" rel="noopener noreffer">systemd-tmpfiles</a> 管理 <code>/var/run</code> 下的临时目录。这意味着如果我手动创建 <code>/var/run/php</code> 目录，在系统重启后将不复存在。</p>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Archlinux - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/archlinux/</link><description>Archlinux - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Mon, 09 Aug 2021 15:27:58 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/archlinux/" rel="self" type="application/rss+xml"/><item><title>Archlinux 下 PHP 不能读取 /tmp 下文件的问题</title><link>http://0x3f.org/post/php-failed-to-open-stream-under-tmp-in-archlinux/</link><pubDate>Mon, 09 Aug 2021 15:27:58 +0800</pubDate><author>作者</author><guid>http://0x3f.org/post/php-failed-to-open-stream-under-tmp-in-archlinux/</guid><description><![CDATA[<p>问题的场景是，以 http 用户运行的 FPM 进程访问 <code>/tmp</code> 下由普通用户运行的 CLI 进程创建的文件时，报如下错误：</p>
+<blockquote>
+<p>Failed to open stream.</p>
+</blockquote>
+<p>原因是 PHP-FPM 的 systemd 配置中默认对 FPM 进程单独挂载 <code>/tmp</code> 目录。</p>
+<p>具体对应：</p>
+<p><code>/etc/systemd/system/multi-user.target.wants/php-fpm.service</code></p>
+<p>中的：</p>
+<p><code>PrivateTmp=true</code></p>
+]]></description></item><item><title>Archlinux 下在 /var/run 下创建目录的方法</title><link>http://0x3f.org/post/create-directory-under-/var/run-in-archlinux/</link><pubDate>Sun, 08 Aug 2021 23:30:18 +0800</pubDate><author>作者</author><guid>http://0x3f.org/post/create-directory-under-/var/run-in-archlinux/</guid><description><![CDATA[<p>Archlinux 使用 <a href="https://wiki.archlinux.org/title/systemd#systemd-tmpfiles_-_temporary_files" target="_blank" rel="noopener noreffer">systemd-tmpfiles</a> 管理 <code>/var/run</code> 下的临时目录。这意味着如果我手动创建 <code>/var/run/php</code> 目录，在系统重启后将不复存在。</p>
 <p>解决的办法是修改 <code>/usr/lib/tmpfiles.d/php-fpm.conf</code> 文件，把默认的目录名 <code>php-fpm</code> 改成 <code>php</code>。</p>
 <p>但这会带来另一个问题，当 PHP 被重装或升级后，该文件会被覆盖。所以，解决的方法是复制后再修改。</p>
 ]]></description></item><item><title>Archlinux安装过程中的几个坑</title><link>http://0x3f.org/post/pits-of-archlinux/</link><pubDate>Mon, 17 Oct 2016 13:14:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/pits-of-archlinux/</guid><description><![CDATA[<h2 id="安装方案">安装方案</h2>
@@ -339,25 +348,4 @@ INTEL_HDA_DEVICE_TIMEOUT=30
 <li>http://www.ibm.com/developerworks/cn/linux/l-cpufreq-1/index.html</li>
 <li>http://www.lesswatts.org/</li>
 </ol>
-]]></description></item><item><title>使Thinkpad的静音按钮能被识别的方法</title><link>http://0x3f.org/post/howto-make-thinkpad-mute-button-detected-on-linux/</link><pubDate>Mon, 09 Aug 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/howto-make-thinkpad-mute-button-detected-on-linux/</guid><description><![CDATA[<p>我的型号是X200，问题表现为在GNOME或XFCE下静音按钮无效，使用xev也捕获不到输入信号，而音量增加和减小按钮可以正常使用且有OSD。</p>
-<p>解决办法是在grub的启动菜单中，给内核加上参数<strong>acpi_osi=“Linux”</strong>，如：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># (0) Arch Linux</span>
-title  Arch Linux
-root   <span class="o">(</span>hd0,2<span class="o">)</span>
-kernel /boot/vmlinuz26 <span class="nv">root</span><span class="o">=</span>/dev/sda3 <span class="nv">resume</span><span class="o">=</span>/dev/sda4 ro <span class="nv">acpi_osi</span><span class="o">=</span><span class="s2">&#34;Linux&#34;</span>
-initrd /boot/kernel26.img
-</code></pre></td></tr></table>
-</div>
-</div><p>从查到的资料看，<strong>acpi_osi</strong>参数是用来指定操作系统接口的，据说有些硬件都只针对Windows做了测试或优化，对于这些硬件，如果将内核的操作系统接口指定为Linux，则有可能会出问题。所以内核从2.6.23版本开始，此参数的默认值被改成了“<strong>!Linux</strong>”，以保证更广泛的兼容性和稳定性。</p>
-<p>而根据<a href="http://www.thinkwiki.org/wiki/Mute_button">这里</a>的说法，thinkpad一直以来在对Linux的兼容程度上有很好的口碑，故可以放心添加这个参数。</p>
-<p>另外，xfce下使用OSD需要安装xfce4-volumed。</p>
 ]]></description></item></channel></rss>
