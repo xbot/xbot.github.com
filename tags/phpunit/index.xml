@@ -1,4 +1,73 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>phpunit - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/phpunit/</link><description>phpunit - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 18 Feb 2020 22:49:45 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/phpunit/" rel="self" type="application/rss+xml"/><item><title>在 VS Code 中快速创建 PHPUnit 测试类的方法</title><link>http://0x3f.org/post/quickly-create-phpunit-test-cases-with-vscode/</link><pubDate>Tue, 18 Feb 2020 22:49:45 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/quickly-create-phpunit-test-cases-with-vscode/</guid><description><![CDATA[<p>通过单元测试解决问题或者调试代码，可以避开错综复杂的依赖关系、直击问题的核心，从而极大地节约时间、提高效率。</p>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>phpunit - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/phpunit/</link><description>phpunit - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 17 Aug 2021 14:48:12 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/phpunit/" rel="self" type="application/rss+xml"/><item><title>PHPUnit 9.x 性能分析的方法</title><link>http://0x3f.org/post/method-for-phpunit-9.x-performance-analysis/</link><pubDate>Tue, 17 Aug 2021 14:48:12 +0800</pubDate><author>作者</author><guid>http://0x3f.org/post/method-for-phpunit-9.x-performance-analysis/</guid><description><![CDATA[<p>利用 PHPUnit 9.x 的 extension 特性，可以记录每个测试用例的耗时并存储到 CSV 文件中。</p>
+<p>Extension 代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+
+<span class="k">declare</span><span class="p">(</span><span class="nx">strict_types</span><span class="o">=</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="k">namespace</span> <span class="nx">Tests</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">PHPUnit\Runner\AfterTestHook</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">LongRunningTestsLogger</span> <span class="k">implements</span> <span class="nx">AfterTestHook</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="k">private</span> <span class="nx">string</span> <span class="nv">$log_file</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">executeAfterTest</span><span class="p">(</span><span class="nx">string</span> <span class="nv">$test</span><span class="p">,</span> <span class="nx">float</span> <span class="nv">$time</span><span class="p">)</span><span class="o">:</span> <span class="nx">void</span>
+    <span class="p">{</span>
+        <span class="nv">$fp</span> <span class="o">=</span> <span class="nx">fopen</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">log_file</span> <span class="o">.</span> <span class="s1">&#39;.csv&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">);</span>
+        <span class="nx">fputcsv</span><span class="p">(</span><span class="nv">$fp</span><span class="p">,</span> <span class="p">[</span><span class="nv">$test</span><span class="p">,</span> <span class="nv">$time</span><span class="p">]);</span>
+        <span class="nx">fclose</span><span class="p">(</span><span class="nv">$fp</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>phpunit.xml 的配置：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml">    <span class="nt">&lt;extensions&gt;</span>
+        <span class="nt">&lt;extension</span> <span class="na">class=</span><span class="s">&#34;Tests\LongRunningTestsLogger&#34;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;arguments&gt;</span>
+                <span class="nt">&lt;string&gt;</span>profiling<span class="nt">&lt;/string&gt;</span>
+            <span class="nt">&lt;/arguments&gt;</span>
+        <span class="nt">&lt;/extension&gt;</span>
+    <span class="nt">&lt;/extensions&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div>]]></description></item><item><title>在 VS Code 中快速创建 PHPUnit 测试类的方法</title><link>http://0x3f.org/post/quickly-create-phpunit-test-cases-with-vscode/</link><pubDate>Tue, 18 Feb 2020 22:49:45 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/quickly-create-phpunit-test-cases-with-vscode/</guid><description><![CDATA[<p>通过单元测试解决问题或者调试代码，可以避开错综复杂的依赖关系、直击问题的核心，从而极大地节约时间、提高效率。</p>
 <p>但是，当创建测试类成为一个经常发生的操作时，每次都手动创建类、引入基类、添加测试方法就显得很烦琐。我需要这样一个解决方案，让我可以立即开始着手写测试代码。</p>
 <h2 id="方案一文件模板">方案一：文件模板</h2>
 <p>通过VS Code的插件<a href="https://marketplace.visualstudio.com/items?itemName=yongwoo.template" target="_blank" rel="noopener noreffer">Template</a>，可以实现把事先准备好的一个测试类文件模板复制到工程目录下。</p>

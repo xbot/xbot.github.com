@@ -1,4 +1,73 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>编程 - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/%E7%BC%96%E7%A8%8B/</link><description>编程 - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 21 Jul 2020 16:25:09 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/%E7%BC%96%E7%A8%8B/" rel="self" type="application/rss+xml"/><item><title>MySQL 事务的一致性、隔离级别与幻读问题</title><link>http://0x3f.org/post/isolation-levels-and-phantom-reads-in-mysql/</link><pubDate>Tue, 21 Jul 2020 16:25:09 +0800</pubDate><author>作者</author><guid>http://0x3f.org/post/isolation-levels-and-phantom-reads-in-mysql/</guid><description><![CDATA[<h2 id="数据库事务的一致性">数据库事务的一致性</h2>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>编程 - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/%E7%BC%96%E7%A8%8B/</link><description>编程 - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 17 Aug 2021 14:48:12 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/%E7%BC%96%E7%A8%8B/" rel="self" type="application/rss+xml"/><item><title>PHPUnit 9.x 性能分析的方法</title><link>http://0x3f.org/post/method-for-phpunit-9.x-performance-analysis/</link><pubDate>Tue, 17 Aug 2021 14:48:12 +0800</pubDate><author>作者</author><guid>http://0x3f.org/post/method-for-phpunit-9.x-performance-analysis/</guid><description><![CDATA[<p>利用 PHPUnit 9.x 的 extension 特性，可以记录每个测试用例的耗时并存储到 CSV 文件中。</p>
+<p>Extension 代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+
+<span class="k">declare</span><span class="p">(</span><span class="nx">strict_types</span><span class="o">=</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="k">namespace</span> <span class="nx">Tests</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="nx">PHPUnit\Runner\AfterTestHook</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">LongRunningTestsLogger</span> <span class="k">implements</span> <span class="nx">AfterTestHook</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="fm">__construct</span><span class="p">(</span><span class="k">private</span> <span class="nx">string</span> <span class="nv">$log_file</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">executeAfterTest</span><span class="p">(</span><span class="nx">string</span> <span class="nv">$test</span><span class="p">,</span> <span class="nx">float</span> <span class="nv">$time</span><span class="p">)</span><span class="o">:</span> <span class="nx">void</span>
+    <span class="p">{</span>
+        <span class="nv">$fp</span> <span class="o">=</span> <span class="nx">fopen</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">log_file</span> <span class="o">.</span> <span class="s1">&#39;.csv&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">);</span>
+        <span class="nx">fputcsv</span><span class="p">(</span><span class="nv">$fp</span><span class="p">,</span> <span class="p">[</span><span class="nv">$test</span><span class="p">,</span> <span class="nv">$time</span><span class="p">]);</span>
+        <span class="nx">fclose</span><span class="p">(</span><span class="nv">$fp</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>phpunit.xml 的配置：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-xml" data-lang="xml">    <span class="nt">&lt;extensions&gt;</span>
+        <span class="nt">&lt;extension</span> <span class="na">class=</span><span class="s">&#34;Tests\LongRunningTestsLogger&#34;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;arguments&gt;</span>
+                <span class="nt">&lt;string&gt;</span>profiling<span class="nt">&lt;/string&gt;</span>
+            <span class="nt">&lt;/arguments&gt;</span>
+        <span class="nt">&lt;/extension&gt;</span>
+    <span class="nt">&lt;/extensions&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div>]]></description></item><item><title>MySQL 事务的一致性、隔离级别与幻读问题</title><link>http://0x3f.org/post/isolation-levels-and-phantom-reads-in-mysql/</link><pubDate>Tue, 21 Jul 2020 16:25:09 +0800</pubDate><author>作者</author><guid>http://0x3f.org/post/isolation-levels-and-phantom-reads-in-mysql/</guid><description><![CDATA[<h2 id="数据库事务的一致性">数据库事务的一致性</h2>
 <p>数据库事务有四个特性：原子性（Atomicity）、一致性（Consistency）、隔离性（Isolation）、持久性（Durability），简称“ACID”。</p>
 <p>其中，“一致性”指的是数据库层面的一致性，与应用层面的一致性不同。</p>
 <p>数据库层面的一致性是说，事务具备把数据库从一个正确的状态迁移到另一个正确的状态的特性。所谓正确的状态，是指任何写入数据库的数据都满足数据库既定的规则，这些规则包括各种约束、级联回滚、触发器以及任何它们的组合。</p>
@@ -712,18 +781,4 @@ $invoice = factory(\App\Models\Invoice::class)-&gt;create();
 <p>因此，可以把对一个方法校验逻辑的测试单独抽象出一个测试方法，并用dataProvider提供测试数据和断言。</p>
 <h2 id="利用工具查看代码覆盖率">利用工具查看代码覆盖率</h2>
 <p>PHPUnit提供参数<code>--coverage-html</code>生成覆盖率分析结果的HTML页面，但在IDE或编辑器里相对实时地查看结果会更方便。</p>
-<p>主流IDE或编辑器一般都集成了这个功能或提供了相关插件，如<a href="https://marketplace.visualstudio.com/items?itemName=ryanluker.vscode-coverage-gutters" target="_blank" rel="noopener noreffer">Coverage Gutters</a>。</p>]]></description></item><item><title>Lumen单元测试提示自定义校验规则不存在的问题</title><link>http://0x3f.org/post/unit-test-in-laravel-complains-validation-rule-not-exist/</link><pubDate>Fri, 02 Aug 2019 15:12:17 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/unit-test-in-laravel-complains-validation-rule-not-exist/</guid><description><![CDATA[<p>执行单元测试时遇到报错：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">BadMethodCallException: Method [validateIdList] does not exist.
-</code></pre></td></tr></table>
-</div>
-</div><p><code>id_list</code>是一个自定义的校验规则，通过<code>Illuminate\Support\Facades\Validator::extend()</code>在<code>AppServiceProvider::boot()</code>中注册。由于存在一个和该规则配套的、通过<code>Illuminate\Support\Facades\Request::macro()</code>注册的扩展方法<code>getIDs()</code>，故通过<code>Illuminate\Support\Facades\Request::hasMacro()</code>判断当该方法不存在时才注册，并把这个校验规则的注册逻辑也放到了这个判断里。</p>
-<p>同一接口，在Postman中测试并无异常。通过日志看到，<code>AppServiceProvider::boot()</code>被执行了两次，这也很好理解，执行单元测试本身时会初始化一次，当单元测试调用被测试接口时，是第二次调用。也就是在这次调用中，抛出了这个异常。</p>
-<p>那么，为什么<code>getIDs()</code>方法没有问题，而<code>id_list</code>校验规则却不存在呢？</p>
-<p>通过源码可以看到，<code>macro()</code>方法来自于<code>Illuminate\Support\Traits\Macroable</code>，该Trait内部使用静态变量<code>$macros</code>存储被注册的逻辑。而注册校验规则的<code>extend()</code>方法来自于<code>Illuminate\Validation\Factory</code>这个类。此类在<code>Illuminate\Validation\ValidationServiceProvider</code>中被注册为单例。</p>
-<p>因此，当第二次被执行时，静态存储的<code>getIDs()</code>方法仍然存在，而<code>id_list</code>由于程序实例被重置，已经不存在了。</p>
-<p>综上，解决的办法是把注册自定义校验规则的逻辑拿到<code>hasMacro()</code>外面。</p>]]></description></item></channel></rss>
+<p>主流IDE或编辑器一般都集成了这个功能或提供了相关插件，如<a href="https://marketplace.visualstudio.com/items?itemName=ryanluker.vscode-coverage-gutters" target="_blank" rel="noopener noreffer">Coverage Gutters</a>。</p>]]></description></item></channel></rss>
