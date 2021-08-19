@@ -6,7 +6,7 @@ date: 2010-10-01 00:00:00
 tags:
 - Linux
 - 计算机
-- 软体
+- 软件
 status: publish
 published: true
 comments: true

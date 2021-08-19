@@ -6,6 +6,8 @@ categories:
 - 计算机
 tags:
 - zsh
+- 工具
+- 软件
 ---
 
 [zsh-autoenv](https://github.com/Tarrasch/zsh-autoenv) 可以实现当进入特定的目录时加载特定的 zshrc 文件，并当切换到其它目录时取消其中的变更。后者在当前的版本下，对环境变量、命令别名和函数有效。

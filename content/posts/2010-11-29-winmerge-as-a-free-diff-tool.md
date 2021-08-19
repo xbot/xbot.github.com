@@ -6,7 +6,7 @@ date: 2010-11-29 00:00:00
 tags:
 - Windows
 - 计算机
-- 软体
+- 软件
 - 开源
 status: publish
 published: true
