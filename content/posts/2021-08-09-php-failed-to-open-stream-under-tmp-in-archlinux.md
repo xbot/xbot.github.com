@@ -17,7 +17,7 @@ tags:
 
 具体对应：
 
-`/etc/systemd/system/multi-user.target.wants/php-fpm.service`
+`/usr/lib/systemd/system/php-fpm.service`
 
 中的：
 
