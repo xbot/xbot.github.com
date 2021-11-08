@@ -66,6 +66,8 @@ CPU 用当时比较热门的 i5-8600T ，散片刚从 1k+ 降到 800+ 。6 核�
 
 最后买了 Unraid 的 Basic Plan 。
 
+![2021-11-09-01-16-20-1iSmYb](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2021-11-09-01-16-20-1iSmYb.png)
+
 ## 使用感受
 
 目前主要使用以下功能：
