@@ -66,7 +66,7 @@ posts --> post_logs
 
 效果：
 
-![Example 1](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/xbot/plantuml-erd/master/examples/Posts.md)
+![2021-11-11-17-05-28-AJWtJh](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2021-11-11-17-05-28-AJWtJh.jpg)
 
 具体的源码和例子可以参考 [Git 仓库](https://github.com/xbot/plantuml-erd)。
 
