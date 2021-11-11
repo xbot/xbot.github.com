@@ -24,6 +24,9 @@ PlantUML 是个基于文本、灵活且强大的 UML 画图工具，高度可定
 
 !include https://raw.githubusercontent.com/xbot/plantuml-erd/master/src/Library.iuml
 
+' avoid problems with angled crows feet
+skinparam linetype ortho
+
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 ' Entities
 '
@@ -57,7 +60,6 @@ Table(comments, 评论表) {
     Column("user_id", PK_TYPE, 1, "", "用户ID")
     Column("content", "NVARCHAR[255]", 1, "", "评论内容")
 }
-posts --> comments
 
 Table(post_logs, 文章日志表) {
     PRIMARY_KEY
@@ -67,14 +69,16 @@ Table(post_logs, 文章日志表) {
     Column("action", UN("TINYINT"), 1, "0", "操作类型", "1:创建; 2:修改; 3:删除")
     Column("data", "TEXT", 0, "", "操作详情")
 }
-posts --> post_logs
+
+posts ||..o{ comments
+posts ||..|{ post_logs
 
 @enduml
 ```
 
 效果：
 
-![2021-11-11-17-05-28-AJWtJh](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2021-11-11-17-05-28-AJWtJh.jpg)
+![2021-11-17-21-56-14-nLLRJnD157xlhnZtHJ3q1k454aC3JMoGfYchaOXffjsXtR2TsSpCWXimmI0NBuX48YfUq8WXqK0q1kJIy6VORNdYBpYpIw6srSI4n7dPcJFd-ywSSxwPxM4SKcuLZK3WaevpXgKXKE3SP5tXC8NZeRpE2rRMOeZc2EO8yr2E5CDtiuI7JGDYYGmYgeMBa754mupcmjVrB8NK3kaUwsK0nuYk0PEIh86A38mBHW1nta0Qo54o](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2021-11-17-21-56-14-nLLRJnD157xlhnZtHJ3q1k454aC3JMoGfYchaOXffjsXtR2TsSpCWXimmI0NBuX48YfUq8WXqK0q1kJIy6VORNdYBpYpIw6srSI4n7dPcJFd-ywSSxwPxM4SKcuLZK3WaevpXgKXKE3SP5tXC8NZeRpE2rRMOeZc2EO8yr2E5CDtiuI7JGDYYGmYgeMBa754mupcmjVrB8NK3kaUwsK0nuYk0PEIh86A38mBHW1nta0Qo54o.svg)
 
 具体的源码和例子可以参考 [Git 仓库](https://github.com/xbot/plantuml-erd)。
 
