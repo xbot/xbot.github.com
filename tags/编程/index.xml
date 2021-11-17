@@ -366,11 +366,18 @@
 </span><span class="lnt">48
 </span><span class="lnt">49
 </span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
 </span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-fallback" data-lang="fallback">@startuml
 
 !include https://raw.githubusercontent.com/xbot/plantuml-erd/master/src/Library.iuml
+
+&#39; avoid problems with angled crows feet
+skinparam linetype ortho
 
 &#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;
 &#39; Entities
@@ -405,7 +412,6 @@ Table(comments, 评论表) {
     Column(&#34;user_id&#34;, PK_TYPE, 1, &#34;&#34;, &#34;用户ID&#34;)
     Column(&#34;content&#34;, &#34;NVARCHAR[255]&#34;, 1, &#34;&#34;, &#34;评论内容&#34;)
 }
-posts --&gt; comments
 
 Table(post_logs, 文章日志表) {
     PRIMARY_KEY
@@ -415,7 +421,9 @@ Table(post_logs, 文章日志表) {
     Column(&#34;action&#34;, UN(&#34;TINYINT&#34;), 1, &#34;0&#34;, &#34;操作类型&#34;, &#34;1:创建; 2:修改; 3:删除&#34;)
     Column(&#34;data&#34;, &#34;TEXT&#34;, 0, &#34;&#34;, &#34;操作详情&#34;)
 }
-posts --&gt; post_logs
+
+posts ||..o{ comments
+posts ||..|{ post_logs
 
 @enduml
 </code></pre></td></tr></table>
