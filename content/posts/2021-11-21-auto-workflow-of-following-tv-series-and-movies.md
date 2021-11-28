@@ -11,7 +11,7 @@ tags:
 
 在 NAS 上搭了个自动追剧、追影的工作流，体验非常好。
 
-<img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2021-11-21-17-24-06-自动追剧流程.svg" alt="2021-11-21-17-24-06-自动追剧流程" style="zoom:110%;" />
+![自动追剧流程](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2021-11-21-17-24-06-自动追剧流程.svg)
 
 只需要把想看的美剧或者电影添加到监控列表里，就可以在资源出现之后自动下载并通知到手机或电脑，全程无值守，回家打开电视就能看。
 
