@@ -1,53 +1,5 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>HTTP - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/http/</link><description>HTTP - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sun, 19 Feb 2012 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/http/" rel="self" type="application/rss+xml"/><item><title>NGINX: 405 Not Allowed</title><link>http://0x3f.org/post/nginx-405-not-allowed/</link><pubDate>Sun, 19 Feb 2012 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/nginx-405-not-allowed/</guid><description><![CDATA[<p>NGINX不允许向静态文件提交POST方式的请求，否则报405错误。测试方法为，使用curl向服务器上的静态文件提交POST请求：</p>
-
-```bash
-curl -d 1=1 http://localhost/version.txt
-```
-
-得到以下结果：
-
-```html
-<html>
-<head><title>405 Not Allowed</title></head>
-<body bgcolor="white">
-<center><h1>405 Not Allowed</h1></center>
-<hr><center>nginx/1.0.11</center>
-</body>
-</html>
-```
-
-<p>网上传抄的添加以下配置的解决办法不可用：</p>
-
-```nginx
-error_page 405 =200 @405;
-location @405
-{
-    root /srv/http;
-}
-```
-
-<p>一种不完美但可用的方法为：</p>
-
-```nginx
-upstream static_backend {
-    server localhost:80;
-}
-
-server {
-    listen 80;
-
-    # ...
-
-    error_page 405 =200 @405;
-    location @405 {
-        root /srv/http;
-        proxy_method GET;
-        proxy_pass http://static_backend;
-    }
-}
-```
-
-<p>即转换静态文件接收的POST请求到GET方式。</p>
-
-<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
-]]></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>HTTP on 晴耕雨讀</title><link>http://0x3f.org/tags/http/</link><description>Recent content in HTTP on 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><copyright>© 淘气 2021</copyright><lastBuildDate>Sun, 19 Feb 2012 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/http/index.xml" rel="self" type="application/rss+xml"/><item><title>NGINX: 405 Not Allowed</title><link>http://0x3f.org/posts/nginx-405-not-allowed/</link><pubDate>Sun, 19 Feb 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/nginx-405-not-allowed/</guid><description>NGINX不允许向静态文件提交POST方式的请求，否则报405错误。测试方法为，使用curl向服务器上的静态文件提交POST请求：
+```bash curl -d 1=1 http://localhost/version.txt ``` 得到以下结果： ```html 405 Not Allowed 405 Not Allowed nginx/1.0.11 ``` 网上传抄的添加以下配置的解决办法不可用：
+```nginx error_page 405 =200 @405; location @405 { root /srv/http; } ``` 一种不完美但可用的方法为：
+```nginx upstream static_backend { server localhost:80; } server { listen 80; # ... error_page 405 =200 @405; location @405 { root /srv/http; proxy_method GET; proxy_pass http://static_backend; } } ``` 即转换静态文件接收的POST请求到GET方式。
+Posted via UltraBlog.vim.</description></item></channel></rss>

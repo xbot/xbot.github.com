@@ -1,136 +1,19 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Dojo - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/dojo/</link><description>Dojo - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 05 Nov 2013 16:58:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/dojo/" rel="self" type="application/rss+xml"/><item><title>用Dojo实现拖放操作的最佳实践</title><link>http://0x3f.org/post/practical-drag-and-drop-implementation-with-dojo/</link><pubDate>Tue, 05 Nov 2013 16:58:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/practical-drag-and-drop-implementation-with-dojo/</guid><description><![CDATA[<p>网上关于Dojo实现拖放操作的资料都讲得很浅，所以我在研究这个东西的时候在一些细节上费了不少功夫，例如创建自定义样式的拖拽物件、将光标置于拖拽开始时的位置等等。这些细节一般在实现个性化的拖放操作时都要涉及，但几乎找不到任何直接的资料，所以本文斗胆宣称是当前Dojo拖放的最佳实践。</p>
-<h2 id="创建自定义样式的拖拽物件">创建自定义样式的拖拽物件</h2>
-<p>Dojo缺省的拖拽物件样式很丑，通过覆盖官方文档里列出的几个CSS的class可以有限地调整部分样式，如果需要更多个性化，就需要使用自定义的物件模板。</p>
-<p>通过重载Source对象的creator方法可以实现这一点。这个方法会在创建拖拽物件的时候被调用，如果hint参数的值为“avatar”就表示将被创建的是被拖拽物件，此时可以使用预先定义好的模板avatarTmpl创建物件的node。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="k">this</span><span class="p">.</span><span class="nx">dndSrc</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Source</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">itemList</span><span class="p">.</span><span class="nx">domNode</span><span class="p">,</span> <span class="p">{</span>
-    <span class="nx">copyOnly</span><span class="o">:</span><span class="kc">true</span><span class="p">,</span>
-    <span class="nx">selfAccept</span><span class="o">:</span><span class="kc">true</span><span class="p">,</span>
-    <span class="nx">creator</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">,</span> <span class="nx">hint</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">n</span><span class="p">;</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nx">hint</span> <span class="o">==</span> <span class="s1">&#39;avatar&#39;</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">n</span> <span class="o">=</span> <span class="nx">domConstruct</span><span class="p">.</span><span class="nx">toDom</span><span class="p">(</span><span class="nx">lang</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">avatarTmpl</span><span class="p">,</span> <span class="nx">item</span><span class="p">));</span>
-        <span class="p">}</span>
-        <span class="k">return</span> <span class="p">{</span><span class="nx">node</span><span class="o">:</span><span class="nx">n</span><span class="p">,</span> <span class="nx">data</span><span class="o">:</span><span class="nx">item</span><span class="p">,</span> <span class="nx">type</span><span class="o">:</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]};</span>
-    <span class="p">}</span>
-<span class="p">});</span>
-</code></pre></td></tr></table>
-</div>
-</div><h2 id="置光标位置于拖拽起始处">置光标位置于拖拽起始处</h2>
-<p>在拖拽开始后，Dojo默认将光标置于被拖拽物件的左上角，而一般把光标置于拖拽开始时相对于物件的位置处显得比较自然。</p>
-<p>实现方式是先记录拖拽开始时光标的位置，然后设置dojo.dnd.Manager的两个位移属性。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">on</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">domNode</span><span class="p">,</span> <span class="s1">&#39;mousedown&#39;</span><span class="p">,</span> <span class="nx">lang</span><span class="p">.</span><span class="nx">hitch</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_setDndOffset</span><span class="p">))</span>
-
-<span class="nx">_setDndOffset</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">evt</span><span class="p">){</span>
-    <span class="c1">// summary: 鼠标按下时将光标相对于组件的位移设置为dojo.dnd.Manager的位移
-</span><span class="c1"></span>    <span class="c1">//          即使光标在拖动开始后位于拖动开始时的位置
-</span><span class="c1"></span>    <span class="kd">var</span> <span class="nx">cPos</span> <span class="o">=</span> <span class="nx">Functions</span><span class="p">.</span><span class="nx">getCursorPosition</span><span class="p">(</span><span class="nx">evt</span><span class="p">);</span>
-    <span class="kd">var</span> <span class="nx">nPos</span> <span class="o">=</span> <span class="nx">domGeometry</span><span class="p">.</span><span class="nx">position</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">domNode</span><span class="p">);</span>
-    <span class="nx">Manager</span><span class="p">.</span><span class="nx">manager</span><span class="p">().</span><span class="nx">OFFSET_X</span> <span class="o">=</span> <span class="nx">nPos</span><span class="p">.</span><span class="nx">x</span> <span class="o">-</span> <span class="nx">cPos</span><span class="p">.</span><span class="nx">x</span><span class="p">;</span>
-    <span class="nx">Manager</span><span class="p">.</span><span class="nx">manager</span><span class="p">().</span><span class="nx">OFFSET_Y</span> <span class="o">=</span> <span class="nx">nPos</span><span class="p">.</span><span class="nx">y</span> <span class="o">-</span> <span class="nx">cPos</span><span class="p">.</span><span class="nx">y</span><span class="p">;</span>
-<span class="p">},</span>
-</code></pre></td></tr></table>
-</div>
-</div><h2 id="使鼠标事件穿透被拖拽物件">使鼠标事件穿透被拖拽物件</h2>
-<p>将光标置于物件开始被拖拽时的位置后，物件本身会挡住mouseover事件，导致Target不能获知物件被拖拽到自己上方，以致能拖不能放。</p>
-<p>解决方法是通过CSS使鼠标事件穿透被拖拽物件。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="p">.</span><span class="nx">dojoDndAvatar</span> <span class="p">{</span>
-    <span class="nx">pointer</span><span class="o">-</span><span class="nx">events</span><span class="o">:</span> <span class="nx">none</span><span class="p">;</span> <span class="cm">/*Chrome, FF下使鼠标事件穿透*/</span>
-    <span class="nx">background</span><span class="o">:</span><span class="nx">transparent</span><span class="p">;</span> <span class="cm">/*IE下使鼠标事件穿透*/</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
-</div>
-</div>]]></description></item><item><title>IE中使用IFrame上传文件报错——TypeError:拒绝访问</title><link>http://0x3f.org/post/typeerror-access-denied/</link><pubDate>Sat, 03 Aug 2013 01:03:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/typeerror-access-denied/</guid><description><![CDATA[<p>场景为：</p>
-<p>点击一个图标，打开文件选择对话框，选择好文件后即时上传。</p>
-<p>之前的实现方式是在一个隐藏表单中放一个file类型的input元素，通过调用input.click()打开对话框，同时监听input.onchange，最后通过dojo/request/iframe上传文件。</p>
-<p>这个实现方式在Chrome和Firefox里都没问题，但是在IE里报错：“<strong>TypeError:拒绝访问</strong>”。原因是IE要求必须通过点击file类型的input的按钮打开选择对话框，否则就报这个错误。</p>
-<p>解决办法是修改input元素的样式，或者直接用dojox.form.Uploader替代。</p>
-<p><em>因为这个破问题又血战到半夜，只支持IE9+的世界你们好吗，还支持IE7+的屌丝伤不起……不起……起……啊。<strong>IE不死，吾难未已！！！</strong></em></p>
-]]></description></item><item><title>Dojo DnD: Cannot read property 'type' of undefined</title><link>http://0x3f.org/post/dojo-dnd-cannot-read-property-type-of-undefined/</link><pubDate>Thu, 11 Jul 2013 22:44:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/dojo-dnd-cannot-read-property-type-of-undefined/</guid><description><![CDATA[<p>场景如下：</p>
-<p>假设有两个Widget：ItemListWidget和ItemWidget，后者要被创建多份并追加到前者内部，同时ItemListWidget要作为dojo/dnd/Source，每个ItemWidget作为一个单元可被拖拽到另外一个dojo/dnd/Target容器中。</p>
-<p>问题是，当Source被创建后，再添加到ItemListWidget的ItemWidget实例在被拖拽时会报如下错误：</p>
-<blockquote>
-<p>Uncaught TypeError: Cannot read property &lsquo;type&rsquo; of undefined</p>
-</blockquote>
-<p>在Chrome开发工具中点开这个错误，显示以下内容：</p>
-<p></p>
-<p>从方法的注释或API中可以看到，checkAcceptance()是用来判断当前拖拽对象是否在这个target接受的范围之内，接受规则用Source和Target的构造参数中的“accept”定义。在这个方法里通过Source.getItem()方法拿到的对象是null，上述错误就是从这儿报出来的。</p>
-<p>接合API和Reference Guide发现，每个Source中的可拖拽项目在Source中都要有一个对应的对象，这个对象至少包括两个属性：“data”和“type”。在<a href="http://dojotoolkit.org/reference-guide/1.9/dojo/dnd.html" target="_blank" rel="noopener noreffer">Reference Guide</a>中，对这两个属性有详细说明，简言之，data是向Target传递的数据，type是被Target用来判断拖拽个体是否属于接受范围的依据。</p>
-<p>当Source实例被创建时，已经存在于ItemListWidget中的ItemWidget实例会被自动创建对应的上述对象，但之后加入的不会。解决的办法是调用Source.setItem()方法为每一个新加入的ItemWidget关联相应的对象，或在ItemWidget中添加一个构造参数，用于指定Source，并在postCreate()方法中为当前ItemWidget实例关联相应的对象:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">define</span><span class="p">([</span>
-    <span class="s2">&#34;dojo/_base/declare&#34;</span><span class="p">,</span>
-    <span class="s2">&#34;dijit/_WidgetBase&#34;</span><span class="p">,</span>
-<span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">declare</span><span class="p">,</span> <span class="nx">_WidgetBase</span><span class="p">){</span>
-    <span class="k">return</span> <span class="nx">declare</span><span class="p">(</span><span class="s2">&#34;ItemWidget&#34;</span><span class="p">,</span> <span class="p">[</span><span class="nx">_WidgetBase</span><span class="p">],</span> <span class="p">{</span>
-
-        <span class="c1">// 本Widget实例所属的Source实例
-</span><span class="c1"></span>        <span class="nx">dndSrc</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
-        
-        <span class="nx">postCreate</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">inherited</span><span class="p">(</span><span class="nx">arguments</span><span class="p">);</span>
-            <span class="c1">// 不需要传递数据时，可忽略data参数
-</span><span class="c1"></span>            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">dndSrc</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">)</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">dndSrc</span><span class="p">.</span><span class="nx">setItem</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="p">{</span><span class="nx">type</span><span class="o">:</span><span class="p">[</span><span class="s2">&#34;text&#34;</span><span class="p">]});</span>
-        <span class="p">}</span>
-    <span class="p">});</span>
-<span class="p">});</span>
-</code></pre></td></tr></table>
-</div>
-</div>]]></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Dojo on 晴耕雨讀</title><link>http://0x3f.org/tags/dojo/</link><description>Recent content in Dojo on 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><copyright>© 淘气 2021</copyright><lastBuildDate>Tue, 05 Nov 2013 16:58:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/dojo/index.xml" rel="self" type="application/rss+xml"/><item><title>用Dojo实现拖放操作的最佳实践</title><link>http://0x3f.org/posts/practical-drag-and-drop-implementation-with-dojo/</link><pubDate>Tue, 05 Nov 2013 16:58:00 +0000</pubDate><guid>http://0x3f.org/posts/practical-drag-and-drop-implementation-with-dojo/</guid><description>网上关于Dojo实现拖放操作的资料都讲得很浅，所以我在研究这个东西的时候在一些细节上费了不少功夫，例如创建自定义样式的拖拽物件、将光标置于拖拽开始时的位置等等。这些细节一般在实现个性化的拖放操作时都要涉及，但几乎找不到任何直接的资料，所以本文斗胆宣称是当前Dojo拖放的最佳实践。
+创建自定义样式的拖拽物件 Dojo缺省的拖拽物件样式很丑，通过覆盖官方文档里列出的几个CSS的class可以有限地调整部分样式，如果需要更多个性化，就需要使用自定义的物件模板。
+通过重载Source对象的creator方法可以实现这一点。这个方法会在创建拖拽物件的时候被调用，如果hint参数的值为“avatar”就表示将被创建的是被拖拽物件，此时可以使用预先定义好的模板avatarTmpl创建物件的node。
+1 2 3 4 5 6 7 8 9 10 11 this.dndSrc = new Source(this.itemList.domNode, { copyOnly:true, selfAccept:true, creator: function(item, hint) { var n; if (hint == &amp;#39;avatar&amp;#39;) { n = domConstruct.toDom(lang.replace(avatarTmpl, item)); } return {node:n, data:item, type:[&amp;#39;text&amp;#39;]}; } }); 置光标位置于拖拽起始处 在拖拽开始后，Dojo默认将光标置于被拖拽物件的左上角，而一般把光标置于拖拽开始时相对于物件的位置处显得比较自然。
+实现方式是先记录拖拽开始时光标的位置，然后设置dojo.dnd.Manager的两个位移属性。
+1 2 3 4 5 6 7 8 9 10 on(this.domNode, &amp;#39;mousedown&amp;#39;, lang.hitch(this, this._setDndOffset)) _setDndOffset: function(evt){ // summary: 鼠标按下时将光标相对于组件的位移设置为dojo.dnd.Manager的位移 // 即使光标在拖动开始后位于拖动开始时的位置 var cPos = Functions.</description></item><item><title>IE中使用IFrame上传文件报错——TypeError:拒绝访问</title><link>http://0x3f.org/posts/typeerror-access-denied/</link><pubDate>Sat, 03 Aug 2013 01:03:00 +0000</pubDate><guid>http://0x3f.org/posts/typeerror-access-denied/</guid><description>场景为：
+点击一个图标，打开文件选择对话框，选择好文件后即时上传。
+之前的实现方式是在一个隐藏表单中放一个file类型的input元素，通过调用input.click()打开对话框，同时监听input.onchange，最后通过dojo/request/iframe上传文件。
+这个实现方式在Chrome和Firefox里都没问题，但是在IE里报错：“TypeError:拒绝访问”。原因是IE要求必须通过点击file类型的input的按钮打开选择对话框，否则就报这个错误。
+解决办法是修改input元素的样式，或者直接用dojox.form.Uploader替代。
+因为这个破问题又血战到半夜，只支持IE9+的世界你们好吗，还支持IE7+的屌丝伤不起……不起……起……啊。IE不死，吾难未已！！！</description></item><item><title>Dojo DnD: Cannot read property 'type' of undefined</title><link>http://0x3f.org/posts/dojo-dnd-cannot-read-property-type-of-undefined/</link><pubDate>Thu, 11 Jul 2013 22:44:00 +0000</pubDate><guid>http://0x3f.org/posts/dojo-dnd-cannot-read-property-type-of-undefined/</guid><description>场景如下：
+假设有两个Widget：ItemListWidget和ItemWidget，后者要被创建多份并追加到前者内部，同时ItemListWidget要作为dojo/dnd/Source，每个ItemWidget作为一个单元可被拖拽到另外一个dojo/dnd/Target容器中。
+问题是，当Source被创建后，再添加到ItemListWidget的ItemWidget实例在被拖拽时会报如下错误：
+Uncaught TypeError: Cannot read property &amp;lsquo;type&amp;rsquo; of undefined
+在Chrome开发工具中点开这个错误，显示以下内容：
+从方法的注释或API中可以看到，checkAcceptance()是用来判断当前拖拽对象是否在这个target接受的范围之内，接受规则用Source和Target的构造参数中的“accept”定义。在这个方法里通过Source.getItem()方法拿到的对象是null，上述错误就是从这儿报出来的。
+接合API和Reference Guide发现，每个Source中的可拖拽项目在Source中都要有一个对应的对象，这个对象至少包括两个属性：“data”和“type”。在Reference Guide中，对这两个属性有详细说明，简言之，data是向Target传递的数据，type是被Target用来判断拖拽个体是否属于接受范围的依据。
+当Source实例被创建时，已经存在于ItemListWidget中的ItemWidget实例会被自动创建对应的上述对象，但之后加入的不会。解决的办法是调用Source.setItem()方法为每一个新加入的ItemWidget关联相应的对象，或在ItemWidget中添加一个构造参数，用于指定Source，并在postCreate()方法中为当前ItemWidget实例关联相应的对象:
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 define([ &amp;#34;dojo/_base/declare&amp;#34;, &amp;#34;dijit/_WidgetBase&amp;#34;, ], function(declare, _WidgetBase){ return declare(&amp;#34;ItemWidget&amp;#34;, [_WidgetBase], { // 本Widget实例所属的Source实例 dndSrc: null, postCreate: function() { this.inherited(arguments); // 不需要传递数据时，可忽略data参数 if (this.dndSrc !== null) this.dndSrc.setItem(this.id, {type:[&amp;#34;text&amp;#34;]}); } }); });</description></item></channel></rss>

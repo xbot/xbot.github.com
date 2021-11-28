@@ -1,224 +1,56 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Mac - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/mac/</link><description>Mac - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sun, 04 Oct 2020 18:21:04 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/mac/" rel="self" type="application/rss+xml"/><item><title>使用 Homebrew 安装旧版程序</title><link>http://0x3f.org/post/rollback-to-old-version-with-homebrew/</link><pubDate>Sun, 04 Oct 2020 18:21:04 +0800</pubDate><author>作者</author><guid>http://0x3f.org/post/rollback-to-old-version-with-homebrew/</guid><description><![CDATA[<p>前几天发现因为 Hugo 的不兼容更新导致我在用的主题在部署时报错，所以打算装回旧版。但是网上找到的 Homebrew 回滚方法已过时，新的方法更简单，但找到具体说明也费了点功夫。</p>
-<p>以回滚 Hugo 到 0.74.3 为例：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell">brew uninstall hugo
-brew tap-new donie/hugo-0-74-3
-brew extract --version 0.74.3 hugo donie/hugo-0-74-3
-brew install hugo@0.74.3
-</code></pre></td></tr></table>
-</div>
-</div><p>即：先创建一个名为“donie/hugo-0-74-3”的 tap ，然后通过 extract 命令把相应版本的数据放到里面，就可以安装了。</p>
-]]></description></item><item><title>MacBook Pro 维修记</title><link>http://0x3f.org/post/story-of-repairing-macbook-pro/</link><pubDate>Fri, 26 Jun 2020 23:29:24 +0800</pubDate><author>作者</author><guid>http://0x3f.org/post/story-of-repairing-macbook-pro/</guid><description><![CDATA[<p></p>
-<p>生平第一次修电脑。</p>
-<p>17款的 MacBook Pro 13`，该有的问题全有——键盘随机连击或无反应、在桌面上放不平且触控板反馈很弱、疑似电池鼓包。</p>
-<p>用过 ThinkPad X200 和 X220，虽然屏幕很渣，但从来没出过问题。上一台电脑是 15 款的 MacBook Air，用了三年，也没事儿。只能说这届苹果不行。</p>
-<p>APP 上预约的三里屯店，时间下午两点多。太古里门口和店门口分别出示了一次健康码。虽然是工作日、而且在疫情期间，店里人不多也不少，还是等了一会儿。</p>
-<p>常规的询问和联机检查，大概花了十几分钟，没有要求提供任何凭证。店员说因为键盘和电池都在一起，所以是要一块换的。时间上快则一天，慢则两三天，就能修好。</p>
-<p>第二天晚上九点半，接到一个陌生座机号码打来的电话，以为是营销电话，而且之前看过有说换键盘用了一周时间的帖子，所以没往这上面想，就没接。</p>
-<p>第三天晚上看手机电池健康状态的时候，偶然看到电脑的维修状态是已完成，才意识到，回电话过去果然是三里屯苹果商店，但是没人接。</p>
-<p>今天早上九点多，再次打过去，说是十点才营业。于是决定直接过去。</p>
-<p>交接需要出示身份证，花了几分钟验机，很快结束。期间问店员如果之后键盘再坏了怎么办，说是有一年保修期，而且因为批次不同的原因，换过的键盘不容易再出问题。暗笑，换个批次就能解决的话，新款何至于换回剪刀脚？！</p>
-<p>回家后用了一会儿，新键盘和触控板体验很棒，没有打油的阻尼感沁人心脾，发了条 tweet 说：找回了初恋的感觉。</p>
-]]></description></item><item><title>用 SSH 命令调试 Git 的连接问题</title><link>http://0x3f.org/post/debug-git-connection-with-ssh/</link><pubDate>Sat, 28 Mar 2020 23:17:45 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/debug-git-connection-with-ssh/</guid><description><![CDATA[<p>昨天执行<code>git pull</code>的时候发现会一直卡在那儿，排除了各种可能，而且 Github 上的项目也是可以正常拉取的，说明跟网络、代理等关系应该不大，git 命令本身也工作正常。</p>
-<p>问题集中在公司的项目上，所有项目都无法拉取代码。起先怀疑是公司自建的 Gitlab 出了问题，但是其他人那里又是正常的，甚至跟我同一局域网的电脑上也是正常的。</p>
-<p>也就是说问题应该出在我自己的电脑上。考虑到前两天还能正常使用，之后唯一一件相关的事就是升级 macOS 到 10.15.4 了。</p>
-<p>然而用 Homebrew 重新安装 git 等相关的几个包也没能解决问题，于是用<code>ssh -T -v git@gitlab.xxx.com -p 8848</code>调试，输出如下：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">donie@Donies  ~  ssh -T -v git@gitlab.xxx.com -p 8848
-OpenSSH_8.1p1, LibreSSL 2.7.3
-debug1: Reading configuration data /Users/donie/.ssh/config
-debug1: /Users/donie/.ssh/config line 9: Applying options for gitlab.xxx.com
-debug1: Reading configuration data /etc/ssh/ssh_config
-debug1: /etc/ssh/ssh_config line 47: Applying options for *
-debug1: Connecting to gitlab.xxx.com port 8848.
-</code></pre></td></tr></table>
-</div>
-</div><p>卡在了“Connecting to gitlab.xxx.com port 8848”这一步，但是<code>telnet gitlab.xxx.com 8848</code>却是通的。</p>
-<p>问题陷入僵局。</p>
-<p>Google的过程中偶然注意到别人正常的调试信息中这一步的输出是有 IP 地址的，如下所示：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">debug1: Connecting to gitlab.xxx.com [xxx.xxx.xxx.xxx] port 8848.
-</code></pre></td></tr></table>
-</div>
-</div><p>首先怀疑应该是主机名映射出了问题，但是无论是修改 Hosts 还是在 ~/.ssh/config 中指定都还是不行，ping 主机名也能正常解析出 IP 地址。</p>
-<p>问题陷入绝境。</p>
-<p>绝望之际，突然想到会不会是 SSH 自身出了问题呢？<code>which ssh</code>发现是系统自带的，所以装上 Homebrew 的版本试了一下，竟然好了！</p>
-<p>bugOS !!!</p>
-]]></description></item><item><title>用鼠须管输入日期时间的方法</title><link>http://0x3f.org/post/input-date-and-time-with-rime/</link><pubDate>Wed, 08 Jan 2020 13:52:49 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/input-date-and-time-with-rime/</guid><description><![CDATA[<p>原来在Linux下用小小输入法，输入日期时间很方便。换到Mac后，很早就在关注这个问题，直到后来鼠须管实现了嵌入Lua脚本的功能才得以解决。</p>
-<p>在“用户设定”目录下创建文件<code>rime.lua</code>，内容如下：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="kr">function</span> <span class="nf">date_translator</span><span class="p">(</span><span class="n">input</span><span class="p">,</span> <span class="n">seg</span><span class="p">)</span>
-    <span class="kr">if</span> <span class="p">(</span><span class="n">input</span> <span class="o">==</span> <span class="s2">&#34;date&#34;</span><span class="p">)</span> <span class="kr">then</span>
-       <span class="c1">--- Candidate(type, start, end, text, comment)</span>
-       <span class="n">yield</span><span class="p">(</span><span class="n">Candidate</span><span class="p">(</span><span class="s2">&#34;date&#34;</span><span class="p">,</span> <span class="n">seg.start</span><span class="p">,</span> <span class="n">seg._end</span><span class="p">,</span> <span class="n">os.date</span><span class="p">(</span><span class="s2">&#34;%Y-%m-%d&#34;</span><span class="p">),</span> <span class="s2">&#34;日期&#34;</span><span class="p">))</span>
-       <span class="n">yield</span><span class="p">(</span><span class="n">Candidate</span><span class="p">(</span><span class="s2">&#34;date&#34;</span><span class="p">,</span> <span class="n">seg.start</span><span class="p">,</span> <span class="n">seg._end</span><span class="p">,</span> <span class="n">os.date</span><span class="p">(</span><span class="s2">&#34;%Y年%m月%d日&#34;</span><span class="p">),</span> <span class="s2">&#34;日期&#34;</span><span class="p">))</span>
-    <span class="kr">end</span>
-    <span class="kr">if</span> <span class="p">(</span><span class="n">input</span> <span class="o">==</span> <span class="s2">&#34;time&#34;</span><span class="p">)</span> <span class="kr">then</span>
-       <span class="c1">--- Candidate(type, start, end, text, comment)</span>
-       <span class="n">yield</span><span class="p">(</span><span class="n">Candidate</span><span class="p">(</span><span class="s2">&#34;date&#34;</span><span class="p">,</span> <span class="n">seg.start</span><span class="p">,</span> <span class="n">seg._end</span><span class="p">,</span> <span class="n">os.date</span><span class="p">(</span><span class="s2">&#34;%H:%M&#34;</span><span class="p">),</span> <span class="s2">&#34;时间&#34;</span><span class="p">))</span>
-       <span class="n">yield</span><span class="p">(</span><span class="n">Candidate</span><span class="p">(</span><span class="s2">&#34;date&#34;</span><span class="p">,</span> <span class="n">seg.start</span><span class="p">,</span> <span class="n">seg._end</span><span class="p">,</span> <span class="n">os.date</span><span class="p">(</span><span class="s2">&#34;%H:%M:%S&#34;</span><span class="p">),</span> <span class="s2">&#34;时间&#34;</span><span class="p">))</span>
-    <span class="kr">end</span>
-    <span class="kr">if</span> <span class="p">(</span><span class="n">input</span> <span class="o">==</span> <span class="s2">&#34;datetime&#34;</span><span class="p">)</span> <span class="kr">then</span>
-       <span class="c1">--- Candidate(type, start, end, text, comment)</span>
-       <span class="n">yield</span><span class="p">(</span><span class="n">Candidate</span><span class="p">(</span><span class="s2">&#34;date&#34;</span><span class="p">,</span> <span class="n">seg.start</span><span class="p">,</span> <span class="n">seg._end</span><span class="p">,</span> <span class="n">os.date</span><span class="p">(</span><span class="s2">&#34;%Y-%m-%d %H:%M:%S&#34;</span><span class="p">),</span> <span class="s2">&#34;日期时间&#34;</span><span class="p">))</span>
-    <span class="kr">end</span>
- <span class="kr">end</span>
- 
- <span class="c1">--- 过滤器：单字在先</span>
- <span class="kr">function</span> <span class="nf">single_char_first_filter</span><span class="p">(</span><span class="n">input</span><span class="p">)</span>
-    <span class="kd">local</span> <span class="n">l</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="kr">for</span> <span class="n">cand</span> <span class="kr">in</span> <span class="n">input</span><span class="p">:</span><span class="n">iter</span><span class="p">()</span> <span class="kr">do</span>
-       <span class="kr">if</span> <span class="p">(</span><span class="n">utf8.len</span><span class="p">(</span><span class="n">cand.text</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="kr">then</span>
-          <span class="n">yield</span><span class="p">(</span><span class="n">cand</span><span class="p">)</span>
-       <span class="kr">else</span>
-          <span class="n">table.insert</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">cand</span><span class="p">)</span>
-       <span class="kr">end</span>
-    <span class="kr">end</span>
-    <span class="kr">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">cand</span> <span class="kr">in</span> <span class="n">ipairs</span><span class="p">(</span><span class="n">l</span><span class="p">)</span> <span class="kr">do</span>
-       <span class="n">yield</span><span class="p">(</span><span class="n">cand</span><span class="p">)</span>
-    <span class="kr">end</span>
- <span class="kr">end</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>然后在码表配置文件的“engine/translators”下追加<code>lua_translator@date_translator</code>。</p>
-<p>最后，重新部署即可。</p>]]></description></item><item><title>配置鼠须管的特殊符号输入</title><link>http://0x3f.org/post/input-punctuations-with-rime/</link><pubDate>Sat, 13 Oct 2018 11:59:50 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/input-punctuations-with-rime/</guid><description><![CDATA[<p><em>开源工具最常见的问题就是文档不全，实现一个需求的时候只能苦苦Google，甚至连蒙带猜。这也是我逐渐倾向买用户体验更好的收费软件的原因。</em></p>
-<p>鼠须管是自带特殊符号码表的，在用户配置目录中的<code>symbols.yaml</code>，但是有的码表需要手动配置。经过查资料和摸索，关键在于以下几项配置：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="k">punctuator</span><span class="p">:</span><span class="w">
-</span><span class="w">  </span><span class="k">import_preset</span><span class="p">:</span><span class="w"> </span>symbols<span class="w">
-</span><span class="w">
-</span><span class="w"></span><span class="k">recognizer</span><span class="p">:</span><span class="w">
-</span><span class="w">  </span><span class="k">import_preset</span><span class="p">:</span><span class="w"> </span>default<span class="w">
-</span><span class="w">  </span><span class="k">patterns</span><span class="p">:</span><span class="w">
-</span><span class="w">    </span><span class="k">punct</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;^/([a-z]+|[0-9]0?)$&#34;</span><span class="w">
-</span></code></pre></td></tr></table>
-</div>
-</div><p>然后就可以通过<code>【/】+【编码】</code>的方式显示符号备选项了，具体的编码可以到<code>symbols.yaml</code>里看，当然一般为了方便定制该码表，会复制并重命名该文件，然后上述的配置项里也要做相应的修改。</p>
-]]></description></item><item><title>用AlfredTweet发推</title><link>http://0x3f.org/post/tweet-with-alfredtweet/</link><pubDate>Sun, 17 Sep 2017 09:26:41 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/tweet-with-alfredtweet/</guid><description><![CDATA[<p>AlfredTweet是用来解决“最后一公里”问题的东西，有了它就可以随时发推了。</p>
-<p>需要修改源码指定代理：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span><span class="lnt">9
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-php" data-lang="php">// twitteroauth.php
-
-function http($url, $method, $postfields = NULL) {
-    // ...
-    curl_setopt($ci, CURLOPT_HTTPPROXYTUNNEL, TRUE);
-    curl_setopt($ci, CURLOPT_PROXY, &#39;127.0.0.1:1086&#39;);
-    curl_setopt($ci, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5);
-    // ...
-}
-</code></pre></td></tr></table>
-</div>
-</div>]]></description></item><item><title>给Thinkpad X220装了黑苹果</title><link>http://0x3f.org/post/installed-hackintosh-in-thinkpad-x220/</link><pubDate>Sat, 29 Jul 2017 17:44:16 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/installed-hackintosh-in-thinkpad-x220/</guid><description><![CDATA[<p>闲鱼上突然收到询价消息，于是突发奇想，在闲置很久的X220上装个黑苹果玩玩。</p>
-<p>过程很简单，参考这两个链接：<a href="https://www.youtube.com/watch?v=e_VDC-wUXis" target="_blank" rel="noopener noreffer">link1</a>和<a href="http://x220.mcdonnelltech.com" target="_blank" rel="noopener noreffer">link2</a>。</p>
-<p></p>
-<p>内置的无线网卡不能驱动，用了个闲置的USB卡。蓝牙能用耳机，但不能airdrop。关机会变重启。此外没别的问题了。</p>
-<p>现在计算机性能真是过剩的，n年前的机器，除了机械硬盘慢了点，其它毫无压力。</p>
-<p>我在twitter上说：“似可再战三年。”</p>
-]]></description></item><item><title>用Keyboard Maestro自动登录MAS</title><link>http://0x3f.org/post/auto-login-mas-with-keyboard-maestro/</link><pubDate>Tue, 21 Mar 2017 22:51:32 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/auto-login-mas-with-keyboard-maestro/</guid><description>&lt;p>&lt;/p></description></item><item><title>MacOS中切换输入法的最佳实践</title><link>http://0x3f.org/post/the-best-practice-of-switching-input-methods-in-macos/</link><pubDate>Mon, 20 Mar 2017 14:25:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/the-best-practice-of-switching-input-methods-in-macos/</guid><description><![CDATA[<p>原则：</p>
-<ul>
-<li>一键切换</li>
-<li>可以对特定应用设定初始输入状态</li>
-<li>可以方便地确认当前输入状态</li>
-<li>兼容外接键盘</li>
-</ul>
-<p>思路：</p>
-<ul>
-<li>用Karabiner Elements把右Shift修改成F19，在系统里设置用F19切换输入法</li>
-<li>用isHUD显示输入法状态</li>
-<li><a href="/post/auto-switch-keyboard-layouts-in-macos/" rel="">用Keyboard Maestro自动切换键盘布局</a></li>
-</ul>
-<p>Karabiner Elements会使系统的键盘布局失效，且不能对不同的键盘使用不同的布局，所以只有用Keyboard Maestro自动切换。</p>
-<p>isHUD只在切换输入法时有效，理想情况是用Caps Lock键灯表示输入状态，不过目前没找到可用的解决办法。</p>
-<p>鼠须管可以对不同的应用设置初始输入状态，但只是在切换输入法后，例如对于Alfred，如果上次鼠须管处于中文输入状态，再次打开输入框的时候不会变成英文状态，因此需要在Alfred中设置初始输入法为英文。</p>
-]]></description></item><item><title>MacOS下自动切换Karabiner Elements配置</title><link>http://0x3f.org/post/auto-switch-keyboard-layouts-in-macos/</link><pubDate>Mon, 20 Mar 2017 13:14:18 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/auto-switch-keyboard-layouts-in-macos/</guid><description><![CDATA[<p>Karabiner Elements不支持对不同的键盘自动使用不同的配置，所以本文通过监听USB键盘插拔事件实现自动切换。</p>
-<h2 id="依赖">依赖：</h2>
-<ul>
-<li>Keyboard Maestro</li>
-<li>php</li>
-</ul>
-<h2 id="脚本">脚本</h2>
-<p>Karabiner Elements会监听配置文件<code>~/.config/karabiner/karabiner.json</code>，如果有变动，会自动重新加载。</p>
-<p>切换配置的脚本在<a href="https://github.com/xbot/shell/blob/master/karabiner-elements-profile-switcher.php" target="_blank" rel="noopener noreffer">这里</a>。</p>
-<h2 id="keyboard-maestro">Keyboard Maestro</h2>
-<p>键盘插入事件：</p>
-<p></p>
-<p>键盘拔出事件：</p>
-<p></p>
-]]></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Mac on 晴耕雨讀</title><link>http://0x3f.org/tags/mac/</link><description>Recent content in Mac on 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><copyright>© 淘气 2021</copyright><lastBuildDate>Sun, 04 Oct 2020 18:21:04 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/mac/index.xml" rel="self" type="application/rss+xml"/><item><title>使用 Homebrew 安装旧版程序</title><link>http://0x3f.org/posts/rollback-to-old-version-with-homebrew/</link><pubDate>Sun, 04 Oct 2020 18:21:04 +0800</pubDate><guid>http://0x3f.org/posts/rollback-to-old-version-with-homebrew/</guid><description>前几天发现因为 Hugo 的不兼容更新导致我在用的主题在部署时报错，所以打算装回旧版。但是网上找到的 Homebrew 回滚方法已过时，新的方法更简单，但找到具体说明也费了点功夫。
+以回滚 Hugo 到 0.74.3 为例：
+1 2 3 4 brew uninstall hugo brew tap-new donie/hugo-0-74-3 brew extract --version 0.74.3 hugo donie/hugo-0-74-3 brew install hugo@0.74.3 即：先创建一个名为“donie/hugo-0-74-3”的 tap ，然后通过 extract 命令把相应版本的数据放到里面，就可以安装了。</description></item><item><title>MacBook Pro 维修记</title><link>http://0x3f.org/posts/story-of-repairing-macbook-pro/</link><pubDate>Fri, 26 Jun 2020 23:29:24 +0800</pubDate><guid>http://0x3f.org/posts/story-of-repairing-macbook-pro/</guid><description>生平第一次修电脑。
+17款的 MacBook Pro 13`，该有的问题全有——键盘随机连击或无反应、在桌面上放不平且触控板反馈很弱、疑似电池鼓包。
+用过 ThinkPad X200 和 X220，虽然屏幕很渣，但从来没出过问题。上一台电脑是 15 款的 MacBook Air，用了三年，也没事儿。只能说这届苹果不行。
+APP 上预约的三里屯店，时间下午两点多。太古里门口和店门口分别出示了一次健康码。虽然是工作日、而且在疫情期间，店里人不多也不少，还是等了一会儿。
+常规的询问和联机检查，大概花了十几分钟，没有要求提供任何凭证。店员说因为键盘和电池都在一起，所以是要一块换的。时间上快则一天，慢则两三天，就能修好。
+第二天晚上九点半，接到一个陌生座机号码打来的电话，以为是营销电话，而且之前看过有说换键盘用了一周时间的帖子，所以没往这上面想，就没接。
+第三天晚上看手机电池健康状态的时候，偶然看到电脑的维修状态是已完成，才意识到，回电话过去果然是三里屯苹果商店，但是没人接。
+今天早上九点多，再次打过去，说是十点才营业。于是决定直接过去。
+交接需要出示身份证，花了几分钟验机，很快结束。期间问店员如果之后键盘再坏了怎么办，说是有一年保修期，而且因为批次不同的原因，换过的键盘不容易再出问题。暗笑，换个批次就能解决的话，新款何至于换回剪刀脚？！
+回家后用了一会儿，新键盘和触控板体验很棒，没有打油的阻尼感沁人心脾，发了条 tweet 说：找回了初恋的感觉。</description></item><item><title>用 SSH 命令调试 Git 的连接问题</title><link>http://0x3f.org/posts/debug-git-connection-with-ssh/</link><pubDate>Sat, 28 Mar 2020 23:17:45 +0000</pubDate><guid>http://0x3f.org/posts/debug-git-connection-with-ssh/</guid><description>昨天执行git pull的时候发现会一直卡在那儿，排除了各种可能，而且 Github 上的项目也是可以正常拉取的，说明跟网络、代理等关系应该不大，git 命令本身也工作正常。
+问题集中在公司的项目上，所有项目都无法拉取代码。起先怀疑是公司自建的 Gitlab 出了问题，但是其他人那里又是正常的，甚至跟我同一局域网的电脑上也是正常的。
+也就是说问题应该出在我自己的电脑上。考虑到前两天还能正常使用，之后唯一一件相关的事就是升级 macOS 到 10.15.4 了。
+然而用 Homebrew 重新安装 git 等相关的几个包也没能解决问题，于是用ssh -T -v git@gitlab.xxx.com -p 8848调试，输出如下：
+donie@Donies  ~  ssh -T -v git@gitlab.xxx.com -p 8848 OpenSSH_8.1p1, LibreSSL 2.7.3 debug1: Reading configuration data /Users/donie/.ssh/config debug1: /Users/donie/.ssh/config line 9: Applying options for gitlab.xxx.com debug1: Reading configuration data /etc/ssh/ssh_config debug1: /etc/ssh/ssh_config line 47: Applying options for * debug1: Connecting to gitlab.xxx.com port 8848. 卡在了“Connecting to gitlab.</description></item><item><title>用鼠须管输入日期时间的方法</title><link>http://0x3f.org/posts/input-date-and-time-with-rime/</link><pubDate>Wed, 08 Jan 2020 13:52:49 +0000</pubDate><guid>http://0x3f.org/posts/input-date-and-time-with-rime/</guid><description>&lt;p>原来在Linux下用小小输入法，输入日期时间很方便。换到Mac后，很早就在关注这个问题，直到后来鼠须管实现了嵌入Lua脚本的功能才得以解决。&lt;/p></description></item><item><title>配置鼠须管的特殊符号输入</title><link>http://0x3f.org/posts/input-punctuations-with-rime/</link><pubDate>Sat, 13 Oct 2018 11:59:50 +0000</pubDate><guid>http://0x3f.org/posts/input-punctuations-with-rime/</guid><description>开源工具最常见的问题就是文档不全，实现一个需求的时候只能苦苦Google，甚至连蒙带猜。这也是我逐渐倾向买用户体验更好的收费软件的原因。
+鼠须管是自带特殊符号码表的，在用户配置目录中的symbols.yaml，但是有的码表需要手动配置。经过查资料和摸索，关键在于以下几项配置：
+1 2 3 4 5 6 7 punctuator:import_preset:symbolsrecognizer:import_preset:defaultpatterns:punct:&amp;#34;^/([a-z]+|[0-9]0?)$&amp;#34; 然后就可以通过【/】+【编码】的方式显示符号备选项了，具体的编码可以到symbols.yaml里看，当然一般为了方便定制该码表，会复制并重命名该文件，然后上述的配置项里也要做相应的修改。</description></item><item><title>用AlfredTweet发推</title><link>http://0x3f.org/posts/tweet-with-alfredtweet/</link><pubDate>Sun, 17 Sep 2017 09:26:41 +0000</pubDate><guid>http://0x3f.org/posts/tweet-with-alfredtweet/</guid><description>AlfredTweet是用来解决“最后一公里”问题的东西，有了它就可以随时发推了。
+需要修改源码指定代理：
+1 2 3 4 5 6 7 8 9 // twitteroauth.php function http($url, $method, $postfields = NULL) { // ... curl_setopt($ci, CURLOPT_HTTPPROXYTUNNEL, TRUE); curl_setopt($ci, CURLOPT_PROXY, &amp;#39;127.0.0.1:1086&amp;#39;); curl_setopt($ci, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5); // ... }</description></item><item><title>给Thinkpad X220装了黑苹果</title><link>http://0x3f.org/posts/installed-hackintosh-in-thinkpad-x220/</link><pubDate>Sat, 29 Jul 2017 17:44:16 +0000</pubDate><guid>http://0x3f.org/posts/installed-hackintosh-in-thinkpad-x220/</guid><description>闲鱼上突然收到询价消息，于是突发奇想，在闲置很久的X220上装个黑苹果玩玩。
+过程很简单，参考这两个链接：link1和link2。
+内置的无线网卡不能驱动，用了个闲置的USB卡。蓝牙能用耳机，但不能airdrop。关机会变重启。此外没别的问题了。
+现在计算机性能真是过剩的，n年前的机器，除了机械硬盘慢了点，其它毫无压力。
+我在twitter上说：“似可再战三年。”</description></item><item><title>用Keyboard Maestro自动登录MAS</title><link>http://0x3f.org/posts/auto-login-mas-with-keyboard-maestro/</link><pubDate>Tue, 21 Mar 2017 22:51:32 +0000</pubDate><guid>http://0x3f.org/posts/auto-login-mas-with-keyboard-maestro/</guid><description/></item><item><title>MacOS中切换输入法的最佳实践</title><link>http://0x3f.org/posts/the-best-practice-of-switching-input-methods-in-macos/</link><pubDate>Mon, 20 Mar 2017 14:25:00 +0000</pubDate><guid>http://0x3f.org/posts/the-best-practice-of-switching-input-methods-in-macos/</guid><description>原则：
+一键切换 可以对特定应用设定初始输入状态 可以方便地确认当前输入状态 兼容外接键盘 思路：
+用Karabiner Elements把右Shift修改成F19，在系统里设置用F19切换输入法 用isHUD显示输入法状态 用Keyboard Maestro自动切换键盘布局 Karabiner Elements会使系统的键盘布局失效，且不能对不同的键盘使用不同的布局，所以只有用Keyboard Maestro自动切换。
+isHUD只在切换输入法时有效，理想情况是用Caps Lock键灯表示输入状态，不过目前没找到可用的解决办法。
+鼠须管可以对不同的应用设置初始输入状态，但只是在切换输入法后，例如对于Alfred，如果上次鼠须管处于中文输入状态，再次打开输入框的时候不会变成英文状态，因此需要在Alfred中设置初始输入法为英文。</description></item><item><title>MacOS下自动切换Karabiner Elements配置</title><link>http://0x3f.org/posts/auto-switch-keyboard-layouts-in-macos/</link><pubDate>Mon, 20 Mar 2017 13:14:18 +0000</pubDate><guid>http://0x3f.org/posts/auto-switch-keyboard-layouts-in-macos/</guid><description>Karabiner Elements不支持对不同的键盘自动使用不同的配置，所以本文通过监听USB键盘插拔事件实现自动切换。
+依赖： Keyboard Maestro php 脚本 Karabiner Elements会监听配置文件~/.config/karabiner/karabiner.json，如果有变动，会自动重新加载。
+切换配置的脚本在这里。
+Keyboard Maestro 键盘插入事件：
+键盘拔出事件：</description></item><item><title>鼠须管实现简繁转换的方法</title><link>http://0x3f.org/posts/switch-cn-tw-in-rime/</link><pubDate>Sat, 11 Mar 2017 23:42:11 +0000</pubDate><guid>http://0x3f.org/posts/switch-cn-tw-in-rime/</guid><description>鼠须管默认输出繁体，可以通过自带的过滤器转换成简体。这样做是科学的，因为繁体的异体字较多，从简转繁容易转错。
+对于只有简体的码表，可以转换成繁体，再通过过滤器转简体，但是会导致在简体状态下无法自造词。所以最好的办法是给繁体单独配一个码表。
+步骤为：
+复制简体码表的schema.yaml和dict.yaml文件 修改两个yaml文件的名称 文件内容中和文件名对应的内容也都改为和新文件名一致 修改schema.yaml中输入法的名称，使之和简体码表区分开 转换dict.yaml中的内容到繁体 重新部署 如果需要给繁体码表增加临时输出简体的功能，方法如下：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 # 在码表的schema.yaml中# switches下增加- name:simplificationstates:[汉字, 汉字 ]# engine下增加filters:- simplifier- uniquifier#key_binder下增加- {when: always, accept: Control+Shift+4, toggle:simplification }- {when: always, accept: Control+Shift+dollar, toggle:simplification }</description></item><item><title>加速Homebrew</title><link>http://0x3f.org/posts/speed-up-homebew/</link><pubDate>Mon, 06 Mar 2017 23:14:02 +0000</pubDate><guid>http://0x3f.org/posts/speed-up-homebew/</guid><description>两个方法：走代理和使用国内镜像。镜像有同步时间差，而且遇到国外资源还是慢。
+homebrew用curl下载，用proxychains和环境变量http_proxy都没用，需要在~/.curlrc里配置：
+socks5 = &amp;quot;127.0.0.1:1080&amp;quot;</description></item><item><title>小确幸，用Vim编辑当前命令行</title><link>http://0x3f.org/posts/edit-command-with-vim/</link><pubDate>Mon, 26 Dec 2016 11:58:00 +0000</pubDate><guid>http://0x3f.org/posts/edit-command-with-vim/</guid><description>修改很长的命令是件痛苦的事，在Linux下，可以通过快捷键Ctrl+X Ctrl+E调用$EDITOR快速编辑当前命令行的内容，保存退出后，结果会呈现在光标下。
+不过在Mac OS的iTerm2下，似乎是因为Ctrl+X被占用而不能生效。误打误撞地发现了另外一个方法，使用oh-my-zsh并且开启了vi mode的话，先进入vi mode，然后输入v，同样可以实现这样的功能。</description></item><item><title>小确幸，用shift切换输入法</title><link>http://0x3f.org/posts/little-happiness-from-replacing-ctrl-space-with-shift/</link><pubDate>Sat, 17 Sep 2016 15:36:00 +0000</pubDate><guid>http://0x3f.org/posts/little-happiness-from-replacing-ctrl-space-with-shift/</guid><description>把Alfred升级到3，就想著把切换中英输入状态的问题一块解决掉。
+Alfred可以设置默认使用英文输入状态，然后用Karabiner把Shift_L映射成Ctrl+Space。现在切换输入状态和用Alfred的效率都高多了。
+1 2 3 4 5 6 7 &amp;lt;item&amp;gt; &amp;lt;name&amp;gt;Shift_L to Shift_L&amp;lt;/name&amp;gt; &amp;lt;appendix&amp;gt; + When you type Shift_L only,change to previous system input method&amp;lt;/appendix&amp;gt; &amp;lt;appendix&amp;gt;Shift_L == (Ctrl-Space)&amp;lt;/appendix&amp;gt; &amp;lt;identifier&amp;gt;private.change_input_source_to_squirrel.Rime&amp;lt;/identifier&amp;gt; &amp;lt;autogen&amp;gt;__KeyOverlaidModifier__ KeyCode::SHIFT_L, ModifierFlag::SHIFT_L | ModifierFlag::NONE, KeyCode::SHIFT_L, KeyCode::SPACE,ModifierFlag::CONTROL_L&amp;lt;/autogen&amp;gt; &amp;lt;/item&amp;gt;</description></item><item><title>Alfred-pushbullet: Push a text to your phone</title><link>http://0x3f.org/posts/alfred-pushbullet/</link><pubDate>Wed, 13 Apr 2016 17:30:00 +0000</pubDate><guid>http://0x3f.org/posts/alfred-pushbullet/</guid><description>Pushbullet workflow for Alfred.
+Features Push a text to another device. Installation Download the latest release and rename it to pushbullet.alfredworkflow. Double click it to import it into Alfred. Double click the &amp;ldquo;Run Script&amp;rdquo; button and replace &amp;ldquo;ACCESS_TOKEN&amp;rdquo; and &amp;ldquo;DEVICE_NAME&amp;rdquo; according to your pushbullet settings. Activate alfred and input &amp;ldquo;push blablabla&amp;rdquo;, then press enter. Author base64decode IkRvbmllIExlaWdoIiA8ZG9uaWUubGVpZ2hAZ21haWwuY29tPgo=
+Download https://github.com/xbot/alfred-pushbullet/</description></item><item><title>Linux下做Mac OSX安装U盘的步骤</title><link>http://0x3f.org/posts/create-mac-bootable-usb-stick-on-linux/</link><pubDate>Tue, 08 Mar 2016 12:22:00 +0000</pubDate><guid>http://0x3f.org/posts/create-mac-bootable-usb-stick-on-linux/</guid><description>假设U盘对应/dev/sdb1、OSX安装包是osx.dmg。整个过程就是提取出一系列文件，然后复制到U盘里。
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 # 格式化U盘为hfs+文件系统 sudo mkfs.hfsplus -v EICaptianInstall /dev/sdb1 # 提取和挂载第一个光盘镜像 dmg2img -p 5 osx.dmg osx.img mkdir raw &amp;amp;&amp;amp; sudo mount -o loop osx.img raw # 提取和挂载第二个光盘镜像 dmg2img -p 5 raw/Install\ OS\ X\ El\ Capitan.app/Contents/SharedSupport/InstallESD.dmg InstallESD.img mkdir esd &amp;amp;&amp;amp; sudo mount -o loop InstallESD.img esd # 提取和挂载第三个光盘镜像 dmg2img -p 4 esd/BaseSystem.</description></item><item><title>Mac，江湖再见！</title><link>http://0x3f.org/posts/bye-mac/</link><pubDate>Mon, 12 Mar 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/bye-mac/</guid><description>零八年底，我用半年的差补收了当时Thinkpad X200顶配的FN3。三年的时间，几乎每天都要用很久，竟然从没掉过链子。虽说是这样，但毕竟用的强度大、时间长，屏幕已经远不如当初清晰，亮度也差了，即使调到最高亮度都觉著暗。
+于是打算趁著还能发挥余热，趁早处理掉，省得将来砸手里。
+既然要换，不如玩儿得折腾一点儿，于是小手一抖，Mac到手。
+我对Mac的OS只是有点小好奇，主要是奔著Mac的外观和做工去的，还是打算回头装Arch。玩儿了四个月，平心而论，Mac OS X确实是个不错的OS，美观程度无与伦比，结合Mac硬件的外观和做工，真是天作之合；易用性之高，确实让我有点小惊讶，多点触摸得心应手，软件安装一拖而就，相比之下，Windows显得拙劣不堪。
+如果只是作为办公和娱乐的工具，Mac可挑剔的地方确实不多。但是易用性往往和灵活性成反比，灵活性高意味著你可以随心所欲地制定自己的游戏规则，而易用性高则往往意味著你只能接受它的方式、认可它的价值观，易用并不代表顺手。
+除此之外就是软件资源的问题，Mac的免费软件相对很少，而且和Windows一样，需要先下载，再安装。虽然也有MacPorts、Homebrew，和Linux的软件仓库比起来还是差得太远。
+做惯了Archer，是可忍，孰不可忍。
+还是要装Arch。但是在制作安装介质这一步就遇著麻烦了，USB启动安装盘死活都不认，试了几种方法，无果。此外还有不少未知的问题，比如驱动等等。
+如果在几年前，在学校，有大把的时间可以糟蹋，我就跟丫死掐了。现在不行了，伤不起了。果断入手Thinkpad X220 A45，上周六把Mac出手了。
+小黑和Arch不愧是天作之合，比起当初在X200上装的时候还容易。只是小黑的多点触摸板啊，东施效颦，我想不到更贴切的词形容了，太TMD坑爹了！
+鉴于X200上4G内存被Chromium吃光光的苦逼经历，这次果断入手两根4G的三星金条，都是党的政策好啊，最近内存白菜价，两根金条才300粮票。
+从宣和八年秋十月到宣和九年春王三月，我的短暂的小白史告一段落，MacBook Pro MC700CH/A，江湖再见！
+Posted via UltraBlog.vim.</description></item></channel></rss>

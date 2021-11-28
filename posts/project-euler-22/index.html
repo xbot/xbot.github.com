@@ -1,0 +1,208 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta property="og:title" content="Project Euler Problem 22 Solved">
+<meta property="og:description" content="Names scores Using names.txt (right click and &lsquo;Save Link/Target As&mldr;'), a 46K text file containing over five-thousand first names, begin by sorting it into alphabetical order. Then working out the alphabetical value for each name, multiply this value by its alphabetical position in the list to obtain a name score.
+For example, when the list is sorted into alphabetical order, COLIN, which is worth 3 + 15 + 12 + 9 + 14 = 53, is the 938th name in the list.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://0x3f.org/posts/project-euler-22/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2014-04-20T08:03:00+00:00">
+<meta property="article:modified_time" content="2014-04-20T08:03:00+00:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Project Euler Problem 22 Solved">
+<meta name=twitter:description content="Names scores Using names.txt (right click and &lsquo;Save Link/Target As&mldr;'), a 46K text file containing over five-thousand first names, begin by sorting it into alphabetical order. Then working out the alphabetical value for each name, multiply this value by its alphabetical position in the list to obtain a name score.
+For example, when the list is sorted into alphabetical order, COLIN, which is worth 3 + 15 + 12 + 9 + 14 = 53, is the 938th name in the list.">
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-93233020-1','auto'),ga('send','pageview'))</script>
+<meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name=theme-color media="(prefers-color-scheme: dark)" content="#262d33">
+<title>
+晴耕雨讀 - Project Euler Problem 22 Solved
+</title>
+<link rel="shortcut icon" href=/favicon.ico type=image/x-icon>
+<link rel=preconnect href=https://fonts.googleapis.com>
+<link rel=preconnect href=https://fonts.gstatic.com crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel=stylesheet>
+<link rel=stylesheet href=/minima.1638090831.css>
+<script defer type=text/javascript src=/minima.1638090831.js></script>
+</head>
+<script>try{'theme'in localStorage||(localStorage.theme=window.matchMedia('(prefer-color-scheme: dark)').matches?'dark':'light'),document.querySelector('html').classList.add(localStorage.theme)}catch(a){console.error(a)}</script>
+<body class="sm:mx-5 sm:my-0">
+<header class="flex justify-between items-center sm:my-3">
+<div class="flex items-center">
+<div id=theme-switcher class="text-4xl cursor-pointer">🌚</div>
+</div>
+<nav class="flex items-center
+whitespace-nowrap overflow-x-auto overflow-y-hidden">
+<a class=ml-5 href=/>主頁</a>
+<a class=ml-5 href=/posts>文章</a>
+<a class=ml-5 href=/tags>標籤</a>
+<a class=ml-5 href=/categories>分類</a>
+<a class=ml-5 href=/about>關於</a>
+</nav>
+</header>
+<h1 class="mt-8 mb-6">Project Euler Problem 22 Solved</h1>
+<div class="mb-3 text-xs flex justify-between sm:flex-col">
+<div>
+Posted at &mdash; Apr 20, 2014
+</div>
+<div class=sm:mt-4>
+<a class=not-first:ml-3 href=/tags/golang>#golang</a>
+<a class=not-first:ml-3 href=/tags/python>#python</a>
+<a class=not-first:ml-3 href=/tags/php>#php</a>
+<a class=not-first:ml-3 href=/tags/%e6%ac%a7%e6%8b%89%e5%b7%a5%e7%a8%8b>#欧拉工程</a>
+<a class=not-first:ml-3 href=/tags/%e7%bc%96%e7%a8%8b>#编程</a>
+</div>
+</div>
+<main>
+<p></p>
+<article class=md>
+<h2 id=names-scores>Names scores</h2>
+<p>Using <a href=http://projecteuler.net/project/names.txt>names.txt</a> (right click and &lsquo;Save Link/Target As&mldr;'), a 46K text file containing over five-thousand first names, begin by sorting it into alphabetical order. Then working out the alphabetical value for each name, multiply this value by its alphabetical position in the list to obtain a name score.</p>
+<p>For example, when the list is sorted into alphabetical order, COLIN, which is worth 3 + 15 + 12 + 9 + 14 = 53, is the 938th name in the list. So, COLIN would obtain a score of 938 × 53 = 49714.</p>
+<p>What is the total of all the name scores in the file?</p>
+<h2 id=solution>Solution</h2>
+<p>Pretty code snippets are easily to be implemented in Python as always:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=ch>#!/usr/bin/python</span>
+<span class=c1># -*- coding: utf-8 -*-</span>
+
+<span class=k>if</span> <span class=vm>__name__</span> <span class=o>==</span> <span class=s1>&#39;__main__&#39;</span><span class=p>:</span>
+    <span class=n>f</span> <span class=o>=</span> <span class=nb>open</span><span class=p>(</span><span class=s1>&#39;names.txt&#39;</span><span class=p>)</span>
+    <span class=n>names</span> <span class=o>=</span> <span class=nb>sorted</span><span class=p>(</span><span class=n>f</span><span class=o>.</span><span class=n>readline</span><span class=p>()</span><span class=o>.</span><span class=n>replace</span><span class=p>(</span><span class=s1>&#39;&#34;&#39;</span><span class=p>,</span> <span class=s1>&#39;&#39;</span><span class=p>)</span><span class=o>.</span><span class=n>split</span><span class=p>(</span><span class=s1>&#39;,&#39;</span><span class=p>))</span>
+    <span class=n>f</span><span class=o>.</span><span class=n>close</span><span class=p>()</span>
+
+    <span class=nb>print</span> <span class=nb>sum</span><span class=p>(</span><span class=nb>map</span><span class=p>(</span><span class=k>lambda</span> <span class=n>name</span><span class=p>:</span> <span class=nb>sum</span><span class=p>([</span><span class=nb>ord</span><span class=p>(</span><span class=n>c</span><span class=p>)</span> <span class=o>-</span> <span class=mi>64</span> <span class=k>for</span> <span class=n>c</span> <span class=ow>in</span> <span class=n>name</span><span class=p>])</span> \
+              <span class=o>*</span> <span class=p>(</span><span class=n>names</span><span class=o>.</span><span class=n>index</span><span class=p>(</span><span class=n>name</span><span class=p>)</span> <span class=o>+</span> <span class=mi>1</span><span class=p>),</span> <span class=n>names</span><span class=p>))</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Easy as Python, ugly as shit, here is the PHP implementation:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-php data-lang=php><span class=o>&lt;?</span><span class=nx>php</span>
+<span class=nv>$names</span> <span class=o>=</span> <span class=nx>explode</span><span class=p>(</span><span class=s1>&#39;,&#39;</span><span class=p>,</span> <span class=nx>str_replace</span><span class=p>(</span><span class=s1>&#39;&#34;&#39;</span><span class=p>,</span> <span class=s1>&#39;&#39;</span><span class=p>,</span> <span class=nx>file_get_contents</span><span class=p>(</span><span class=s1>&#39;names.txt&#39;</span><span class=p>)));</span>
+<span class=nx>sort</span><span class=p>(</span><span class=nv>$names</span><span class=p>,</span> <span class=nx>SORT_STRING</span><span class=p>);</span>
+<span class=nv>$cal_alpha_value</span> <span class=o>=</span> <span class=k>function</span><span class=p>(</span><span class=nv>$name</span><span class=p>,</span> <span class=nv>$i</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nv>$cal_alpha_index</span> <span class=o>=</span> <span class=k>function</span><span class=p>(</span><span class=nv>$char</span><span class=p>){</span><span class=k>return</span> <span class=nx>ord</span><span class=p>(</span><span class=nv>$char</span><span class=p>)</span> <span class=o>-</span> <span class=mi>64</span><span class=p>;};</span>
+    <span class=k>return</span> <span class=nx>array_sum</span><span class=p>(</span><span class=nx>array_map</span><span class=p>(</span><span class=nv>$cal_alpha_index</span><span class=p>,</span> <span class=nx>str_split</span><span class=p>(</span><span class=nv>$name</span><span class=p>,</span> <span class=mi>1</span><span class=p>)))</span> <span class=o>*</span> <span class=nv>$i</span><span class=p>;</span>
+<span class=p>};</span>
+<span class=k>echo</span> <span class=nx>array_sum</span><span class=p>(</span><span class=nx>array_map</span><span class=p>(</span><span class=nv>$cal_alpha_value</span><span class=p>,</span> <span class=nv>$names</span><span class=p>,</span> <span class=nx>range</span><span class=p>(</span><span class=mi>1</span><span class=p>,</span> <span class=nx>count</span><span class=p>(</span><span class=nv>$names</span><span class=p>))));</span>
+<span class=cp>?&gt;</span><span class=err>
+</span></code></pre></td></tr></table>
+</div>
+</div><div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+	<span class=s>&#34;bufio&#34;</span>
+	<span class=s>&#34;fmt&#34;</span>
+	<span class=s>&#34;os&#34;</span>
+	<span class=s>&#34;sort&#34;</span>
+	<span class=s>&#34;strings&#34;</span>
+<span class=p>)</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+	<span class=nx>f</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>os</span><span class=p>.</span><span class=nf>Open</span><span class=p>(</span><span class=s>&#34;names.txt&#34;</span><span class=p>)</span>
+	<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+		<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
+		<span class=nx>os</span><span class=p>.</span><span class=nf>Exit</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>
+	<span class=p>}</span>
+	<span class=k>defer</span> <span class=nx>f</span><span class=p>.</span><span class=nf>Close</span><span class=p>()</span>
+
+	<span class=nx>reader</span> <span class=o>:=</span> <span class=nx>bufio</span><span class=p>.</span><span class=nf>NewReader</span><span class=p>(</span><span class=nx>f</span><span class=p>)</span>
+	<span class=nx>line</span><span class=p>,</span> <span class=nx>_</span> <span class=o>:=</span> <span class=nx>reader</span><span class=p>.</span><span class=nf>ReadString</span><span class=p>(</span><span class=sc>&#39;\n&#39;</span><span class=p>)</span>
+	<span class=nx>names</span> <span class=o>:=</span> <span class=nx>strings</span><span class=p>.</span><span class=nf>Split</span><span class=p>(</span><span class=nx>strings</span><span class=p>.</span><span class=nf>Replace</span><span class=p>(</span><span class=nx>line</span><span class=p>,</span> <span class=s>&#34;\&#34;&#34;</span><span class=p>,</span> <span class=s>&#34;&#34;</span><span class=p>,</span> <span class=o>-</span><span class=mi>1</span><span class=p>),</span> <span class=s>&#34;,&#34;</span><span class=p>)</span>
+	<span class=nx>sort</span><span class=p>.</span><span class=nf>Sort</span><span class=p>(</span><span class=nx>sort</span><span class=p>.</span><span class=nf>StringSlice</span><span class=p>(</span><span class=nx>names</span><span class=p>))</span>
+
+	<span class=nx>val</span> <span class=o>:=</span> <span class=mi>0</span>
+	<span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=nb>len</span><span class=p>(</span><span class=nx>names</span><span class=p>);</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+		<span class=nx>tmp</span> <span class=o>:=</span> <span class=mi>0</span>
+		<span class=k>for</span> <span class=nx>j</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>j</span> <span class=p>&lt;</span> <span class=nb>len</span><span class=p>(</span><span class=nx>names</span><span class=p>[</span><span class=nx>i</span><span class=p>]);</span> <span class=nx>j</span><span class=o>++</span> <span class=p>{</span>
+			<span class=nx>tmp</span> <span class=o>+=</span> <span class=nb>int</span><span class=p>(</span><span class=nx>names</span><span class=p>[</span><span class=nx>i</span><span class=p>][</span><span class=nx>j</span><span class=p>])</span> <span class=o>-</span> <span class=mi>64</span>
+		<span class=p>}</span>
+		<span class=nx>val</span> <span class=o>+=</span> <span class=nx>tmp</span> <span class=o>*</span> <span class=p>(</span><span class=nx>i</span> <span class=o>+</span> <span class=mi>1</span><span class=p>)</span>
+	<span class=p>}</span>
+
+	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>val</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>I&rsquo;m the 65646th person to have solved this problem.</p>
+</article>
+</main>
+<footer class="mt-8 flex sm:flex-col-reverse justify-between items-center">
+<p class="mt-0 text-sm">
+© 淘气 2021 |
+<a href=https://gohugo.io target=_blank rel="noopener noreferrer">Hugo</a> on
+<a href=https://github.com/mivinci/hugo-theme-minima target=_blank rel="noopener noreferrer">Minima</a>
+</p>
+<p class="flex items-center mt-0">
+<a class="icon mx-2" href=https://github.com/xbot title=github><svg fill="#63636f" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>GitHub</title><path d="M12 .297c-6.63.0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577.0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93.0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176.0.0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22.0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22.0 1.606-.015 2.896-.015 3.286.0.315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+</a>
+<a class="icon mx-2" href=/index.xml title=rss><svg fill="#63636f" t="1626591563876" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" p-id="1984" width="18" height="16"><path d="M128 768a128 128 0 100 256 128 128 0 000-256zM0 368v176c265.104.0 480 214.912 480 480h176c0-362.32-293.696-656-656-656zM0 0v176c468.336.0 848 379.664 848 848h176C1024 458.464 565.536.0.0.0z" p-id="1985"/></svg>
+</a>
+</p>
+</footer>
+</body>
+</html>

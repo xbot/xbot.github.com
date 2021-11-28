@@ -1,125 +1,16 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>容器 - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/%E5%AE%B9%E5%99%A8/</link><description>容器 - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Thu, 07 Sep 2017 15:31:11 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/%E5%AE%B9%E5%99%A8/" rel="self" type="application/rss+xml"/><item><title>什么是docker</title><link>http://0x3f.org/post/what-is-docker/</link><pubDate>Thu, 07 Sep 2017 15:31:11 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/what-is-docker/</guid><description><![CDATA[<h2 id="什么是docker">什么是docker</h2>
-<p>docker是一种容器，<a href="http://www.infoq.com/cn/articles/container-landscape-2016" target="_blank" rel="noopener noreffer">这篇文章</a>对容器的定义是：</p>
-<blockquote>
-<p>容器是一组运行在Linux操作系统上并使用命名空间进程进行分隔的进程，有了容器就无需再启动和维护虚拟机。与虚拟机技术相比，容器的最大不同之处在于打包格式和可移植性。构建容器的目的在于为现代基础设施降低占用空间和启动时间、提供重用性、更好地利用服务器资源，并更好地集成到整个开发生态系统中（例如持续集成和交付生命周期）。</p>
-</blockquote>
-<p>容器相对于虚拟机有以下优点：</p>
-<ul>
-<li>更高效地利用系统资源</li>
-<li>更快的启动速度</li>
-<li>一致的运行环境</li>
-<li>持续的交付和部署</li>
-<li>更轻松的迁移</li>
-<li>维护和扩展的便利性</li>
-</ul>
-<h2 id="基本概念">基本概念</h2>
-<h3 id="镜像">镜像</h3>
-<p>Docker 镜像是一个特殊的文件系统，除了提供容器运行时所需的程序、库、资源、配置等文件外，还包含了一些为运行时准备的一些配置参数（如匿名卷、环境变量、用户等）。镜像不包含任何动态数据，其内容在构建之后也不会被改变。</p>
-<p>镜像分为黑箱镜像和dockerfile。</p>
-<p>前者通过实际创建和配置docker容器并通过<code>docker commit</code>记录每个版本的变更，优点是简单直观，缺点是不能记录在基础镜像上做了哪些操作，并且在多次修改之后，镜像会变得很臃肿。</p>
-<p>dockerfile是镜像的配置文件，部署时docker根据配置内容生成容器，优点是可以清楚地记录每次修改的内容、镜像体积很小，缺点是编写时比较复杂。</p>
-<h3 id="容器">容器</h3>
-<p>容器是镜像运行的实体。</p>
-<h3 id="仓库">仓库</h3>
-<p>分发镜像的服务。</p>
-<h3 id="编排">编排</h3>
-<p>容器的编排包含如下一系列任务：</p>
-<ul>
-<li>调度（包括部署、复制、扩展、复活、重新调度、升级、降级等）</li>
-<li>资源管理（内存、CPU、存储空间、端口、IP、镜像等）</li>
-<li>服务管理（即使用标签、分组、命名空间、负载均衡和准备就绪检查将多个容器编排在一起）</li>
-</ul>
-<h2 id="安装">安装</h2>
-<p>我在黑苹果下安装。Mac下安装docker有两种方式：Docker for Mac或Docker Toolbox。前者最简单，后者在前者的系统要求不能被满足的情况下使用。后者的卸载比较麻烦，具体参照<a href="https://github.com/widuu/chinese_docker/blob/master/installation/mac.md" target="_blank" rel="noopener noreffer">这里</a>。</p>
-<p>我用前种方式安装，启动时报错：</p>
-<blockquote>
-<p>com.docker.osx.hyperkit.linux failed to start</p>
-</blockquote>
-<p>解决方法是到BIOS里打开VT特性，有说法说黑苹果不支持VT，我这里是可以的。</p>
-<h3 id="镜像加速器">镜像加速器</h3>
-<p>一般用阿里云的镜像服务。</p>
-<h2 id="docker的使用">docker的使用</h2>
-<h3 id="拉取镜像">拉取镜像</h3>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">docker pull base/archlinux
-</code></pre></td></tr></table>
-</div>
-</div><h3 id="列出镜像">列出镜像</h3>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">docker images
-</code></pre></td></tr></table>
-</div>
-</div><h3 id="创建容器">创建容器</h3>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">docker run --name arch --it base/archlinux bash
-</code></pre></td></tr></table>
-</div>
-</div><h3 id="终止容器">终止容器</h3>
-<p><code>exit</code>或<code>ctrl-d</code></p>
-<h3 id="启动已终止容器">启动已终止容器</h3>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">docker start arch
-</code></pre></td></tr></table>
-</div>
-</div><h3 id="attach运行中的容器">attach运行中的容器</h3>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">docker attach arch
-</code></pre></td></tr></table>
-</div>
-</div><h3 id="detach运行中的容器">detach运行中的容器</h3>
-<p><code>ctrl+p ctrl+q</code>或者：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">docker detach arch
-</code></pre></td></tr></table>
-</div>
-</div><h3 id="查看容器">查看容器</h3>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># 查看运行中的容器</span>
-docker ps -q
-
-<span class="c1"># 查看所有，包括已终止的</span>
-docker ps -a
-</code></pre></td></tr></table>
-</div>
-</div><h3 id="删除已终止容器">删除已终止容器</h3>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">docker rm arch
-</code></pre></td></tr></table>
-</div>
-</div>]]></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>容器 on 晴耕雨讀</title><link>http://0x3f.org/tags/%E5%AE%B9%E5%99%A8/</link><description>Recent content in 容器 on 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><copyright>© 淘气 2021</copyright><lastBuildDate>Thu, 07 Sep 2017 15:31:11 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/%E5%AE%B9%E5%99%A8/index.xml" rel="self" type="application/rss+xml"/><item><title>什么是docker</title><link>http://0x3f.org/posts/what-is-docker/</link><pubDate>Thu, 07 Sep 2017 15:31:11 +0000</pubDate><guid>http://0x3f.org/posts/what-is-docker/</guid><description>什么是docker docker是一种容器，这篇文章对容器的定义是：
+容器是一组运行在Linux操作系统上并使用命名空间进程进行分隔的进程，有了容器就无需再启动和维护虚拟机。与虚拟机技术相比，容器的最大不同之处在于打包格式和可移植性。构建容器的目的在于为现代基础设施降低占用空间和启动时间、提供重用性、更好地利用服务器资源，并更好地集成到整个开发生态系统中（例如持续集成和交付生命周期）。
+容器相对于虚拟机有以下优点：
+更高效地利用系统资源 更快的启动速度 一致的运行环境 持续的交付和部署 更轻松的迁移 维护和扩展的便利性 基本概念 镜像 Docker 镜像是一个特殊的文件系统，除了提供容器运行时所需的程序、库、资源、配置等文件外，还包含了一些为运行时准备的一些配置参数（如匿名卷、环境变量、用户等）。镜像不包含任何动态数据，其内容在构建之后也不会被改变。
+镜像分为黑箱镜像和dockerfile。
+前者通过实际创建和配置docker容器并通过docker commit记录每个版本的变更，优点是简单直观，缺点是不能记录在基础镜像上做了哪些操作，并且在多次修改之后，镜像会变得很臃肿。
+dockerfile是镜像的配置文件，部署时docker根据配置内容生成容器，优点是可以清楚地记录每次修改的内容、镜像体积很小，缺点是编写时比较复杂。
+容器 容器是镜像运行的实体。
+仓库 分发镜像的服务。
+编排 容器的编排包含如下一系列任务：
+调度（包括部署、复制、扩展、复活、重新调度、升级、降级等） 资源管理（内存、CPU、存储空间、端口、IP、镜像等） 服务管理（即使用标签、分组、命名空间、负载均衡和准备就绪检查将多个容器编排在一起） 安装 我在黑苹果下安装。Mac下安装docker有两种方式：Docker for Mac或Docker Toolbox。前者最简单，后者在前者的系统要求不能被满足的情况下使用。后者的卸载比较麻烦，具体参照这里。
+我用前种方式安装，启动时报错：
+com.docker.osx.hyperkit.linux failed to start
+解决方法是到BIOS里打开VT特性，有说法说黑苹果不支持VT，我这里是可以的。
+镜像加速器 一般用阿里云的镜像服务。
+docker的使用 拉取镜像 1 docker pull base/archlinux 列出镜像 1 docker images 创建容器 1 docker run --name arch --it base/archlinux bash 终止容器 exit或ctrl-d</description></item></channel></rss>

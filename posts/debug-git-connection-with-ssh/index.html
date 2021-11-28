@@ -1,0 +1,99 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta property="og:title" content="用 SSH 命令调试 Git 的连接问题">
+<meta property="og:description" content="昨天执行git pull的时候发现会一直卡在那儿，排除了各种可能，而且 Github 上的项目也是可以正常拉取的，说明跟网络、代理等关系应该不大，git 命令本身也工作正常。
+问题集中在公司的项目上，所有项目都无法拉取代码。起先怀疑是公司自建的 Gitlab 出了问题，但是其他人那里又是正常的，甚至跟我同一局域网的电脑上也是正常的。
+也就是说问题应该出在我自己的电脑上。考虑到前两天还能正常使用，之后唯一一件相关的事就是升级 macOS 到 10.15.4 了。
+然而用 Homebrew 重新安装 git 等相关的几个包也没能解决问题，于是用ssh -T -v git@gitlab.xxx.com -p 8848调试，输出如下：
+donie@Donies  ~  ssh -T -v git@gitlab.xxx.com -p 8848 OpenSSH_8.1p1, LibreSSL 2.7.3 debug1: Reading configuration data /Users/donie/.ssh/config debug1: /Users/donie/.ssh/config line 9: Applying options for gitlab.xxx.com debug1: Reading configuration data /etc/ssh/ssh_config debug1: /etc/ssh/ssh_config line 47: Applying options for * debug1: Connecting to gitlab.xxx.com port 8848. 卡在了“Connecting to gitlab.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://0x3f.org/posts/debug-git-connection-with-ssh/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2020-03-28T23:17:45+00:00">
+<meta property="article:modified_time" content="2020-03-28T23:17:45+00:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="用 SSH 命令调试 Git 的连接问题">
+<meta name=twitter:description content="昨天执行git pull的时候发现会一直卡在那儿，排除了各种可能，而且 Github 上的项目也是可以正常拉取的，说明跟网络、代理等关系应该不大，git 命令本身也工作正常。
+问题集中在公司的项目上，所有项目都无法拉取代码。起先怀疑是公司自建的 Gitlab 出了问题，但是其他人那里又是正常的，甚至跟我同一局域网的电脑上也是正常的。
+也就是说问题应该出在我自己的电脑上。考虑到前两天还能正常使用，之后唯一一件相关的事就是升级 macOS 到 10.15.4 了。
+然而用 Homebrew 重新安装 git 等相关的几个包也没能解决问题，于是用ssh -T -v git@gitlab.xxx.com -p 8848调试，输出如下：
+donie@Donies  ~  ssh -T -v git@gitlab.xxx.com -p 8848 OpenSSH_8.1p1, LibreSSL 2.7.3 debug1: Reading configuration data /Users/donie/.ssh/config debug1: /Users/donie/.ssh/config line 9: Applying options for gitlab.xxx.com debug1: Reading configuration data /etc/ssh/ssh_config debug1: /etc/ssh/ssh_config line 47: Applying options for * debug1: Connecting to gitlab.xxx.com port 8848. 卡在了“Connecting to gitlab.">
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-93233020-1','auto'),ga('send','pageview'))</script>
+<meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name=theme-color media="(prefers-color-scheme: dark)" content="#262d33">
+<title>
+晴耕雨讀 - 用 SSH 命令调试 Git 的连接问题
+</title>
+<link rel="shortcut icon" href=/favicon.ico type=image/x-icon>
+<link rel=preconnect href=https://fonts.googleapis.com>
+<link rel=preconnect href=https://fonts.gstatic.com crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel=stylesheet>
+<link rel=stylesheet href=/minima.1638090831.css>
+<script defer type=text/javascript src=/minima.1638090831.js></script>
+</head>
+<script>try{'theme'in localStorage||(localStorage.theme=window.matchMedia('(prefer-color-scheme: dark)').matches?'dark':'light'),document.querySelector('html').classList.add(localStorage.theme)}catch(a){console.error(a)}</script>
+<body class="sm:mx-5 sm:my-0">
+<header class="flex justify-between items-center sm:my-3">
+<div class="flex items-center">
+<div id=theme-switcher class="text-4xl cursor-pointer">🌚</div>
+</div>
+<nav class="flex items-center
+whitespace-nowrap overflow-x-auto overflow-y-hidden">
+<a class=ml-5 href=/>主頁</a>
+<a class=ml-5 href=/posts>文章</a>
+<a class=ml-5 href=/tags>標籤</a>
+<a class=ml-5 href=/categories>分類</a>
+<a class=ml-5 href=/about>關於</a>
+</nav>
+</header>
+<h1 class="mt-8 mb-6">用 SSH 命令调试 Git 的连接问题</h1>
+<div class="mb-3 text-xs flex justify-between sm:flex-col">
+<div>
+Posted at &mdash; Mar 28, 2020
+</div>
+<div class=sm:mt-4>
+<a class=not-first:ml-3 href=/tags/Git>#Git</a>
+<a class=not-first:ml-3 href=/tags/Gitlab>#Gitlab</a>
+<a class=not-first:ml-3 href=/tags/Mac>#Mac</a>
+</div>
+</div>
+<main>
+<p></p>
+<article class=md>
+<p>昨天执行<code>git pull</code>的时候发现会一直卡在那儿，排除了各种可能，而且 Github 上的项目也是可以正常拉取的，说明跟网络、代理等关系应该不大，git 命令本身也工作正常。</p>
+<p>问题集中在公司的项目上，所有项目都无法拉取代码。起先怀疑是公司自建的 Gitlab 出了问题，但是其他人那里又是正常的，甚至跟我同一局域网的电脑上也是正常的。</p>
+<p>也就是说问题应该出在我自己的电脑上。考虑到前两天还能正常使用，之后唯一一件相关的事就是升级 macOS 到 10.15.4 了。</p>
+<p>然而用 Homebrew 重新安装 git 等相关的几个包也没能解决问题，于是用<code>ssh -T -v git@gitlab.xxx.com -p 8848</code>调试，输出如下：</p>
+<pre tabindex=0><code>donie@Donies  ~  ssh -T -v git@gitlab.xxx.com -p 8848
+OpenSSH_8.1p1, LibreSSL 2.7.3
+debug1: Reading configuration data /Users/donie/.ssh/config
+debug1: /Users/donie/.ssh/config line 9: Applying options for gitlab.xxx.com
+debug1: Reading configuration data /etc/ssh/ssh_config
+debug1: /etc/ssh/ssh_config line 47: Applying options for *
+debug1: Connecting to gitlab.xxx.com port 8848.
+</code></pre><p>卡在了“Connecting to gitlab.xxx.com port 8848”这一步，但是<code>telnet gitlab.xxx.com 8848</code>却是通的。</p>
+<p>问题陷入僵局。</p>
+<p>Google的过程中偶然注意到别人正常的调试信息中这一步的输出是有 IP 地址的，如下所示：</p>
+<pre tabindex=0><code>debug1: Connecting to gitlab.xxx.com [xxx.xxx.xxx.xxx] port 8848.
+</code></pre><p>首先怀疑应该是主机名映射出了问题，但是无论是修改 Hosts 还是在 ~/.ssh/config 中指定都还是不行，ping 主机名也能正常解析出 IP 地址。</p>
+<p>问题陷入绝境。</p>
+<p>绝望之际，突然想到会不会是 SSH 自身出了问题呢？<code>which ssh</code>发现是系统自带的，所以装上 Homebrew 的版本试了一下，竟然好了！</p>
+<p>bugOS !!!</p>
+</article>
+</main>
+<footer class="mt-8 flex sm:flex-col-reverse justify-between items-center">
+<p class="mt-0 text-sm">
+© 淘气 2021 |
+<a href=https://gohugo.io target=_blank rel="noopener noreferrer">Hugo</a> on
+<a href=https://github.com/mivinci/hugo-theme-minima target=_blank rel="noopener noreferrer">Minima</a>
+</p>
+<p class="flex items-center mt-0">
+<a class="icon mx-2" href=https://github.com/xbot title=github><svg fill="#63636f" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>GitHub</title><path d="M12 .297c-6.63.0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577.0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93.0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176.0.0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22.0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22.0 1.606-.015 2.896-.015 3.286.0.315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+</a>
+<a class="icon mx-2" href=/index.xml title=rss><svg fill="#63636f" t="1626591563876" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" p-id="1984" width="18" height="16"><path d="M128 768a128 128 0 100 256 128 128 0 000-256zM0 368v176c265.104.0 480 214.912 480 480h176c0-362.32-293.696-656-656-656zM0 0v176c468.336.0 848 379.664 848 848h176C1024 458.464 565.536.0.0.0z" p-id="1985"/></svg>
+</a>
+</p>
+</footer>
+</body>
+</html>

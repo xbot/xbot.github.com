@@ -1,351 +1,91 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Archlinux - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/archlinux/</link><description>Archlinux - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Mon, 09 Aug 2021 15:27:58 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/archlinux/" rel="self" type="application/rss+xml"/><item><title>Archlinux 下 PHP 不能读取 /tmp 下文件的问题</title><link>http://0x3f.org/post/php-failed-to-open-stream-under-tmp-in-archlinux/</link><pubDate>Mon, 09 Aug 2021 15:27:58 +0800</pubDate><author>作者</author><guid>http://0x3f.org/post/php-failed-to-open-stream-under-tmp-in-archlinux/</guid><description><![CDATA[<p>问题的场景是，以 http 用户运行的 FPM 进程访问 <code>/tmp</code> 下由普通用户运行的 CLI 进程创建的文件时，报如下错误：</p>
-<blockquote>
-<p>Failed to open stream.</p>
-</blockquote>
-<p>原因是 PHP-FPM 的 systemd 配置中默认对 FPM 进程单独挂载 <code>/tmp</code> 目录。</p>
-<p>具体对应：</p>
-<p><code>/usr/lib/systemd/system/php-fpm.service</code></p>
-<p>中的：</p>
-<p><code>PrivateTmp=true</code></p>
-]]></description></item><item><title>Archlinux 下在 /var/run 下创建目录的方法</title><link>http://0x3f.org/post/create-directory-under-/var/run-in-archlinux/</link><pubDate>Sun, 08 Aug 2021 23:30:18 +0800</pubDate><author>作者</author><guid>http://0x3f.org/post/create-directory-under-/var/run-in-archlinux/</guid><description><![CDATA[<p>Archlinux 使用 <a href="https://wiki.archlinux.org/title/systemd#systemd-tmpfiles_-_temporary_files" target="_blank" rel="noopener noreffer">systemd-tmpfiles</a> 管理 <code>/var/run</code> 下的临时目录。这意味着如果我手动创建 <code>/var/run/php</code> 目录，在系统重启后将不复存在。</p>
-<p>解决的办法是修改 <code>/usr/lib/tmpfiles.d/php-fpm.conf</code> 文件，把默认的目录名 <code>php-fpm</code> 改成 <code>php</code>。</p>
-<p>但这会带来另一个问题，当 PHP 被重装或升级后，该文件会被覆盖。所以，解决的方法是复制后再修改。</p>
-]]></description></item><item><title>Archlinux安装过程中的几个坑</title><link>http://0x3f.org/post/pits-of-archlinux/</link><pubDate>Mon, 17 Oct 2016 13:14:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/pits-of-archlinux/</guid><description><![CDATA[<h2 id="安装方案">安装方案</h2>
-<p><a href="https://mirrors.ustc.edu.cn/archlinux/iso/archboot/latest/" target="_blank" rel="noopener noreffer">Archboot</a>是比官方镜像更友好的安装媒介，此外还有<a href="https://github.com/helmuthdu/aui" target="_blank" rel="noopener noreffer">AUI</a>和<a href="https://arch-anywhere.org" target="_blank" rel="noopener noreffer">Arch Anywhere</a>，没有试过。</p>
-<h2 id="分区">分区</h2>
-<p>Archboot使用parted处理分区任务。</p>
-<p>第一个分区不能从sector 0开始，否则安装完成后系统玩法启动，报如下错误：</p>
-<blockquote>
-<p>no operating system found</p>
-</blockquote>
-<p>正确的姿势：</p>
-<blockquote>
-<p>(parted) mkpart primary 2048s 512</p>
-</blockquote>
-<p>以上假设第一个分区用来挂载/boot，分配512M。</p>
-<p>还需要设置/boot所在的分区可启动：</p>
-<blockquote>
-<p>(parted) set 1 boot on</p>
-</blockquote>
-<h2 id="启动引导器">启动引导器</h2>
-<p>GRUB的兼容性比较好。</p>
-<p>如果是syslinux，对于没有单独对/boot分区并且根分区使用ext4的情况，会无法启动，报如下错误：</p>
-<blockquote>
-<p>failed to load ldlinux.c32</p>
-</blockquote>
-<p>此时，应对/boot单独分区并使用fat格式。</p>
-<h2 id="图形界面">图形界面</h2>
-<p>安装X不会连带安装显卡驱动，要单独安装，否则启动图形界面会黑屏。</p>
-<p>在VirtualBox中安装时，驱动在「virtualbox-guest-utils」。</p>
-]]></description></item><item><title>Linux下做Mac OSX安装U盘的步骤</title><link>http://0x3f.org/post/create-mac-bootable-usb-stick-on-linux/</link><pubDate>Tue, 08 Mar 2016 12:22:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/create-mac-bootable-usb-stick-on-linux/</guid><description><![CDATA[<p>假设U盘对应/dev/sdb1、OSX安装包是osx.dmg。整个过程就是提取出一系列文件，然后复制到U盘里。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># 格式化U盘为hfs+文件系统</span>
-sudo mkfs.hfsplus -v EICaptianInstall /dev/sdb1
- 
-<span class="c1"># 提取和挂载第一个光盘镜像</span>
-dmg2img -p <span class="m">5</span> osx.dmg osx.img
-mkdir raw <span class="o">&amp;&amp;</span> sudo mount -o loop osx.img raw
- 
-<span class="c1"># 提取和挂载第二个光盘镜像</span>
-dmg2img -p <span class="m">5</span> raw/Install<span class="se">\ </span>OS<span class="se">\ </span>X<span class="se">\ </span>El<span class="se">\ </span>Capitan.app/Contents/SharedSupport/InstallESD.dmg InstallESD.img
-mkdir esd <span class="o">&amp;&amp;</span> sudo mount -o loop InstallESD.img esd
- 
-<span class="c1"># 提取和挂载第三个光盘镜像</span>
-dmg2img -p <span class="m">4</span> esd/BaseSystem.dmg BaseSystem.img
-mkdir base <span class="o">&amp;&amp;</span> sudo mount -o loop BaseSystem.img base
- 
-<span class="c1"># 挂载U盘</span>
-mkdir usb <span class="o">&amp;&amp;</span> sudo mount /dev/sdb1 usb
- 
-<span class="c1"># 复制一系列文件</span>
-sudo cp -r base/* usb/
-sudo rm usb/System/Installation/Packages
-sudo cp -r esd/Packages usb/System/Installation/
-sudo cp esd/BaseSystem.* usb/
-</code></pre></td></tr></table>
-</div>
-</div><p>注意dmg2img的参数-p表示提取dmg的第几个分区，似乎不同的OSX版本提取哪个分区也不一样，判断方法就是先执行<code>dmg2img osx.dmg</code>，看哪个分区提取得最慢就选哪个。</p>
-]]></description></item><item><title>在Archlinux ARM上使用DS18B20温度传感器</title><link>http://0x3f.org/post/setup-ds18b20-on-archlinux/</link><pubDate>Mon, 25 May 2015 15:30:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/setup-ds18b20-on-archlinux/</guid><description><![CDATA[<p>线路图：</p>
-<p></p>
-<p>修改/boot/config.txt，启用w1内核模块。配置文件中有两部分关于w1的内容，一个只使用一个GPIO引脚，需要自行添加上拉电阻，另一个使用一个额外的GPIO引脚作上拉。</p>
-<p>使用Python模块w1thermsensor读数，用法见<a href="https://github.com/timofurrer/w1thermsensor" target="_blank" rel="noopener noreffer">这里</a>。</p>
-]]></description></item><item><title>在Archlinux下使用thinkfan控制Thinkpad x220的风扇转速</title><link>http://0x3f.org/post/how-to-control-fan-speed-with-thinkfan/</link><pubDate>Sat, 14 Apr 2012 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/how-to-control-fan-speed-with-thinkfan/</guid><description><![CDATA[<p>Archlinux目前对Thinkpad风扇的自动控制效果并不好，气温上升后很容易出现一直在三千多转一直跑的问题。thinkfan是目前用的比较多的自动控制风扇转速的程序，但Google到的配置thinkfan的文章大多语焉不详，可能是跟具体的发行版有关，因为貌似有些发行版中安装了thinkfan后会自动生成缺省的配置文件，但在目前的AUR中的包被安装后却没有生成任何配置文件。</p>
-
-<p>下面是我在Archlinux下配置的步骤，实际效果很好，现在只要不看视频、不编译程序、不启动Chromium，一般是两千九百转的速度，安静多了。</p>
-
-<h2>lm_sensors</h2>
-
-<p>安装lm_sensors并执行命令初始化：</p>
-
-```bash
-# 一路回车
-sudo sensors-detect
-```
-
-<p>将sensors加入rc.conf中DAEMONS中，开机启动。</p>
-
-<p>启动sensors服务：</p>
-
-```bash
-sudo rc.d start sensors
-```
-
-<h2>thinkpad_acpi</h2>
-
-<p>修改文件“<strong>/etc/modprobe.d/thinkpad_acpi.conf</strong>”：</p>
-
-```
-options thinkpad_acpi fan_control=1
-```
-
-<p>我这里虽没有把thinkpad_acpi加到rc.conf的MODULES中，但lsmod也是可以看到它的，说明还是自动启用了。要使上面这项配置生效，必须重启电脑，我这里重启thinkpad_acpi模块时报错说该模块正在被使用。</p>
-
-<h2>thinkfan</h2>
-
-<p>安装thinkfan并修改文件“<strong>/etc/default/thinkfan</strong>”：</p>
-
-```
-START=yes
-```
-
-<p>修改文件“<strong>/etc/thinkfan.conf</strong>”：</p>
-
-```
-sensor /sys/class/hwmon/hwmon0/temp1_input
-
-(0,  0, 55)
-(1, 48, 60)
-(2, 50, 61)
-(3, 52, 63)
-(4, 56, 65)
-(5, 59, 66)
-(7, 63, 32767)
-```
-
-<p>将thinkfan加入rc.conf的DAEMONS中，开机自动启动。</p>
-
-<p>启动thinkfan：</p>
-
-```bash
-sudo thinkfan
-```
-
-<h2>查看状态</h2>
-
-```bash
-# 看CPU温度和风扇转速
-sensors
-
-# 看风扇详细信息
-cat /proc/acpi/ibm/fan
-```
-
-<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
-]]></description></item><item><title>Oxygen Refit：适用于xfce的Oxygen图标集</title><link>http://0x3f.org/post/oxygen-iconset-fit-for-xfce/</link><pubDate>Mon, 29 Nov 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/oxygen-iconset-fit-for-xfce/</guid><description><![CDATA[<p>Oxygen是KDE桌面环境中的一套著名的图标集，但是据说基于GTK的桌面环境如GNOME、XFCE等对其支持得不好，我这里在GNOME下倒没发现问题，不过在XFCE下文件夹的图标显示的是缺省的图标，不好看。</p>
-<p><a href="http://gnome-look.org/content/show.php/Oxygen+Refit+2?content=79756">Oxygen Refit</a>是针对GTK的桌面环境修改的Oxygen图标集，在XFCE下可以正常显示，但是缺点是最大分辨率只有48×48，不能显示较大的高清图标。Archlinux下可以安装AUR中的<a href="http://aur.archlinux.org/packages.php?ID=18673">oxygenrefit2-icon-theme</a>。</p>
-<p><a href="http://picasaweb.google.com/lh/photo/cURosgqNAesp47LgLj4LpA?feat=embedwebsite"></a></p>
-]]></description></item><item><title>升级fcitx到4.0</title><link>http://0x3f.org/post/upgraded-to-fcitx4/</link><pubDate>Sat, 20 Nov 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/upgraded-to-fcitx4/</guid><description><![CDATA[<p>虽然是个大版本，但4.0在实际功能上并没有太大的进步。新版本相对于3.x增加的主要特性是：</p>
-<ol>
-  <li>支持皮肤</li>
-  <li>图形界面的配置工具</li>
-  <li>增加系统托盘图标</li>
-  <li>托盘图标和输入条提供右键菜单，如皮肤切换、选择输入法等</li>
-  <li>放弃GBK编码，改用UTF-8编码</li>
-  <li>拼音支持多词库</li>
-  <li>一系列细节功能及Bug修复</li>
-</ol>
-<p>最主要的特性只有前两个，可见fcitx 4.0只是这个项目涅槃后的一个新的起点，象征意义大于实际意义，尤其对于码表输入法用户来说是这样。三年前我就<a href="http://0x3f.org/?p=185">说过</a>，fcitx在用户造词上有个致命缺陷，就是对于多音字它总是使用字母表中声母靠前的编码，对于音码或者音形码输入法来说，这样造出来的词的编码经常会是错的，更糟糕的是用户还不容易自行修改词组编码。三年后的今天，新版本并没有解决这个问题。</p>
-<p>此外，需要注意的是，新版本对界面和易用性的改进也带来一些负面的影响，fcitx不再是当年以轻巧著称的那只小企鹅了，在我这里，它的内存占用达到了26M，所幸反应速度仍然很快。</p>
-<p>三年前，由于众所周知的原因，fcitx的路线图显得非常混乱，几个新版本都非常不稳定，所以我不再使用源中的版本，转而编译安装了新版本中相对稳定的黑色星期五版，不知不觉中三年过去了，想到一直用著这个版本就这么过来了，很感慨。要卸载编译安装的程序就得用源码重新configure一下再make uninstall，所幸还能在<a href="http://www.fcitx.org/download/fcitx-3.5-BlackFri.tar.bz2">这里</a>找到这个版本。</p>
-<p>Archlinux下安装AUR中的fcitx-config时报如下错误：</p>
-<blockquote>
-ERROR: certificate common name “*.github.com” doesn’t match requested host name “github.com”.
-</blockquote>
-<p>需要修改/etc/makepkg.conf，使wget在下载源码时不做安全验证：</p>
-<blockquote>
-# 增加--no-check-certificate参数
-DLAGENTS=('ftp::/usr/bin/wget -c --passive-ftp -t 3 --waitretry=3'
-          'http::/usr/bin/wget -c -t 3 --waitretry=3 --no-check-certificate'
-          'https::/usr/bin/wget -c -t 3 --waitretry=3 --no-check-certificate'
-          'rsync::/usr/bin/rsync -z'
-          'scp::/usr/bin/scp -C')
-</blockquote>
-<p>新版本的稳定性不如黑色星期五版，如果把简繁转换热键修改为ALT+J，使用时会导致fcitx崩溃。加之实际功能的改进不大，所以是否升级就无可无不可了。</p>
-]]></description></item><item><title>调整Arch的磁盘分区</title><link>http://0x3f.org/post/adjust-disk-partitions-in-archlinux/</link><pubDate>Sat, 13 Nov 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/adjust-disk-partitions-in-archlinux/</guid><description><![CDATA[<p><h2>简述</h2></p>
-
-<p>目标：移除Windows 7，整块硬盘完全分配给Archlinux。</p>
-
-<p>原分区结构：</p>
-
-<p>
-<table class="art_tbl">
-<tr><th class="art_tbl_th">分区</th><th class="art_tbl_th">类型</th><th class="art_tbl_th">挂载</th><th class="art_tbl_th">文件系统</th><th class="art_tbl_th">容量</th></tr>
-<tr><td class="art_tbl_td">/dev/sda1</td><td class="art_tbl_td">主分区，启动分区</td><td class="art_tbl_td">Windows 7的安装分区</td><td class="art_tbl_td">ntfs</td><td class="art_tbl_td">30G</td></tr>
-<tr><td class="art_tbl_td">/dev/sda2</td><td class="art_tbl_td">扩展分区</td><td class="art_tbl_td">-</td><td class="art_tbl_td">-</td><td class="art_tbl_td">-</td></tr>
-<tr><td class="art_tbl_td">/dev/sda5</td><td class="art_tbl_td">逻辑分区</td><td class="art_tbl_td">Windows的D盘</td><td class="art_tbl_td">ntfs</td><td class="art_tbl_td">40G</td></tr>
-<tr><td class="art_tbl_td">/dev/sda3</td><td class="art_tbl_td">主分区</td><td class="art_tbl_td">/</td><td class="art_tbl_td">ext3</td><td class="art_tbl_td">78G</td></tr>
-<tr><td class="art_tbl_td">/dev/sda4</td><td class="art_tbl_td">交换分区</td><td class="art_tbl_td">swap</td><td class="art_tbl_td">-</td><td class="art_tbl_td">2G</td></tr>
-</table>
-</p>
-
-<p>调整后分区结构：</p>
-
-<p>
-<table class="art_tbl">
-<tr><th class="art_tbl_th">分区</th><th class="art_tbl_th">类型</th><th class="art_tbl_th">挂载</th><th class="art_tbl_th">文件系统</th><th class="art_tbl_th">容量</th></tr>
-<tr><td class="art_tbl_td">/dev/sda1</td><td class="art_tbl_td">主分区，启动分区</td><td class="art_tbl_td">/</td><td class="art_tbl_td">ext3</td><td class="art_tbl_td">30G</td></tr>
-<tr><td class="art_tbl_td">/dev/sda2</td><td class="art_tbl_td">主分区</td><td class="art_tbl_td">/home</td><td class="art_tbl_td">ext3</td><td class="art_tbl_td">120G</td></tr>
-<tr><td class="art_tbl_td">/dev/sda3</td><td class="art_tbl_td">交换分区</td><td class="art_tbl_td">swap</td><td class="art_tbl_td">-</td><td class="art_tbl_td">2G</td></tr>
-</table>
-</p>
-
-<p><h2>步骤</h2></p>
-
-<ol>
-```bash
-sudo grub-install /dev/sda
-```
-```bash
-sudo vi /boot/grub/menu.lst
-```
-# (2) Arch Linux
-title  Arch Linux
-root   (hd0,0)
-kernel /boot/vmlinuz26 root=/dev/sda1 resume=/dev/sda4 ro acpi_osi="Linux"
-initrd /boot/kernel26.img
-</blockquote></li>
-  <li><a href="http://0x3f.org/?p=1699">安装U盘启动的Puppy Linux</a></li>
-```bash
-mkfs.ext3 /dev/sda1
-```
-```bash
-# 先点击桌面上sda1和sda3的盘符，使之被挂载到/mnt下
-
-cd /mnt/sda3
-cp -a * /mnt/sda1
-```
-```bash
-vi /mnt/sda1/etc/fstab
-```
-# 修改必要的挂载点，如将根目录的挂载点由sda3改为sda1：
-/dev/sda1           /         ext3      defaults,noatime       0       1
-</blockquote></li>
-  <li>重启系统，并引导到新分区上的系统中</li>
-```bash
-sudo grub-install /dev/sda
-```
-  <li>重启并进入Puppy，使用gparted删除除sda1以外的所有分区，然后在空闲的空间上创建ext3格式的主分区sda2和交换分区sda3</li>
-```bash
-cp -a /mnt/sda1/home/* /mnt/sda2
-rm -rf /mnt/sda1/home/*
-```
-```bash
-vi /mnt/sda1/etc/fstab
-```
-# 将fstab中磁盘分区的挂载点配置为如下内容
-/dev/sda1        /          ext3      defaults,noatime         0        1
-/dev/sda2        /home      ext3      defaults,noatime         1        2
-/dev/sda3        swap       swap      defaults                 0        0
-```bash
-vi /mnt/boot/grub/menu.lst
-```
-# 将原来启动项中的sda3修改为sda1，由于配置过休眠，也将resume参数中的sda4改为sda3，即交换分区
-</blockquote>
-  <li>重启系统</li>
-</ol>
-
-<p><h2>后记</h2></p>
-
-<p>从<a href="http://0x3f.org/?tag=arch">Arch</a><a href="http://0x3f.org/?p=819">诞生</a>时只装XP，到<a href="http://0x3f.org/?p=836">装上Archlinux</a>后双系统并存，再到<a href="http://0x3f.org/?p=1180">尝试Win7</a>，两年的时间里，一直有很多原因让Windows像只寄生虫一样顽强地活著。最近硬盘空间越来越紧张，早前装的Win7也很长时间不用了，于是时隔三年之后，我又成了个纯粹的Archer。</p>
-]]></description></item><item><title>Arch不完全降温笔记</title><link>http://0x3f.org/post/howto-cool-archlinux-down/</link><pubDate>Sat, 18 Sep 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/howto-cool-archlinux-down/</guid><description><![CDATA[<p>主要目标是解决我的X200在Archlinux<em>（本文内容均基于此发行版）</em>下CPU温度长期居高不下的问题，基本原理是使用<a href="http://wiki.archlinux.org/index.php/Cpufrequtils">cpufrequtils</a>根据CPU负载状况自动变频，和使用<a href="http://wiki.archlinux.org/index.php/Laptop_Mode_Tools">laptop-mode-tools</a>实现其它硬件设备的自动节能。最直接的效果是省电，从而延长电池的使用时间，产生的附加影响就是CPU及笔记本整体的温度下降。我几乎不用电池，所以节能不是我的关注点，但降温却是我所欲也。</p>
-
-<p>首先安装cpufrequtils，并将<strong>acpi-cpufreq</strong>、<strong>cpufreq_ondemand</strong>、<strong>cpufreq_powersave</strong>加入<strong>rc.conf</strong>的<strong>MODULES</strong>中，使系统在启动时加载这些模块。</p>
-
-<p>默认情况下，内核采用cpufreq的performance模式，以获得最高性能，现在用ondemand模式使CPU根据负载状况自动变频。修改<strong>/etc/conf.d/cpufreq</strong>文件，将<strong>governor</strong>项设为<strong>ondemand</strong>。</p>
-
-<p>将<strong>cpufreq</strong>加入<strong>rc.conf</strong>的<strong>DAEMONS</strong>中，此守护进程会在系统启动时读取配置文件<strong>/etc/conf.d/cpufreq</strong>中的设置项，故上面设置的ondemand模式会在系统启动时得以自动生效。</p>
-
-<p>然后安装laptop-mode-tools，并修改<strong>/etc/laptop-mode/laptop-mode.conf</strong>，打开所有的三个以<strong>ENABLE</strong>开头的选项，和所有以<strong>CONTROL</strong>开头的选项。</p>
-
-<p>将<strong>laptop-mode</strong>加入<strong>rc.conf</strong>的<strong>DAEMONS</strong>中，使其随系统自动启动。</p>
-
-<p>修改<strong>/etc/laptop-mode/conf.d/usb-autosuspend.conf</strong>，此配置文件用来配置laptop-mode如何管理USB设备的电源使用。我希望在任何时候都启用USB设备自动节能，但需要把我的无线鼠标排除在外，故作如下配置：</p>
-
-```bash
-# 启用USB设备自动挂起
-CONTROL_USB_AUTOSUSPEND="auto"
-
-# 将不使用自动挂起的USB设备的ID填在下面，使用lsusb命令查看ID
-AUTOSUSPEND_USBID_BLACKLIST="04fc:05dc"
-
-# 总是启用USB自动挂起
-BATT_SUSPEND_USB=1
-LM_AC_SUSPEND_USB=1
-NOLM_AC_SUSPEND_USB=1
-```
-
-<p>类似地，修改<strong>intel-hda-powersave.conf</strong>，此配置文件用于配置laptop-mode如何管理Intel HDA音频芯片的电源使用。我希望一直启用声卡自动节能，并适当地将自动进入节电模式的空闲时间增加到30秒，故配置如下：</p>
-
-```bash
-# 启用Intel音频芯片电源管理
-CONTROL_INTEL_HDA_POWER="auto"
-
-# 总是启用
-BATT_INTEL_HDA_POWERSAVE=1
-LM_AC_INTEL_HDA_POWERSAVE=1
-NOLM_AC_INTEL_HDA_POWERSAVE=1
-
-# 适当地设置声卡进入节电模式的超时时间
-INTEL_HDA_DEVICE_TIMEOUT=30
-```
-
-<p>类似地，修改<strong>intel-sata-powermgmt.conf</strong>，启用sata硬盘接口的电源管理。由于我用Blueman控制蓝牙设备，一般不用时都将其关闭，同时经常使用wifi，故蓝牙和无线网卡均未作配置。</p>
-
-<p>最后，关闭conky,Firefox和Chromium，<a href="http://www.lesswatts.org/projects/powertop/">powertop</a>显示conky是个很吵闹的东西，关掉它可以使<strong>Wakeups-from-idle per second</strong>的值下降很多，另外Chromium和Firefox也是耗电大户。</p>
-
-<p><em>在此之前，系统空闲时CPU温度一般是50多度，普通使用时一般在60多度，如果开了kvm虚拟机会达到60至90度间。经过以上设置，系统空闲时CPU温度一度下降到39度，即使开了虚拟机，一般也可维持在50到80度间。</em></p>
-
-<p>另外，对于以上内容，我还有些没搞明白的地方和要补充说明的东西：</p>
-
-<ol>
-<li>虽然将laptop-mode加入rc.conf且已随系统启动，但使用命令“<strong>cat /proc/sys/vm/laptop_mode</strong>”查询得到的结果仍然是0，也就是说没有自动启用laptop-mode，必须使用命令“<strong>sudo /etc/rc.d/laptop-mode restart</strong>”手动重启才行。目前没有找到解决办法。</li>
-<li>虽然启用laptop-mode接管声卡电源管理，但没找到查看是否生效的方法，于是在/etc/rc.local中加入命令“<strong>echo 1 &gt; /sys/module/snd<em>hda</em>intel/parameters/power_save</strong>”以强制声卡节电。</li>
-<li>Intel的powertop是个好东西，用它可以查看哪些进程最影响CPU节能。我们优化的标准之一就是使powertop中显示的“Wakeups-from-idle per second”尽可能地减少。powertop的另一个特点就是通过自动检查当前系统中电源使用的配置情况给出优化的建议，这是个很贴心的功能。</li>
-</ol>
-
-<p>鉴于目前存疑较多并将继续尝试，所以在标题中特别注明“不完全”三个字……</p>
-
-<h3>参考</h3>
-
-<ol>
-<li>http://itgen.blogspot.com/2009/03/energy-management-in-linux.html</li>
-<li>http://www.ibm.com/developerworks/cn/linux/l-cpufreq-1/index.html</li>
-<li>http://www.lesswatts.org/</li>
-</ol>
-]]></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Archlinux on 晴耕雨讀</title><link>http://0x3f.org/tags/archlinux/</link><description>Recent content in Archlinux on 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><copyright>© 淘气 2021</copyright><lastBuildDate>Mon, 09 Aug 2021 15:27:58 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/archlinux/index.xml" rel="self" type="application/rss+xml"/><item><title>Archlinux 下 PHP 不能读取 /tmp 下文件的问题</title><link>http://0x3f.org/posts/php-failed-to-open-stream-under-tmp-in-archlinux/</link><pubDate>Mon, 09 Aug 2021 15:27:58 +0800</pubDate><guid>http://0x3f.org/posts/php-failed-to-open-stream-under-tmp-in-archlinux/</guid><description>问题的场景是，以 http 用户运行的 FPM 进程访问 /tmp 下由普通用户运行的 CLI 进程创建的文件时，报如下错误：
+Failed to open stream.
+原因是 PHP-FPM 的 systemd 配置中默认对 FPM 进程单独挂载 /tmp 目录。
+具体对应：
+/usr/lib/systemd/system/php-fpm.service
+中的：
+PrivateTmp=true</description></item><item><title>Archlinux 下在 /var/run 下创建目录的方法</title><link>http://0x3f.org/posts/create-directory-under-/var/run-in-archlinux/</link><pubDate>Sun, 08 Aug 2021 23:30:18 +0800</pubDate><guid>http://0x3f.org/posts/create-directory-under-/var/run-in-archlinux/</guid><description>Archlinux 使用 systemd-tmpfiles 管理 /var/run 下的临时目录。这意味着如果我手动创建 /var/run/php 目录，在系统重启后将不复存在。
+解决的办法是修改 /usr/lib/tmpfiles.d/php-fpm.conf 文件，把默认的目录名 php-fpm 改成 php。
+但这会带来另一个问题，当 PHP 被重装或升级后，该文件会被覆盖。所以，解决的方法是复制后再修改。</description></item><item><title>Archlinux安装过程中的几个坑</title><link>http://0x3f.org/posts/pits-of-archlinux/</link><pubDate>Mon, 17 Oct 2016 13:14:00 +0000</pubDate><guid>http://0x3f.org/posts/pits-of-archlinux/</guid><description>安装方案 Archboot是比官方镜像更友好的安装媒介，此外还有AUI和Arch Anywhere，没有试过。
+分区 Archboot使用parted处理分区任务。
+第一个分区不能从sector 0开始，否则安装完成后系统玩法启动，报如下错误：
+no operating system found
+正确的姿势：
+(parted) mkpart primary 2048s 512
+以上假设第一个分区用来挂载/boot，分配512M。
+还需要设置/boot所在的分区可启动：
+(parted) set 1 boot on
+启动引导器 GRUB的兼容性比较好。
+如果是syslinux，对于没有单独对/boot分区并且根分区使用ext4的情况，会无法启动，报如下错误：
+failed to load ldlinux.c32
+此时，应对/boot单独分区并使用fat格式。
+图形界面 安装X不会连带安装显卡驱动，要单独安装，否则启动图形界面会黑屏。
+在VirtualBox中安装时，驱动在「virtualbox-guest-utils」。</description></item><item><title>Linux下做Mac OSX安装U盘的步骤</title><link>http://0x3f.org/posts/create-mac-bootable-usb-stick-on-linux/</link><pubDate>Tue, 08 Mar 2016 12:22:00 +0000</pubDate><guid>http://0x3f.org/posts/create-mac-bootable-usb-stick-on-linux/</guid><description>假设U盘对应/dev/sdb1、OSX安装包是osx.dmg。整个过程就是提取出一系列文件，然后复制到U盘里。
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 # 格式化U盘为hfs+文件系统 sudo mkfs.hfsplus -v EICaptianInstall /dev/sdb1 # 提取和挂载第一个光盘镜像 dmg2img -p 5 osx.dmg osx.img mkdir raw &amp;amp;&amp;amp; sudo mount -o loop osx.img raw # 提取和挂载第二个光盘镜像 dmg2img -p 5 raw/Install\ OS\ X\ El\ Capitan.app/Contents/SharedSupport/InstallESD.dmg InstallESD.img mkdir esd &amp;amp;&amp;amp; sudo mount -o loop InstallESD.img esd # 提取和挂载第三个光盘镜像 dmg2img -p 4 esd/BaseSystem.</description></item><item><title>在Archlinux ARM上使用DS18B20温度传感器</title><link>http://0x3f.org/posts/setup-ds18b20-on-archlinux/</link><pubDate>Mon, 25 May 2015 15:30:00 +0000</pubDate><guid>http://0x3f.org/posts/setup-ds18b20-on-archlinux/</guid><description>线路图：
+修改/boot/config.txt，启用w1内核模块。配置文件中有两部分关于w1的内容，一个只使用一个GPIO引脚，需要自行添加上拉电阻，另一个使用一个额外的GPIO引脚作上拉。
+使用Python模块w1thermsensor读数，用法见这里。</description></item><item><title>在Archlinux下使用thinkfan控制Thinkpad x220的风扇转速</title><link>http://0x3f.org/posts/how-to-control-fan-speed-with-thinkfan/</link><pubDate>Sat, 14 Apr 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/how-to-control-fan-speed-with-thinkfan/</guid><description>Archlinux目前对Thinkpad风扇的自动控制效果并不好，气温上升后很容易出现一直在三千多转一直跑的问题。thinkfan是目前用的比较多的自动控制风扇转速的程序，但Google到的配置thinkfan的文章大多语焉不详，可能是跟具体的发行版有关，因为貌似有些发行版中安装了thinkfan后会自动生成缺省的配置文件，但在目前的AUR中的包被安装后却没有生成任何配置文件。
+下面是我在Archlinux下配置的步骤，实际效果很好，现在只要不看视频、不编译程序、不启动Chromium，一般是两千九百转的速度，安静多了。
+lm_sensors 安装lm_sensors并执行命令初始化：
+```bash # 一路回车 sudo sensors-detect ``` 将sensors加入rc.conf中DAEMONS中，开机启动。
+启动sensors服务：
+```bash sudo rc.d start sensors ``` thinkpad_acpi 修改文件“/etc/modprobe.d/thinkpad_acpi.conf”：
+``` options thinkpad_acpi fan_control=1 ``` 我这里虽没有把thinkpad_acpi加到rc.conf的MODULES中，但lsmod也是可以看到它的，说明还是自动启用了。要使上面这项配置生效，必须重启电脑，我这里重启thinkpad_acpi模块时报错说该模块正在被使用。
+thinkfan 安装thinkfan并修改文件“/etc/default/thinkfan”：
+``` START=yes ``` 修改文件“/etc/thinkfan.conf”：
+``` sensor /sys/class/hwmon/hwmon0/temp1_input (0, 0, 55) (1, 48, 60) (2, 50, 61) (3, 52, 63) (4, 56, 65) (5, 59, 66) (7, 63, 32767) ``` 将thinkfan加入rc.conf的DAEMONS中，开机自动启动。
+启动thinkfan：
+```bash sudo thinkfan ``` 查看状态 ```bash # 看CPU温度和风扇转速 sensors # 看风扇详细信息 cat /proc/acpi/ibm/fan ``` Posted via UltraBlog.</description></item><item><title>Oxygen Refit：适用于xfce的Oxygen图标集</title><link>http://0x3f.org/posts/oxygen-iconset-fit-for-xfce/</link><pubDate>Mon, 29 Nov 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/oxygen-iconset-fit-for-xfce/</guid><description>Oxygen是KDE桌面环境中的一套著名的图标集，但是据说基于GTK的桌面环境如GNOME、XFCE等对其支持得不好，我这里在GNOME下倒没发现问题，不过在XFCE下文件夹的图标显示的是缺省的图标，不好看。
+Oxygen Refit是针对GTK的桌面环境修改的Oxygen图标集，在XFCE下可以正常显示，但是缺点是最大分辨率只有48×48，不能显示较大的高清图标。Archlinux下可以安装AUR中的oxygenrefit2-icon-theme。</description></item><item><title>升级fcitx到4.0</title><link>http://0x3f.org/posts/upgraded-to-fcitx4/</link><pubDate>Sat, 20 Nov 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/upgraded-to-fcitx4/</guid><description>虽然是个大版本，但4.0在实际功能上并没有太大的进步。新版本相对于3.x增加的主要特性是：
+最主要的特性只有前两个，可见fcitx 4.0只是这个项目涅槃后的一个新的起点，象征意义大于实际意义，尤其对于码表输入法用户来说是这样。三年前我就说过，fcitx在用户造词上有个致命缺陷，就是对于多音字它总是使用字母表中声母靠前的编码，对于音码或者音形码输入法来说，这样造出来的词的编码经常会是错的，更糟糕的是用户还不容易自行修改词组编码。三年后的今天，新版本并没有解决这个问题。
+此外，需要注意的是，新版本对界面和易用性的改进也带来一些负面的影响，fcitx不再是当年以轻巧著称的那只小企鹅了，在我这里，它的内存占用达到了26M，所幸反应速度仍然很快。
+三年前，由于众所周知的原因，fcitx的路线图显得非常混乱，几个新版本都非常不稳定，所以我不再使用源中的版本，转而编译安装了新版本中相对稳定的黑色星期五版，不知不觉中三年过去了，想到一直用著这个版本就这么过来了，很感慨。要卸载编译安装的程序就得用源码重新configure一下再make uninstall，所幸还能在这里找到这个版本。
+Archlinux下安装AUR中的fcitx-config时报如下错误：
+需要修改/etc/makepkg.conf，使wget在下载源码时不做安全验证：
+新版本的稳定性不如黑色星期五版，如果把简繁转换热键修改为ALT+J，使用时会导致fcitx崩溃。加之实际功能的改进不大，所以是否升级就无可无不可了。</description></item><item><title>调整Arch的磁盘分区</title><link>http://0x3f.org/posts/adjust-disk-partitions-in-archlinux/</link><pubDate>Sat, 13 Nov 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/adjust-disk-partitions-in-archlinux/</guid><description>简述
+目标：移除Windows 7，整块硬盘完全分配给Archlinux。
+原分区结构：
+分区类型挂载文件系统容量 /dev/sda1主分区，启动分区Windows 7的安装分区ntfs30G /dev/sda2扩展分区--- /dev/sda5逻辑分区Windows的D盘ntfs40G /dev/sda3主分区/ext378G /dev/sda4交换分区swap-2G 调整后分区结构：
+分区类型挂载文件系统容量 /dev/sda1主分区，启动分区/ext330G /dev/sda2主分区/homeext3120G /dev/sda3交换分区swap-2G 步骤
+```bash sudo grub-install /dev/sda ``` ```bash sudo vi /boot/grub/menu.lst ``` # (2) Arch Linux title Arch Linux root (hd0,0) kernel /boot/vmlinuz26 root=/dev/sda1 resume=/dev/sda4 ro acpi_osi="Linux" initrd /boot/kernel26.img 安装U盘启动的Puppy Linux ```bash mkfs.ext3 /dev/sda1 ``` ```bash # 先点击桌面上sda1和sda3的盘符，使之被挂载到/mnt下 cd /mnt/sda3 cp -a * /mnt/sda1 ``` ```bash vi /mnt/sda1/etc/fstab ``` # 修改必要的挂载点，如将根目录的挂载点由sda3改为sda1： /dev/sda1 / ext3 defaults,noatime 0 1 重启系统，并引导到新分区上的系统中 ```bash sudo grub-install /dev/sda ``` 重启并进入Puppy，使用gparted删除除sda1以外的所有分区，然后在空闲的空间上创建ext3格式的主分区sda2和交换分区sda3 ```bash cp -a /mnt/sda1/home/* /mnt/sda2 rm -rf /mnt/sda1/home/* ``` ```bash vi /mnt/sda1/etc/fstab ``` # 将fstab中磁盘分区的挂载点配置为如下内容 /dev/sda1 / ext3 defaults,noatime 0 1 /dev/sda2 /home ext3 defaults,noatime 1 2 /dev/sda3 swap swap defaults 0 0 ```bash vi /mnt/boot/grub/menu.</description></item><item><title>Arch不完全降温笔记</title><link>http://0x3f.org/posts/howto-cool-archlinux-down/</link><pubDate>Sat, 18 Sep 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-cool-archlinux-down/</guid><description>主要目标是解决我的X200在Archlinux（本文内容均基于此发行版）下CPU温度长期居高不下的问题，基本原理是使用cpufrequtils根据CPU负载状况自动变频，和使用laptop-mode-tools实现其它硬件设备的自动节能。最直接的效果是省电，从而延长电池的使用时间，产生的附加影响就是CPU及笔记本整体的温度下降。我几乎不用电池，所以节能不是我的关注点，但降温却是我所欲也。
+首先安装cpufrequtils，并将acpi-cpufreq、cpufreq_ondemand、cpufreq_powersave加入rc.conf的MODULES中，使系统在启动时加载这些模块。
+默认情况下，内核采用cpufreq的performance模式，以获得最高性能，现在用ondemand模式使CPU根据负载状况自动变频。修改/etc/conf.d/cpufreq文件，将governor项设为ondemand。
+将cpufreq加入rc.conf的DAEMONS中，此守护进程会在系统启动时读取配置文件/etc/conf.d/cpufreq中的设置项，故上面设置的ondemand模式会在系统启动时得以自动生效。
+然后安装laptop-mode-tools，并修改/etc/laptop-mode/laptop-mode.conf，打开所有的三个以ENABLE开头的选项，和所有以CONTROL开头的选项。
+将laptop-mode加入rc.conf的DAEMONS中，使其随系统自动启动。
+修改/etc/laptop-mode/conf.d/usb-autosuspend.conf，此配置文件用来配置laptop-mode如何管理USB设备的电源使用。我希望在任何时候都启用USB设备自动节能，但需要把我的无线鼠标排除在外，故作如下配置：
+```bash # 启用USB设备自动挂起 CONTROL_USB_AUTOSUSPEND="auto" # 将不使用自动挂起的USB设备的ID填在下面，使用lsusb命令查看ID AUTOSUSPEND_USBID_BLACKLIST="04fc:05dc" # 总是启用USB自动挂起 BATT_SUSPEND_USB=1 LM_AC_SUSPEND_USB=1 NOLM_AC_SUSPEND_USB=1 ``` 类似地，修改intel-hda-powersave.conf，此配置文件用于配置laptop-mode如何管理Intel HDA音频芯片的电源使用。我希望一直启用声卡自动节能，并适当地将自动进入节电模式的空闲时间增加到30秒，故配置如下：
+```bash # 启用Intel音频芯片电源管理 CONTROL_INTEL_HDA_POWER="auto" # 总是启用 BATT_INTEL_HDA_POWERSAVE=1 LM_AC_INTEL_HDA_POWERSAVE=1 NOLM_AC_INTEL_HDA_POWERSAVE=1 # 适当地设置声卡进入节电模式的超时时间 INTEL_HDA_DEVICE_TIMEOUT=30 ``` 类似地，修改intel-sata-powermgmt.conf，启用sata硬盘接口的电源管理。由于我用Blueman控制蓝牙设备，一般不用时都将其关闭，同时经常使用wifi，故蓝牙和无线网卡均未作配置。
+最后，关闭conky,Firefox和Chromium，powertop显示conky是个很吵闹的东西，关掉它可以使Wakeups-from-idle per second的值下降很多，另外Chromium和Firefox也是耗电大户。
+在此之前，系统空闲时CPU温度一般是50多度，普通使用时一般在60多度，如果开了kvm虚拟机会达到60至90度间。经过以上设置，系统空闲时CPU温度一度下降到39度，即使开了虚拟机，一般也可维持在50到80度间。
+另外，对于以上内容，我还有些没搞明白的地方和要补充说明的东西：
+虽然将laptop-mode加入rc.conf且已随系统启动，但使用命令“cat /proc/sys/vm/laptop_mode”查询得到的结果仍然是0，也就是说没有自动启用laptop-mode，必须使用命令“sudo /etc/rc.d/laptop-mode restart”手动重启才行。目前没有找到解决办法。 虽然启用laptop-mode接管声卡电源管理，但没找到查看是否生效的方法，于是在/etc/rc.local中加入命令“echo 1 &amp;gt; /sys/module/sndhdaintel/parameters/power_save”以强制声卡节电。 Intel的powertop是个好东西，用它可以查看哪些进程最影响CPU节能。我们优化的标准之一就是使powertop中显示的“Wakeups-from-idle per second”尽可能地减少。powertop的另一个特点就是通过自动检查当前系统中电源使用的配置情况给出优化的建议，这是个很贴心的功能。 鉴于目前存疑较多并将继续尝试，所以在标题中特别注明“不完全”三个字……
+参考 http://itgen.blogspot.com/2009/03/energy-management-in-linux.html http://www.ibm.com/developerworks/cn/linux/l-cpufreq-1/index.html http://www.lesswatts.org/</description></item><item><title>使Thinkpad的静音按钮能被识别的方法</title><link>http://0x3f.org/posts/howto-make-thinkpad-mute-button-detected-on-linux/</link><pubDate>Mon, 09 Aug 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-make-thinkpad-mute-button-detected-on-linux/</guid><description>我的型号是X200，问题表现为在GNOME或XFCE下静音按钮无效，使用xev也捕获不到输入信号，而音量增加和减小按钮可以正常使用且有OSD。
+解决办法是在grub的启动菜单中，给内核加上参数acpi_osi=“Linux”，如：
+1 2 3 4 5 # (0) Arch Linux title Arch Linux root (hd0,2) kernel /boot/vmlinuz26 root=/dev/sda3 resume=/dev/sda4 ro acpi_osi=&amp;#34;Linux&amp;#34; initrd /boot/kernel26.img 从查到的资料看，acpi_osi参数是用来指定操作系统接口的，据说有些硬件都只针对Windows做了测试或优化，对于这些硬件，如果将内核的操作系统接口指定为Linux，则有可能会出问题。所以内核从2.6.23版本开始，此参数的默认值被改成了“!Linux”，以保证更广泛的兼容性和稳定性。
+而根据这里的说法，thinkpad一直以来在对Linux的兼容程度上有很好的口碑，故可以放心添加这个参数。
+另外，xfce下使用OSD需要安装xfce4-volumed。</description></item><item><title>Linux下pppoe连接建立后仍不能上网的问题</title><link>http://0x3f.org/posts/problem-on-pppoe-connections-on-linux/</link><pubDate>Sat, 10 Jul 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/problem-on-pppoe-connections-on-linux/</guid><description>问题描述pppoe可以连接，ifconfig可以看到ppp0接口，一切正常，只是不能上网。
+解决办法使用如下命令查看路由表：
+1 route 正常情况下返回的结果中应该有如下内容：
+如果没有，可手工添加：
+1 route add default dev ppp0 如果可以上网，就成功了。
+使用如下脚本在pppoe连接成功时自动添加路由表项：
+1 2 3 4 5 6 #!/bin/sh if ifconfig ppp0 &amp;gt; /dev/null 2&amp;gt;&amp;amp;1 ; then route del default route add default dev ppp0 fi 将上述内容保存成名为01-route.sh的文件，权限755，放到/etc/ppp/ip-up.d目录下。
+然后创建以下两个脚本：
+1 2 3 4 5 6 7 8 9 10 11 12 #!/bin/bash if ifconfig ppp0 &amp;gt; /dev/null 2&amp;gt;&amp;amp;1 ; then echo &amp;#39;PPPOE has already been switched on !</description></item><item><title>低碳生活：使用 cpufrequtils降低CPU温度</title><link>http://0x3f.org/posts/using-cpufrequtils-to-reduce-cpu-temperature/</link><pubDate>Fri, 11 Jun 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/using-cpufrequtils-to-reduce-cpu-temperature/</guid><description>cpufrequtils可以根据不同的方案自动调节CPU的频率，从而达到在系统空闲时降低CPU温度、节省电力的目的。
+Archlinux官方wiki已经介绍得很明白了：http://wiki.archlinux.org/index.php/Cpufrequtils_(简体中文)使用后效果明显，CPU温度有所下降，下面是cpufrequtils在Arch上的工作情况：
+[lenin@archer ~]$ cpufreq-info cpufrequtils 007: cpufreq-info (C) Dominik Brodowski 2004-2009 Report errors and bugs to cpufreq@vger.kernel.org, please. analyzing CPU 0: driver: acpi-cpufreq CPUs which run at the same hardware frequency: 0 1 CPUs which need to have their frequency coordinated by software: 0 maximum transition latency: 10.0 us. hardware limits: 800 MHz - 2.53 GHz available frequency steps: 2.53 GHz, 2.53 GHz, 1.60 GHz, 800 MHz available cpufreq governors: ondemand, performance current policy: frequency should be within 800 MHz and 1.</description></item><item><title>Archlinux升级到GNOME2.30后的光标主题问题</title><link>http://0x3f.org/posts/problem-about-icon-theme-on-gnome230/</link><pubDate>Sun, 04 Apr 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/problem-about-icon-theme-on-gnome230/</guid><description>Archlinux下的GNOME升级到2.30后，若启用了Compiz，则光标主题只能使用X默认的主题，无法自定义。尚不清楚是GNOME新版本自身的问题还是仅限于Arch发行版。
+在官方提供解决方案或更新之前，可以先使用Xdefault或Xresource文件实现。
+以后者为例，编辑用户主目录下的.Xresource，在文件最后添加如下内容：
+Xcursor.theme: faber-anthracite-shd-m
+faber-anthracite-sdh-m是我使用的光标主题的文件夹名。
+然后执行如下命令：
+xrdb ~/.Xresource
+最后注销并重新登录即可。</description></item><item><title>被迫弃UMS而用KMS</title><link>http://0x3f.org/posts/switching-from-ums-to-kms/</link><pubDate>Sat, 13 Feb 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/switching-from-ums-to-kms/</guid><description>昨天更新了一下系统，今天开机就白屏了。于是先关掉Compiz，看了一下Archlinux的新闻，发现新的xf86-video-intel中已经移除了UMS，也就意味着只能使用KMS做3D加速了。
+UMS的全称是User Mode-Setting，是一种传统的图形界面初始化方案，即在X加载之后由它初始化图形界面。这种方案的弊端是虚拟终端不具备显示和处理图形的能力，同时虚拟终端和图形界面之间的切换显得缓慢并带有闪烁。
+KMS的全称是Kernel Mode-Setting，是新一代图形界面初始化方案，它将图形界面的初始化由X加载之后由X负责进行改为在内核初始化时由内核进行。KMS的好处不仅仅是解决了上面UMS的问题，同时也使得Linux具备了在启动时显示漂亮的开机图示的能力。另外，在3D加速性能和低功耗方面，KMS也较UMS更胜一筹。
+我的Thinkpad X200使用的是Intel GMA 945的芯片组，而Archlinux的Wiki上仍以915为例，所以尝试着做如下内容：
+一、去除/boot/grub/menu.lst中Kernel启动参数中的vga参数；
+二、加入以下内容到/etc/modprobe.d/modprobe.conf：
+options i945 modeset=1
+三、在/etc/rc.conf中的MODULES行加入intel_agp和i945；
+重启系统后，Compiz白屏问题解决，3D加速性能似乎有所上升。</description></item><item><title>立方体归来</title><link>http://0x3f.org/posts/cube-is-back/</link><pubDate>Tue, 24 Nov 2009 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/cube-is-back/</guid><description> 上次鼓捣出立方体还是几年前在学校的时候，Ubuntu+Beryl。 我那个时候的台式机，Celeron Tualatin+256M SDRAM+GForce 440，跑XP要了亲命，忍无可忍而投奔Linux，结果一不小心鼓捣出了立方体，捎带着Firefox、OpenOffice开了一大堆，屁事儿没有，我就是这么死心塌地地上了贼船，直至今天。 后来一直用Archlinux，习惯了Fluxbox和Openbox的简洁。买了X200后曾试图找寻一下旧日华丽的记忆，但却人是物非，新的X200、新的Archlinux、新的Compiz-fusion远不如当年的老牛破车那么搭调。虽说也搞出了立方体，但所有的窗口都没有边框，于是作罢。 上周六鬼使神差的进入GNOME并打开Fusion-icon，奇迹就这么出现了：</description></item></channel></rss>

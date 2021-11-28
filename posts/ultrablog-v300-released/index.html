@@ -1,0 +1,180 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta property="og:title" content="UltraBlog.vim v3.0释出：全文检索与事件驱动">
+<meta property="og:description" content="用了一周的业余时间，昨天我释出了UltraBlog.vim的3.0版。新版本主要加入了全文检索的功能，并引入事件驱动的模式。
+全文检索是我蓄谋已久的功能，一个不能搜索的博客客户端的管理功能是大打折扣的。得益于SQLite数据库和SQLAlchemy框架，全文检索的实现是很简单的，新增加的:UBFind命令将在所有文章和页面的标题与内容中查询，并将搜索结果显示在一个可分页的列表中。这个命令支持任意多个关键词，各关键词之间遵循与的关系。此外，检索结果中，所有的关键词将被自动标记为高亮。
+事件驱动模式的引入是我悍然将版本号跳跃到3.x的主要原因。
+在前几个版本中，我实现了对多窗口的支持，它使得用户可以在新窗口中打开列表中的文章。但UltraBlog.vim最初开发的时候并没有考虑到多窗口的问题，所有命令都只针对当前窗口进行操作。这就有了缓冲区内容同步的问题，假如在一个新的缓冲区中打开了和另一个缓冲区相同的文章，则一个缓冲区内容的改变不会同步到另外一个中，这多少是有些隐患的。
+最直接的做法是在所有可能改变缓冲区内容的功能中加入对其它缓冲区的处理，但这样做有不少问题：
+ 代码耦合度太高，违反K.I.S.S原则，不利于今后的开发和维护 函数体过长，我讨厌难看的代码 代码冗余，重复劳动  事件驱动模式可以很好的解决以上问题，一个函数只干一件事，做完后一个事件抛出去，至于连带著要做什么，谁监听这个事件谁去处理，代码的耦合度很低，复用度很高，易于维护和阅读。
+UltraBlog.vim引入事件驱动模式处理缓冲区同步的问题。不同的操作抛出不同的事件，所有的事件继承自父类UBEvent：
+```python class UBEvent: def __init__(self, srcObj): self.srcObj = srcObj class UBDebugEvent(UBEvent): pass class UBTmplDelEvent(UBEvent): pass class UBTmplSaveEvent(UBEvent): pass class UBLocalPostDelEvent(UBEvent): pass class UBRemotePostDelEvent(UBEvent): pass class UBPostSendEvent(UBEvent): pass class UBPostSaveEvent(UBEvent): pass ``` 一个可能改变缓冲区内容的操作执行完后，创建一个特定的事件并将其加入到事件队列中。事件队列类中存放两个列表，一是事件队列，二是事件监听器列表；提供三个方法，分别用来注册事件监听器、对事件执行入队列操作和处理队列中所有事件：
+```python class UBEventQueue: queue = [] listeners = [] @classmethod def fireEvent(cls, evt): cls.queue.append(evt) @classmethod def processEvents(cls): for evt in cls.queue: for listener in cls.listeners: if listener.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://0x3f.org/posts/ultrablog-v300-released/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2011-07-25T00:00:00+00:00">
+<meta property="article:modified_time" content="2011-07-25T00:00:00+00:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="UltraBlog.vim v3.0释出：全文检索与事件驱动">
+<meta name=twitter:description content="用了一周的业余时间，昨天我释出了UltraBlog.vim的3.0版。新版本主要加入了全文检索的功能，并引入事件驱动的模式。
+全文检索是我蓄谋已久的功能，一个不能搜索的博客客户端的管理功能是大打折扣的。得益于SQLite数据库和SQLAlchemy框架，全文检索的实现是很简单的，新增加的:UBFind命令将在所有文章和页面的标题与内容中查询，并将搜索结果显示在一个可分页的列表中。这个命令支持任意多个关键词，各关键词之间遵循与的关系。此外，检索结果中，所有的关键词将被自动标记为高亮。
+事件驱动模式的引入是我悍然将版本号跳跃到3.x的主要原因。
+在前几个版本中，我实现了对多窗口的支持，它使得用户可以在新窗口中打开列表中的文章。但UltraBlog.vim最初开发的时候并没有考虑到多窗口的问题，所有命令都只针对当前窗口进行操作。这就有了缓冲区内容同步的问题，假如在一个新的缓冲区中打开了和另一个缓冲区相同的文章，则一个缓冲区内容的改变不会同步到另外一个中，这多少是有些隐患的。
+最直接的做法是在所有可能改变缓冲区内容的功能中加入对其它缓冲区的处理，但这样做有不少问题：
+ 代码耦合度太高，违反K.I.S.S原则，不利于今后的开发和维护 函数体过长，我讨厌难看的代码 代码冗余，重复劳动  事件驱动模式可以很好的解决以上问题，一个函数只干一件事，做完后一个事件抛出去，至于连带著要做什么，谁监听这个事件谁去处理，代码的耦合度很低，复用度很高，易于维护和阅读。
+UltraBlog.vim引入事件驱动模式处理缓冲区同步的问题。不同的操作抛出不同的事件，所有的事件继承自父类UBEvent：
+```python class UBEvent: def __init__(self, srcObj): self.srcObj = srcObj class UBDebugEvent(UBEvent): pass class UBTmplDelEvent(UBEvent): pass class UBTmplSaveEvent(UBEvent): pass class UBLocalPostDelEvent(UBEvent): pass class UBRemotePostDelEvent(UBEvent): pass class UBPostSendEvent(UBEvent): pass class UBPostSaveEvent(UBEvent): pass ``` 一个可能改变缓冲区内容的操作执行完后，创建一个特定的事件并将其加入到事件队列中。事件队列类中存放两个列表，一是事件队列，二是事件监听器列表；提供三个方法，分别用来注册事件监听器、对事件执行入队列操作和处理队列中所有事件：
+```python class UBEventQueue: queue = [] listeners = [] @classmethod def fireEvent(cls, evt): cls.queue.append(evt) @classmethod def processEvents(cls): for evt in cls.queue: for listener in cls.listeners: if listener.">
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-93233020-1','auto'),ga('send','pageview'))</script>
+<meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name=theme-color media="(prefers-color-scheme: dark)" content="#262d33">
+<title>
+晴耕雨讀 - UltraBlog.vim v3.0释出：全文检索与事件驱动
+</title>
+<link rel="shortcut icon" href=/favicon.ico type=image/x-icon>
+<link rel=preconnect href=https://fonts.googleapis.com>
+<link rel=preconnect href=https://fonts.gstatic.com crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel=stylesheet>
+<link rel=stylesheet href=/minima.1638090831.css>
+<script defer type=text/javascript src=/minima.1638090831.js></script>
+</head>
+<script>try{'theme'in localStorage||(localStorage.theme=window.matchMedia('(prefer-color-scheme: dark)').matches?'dark':'light'),document.querySelector('html').classList.add(localStorage.theme)}catch(a){console.error(a)}</script>
+<body class="sm:mx-5 sm:my-0">
+<header class="flex justify-between items-center sm:my-3">
+<div class="flex items-center">
+<div id=theme-switcher class="text-4xl cursor-pointer">🌚</div>
+</div>
+<nav class="flex items-center
+whitespace-nowrap overflow-x-auto overflow-y-hidden">
+<a class=ml-5 href=/>主頁</a>
+<a class=ml-5 href=/posts>文章</a>
+<a class=ml-5 href=/tags>標籤</a>
+<a class=ml-5 href=/categories>分類</a>
+<a class=ml-5 href=/about>關於</a>
+</nav>
+</header>
+<h1 class="mt-8 mb-6">UltraBlog.vim v3.0释出：全文检索与事件驱动</h1>
+<div class="mb-3 text-xs flex justify-between sm:flex-col">
+<div>
+Posted at &mdash; Jul 25, 2011
+</div>
+<div class=sm:mt-4>
+<a class=not-first:ml-3 href=/tags/Plugin>#Plugin</a>
+<a class=not-first:ml-3 href=/tags/Python>#Python</a>
+<a class=not-first:ml-3 href=/tags/UltraBlog.vim>#UltraBlog.vim</a>
+<a class=not-first:ml-3 href=/tags/Vim>#Vim</a>
+<a class=not-first:ml-3 href=/tags/%e5%8d%9a%e5%ae%a2>#博客</a>
+<a class=not-first:ml-3 href=/tags/%e7%bc%96%e7%a8%8b>#编程</a>
+</div>
+</div>
+<main>
+<p></p>
+<article class=md>
+<p>用了一周的业余时间，昨天我释出了<a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>的3.0版。新版本主要加入了全文检索的功能，并引入事件驱动的模式。</p>
+<p>全文检索是我蓄谋已久的功能，一个不能搜索的博客客户端的管理功能是大打折扣的。得益于SQLite数据库和SQLAlchemy框架，全文检索的实现是很简单的，新增加的<code>:UBFind</code>命令将在所有文章和页面的标题与内容中查询，并将搜索结果显示在一个可分页的列表中。这个命令支持任意多个关键词，各关键词之间遵循与的关系。此外，检索结果中，所有的关键词将被自动标记为高亮。</p>
+<p>事件驱动模式的引入是我悍然将版本号跳跃到3.x的主要原因。</p>
+<p>在前几个版本中，我实现了对多窗口的支持，它使得用户可以在新窗口中打开列表中的文章。但UltraBlog.vim最初开发的时候并没有考虑到多窗口的问题，所有命令都只针对当前窗口进行操作。这就有了缓冲区内容同步的问题，假如在一个新的缓冲区中打开了和另一个缓冲区相同的文章，则一个缓冲区内容的改变不会同步到另外一个中，这多少是有些隐患的。</p>
+<p>最直接的做法是在所有可能改变缓冲区内容的功能中加入对其它缓冲区的处理，但这样做有不少问题：</p>
+<ul>
+<li>代码耦合度太高，违反K.I.S.S原则，不利于今后的开发和维护</li>
+<li>函数体过长，我讨厌难看的代码</li>
+<li>代码冗余，重复劳动</li>
+</ul>
+<p>事件驱动模式可以很好的解决以上问题，一个函数只干一件事，做完后一个事件抛出去，至于连带著要做什么，谁监听这个事件谁去处理，代码的耦合度很低，复用度很高，易于维护和阅读。</p>
+<p>UltraBlog.vim引入事件驱动模式处理缓冲区同步的问题。不同的操作抛出不同的事件，所有的事件继承自父类<strong>UBEvent</strong>：</p>
+```python
+class UBEvent:
+def __init__(self, srcObj):
+self.srcObj = srcObj
+class UBDebugEvent(UBEvent): pass
+class UBTmplDelEvent(UBEvent): pass
+class UBTmplSaveEvent(UBEvent): pass
+class UBLocalPostDelEvent(UBEvent): pass
+class UBRemotePostDelEvent(UBEvent): pass
+class UBPostSendEvent(UBEvent): pass
+class UBPostSaveEvent(UBEvent): pass
+```
+<p>一个可能改变缓冲区内容的操作执行完后，创建一个特定的事件并将其加入到事件队列中。事件队列类中存放两个列表，一是事件队列，二是事件监听器列表；提供三个方法，分别用来注册事件监听器、对事件执行入队列操作和处理队列中所有事件：</p>
+```python
+class UBEventQueue:
+queue = []
+listeners = []
+@classmethod
+def fireEvent(cls, evt):
+cls.queue.append(evt)
+@classmethod
+def processEvents(cls):
+for evt in cls.queue:
+for listener in cls.listeners:
+if listener.isTarget(evt):
+cls.queue.remove(evt)
+listener.processEvent(evt)
+@classmethod
+def registerListener(cls, lsnr):
+cls.listeners.append(lsnr)
+```
+<p>事件队列对事件的处理是通过事件监听器进行的，每个事件监听器要实现两个功能：识别监听对象和处理监听对象。所有具体事件的监听类都是<strong>UBListener</strong>的子类：</p>
+```python
+class UBListener():
+''' Parent class of all listeners
+'''
+eventType = None
+@classmethod
+def isTarget(cls, evt):
+return isinstance(evt, cls.eventType)
+@staticmethod
+def processEvent(evt): pass
+class UBPostSaveListener(UBListener):
+''' Listener for saving posts/pages
+1. Refresh the current view if it is an edit/list view of this post
+2. Mark all edit/list views of posts/pages outdated
+'''
+eventType = UBPostSaveEvent
+@staticmethod
+def processEvent(evt):
+for nr in ub_get_buffers(['post_edit','page_edit']):
+if evt.srcObj==ub_get_meta('id', nr):
+if nr==ub_get_bufnr('%'):
+ub_refresh_current_view()
+else:
+ub_set_view_outdated(nr)
+for nr in ub_get_buffers(['post_list','page_list','search_result_list']):
+if nr == ub_get_bufnr('%'):
+ub_refresh_current_view()
+else:
+ub_set_view_outdated(nr)
+```
+<p>事件监听器遍历所有满足处理条件的缓冲区，对当前缓冲区，立即刷新，其余的标记为已过期。同时利用Vim自身的事件驱动特性，在进入已过期的缓冲区时，再更新之，也就是传说中的懒加载模式：</p>
+```vim
+au BufEnter * py __ub_on_buffer_enter()
+```
+```python
+@__ub_exception_handler
+def __ub_on_buffer_enter():
+''' Triggered by BufEnter event, check if the buffer is outdated
+'''
+if ub_is_view_outdated('%'):
+ub_refresh_current_view()
+ub_set_view_outdated('%', False)
+```
+<p>此外，随著代码量的增加，原来把全部代码都放在一个文件中的做法不再适用，尤其是以<a href=http://en.wikipedia.org/wiki/Here_document>Here Document</a>形式存放在vim脚本文件中的Python代码不能被ctags识别，所以按类别分别存放到<strong>$VIMRUNTIME/plugin/ultrablog/</strong>下的几个Python源文件中。</p>
+<p>Posted via <a href="http://0x3f.org/?p=1894">UltraBlog.vim</a>.</p>
+</article>
+</main>
+<footer class="mt-8 flex sm:flex-col-reverse justify-between items-center">
+<p class="mt-0 text-sm">
+© 淘气 2021 |
+<a href=https://gohugo.io target=_blank rel="noopener noreferrer">Hugo</a> on
+<a href=https://github.com/mivinci/hugo-theme-minima target=_blank rel="noopener noreferrer">Minima</a>
+</p>
+<p class="flex items-center mt-0">
+<a class="icon mx-2" href=https://github.com/xbot title=github><svg fill="#63636f" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>GitHub</title><path d="M12 .297c-6.63.0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577.0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93.0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176.0.0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22.0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22.0 1.606-.015 2.896-.015 3.286.0.315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+</a>
+<a class="icon mx-2" href=/index.xml title=rss><svg fill="#63636f" t="1626591563876" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" p-id="1984" width="18" height="16"><path d="M128 768a128 128 0 100 256 128 128 0 000-256zM0 368v176c265.104.0 480 214.912 480 480h176c0-362.32-293.696-656-656-656zM0 0v176c468.336.0 848 379.664 848 848h176C1024 458.464 565.536.0.0.0z" p-id="1985"/></svg>
+</a>
+</p>
+</footer>
+</body>
+</html>

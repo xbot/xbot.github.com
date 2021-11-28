@@ -1,65 +1,23 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>内核 - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/%E5%86%85%E6%A0%B8/</link><description>内核 - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Mon, 09 Aug 2010 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/%E5%86%85%E6%A0%B8/" rel="self" type="application/rss+xml"/><item><title>使Thinkpad的静音按钮能被识别的方法</title><link>http://0x3f.org/post/howto-make-thinkpad-mute-button-detected-on-linux/</link><pubDate>Mon, 09 Aug 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/howto-make-thinkpad-mute-button-detected-on-linux/</guid><description><![CDATA[<p>我的型号是X200，问题表现为在GNOME或XFCE下静音按钮无效，使用xev也捕获不到输入信号，而音量增加和减小按钮可以正常使用且有OSD。</p>
-<p>解决办法是在grub的启动菜单中，给内核加上参数<strong>acpi_osi=“Linux”</strong>，如：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># (0) Arch Linux</span>
-title  Arch Linux
-root   <span class="o">(</span>hd0,2<span class="o">)</span>
-kernel /boot/vmlinuz26 <span class="nv">root</span><span class="o">=</span>/dev/sda3 <span class="nv">resume</span><span class="o">=</span>/dev/sda4 ro <span class="nv">acpi_osi</span><span class="o">=</span><span class="s2">&#34;Linux&#34;</span>
-initrd /boot/kernel26.img
-</code></pre></td></tr></table>
-</div>
-</div><p>从查到的资料看，<strong>acpi_osi</strong>参数是用来指定操作系统接口的，据说有些硬件都只针对Windows做了测试或优化，对于这些硬件，如果将内核的操作系统接口指定为Linux，则有可能会出问题。所以内核从2.6.23版本开始，此参数的默认值被改成了“<strong>!Linux</strong>”，以保证更广泛的兼容性和稳定性。</p>
-<p>而根据<a href="http://www.thinkwiki.org/wiki/Mute_button">这里</a>的说法，thinkpad一直以来在对Linux的兼容程度上有很好的口碑，故可以放心添加这个参数。</p>
-<p>另外，xfce下使用OSD需要安装xfce4-volumed。</p>
-]]></description></item><item><title>TTL线在Linux下的用法</title><link>http://0x3f.org/post/usage-of-ttl-wire-on-linux/</link><pubDate>Sun, 18 Jul 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/usage-of-ttl-wire-on-linux/</guid><description><![CDATA[<p>虽然由于<a href="http://0x3f.org/?p=1544">我的H108B</a>没有TTL引脚而无法通过TTL线登入猫的<a href="http://en.wikipedia.org/wiki/BusyBox">BusyBox</a>系统，但TTL线在Linux下的使用方法仍然值得一叙，因为除此之外，它还有较为广泛的用途，例如为路由器刷<a href="http://en.wikipedia.org/wiki/OpenWrt">OpenWRT</a>系统等等。</p>
-<p>TTL转USB端子是目前较为常见的此类设备，这得益于它的简单易用和便携性。在这类设备上最常见的就是台湾的Prolific Technology生产的<strong>PL2303</strong>：</p>
-<p><a href="http://picasaweb.google.com/lh/photo/fAc0kt6VmnFFTUY7IA-VrA?feat=embedwebsite"></a></p>
-<p>这种芯片的驱动已被编译进Linux内核，如果使用的是较新版本的内核，则使用该芯片的TTL转USB端子会被自动识别，通常为<strong>/dev/ttyUSB0</strong>设备，使用<strong>lsusb</strong>命令可以查看：</p>
-<blockquote>
-[lenin@archer ~]$ lsusb
-Bus 008 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
-Bus 007 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
-Bus 006 Device 003: ID 067b:2303 Prolific Technology, Inc. PL2303 Serial Port
-Bus 006 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hub
-</blockquote>
-<p>将四根杜邦线连接到TTL转USB插头上，并接入相应设备的对应引脚。同一根线两端连接的引脚必须对应，另外，VCC引脚不能接线，否则会烧坏TTL转 USB芯片。</p>
-<p>在计算机上使用串口通讯程序进行操控，常见的串口通讯程序有：<a href="http://en.wikipedia.org/wiki/Minicom">minicom</a>，<a href="http://en.wikipedia.org/wiki/Microcom">microcom</a>，picocom，tinyserial，xgcom。</p>
-<p>以minicom为例，进入minicom的设置界面：</p>
-<blockquote>sudo minicom -s</blockquote>
-<p>先设置默认的通讯设备为ttyUSB0并设置硬件流控制（Hardware Flow Control）为No：</p>
-<p><a href="http://picasaweb.google.com/lh/photo/YnqotA0Fo6Z883T7aKvDcg?feat=embedwebsite"></a></p>
-<p><a href="http://picasaweb.google.com/lh/photo/G2S6THC9IqvBChZGkJfyqQ?feat=embedwebsite"></a></p>
-<p>保存为缺省设置：</p>
-<p><a href="http://picasaweb.google.com/lh/photo/lY9b49woVJhLdkPJqViT3Q?feat=embedwebsite"></a></p>
-<p>启动minicom：</p>
-<blockquote>sudo minicom</blockquote>
-<p>理论上说，此时即可和设备进行通讯了。</p>
-<p>Windows下要安装相应芯片的驱动，通讯程序一般用SecureCRT。</p>
-]]></description></item><item><title>被迫弃UMS而用KMS</title><link>http://0x3f.org/post/switching-from-ums-to-kms/</link><pubDate>Sat, 13 Feb 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/switching-from-ums-to-kms/</guid><description><![CDATA[<p>昨天更新了一下系统，今天开机就白屏了。于是先关掉Compiz，看了一下Archlinux的<a href="http://www.archlinux.org/news/484/">新闻</a>，发现新的<strong>xf86-video-intel</strong>中已经移除了UMS，也就意味着只能使用KMS做3D加速了。</p>
-
-<p><a href="http://www.thinkwiki.org/wiki/Intel_Graphics_Media_Accelerator_950#User_mode_setting_.28UMS.29">UMS</a>的全称是<strong>User Mode-Setting</strong>，是一种传统的图形界面初始化方案，即在X加载之后由它初始化图形界面。这种方案的弊端是虚拟终端不具备显示和处理图形的能力，同时虚拟终端和图形界面之间的切换显得缓慢并带有闪烁。</p>
-
-<p><a href="http://wiki.archlinux.org/index.php/KMS">KMS</a>的全称是<strong>Kernel Mode-Setting</strong>，是新一代图形界面初始化方案，它将图形界面的初始化由X加载之后由X负责进行改为在内核初始化时由内核进行。KMS的好处不仅仅是解决了上面UMS的问题，同时也使得Linux具备了在启动时显示漂亮的开机图示的能力。另外，在3D加速性能和低功耗方面，KMS也较UMS更胜一筹。</p>
-
-<p>我的<a href="http://0x3f.org/?p=819">Thinkpad X200</a>使用的是Intel GMA 945的芯片组，而Archlinux的<a href="http://wiki.archlinux.org/index.php/Intel_(简体中文)#KMS_.28Kernel_Mode_Setting.29">Wiki</a>上仍以915为例，所以尝试着做如下内容：</p>
-
-<p>一、去除/boot/grub/menu.lst中Kernel启动参数中的<a href="http://0x3f.org/?p=866">vga参数</a>；</p>
-
-<p>二、加入以下内容到/etc/modprobe.d/modprobe.conf：</p>
-
-<blockquote>
-  <p>options i945 modeset=1</p>
-</blockquote>
-
-<p>三、在/etc/rc.conf中的<strong>MODULES</strong>行加入<strong>intel_agp</strong>和<strong>i945</strong>；</p>
-
-<p>重启系统后，Compiz白屏问题解决，3D加速性能似乎有所上升。</p>
-]]></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>内核 on 晴耕雨讀</title><link>http://0x3f.org/tags/%E5%86%85%E6%A0%B8/</link><description>Recent content in 内核 on 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><copyright>© 淘气 2021</copyright><lastBuildDate>Mon, 09 Aug 2010 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/%E5%86%85%E6%A0%B8/index.xml" rel="self" type="application/rss+xml"/><item><title>使Thinkpad的静音按钮能被识别的方法</title><link>http://0x3f.org/posts/howto-make-thinkpad-mute-button-detected-on-linux/</link><pubDate>Mon, 09 Aug 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-make-thinkpad-mute-button-detected-on-linux/</guid><description>我的型号是X200，问题表现为在GNOME或XFCE下静音按钮无效，使用xev也捕获不到输入信号，而音量增加和减小按钮可以正常使用且有OSD。
+解决办法是在grub的启动菜单中，给内核加上参数acpi_osi=“Linux”，如：
+1 2 3 4 5 # (0) Arch Linux title Arch Linux root (hd0,2) kernel /boot/vmlinuz26 root=/dev/sda3 resume=/dev/sda4 ro acpi_osi=&amp;#34;Linux&amp;#34; initrd /boot/kernel26.img 从查到的资料看，acpi_osi参数是用来指定操作系统接口的，据说有些硬件都只针对Windows做了测试或优化，对于这些硬件，如果将内核的操作系统接口指定为Linux，则有可能会出问题。所以内核从2.6.23版本开始，此参数的默认值被改成了“!Linux”，以保证更广泛的兼容性和稳定性。
+而根据这里的说法，thinkpad一直以来在对Linux的兼容程度上有很好的口碑，故可以放心添加这个参数。
+另外，xfce下使用OSD需要安装xfce4-volumed。</description></item><item><title>TTL线在Linux下的用法</title><link>http://0x3f.org/posts/usage-of-ttl-wire-on-linux/</link><pubDate>Sun, 18 Jul 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/usage-of-ttl-wire-on-linux/</guid><description>虽然由于我的H108B没有TTL引脚而无法通过TTL线登入猫的BusyBox系统，但TTL线在Linux下的使用方法仍然值得一叙，因为除此之外，它还有较为广泛的用途，例如为路由器刷OpenWRT系统等等。
+TTL转USB端子是目前较为常见的此类设备，这得益于它的简单易用和便携性。在这类设备上最常见的就是台湾的Prolific Technology生产的PL2303：
+这种芯片的驱动已被编译进Linux内核，如果使用的是较新版本的内核，则使用该芯片的TTL转USB端子会被自动识别，通常为/dev/ttyUSB0设备，使用lsusb命令可以查看：
+将四根杜邦线连接到TTL转USB插头上，并接入相应设备的对应引脚。同一根线两端连接的引脚必须对应，另外，VCC引脚不能接线，否则会烧坏TTL转 USB芯片。
+在计算机上使用串口通讯程序进行操控，常见的串口通讯程序有：minicom，microcom，picocom，tinyserial，xgcom。
+以minicom为例，进入minicom的设置界面：
+先设置默认的通讯设备为ttyUSB0并设置硬件流控制（Hardware Flow Control）为No：
+保存为缺省设置：
+启动minicom：
+理论上说，此时即可和设备进行通讯了。
+Windows下要安装相应芯片的驱动，通讯程序一般用SecureCRT。</description></item><item><title>被迫弃UMS而用KMS</title><link>http://0x3f.org/posts/switching-from-ums-to-kms/</link><pubDate>Sat, 13 Feb 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/switching-from-ums-to-kms/</guid><description>昨天更新了一下系统，今天开机就白屏了。于是先关掉Compiz，看了一下Archlinux的新闻，发现新的xf86-video-intel中已经移除了UMS，也就意味着只能使用KMS做3D加速了。
+UMS的全称是User Mode-Setting，是一种传统的图形界面初始化方案，即在X加载之后由它初始化图形界面。这种方案的弊端是虚拟终端不具备显示和处理图形的能力，同时虚拟终端和图形界面之间的切换显得缓慢并带有闪烁。
+KMS的全称是Kernel Mode-Setting，是新一代图形界面初始化方案，它将图形界面的初始化由X加载之后由X负责进行改为在内核初始化时由内核进行。KMS的好处不仅仅是解决了上面UMS的问题，同时也使得Linux具备了在启动时显示漂亮的开机图示的能力。另外，在3D加速性能和低功耗方面，KMS也较UMS更胜一筹。
+我的Thinkpad X200使用的是Intel GMA 945的芯片组，而Archlinux的Wiki上仍以915为例，所以尝试着做如下内容：
+一、去除/boot/grub/menu.lst中Kernel启动参数中的vga参数；
+二、加入以下内容到/etc/modprobe.d/modprobe.conf：
+options i945 modeset=1
+三、在/etc/rc.conf中的MODULES行加入intel_agp和i945；
+重启系统后，Compiz白屏问题解决，3D加速性能似乎有所上升。</description></item></channel></rss>

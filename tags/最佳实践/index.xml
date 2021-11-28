@@ -1,410 +1,188 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>最佳实践 - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/</link><description>最佳实践 - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sun, 21 Nov 2021 17:16:15 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" rel="self" type="application/rss+xml"/><item><title>自动追剧的工作流</title><link>http://0x3f.org/post/auto-workflow-of-following-tv-series-and-movies/</link><pubDate>Sun, 21 Nov 2021 17:16:15 +0800</pubDate><author>作者</author><guid>http://0x3f.org/post/auto-workflow-of-following-tv-series-and-movies/</guid><description><![CDATA[<p>在 NAS 上搭了个自动追剧、追影的工作流，体验非常好。</p>
-<p></p>
-<p>只需要把想看的美剧或者电影添加到监控列表里，就可以在资源出现之后自动下载并通知到手机或电脑，全程无值守，回家打开电视就能看。</p>
-<p>用到这些工具：</p>
-<ul>
-<li>Jackett: BT 索引工具，负责搜索资源。</li>
-<li>Sonarr: 电视剧管理工具，负责管理追剧列表、调用 Jackett 搜索、资源监控、下载调度。</li>
-<li>Radarr: 电影管理工具，功能同 Sonarr 。</li>
-<li>qBittorrent: BT 下载工具。</li>
-<li>ChineseSubFinder: 字幕搜索工具。</li>
-<li>Jellyfin: 媒体中心，负责影视剧转码、播放、管理。</li>
-<li>Telegram: 接收通知。</li>
-<li>nzb360: Android APP ， Sonarr 、 Radarr 、 qBittorrent 的客户端。</li>
-</ul>
-<p>Jackett 是 BT 资源索引工具，可以对添加到索引列表中的 BT 资源站点做集中搜索。</p>
-<p></p>
-<p>Sonarr 专门用来管理剧集，与 Jackett 集成后可以在 Sonarr 的页面上搜索并添加到监控列表。剧集更新后会自动调用下载服务下载，随后导入并刮削元数据。特别地，如果发现有更清晰的资源，它可以自动下载并替换现有的资源。</p>
-<p></p>
-<p>Radarr 的功能和 Sonarr 几乎一样，只不过它是用来管理电影的。</p>
-<p></p>
-<p>qBittorrent 是下载工具。</p>
-<p></p>
-<p>Jellyfin 是媒体中心，实现对影视资源的管理、转码、播放功能。在播放终端解码能力弱或者网络不够好的场景下比较有用。如果电视的播放器（例如 Infuse 7）刷新海报墙比较慢，Jellyfin 会因为是持续运行的服务而有更好的体验。</p>
-<p></p>
-<p>这里还需要用到一个没有 UI 的服务，就是 ChineseSubFinder 。它会监视媒体目录并自动下载合适的字幕。</p>
-<p></p>
-<p>当资源被添加、删除或下载时，通过 Telegram 发送通知到手机或者电脑。</p>
-<p></p>
-<p></p>
-<p>nzb360 是 Sonarr 、 Radarr 、 qBittorrent 的 Android 客户端。UI 很漂亮，使用体验也非常好。还可以添加 Jellyfin 等系统的 Web UI ，实现对整个工作流的一站式访问。</p>
-<p></p>
-<p></p>
-<p></p>
-<p></p>
-<p></p>
-]]></description></item><item><title>用微力同步换掉了 Dropbox</title><link>http://0x3f.org/post/replace-dropbox-with-verysync/</link><pubDate>Wed, 06 Oct 2021 01:24:41 +0800</pubDate><author>作者</author><guid>http://0x3f.org/post/replace-dropbox-with-verysync/</guid><description><![CDATA[<p>我希望找到一种体验较好的方式，把两部手机和索尼黑卡上的照片集中同步到 NAS 上交由 PhotoPrism 托管。</p>
-<p>需求如下：</p>
-<ol>
-<li>可以方便地发送多平台照片到 NAS 。</li>
-<li>可以单向同步手机到 NAS 并忽略手机的删除操作，以节省手机的存储空间。</li>
-<li>可以实现内网穿透且简单稳定。</li>
-<li>便宜。</li>
-</ol>
-<p>对比了 PhotoSync 、 Resilio Sync 、 Syncthing 和微力同步（verysync）。</p>
-<p>PhotoSync 作为专门针对同步照片的场景设计的 APP ，完美覆盖前两点，第三点可以借助 NAS 已经配置好的内网穿透实现，但是需要购买相应的 Plan ，而且 Android 和 iOS 平台要各自单独购买。</p>
-<p>Resilio Sync 实现内网穿透需要引入新的依赖关系，不完全满足第三点。</p>
-<p>Syncthing 看起来不错，但是没有官方的 iOS 客户端。</p>
-<p>微力同步据说是基于 Syncthing 的，且补上了后者缺失的一环。各平台免费，只有 iOS 上需要花 12￥ 买 APP 。</p>
-<p>我的 NAS 运行的是 Unraid ， Community Applications 里没有微力同步，在<a href="https://github.com/shuosiw/unraid" target="_blank" rel="noopener noreffer">这里</a>找到了别人配置好的模板，部署很方便。</p>
-<p>试用后因为太好用，干脆把 Dropbox 目录也放到微力同步里，卸载了会占用很多内存且免费方案 3 个端的限制早已捉襟见肘的 Dropbox 。</p>
-]]></description></item><item><title>改变 Vim 模式时自动切换输入法的方法</title><link>http://0x3f.org/post/auto-switch-input-method-while-changing-vim-mode/</link><pubDate>Wed, 19 Feb 2020 21:48:15 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/auto-switch-input-method-while-changing-vim-mode/</guid><description><![CDATA[<p>VS Code的Vim插件有个很贴心的功能，可以在切换到普通模式时自动切换到英文输入法，而当切换回插入模式时再换到此前的输入法。</p>
-<p>设置的方法很简单。先安装<a href="https://github.com/daipeihust/im-select" target="_blank" rel="noopener noreffer">im-select</a>，然后配置如下（macOS）：</p>
-<p></p>
-<p>当然，在Vim里也可以利用im-select实现这个功能。</p>
-]]></description></item><item><title>在 VS Code 中快速创建 PHPUnit 测试类的方法</title><link>http://0x3f.org/post/quickly-create-phpunit-test-cases-with-vscode/</link><pubDate>Tue, 18 Feb 2020 22:49:45 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/quickly-create-phpunit-test-cases-with-vscode/</guid><description><![CDATA[<p>通过单元测试解决问题或者调试代码，可以避开错综复杂的依赖关系、直击问题的核心，从而极大地节约时间、提高效率。</p>
-<p>但是，当创建测试类成为一个经常发生的操作时，每次都手动创建类、引入基类、添加测试方法就显得很烦琐。我需要这样一个解决方案，让我可以立即开始着手写测试代码。</p>
-<h2 id="方案一文件模板">方案一：文件模板</h2>
-<p>通过VS Code的插件<a href="https://marketplace.visualstudio.com/items?itemName=yongwoo.template" target="_blank" rel="noopener noreffer">Template</a>，可以实现把事先准备好的一个测试类文件模板复制到工程目录下。</p>
-<p>安装完后，第一次执行<code>Template: Create New</code>命令会在当前工程根目录下创建文件“template.config.js”和目录“.templates”。</p>
-<p>在“.templates”中创建测试类模板文件，例如：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-
-<span class="k">namespace</span> <span class="nx">Tests</span><span class="p">;</span>
-
-<span class="k">use</span> <span class="nx">Tests\TransactionalTestCase</span><span class="p">;</span>
-
-<span class="k">class</span> <span class="nc">AnyTest</span> <span class="k">extends</span> <span class="nx">TransactionalTestCase</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">testAnything</span><span class="p">()</span>
-    <span class="p">{</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>下次再执行Template的命令或者侧边栏文件管理器中的右键菜单项时，就可以选择该模板了。</p>
-<p>Template有个很大的短板，目前的版本还不支持全局模板，每个工程下都维护一套模板还是很烦琐的。</p>
-<h2 id="方案二代码片断">方案二：代码片断</h2>
-<p>代码片断（以下统称Snippet）可能是VS Code做得最烂的一个功能，我曾无数次泪流满面地回想起有Vim和UltiSnips相伴的美好时光。</p>
-<p>解决方案是这样的：</p>
-<p>先通过插件<a href="https://marketplace.visualstudio.com/items?itemName=sleistner.vscode-fileutils" target="_blank" rel="noopener noreffer">File Utils</a>的<code>File: New File Relative to Project Root</code>命令在工程目录下创建一个空白文件（如AnyTest.php）。然后再通过Snippet快速插入测试类的脚手架代码。</p>
-<p>这里有一个问题，VS Code的PHP Snippet只有在<code>&lt;?php</code>标签之内才能生效，所以如果创建一个针对PHP语言的Snippet，在上面创建的这个空白文件里是无法触发的。</p>
-<p>VS Code的Snippet总体上分为工程和通用两类，所谓工程类（Project Snippet Scope），就是只对当前工程生效，存储在工程根目录下的“.vscode”目录中。通用类（Language Snippet Scope）是我们平时最常用的，对所有工程都会生效。它又分为语言和全局两种。语言类（Language Snippet File）是针对具体的语言定义的Snippet集合，文件名为语言名称，后缀是“.json”，如“php.json”。全局类（Global Snippet File）通常是不受限于语言的，当然也可以指定单个Snippet对哪些语言启用，文件名随意，后缀是“.code-snippets”。</p>
-<p>因此，测试类脚手架代码的Snippet不能定义在“php.json”中，而应放在“global.code-snippets”里：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-JSON" data-lang="JSON"><span class="s2">&#34;PHPUnit：新测试类&#34;</span><span class="err">:</span> <span class="p">{</span>
-    <span class="nt">&#34;prefix&#34;</span><span class="p">:</span> <span class="s2">&#34;newcase&#34;</span><span class="p">,</span>
-    <span class="nt">&#34;body&#34;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="s2">&#34;&lt;?php&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;namespace Tests${1:\\\\${2:SubNameSpace}};&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;use Tests\\\\${3|TransactionalTestCase,TestCase|};&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;class ${TM_FILENAME_BASE} extends $3&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;{&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;    $0&#34;</span><span class="p">,</span>
-        <span class="s2">&#34;}&#34;</span>
-    <span class="p">],</span>
-    <span class="nt">&#34;description&#34;</span><span class="p">:</span> <span class="s2">&#34;PHPUnit：新测试类&#34;</span><span class="p">,</span>
-    <span class="nt">&#34;scope&#34;</span><span class="p">:</span> <span class="s2">&#34;html,php&#34;</span><span class="p">,</span>
-<span class="p">}</span><span class="err">,</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>这里通过选项“scope”设定只对“html”和“php”两种语言生效，注意如果只设定“php”也是只能在<code>&lt;?php</code>标签内才能生效的。</p>]]></description></item><item><title>用Github当图床</title><link>http://0x3f.org/post/take-github-as-image-hosting-service/</link><pubDate>Thu, 06 Feb 2020 22:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/take-github-as-image-hosting-service/</guid><description><![CDATA[<p>微博图床的域名不知道什么时候改了，Google找不到相关信息，经过排查发现原域名中的“ws”改成了“wx”，浪费了不少时间。</p>
-<p>于是打算换图床。</p>
-<p>Github自从去年扩大免费账户享受的权利后，单个仓库的大小没有硬性限制，很适合做图床。</p>
-<p>uPic是个很好用的图床辅助工具，支持Github。</p>
-<p></p>
-<p>同类工具还有PicGo。</p>]]></description></item><item><title>用C4-PlantUML画软件架构图</title><link>http://0x3f.org/post/design-software-architecture-with-c4-plantuml/</link><pubDate>Fri, 17 Jan 2020 17:29:24 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/design-software-architecture-with-c4-plantuml/</guid><description><![CDATA[<p><a href="https://c4model.com" target="_blank" rel="noopener noreffer">C4 Model</a>是一种简洁有序的架构模型，四个“C”分别表示“Context”、“Container”、“Component”和“Code”，是由上而下逐步细化的四个层级。</p>
-<p>Contex即上下文，它表示我们正在构架的软件系统和用户、其它系统之间的关系。例如：</p>
-<p><figure><a class="lightgallery" href="https://www.plantuml.com/plantuml/svg/0/TLHBRzim3BxxLt2vD0NIP8UTTceUnbeiZo8F53qPYaB7GcJ9a-IcmR3_FigE4xjrSeh8Z-H7ygCVhMF6vQaClWd5PRx3t4X8dClipy70i6D_BroIRtEBXclbKBa-r-bWAJWpEpqNcA4SZ7yyl4Yct6Os7QJCEZHaYiOU_-7wcKz_1xcYm9GIW4iGOYsbFWgr1oaK0bCxQBY5iVHF0nK6gJcJyaGvAfBmENrmDns-BJRhQBruYIQBr_d5C5n5gz_XUln4uMVJw_FwAPg6lyBv90YSS19XTIBMAKo9X-KiGzW9jZSi9Pu6Hc8F8wOEa4aU12zeh5PTdbkdKpGzw9GM9WkGRsbyzdN8EOGA2JekUjiIgWT7cYjaLQIt0UDSvyhPVkS-24BgpcH6M8n6PDqnS-hoxvImpgPp3ty3e5_9lxij2KIsU1BusMTHw2xKIc11p2_0NjXPF-rtWKSGYffEcHDQ0TlglDY8C4sElM9bAJiWPEpazrRIlfA9mW_NPSwp6AvdjohwCUn8Py2PJNo6JmbI9kIrdV31ly5UcbZJF4NH8mrn9hZHLiSEmW-UCBL7m7f06q5ogvWMZPHiLlrlcTRAQOCMI8VL6ZaPu3pmbfbTkkpLPkOCKvPn3wCNEdwXL6gee5H5HdHpxu9xPfMWO5MQOELO77VgdZCOhFSKOnNg8hTgiBKgMyOFaOxZii28Nh0eNjVSmrqgbB14kkoB5cxpBDF6tQxoBmYMAACvYdsorQPs9b-qkR5eASB3bpLSAPdNiovi8Gpw353e6Uovrl1DXQoGBlYyTYymFz_F5Le6FBG72tzojCLgV9mN5qhC4gsmIZBvSc2tYpSeByj3g8kjqNrBsZRWf4KRDw2Rve9RKC6KdIXZGQnPl-chIjuNnatp8g_EH-gTliJ_0G00" title="System Landscape diagram for Big Bank plc" data-thumbnail="https://www.plantuml.com/plantuml/svg/0/TLHBRzim3BxxLt2vD0NIP8UTTceUnbeiZo8F53qPYaB7GcJ9a-IcmR3_FigE4xjrSeh8Z-H7ygCVhMF6vQaClWd5PRx3t4X8dClipy70i6D_BroIRtEBXclbKBa-r-bWAJWpEpqNcA4SZ7yyl4Yct6Os7QJCEZHaYiOU_-7wcKz_1xcYm9GIW4iGOYsbFWgr1oaK0bCxQBY5iVHF0nK6gJcJyaGvAfBmENrmDns-BJRhQBruYIQBr_d5C5n5gz_XUln4uMVJw_FwAPg6lyBv90YSS19XTIBMAKo9X-KiGzW9jZSi9Pu6Hc8F8wOEa4aU12zeh5PTdbkdKpGzw9GM9WkGRsbyzdN8EOGA2JekUjiIgWT7cYjaLQIt0UDSvyhPVkS-24BgpcH6M8n6PDqnS-hoxvImpgPp3ty3e5_9lxij2KIsU1BusMTHw2xKIc11p2_0NjXPF-rtWKSGYffEcHDQ0TlglDY8C4sElM9bAJiWPEpazrRIlfA9mW_NPSwp6AvdjohwCUn8Py2PJNo6JmbI9kIrdV31ly5UcbZJF4NH8mrn9hZHLiSEmW-UCBL7m7f06q5ogvWMZPHiLlrlcTRAQOCMI8VL6ZaPu3pmbfbTkkpLPkOCKvPn3wCNEdwXL6gee5H5HdHpxu9xPfMWO5MQOELO77VgdZCOhFSKOnNg8hTgiBKgMyOFaOxZii28Nh0eNjVSmrqgbB14kkoB5cxpBDF6tQxoBmYMAACvYdsorQPs9b-qkR5eASB3bpLSAPdNiovi8Gpw353e6Uovrl1DXQoGBlYyTYymFz_F5Le6FBG72tzojCLgV9mN5qhC4gsmIZBvSc2tYpSeByj3g8kjqNrBsZRWf4KRDw2Rve9RKC6KdIXZGQnPl-chIjuNnatp8g_EH-gTliJ_0G00" data-sub-html="<h2>System Landscape diagram for Big Bank plc</h2><p>System Landscape diagram for Big Bank plc</p>">
-        
-    </a><figcaption class="image-caption">System Landscape diagram for Big Bank plc</figcaption>
-    </figure></p>
-<p>容器（Container）把关注点放在被架构的系统本身，显示组成系统的容器（例如：APP、Web端、API、微服务、数据库等）及彼此之间的关系。例如：</p>
-<p><figure><a class="lightgallery" href="https://www.plantuml.com/plantuml/svg/0/bLN1Zjf84BtxAsh98KJo35ffJtiA0sXdae7nZfcTv6ILsmMqqkwskjiG5Es_RxMn0KEKP3dPHTMhrwzUjTyxZzRNfOf-argekg3QAjXuNxa_HoEBkzkrz9iwhnrPORGdxM-5AKVFKg0jp49IHMeq-UCcKQZzo_nnLABpP3cKJJWVfIPxMuK6Rw7MN5eo1FWDmSeePNPIhq5n4g0keFUtj8wV371hK4QWKdl6w6Z2TOFeSVpvwMMPBP-IRFhqkeZUje5ncgKVPyl9FTUteTU7vNtsEFjhjfX6aPTUCM271eN4jSMI6Lfuu3DRJHxkK7y9PDCzdw-CeeIiCteeQkTDIJQ6oV5fC8Ok36RLd2RdwXXsh2LKJI6g9WOeXAcrTuDtKNI0pkuuKA3T3yNlZ7L9OF0ElaN0loFVuOxo3AkAaryfXt5LAPwEbqOFEFG1jnX3Mjb0VlxF9CIcfEIMQJJKs05U2cYdsymXX8zzy-xWoPX9zZkxYh47AV-jw2R1DONkNTTKM5dv6CPwNIkq8PnOivK5EU1fVh_BYaqIgAEIVX_6B-f6I0TRYQ54Mk3pGcxDZZrvnQWqkLJKoZ5lNZfEapSnVC8IMOa-5pPWAJqLuEhSCPTsPh_2pLsHEn20WhPIq2MzQJuiq6EEZi8OsiV09ltx4NhltbZc5lOEBAsbynQvDKZDhYoRwSQmuUG2i6PN2Ki5Zq-YSd4m5Jd7MxFc5_BYzagc7CKNqWNh98DVauVlssPgECsUwdgw_KIV80a3S-j_ZzQUVVL3Ab6gp3K1XflTpFczNQk0lsJfPGFDEpANmXfdLXvcNyK6DJliKCcmPvWjWnCgO-eLxp1TxEsPjC62xQG51uwdE5COC3UrFuqvFgvh33mFxR0vxqdaw9dKsPLmMimNHoxqlbykavGJ-tc7DVfnJi_OJUgXNROWkTxavkmQEC1rIzuYDS7-sBk6wFPQnF0XVLgCpfkVj_nVbTaTPv-8dIpVHtacB1oih2cRMsTdUGdvJZ81kGMUtaswSmRCCpqkR9Goh0Ew2T46uqJamd5z3lswseKRzjW-dI-J5kXuc5xvbUywOKBzg5Nd4tyLEt7USob_g_u3" title="Container diagram for Internet Banking System" data-thumbnail="https://www.plantuml.com/plantuml/svg/0/bLN1Zjf84BtxAsh98KJo35ffJtiA0sXdae7nZfcTv6ILsmMqqkwskjiG5Es_RxMn0KEKP3dPHTMhrwzUjTyxZzRNfOf-argekg3QAjXuNxa_HoEBkzkrz9iwhnrPORGdxM-5AKVFKg0jp49IHMeq-UCcKQZzo_nnLABpP3cKJJWVfIPxMuK6Rw7MN5eo1FWDmSeePNPIhq5n4g0keFUtj8wV371hK4QWKdl6w6Z2TOFeSVpvwMMPBP-IRFhqkeZUje5ncgKVPyl9FTUteTU7vNtsEFjhjfX6aPTUCM271eN4jSMI6Lfuu3DRJHxkK7y9PDCzdw-CeeIiCteeQkTDIJQ6oV5fC8Ok36RLd2RdwXXsh2LKJI6g9WOeXAcrTuDtKNI0pkuuKA3T3yNlZ7L9OF0ElaN0loFVuOxo3AkAaryfXt5LAPwEbqOFEFG1jnX3Mjb0VlxF9CIcfEIMQJJKs05U2cYdsymXX8zzy-xWoPX9zZkxYh47AV-jw2R1DONkNTTKM5dv6CPwNIkq8PnOivK5EU1fVh_BYaqIgAEIVX_6B-f6I0TRYQ54Mk3pGcxDZZrvnQWqkLJKoZ5lNZfEapSnVC8IMOa-5pPWAJqLuEhSCPTsPh_2pLsHEn20WhPIq2MzQJuiq6EEZi8OsiV09ltx4NhltbZc5lOEBAsbynQvDKZDhYoRwSQmuUG2i6PN2Ki5Zq-YSd4m5Jd7MxFc5_BYzagc7CKNqWNh98DVauVlssPgECsUwdgw_KIV80a3S-j_ZzQUVVL3Ab6gp3K1XflTpFczNQk0lsJfPGFDEpANmXfdLXvcNyK6DJliKCcmPvWjWnCgO-eLxp1TxEsPjC62xQG51uwdE5COC3UrFuqvFgvh33mFxR0vxqdaw9dKsPLmMimNHoxqlbykavGJ-tc7DVfnJi_OJUgXNROWkTxavkmQEC1rIzuYDS7-sBk6wFPQnF0XVLgCpfkVj_nVbTaTPv-8dIpVHtacB1oih2cRMsTdUGdvJZ81kGMUtaswSmRCCpqkR9Goh0Ew2T46uqJamd5z3lswseKRzjW-dI-J5kXuc5xvbUywOKBzg5Nd4tyLEt7USob_g_u3" data-sub-html="<h2>Container diagram for Internet Banking System</h2><p>Container diagram for Internet Banking System</p>">
-        
-    </a><figcaption class="image-caption">Container diagram for Internet Banking System</figcaption>
-    </figure></p>
-<p>组件（Component）把一个容器放大，拆分成不同的抽象逻辑，这一层级已经涉及代码层面的内容。例如：</p>
-<p><figure><a class="lightgallery" href="https://www.plantuml.com/plantuml/svg/0/fLLDRnen4BtlhvXoQ45AmgMddaf8sYJA1mBIZnEQzGwBMt-iR2yKLVtl7Nk1NPAeYjHSuXsFPzwyzsm--e0kr5fbRwGHgYweTWfM8LJ-mt3eS7DMoh2gyzgJ4zO4Ck5CM3sSIe6kiFUIAbB3yVlJYK8J7kzkXnfz8CUXnTZgoffueeeDta5j-AZc08GLmT8gPJVIbA2a8K1JmD6sT9vN5hWrA2jGgItNsCE4vmsosz7tXyVvuklr_6fnU_dvylwYFyYo88FYz7qk519BXvhxExZcYPoX0ETeVaOeiosZrt0AeyarZAfAyPn1MfDbOvuU6QZh-mfFe3VZTAuxmPAwYJtU-e5hzCB9AgIfq9IrGXTt9iwkPK4UU9eqfTm3o7S0banIh8DAXcqSNzG-M4tEmrfYF2CTR2Y7tDaDYtBM6tIWwOZipkPI9L2nvJVKwAGvxiwKQnce05_ddhlRy1zeTDDlzw-WjHHq1EiYxnSvzx_0W3bwYbYcfB2f3FimpCIADCRTMR2ESKRNWQDI-k1IDYDasNHQdy0A_Ofdm9fncB0J08IZ8dwYyYU0Gf3tx9-IFoY8YAlHU77vA_HrxYDXZ7B9bg0dDkWWYNhPPI99SE10K0SFO6xhq3AKcjlQ15unVECnKTdYQ0bQd7DUWMxRnqfoqoVcwmtWTmRyTp1ntylI91EMXaqCiPBZ-qJ9PNTVnZ0blZs7S8oEudLhEFLHobY2ySVbYzhxXeF1ayxjKBtHRWcpMhF9jg-2SJ1XQwKDFp7iISzLB5TfU6PZHIG74fy1yIHgnxQCDEoMxMwIhd9nZdF2O_SVczf58xAB4YEcR4Gz0R72vgD2xpVM5Qrknp3OGaiKMD0_Z0IVKiOBe4RG70QcgD517seS2v4S4rlppTd9ts7WqTEUeRZVYjI5zoIfFPvkvvImWBUmuH0n6n7TpSNvk7EWKwkvEAbWV6FutR-QpoSpJlwJPQbuV2HtBjsdtSmUxWzvXwIEeLvCJ9dw5TNqAufz95FmRyLV" title="Component diagram for Internet Banking System - API Application" data-thumbnail="https://www.plantuml.com/plantuml/svg/0/fLLDRnen4BtlhvXoQ45AmgMddaf8sYJA1mBIZnEQzGwBMt-iR2yKLVtl7Nk1NPAeYjHSuXsFPzwyzsm--e0kr5fbRwGHgYweTWfM8LJ-mt3eS7DMoh2gyzgJ4zO4Ck5CM3sSIe6kiFUIAbB3yVlJYK8J7kzkXnfz8CUXnTZgoffueeeDta5j-AZc08GLmT8gPJVIbA2a8K1JmD6sT9vN5hWrA2jGgItNsCE4vmsosz7tXyVvuklr_6fnU_dvylwYFyYo88FYz7qk519BXvhxExZcYPoX0ETeVaOeiosZrt0AeyarZAfAyPn1MfDbOvuU6QZh-mfFe3VZTAuxmPAwYJtU-e5hzCB9AgIfq9IrGXTt9iwkPK4UU9eqfTm3o7S0banIh8DAXcqSNzG-M4tEmrfYF2CTR2Y7tDaDYtBM6tIWwOZipkPI9L2nvJVKwAGvxiwKQnce05_ddhlRy1zeTDDlzw-WjHHq1EiYxnSvzx_0W3bwYbYcfB2f3FimpCIADCRTMR2ESKRNWQDI-k1IDYDasNHQdy0A_Ofdm9fncB0J08IZ8dwYyYU0Gf3tx9-IFoY8YAlHU77vA_HrxYDXZ7B9bg0dDkWWYNhPPI99SE10K0SFO6xhq3AKcjlQ15unVECnKTdYQ0bQd7DUWMxRnqfoqoVcwmtWTmRyTp1ntylI91EMXaqCiPBZ-qJ9PNTVnZ0blZs7S8oEudLhEFLHobY2ySVbYzhxXeF1ayxjKBtHRWcpMhF9jg-2SJ1XQwKDFp7iISzLB5TfU6PZHIG74fy1yIHgnxQCDEoMxMwIhd9nZdF2O_SVczf58xAB4YEcR4Gz0R72vgD2xpVM5Qrknp3OGaiKMD0_Z0IVKiOBe4RG70QcgD517seS2v4S4rlppTd9ts7WqTEUeRZVYjI5zoIfFPvkvvImWBUmuH0n6n7TpSNvk7EWKwkvEAbWV6FutR-QpoSpJlwJPQbuV2HtBjsdtSmUxWzvXwIEeLvCJ9dw5TNqAufz95FmRyLV" data-sub-html="<h2>Component diagram for Internet Banking System - API Application</h2><p>Component diagram for Internet Banking System - API Application</p>">
-        
-    </a><figcaption class="image-caption">Component diagram for Internet Banking System - API Application</figcaption>
-    </figure></p>
-<p>而抽象逻辑内部代码之间的关系由Code这一层展示。</p>
-<p><a href="https://github.com/RicardoNiepel/C4-PlantUML" target="_blank" rel="noopener noreffer">C4-PlantUML</a>是为PlantUML封装的一套模板，用来画C4架构图既美观又方便。下面是我画的样子：</p>
-<p><figure><a class="lightgallery" href="https://www.plantuml.com/plantuml/svg/0/jLXVJzjM57_Ff_3oKYAnvcLFUse7Q7Ib445GDMcIPHmRh3fsP3ljq5I9m4ef8v0MwDgDjGqjRRKL1rG68H7amyptElaMkzVNyP_43cPXUOXkxZs_txddt7FEFJStL8rHj7nMZCM-42HMp6SuQaxJSkhNoQJ2FBW-AsXp-PcyoYciB6cSf5rdvMnoKc0P9IEF2roE4vD3NtsP4Xb9cxupbimogiOfQ8eUGlAC877AzHoclqRb9GJD8WfAc-CeNXP5-O4WpL8Y4g8OAKFvbWL5HIEPGgefKMOPKPn77CuUknN4ncv-Fp6TfjCJANfuukuuahPdRaxHKxT7qaEZ0mbtykwjz2WzDlBjoFWmcevfWYPob57x03OBIQFs3hxOJ3QFTi5g6VvTCAg_uS6hO_ZgvrWinIcgB0ta53cJPpKwoqZCBASCsc2plc6MbXDjAJQlQdAMKsX6LGNaQqaRf82-2tUAtI8E4nPOEUbWObXMpak4WUoilKIF_AWvB6sqRp73gSAiX1UR-dbJBuFg2h9v11seabC4bQE_GTGPHfaVU20hzsOuYPqRfEBWPCyusm4R1_44zLECGf-fUNIwMLUwxGEMmrG8GdnWLFT1Oyb1uOzpM0CvbkOLAvOoMCUJelbN9Ov6tp7t6PLLX1ooxwQa3LjRZZiYhVAf-RiUJmGppZ3iFPkmj6uJfaPJWzHO7eLKt9c7wtjWusqGo_0Cviam6ZF3g5o7AN3x01PrKDl4JAqNZTRZDQFsr9qbV0zZWKvYbIn23KtU2N48MhzgZs3AAt499lBu11dHbojuGM8abdFZXGHoptZXhpnU-2kA5zuNBrvJeZhfON0Iec97eufxNs0v5M_bN4Vr0f67vg57k4FIRxajHzjvwqIv3UfsmigoULZ_Pw4mbPh6txUd0ntQfaMb6Nl2h3NCezqmJh9gwcLKt13d3n8ehS7zFVFJ9wFw13u_TMAifoevbvFHlIK9sZpUv_OotAc5Mc6jzglHBR1nKc53rP7gRQdhpOXc5COw1b1QmPiAOxHM-tQPaY4vf--2udQOBhAAj83z4Xdt9BKpsed_C5guLJ7gBu1UXc-gY1nk7SDFvwtDusPv3HJBZcbmesIk7pXYnjdBrkuVw0Q61qVeP-ljEbp_q7C_agm9F0u9nDHQVXRgqOsdhOM2-NhVQ9HxycdCB2PxyzZSFm-DQ6ltHCQi7u7QUso9zTCPW6The7BQF2o3Hv-RXItqRNwkzowMCkg355yTU7GCzAM01BUH-APNLHbB5hVDnLFpPHsSUO_FAsVRXpixRCBMHpUYUmAuB2E8kAejwaRzs8Umwjcr__n1lHdPXd7MG0E04lfbfH--IKxixjByxKTJRxH-rV4XZgRJgIba20O5DMqTj_G5G4TT99YtjUFPoyb7Kj2P7PvQHdA0P4k7j7tK7c7xq8E4szHkgnc1sYFSGTrV77bxjpuZY9xqTwo-PhDPEO67YrOtCZKndiGkjmtrOKXIskdO8UpgS6ZzVQYh8psKIjxoA700NdxufjpwSoraIowYgn7eQKeNpYuRyFLUix9hPoqwwaAboxo-pX5TRFqVdpz3_ArnkDL-L8GJz15tzCqXP-Y3H3j4FyJVTy7D8dglaVugCjRVI14AqZ15L-yM21jlTK3HyMuVPEEjVYUw2NPZGy1sqn8L73cIGndS728aTl6v78cdZ-ePabr0f-7njJHHqUtRd8193RxQ5FO-Y_hFPT_jo4ShnVmbIx6NbezIYlbBbsAUxIiBWk1E4bWnI9A0n21SUMuqTBXrIYRDrMEuK8XAUwdq23JBKnmi4b8SBaSI9Jk2S96J8mZy_-S6g2w1muK-EKxUeuT5wwo4_zfavkdXNlSy_lyJhgvwdpFeOU9zkS6jSx1oW5-MjJNqDeiHogvIvtaU9IwI8OTmeLWxK2uKj8F1jWMyUzvQ-cY_NwpDmvq5e_eBUXPt45bFkNR7cGXQTBVWEDEV1xxGI3X2dHK6uM-WSJuh_Wi0" title="产品 交易 财务流业务架构" data-thumbnail="https://www.plantuml.com/plantuml/svg/0/jLXVJzjM57_Ff_3oKYAnvcLFUse7Q7Ib445GDMcIPHmRh3fsP3ljq5I9m4ef8v0MwDgDjGqjRRKL1rG68H7amyptElaMkzVNyP_43cPXUOXkxZs_txddt7FEFJStL8rHj7nMZCM-42HMp6SuQaxJSkhNoQJ2FBW-AsXp-PcyoYciB6cSf5rdvMnoKc0P9IEF2roE4vD3NtsP4Xb9cxupbimogiOfQ8eUGlAC877AzHoclqRb9GJD8WfAc-CeNXP5-O4WpL8Y4g8OAKFvbWL5HIEPGgefKMOPKPn77CuUknN4ncv-Fp6TfjCJANfuukuuahPdRaxHKxT7qaEZ0mbtykwjz2WzDlBjoFWmcevfWYPob57x03OBIQFs3hxOJ3QFTi5g6VvTCAg_uS6hO_ZgvrWinIcgB0ta53cJPpKwoqZCBASCsc2plc6MbXDjAJQlQdAMKsX6LGNaQqaRf82-2tUAtI8E4nPOEUbWObXMpak4WUoilKIF_AWvB6sqRp73gSAiX1UR-dbJBuFg2h9v11seabC4bQE_GTGPHfaVU20hzsOuYPqRfEBWPCyusm4R1_44zLECGf-fUNIwMLUwxGEMmrG8GdnWLFT1Oyb1uOzpM0CvbkOLAvOoMCUJelbN9Ov6tp7t6PLLX1ooxwQa3LjRZZiYhVAf-RiUJmGppZ3iFPkmj6uJfaPJWzHO7eLKt9c7wtjWusqGo_0Cviam6ZF3g5o7AN3x01PrKDl4JAqNZTRZDQFsr9qbV0zZWKvYbIn23KtU2N48MhzgZs3AAt499lBu11dHbojuGM8abdFZXGHoptZXhpnU-2kA5zuNBrvJeZhfON0Iec97eufxNs0v5M_bN4Vr0f67vg57k4FIRxajHzjvwqIv3UfsmigoULZ_Pw4mbPh6txUd0ntQfaMb6Nl2h3NCezqmJh9gwcLKt13d3n8ehS7zFVFJ9wFw13u_TMAifoevbvFHlIK9sZpUv_OotAc5Mc6jzglHBR1nKc53rP7gRQdhpOXc5COw1b1QmPiAOxHM-tQPaY4vf--2udQOBhAAj83z4Xdt9BKpsed_C5guLJ7gBu1UXc-gY1nk7SDFvwtDusPv3HJBZcbmesIk7pXYnjdBrkuVw0Q61qVeP-ljEbp_q7C_agm9F0u9nDHQVXRgqOsdhOM2-NhVQ9HxycdCB2PxyzZSFm-DQ6ltHCQi7u7QUso9zTCPW6The7BQF2o3Hv-RXItqRNwkzowMCkg355yTU7GCzAM01BUH-APNLHbB5hVDnLFpPHsSUO_FAsVRXpixRCBMHpUYUmAuB2E8kAejwaRzs8Umwjcr__n1lHdPXd7MG0E04lfbfH--IKxixjByxKTJRxH-rV4XZgRJgIba20O5DMqTj_G5G4TT99YtjUFPoyb7Kj2P7PvQHdA0P4k7j7tK7c7xq8E4szHkgnc1sYFSGTrV77bxjpuZY9xqTwo-PhDPEO67YrOtCZKndiGkjmtrOKXIskdO8UpgS6ZzVQYh8psKIjxoA700NdxufjpwSoraIowYgn7eQKeNpYuRyFLUix9hPoqwwaAboxo-pX5TRFqVdpz3_ArnkDL-L8GJz15tzCqXP-Y3H3j4FyJVTy7D8dglaVugCjRVI14AqZ15L-yM21jlTK3HyMuVPEEjVYUw2NPZGy1sqn8L73cIGndS728aTl6v78cdZ-ePabr0f-7njJHHqUtRd8193RxQ5FO-Y_hFPT_jo4ShnVmbIx6NbezIYlbBbsAUxIiBWk1E4bWnI9A0n21SUMuqTBXrIYRDrMEuK8XAUwdq23JBKnmi4b8SBaSI9Jk2S96J8mZy_-S6g2w1muK-EKxUeuT5wwo4_zfavkdXNlSy_lyJhgvwdpFeOU9zkS6jSx1oW5-MjJNqDeiHogvIvtaU9IwI8OTmeLWxK2uKj8F1jWMyUzvQ-cY_NwpDmvq5e_eBUXPt45bFkNR7cGXQTBVWEDEV1xxGI3X2dHK6uM-WSJuh_Wi0" data-sub-html="<h2>产品 交易 财务流业务架构</h2><p>产品 交易 财务流业务架构</p>">
-        
-    </a><figcaption class="image-caption">产品 交易 财务流业务架构</figcaption>
-    </figure></p>
-<p>和上面的例子相比，好像不太适合画较复杂的架构，布局不太好处理，另外连线太多容易重叠在一块傻傻分不清楚。</p>]]></description></item><item><title>用鼠须管输入日期时间的方法</title><link>http://0x3f.org/post/input-date-and-time-with-rime/</link><pubDate>Wed, 08 Jan 2020 13:52:49 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/input-date-and-time-with-rime/</guid><description><![CDATA[<p>原来在Linux下用小小输入法，输入日期时间很方便。换到Mac后，很早就在关注这个问题，直到后来鼠须管实现了嵌入Lua脚本的功能才得以解决。</p>
-<p>在“用户设定”目录下创建文件<code>rime.lua</code>，内容如下：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-lua" data-lang="lua"><span class="kr">function</span> <span class="nf">date_translator</span><span class="p">(</span><span class="n">input</span><span class="p">,</span> <span class="n">seg</span><span class="p">)</span>
-    <span class="kr">if</span> <span class="p">(</span><span class="n">input</span> <span class="o">==</span> <span class="s2">&#34;date&#34;</span><span class="p">)</span> <span class="kr">then</span>
-       <span class="c1">--- Candidate(type, start, end, text, comment)</span>
-       <span class="n">yield</span><span class="p">(</span><span class="n">Candidate</span><span class="p">(</span><span class="s2">&#34;date&#34;</span><span class="p">,</span> <span class="n">seg.start</span><span class="p">,</span> <span class="n">seg._end</span><span class="p">,</span> <span class="n">os.date</span><span class="p">(</span><span class="s2">&#34;%Y-%m-%d&#34;</span><span class="p">),</span> <span class="s2">&#34;日期&#34;</span><span class="p">))</span>
-       <span class="n">yield</span><span class="p">(</span><span class="n">Candidate</span><span class="p">(</span><span class="s2">&#34;date&#34;</span><span class="p">,</span> <span class="n">seg.start</span><span class="p">,</span> <span class="n">seg._end</span><span class="p">,</span> <span class="n">os.date</span><span class="p">(</span><span class="s2">&#34;%Y年%m月%d日&#34;</span><span class="p">),</span> <span class="s2">&#34;日期&#34;</span><span class="p">))</span>
-    <span class="kr">end</span>
-    <span class="kr">if</span> <span class="p">(</span><span class="n">input</span> <span class="o">==</span> <span class="s2">&#34;time&#34;</span><span class="p">)</span> <span class="kr">then</span>
-       <span class="c1">--- Candidate(type, start, end, text, comment)</span>
-       <span class="n">yield</span><span class="p">(</span><span class="n">Candidate</span><span class="p">(</span><span class="s2">&#34;date&#34;</span><span class="p">,</span> <span class="n">seg.start</span><span class="p">,</span> <span class="n">seg._end</span><span class="p">,</span> <span class="n">os.date</span><span class="p">(</span><span class="s2">&#34;%H:%M&#34;</span><span class="p">),</span> <span class="s2">&#34;时间&#34;</span><span class="p">))</span>
-       <span class="n">yield</span><span class="p">(</span><span class="n">Candidate</span><span class="p">(</span><span class="s2">&#34;date&#34;</span><span class="p">,</span> <span class="n">seg.start</span><span class="p">,</span> <span class="n">seg._end</span><span class="p">,</span> <span class="n">os.date</span><span class="p">(</span><span class="s2">&#34;%H:%M:%S&#34;</span><span class="p">),</span> <span class="s2">&#34;时间&#34;</span><span class="p">))</span>
-    <span class="kr">end</span>
-    <span class="kr">if</span> <span class="p">(</span><span class="n">input</span> <span class="o">==</span> <span class="s2">&#34;datetime&#34;</span><span class="p">)</span> <span class="kr">then</span>
-       <span class="c1">--- Candidate(type, start, end, text, comment)</span>
-       <span class="n">yield</span><span class="p">(</span><span class="n">Candidate</span><span class="p">(</span><span class="s2">&#34;date&#34;</span><span class="p">,</span> <span class="n">seg.start</span><span class="p">,</span> <span class="n">seg._end</span><span class="p">,</span> <span class="n">os.date</span><span class="p">(</span><span class="s2">&#34;%Y-%m-%d %H:%M:%S&#34;</span><span class="p">),</span> <span class="s2">&#34;日期时间&#34;</span><span class="p">))</span>
-    <span class="kr">end</span>
- <span class="kr">end</span>
- 
- <span class="c1">--- 过滤器：单字在先</span>
- <span class="kr">function</span> <span class="nf">single_char_first_filter</span><span class="p">(</span><span class="n">input</span><span class="p">)</span>
-    <span class="kd">local</span> <span class="n">l</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="kr">for</span> <span class="n">cand</span> <span class="kr">in</span> <span class="n">input</span><span class="p">:</span><span class="n">iter</span><span class="p">()</span> <span class="kr">do</span>
-       <span class="kr">if</span> <span class="p">(</span><span class="n">utf8.len</span><span class="p">(</span><span class="n">cand.text</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="kr">then</span>
-          <span class="n">yield</span><span class="p">(</span><span class="n">cand</span><span class="p">)</span>
-       <span class="kr">else</span>
-          <span class="n">table.insert</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">cand</span><span class="p">)</span>
-       <span class="kr">end</span>
-    <span class="kr">end</span>
-    <span class="kr">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">cand</span> <span class="kr">in</span> <span class="n">ipairs</span><span class="p">(</span><span class="n">l</span><span class="p">)</span> <span class="kr">do</span>
-       <span class="n">yield</span><span class="p">(</span><span class="n">cand</span><span class="p">)</span>
-    <span class="kr">end</span>
- <span class="kr">end</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>然后在码表配置文件的“engine/translators”下追加<code>lua_translator@date_translator</code>。</p>
-<p>最后，重新部署即可。</p>]]></description></item><item><title>AirPods Pro的使用感受</title><link>http://0x3f.org/post/the-expirence-of-airpods-pro/</link><pubDate>Tue, 05 Nov 2019 16:18:54 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/the-expirence-of-airpods-pro/</guid><description><![CDATA[<p>Bose QC35曾是带给我巨大幸福感的工具，并且三年来一直处于重度使用的状态。但是它的一些弱点，使得在某些细分场景下并不能得到很好的体验。首先是包耳式的设计在夏天会很热。其次，虽然有折叠的功能，但头戴式的设计对于日常通勤来说，还是不够便携。再次，QC35一代的降噪级别只能通过APP设置，很麻烦，所以我一直都保持默认开启状态，出于安全性考虑，不适合徒步或者骑行。</p>
-<p>于是后来买了一副AirPods（以下简称AP）。高温和骑行的体验得以改善，但一直被通勤过程中北京公交糟糕的乘坐体验所困扰。其实在购买AP之前，更想买的是带降噪功能的耳塞，当时索尼的降噪豆一代才刚上市，评测普遍反馈体验不太好，而QC30的狗圈又让我完全接受不能，除此之外，在当时并无更多的选择。AP其实是权衡之后妥协的结果。</p>
-<p>所以从看到AirPods Pro（以下简称APP）上市的消息到下单，并没有考虑太久。下单时提示可能一到两周才能到货，但其实第二天就发了货，次日到手。体验了几天，说说感受。</p>
-<h1 id="降噪效果">降噪效果</h1>
-<p>首先是最大的卖点，降噪。整体上不如QC35，但完全可以接受。</p>
-<p>在主要的应用场景（通勤）下，对公交车、马路上的低频噪音过滤效果明显，戴上之后一秒钟，整个世界都安静了。仍然能听到较为清楚的人声，好处是可以听到报站声、避免坐过站，但旁边大声打电话的声音也会产生一定的干扰。</p>
-<h1 id="佩戴舒适度">佩戴舒适度</h1>
-<p>对APP主要的疑虑应该就是入耳式的设计。对于我来说，默认的中号耳塞确实会有明显的胀感，戴的时间稍长就会不舒服。换上小号之后好很多，可以长时间佩戴，但稳固度会受到一定影响。</p>
-<h1 id="稳固度">稳固度</h1>
-<p>我戴AP时，右耳容易松脱。APP的稳固度会好于AP，但吃东西时右耳仍然会松脱。而且换成小号耳塞也会影响到稳固度。</p>
-<h1 id="操控体验">操控体验</h1>
-<p>之前对APP捏的操控方式有些顾虑，担心会影响稳固度。实际体验下来没有那么严重，可能跟入耳式、柄较短和重心靠上有关。但还是会在每次操作后不自觉地扶一下。整体上操控比AP敲击的方式精准，但不如后者方便。</p>
-<h1 id="音质和续航">音质和续航</h1>
-<p>我不是个音乐发烧友，对音质不敏感。续航方面也没有过多关注。这两方面大致是Apple一贯的水准吧，和AP相比差不多。</p>
-<h1 id="通话体验">通话体验</h1>
-<p>我很少打电话，留做后补吧。</p>
-<h1 id="结尾">结尾</h1>
-<p>我曾<a href="/post/the-experience-of-bose-qc35/" rel="">说过</a>，我对耳机的核心需求是降噪、无线和舒适。AirPods Pro完全可以满足这样的需求。QC35仍是我降噪效果最好、佩戴最舒适的耳机，而APP会是通勤、高温场景下绝对的主力。至于AP，我想知道iOS 13的音频共享什么时候迁移到macOS上？</p>]]></description></item><item><title>PHP单元测试的技巧</title><link>http://0x3f.org/post/phpunit-tips/</link><pubDate>Tue, 13 Aug 2019 14:21:48 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/phpunit-tips/</guid><description><![CDATA[<p>以下是我平时写单元测试时总结的一些最佳实践，有些是和具体的框架强相关的。</p>
-<h2 id="利用model-factory生成测试数据">利用Model Factory生成测试数据</h2>
-<p>Laravel/Lumen的Model Factory是个很好的工具。</p>
-<p>事先定义好主要对象的Model Factory，可以在写单元测试的代码时方便地生成临时数据：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-php" data-lang="php">// 在数据库中创建一条发票的数据，并返回其Model的实例
-$invoice = factory(\App\Models\Invoice::class)-&gt;create();
-</code></pre></td></tr></table>
-</div>
-</div><p>此外，借助<a href="https://github.com/fzaninotto/Faker" target="_blank" rel="noopener noreffer">Faker</a>，可以为Model Factory定义仿真数据：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-php" data-lang="php">$factory-&gt;define(\App\Models\Invoice::class, function () {
-    $faker = Faker\Factory::create(&#39;zh_CN&#39;);
-    $enFaker = Faker\Factory::create(&#39;en_US&#39;);
-
-    return [
-        &#39;user_id&#39;                      =&gt; 1,
-        &#39;amount&#39;                       =&gt; 100,
-        &#39;title&#39;                        =&gt; $faker-&gt;company,
-        &#39;taxpayer_id&#39;                  =&gt; $faker-&gt;randomNumber(),
-        &#39;bank&#39;                         =&gt; $faker-&gt;bank,
-        &#39;account&#39;                      =&gt; $enFaker-&gt;bankAccountNumber,
-        &#39;company_registration_address&#39; =&gt; $faker-&gt;address,
-        &#39;company_registration_phone&#39;   =&gt; $faker-&gt;phoneNumber,
-        &#39;consignee_name&#39;               =&gt; $faker-&gt;name,
-        &#39;consignee_province&#39;           =&gt; $faker-&gt;state,
-        &#39;consignee_city&#39;               =&gt; $faker-&gt;city,
-        &#39;consignee_district&#39;           =&gt; $faker-&gt;citySuffix,
-        &#39;consignee_address&#39;            =&gt; $faker-&gt;address,
-        &#39;consignee_phone&#39;              =&gt; $faker-&gt;phoneNumber,
-        &#39;zip_code&#39;                     =&gt; $faker-&gt;postcode,
-        &#39;remark&#39;                       =&gt; $faker-&gt;text,
-        &#39;status&#39;                       =&gt; 1,
-    ];
-});
-</code></pre></td></tr></table>
-</div>
-</div><h2 id="只伪造被测单元所需的数据">只伪造被测单元所需的数据</h2>
-<p>单元测试只关注被测单元本身，并不关注整体功能，所以无须保证测试数据的完整性。换言之，如果被测单元只用到了订单主表数据，就没必要创建一个包含子单、SPU/SKU、支付记录等在内的完整订单。</p>
-<h2 id="利用dataprovider简化测试代码">利用dataProvider简化测试代码</h2>
-<p>当多个测试用例逻辑相似时，可以把它们抽象成一个测试方法，并用dataProvider提供每个用例的数据和断言。从而使测试代码变得更为简洁、易懂和便于维护。</p>
-<h2 id="单独测试被测单元的校验逻辑">单独测试被测单元的校验逻辑</h2>
-<p>通常我们会用标准的IO模型实现一个方法，同时对包含校验不合法在内的异常情况抛出相应异常。</p>
-<p>PHPUnit提供了expectException()系列方法用于断言异常的抛出。但由于代码抛出了异常、程序被中断，故无法在一次测试中对多个异常做断言。</p>
-<p>因此，可以把对一个方法校验逻辑的测试单独抽象出一个测试方法，并用dataProvider提供测试数据和断言。</p>
-<h2 id="利用工具查看代码覆盖率">利用工具查看代码覆盖率</h2>
-<p>PHPUnit提供参数<code>--coverage-html</code>生成覆盖率分析结果的HTML页面，但在IDE或编辑器里相对实时地查看结果会更方便。</p>
-<p>主流IDE或编辑器一般都集成了这个功能或提供了相关插件，如<a href="https://marketplace.visualstudio.com/items?itemName=ryanluker.vscode-coverage-gutters" target="_blank" rel="noopener noreffer">Coverage Gutters</a>。</p>]]></description></item><item><title>用ALE替换了Syntastic</title><link>http://0x3f.org/post/replace-syntastic-with-ale/</link><pubDate>Wed, 12 Dec 2018 20:42:10 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/replace-syntastic-with-ale/</guid><description><![CDATA[<p>习惯频繁地保存源码，但是每次保存都有明显的卡顿，于是用Vim自己的调优功能跟踪了一下。</p>
-<p>依次执行以下命令：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">:profile start profile.log
-:profile file *
-:profile func *
-</code></pre></td></tr></table>
-</div>
-</div><p>然后执行保存操作，再执行以下命令：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-fallback" data-lang="fallback">:profile pause
-:noautocmd qall!
-</code></pre></td></tr></table>
-</div>
-</div><p>在当前目录下生成的文件profile.log里，看到执行时间最长的是Syntastic的函数，禁用这个扩展后保存果然比原来快多了。</p>
-<p>但是Syntastic是个很有用的扩展，所以Google一下有没有异步执行的方法，偶然发现了ALE，主要特性就是异步执行。试用之后觉得很好用，就把前者卸了。</p>
-<p>ALE的初始配置如下：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-vim" data-lang="vim"><span class="c">&#34; ALE</span><span class="err">
-</span><span class="err"></span><span class="k">let</span> <span class="nx">g</span>:<span class="nx">ale_sign_column_always</span> <span class="p">=</span> <span class="m">1</span><span class="err">
-</span><span class="err"></span><span class="k">let</span> <span class="nx">g</span>:<span class="nx">ale_set_highlights</span> <span class="p">=</span> <span class="m">0</span><span class="err">
-</span><span class="err"></span><span class="k">let</span> <span class="nx">g</span>:<span class="nx">airline</span>#<span class="nx">extensions</span>#<span class="nx">ale</span>#<span class="nx">enabled</span> <span class="p">=</span> <span class="m">1</span><span class="err">
-</span><span class="err"></span><span class="c">&#34;自定义error和warning图标</span><span class="err">
-</span><span class="err"></span><span class="k">let</span> <span class="nx">g</span>:<span class="nx">ale_sign_error</span> <span class="p">=</span> <span class="s1">&#39;✗&#39;</span><span class="err">
-</span><span class="err"></span><span class="k">let</span> <span class="nx">g</span>:<span class="nx">ale_sign_warning</span> <span class="p">=</span> <span class="s1">&#39;⚠&#39;</span><span class="err">
-</span><span class="err"></span><span class="c">&#34; 显示Linter名称,出错或警告等相关信息</span><span class="err">
-</span><span class="err"></span><span class="k">let</span> <span class="nx">g</span>:<span class="nx">ale_echo_msg_error_str</span> <span class="p">=</span> <span class="s1">&#39;E&#39;</span><span class="err">
-</span><span class="err"></span><span class="k">let</span> <span class="nx">g</span>:<span class="nx">ale_echo_msg_warning_str</span> <span class="p">=</span> <span class="s1">&#39;W&#39;</span><span class="err">
-</span><span class="err"></span><span class="k">let</span> <span class="nx">g</span>:<span class="nx">ale_echo_msg_format</span> <span class="p">=</span> <span class="s1">&#39;[%linter%] %s [%severity%]&#39;</span><span class="err">
-</span><span class="err"></span><span class="c">&#34; PHP</span><span class="err">
-</span><span class="err"></span><span class="k">let</span> <span class="nx">g</span>:<span class="nx">ale_php_phpcs_standard</span> <span class="p">=</span> <span class="s1">&#39;PSR2&#39;</span><span class="err">
-</span><span class="err"></span><span class="k">let</span> <span class="nx">g</span>:<span class="nx">ale_php_phpmd_ruleset</span> <span class="p">=</span> <span class="s1">&#39;~/.phpmd.xml&#39;</span><span class="err">
-</span><span class="err"></span><span class="c">&#34; 普通模式下，sp前往上一个错误或警告，sn前往下一个错误或警告</span><span class="err">
-</span><span class="err"></span><span class="nx">nmap</span> <span class="nx">sp</span> <span class="p">&lt;</span><span class="nx">Plug</span><span class="p">&gt;(</span><span class="nx">ale_previous_wrap</span><span class="p">)</span><span class="err">
-</span><span class="err"></span><span class="nx">nmap</span> <span class="nx">sn</span> <span class="p">&lt;</span><span class="nx">Plug</span><span class="p">&gt;(</span><span class="nx">ale_next_wrap</span><span class="p">)</span><span class="err">
-</span><span class="err"></span><span class="c">&#34; 触发/关闭语法检查</span><span class="err">
-</span><span class="err"></span><span class="nx">nmap</span> <span class="p">&lt;</span><span class="nx">Leader</span><span class="p">&gt;</span><span class="nx">at</span> :<span class="nx">ALEToggle</span><span class="p">&lt;</span><span class="nx">CR</span><span class="p">&gt;</span><span class="err">
-</span><span class="err"></span><span class="c">&#34; 查看错误或警告的详细信息</span><span class="err">
-</span><span class="err"></span><span class="nx">nmap</span> <span class="p">&lt;</span><span class="nx">Leader</span><span class="p">&gt;</span><span class="nx">ad</span> :<span class="nx">ALEDetail</span><span class="p">&lt;</span><span class="nx">CR</span><span class="p">&gt;</span><span class="err">
-</span></code></pre></td></tr></table>
-</div>
-</div>]]></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>最佳实践 on 晴耕雨讀</title><link>http://0x3f.org/tags/%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/</link><description>Recent content in 最佳实践 on 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><copyright>© 淘气 2021</copyright><lastBuildDate>Sun, 21 Nov 2021 17:16:15 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/index.xml" rel="self" type="application/rss+xml"/><item><title>自动追剧的工作流</title><link>http://0x3f.org/posts/auto-workflow-of-following-tv-series-and-movies/</link><pubDate>Sun, 21 Nov 2021 17:16:15 +0800</pubDate><guid>http://0x3f.org/posts/auto-workflow-of-following-tv-series-and-movies/</guid><description>在 NAS 上搭了个自动追剧、追影的工作流，体验非常好。
+只需要把想看的美剧或者电影添加到监控列表里，就可以在资源出现之后自动下载并通知到手机或电脑，全程无值守，回家打开电视就能看。
+用到这些工具：
+Jackett: BT 索引工具，负责搜索资源。 Sonarr: 电视剧管理工具，负责管理追剧列表、调用 Jackett 搜索、资源监控、下载调度。 Radarr: 电影管理工具，功能同 Sonarr 。 qBittorrent: BT 下载工具。 ChineseSubFinder: 字幕搜索工具。 Jellyfin: 媒体中心，负责影视剧转码、播放、管理。 Telegram: 接收通知。 nzb360: Android APP ， Sonarr 、 Radarr 、 qBittorrent 的客户端。 Jackett 是 BT 资源索引工具，可以对添加到索引列表中的 BT 资源站点做集中搜索。
+Sonarr 专门用来管理剧集，与 Jackett 集成后可以在 Sonarr 的页面上搜索并添加到监控列表。剧集更新后会自动调用下载服务下载，随后导入并刮削元数据。特别地，如果发现有更清晰的资源，它可以自动下载并替换现有的资源。
+Radarr 的功能和 Sonarr 几乎一样，只不过它是用来管理电影的。
+qBittorrent 是下载工具。
+Jellyfin 是媒体中心，实现对影视资源的管理、转码、播放功能。在播放终端解码能力弱或者网络不够好的场景下比较有用。如果电视的播放器（例如 Infuse 7）刷新海报墙比较慢，Jellyfin 会因为是持续运行的服务而有更好的体验。
+这里还需要用到一个没有 UI 的服务，就是 ChineseSubFinder 。它会监视媒体目录并自动下载合适的字幕。
+当资源被添加、删除或下载时，通过 Telegram 发送通知到手机或者电脑。
+nzb360 是 Sonarr 、 Radarr 、 qBittorrent 的 Android 客户端。UI 很漂亮，使用体验也非常好。还可以添加 Jellyfin 等系统的 Web UI ，实现对整个工作流的一站式访问。</description></item><item><title>用微力同步换掉了 Dropbox</title><link>http://0x3f.org/posts/replace-dropbox-with-verysync/</link><pubDate>Wed, 06 Oct 2021 01:24:41 +0800</pubDate><guid>http://0x3f.org/posts/replace-dropbox-with-verysync/</guid><description>我希望找到一种体验较好的方式，把两部手机和索尼黑卡上的照片集中同步到 NAS 上交由 PhotoPrism 托管。
+需求如下：
+可以方便地发送多平台照片到 NAS 。 可以单向同步手机到 NAS 并忽略手机的删除操作，以节省手机的存储空间。 可以实现内网穿透且简单稳定。 便宜。 对比了 PhotoSync 、 Resilio Sync 、 Syncthing 和微力同步（verysync）。
+PhotoSync 作为专门针对同步照片的场景设计的 APP ，完美覆盖前两点，第三点可以借助 NAS 已经配置好的内网穿透实现，但是需要购买相应的 Plan ，而且 Android 和 iOS 平台要各自单独购买。
+Resilio Sync 实现内网穿透需要引入新的依赖关系，不完全满足第三点。
+Syncthing 看起来不错，但是没有官方的 iOS 客户端。
+微力同步据说是基于 Syncthing 的，且补上了后者缺失的一环。各平台免费，只有 iOS 上需要花 12￥ 买 APP 。
+我的 NAS 运行的是 Unraid ， Community Applications 里没有微力同步，在这里找到了别人配置好的模板，部署很方便。
+试用后因为太好用，干脆把 Dropbox 目录也放到微力同步里，卸载了会占用很多内存且免费方案 3 个端的限制早已捉襟见肘的 Dropbox 。</description></item><item><title>改变 Vim 模式时自动切换输入法的方法</title><link>http://0x3f.org/posts/auto-switch-input-method-while-changing-vim-mode/</link><pubDate>Wed, 19 Feb 2020 21:48:15 +0000</pubDate><guid>http://0x3f.org/posts/auto-switch-input-method-while-changing-vim-mode/</guid><description>VS Code的Vim插件有个很贴心的功能，可以在切换到普通模式时自动切换到英文输入法，而当切换回插入模式时再换到此前的输入法。
+设置的方法很简单。先安装im-select，然后配置如下（macOS）：
+当然，在Vim里也可以利用im-select实现这个功能。</description></item><item><title>在 VS Code 中快速创建 PHPUnit 测试类的方法</title><link>http://0x3f.org/posts/quickly-create-phpunit-test-cases-with-vscode/</link><pubDate>Tue, 18 Feb 2020 22:49:45 +0000</pubDate><guid>http://0x3f.org/posts/quickly-create-phpunit-test-cases-with-vscode/</guid><description>&lt;p>通过单元测试解决问题或者调试代码，可以避开错综复杂的依赖关系、直击问题的核心，从而极大地节约时间、提高效率。&lt;/p>
+&lt;p>但是，当创建测试类成为一个经常发生的操作时，每次都手动创建类、引入基类、添加测试方法就显得很烦琐。我需要这样一个解决方案，让我可以立即开始着手写测试代码。&lt;/p></description></item><item><title>用Github当图床</title><link>http://0x3f.org/posts/take-github-as-image-hosting-service/</link><pubDate>Thu, 06 Feb 2020 22:00:00 +0000</pubDate><guid>http://0x3f.org/posts/take-github-as-image-hosting-service/</guid><description>&lt;p>微博图床的域名不知道什么时候改了，Google找不到相关信息，经过排查发现原域名中的“ws”改成了“wx”，浪费了不少时间。&lt;/p>
+&lt;p>于是打算换图床。&lt;/p></description></item><item><title>用C4-PlantUML画软件架构图</title><link>http://0x3f.org/posts/design-software-architecture-with-c4-plantuml/</link><pubDate>Fri, 17 Jan 2020 17:29:24 +0000</pubDate><guid>http://0x3f.org/posts/design-software-architecture-with-c4-plantuml/</guid><description>&lt;p>&lt;a href="https://c4model.com">C4 Model&lt;/a>是一种简洁有序的架构模型，四个“C”分别表示“Context”、“Container”、“Component”和“Code”，是由上而下逐步细化的四个层级。&lt;/p></description></item><item><title>用鼠须管输入日期时间的方法</title><link>http://0x3f.org/posts/input-date-and-time-with-rime/</link><pubDate>Wed, 08 Jan 2020 13:52:49 +0000</pubDate><guid>http://0x3f.org/posts/input-date-and-time-with-rime/</guid><description>&lt;p>原来在Linux下用小小输入法，输入日期时间很方便。换到Mac后，很早就在关注这个问题，直到后来鼠须管实现了嵌入Lua脚本的功能才得以解决。&lt;/p></description></item><item><title>AirPods Pro的使用感受</title><link>http://0x3f.org/posts/the-expirence-of-airpods-pro/</link><pubDate>Tue, 05 Nov 2019 16:18:54 +0000</pubDate><guid>http://0x3f.org/posts/the-expirence-of-airpods-pro/</guid><description>&lt;p>Bose QC35曾是带给我巨大幸福感的工具，并且三年来一直处于重度使用的状态。但是它的一些弱点，使得在某些细分场景下并不能得到很好的体验。首先是包耳式的设计在夏天会很热。其次，虽然有折叠的功能，但头戴式的设计对于日常通勤来说，还是不够便携。再次，QC35一代的降噪级别只能通过APP设置，很麻烦，所以我一直都保持默认开启状态，出于安全性考虑，不适合徒步或者骑行。&lt;/p>
+&lt;p>于是后来买了一副AirPods（以下简称AP）。高温和骑行的体验得以改善，但一直被通勤过程中北京公交糟糕的乘坐体验所困扰。其实在购买AP之前，更想买的是带降噪功能的耳塞，当时索尼的降噪豆一代才刚上市，评测普遍反馈体验不太好，而QC30的狗圈又让我完全接受不能，除此之外，在当时并无更多的选择。AP其实是权衡之后妥协的结果。&lt;/p>
+&lt;p>所以从看到AirPods Pro（以下简称APP）上市的消息到下单，并没有考虑太久。下单时提示可能一到两周才能到货，但其实第二天就发了货，次日到手。体验了几天，说说感受。&lt;/p></description></item><item><title>PHP单元测试的技巧</title><link>http://0x3f.org/posts/phpunit-tips/</link><pubDate>Tue, 13 Aug 2019 14:21:48 +0000</pubDate><guid>http://0x3f.org/posts/phpunit-tips/</guid><description>&lt;p>以下是我平时写单元测试时总结的一些最佳实践，有些是和具体的框架强相关的。&lt;/p></description></item><item><title>用ALE替换了Syntastic</title><link>http://0x3f.org/posts/replace-syntastic-with-ale/</link><pubDate>Wed, 12 Dec 2018 20:42:10 +0000</pubDate><guid>http://0x3f.org/posts/replace-syntastic-with-ale/</guid><description>&lt;p>习惯频繁地保存源码，但是每次保存都有明显的卡顿，于是用Vim自己的调优功能跟踪了一下。&lt;/p></description></item><item><title>配置鼠须管的特殊符号输入</title><link>http://0x3f.org/posts/input-punctuations-with-rime/</link><pubDate>Sat, 13 Oct 2018 11:59:50 +0000</pubDate><guid>http://0x3f.org/posts/input-punctuations-with-rime/</guid><description>开源工具最常见的问题就是文档不全，实现一个需求的时候只能苦苦Google，甚至连蒙带猜。这也是我逐渐倾向买用户体验更好的收费软件的原因。
+鼠须管是自带特殊符号码表的，在用户配置目录中的symbols.yaml，但是有的码表需要手动配置。经过查资料和摸索，关键在于以下几项配置：
+1 2 3 4 5 6 7 punctuator:import_preset:symbolsrecognizer:import_preset:defaultpatterns:punct:&amp;#34;^/([a-z]+|[0-9]0?)$&amp;#34; 然后就可以通过【/】+【编码】的方式显示符号备选项了，具体的编码可以到symbols.yaml里看，当然一般为了方便定制该码表，会复制并重命名该文件，然后上述的配置项里也要做相应的修改。</description></item><item><title>鼠须管的美化</title><link>http://0x3f.org/posts/beautify-squrrel-input-method/</link><pubDate>Sat, 21 Apr 2018 20:52:42 +0000</pubDate><guid>http://0x3f.org/posts/beautify-squrrel-input-method/</guid><description>效果如下： 尽管鼠须管的Github仓库一直在更新，但释出版已经很久没有更新了，所以下面的美化基于网络上个人编译的版本。这篇文章里有该版本和「花园明朝」字体的下载链接，按照文中的说明替换鼠须管的程序。（注意：官方当前释出版本鼠须管不支持下文通过patch自定义配置的方式，会造成原配置信息丢失。也不支持图示的样式。）
+然后参考这篇文章，把新的颜色方案移植到用户配置中。
+图示样式使用「dust」方案。原色彩方案的字体设置的有点小，需要把font_point和label_font_point分别从14和10修改成18和14。原方案的第一顺序字体是「HYQiHei-55S Book」，要使用图示的花园明朝字体，可以不安装或者从配置信息中去掉该字体。由于原方案中已存在的配置项不能通过patch的方式覆盖，所以只能直接修改squirrel.yaml文件。</description></item><item><title>我在用的Safari扩展</title><link>http://0x3f.org/posts/the-safari-extensions-i-am-using/</link><pubDate>Sun, 15 Apr 2018 22:29:10 +0000</pubDate><guid>http://0x3f.org/posts/the-safari-extensions-i-am-using/</guid><description>和Chrome相比，Safari更省电、需要更少的系统资源，而且Chrome还有一些莫名其妙的问题，比如在没有运行的时候，从Alfred执行搜索会启动两个窗口，一个是之前的会话，另一个是当前的搜索页面。并且，启用了一些扩展之后Safari的体验可以改进很多。所以平时用Safari更多一些。
+sVim 作为注重效率的Vim党和键盘党，这种扩展是使用任何浏览器必备的东西。最常用的就是用标记打开链接的功能。
+Tampermonkey 油猴脚本管理器，应该是任何浏览器必备的东西。
+AutoPagerize 用Google搜索时自动滚动到下一页。
+RSS Menu 当发现当前页面有可订阅的RSS链接时，在工具栏图标上显示提示。
+Instapaper 稍后读工具。
+Turn Off the Lights 看视频时降低网页其余部分亮度。
+Scroll To Top Button 在页面右下角显示一个浮动的跳转到页首按钮。
+Push for Kindle FiveFilters.org的发送到Kindle按钮。
+octotree GitHub侧边栏。
+Translate 翻译当前页。
+WikiWand 优化维基百科阅读体验。
+Xdebug Helper PHP单步调试辅助工具。
+AdBlock 广告过滤器。
+Sessions 网页会话管理器。如果打开的页面太多，又可能在将来再用到，可以保存会话后清理掉，用到的时候再打开保存过的会话。虽然没有Chrome下的Session Buddy和Tab Snooze好用，但是解决关键问题也够了。</description></item><item><title>广告过滤工具AdBlock、Adblock Plus和uBlock的简单对比</title><link>http://0x3f.org/posts/a-simple-comparison-among-adblock-ublock-and-adblock-plus/</link><pubDate>Sun, 01 Apr 2018 22:47:47 +0000</pubDate><guid>http://0x3f.org/posts/a-simple-comparison-among-adblock-ublock-and-adblock-plus/</guid><description>Adblock Plus作者的那篇博客可能会影响很多人。我并不关心那些情怀的东西，只看疗效。
+简单地对比了下AdBlock、Adblock Plus、uBlock在Safari for Mac上的效果，所有样本和环境均为当前最新版本。AdBlock开启Safari内容过滤后是最好的，成功地过滤掉了我常访问的一个BT下载网站上的所有广告，而不开启Safari内容过滤时，会出现部分广告先显示后隐藏的情况。uBlock漏掉了个别不容易屏蔽的。而Adblock Plus最差，缺省设置下一条都没过滤掉，在选择更多的过滤规则后才过滤掉一部分。由于样本很单一，本结论不具有普适性。
+说句题外话，我觉得Adblock Plus这名字起得动机就挺不纯的，没有详细考证过，印象中这个东西是比AdBlock后出现的，而且这名字很容易让人理解成AdBlock的加强版。</description></item><item><title>iQunix F60使用感受</title><link>http://0x3f.org/posts/iqunix-f60/</link><pubDate>Sat, 17 Feb 2018 15:40:47 +0000</pubDate><guid>http://0x3f.org/posts/iqunix-f60/</guid><description>我不喜欢冗余的东西。如果桌子足够大，我能接受的极限是87键。然而我的Filco 87圣手二代黑茶已经吃灰很久了，之前的主力是Poker II白青。所以目前主要的关注点还是在60键上。
+我对Poker整体上还是比较满意的，尤其是按键编程的功能很方便。但是有两点让我很不满意。一是做工一般，键帽的活动幅度较大，远远没有Filco的扎实感。二是不支持蓝牙，无线化是一个用了就回不去的东西。
+iQunix F60就是这么个东西，符合我对键盘所有的核心需求：支持蓝牙、做工好、60%布局、Cherry轴、PBT键帽。用了一段时间，整体是满意的。
+买的银白色，收到的是侧刻，算是个小惊喜吧，虽然不如无刻骚气，至少不像正刻那么平庸。铝合金外框加白色PBT键帽的颜值很高，整体很有质感。
+做工比Poker好很多，找回了Filco的扎实感。PBT的键帽不打油，这一点超过了Filco。
+续航一般，轻度使用可以持续一周。信号强度也很一般，一米的距离，已能感受到明显的延迟。不过这些在实际的使用中不是什么大问题。
+功能上，不支持键盘编程，这点不如Poker。但是可以用组合键交换左侧WIN键和ALT键，对Mac很友好。代替方向键的组合键位也比Poker合理。此外，可以用组合键切换有线和无线模式，支持在3台设备之间切换。</description></item><item><title>飞利浦电动牙刷HX9903/42使用感受</title><link>http://0x3f.org/posts/philips-hx9903-42/</link><pubDate>Sat, 10 Feb 2018 17:23:15 +0000</pubDate><guid>http://0x3f.org/posts/philips-hx9903-42/</guid><description>效果虽说没别人说的夸张，也的确刷得很干净，再就是缓解了胳膊的疲劳感。
+有个问题。刚开始的几天，虽然电池已经充满，但是震动强度很一般，而且手柄底部的压力警示灯一直闪，试过拔掉刷头，问题还在，说明是手柄的问题。直到提示电量紧张后第二次充电，之后才恢复正常。
+App、多种刷头、多种模式、压力警示和三级震动强度都是噱头，刷个牙而已，HX6730足够了，多交的几百块钱除了智商税，也就颜值和无线充电有点价值了。
+电动牙刷不是个用了就回不去的东西，不过体验确实很好，刷牙不再是例行公事和负担，而是件挺有意思的事。</description></item><item><title>用OTP Auth替换了Authy</title><link>http://0x3f.org/posts/migrate-from-authy-to-otp-auth/</link><pubDate>Tue, 06 Feb 2018 22:53:40 +0000</pubDate><guid>http://0x3f.org/posts/migrate-from-authy-to-otp-auth/</guid><description>Authy的界面很花哨，但并不实用，管理多个两步验证账号时查询效率很低。OTP Auth采用更直观的列表布局，并且支持搜索，在用户体验和效率上有更大的优势。两者之间没有批量迁移数据的方式，只能逐个手动添加，很麻烦。</description></item><item><title>Unlox：兼顾安全和体验的东西深得我心</title><link>http://0x3f.org/posts/unlox/</link><pubDate>Sun, 14 Jan 2018 16:52:11 +0000</pubDate><guid>http://0x3f.org/posts/unlox/</guid><description>买了Unlox。早就知道MacID，阴差阳错一直没买，所以这又是一次后知后觉的行为。
+曾经用过一段时间ControlPlane，通过多种条件自动判断场景以启用或关闭锁屏密码。后来在一次系统升级之后就不能用了。因为这个东西本身体验也不是很好，免费的东西折腾起来太耗费精力，所以付费买体验也是个不错的选择。
+有三个功能对我来说很有用。
+首先是用Face ID解锁Mac。在Mac被唤醒后，iPhone X自动弹出解锁的通知，点击后Unlox被打开并自动调用Face ID，验证通过后Mac即被解锁。不过两次Face ID验证稍显繁琐，如果在iPhone锁屏界面验证通过后就自动解锁，体验会更好。不过我猜应该是iOS在这个地方不会通知到App。
+其次是Tap解锁。用手指点击触摸板，点击次数和每次用的手指数目可以自定义。这个方式确实很方便。为了加强安全性，还可以设置当手机断开时禁用Tap解锁。
+第三是离开时自动锁屏。可以设置当手机和Mac之间的蓝牙连接信号减弱多少时自动锁屏。虽然对于Macbook用处不大，也不失为忘记合上屏幕时的一种补救手段。
+此外还有其它一些功能，例如通过手机锁定或解锁Mac、靠近时自动唤醒Mac等。
+今年Apple应该会全系支持Face ID，所以这只是一个过渡方案。</description></item><item><title>密码管理的最佳实践</title><link>http://0x3f.org/posts/the-best-practice-of-password-management/</link><pubDate>Wed, 27 Dec 2017 17:26:17 +0000</pubDate><guid>http://0x3f.org/posts/the-best-practice-of-password-management/</guid><description>通密之所以不应该被过分指责，是因为有其存在的道理，没有哪种方案的管理成本比它更低，它不需要购买昂贵的1password，不需要担心临时用的时候突然想不起来，而且，只要这个密码足够强壮并且使用环境足够安全，大多数情况下也不会有什么问题。通密的问题在于它的风险成本太高，一旦一处泄漏，所有使用这个密码的地方都不安全。
+另一个极端是，使用很复杂的密码，每个账号都不同，甚至用密码生成工具生成完全没有规律的随机字符串。这种方案的安全性很高，高到连你自己都记不住。
+所以我需要这样一套好的方案，它应该在安全性和易用性之间取得一个比较好的平衡，并且随著方法论和工具链的进化，这个平衡可以无限逼近黄金分割点。
+首先，密码应该是复杂但容易记住的。密码的复杂度和记忆负担并不成正比，例如如果你实在记不住“ppnn13%,dkstFeb1st”，那么这样呢——“娉娉袅袅十三余，豆蔻梢头二月初”。密码只是一个字符串，如果不去死记最终的值，而是字符串背后的规律，记忆的压力就会小很多。
+但考虑到每个账号都想一个这样的密码是不现实的，而且怎么解决记忆密码和账号的对应关系的问题？所以进一步，可以用这样的密码当前缀，每个密码的前缀都一样，然后针对每个账号创造一个后缀，这个后缀应该是每个账号都不同的，且和账号有某种只有你自己才知道的关联，这样你可以随时根据账号计算出它的后缀。例如，可以用账号拼音首字母（当然，实际的规则应该更复杂一点）。
+这样你就有了足够复杂、每个账号都不同并且很容易记住的密码。进一步地，在私有设备上可以利用文本替换功能（例如：Alfred for Mac的Snippets功能）快速输入通用前缀，某些支持按键编程的机械键盘会有更好的体验。
+不过好记性不如烂笔头，为防万一，还是需要一个Plan B。主流的密码管理工具主要有这么几种：
+浏览器的账号记忆功能 操作系统的keychain 在线密码管理工具 离线密码管理工具 浏览器一般是把密码以明文存储在本地的，firefox虽然有个主密码，但只是个幌子，别人仍然可以拿到它记录密码的数据库文件。这种做法的逻辑在于，设备上存储的数据的安全性由操作系统和用户负责，换句话说，用户不应该允许他人用自己的权限登录设备。但实际上很难避免这种情况，而且还要考虑到系统被入侵的可能。所以，只应该让浏览器记住那些最不重要的账号。
+相对来说，操作系统的keychain一般有自动锁定的功能，会更安全一些。但是仍无法完全避免上述问题。而且keychain只能记录账号和密码，无法存储更多的附加信息。所以这种工具也只应该存储一些不重要的账号。
+最著名的在线密码管理工具应该是Lastpass。关于它的安全性有很多种说法，不过我觉得但凡是敏感数据都不要存储到线上，所以这种方式不予考虑。
+我倾向于使用离线的密码管理工具。1password据说很好用，但是太贵了，而且开源免费的keepass已经完全够用了。我在Mac上用KeePassXC，在iOS中用MiniKeePass，私钥文件离线存储，然后数据库文件用Dropbox同步就可以了。
+此外，对于重要的账号，如果支持两步验证，一定要开启，然后用OTP Auth管理即可。
+最终的方案是：
+方法论：统一的复杂但有规律的前缀+根据账号计算出来的后缀 工具链：KeePass + OTP Auth + Dropbox</description></item><item><title>测试驱动开发的实际收益</title><link>http://0x3f.org/posts/the-real-income-of-tdd/</link><pubDate>Sun, 17 Dec 2017 14:20:02 +0000</pubDate><guid>http://0x3f.org/posts/the-real-income-of-tdd/</guid><description>我并不试图系统地谈TDD，因为我在这方面的经验还不足以做到这一点。但是TDD的一些方法论和工具确实解决了我在实际开发过程中遇到的一些问题。
+第一个问题是健壮性。尤其是对于我这样思维发散、容易迷失又喜欢重构的人，TDD给了我一个明确的目标，在一切刚开始的时候，我要做的只是满足测试用例，让它们由红变绿。到了重构阶段，我就可以把精力放到优化代码上面，且不必对健壮性有过多的担心。在此之前，由于手动测试比较麻烦，很多时候惰性会说服潜意识告诉自己这部分逻辑很简单、不会有什么bug，结果提交测试后却一再地发生问题。
+第二个问题是效率。曾经只有不忙的时候才会写测试用例，但是现在一般都会写，因为确实可以提高开发效率，而不只是保证重构的健壮性。可能对于所有对单元测试不熟悉的人来说，这都是匪夷所思的，我也曾认为单元测试只是用来保证健壮性的，必然和开发效率是一对矛盾，因为要花很多时间写测试代码。这种想法首先是因为对单元测试不熟悉，所以才需要花很多时间在上面。其次是没有看到它所带来的好处。
+例如你要实现一整套退款单的功能，退款单是依赖订单的，这意味著你需要不只一条符合条件的订单数据。但是订单是有状态的，随著时间的推移、人为的操作或者开发过程中程序的影响，状态会变得不再符合你的要求，这时候你就必须停下来去做更多符合要求的订单。而创建订单也存在很多麻烦，你需要找到有库存的商品，有时候还要去库管系统中补充库存，然后下单并支付。最后花了很多时间做出来的订单，因为正在开发的退款单的程序出现的一个小问题变得不能使用！时间被大量浪费在创建所依赖的上游数据上。
+这时候如果用单元测试并mock出依赖关系，就可以随时随地、无限制地执行相关的业务逻辑。对效率的提高不言而喻。
+特别的，mock并不是随时可以抓起的救命稻草，它的原罪在于：不负责任地滥用mock会导致很多问题被掩盖。因此，对mock的使用应该是节制的、目标明确的。
+当然，这并不包括单纯地为了提高代码覆盖率而使用mock，只所以这是个在很多强制TDD的团队里的普遍现象，归根结底是因为KPI是万恶之源，任何好的方法论，一旦沦为KPI，就离死不远了。</description></item><item><title>BaiduPCS：当前最好用的百度网盘下载工具</title><link>http://0x3f.org/posts/baidupcs/</link><pubDate>Tue, 12 Dec 2017 21:21:16 +0000</pubDate><guid>http://0x3f.org/posts/baidupcs/</guid><description>BaiduPCS是个命令行工具，用于下载百度网盘中的资源。之前用的是浏览器插件，需要先创建分享，再拿到下载链接，最后用下载工具下载。这个工具可以直接执行一条命令下载指定的资源，非常方便。
+这里有安装说明，然后按照使用说明操作即可。</description></item><item><title>iOS垃圾短信过滤器：熊猫吃短信</title><link>http://0x3f.org/posts/panda-eats-sms/</link><pubDate>Sun, 10 Dec 2017 12:08:47 +0000</pubDate><guid>http://0x3f.org/posts/panda-eats-sms/</guid><description>“熊猫吃短信”是个新上架的App，用于过滤垃圾短信。据说是基于机器学习训练出来的，用了一周，识别得非常准确。
+之前用的腾讯手机管家，即使把“精准识别”、“上传到云端”等选项都打开，还会有漏网之鱼，而且会牺牲隐私。这个App声称不会主动上传短信。最重要的是，这一周里所有不关心的短信都被过滤掉了，而且没有失误。</description></item><item><title>全新Kindle Oasis使用感受</title><link>http://0x3f.org/posts/the-all-new-kindle-oasis/</link><pubDate>Sat, 09 Dec 2017 14:03:08 +0000</pubDate><guid>http://0x3f.org/posts/the-all-new-kindle-oasis/</guid><description>早在Paperwhite 1的时候我就不喜欢它的工业设计：边框太宽，屏幕内陷。此外，非人体工学设计和没有实体翻页键导致单手握持体验很差。再有就是做工的问题，机身表面接缝处缝隙明显而不均匀、通体强烈的塑料感。然而还是从一代用到了三代，除了kpw是kindle全系列里性价比最高的产品线之外，还有就是没有其它任何一款产品解决了kpw的主要问题。
+例如Voage，虽然屏幕不内陷了、楔形机身优化了握持感、增加了翻页键，但整体的设计只算是在kpw基础上的优化，何况各项硬件配置和kpw3几乎无差。
+后来当第一代Oasis发布的时候，看了第一眼就瞬间失掉了兴趣。捆绑的充电保护壳绝对是体验杀手，装上壳比kpw还要厚重，不装的话本体的续航又很差，频繁拆装也很不方便，这样的体验连kpw都不如。所以我很不看好它，果然很快在今年六月就下架了。
+十月刚看到新Oasis的消息时，马上觉得这回终于有买的价值了。
+首先是7寸的屏幕，瞬间和其它产品线拉开了距离。更大的屏幕意味著能展示更多内容，增加了宽度后也更接近实体书的观感。
+工业设计相对于我的kpw3当然是有了质的改变。玻璃材质的纯平表面，金属背壳，没有了kpw的塑料感，显得更精致。得益于窄边框，7寸屏的机身长度比6寸的kpw还短。虽然因为加宽了屏幕和增加了单手握持的边框导致机身宽度超过kpw很多，不过在平时携带中并没有造成很多困扰。
+单手握持是ko系列的主要卖点，实际使用体验当然很好。为握持设计的宽边框加上实体翻页键非常方便。虽然因为加大屏幕和增加续航导致194g的重量远远超过1代的131g，但还是比kpw轻了10g，而且主要重量集中在单手握持的一边，杠杆效应很小。配合重力感应，随时换手可以有效缓解疲劳。当然，作为长时间单手握持的阅读设备，重量自然越轻越好，这一点上，ko还有很大优化的空间。
+此外，新ko的做工远远好于kpw，没有了廉价感。12颗背光灯使得背光的均匀度比kpw强了很多，几乎不会有kpw上明显的光影。性能上是现在kindle全系列里最高的，翻页时虽然还会看到闪屏，但比以前已经快了很多。自动亮度调节算是个聊胜于无的功能吧。至于防水和有声书，我没有这方面的需求。
+如果说缺点的话，还是续航。虽然相对于1代本体，续航已经达到可用的水平，但是对于被其它产品线惯坏的我们来说，新ko电量的消耗还是快了点。我没有精确的对比，但是能明显地感觉到比kpw掉得快不少。</description></item><item><title>清洁手机的最佳实践</title><link>http://0x3f.org/posts/how-to-clean-a-phone/</link><pubDate>Sun, 03 Dec 2017 22:51:42 +0000</pubDate><guid>http://0x3f.org/posts/how-to-clean-a-phone/</guid><description>以前的做法是先用湿巾清理，再用纸巾擦干。后来屏幕的触感逐渐不如开始时顺滑，也更容易沾指纹和灰尘，而且不容易清除。估计应该是湿巾的酒精会腐蚀屏幕的涂层，纸巾粗糙的表面也会造成磨损。
+现在先用软毛刷扫除灰尘，然后用3M魔布擦拭。效果应该会更好。</description></item><item><title>Vim最好的PHP语法高亮插件</title><link>http://0x3f.org/posts/the-best-php-syntax-file-of-vim/</link><pubDate>Tue, 28 Nov 2017 15:55:59 +0000</pubDate><guid>http://0x3f.org/posts/the-best-php-syntax-file-of-vim/</guid><description>StanAngeloff/php.vim应该是目前最新、最全的PHP语法高亮插件了，它解决了旧版本无法高亮@throws的问题。
+默认会把方法注释全部当做普通注释显示，也就是没有高亮，需要专门做配置：
+1 2 3 4 5 6 7 8 9 function! PhpSyntaxOverride() hi! def link phpDocTags phpDefine hi! def link phpDocParam phpTypeendfunctionaugroup phpSyntaxOverride autocmd! autocmd FileType php call PhpSyntaxOverride()augroup END</description></item><item><title>用AlfredTweet发推</title><link>http://0x3f.org/posts/tweet-with-alfredtweet/</link><pubDate>Sun, 17 Sep 2017 09:26:41 +0000</pubDate><guid>http://0x3f.org/posts/tweet-with-alfredtweet/</guid><description>AlfredTweet是用来解决“最后一公里”问题的东西，有了它就可以随时发推了。
+需要修改源码指定代理：
+1 2 3 4 5 6 7 8 9 // twitteroauth.php function http($url, $method, $postfields = NULL) { // ... curl_setopt($ci, CURLOPT_HTTPPROXYTUNNEL, TRUE); curl_setopt($ci, CURLOPT_PROXY, &amp;#39;127.0.0.1:1086&amp;#39;); curl_setopt($ci, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5); // ... }</description></item><item><title>用vim-test简化单元测试的编写</title><link>http://0x3f.org/posts/make-writing-unit-tests-easier-with-vim-test/</link><pubDate>Mon, 14 Aug 2017 16:43:59 +0000</pubDate><guid>http://0x3f.org/posts/make-writing-unit-tests-easier-with-vim-test/</guid><description>vim-test允许在Vim中直接执行一个或多个单元测试，并使用预设的或自定义的执行策略。
+例如，命令:TestNearest可以执行当前测试文件中离光标最近的一个测试方法。而:TestFile、:TestSuite和:TestLast分别执行整个测试文件、测试项目和最近一次执行过的测试。这在编写测试代码时能很大地提高效率。
+执行策略是执行测试的方式和环境。例如缺省状态下，将使用:!执行测试命令，这会从Vim切换回终端。而在MacVim下，可以选择在iTerm或者系统自带的Terminal中执行。</description></item><item><title>用vim-laravel简化laravel下的开发</title><link>http://0x3f.org/posts/speed-up-artisan-with-vim-laravel/</link><pubDate>Fri, 11 Aug 2017 15:05:30 +0000</pubDate><guid>http://0x3f.org/posts/speed-up-artisan-with-vim-laravel/</guid><description>vim-laravel是个极简而实用的插件，只提供一个:Artisan命令。但它并不仅仅是artisan的一个wrapper，还可以实现一些贴心的自动化，利如自动打开artisan make:*创建的文件。</description></item><item><title>用vim-php-namespace管理PHP的命名空间</title><link>http://0x3f.org/posts/manage-php-namespaces-with-vim-php-namespace/</link><pubDate>Fri, 11 Aug 2017 14:56:12 +0000</pubDate><guid>http://0x3f.org/posts/manage-php-namespaces-with-vim-php-namespace/</guid><description>vim-php-namespace是个简单实用的插件，提供三种功能：
+自动用use语句导入光标下的类 自动把光标下的类名扩展成完整命名空间的格式 自动排序use语句 此外，还提供一个选项控制是否在导入类后自动排序use语句。</description></item><item><title>使neocomplete和ultisnips共用tab键的方法</title><link>http://0x3f.org/posts/reconcile-neocomplete-with-ultisnips/</link><pubDate>Fri, 11 Aug 2017 14:43:14 +0000</pubDate><guid>http://0x3f.org/posts/reconcile-neocomplete-with-ultisnips/</guid><description>昨天用vim-clevertab换掉了supertab，但是实际使用中总是出莫名其妙的问题。看了一下插件源码，使用全局变量判断状态，这是个很不靠谱的方案，所以还是卸掉了。
+下面的配置可以很好的解决问题：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 let g:UltiSnipsExpandTrigger=&amp;#34;&amp;lt;c-tab&amp;gt;&amp;#34;let g:UltiSnipsJumpForwardTrigger=&amp;#34;&amp;lt;c-tab&amp;gt;&amp;#34;let g:UltiSnipsJumpBackwardTrigger=&amp;#34;&amp;lt;s-tab&amp;gt;&amp;#34;let g:UltiSnipsSnippetsDir=&amp;#39;~/.vim/UltiSnips&amp;#39;let g:ulti_expand_or_jump_res = 0function! CleverTab()&amp;#34;{{{ call UltiSnips#ExpandSnippetOrJump() if g:ulti_expand_or_jump_res return &amp;#34;&amp;#34; else if pumvisible() return &amp;#34;\&amp;lt;c-n&amp;gt;&amp;#34; else return neocomplete#start_manual_complete() endif endifendfunction&amp;#34;}}}inoremap &amp;lt;silent&amp;gt; &amp;lt;tab&amp;gt; &amp;lt;c-r&amp;gt;=CleverTab()&amp;lt;cr&amp;gt;snoremap &amp;lt;silent&amp;gt; &amp;lt;tab&amp;gt; &amp;lt;esc&amp;gt;:call UltiSnips#ExpandSnippetOrJump()&amp;lt;cr&amp;gt; ultisnips没有禁用按键映射的开关，而默认的映射会干扰上述配置，所以这里把默认的映射改成了&amp;lt;c-tab&amp;gt;。</description></item><item><title>用vim-plug换掉了vim-addon-manager</title><link>http://0x3f.org/posts/replaced-vam-with-vim-plug/</link><pubDate>Mon, 31 Jul 2017 22:44:16 +0000</pubDate><guid>http://0x3f.org/posts/replaced-vam-with-vim-plug/</guid><description>四年零两个月前，我在Vim的邮件组中征询pathogen和vundle的优劣。一个人建议我试试VAM，语气幽怨——他是它的作者。
+试过之后就从pathogen迁移到了VAM，因为它兼有前者和vundle的优点，在当时，这是最好的插件管理器。就这样用了很久，期间还写了点脚本简化插件的管理，VAM工作得很好。
+最近发现越来越多的插件的文档里提到vim-plug，亮点是支持并行安装和更新，这真是解决了VAM最大的痛点：我叠代了十年的vimrc里用了很多插件，串行的VAM每次更新都让我很痛苦。
+另外，vim-plug较VAM的另一个优势是简单。这倒不是说后者很难用，只是作者过于追求灵活性，导致有些工作实现起来相对更复杂。例如，有的插件安装之后需要做一些额外的操作，VAM需要自己实现回调函数，然后挂到post-install钩子上。而对于vim-plug，只需要在注册插件的地方增加一个选项。对于插件的懒加载，也是同样。
+VAM也有自己的优势。其中之一是可以自动处理依赖关系：当一个要被安装的插件依赖别的插件时，相应的依赖也会被自动安装。还有就是对多源的支持：既可以拉取github上的插件，也可以从vim.org或其它源安装。而vim-plug就只支持github。
+所以，vim-plug并没有全面超过VAM，只是没有明显的短板、功能又刚刚够用。</description></item><item><title>用choosewin.vim切换窗口</title><link>http://0x3f.org/posts/choosewin-vim/</link><pubDate>Sun, 30 Jul 2017 20:48:46 +0000</pubDate><guid>http://0x3f.org/posts/choosewin-vim/</guid><description>输入-显示每个窗口的hint，输入hint跳转，简单而高效：</description></item><item><title>利用goyo.vim专注写作</title><link>http://0x3f.org/posts/distraction-free-writing-in-vim/</link><pubDate>Sat, 29 Jul 2017 16:48:45 +0000</pubDate><guid>http://0x3f.org/posts/distraction-free-writing-in-vim/</guid><description>goyo.vim是给vim提供专注写作模式的插件，配合markdown效果不错：
+最好在单独的vim实例中使用，已发现和vim-workspace配合不好的情况。
+对markdown文件自动开启goyo的配置如下：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 function! s:auto_goyo() if &amp;amp;ft == &amp;#39;markdown&amp;#39; Goyo 80 else let bufnr = bufnr(&amp;#39;%&amp;#39;) Goyo! execute &amp;#39;b &amp;#39;.bufnr endifendfunctionaugroup goyo_markdown autocmd! autocmd BufNewFile,BufRead * call s:auto_goyo()augroup END</description></item><item><title>用vim-workspace换掉了session.vim</title><link>http://0x3f.org/posts/replace-session-vim-with-vim-workspace/</link><pubDate>Wed, 19 Jul 2017 17:47:30 +0000</pubDate><guid>http://0x3f.org/posts/replace-session-vim-with-vim-workspace/</guid><description>用session.vim一直有几个痛点。一是保存会话后，退出时仍然会提示保存。二是会话会记录vimrc，恢复会话后用的仍然是旧的配置。
+vim-workspace没有这些问题，而且实现了更多功能。</description></item><item><title>用neocomplete换掉了YouCompleteMe</title><link>http://0x3f.org/posts/replace-youcompleteme-with-neocomplete/</link><pubDate>Sat, 15 Jul 2017 10:29:48 +0000</pubDate><guid>http://0x3f.org/posts/replace-youcompleteme-with-neocomplete/</guid><description>在尝试了多种方案后，我又一次换掉了自动补全插件。
+工具应该是能提高生产力的，而不是相反，很长一段时间以来，YouCompleteMe带给我的却是个疑惑，真不知道这个东东到底是提高了我的生产力，还是反之。自动补全在提高输入速度和准确度上都有助益，但是有时候补全选项弹出的又很慢。
+测试了nvim-complete-manager+LanguageClient-neovim+LanguageServer-php-neovim、deoplete+phpcd、deoplete+padawan、neocomplete+phpcomplete-extended，效果都非常不理想。最后选择了neocomplete+phpcomplete，速度可以接受，表现比YCM稳定，功能该有的都有。
+相关阅读： How to Make YouCompleteMe Compatible with UltiSnips Vim的终极自动补全插件：NeoComplCache</description></item><item><title>LeaderF，也许是Vim最好的模糊查询插件</title><link>http://0x3f.org/posts/leaderf-currently-the-best-fuzzy-finder-of-vim/</link><pubDate>Thu, 13 Jul 2017 16:45:15 +0000</pubDate><guid>http://0x3f.org/posts/leaderf-currently-the-best-fuzzy-finder-of-vim/</guid><description>之前对比过几个模糊查询插件（Fuzzy Finder），最后选定了ctrlp。
+用了下LeaderF，在速度和匹配的准确度上都明显超过了ctrlp，所以用它换掉了后者。
+只是在交互方式上，我更喜欢ctrlp，文件列表高度是动态变化的，最匹配的行和输入焦点都在窗口的最下方。LeaderF是定高的，最匹配的行在最上方，个人认为不如前者自然。
+能解决痛点的才是好东西，什么时候能换掉YouCompleteMe就好了。</description></item><item><title>CopyQ，也许是Linux最好的剪贴板管理工具</title><link>http://0x3f.org/posts/copyq/</link><pubDate>Mon, 19 Jun 2017 21:49:14 +0000</pubDate><guid>http://0x3f.org/posts/copyq/</guid><description>我对剪贴板管理工具的核心需求有四个：
+记录文本 记录图片 快速搜索 独立软件包 CopyQ是Linux上唯一满足这些需求的实现，虽然体验上跟Mac下的竞品还有差距。
+用法：
+copyq：运行 copyq menu：显示剪贴板历史管理菜单 copyq show：显示剪贴板历史管理窗口</description></item><item><title>用Tmux的控制模式提高生产力</title><link>http://0x3f.org/posts/improve-productivity-with-tmux-control-mode/</link><pubDate>Sun, 11 Jun 2017 10:40:06 +0000</pubDate><guid>http://0x3f.org/posts/improve-productivity-with-tmux-control-mode/</guid><description>Tmux的控制模式（Control Mode）可以把tmux的窗口映射为本地虚拟终端的窗口，也就是说，用户可以像操作本地虚拟终端一样操作tmux。这对备受tmux的emacs风格的热键绑定折磨或需要嵌套tmux的人来说非常有用。
+在支持这个特性的虚拟终端（例如「iTerm」）里，执行tmux -CC即可。当然也可以tmux -CC a恢复会话。</description></item><item><title>用SwitchHosts!切换主机映射方案</title><link>http://0x3f.org/posts/switch-hosts-with-switchhosts/</link><pubDate>Sun, 11 Jun 2017 09:57:54 +0000</pubDate><guid>http://0x3f.org/posts/switch-hosts-with-switchhosts/</guid><description>最近在Archlinux上开始用SwitchHosts!管理主机映射方案，它可能是Linux下做这件事的最好的工具了。
+在Mac下也用它替换掉了Gas Mask，因为支持Alfred Workflow。相对的缺点是不支持在状态栏图标上显示当前方案名称，不过Alfred里可以，一定程度上缓解了这个问题。</description></item><item><title>网站签到的最佳实践</title><link>http://0x3f.org/posts/the-best-practice-of-checking-in/</link><pubDate>Wed, 24 May 2017 11:42:52 +0000</pubDate><guid>http://0x3f.org/posts/the-best-practice-of-checking-in/</guid><description>v2ex、优酷、什么值得买用qiandao.today实现。优点是依赖少，速度快，支持的范围广，可扩展。缺点是对京东和京东金融无效。
+京东和京东金融使用daily-signin。缺点是依赖docker，速度慢。
+淘宝签到没有有效的脚本，用淘金币一键领取。
+飞猪也没有有效脚本，手工签：
+http://trip.taobao.com/mytrip/?tvm=tvip http://trip.taobao.com/mytrip/ http://h5.m.taobao.com/trip/member/index.html</description></item><item><title>接口编程中记录日志的最佳实践</title><link>http://0x3f.org/posts/the-best-practice-of-logging-in-api-programming/</link><pubDate>Tue, 25 Apr 2017 15:50:41 +0000</pubDate><guid>http://0x3f.org/posts/the-best-practice-of-logging-in-api-programming/</guid><description>解决什么问题 快速定位日志 降低记录成本 提高代码可读性 日志框架是项目开始阶段应该最先搭建好的内容之一，有助于极大地节约以后解决问题的时间和成本。但这也是最让我头疼的问题之一，因为记日志不光包括用什么记、怎么记，也包括记什么内容，这恰恰是最容易被忽略的问题。
+一条好的日志需要做到能让问题的跟踪者快速定位它在程序中的位置且包含关键数据。工作中不乏这样的团队成员，在移交接口问题的时候没有主动提供关键信息的意识，所谓关键信息，是指像问题发生的环境、接口名、传递的实参和返回结果这样的内容，使得面向契约编程本来是很好的开发模式，却得不到最好的应用。这时我们可以从自己接口的日志中得到一些弥补。
+但是日志的记录不应该占用很大的代码量，一来降低了代码的可读性，二来会耗费太多的时间精力。
+本文目的在于讨论一种日志记录的最佳实践方式，使得可以兼顾以上这些问题。
+实践 这里针对Laravel实现一个日志工具类，实现以下功能：
+兼容Laravel自己的日志系统 自动记录关键的业务数据 自动记录日志所属的接口名 自动记录接口的实参 记录接口的返回值 生成简洁规范的日志内容 代码：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 &amp;lt;?</description></item><item><title>用Raspberry Pi实现音频Airplay</title><link>http://0x3f.org/posts/implement-airplay-with-raspberry-pi/</link><pubDate>Mon, 17 Apr 2017 10:19:51 +0000</pubDate><guid>http://0x3f.org/posts/implement-airplay-with-raspberry-pi/</guid><description>用树莓派做音频airplay效果不错，老书架音箱又可以用起来了。
+实现方式是shairplay-sync，利用HDMI转VGA线上的3.5mm音频输出孔，因为我的树莓派2B的3.5mm音视频输出口没有合适的转接头。
+我用的是Arch Linux ARM，需要手动开启HDMI输出。修改/boot/config.txt：
+1 2 3 4 hdmi_force_hotplug=1 hdmi_drive=2 config_hdmi_boost=4 dtparam=audio=on 重启后，用alsamixer把树莓派音量调整到最大值。
+AUR里没有针对ARM的shairplay-sync，需要手动编译：
+1 git clone https://github.com/mikebrady/shairport-sync.git 1 2 # 生成configure autoreconf -i -f 1 2 3 4 5 6 # 针对systemd编译 ./configure --sysconfdir=/etc --with-alsa --with-avahi --with-ssl=openssl --with-metadata --with-soxr --with-systemd # END 1 2 3 4 5 6 7 8 # 如果shairport-sync用户不存在，新增用户和用户组 getent group shairport-sync &amp;amp;&amp;gt;/dev/null || sudo groupadd -r shairport-sync &amp;gt;/dev/null getent passwd shairport-sync &amp;amp;&amp;gt; /dev/null || sudo useradd -r -M -g shairport-sync -s /usr/bin/nologin -G audio shairport-sync &amp;gt;/dev/null # END airplay默认的服务名和树莓派的hostname一致，可以到/etc/shairport-sync.</description></item><item><title>编写接口文档的最佳实践</title><link>http://0x3f.org/posts/the-best-practice-of-writing-api-documents/</link><pubDate>Mon, 10 Apr 2017 16:36:27 +0000</pubDate><guid>http://0x3f.org/posts/the-best-practice-of-writing-api-documents/</guid><description>前言 传统的做法是用office写接口文档，这种方式的缺点很多：
+格式混乱 事实上，所有的传统富文本文档都存在这个问题，富文本的跨平台兼容性很差，很容易造成格式错乱。
+版本管理困难 依赖文件系统管理文档是很落后的做法，很难保证手头的文档是最新的版本。
+兼容性差 不是所有人都用windows。
+低效 对效率的负面影响很大程度上已经包含在前面几项里。此外，编辑工具的臃肿、编辑内容的同时还要调整样式、缺少全文检索等，也是导致效率下降的原因。
+理想情况 理想的接口文档应该有以下特征：
+方便创作 文档编辑最重要的是文档的内容，而不是编辑操作本身。所以编写文档的过程应该是简单快捷的，而且最好不需要额外的学习成本。
+排版简洁规范 技术文档的排版，简洁规范是最重要的，花哨的排版会降低效率。
+方便查阅 应该有目录或者大纲视图，并且可以方便地全文检索。
+在线协作 传统的离线文档不方便协作。
+多端兼容 允许在大多数常见平台编辑和使用文档。
+版本管理 可以查看什么人在什么时间改了哪些内容。
+交互式文档 所见即所得。可以修改参数、发送请求并查看接口返回值。
+可订阅 可以给接口打标签。用户可以订阅任意标签下的接口变更，也可以针对接口订阅。
+自动生成 如果代码的可读性足够好，何必浪费时间写文档？或者至少可以自动生成。
+当前实践 理想很丰满，但是目前还没有能满足以上所有需求的解决方案。权衡之下，markdown和wiki是目前比较合适的方案。
+markdown 用markdown写文档有以下特点：
+适合单文档形式 主流git托管平台都支持 适合个人创作 适合小型项目、需要移交开发成果的项目 下面是用markdown写的接口文档的例子： 主流markdown编辑器在转换过程中会为标题添加锚点，利用这个特性可以实现从接口列表跳转到接口详情。
+最佳工具 Cmd Markdown
+美观 跨平台 编辑操作支持Vim模式 wiki 用wiki写文档有这些特点：
+方便多层级文档 需要自己搭建平台 适合团队创作 适合长期、大型项目 最佳工具 dokuwiki
+刚刚好 结论 综上，小型的、托管在主流git平台的项目适合用markdown，公司级项目用wiki更好。但这还达不到理想的标准，需要继续探索更好的解决方案。</description></item><item><title>MacOS中切换输入法的最佳实践</title><link>http://0x3f.org/posts/the-best-practice-of-switching-input-methods-in-macos/</link><pubDate>Mon, 20 Mar 2017 14:25:00 +0000</pubDate><guid>http://0x3f.org/posts/the-best-practice-of-switching-input-methods-in-macos/</guid><description>原则：
+一键切换 可以对特定应用设定初始输入状态 可以方便地确认当前输入状态 兼容外接键盘 思路：
+用Karabiner Elements把右Shift修改成F19，在系统里设置用F19切换输入法 用isHUD显示输入法状态 用Keyboard Maestro自动切换键盘布局 Karabiner Elements会使系统的键盘布局失效，且不能对不同的键盘使用不同的布局，所以只有用Keyboard Maestro自动切换。
+isHUD只在切换输入法时有效，理想情况是用Caps Lock键灯表示输入状态，不过目前没找到可用的解决办法。
+鼠须管可以对不同的应用设置初始输入状态，但只是在切换输入法后，例如对于Alfred，如果上次鼠须管处于中文输入状态，再次打开输入框的时候不会变成英文状态，因此需要在Alfred中设置初始输入法为英文。</description></item><item><title>沙发椅，让阅读更有趣</title><link>http://0x3f.org/posts/my-new-sofa-chair/</link><pubDate>Sat, 18 Mar 2017 22:48:35 +0000</pubDate><guid>http://0x3f.org/posts/my-new-sofa-chair/</guid><description>心水沙发椅很久了，终于拔草。
+因为喜欢极简，之前一直用著一张双人小沙发，但是不够舒适，也不便移动。后来坐过一间餐厅的沙发椅感觉包覆感很好，就想著换一下，于是出掉了沙发，准备入一把伊姆斯椅，偶然看到现在这把，瞬间庆幸没有草率地买前者。
+在阳台上阅读变得更有趣了，这椅子和小抱枕很搭（不是照片中这个）。</description></item><item><title>Vim搜索的最佳实践</title><link>http://0x3f.org/posts/the-best-practice-of-searching-in-vim/</link><pubDate>Sun, 19 Feb 2017 20:37:18 +0000</pubDate><guid>http://0x3f.org/posts/the-best-practice-of-searching-in-vim/</guid><description>目标 使用PCRE正则表达式在当前目录下递归搜索 将选定内容自动转换成正则表达式 有较高的搜索速度 依赖 Ferret：实现用PCRE正则表达式递归搜索 The Silver Searcher：搜索速度快 配置 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 &amp;#34; 在当前缓冲区中查找与替换nmap &amp;lt;leader&amp;gt;ff yiw/\&amp;lt;&amp;lt;C-R&amp;gt;&amp;#34;\&amp;gt;\Cvmap &amp;lt;leader&amp;gt;ff y/&amp;lt;C-R&amp;gt;=XEscapeRegex(@&amp;#34;)&amp;lt;CR&amp;gt;\Cnmap &amp;lt;leader&amp;gt;rr yiw:%s/\&amp;lt;&amp;lt;C-R&amp;gt;&amp;#34;\&amp;gt;\C//g&amp;lt;LEFT&amp;gt;&amp;lt;LEFT&amp;gt;vmap &amp;lt;leader&amp;gt;rr y:%s/&amp;lt;C-R&amp;gt;=XEscapeRegex(@&amp;#34;)&amp;lt;CR&amp;gt;\C//g&amp;lt;LEFT&amp;gt;&amp;lt;LEFT&amp;gt;nmap &amp;lt;leader&amp;gt;rl yiw:s/\&amp;lt;&amp;lt;C-R&amp;gt;&amp;#34;\&amp;gt;\C//g&amp;lt;LEFT&amp;gt;&amp;lt;LEFT&amp;gt;vmap &amp;lt;leader&amp;gt;rl y:s/&amp;lt;C-R&amp;gt;=XEscapeRegex(@&amp;#34;)&amp;lt;CR&amp;gt;\C//g&amp;lt;LEFT&amp;gt;&amp;lt;LEFT&amp;gt;&amp;#34; 在当前目录下递归搜索和替换let g:FerretExecutable=&amp;#39;ag&amp;#39;nmap &amp;lt;leader&amp;gt;ak &amp;lt;Plug&amp;gt;(FerretAck)nmap &amp;lt;leader&amp;gt;lak &amp;lt;Plug&amp;gt;(FerretLack)nmap &amp;lt;leader&amp;gt;aw &amp;lt;Plug&amp;gt;(FerretAckWord)nmap &amp;lt;leader&amp;gt;as &amp;lt;Plug&amp;gt;(FerretAcks)vmap &amp;lt;leader&amp;gt;ak y:Ack &amp;lt;C-R&amp;gt;=XEscapeRegex(@&amp;#34;, 2)&amp;lt;CR&amp;gt;vmap &amp;lt;leader&amp;gt;lak y:Lack &amp;lt;C-R&amp;gt;=XEscapeRegex(@&amp;#34;, 2)&amp;lt;CR&amp;gt;nnoremap &amp;lt;leader&amp;gt;a :set operatorfunc=GrepOperator&amp;lt;CR&amp;gt;g@vnoremap &amp;lt;leader&amp;gt;a :&amp;lt;c-u&amp;gt;call GrepOperator(visualmode())&amp;lt;CR&amp;gt;function!</description></item><item><title>Bose QC35，这安静有毒</title><link>http://0x3f.org/posts/the-experience-of-bose-qc35/</link><pubDate>Sat, 18 Feb 2017 20:23:28 +0000</pubDate><guid>http://0x3f.org/posts/the-experience-of-bose-qc35/</guid><description>我很容易受环境影响，即便在家里比较安静的时候，也经常集中不了注意力。小时候总是可以连续几个小时读一本书，现在已经很久没有长时间专心做一件事了。戴了一段时间QC35，又重新找回了这种感觉，干什么事都很专心，感觉很安静，心态平和很多。
+之前先入手了森海大馒头，不过没有降噪的功能，所以必须一直配合白噪声使用，时间长了还是有点累的。另外，有线耳机实在不方便，所有的数码设备都应该无线化，对生活品质的提升会很大。虽然大馒头作为出街向的东西，手机也推得动，但是要发挥音质，还是得上耳放，我不是发烧友，这木耳就算了。
+所以对QC35长草很久了，后来大法又出了MDR 1000X，作为对标QC35的东西，有这些优点：
+独立的降噪开关 手势操作 快速反应模式 音质 QC35的优势：
+穿戴更舒适 同时连接两个设备 关于耳机，我的核心需求是：
+降噪效果好 无线 舒适 在满足核心需求的基础上，选择有价格优势的东西。1000X肯定更方便，不过没有这些功能好像问题也不大。而且有些噱头的实际体验究竟有多好，我是有疑问的，比如手势的误操作问题。在我看来，为这些噱头买单不值，所以最后选了QC35。
+使用一段时间下来体验确实很好，已经对这久违的安静上瘾了，长时间戴也没有不适感，同时连接电脑和手机也很方便。</description></item><item><title>改用Bear记笔记</title><link>http://0x3f.org/posts/switch-to-bear/</link><pubDate>Mon, 14 Nov 2016 23:32:00 +0000</pubDate><guid>http://0x3f.org/posts/switch-to-bear/</guid><description>再次证明我是后知后觉的。
+曾经对印象笔记不屑一顾，因为对所见即所得的偏见和印象笔记对技术人员的不友好。所以这些年一直用DokuWiki。
+DW的编辑模式不是传统的所见即所得，自己的wiki标记简洁好用。能针对段落进行修改。可以列出大纲。插件和主题较多。使用文件存储数据，方便同步。平台无关，对Linux友好。
+不过DW自身也存在一些问题：
+需要搭建服务 自行处理同步 移动端访问不便 编辑和查看操作有割裂感 最近开始琢磨记笔记的最佳实践。考虑到用DW的痛点，感觉对于记笔记最重要的是是否方便记录和查看。在这点上，所见即所得的确有优势。所以我尝试转换到这类工具上。
+选择Bear而不是印象笔记的原因主要是：
+支持代码语法高亮 支持导出Markdown格式 极简风和多种主题 代码语法高亮是刚需，没什么可说的。导出Markdown格式可以方便写博客，这样就不需要Cmd Markdown了。极简的风格和包括Solarized在内的多种主题很毒我。
+不过Bear也有不少问题：
+没有大纲视图，不适合长笔记 标签只支持两级，大量标签不好管理 不支持扫描 对Linux不友好 用标签替代分类的方式我很喜欢，不过两级的限制让笔记分类很伤脑筋，而且容易造成标签太多、难以管理。扫描也是刚需，印象笔记的扫描就很好用，Bear目前没有这个功能，只能用扫描全能王暂补，割裂感很强，而且还增加了APP。
+希望Bear尽快变得更好用。</description></item><item><title>CtrlP vs Unite vs Command-T vs FuzzyFinder</title><link>http://0x3f.org/posts/ctrlp-vs-unite-vs-command-t-vs-fuzzyfinder/</link><pubDate>Wed, 27 Jan 2016 16:16:00 +0000</pubDate><guid>http://0x3f.org/posts/ctrlp-vs-unite-vs-command-t-vs-fuzzyfinder/</guid><description>简述 Sublime在文件打开速度上的表现很惊艳，Vim有几个扩展可以实现类似功能，本文对这些扩展做个对比。
+虽然每个扩展都或多或少地实现了一些功能，我个人用得最多的也就文件、Tag、Buffer Tag的模糊查找这三个，像MRU、buffer之类的查找不觉得有多大用处，所以提高工作效率的工具一定是在热度环节有很好表现，其余偏门功能可以交给插件实现，在这点上CtrlP和Unite做得很好。所以下面针对最常用的这三个功能做下对比，更多功能的对比见下表：
+文件模糊查找 Command-T的文件索引速度最快，各方面在这几个扩展中的表现都是最好的。
+CtrlP默认使用VIM自建的globpath()，需要手工配置使用ag以获取更快的速度，据说使用find命令效率更高，实际感觉和ag差别不大。
+Unite也需要手工设置使用ag，而且可以实现异步索引，在这一点的体验上好于前两个，但是在模糊匹配的排序上表现不好，比如输入“php”，当然希望“/etc/php.ini”这样的结果排在“/home/peter/host/tmp.txt”前面，实际往往不是这样，Unite的几个sorter里，数rank的排序结果最接近于这个要求，但是表现仍然不如前两个。
+Tag模糊查找 三个扩展都是通过ctags实现，虽然Unite的排序问题仍然存在，对于Tag这么简短的东西，问题不大。
+Buffer Tag模糊查找 CtrlP的表现是最好的。
+Unite需要通过unite-outline这个source实现，但是只能列出类和方法，无法定制列举类型。而且默认选中排在第一位的类名，查询方法时很不方便。
+Command-T不支持此功能。
+我的选择 FuzzyFinder是该类扩展里的老前辈，不过早已不维护，功能上不比其它几个出彩。Command-T虽然在文件索引速度上表现最好，但是优势并不很明显，而且支持功能最少。所以排除这两个。
+在最常用的三个功能上，CtrlP的综合表现是最均衡的，所以留下它。Unite本身是一种统一的交互方式和界面，很多扩展（source）可以实现五花八门的功能，像unite-outline虽然在Buffer Tag上表现不佳，对于Markdown和Vim文档还是很有用的。
+Update: 2016-02-01 FZF: 又一个文件模糊查询工具</description></item></channel></rss>

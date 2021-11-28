@@ -1,0 +1,557 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta property="og:title" content="从 Hexo 到 Hugo">
+<meta property="og:description" content="一切源于我这个颜党的喜新厌旧。
+总想找到一个极简而不失现代感的主题，在这个过程中，发现越来越多比较贴近我口味的主题都是适配 Hugo 的。趁最近有时间，就换了过来。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://0x3f.org/posts/migrate-from-hexo-to-hugo/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2020-06-19T17:41:52+08:00">
+<meta property="article:modified_time" content="2020-06-19T17:41:52+08:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="从 Hexo 到 Hugo">
+<meta name=twitter:description content="一切源于我这个颜党的喜新厌旧。
+总想找到一个极简而不失现代感的主题，在这个过程中，发现越来越多比较贴近我口味的主题都是适配 Hugo 的。趁最近有时间，就换了过来。">
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-93233020-1','auto'),ga('send','pageview'))</script>
+<meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name=theme-color media="(prefers-color-scheme: dark)" content="#262d33">
+<title>
+晴耕雨讀 - 从 Hexo 到 Hugo
+</title>
+<link rel="shortcut icon" href=/favicon.ico type=image/x-icon>
+<link rel=preconnect href=https://fonts.googleapis.com>
+<link rel=preconnect href=https://fonts.gstatic.com crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel=stylesheet>
+<link rel=stylesheet href=/minima.1638090831.css>
+<script defer type=text/javascript src=/minima.1638090831.js></script>
+</head>
+<script>try{'theme'in localStorage||(localStorage.theme=window.matchMedia('(prefer-color-scheme: dark)').matches?'dark':'light'),document.querySelector('html').classList.add(localStorage.theme)}catch(a){console.error(a)}</script>
+<body class="sm:mx-5 sm:my-0">
+<header class="flex justify-between items-center sm:my-3">
+<div class="flex items-center">
+<div id=theme-switcher class="text-4xl cursor-pointer">🌚</div>
+</div>
+<nav class="flex items-center
+whitespace-nowrap overflow-x-auto overflow-y-hidden">
+<a class=ml-5 href=/>主頁</a>
+<a class=ml-5 href=/posts>文章</a>
+<a class=ml-5 href=/tags>標籤</a>
+<a class=ml-5 href=/categories>分類</a>
+<a class=ml-5 href=/about>關於</a>
+</nav>
+</header>
+<h1 class="mt-8 mb-6">从 Hexo 到 Hugo</h1>
+<div class="mb-3 text-xs flex justify-between sm:flex-col">
+<div>
+Posted at &mdash; Jun 19, 2020
+</div>
+<div class=sm:mt-4>
+<a class=not-first:ml-3 href=/tags/Hexo>#Hexo</a>
+<a class=not-first:ml-3 href=/tags/Hugo>#Hugo</a>
+<a class=not-first:ml-3 href=/tags/%e5%8d%9a%e5%ae%a2>#博客</a>
+</div>
+</div>
+<main>
+<p></p>
+<article class=md>
+<p>一切源于我这个颜党的喜新厌旧。</p>
+<p>总想找到一个极简而不失现代感的主题，在这个过程中，发现越来越多比较贴近我口味的主题都是适配 Hugo 的。趁最近有时间，就换了过来。</p>
+<hr>
+<h2 id=创建一个空站点>创建一个空站点</h2>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=c1># 安装 hugo</span>
+brew install hugo
+
+<span class=c1># 创建空站点</span>
+hugo new site Blog
+
+<span class=c1># 安装 LoveIt 主题</span>
+<span class=nb>cd</span> Blog
+git init
+git submodule add https://github.com/dillonzq/LoveIt.git themes/LoveIt
+cp -f themes/LoveIt/exampleSite/config.toml .
+
+<span class=c1># 配置 config.toml</span>
+
+<span class=c1># 在本机预览效果</span>
+hugo server -D
+</code></pre></td></tr></table>
+</div>
+</div><h2 id=写一篇新文章>写一篇新文章</h2>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>hugo new posts/test.md
+</code></pre></td></tr></table>
+</div>
+</div><p>Hugo 需要自己指定文章的相对路径和文件名，这一点不如 Hexo 自动化程度高。</p>
+<h2 id=迁移文章>迁移文章</h2>
+<blockquote>
+<p>注意：以下命令和脚本仅适用于本博客，不加判断地使用可能会修改不需要变动的内容。</p>
+</blockquote>
+<h3 id=统一文章后缀>统一文章后缀</h3>
+<p>历史原因，用过的文件后缀不止一种，这次把<code>.mkd</code>和<code>.markdown</code>统一成<code>.md</code>。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>rename -s .mkd .md -s .markdown .md *
+</code></pre></td></tr></table>
+</div>
+</div><h3 id=删除不兼容的-front-matter>删除不兼容的 Front Matter</h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>gsed -i <span class=s1>&#39;/^type:\s*post/d&#39;</span> *
+</code></pre></td></tr></table>
+</div>
+</div><h3 id=修改不规范的-front-matter>修改不规范的 Front Matter</h3>
+<p>我用单分类、多标签的方式管理文章，所以以前都是把分类名直接写在<code>categories:</code>后面了，Hugo 要求必须使用连接符前缀另起一行。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>perl -pi -e <span class=s1>&#39;s/(?&lt;=^categories:)/\n-/g&#39;</span> *
+</code></pre></td></tr></table>
+</div>
+</div><p>也是因为历史的原因，有的文章没有日期时间，有的格式也不统一。Hugo 对日期时间的格式要求比较严格。这里把所有没有秒的时间后补全。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>perl -pi -e <span class=s1>&#39;s/(?&lt;=^date:\s\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}$)/:00/g&#39;</span> *
+</code></pre></td></tr></table>
+</div>
+</div><h3 id=替换文章摘要标签>替换文章摘要标签</h3>
+<p>Hugo 不允许“more”两侧有空格：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>gsed -ri <span class=s1>&#39;s/!-- more --/!--more--/g&#39;</span> *
+</code></pre></td></tr></table>
+</div>
+</div><h3 id=补充和转换复杂内容>补充和转换复杂内容</h3>
+<p>此外还有诸如日期时间缺失、转换 Octopress 标签到 Markdown 格式等问题，另外为了保持 Permalink 不变，准备每篇文章都补充一个Front Matter <code>slug</code>。所以写了一个 PHP 脚本：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
+</span><span class=lnt>61
+</span><span class=lnt>62
+</span><span class=lnt>63
+</span><span class=lnt>64
+</span><span class=lnt>65
+</span><span class=lnt>66
+</span><span class=lnt>67
+</span><span class=lnt>68
+</span><span class=lnt>69
+</span><span class=lnt>70
+</span><span class=lnt>71
+</span><span class=lnt>72
+</span><span class=lnt>73
+</span><span class=lnt>74
+</span><span class=lnt>75
+</span><span class=lnt>76
+</span><span class=lnt>77
+</span><span class=lnt>78
+</span><span class=lnt>79
+</span><span class=lnt>80
+</span><span class=lnt>81
+</span><span class=lnt>82
+</span><span class=lnt>83
+</span><span class=lnt>84
+</span><span class=lnt>85
+</span><span class=lnt>86
+</span><span class=lnt>87
+</span><span class=lnt>88
+</span><span class=lnt>89
+</span><span class=lnt>90
+</span><span class=lnt>91
+</span><span class=lnt>92
+</span><span class=lnt>93
+</span><span class=lnt>94
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-php data-lang=php><span class=c1>#!/usr/bin/env php
+</span><span class=c1></span><span class=o>&lt;?</span><span class=nx>php</span>
+
+<span class=k>if</span> <span class=p>(</span><span class=nv>$argc</span> <span class=o>&lt;</span> <span class=mi>2</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>file_put_contents</span><span class=p>(</span><span class=s1>&#39;php://stderr&#39;</span><span class=p>,</span> <span class=s2>&#34;需输入一个合法的文件路径</span><span class=se>\n</span><span class=s2>&#34;</span><span class=p>);</span>
+    <span class=k>exit</span><span class=p>(</span><span class=mi>1</span><span class=p>);</span>
+<span class=p>}</span>
+
+<span class=k>for</span> <span class=p>(</span><span class=nv>$i</span><span class=o>=</span><span class=mi>1</span><span class=p>;</span> <span class=nv>$i</span> <span class=o>&lt;</span> <span class=nv>$argc</span><span class=p>;</span> <span class=nv>$i</span><span class=o>++</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>handle_file</span><span class=p>(</span><span class=nv>$argv</span><span class=p>[</span><span class=nv>$i</span><span class=p>]);</span>
+<span class=p>}</span>
+
+<span class=k>function</span> <span class=nf>handle_file</span><span class=p>(</span><span class=nv>$filePath</span><span class=p>)</span>
+<span class=p>{</span>
+    <span class=nv>$content</span> <span class=o>=</span> <span class=nx>file_get_contents</span><span class=p>(</span><span class=nv>$filePath</span><span class=p>);</span>
+    <span class=nv>$lines</span> <span class=o>=</span> <span class=nx>explode</span><span class=p>(</span><span class=s2>&#34;</span><span class=se>\n</span><span class=s2>&#34;</span><span class=p>,</span> <span class=nv>$content</span><span class=p>);</span>
+
+    <span class=nv>$isDateMissing</span> <span class=o>=</span> <span class=k>empty</span><span class=p>(</span><span class=nx>preg_grep</span><span class=p>(</span><span class=s1>&#39;/^date:\s*/&#39;</span><span class=p>,</span> <span class=nv>$lines</span><span class=p>));</span>
+    <span class=k>if</span> <span class=p>(</span><span class=nv>$isDateMissing</span><span class=p>)</span> <span class=p>{</span>
+        <span class=nx>append_date</span><span class=p>(</span><span class=nv>$filePath</span><span class=p>,</span> <span class=nv>$lines</span><span class=p>);</span>
+    <span class=p>}</span>
+
+    <span class=nv>$isSlugMissing</span> <span class=o>=</span> <span class=k>empty</span><span class=p>(</span><span class=nx>preg_grep</span><span class=p>(</span><span class=s1>&#39;/^slug:\s/&#39;</span><span class=p>,</span> <span class=nv>$lines</span><span class=p>));</span>
+    <span class=k>if</span> <span class=p>(</span><span class=nv>$isSlugMissing</span><span class=p>)</span> <span class=p>{</span>
+        <span class=nx>append_slug</span><span class=p>(</span><span class=nv>$filePath</span><span class=p>,</span> <span class=nv>$lines</span><span class=p>);</span>
+    <span class=p>}</span>
+
+    <span class=nx>convert_hexo_tags</span><span class=p>(</span><span class=nv>$lines</span><span class=p>);</span>
+
+    <span class=nx>file_put_contents</span><span class=p>(</span><span class=nv>$filePath</span><span class=p>,</span> <span class=nx>implode</span><span class=p>(</span><span class=s2>&#34;</span><span class=se>\n</span><span class=s2>&#34;</span><span class=p>,</span> <span class=nv>$lines</span><span class=p>));</span>
+<span class=p>}</span>
+
+<span class=k>function</span> <span class=nf>append_date</span><span class=p>(</span><span class=nv>$filePath</span><span class=p>,</span> <span class=o>&amp;</span><span class=nv>$lines</span><span class=p>)</span>
+<span class=p>{</span>
+    <span class=c1>// 获取文件名中的日期
+</span><span class=c1></span>    <span class=nv>$arr</span> <span class=o>=</span> <span class=p>[];</span>
+    <span class=nx>preg_match</span><span class=p>(</span><span class=s1>&#39;/\d{4}-\d{2}-\d{2}/&#39;</span><span class=p>,</span> <span class=nx>basename</span><span class=p>(</span><span class=nv>$filePath</span><span class=p>),</span> <span class=nv>$arr</span><span class=p>);</span>
+    <span class=k>if</span> <span class=p>(</span><span class=k>empty</span><span class=p>(</span><span class=nv>$arr</span><span class=p>))</span> <span class=p>{</span>
+        <span class=nx>file_put_contents</span><span class=p>(</span><span class=s1>&#39;php://stderr&#39;</span><span class=p>,</span> <span class=s2>&#34;未能从文件名中找到日期</span><span class=se>\n</span><span class=s2>&#34;</span><span class=p>);</span>
+        <span class=k>exit</span><span class=p>(</span><span class=mi>1</span><span class=p>);</span>
+    <span class=p>}</span>
+
+    <span class=k>foreach</span> <span class=p>(</span><span class=nv>$lines</span> <span class=k>as</span> <span class=nv>$idx</span> <span class=o>=&gt;</span> <span class=nv>$line</span><span class=p>)</span> <span class=p>{</span>
+        <span class=k>if</span> <span class=p>(</span><span class=nx>strpos</span><span class=p>(</span><span class=nv>$line</span><span class=p>,</span> <span class=s1>&#39;title:&#39;</span><span class=p>)</span> <span class=o>===</span> <span class=mi>0</span><span class=p>)</span> <span class=p>{</span>
+            <span class=nv>$lines</span> <span class=o>=</span> <span class=nx>array_merge</span><span class=p>(</span>
+                <span class=nx>array_slice</span><span class=p>(</span><span class=nv>$lines</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=nv>$idx</span> <span class=o>+</span> <span class=mi>1</span><span class=p>),</span>
+                <span class=p>[</span><span class=s2>&#34;date: </span><span class=si>{</span><span class=nv>$arr</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span><span class=si>}</span><span class=s2> 00:00:00&#34;</span><span class=p>],</span>
+                <span class=nx>array_slice</span><span class=p>(</span><span class=nv>$lines</span><span class=p>,</span> <span class=nv>$idx</span> <span class=o>+</span> <span class=mi>1</span><span class=p>)</span>
+            <span class=p>);</span>
+            <span class=k>break</span><span class=p>;</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=k>function</span> <span class=nf>append_slug</span><span class=p>(</span><span class=nv>$filePath</span><span class=p>,</span> <span class=o>&amp;</span><span class=nv>$lines</span><span class=p>)</span>
+<span class=p>{</span>
+    <span class=k>if</span> <span class=p>(</span><span class=o>!</span> <span class=nx>preg_match</span><span class=p>(</span><span class=s1>&#39;/(?&lt;=\d{4}-\d{2}-\d{2}-).*(?=\.)/&#39;</span><span class=p>,</span> <span class=nx>basename</span><span class=p>(</span><span class=nv>$filePath</span><span class=p>),</span> <span class=nv>$matches</span><span class=p>))</span> <span class=p>{</span>
+        <span class=nx>file_put_contents</span><span class=p>(</span><span class=s1>&#39;php://stderr&#39;</span><span class=p>,</span> <span class=s2>&#34;未能从文件名中找到slug</span><span class=se>\n</span><span class=s2>&#34;</span><span class=p>);</span>
+        <span class=k>exit</span><span class=p>(</span><span class=mi>1</span><span class=p>);</span>
+    <span class=p>}</span>
+
+    <span class=k>foreach</span> <span class=p>(</span><span class=nv>$lines</span> <span class=k>as</span> <span class=nv>$idx</span> <span class=o>=&gt;</span> <span class=nv>$line</span><span class=p>)</span> <span class=p>{</span>
+        <span class=k>if</span> <span class=p>(</span><span class=nx>strpos</span><span class=p>(</span><span class=nv>$line</span><span class=p>,</span> <span class=s1>&#39;title:&#39;</span><span class=p>)</span> <span class=o>===</span> <span class=mi>0</span><span class=p>)</span> <span class=p>{</span>
+            <span class=nv>$lines</span> <span class=o>=</span> <span class=nx>array_merge</span><span class=p>(</span>
+                <span class=nx>array_slice</span><span class=p>(</span><span class=nv>$lines</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=nv>$idx</span> <span class=o>+</span> <span class=mi>1</span><span class=p>),</span>
+                <span class=p>[</span><span class=s2>&#34;slug: &#34;</span> <span class=o>.</span> <span class=nx>str_replace</span><span class=p>(</span><span class=s1>&#39;-&#39;</span><span class=p>,</span> <span class=s1>&#39; &#39;</span><span class=p>,</span> <span class=nv>$matches</span><span class=p>[</span><span class=mi>0</span><span class=p>])],</span>
+                <span class=nx>array_slice</span><span class=p>(</span><span class=nv>$lines</span><span class=p>,</span> <span class=nv>$idx</span> <span class=o>+</span> <span class=mi>1</span><span class=p>)</span>
+            <span class=p>);</span>
+            <span class=k>break</span><span class=p>;</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+
+<span class=k>function</span> <span class=nf>convert_hexo_tags</span><span class=p>(</span><span class=o>&amp;</span><span class=nv>$lines</span><span class=p>)</span>
+<span class=p>{</span>
+    <span class=k>foreach</span> <span class=p>(</span><span class=nv>$lines</span> <span class=k>as</span> <span class=nv>$idx</span> <span class=o>=&gt;</span> <span class=nv>$line</span><span class=p>)</span> <span class=p>{</span>
+        <span class=k>if</span> <span class=p>(</span><span class=nx>preg_match</span><span class=p>(</span><span class=s1>&#39;/(?&lt;={%\simg\s).*(?=\s\d+\s%})/&#39;</span><span class=p>,</span> <span class=nv>$line</span><span class=p>,</span> <span class=nv>$matches</span><span class=p>)</span>
+            <span class=o>||</span> <span class=nx>preg_match</span><span class=p>(</span><span class=s1>&#39;/(?&lt;={%\simg\s).*(?=\s%})/&#39;</span><span class=p>,</span> <span class=nv>$line</span><span class=p>,</span> <span class=nv>$matches</span><span class=p>)</span>
+        <span class=p>)</span> <span class=p>{</span>
+            <span class=nv>$lines</span><span class=p>[</span><span class=nv>$idx</span><span class=p>]</span> <span class=o>=</span> <span class=s2>&#34;![](</span><span class=si>{</span><span class=nv>$matches</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span><span class=si>}</span><span class=s2>)&#34;</span><span class=p>;</span>
+        <span class=p>}</span>
+
+        <span class=k>if</span> <span class=p>(</span><span class=nx>preg_match</span><span class=p>(</span><span class=s1>&#39;/(?&lt;={%\scodeblock\slang:).*(?=\s[a-zA-Z0-9.]+\s%})/&#39;</span><span class=p>,</span> <span class=nv>$line</span><span class=p>,</span> <span class=nv>$matches</span><span class=p>)</span>
+            <span class=o>||</span> <span class=nx>preg_match</span><span class=p>(</span><span class=s1>&#39;/(?&lt;={%\scodeblock\slang:).*(?=\s%})/&#39;</span><span class=p>,</span> <span class=nv>$line</span><span class=p>,</span> <span class=nv>$matches</span><span class=p>)</span>
+            <span class=o>||</span> <span class=nx>preg_match</span><span class=p>(</span><span class=s1>&#39;/(?&lt;={%\scodeblock).*(?=\s%})/&#39;</span><span class=p>,</span> <span class=nv>$line</span><span class=p>,</span> <span class=nv>$matches</span><span class=p>)</span>
+        <span class=p>)</span> <span class=p>{</span>
+            <span class=nv>$lines</span><span class=p>[</span><span class=nv>$idx</span><span class=p>]</span> <span class=o>=</span> <span class=s2>&#34;```</span><span class=si>{</span><span class=nv>$matches</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>;</span>
+        <span class=p>}</span>
+
+        <span class=k>if</span> <span class=p>(</span><span class=nx>preg_match</span><span class=p>(</span><span class=s1>&#39;/{%\sendcodeblock\s%}/&#39;</span><span class=p>,</span> <span class=nv>$line</span><span class=p>))</span> <span class=p>{</span>
+            <span class=nv>$lines</span><span class=p>[</span><span class=nv>$idx</span><span class=p>]</span> <span class=o>=</span> <span class=s2>&#34;```&#34;</span><span class=p>;</span>
+        <span class=p>}</span>
+    <span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>执行：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>ls content/posts <span class=p>|</span> sed <span class=s2>&#34;s:^:`pwd`/content/posts/:&#34;</span> <span class=p>|</span> xargs ./convert.php
+</code></pre></td></tr></table>
+</div>
+</div><h2 id=实现全文检索>实现全文检索</h2>
+<p>默认的 Lunr 方式开箱即用，但速度较慢，而且中文分词做得不好。所以使用 <a href=https://www.algolia.com/>Algolia</a> 实现。</p>
+<p>注册账号并选用免费方案后，在“API Keys”页面复制“Application ID”、“Search-Only API Key”和“Admin API Key”。</p>
+<p>在项目根目录下创建 <code>.env</code> 文件：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-ini data-lang=ini><span class=na>ALGOLIA_APP_ID</span><span class=o>=</span><span class=s>XXXXXX</span>
+<span class=na>ALGOLIA_ADMIN_KEY</span><span class=o>=</span><span class=s>XXXXXX</span>
+<span class=na>ALGOLIA_INDEX_NAME</span><span class=o>=</span><span class=s>0x3f.org</span>
+<span class=na>ALGOLIA_INDEX_FILE</span><span class=o>=</span><span class=s>public/index.json</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>APP_ID</code> 和 <code>ADMIN_KEY</code> 是前面复制的三项中的值，<code>INDEX_NAME</code> 是 Algolia 上的索引名称，随便起一个就行。<code>INDEX_FILE</code> 是生成站点时自动生成的索引文件的路径，一般不需要修改。</p>
+<p>安装自动提交索引到 Algolia 的脚本：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>npm install atomic-algolia -g
+</code></pre></td></tr></table>
+</div>
+</div><p>执行提交：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>atomic-algolia
+</code></pre></td></tr></table>
+</div>
+</div><p>因为我所用的主题是支持 Algolia 的，所以把 “Application ID”、“Search-Only Key”和索引名称填到配置文件中对应的项后就可以使用搜索了。</p>
+<h2 id=添加评论功能>添加评论功能</h2>
+<p>用了很多年 Disqus ，这次打算换用 Github Issues ，选择了 <a href=https://utteranc.es/>Utterances</a> 。</p>
+<p>主题原生支持，注册账号后简单配置即可。</p>
+<h2 id=favicon>Favicon</h2>
+<p>原来简单粗暴地用了唯一在的图标文件，这次改用 <a href=https://realfavicongenerator.net/>Favicon Generator</a> 生成一套对多平台浏览器优化的图标。</p>
+<p>把全套文件放到 <code>static/</code> 目录下即可。</p>
+<h2 id=部署到-github-pages>部署到 Github Pages</h2>
+<p>Github Pages 支持多种站点生成方式，由于 Hexo 默认使用 master 分支管理生成的静态资源，而站点源码存放在 source 分支，所以我打算沿用这个方案，在继续使用 master 分支存放静态资源的同时，新增一个 hugo 分支，管理源码。</p>
+<h3 id=手动部署>手动部署</h3>
+<p>Hugo 会将生成的静态资源存放在项目根目录下的<code>public</code>目录中，所以需要将 master 分支检出到该目录：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>git worktree add -B master public origin/master
+</code></pre></td></tr></table>
+</div>
+</div><p>生成站点并部署：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>hugo
+<span class=nb>cd</span> public <span class=o>&amp;&amp;</span> git add —all
+git commit
+git push -f origin master
+</code></pre></td></tr></table>
+</div>
+</div><p>很快就能看到新网站了。</p>
+<h3 id=自动部署>自动部署</h3>
+<p>Hugo 并没有提供 Hexo 那样的自动部署命令，所以要么把上述手动部署的命令写成脚本，要么使用自动部署工具，恰好 Github Actions 可以很好地实现。</p>
+<p>创建 <code>.github/workflows/main.yml</code> 文件：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>github pages</span><span class=w>
+</span><span class=w>
+</span><span class=w></span><span class=nt>on</span><span class=p>:</span><span class=w>
+</span><span class=w>  </span><span class=nt>push</span><span class=p>:</span><span class=w>
+</span><span class=w>    </span><span class=nt>branches</span><span class=p>:</span><span class=w>
+</span><span class=w>      </span>- <span class=l>hugo</span><span class=w>
+</span><span class=w>
+</span><span class=w></span><span class=nt>jobs</span><span class=p>:</span><span class=w>
+</span><span class=w>  </span><span class=nt>deploy</span><span class=p>:</span><span class=w>
+</span><span class=w>    </span><span class=nt>runs-on</span><span class=p>:</span><span class=w> </span><span class=l>ubuntu-18.04</span><span class=w>
+</span><span class=w>    </span><span class=nt>steps</span><span class=p>:</span><span class=w>
+</span><span class=w>      </span>- <span class=nt>uses</span><span class=p>:</span><span class=w> </span><span class=l>actions/checkout@v2</span><span class=w>
+</span><span class=w>        </span><span class=nt>with</span><span class=p>:</span><span class=w>
+</span><span class=w>          </span><span class=nt>submodules</span><span class=p>:</span><span class=w> </span><span class=kc>true</span><span class=w>  </span><span class=c># Fetch Hugo themes (true OR recursive)</span><span class=w>
+</span><span class=w>          </span><span class=nt>fetch-depth</span><span class=p>:</span><span class=w> </span><span class=m>0</span><span class=w>    </span><span class=c># Fetch all history for .GitInfo and .Lastmod</span><span class=w>
+</span><span class=w>
+</span><span class=w>      </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Setup Hugo</span><span class=w>
+</span><span class=w>        </span><span class=nt>uses</span><span class=p>:</span><span class=w> </span><span class=l>peaceiris/actions-hugo@v2</span><span class=w>
+</span><span class=w>        </span><span class=nt>with</span><span class=p>:</span><span class=w>
+</span><span class=w>        </span><span class=c>#   hugo-version: &#39;0.71.1&#39;</span><span class=w>
+</span><span class=w>          </span><span class=nt>hugo-version</span><span class=p>:</span><span class=w> </span><span class=s1>&#39;latest&#39;</span><span class=w>
+</span><span class=w>          </span><span class=c># extended: true</span><span class=w>
+</span><span class=w>
+</span><span class=w>      </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Build</span><span class=w>
+</span><span class=w>        </span><span class=nt>run</span><span class=p>:</span><span class=w> </span><span class=l>hugo --minify</span><span class=w>
+</span><span class=w>
+</span><span class=w>      </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Deploy</span><span class=w>
+</span><span class=w>        </span><span class=nt>uses</span><span class=p>:</span><span class=w> </span><span class=l>peaceiris/actions-gh-pages@v3</span><span class=w>
+</span><span class=w>        </span><span class=nt>with</span><span class=p>:</span><span class=w>
+</span><span class=w>          </span><span class=nt>github_token</span><span class=p>:</span><span class=w> </span><span class=l>${{ secrets.GITHUB_TOKEN }}</span><span class=w>
+</span><span class=w>          </span><span class=nt>publish_dir</span><span class=p>:</span><span class=w> </span><span class=l>./public</span><span class=w>
+</span><span class=w>          </span><span class=nt>publish_branch</span><span class=p>:</span><span class=w> </span><span class=l>master</span><span class=w>
+</span><span class=w>
+</span><span class=w>      </span>- <span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>Update Algolia Index</span><span class=w>
+</span><span class=w>        </span><span class=nt>env</span><span class=p>:</span><span class=w>
+</span><span class=w>          </span><span class=nt>ALGOLIA_APP_ID</span><span class=p>:</span><span class=w> </span><span class=l>XXXXXX</span><span class=w>
+</span><span class=w>          </span><span class=nt>ALGOLIA_ADMIN_KEY</span><span class=p>:</span><span class=w> </span><span class=l>${{ secrets.ALGOLIA_ADMIN_KEY }}</span><span class=w>
+</span><span class=w>          </span><span class=nt>ALGOLIA_INDEX_NAME</span><span class=p>:</span><span class=w> </span><span class=m>0x3f</span><span class=l>.org</span><span class=w>
+</span><span class=w>          </span><span class=nt>ALGOLIA_INDEX_FILE</span><span class=p>:</span><span class=w> </span><span class=l>public/index.json</span><span class=w>
+</span><span class=w>        </span><span class=nt>run</span><span class=p>:</span><span class=w> </span><span class=p>|</span><span class=sd>
+</span><span class=sd>          sudo apt-get -yqq install npm
+</span><span class=sd>          sudo npm install atomic-algolia -g
+</span><span class=sd>          atomic-algolia</span><span class=w>          
+</span><span class=w>
+</span></code></pre></td></tr></table>
+</div>
+</div><p>注意替换 <code>ALGOLIA_APP_ID</code> 的真实值，并把 Algolia 的“Admin API Key”添加到 Github 项目设置中的“Secrets”里，名称为“ALGOLIA_ADMIN_KEY”。</p>
+<p>以后再在 hugo 分支推送新的提交时，Github Actions 就会自动执行部署操作。</p>
+<hr>
+<p>从06年在中国博客网上开始写文章，到后来换到个人搭建并售卖的 Wordpress，五年颠沛流离的博客生涯终于在12年结束并<a href=/post/migrate-blog-to-octopress/>定居到 Github 上</a>，之后 Octopress 一用就又是五年。17年，因为 Octopress 转换速度太慢，<a href=/post/migrate-octopress-to-hexo/>换成了 Hexo</a>。</p>
+<p>我想，这次折腾之后，应该能再安分五年吧。</p>
+</article>
+</main>
+<footer class="mt-8 flex sm:flex-col-reverse justify-between items-center">
+<p class="mt-0 text-sm">
+© 淘气 2021 |
+<a href=https://gohugo.io target=_blank rel="noopener noreferrer">Hugo</a> on
+<a href=https://github.com/mivinci/hugo-theme-minima target=_blank rel="noopener noreferrer">Minima</a>
+</p>
+<p class="flex items-center mt-0">
+<a class="icon mx-2" href=https://github.com/xbot title=github><svg fill="#63636f" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>GitHub</title><path d="M12 .297c-6.63.0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577.0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93.0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176.0.0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22.0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22.0 1.606-.015 2.896-.015 3.286.0.315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+</a>
+<a class="icon mx-2" href=/index.xml title=rss><svg fill="#63636f" t="1626591563876" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" p-id="1984" width="18" height="16"><path d="M128 768a128 128 0 100 256 128 128 0 000-256zM0 368v176c265.104.0 480 214.912 480 480h176c0-362.32-293.696-656-656-656zM0 0v176c468.336.0 848 379.664 848 848h176C1024 458.464 565.536.0.0.0z" p-id="1985"/></svg>
+</a>
+</p>
+</footer>
+</body>
+</html>

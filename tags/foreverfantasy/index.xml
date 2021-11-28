@@ -1,60 +1,20 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>ForeverFantasy - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/foreverfantasy/</link><description>ForeverFantasy - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Mon, 08 Mar 2010 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/foreverfantasy/" rel="self" type="application/rss+xml"/><item><title>Python控制外部进程的灵异事件</title><link>http://0x3f.org/post/supernatural-phenomenon-of-controlling-external-processes-in-python/</link><pubDate>Mon, 08 Mar 2010 00:00:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/supernatural-phenomenon-of-controlling-external-processes-in-python/</guid><description><![CDATA[<p>春节前的一段时间，重新拾起近一年没动过的<a href="http://0x3f.org/?tag=foreverfantasy">ForeverFantasy</a>。</p>
-
-<p>虽然一年内没什么更新，但是我却一直都在用，基本上只限于将用Vim写好的<a href="http://en.wikipedia.org/wiki/Markdown">Markdown</a>格式的文档转换成HTML。</p>
-
-<p>重写了相当一部分代码，较大程度地改变了界面布局，突然发现经过一年的沉淀，对<a href="http://en.wikipedia.org/wiki/WxPython">wxPython</a>的理解增进了不少，开发起来比起去年这个时候清楚了很多。</p>
-
-<p><a href="http://picasaweb.google.com/lh/photo/bNRGQr0g6aLuqDUm8EQ6mg?feat=embedwebsite"></a></p>
-
-<p>这些天来一直坚持着每天或多或少的做一些，如果说有什么主要的进展的话，那就是界面的重构，以及昨天实现了调用Vim编辑文档并回收文档内容的功能。</p>
-
-<p>ForeverFantasy和Vim协同的一个最大的问题就是如何判断Vim已经退出。Python调用外部程序的方法有很多，比如传统的<a href="http://docs.python.org/library/commands.html">commands</a>模块、<a href="http://docs.python.org/library/os.html">os</a>.system()等，<a href="http://docs.python.org/library/subprocess.html">subprocess</a>是致力于替代这些旧有的方式的一个模块，它的一个特点是可以在启动一个外部程序作为子进程后还能监控这个进程的运行状态。这为ForeverFantasy在Vim退出后回收文档内容提供了更简捷的途径。</p>
-
-<p>下面的代码可以说明如何使用subprocess运行外部程序并监控运行状态：</p>
-
-<p>
-```python
-import subprocess
-process = subprocess.Popen('gvim', shell=True)
-status = process.poll()
-if 0 == status:
-    print 'The external program exited.'
-if status is None:
-    print 'The external program is still running.'
-```
-</p>
-
-<p>理论上，可以拿实例process的poll()方法监视进程的运行状态，而且这一点在Windows上也确实可以做到，但是到了Linux下，诡异的事出现了，即使刚刚打开gvim，poll()方法也会马上返回一个0，同时process.pid的值总是和实际在运行的那个gvim进程的pid的值差3，而且在虚拟终端中输入gvim命令也不会阻塞终端，就像别的命令加上“<strong>&amp;</strong>”符号的效果一样。尝试用<a href="http://en.wikipedia.org/wiki/Strace">strace</a>跟踪gvim的运行，试图找到问题原因，无果。我猜想可能/usr/bin/gvim是一个跳板，它启动后会启动一个新的gvim进程。总之，这个方法在Linux下是行不通的。</p>
-
-<p>因此我觉得只能另寻出路了，既然不能监控gvim进程，那就监控gvim进程所编辑的文件，只要这个文件不被任何进程占用，就可以判定gvim已退出。这一点，在Linux下易如反掌，不用说，<a href="http://en.wikipedia.org/wiki/Lsof">lsof</a>当仁不让。</p>
-
-<p>用<strong>commands.getstatusoutput('lsof file.txt')</strong>测试发现，如果文件file.txt被某进程占用，则返回的状态值为0，反之，返回256。</p>
-
-<p>最终，我在程序中使用了两种判断方式，在Windows平台使用subprocess跟踪gvim.exe进程，而在Linux及Unix平台使用lsof检查文档占用情况。</p>
-
-<p>剩下的就是进行这个判断的时间问题了。</p>
-
-<p>很显然，如果在子进程被启动后马上使用while循环不停的检查，一来必须使用多线程，二来系统资源占用也会很高。这时就需要利用wxPython的事件机制了，当ForeverFantasy启动Gvim时，主窗口失去焦点，而当Gvim退出时，ForeverFantasy又会获得焦点，只要能在ForeverFantasy窗口获得焦点时做一次检查即可。不过，在选择最合适的事件的问题上，又是一波三折。</p>
-
-<p>在wxPython的<a href="http://www.wxpython.org/docs/api/frames.html">API</a>文档中没有找到<a href="http://wiki.wxpython.org/ListOfEvents">事件列表</a>，倒是在<a href="http://wiki.wxpython.org">Wiki</a>中找到了。顾名思义，觉得wx.EVT_SET_FOCUS比较靠谱，但试用失败，看API中关于FocusEvent的说明，这个事件适用于窗口控件；然后又试了wx.EVT_CHILD_FOCUS，只有在窗口包含的控件中有获得焦点的情况才会触发；最后才发现<strong>wx.EVT_ACTIVATE</strong>，这个事件会在窗口失去焦点和获得焦点时各触发一次，使用GetActive()方法可以判断是获得焦点还是失去焦点。</p>
-
-<p>完成与Vim的协同使ForeverFantasy在我手上由原来单纯的格式转换工具进化为基本可用的文档编辑器，就算是<strong>Milestone 2</strong>吧。</p>
-
-<p>此外，还有一些小的经验：</p>
-
-<p>1. 调用非环境变量下的程序，即命令中必须带程序所在的路径时，应当将程序所在目录的完整路径以自然字符串的形式传递给subprocess.Popen类的构造方法的cwd参数，即如下所示：</p>
-
-<p>
-```python
-process = subprocess.Popen('gvim.exe', cwd=r'C:\program files\vim\vim72', shell=True)
-```
-</p>
-
-<p>这样可以有效避免路径中的空格和特殊字符对命令执行的影响。</p>
-
-<p>2. Vim编辑一个文档时，实际操作的是一个临时文件，而不是原文件，这个临时文件与原文件同路径，名称为在原文件名的基础上，前面加一个句点，后面加后缀“.swp”。应该用lsof监控这个临时文件，才可以判断出编辑该文档的Vim进程的运行状态。由于对于不存在的文件使用lsof命令的返回值也是256，故可以同时判断临时文件和原文件的占用情况，这样就为对其它编辑器的支持奠定了基础。</p>
-
-<p><strong>2010-03-10 Wednesday 22:52:13 更新</strong></p>
-
-<p>感谢KL童鞋和依云童鞋指教，果然加上<strong>-f</strong>参数就可以了。</p>
-]]></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>ForeverFantasy on 晴耕雨讀</title><link>http://0x3f.org/tags/foreverfantasy/</link><description>Recent content in ForeverFantasy on 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><copyright>© 淘气 2021</copyright><lastBuildDate>Mon, 08 Mar 2010 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/foreverfantasy/index.xml" rel="self" type="application/rss+xml"/><item><title>Python控制外部进程的灵异事件</title><link>http://0x3f.org/posts/supernatural-phenomenon-of-controlling-external-processes-in-python/</link><pubDate>Mon, 08 Mar 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/supernatural-phenomenon-of-controlling-external-processes-in-python/</guid><description>春节前的一段时间，重新拾起近一年没动过的ForeverFantasy。
+虽然一年内没什么更新，但是我却一直都在用，基本上只限于将用Vim写好的Markdown格式的文档转换成HTML。
+重写了相当一部分代码，较大程度地改变了界面布局，突然发现经过一年的沉淀，对wxPython的理解增进了不少，开发起来比起去年这个时候清楚了很多。
+这些天来一直坚持着每天或多或少的做一些，如果说有什么主要的进展的话，那就是界面的重构，以及昨天实现了调用Vim编辑文档并回收文档内容的功能。
+ForeverFantasy和Vim协同的一个最大的问题就是如何判断Vim已经退出。Python调用外部程序的方法有很多，比如传统的commands模块、os.system()等，subprocess是致力于替代这些旧有的方式的一个模块，它的一个特点是可以在启动一个外部程序作为子进程后还能监控这个进程的运行状态。这为ForeverFantasy在Vim退出后回收文档内容提供了更简捷的途径。
+下面的代码可以说明如何使用subprocess运行外部程序并监控运行状态：
+```python import subprocess process = subprocess.Popen('gvim', shell=True) status = process.poll() if 0 == status: print 'The external program exited.' if status is None: print 'The external program is still running.' ``` 理论上，可以拿实例process的poll()方法监视进程的运行状态，而且这一点在Windows上也确实可以做到，但是到了Linux下，诡异的事出现了，即使刚刚打开gvim，poll()方法也会马上返回一个0，同时process.pid的值总是和实际在运行的那个gvim进程的pid的值差3，而且在虚拟终端中输入gvim命令也不会阻塞终端，就像别的命令加上“&amp;amp;”符号的效果一样。尝试用strace跟踪gvim的运行，试图找到问题原因，无果。我猜想可能/usr/bin/gvim是一个跳板，它启动后会启动一个新的gvim进程。总之，这个方法在Linux下是行不通的。
+因此我觉得只能另寻出路了，既然不能监控gvim进程，那就监控gvim进程所编辑的文件，只要这个文件不被任何进程占用，就可以判定gvim已退出。这一点，在Linux下易如反掌，不用说，lsof当仁不让。
+用commands.getstatusoutput('lsof file.txt')测试发现，如果文件file.txt被某进程占用，则返回的状态值为0，反之，返回256。
+最终，我在程序中使用了两种判断方式，在Windows平台使用subprocess跟踪gvim.exe进程，而在Linux及Unix平台使用lsof检查文档占用情况。
+剩下的就是进行这个判断的时间问题了。
+很显然，如果在子进程被启动后马上使用while循环不停的检查，一来必须使用多线程，二来系统资源占用也会很高。这时就需要利用wxPython的事件机制了，当ForeverFantasy启动Gvim时，主窗口失去焦点，而当Gvim退出时，ForeverFantasy又会获得焦点，只要能在ForeverFantasy窗口获得焦点时做一次检查即可。不过，在选择最合适的事件的问题上，又是一波三折。
+在wxPython的API文档中没有找到事件列表，倒是在Wiki中找到了。顾名思义，觉得wx.EVT_SET_FOCUS比较靠谱，但试用失败，看API中关于FocusEvent的说明，这个事件适用于窗口控件；然后又试了wx.EVT_CHILD_FOCUS，只有在窗口包含的控件中有获得焦点的情况才会触发；最后才发现wx.EVT_ACTIVATE，这个事件会在窗口失去焦点和获得焦点时各触发一次，使用GetActive()方法可以判断是获得焦点还是失去焦点。
+完成与Vim的协同使ForeverFantasy在我手上由原来单纯的格式转换工具进化为基本可用的文档编辑器，就算是Milestone 2吧。
+此外，还有一些小的经验：
+1. 调用非环境变量下的程序，即命令中必须带程序所在的路径时，应当将程序所在目录的完整路径以自然字符串的形式传递给subprocess.Popen类的构造方法的cwd参数，即如下所示：
+```python process = subprocess.Popen('gvim.exe', cwd=r'C:\program files\vim\vim72', shell=True) ``` 这样可以有效避免路径中的空格和特殊字符对命令执行的影响。
+2. Vim编辑一个文档时，实际操作的是一个临时文件，而不是原文件，这个临时文件与原文件同路径，名称为在原文件名的基础上，前面加一个句点，后面加后缀“.swp”。应该用lsof监控这个临时文件，才可以判断出编辑该文档的Vim进程的运行状态。由于对于不存在的文件使用lsof命令的返回值也是256，故可以同时判断临时文件和原文件的占用情况，这样就为对其它编辑器的支持奠定了基础。
+2010-03-10 Wednesday 22:52:13 更新
+感谢KL童鞋和依云童鞋指教，果然加上-f参数就可以了。</description></item></channel></rss>

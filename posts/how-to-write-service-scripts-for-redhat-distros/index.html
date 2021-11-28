@@ -1,0 +1,245 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta property="og:title" content="怎样为红帽系Linux发行版写系统服务脚本">
+<meta property="og:description" content="##阅读说明
+阅读本文要求有基本的Linux系统使用经验和Bash脚本编程能力。
+本文所述的内容适用于RHEL、CentOS等红帽系Linux发行版。
+##系统服务简介
+###常用命令
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20  # 启动MySQL service mysqld start # 关闭MySQL service mysqld stop # 重启MySQL service mysqld restart # 查看MySQL服务运行状态 service mysqld status # 查看MySQL服务是否开机自动运行 chkconfig --list mysqld # 设置MySQL服务开机自动运行 chkconfig --level 345 mysqld on # 取消MySQL服务开机自动运行 chkconfig --level 345 mysqld off   ###运行级别
+泛UNIX派系操作系统使用运行级别标识使用何种模式初始化。理论上，不同的发行版各级别代表的意义不同。红帽系发行版使用以下七个运行级别：
+ 0：关机 1：单用户模式 2：多用户模式，无网络服务 3：多用户模式，有网络服务 4：未使用/用户自定义 5：带图形界面的多用户模式 6：重启  最常用的是0、3、5、6四种模式。其中，0和6表示关闭和重启操作系统，所以，执行命令init 0和shutdown是一个效果，同样，执行命令init 6和reboot是一个效果。模式3即普通的命令行用户界面，模式5即普通的图形界面用户界面。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://0x3f.org/posts/how-to-write-service-scripts-for-redhat-distros/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2012-06-19T00:14:00+00:00">
+<meta property="article:modified_time" content="2012-06-19T00:14:00+00:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="怎样为红帽系Linux发行版写系统服务脚本">
+<meta name=twitter:description content="##阅读说明
+阅读本文要求有基本的Linux系统使用经验和Bash脚本编程能力。
+本文所述的内容适用于RHEL、CentOS等红帽系Linux发行版。
+##系统服务简介
+###常用命令
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20  # 启动MySQL service mysqld start # 关闭MySQL service mysqld stop # 重启MySQL service mysqld restart # 查看MySQL服务运行状态 service mysqld status # 查看MySQL服务是否开机自动运行 chkconfig --list mysqld # 设置MySQL服务开机自动运行 chkconfig --level 345 mysqld on # 取消MySQL服务开机自动运行 chkconfig --level 345 mysqld off   ###运行级别
+泛UNIX派系操作系统使用运行级别标识使用何种模式初始化。理论上，不同的发行版各级别代表的意义不同。红帽系发行版使用以下七个运行级别：
+ 0：关机 1：单用户模式 2：多用户模式，无网络服务 3：多用户模式，有网络服务 4：未使用/用户自定义 5：带图形界面的多用户模式 6：重启  最常用的是0、3、5、6四种模式。其中，0和6表示关闭和重启操作系统，所以，执行命令init 0和shutdown是一个效果，同样，执行命令init 6和reboot是一个效果。模式3即普通的命令行用户界面，模式5即普通的图形界面用户界面。">
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-93233020-1','auto'),ga('send','pageview'))</script>
+<meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name=theme-color media="(prefers-color-scheme: dark)" content="#262d33">
+<title>
+晴耕雨讀 - 怎样为红帽系Linux发行版写系统服务脚本
+</title>
+<link rel="shortcut icon" href=/favicon.ico type=image/x-icon>
+<link rel=preconnect href=https://fonts.googleapis.com>
+<link rel=preconnect href=https://fonts.gstatic.com crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel=stylesheet>
+<link rel=stylesheet href=/minima.1638090831.css>
+<script defer type=text/javascript src=/minima.1638090831.js></script>
+</head>
+<script>try{'theme'in localStorage||(localStorage.theme=window.matchMedia('(prefer-color-scheme: dark)').matches?'dark':'light'),document.querySelector('html').classList.add(localStorage.theme)}catch(a){console.error(a)}</script>
+<body class="sm:mx-5 sm:my-0">
+<header class="flex justify-between items-center sm:my-3">
+<div class="flex items-center">
+<div id=theme-switcher class="text-4xl cursor-pointer">🌚</div>
+</div>
+<nav class="flex items-center
+whitespace-nowrap overflow-x-auto overflow-y-hidden">
+<a class=ml-5 href=/>主頁</a>
+<a class=ml-5 href=/posts>文章</a>
+<a class=ml-5 href=/tags>標籤</a>
+<a class=ml-5 href=/categories>分類</a>
+<a class=ml-5 href=/about>關於</a>
+</nav>
+</header>
+<h1 class="mt-8 mb-6">怎样为红帽系Linux发行版写系统服务脚本</h1>
+<div class="mb-3 text-xs flex justify-between sm:flex-col">
+<div>
+Posted at &mdash; Jun 19, 2012
+</div>
+<div class=sm:mt-4>
+<a class=not-first:ml-3 href=/tags/Linux>#Linux</a>
+<a class=not-first:ml-3 href=/tags/Redhat>#Redhat</a>
+<a class=not-first:ml-3 href=/tags/CentOS>#CentOS</a>
+<a class=not-first:ml-3 href=/tags/Bash>#Bash</a>
+<a class=not-first:ml-3 href=/tags/%e7%bc%96%e7%a8%8b>#编程</a>
+</div>
+</div>
+<main>
+<p></p>
+<article class=md>
+<p>##阅读说明</p>
+<p>阅读本文要求有基本的Linux系统使用经验和Bash脚本编程能力。</p>
+<p>本文所述的内容适用于RHEL、CentOS等红帽系Linux发行版。</p>
+<p>##系统服务简介</p>
+<p>###常用命令</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=c1># 启动MySQL</span>
+service mysqld start
+
+<span class=c1># 关闭MySQL</span>
+service mysqld stop
+
+<span class=c1># 重启MySQL</span>
+service mysqld restart
+
+<span class=c1># 查看MySQL服务运行状态</span>
+service mysqld status
+
+<span class=c1># 查看MySQL服务是否开机自动运行</span>
+chkconfig --list mysqld
+
+<span class=c1># 设置MySQL服务开机自动运行</span>
+chkconfig --level <span class=m>345</span> mysqld on
+
+<span class=c1># 取消MySQL服务开机自动运行</span>
+chkconfig --level <span class=m>345</span> mysqld off
+</code></pre></td></tr></table>
+</div>
+</div><p>###运行级别</p>
+<p>泛UNIX派系操作系统使用运行级别标识使用何种模式初始化。理论上，不同的发行版各级别代表的意义不同。红帽系发行版使用以下七个运行级别：</p>
+<ul>
+<li>0：关机</li>
+<li>1：单用户模式</li>
+<li>2：多用户模式，无网络服务</li>
+<li>3：多用户模式，有网络服务</li>
+<li>4：未使用/用户自定义</li>
+<li>5：带图形界面的多用户模式</li>
+<li>6：重启</li>
+</ul>
+<p>最常用的是0、3、5、6四种模式。其中，0和6表示关闭和重启操作系统，所以，执行命令<strong>init 0</strong>和<strong>shutdown</strong>是一个效果，同样，执行命令<strong>init 6</strong>和<strong>reboot</strong>是一个效果。模式3即普通的命令行用户界面，模式5即普通的图形界面用户界面。</p>
+<p>模式1在个别情景下会用到，例如忘记root用户的密码时，需要进入模式1修改密码。</p>
+<p>##系统服务脚本格式</p>
+<p>###示例</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=cp>#!/bin/bash
+</span><span class=cp></span>
+<span class=c1># chkconfig: 345 99 12</span>
+<span class=c1># description: This is a sample service script</span>
+
+<span class=k>case</span> <span class=s2>&#34;</span><span class=nv>$1</span><span class=s2>&#34;</span> in
+    start<span class=o>)</span>
+        <span class=c1># Start something.</span>
+        touch /var/lock/subsys/sample
+        <span class=p>;;</span>
+    stop<span class=o>)</span>
+        <span class=c1># Stop something.</span>
+        /bin/rm -f /var/lock/subsys/sample
+        <span class=p>;;</span>
+    restart<span class=p>|</span>reload<span class=o>)</span>
+        <span class=c1># Restart something.</span>
+        <span class=p>;;</span>
+    status<span class=o>)</span>
+        <span class=c1># Report the running status of something.</span>
+        <span class=p>;;</span>
+    *<span class=o>)</span>
+        <span class=c1># Invalid command, complain an error.</span>
+        <span class=p>;;</span>
+<span class=k>esac</span>
+
+<span class=nb>exit</span> <span class=m>0</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>###解释</p>
+<p>假设本服务脚本文件的文件名为<strong>sample</strong>。</p>
+<p>整个服务脚本是一个普通的Bash脚本。主体是一个case语句，定义了四个命令start、stop、restart或reload、status，顾名思义，四个命令分别用来启动、停止、重启该服务，以及获取服务的运行状态。</p>
+<p>红帽系发行版使用chkconfig命令设置服务自动在哪个运行级别被自动执行。要使服务脚本支持chkconfig命令，需要加入注释行：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=c1># chkconfig: 345 99 12</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>其中，<strong>345</strong>表示缺省的运行级别，使用如下命令添加服务时：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>chkconfig --add sample
+</code></pre></td></tr></table>
+</div>
+</div><p>将和使用如下命令一个效果：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>chkconfig --level <span class=m>345</span> sample on
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>99</strong>表示启动序号，例如若希望服务B在服务A启动后启动，且服务A的启动序号是98，则服务B的启动序号应设为大于98的一个整数。</p>
+<p><strong>12</strong>表示停止序号，作用与启动序号相同。</p>
+<p>此外，若希望在操作系统关闭前先自动执行服务的关闭命令，需要在**/var/lock/subsys/<strong>目录中存在与服务名同名的空文件，因此，应在</strong>start<strong>命令中创建一个这样的文件，并在</strong>stop**命令中删除之。</p>
+</article>
+</main>
+<footer class="mt-8 flex sm:flex-col-reverse justify-between items-center">
+<p class="mt-0 text-sm">
+© 淘气 2021 |
+<a href=https://gohugo.io target=_blank rel="noopener noreferrer">Hugo</a> on
+<a href=https://github.com/mivinci/hugo-theme-minima target=_blank rel="noopener noreferrer">Minima</a>
+</p>
+<p class="flex items-center mt-0">
+<a class="icon mx-2" href=https://github.com/xbot title=github><svg fill="#63636f" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>GitHub</title><path d="M12 .297c-6.63.0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577.0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93.0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176.0.0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22.0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22.0 1.606-.015 2.896-.015 3.286.0.315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+</a>
+<a class="icon mx-2" href=/index.xml title=rss><svg fill="#63636f" t="1626591563876" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" p-id="1984" width="18" height="16"><path d="M128 768a128 128 0 100 256 128 128 0 000-256zM0 368v176c265.104.0 480 214.912 480 480h176c0-362.32-293.696-656-656-656zM0 0v176c468.336.0 848 379.664 848 848h176C1024 458.464 565.536.0.0.0z" p-id="1985"/></svg>
+</a>
+</p>
+</footer>
+</body>
+</html>

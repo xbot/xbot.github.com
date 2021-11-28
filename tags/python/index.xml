@@ -1,1337 +1,181 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Python - 标签 - 晴耕雨讀</title><link>http://0x3f.org/tags/python/</link><description>Python - 标签 - 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sun, 30 Jul 2017 08:40:11 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/python/" rel="self" type="application/rss+xml"/><item><title>Python 2还是3是个纠结的问题</title><link>http://0x3f.org/post/bothered-by-python-2-vs-3/</link><pubDate>Sun, 30 Jul 2017 08:40:11 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/bothered-by-python-2-vs-3/</guid><description><![CDATA[<p>前些天用denite取代unite，用<code>--with-python3</code>重装了vim，结果发现vdebug只支持python 2。</p>
-<p>vim同时只能在py2和py3中选一个，据说可以通过重新编译python实现共存，但是我在编译py3的时候失败。</p>
-<p>neovim同时支持两个版本，但是尝试deoplete失败，报「Invalid Channel」的错误，似乎是python-neovim的锅。而且由于neovim内建lua、不支持<code>has('lua')</code>，所以不能fall back到neocomplete。</p>
-<p>万般无奈，只好换回unite。</p>
-]]></description></item><item><title>Project Euler Problem 24 Solved</title><link>http://0x3f.org/post/project-euler-24/</link><pubDate>Sun, 27 Apr 2014 21:17:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/project-euler-24/</guid><description><![CDATA[<h2 id="lexicographic-permutations">Lexicographic permutations</h2>
-<p>A permutation is an ordered arrangement of objects. For example, 3124 is one possible permutation of the digits 1, 2, 3 and 4. If all of the permutations are listed numerically or alphabetically, we call it lexicographic order. The lexicographic permutations of 0, 1 and 2 are:</p>
-<p>012   021   102   120   201   210</p>
-<p>What is the millionth lexicographic permutation of the digits 0, 1, 2, 3, 4, 5, 6, 7, 8 and 9?</p>
-<h2 id="solution">Solution</h2>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="ch">#!/usr/bin/python2</span>
-<span class="c1"># -*- coding: utf-8 -*-</span>
-
-<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">factorial</span>
-
-
-<span class="k">def</span> <span class="nf">get_perm</span><span class="p">(</span><span class="n">digits</span><span class="p">,</span> <span class="n">number</span><span class="p">):</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s1">&#39;&#39;</span>
-    <span class="p">(</span><span class="n">perm</span><span class="p">,</span> <span class="n">counter</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">factorial</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
-    <span class="k">for</span> <span class="n">digit</span> <span class="ow">in</span> <span class="n">digits</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">counter</span> <span class="o">&gt;=</span> <span class="n">number</span><span class="p">:</span>
-            <span class="n">digits</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">digit</span><span class="p">)</span>
-            <span class="n">perm</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">digit</span><span class="p">)</span> <span class="o">+</span> <span class="n">get_perm</span><span class="p">(</span><span class="n">digits</span><span class="p">,</span> <span class="n">number</span><span class="p">)</span>
-            <span class="k">break</span>
-        <span class="n">number</span> <span class="o">-=</span> <span class="n">counter</span>
-    <span class="k">return</span> <span class="n">perm</span>
-
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">time</span>
-    <span class="n">startTime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-    <span class="n">perm</span> <span class="o">=</span> <span class="n">get_perm</span><span class="p">([</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)],</span> <span class="mi">1000000</span><span class="p">)</span>
-    <span class="k">print</span> <span class="n">perm</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">ms&#39;</span> <span class="o">%</span> <span class="p">((</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">startTime</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span>
-</code></pre></td></tr></table>
-</div>
-</div><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-<span class="k">function</span> <span class="nf">factorial</span><span class="p">(</span><span class="nv">$n</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nv">$result</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-    <span class="k">for</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span><span class="nv">$i</span> <span class="o">&lt;=</span> <span class="nv">$n</span><span class="p">;</span><span class="nv">$i</span><span class="o">++</span><span class="p">)</span> <span class="nv">$result</span><span class="o">*=</span> <span class="nv">$i</span><span class="p">;</span>
-    <span class="k">return</span> <span class="nv">$result</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="k">function</span> <span class="nf">get_perm</span><span class="p">(</span><span class="nv">$digits</span><span class="p">,</span> <span class="nv">$number</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nv">$perm</span> <span class="o">=</span> <span class="s2">&#34;&#34;</span><span class="p">;</span>
-    <span class="nv">$length</span> <span class="o">=</span> <span class="nx">count</span><span class="p">(</span><span class="nv">$digits</span><span class="p">);</span>
-    <span class="nv">$counter</span> <span class="o">=</span> <span class="nx">factorial</span><span class="p">(</span><span class="nv">$length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
-    <span class="k">for</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span><span class="nv">$i</span> <span class="o">&lt;</span> <span class="nv">$length</span><span class="p">;</span><span class="nv">$i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nv">$counter</span> <span class="o">&gt;=</span> <span class="nv">$number</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nv">$segment</span> <span class="o">=</span> <span class="nx">array_splice</span><span class="p">(</span><span class="nv">$digits</span><span class="p">,</span> <span class="nv">$i</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
-            <span class="nv">$perm</span> <span class="o">=</span> <span class="nv">$segment</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">.</span> <span class="nx">get_perm</span><span class="p">(</span><span class="nv">$digits</span><span class="p">,</span> <span class="nv">$number</span><span class="p">);</span>
-            <span class="k">break</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="nv">$number</span><span class="o">-=</span> <span class="nv">$counter</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="nv">$perm</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="nv">$startTime</span> <span class="o">=</span> <span class="nx">microtime</span><span class="p">(</span><span class="k">true</span><span class="p">);</span>
-<span class="nv">$digits</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">);</span>
-<span class="nv">$perm</span> <span class="o">=</span> <span class="nx">get_perm</span><span class="p">(</span><span class="nv">$digits</span><span class="p">,</span> <span class="mi">1000000</span><span class="p">);</span>
-<span class="nv">$costs</span> <span class="o">=</span> <span class="p">(</span><span class="nx">microtime</span><span class="p">(</span><span class="k">true</span><span class="p">)</span> <span class="o">-</span> <span class="nv">$startTime</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">;</span>
-<span class="k">echo</span> <span class="s2">&#34;</span><span class="si">$perm</span><span class="s2"> </span><span class="si">${</span><span class="nv">costs</span><span class="si">}</span><span class="s2">ms</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">;</span>
-<span class="cp">?&gt;</span>
-</code></pre></td></tr></table>
-</div>
-</div><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-	<span class="s">&#34;fmt&#34;</span>
-	<span class="s">&#34;strconv&#34;</span>
-	<span class="s">&#34;time&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">func</span> <span class="nf">factorial</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
-	<span class="nx">result</span> <span class="o">:=</span> <span class="mi">1</span>
-	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">2</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="nx">n</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-		<span class="nx">result</span> <span class="o">*=</span> <span class="nx">i</span>
-	<span class="p">}</span>
-	<span class="k">return</span> <span class="nx">result</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">get_perm</span><span class="p">(</span><span class="nx">digits</span> <span class="p">[]</span><span class="kt">int</span><span class="p">,</span> <span class="nx">number</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
-	<span class="nx">perm</span><span class="p">,</span> <span class="nx">length</span> <span class="o">:=</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">digits</span><span class="p">)</span>
-	<span class="nx">counter</span> <span class="o">:=</span> <span class="nf">factorial</span><span class="p">(</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-		<span class="k">if</span> <span class="nx">counter</span> <span class="o">&gt;=</span> <span class="nx">number</span> <span class="p">{</span>
-			<span class="nx">digit</span> <span class="o">:=</span> <span class="nx">digits</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
-			<span class="nx">digits</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">digits</span><span class="p">[:</span><span class="nx">i</span><span class="p">],</span> <span class="nx">digits</span><span class="p">[</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">:]</span><span class="o">...</span><span class="p">)</span>
-			<span class="nx">perm</span> <span class="o">+=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">Itoa</span><span class="p">(</span><span class="nx">digit</span><span class="p">)</span> <span class="o">+</span> <span class="nf">get_perm</span><span class="p">(</span><span class="nx">digits</span><span class="p">,</span> <span class="nx">number</span><span class="p">)</span>
-			<span class="k">break</span>
-		<span class="p">}</span>
-		<span class="nx">number</span> <span class="o">-=</span> <span class="nx">counter</span>
-	<span class="p">}</span>
-	<span class="k">return</span> <span class="nx">perm</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-	<span class="nx">startTime</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">()</span>
-	<span class="nx">digits</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">}</span>
-	<span class="nx">perm</span> <span class="o">:=</span> <span class="nf">get_perm</span><span class="p">(</span><span class="nx">digits</span><span class="p">,</span> <span class="mi">1000000</span><span class="p">)</span>
-	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">perm</span><span class="p">,</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Sub</span><span class="p">(</span><span class="nx">startTime</span><span class="p">))</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>I&rsquo;m the 57181st person to have solved this problem.</p>
-<p>I&rsquo;ve just advanced to Level 1. 61264 members (15.9%) have made it this far.</p>
-<p>I have earned 1 new award:</p>
-<p>The Journey Begins: Progress to Level 1 by solving twenty-five problems</p>
-]]></description></item><item><title>Project Euler Problem 23 Solved</title><link>http://0x3f.org/post/project-euler-23/</link><pubDate>Fri, 25 Apr 2014 23:56:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/project-euler-23/</guid><description><![CDATA[<h2 id="non-abundant-sums">Non-abundant sums</h2>
-<p>A perfect number is a number for which the sum of its proper divisors is exactly equal to the number. For example, the sum of the proper divisors of 28 would be 1 + 2 + 4 + 7 + 14 = 28, which means that 28 is a perfect number.</p>
-<p>A number n is called deficient if the sum of its proper divisors is less than n and it is called abundant if this sum exceeds n.</p>
-<p>As 12 is the smallest abundant number, 1 + 2 + 3 + 4 + 6 = 16, the smallest number that can be written as the sum of two abundant numbers is 24. By mathematical analysis, it can be shown that all integers greater than 28123 can be written as the sum of two abundant numbers. However, this upper limit cannot be reduced any further by analysis even though it is known that the greatest number that cannot be expressed as the sum of two abundant numbers is less than this limit.</p>
-<p>Find the sum of all the positive integers which cannot be written as the sum of two abundant numbers.</p>
-<h2 id="solution">Solution</h2>
-<p>Using sets instead of lists greatly improves performance in Python:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="ch">#!/usr/bin/python</span>
-<span class="c1"># -*- coding: utf-8 -*-</span>
-
-
-<span class="k">def</span> <span class="nf">sum_proper_factors</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
-    <span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">)</span>
-
-    <span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span> <span class="o">=</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">sqrt</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">+=</span> <span class="n">i</span> <span class="o">+</span> <span class="n">n</span> <span class="o">/</span> <span class="n">i</span>
-
-    <span class="k">if</span> <span class="n">sqrt</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">sqrt</span><span class="p">):</span>
-        <span class="n">result</span> <span class="o">-=</span> <span class="n">sqrt</span>
-
-    <span class="k">return</span> <span class="n">result</span>
-
-
-<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-    <span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">abundants</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">28124</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span>
-
-    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">limit</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">sum_proper_factors</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">n</span><span class="p">:</span>
-            <span class="n">abundants</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">abundants</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">abundants</span><span class="p">):</span>
-            <span class="n">result</span> <span class="o">+=</span> <span class="n">n</span>
-
-    <span class="k">print</span> <span class="n">result</span>
-
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">time</span>
-    <span class="n">startTime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-    <span class="n">main</span><span class="p">()</span>
-    <span class="k">print</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">startTime</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>Simulate sets using maps in Go:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span><span class="lnt">39
-</span><span class="lnt">40
-</span><span class="lnt">41
-</span><span class="lnt">42
-</span><span class="lnt">43
-</span><span class="lnt">44
-</span><span class="lnt">45
-</span><span class="lnt">46
-</span><span class="lnt">47
-</span><span class="lnt">48
-</span><span class="lnt">49
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-	<span class="s">&#34;fmt&#34;</span>
-	<span class="s">&#34;math&#34;</span>
-	<span class="s">&#34;time&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">func</span> <span class="nf">sum_proper_factors</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
-	<span class="nx">result</span><span class="p">,</span> <span class="nx">sqrt</span> <span class="o">:=</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">math</span><span class="p">.</span><span class="nf">Sqrt</span><span class="p">(</span><span class="nb">float64</span><span class="p">(</span><span class="nx">n</span><span class="p">))</span>
-
-	<span class="nx">start</span><span class="p">,</span> <span class="nx">step</span> <span class="o">:=</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span>
-	<span class="k">if</span> <span class="nx">n</span><span class="o">%</span><span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span> <span class="p">{</span>
-		<span class="nx">start</span><span class="p">,</span> <span class="nx">step</span> <span class="p">=</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span>
-	<span class="p">}</span>
-	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nx">start</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="nb">int</span><span class="p">(</span><span class="nx">sqrt</span><span class="p">);</span> <span class="nx">i</span> <span class="o">+=</span> <span class="nx">step</span> <span class="p">{</span>
-		<span class="k">if</span> <span class="nx">n</span><span class="o">%</span><span class="nx">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
-			<span class="nx">result</span> <span class="o">+=</span> <span class="nx">i</span> <span class="o">+</span> <span class="nx">n</span><span class="o">/</span><span class="nx">i</span>
-		<span class="p">}</span>
-	<span class="p">}</span>
-
-	<span class="k">if</span> <span class="nx">sqrt</span> <span class="o">==</span> <span class="nb">float64</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nx">sqrt</span><span class="p">))</span> <span class="p">{</span>
-		<span class="nx">result</span> <span class="o">-=</span> <span class="nb">int</span><span class="p">(</span><span class="nx">sqrt</span><span class="p">)</span>
-	<span class="p">}</span>
-
-	<span class="k">return</span> <span class="nx">result</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-	<span class="nx">result</span><span class="p">,</span> <span class="nx">limit</span><span class="p">,</span> <span class="nx">abundants</span><span class="p">,</span> <span class="nx">startTime</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">28124</span><span class="p">,</span> <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">int</span><span class="p">]</span><span class="kt">bool</span><span class="p">),</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">()</span>
-
-	<span class="k">for</span> <span class="nx">n</span> <span class="o">:=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">n</span> <span class="p">&lt;</span> <span class="nx">limit</span><span class="p">;</span> <span class="nx">n</span><span class="o">++</span> <span class="p">{</span>
-		<span class="k">if</span> <span class="nf">sum_proper_factors</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span> <span class="p">&gt;</span> <span class="nx">n</span> <span class="p">{</span>
-			<span class="nx">abundants</span><span class="p">[</span><span class="nx">n</span><span class="p">]</span> <span class="p">=</span> <span class="kc">true</span>
-		<span class="p">}</span>
-		<span class="nx">isSumOfTwoAbundants</span> <span class="o">:=</span> <span class="kc">false</span>
-		<span class="k">for</span> <span class="nx">k</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">abundants</span> <span class="p">{</span>
-			<span class="k">if</span> <span class="nx">abundants</span><span class="p">[</span><span class="nx">n</span><span class="o">-</span><span class="nx">k</span><span class="p">]</span> <span class="o">==</span> <span class="kc">true</span> <span class="p">{</span>
-				<span class="nx">isSumOfTwoAbundants</span> <span class="p">=</span> <span class="kc">true</span>
-				<span class="k">break</span>
-			<span class="p">}</span>
-		<span class="p">}</span>
-		<span class="k">if</span> <span class="p">!</span><span class="nx">isSumOfTwoAbundants</span> <span class="p">{</span>
-			<span class="nx">result</span> <span class="o">+=</span> <span class="nx">n</span>
-		<span class="p">}</span>
-	<span class="p">}</span>
-
-	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Sub</span><span class="p">(</span><span class="nx">startTime</span><span class="p">))</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>I&rsquo;m the 49489th person to have solved this problem.</p>
-]]></description></item><item><title>UltraBlog.vim v3.6.1: 文章分类自动补全</title><link>http://0x3f.org/post/ultrablog-v361-released/</link><pubDate>Sun, 20 Apr 2014 22:50:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/ultrablog-v361-released/</guid><description><![CDATA[<p>春节期间收到两个issue，一直拖到今天才有时间完成。</p>
-<p>增加了一个功能，在文章编辑视图的元数据中分类那行，使用热键&lt;C-X&gt;&lt;C-U&gt;自动完成文章的分类。在配置数组<strong>ub_blog</strong>中增加键值对“categories”，默认使用这一项的值实现自动完成，如下：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-vim" data-lang="vim"><span class="k">let</span> <span class="nx">ub_blog</span> <span class="p">=</span> {<span class="s1">&#39;login_name&#39;</span>:<span class="s1">&#39;admin&#39;</span><span class="p">,</span><span class="err">
-</span><span class="err"></span>            \<span class="s1">&#39;password&#39;</span>:<span class="s1">&#39;pass2011&#39;</span><span class="p">,</span><span class="err">
-</span><span class="err"></span>            \<span class="s1">&#39;url&#39;</span>:<span class="s1">&#39;http://www.sample.com/&#39;</span><span class="p">,</span><span class="err">
-</span><span class="err"></span>            \<span class="s1">&#39;xmlrpc_uri&#39;</span>:<span class="s1">&#39;xmlrpc.php&#39;</span><span class="p">,</span><span class="err">
-</span><span class="err"></span>            \<span class="s1">&#39;db&#39;</span>:<span class="s1">&#39;$VIM/UltraBlog.db&#39;</span><span class="p">,</span><span class="err">
-</span><span class="err"></span>            \<span class="s1">&#39;categories&#39;</span>: <span class="s1">&#39;News|Computer|Image&#39;</span><span class="err">
-</span><span class="err"></span>            \}<span class="err">
-</span></code></pre></td></tr></table>
-</div>
-</div><p>如果这一项不存在，将从博客中拉取分类数据。</p>
-<p>自从迁移到Octopress，有两年不用Wordpress了，没想到居然还有人在用<a href="/post/ultrablog-as-an-ultimate-vim-blogging-plugin/" rel="">UltraBlog.vim</a>。</p>
-]]></description></item><item><title>Project Euler Problem 22 Solved</title><link>http://0x3f.org/post/project-euler-22/</link><pubDate>Sun, 20 Apr 2014 08:03:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/project-euler-22/</guid><description><![CDATA[<h2 id="names-scores">Names scores</h2>
-<p>Using <a href="http://projecteuler.net/project/names.txt" target="_blank" rel="noopener noreffer">names.txt</a> (right click and &lsquo;Save Link/Target As&hellip;'), a 46K text file containing over five-thousand first names, begin by sorting it into alphabetical order. Then working out the alphabetical value for each name, multiply this value by its alphabetical position in the list to obtain a name score.</p>
-<p>For example, when the list is sorted into alphabetical order, COLIN, which is worth 3 + 15 + 12 + 9 + 14 = 53, is the 938th name in the list. So, COLIN would obtain a score of 938 × 53 = 49714.</p>
-<p>What is the total of all the name scores in the file?</p>
-<h2 id="solution">Solution</h2>
-<p>Pretty code snippets are easily to be implemented in Python as always:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="ch">#!/usr/bin/python</span>
-<span class="c1"># -*- coding: utf-8 -*-</span>
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;names.txt&#39;</span><span class="p">)</span>
-    <span class="n">names</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&#34;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">))</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
-    <span class="k">print</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">name</span><span class="p">:</span> <span class="nb">sum</span><span class="p">([</span><span class="nb">ord</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">-</span> <span class="mi">64</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">name</span><span class="p">])</span> \
-              <span class="o">*</span> <span class="p">(</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">names</span><span class="p">))</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>Easy as Python, ugly as shit, here is the PHP implementation:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span><span class="lnt">9
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
-<span class="nv">$names</span> <span class="o">=</span> <span class="nx">explode</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="nx">str_replace</span><span class="p">(</span><span class="s1">&#39;&#34;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nx">file_get_contents</span><span class="p">(</span><span class="s1">&#39;names.txt&#39;</span><span class="p">)));</span>
-<span class="nx">sort</span><span class="p">(</span><span class="nv">$names</span><span class="p">,</span> <span class="nx">SORT_STRING</span><span class="p">);</span>
-<span class="nv">$cal_alpha_value</span> <span class="o">=</span> <span class="k">function</span><span class="p">(</span><span class="nv">$name</span><span class="p">,</span> <span class="nv">$i</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nv">$cal_alpha_index</span> <span class="o">=</span> <span class="k">function</span><span class="p">(</span><span class="nv">$char</span><span class="p">){</span><span class="k">return</span> <span class="nx">ord</span><span class="p">(</span><span class="nv">$char</span><span class="p">)</span> <span class="o">-</span> <span class="mi">64</span><span class="p">;};</span>
-    <span class="k">return</span> <span class="nx">array_sum</span><span class="p">(</span><span class="nx">array_map</span><span class="p">(</span><span class="nv">$cal_alpha_index</span><span class="p">,</span> <span class="nx">str_split</span><span class="p">(</span><span class="nv">$name</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span> <span class="o">*</span> <span class="nv">$i</span><span class="p">;</span>
-<span class="p">};</span>
-<span class="k">echo</span> <span class="nx">array_sum</span><span class="p">(</span><span class="nx">array_map</span><span class="p">(</span><span class="nv">$cal_alpha_value</span><span class="p">,</span> <span class="nv">$names</span><span class="p">,</span> <span class="nx">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">count</span><span class="p">(</span><span class="nv">$names</span><span class="p">))));</span>
-<span class="cp">?&gt;</span>
-</code></pre></td></tr></table>
-</div>
-</div><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-	<span class="s">&#34;bufio&#34;</span>
-	<span class="s">&#34;fmt&#34;</span>
-	<span class="s">&#34;os&#34;</span>
-	<span class="s">&#34;sort&#34;</span>
-	<span class="s">&#34;strings&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-	<span class="nx">f</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;names.txt&#34;</span><span class="p">)</span>
-	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-		<span class="nx">os</span><span class="p">.</span><span class="nf">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-	<span class="p">}</span>
-	<span class="k">defer</span> <span class="nx">f</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
-
-	<span class="nx">reader</span> <span class="o">:=</span> <span class="nx">bufio</span><span class="p">.</span><span class="nf">NewReader</span><span class="p">(</span><span class="nx">f</span><span class="p">)</span>
-	<span class="nx">line</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">reader</span><span class="p">.</span><span class="nf">ReadString</span><span class="p">(</span><span class="sc">&#39;\n&#39;</span><span class="p">)</span>
-	<span class="nx">names</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">Split</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nf">Replace</span><span class="p">(</span><span class="nx">line</span><span class="p">,</span> <span class="s">&#34;\&#34;&#34;</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="s">&#34;,&#34;</span><span class="p">)</span>
-	<span class="nx">sort</span><span class="p">.</span><span class="nf">Sort</span><span class="p">(</span><span class="nx">sort</span><span class="p">.</span><span class="nf">StringSlice</span><span class="p">(</span><span class="nx">names</span><span class="p">))</span>
-
-	<span class="nx">val</span> <span class="o">:=</span> <span class="mi">0</span>
-	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">names</span><span class="p">);</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-		<span class="nx">tmp</span> <span class="o">:=</span> <span class="mi">0</span>
-		<span class="k">for</span> <span class="nx">j</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">names</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span> <span class="nx">j</span><span class="o">++</span> <span class="p">{</span>
-			<span class="nx">tmp</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="nx">names</span><span class="p">[</span><span class="nx">i</span><span class="p">][</span><span class="nx">j</span><span class="p">])</span> <span class="o">-</span> <span class="mi">64</span>
-		<span class="p">}</span>
-		<span class="nx">val</span> <span class="o">+=</span> <span class="nx">tmp</span> <span class="o">*</span> <span class="p">(</span><span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-	<span class="p">}</span>
-
-	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">val</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>I&rsquo;m the 65646th person to have solved this problem.</p>
-]]></description></item><item><title>Project Euler Problem 21 Solved</title><link>http://0x3f.org/post/project-euler-21/</link><pubDate>Thu, 17 Apr 2014 22:18:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/project-euler-21/</guid><description><![CDATA[<h2 id="amicable-numbers">Amicable numbers</h2>
-<p>Let d(n) be defined as the sum of proper divisors of n (numbers less than n which divide evenly into n).<br>
-If d(a) = b and d(b) = a, where a ≠ b, then a and b are an amicable pair and each of a and b are called amicable numbers.</p>
-<p>For example, the proper divisors of 220 are 1, 2, 4, 5, 10, 11, 20, 22, 44, 55 and 110; therefore d(220) = 284. The proper divisors of 284 are 1, 2, 4, 71 and 142; so d(284) = 220.</p>
-<p>Evaluate the sum of all the amicable numbers under 10000.</p>
-<h2 id="solution">Solution</h2>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="ch">#!/usr/bin/python</span>
-<span class="c1"># -*- coding: utf-8 -*-</span>
-
-
-<span class="k">def</span> <span class="nf">sum_proper_factors</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
-    <span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">)</span>
-
-    <span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span> <span class="o">=</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">sqrt</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">+=</span> <span class="n">i</span> <span class="o">+</span> <span class="n">n</span> <span class="o">/</span> <span class="n">i</span>
-
-    <span class="k">if</span> <span class="n">sqrt</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="n">sqrt</span><span class="p">):</span>
-        <span class="n">result</span> <span class="o">-=</span> <span class="n">sqrt</span>
-
-    <span class="k">return</span> <span class="n">result</span>
-
-
-<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10000</span><span class="p">):</span>
-        <span class="n">sum1</span> <span class="o">=</span> <span class="n">sum_proper_factors</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">sum1</span> <span class="o">&gt;</span> <span class="n">i</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">sum_proper_factors</span><span class="p">(</span><span class="n">sum1</span><span class="p">):</span>
-                <span class="n">result</span> <span class="o">+=</span> <span class="n">i</span> <span class="o">+</span> <span class="n">sum1</span>
-    <span class="k">print</span> <span class="n">result</span>
-
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">time</span>
-    <span class="n">startTime</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-    <span class="n">main</span><span class="p">()</span>
-    <span class="k">print</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">startTime</span>
-</code></pre></td></tr></table>
-</div>
-</div><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span><span class="lnt">39
-</span><span class="lnt">40
-</span><span class="lnt">41
-</span><span class="lnt">42
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-	<span class="s">&#34;fmt&#34;</span>
-	<span class="s">&#34;math&#34;</span>
-	<span class="s">&#34;time&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">func</span> <span class="nf">sum_proper_factors</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
-	<span class="nx">sum</span><span class="p">,</span> <span class="nx">sqrt</span> <span class="o">:=</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">math</span><span class="p">.</span><span class="nf">Sqrt</span><span class="p">(</span><span class="nb">float64</span><span class="p">(</span><span class="nx">n</span><span class="p">))</span>
-
-	<span class="nx">start</span><span class="p">,</span> <span class="nx">step</span> <span class="o">:=</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span>
-	<span class="k">if</span> <span class="nx">n</span><span class="o">%</span><span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span> <span class="p">{</span>
-		<span class="nx">start</span><span class="p">,</span> <span class="nx">step</span> <span class="p">=</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span>
-	<span class="p">}</span>
-	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nx">start</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="nb">int</span><span class="p">(</span><span class="nx">sqrt</span><span class="p">);</span> <span class="nx">i</span> <span class="o">+=</span> <span class="nx">step</span> <span class="p">{</span>
-		<span class="k">if</span> <span class="nx">n</span><span class="o">%</span><span class="nx">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
-			<span class="nx">sum</span> <span class="o">+=</span> <span class="nx">i</span> <span class="o">+</span> <span class="nx">n</span><span class="o">/</span><span class="nx">i</span>
-		<span class="p">}</span>
-	<span class="p">}</span>
-
-	<span class="k">if</span> <span class="nx">sqrt</span> <span class="o">==</span> <span class="nb">float64</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nx">sqrt</span><span class="p">))</span> <span class="p">{</span>
-		<span class="nx">sum</span> <span class="o">-=</span> <span class="nb">int</span><span class="p">(</span><span class="nx">sqrt</span><span class="p">)</span>
-	<span class="p">}</span>
-
-	<span class="k">return</span> <span class="nx">sum</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-	<span class="nx">result</span><span class="p">,</span> <span class="nx">startTime</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">()</span>
-
-	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">10000</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-		<span class="nx">iSum</span> <span class="o">:=</span> <span class="nf">sum_proper_factors</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
-		<span class="k">if</span> <span class="nx">iSum</span> <span class="p">&gt;</span> <span class="nx">i</span> <span class="p">{</span>
-			<span class="k">if</span> <span class="nx">i</span> <span class="o">==</span> <span class="nf">sum_proper_factors</span><span class="p">(</span><span class="nx">iSum</span><span class="p">)</span> <span class="p">{</span>
-				<span class="nx">result</span> <span class="o">+=</span> <span class="nx">i</span> <span class="o">+</span> <span class="nx">iSum</span>
-			<span class="p">}</span>
-		<span class="p">}</span>
-	<span class="p">}</span>
-
-	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Sub</span><span class="p">(</span><span class="nx">startTime</span><span class="p">))</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>I&rsquo;m the 70186th person to have solved this problem.</p>
-]]></description></item><item><title>Project Euler Problem 20 Solved</title><link>http://0x3f.org/post/project-euler-20/</link><pubDate>Mon, 14 Apr 2014 22:19:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/project-euler-20/</guid><description><![CDATA[<h2 id="factorial-digit-sum">Factorial digit sum</h2>
-<p>n! means n × (n − 1) × &hellip; × 3 × 2 × 1</p>
-<p>For example, 10! = 10 × 9 × &hellip; × 3 × 2 × 1 = 3628800,<br>
-and the sum of the digits in the number 10! is 3 + 6 + 2 + 8 + 8 + 0 + 0 = 27.</p>
-<p>Find the sum of the digits in the number 100!</p>
-<h2 id="solution">Solution</h2>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="ch">#!/usr/bin/python</span>
-<span class="c1"># -*- coding: utf-8 -*-</span>
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">product</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">101</span><span class="p">):</span>
-        <span class="n">product</span> <span class="o">*=</span> <span class="n">i</span>
-    <span class="k">print</span> <span class="nb">sum</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">product</span><span class="p">)])</span>
-</code></pre></td></tr></table>
-</div>
-</div><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-    <span class="s">&#34;fmt&#34;</span>
-    <span class="s">&#34;math/big&#34;</span>
-    <span class="s">&#34;strconv&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">product</span> <span class="o">:=</span> <span class="nx">big</span><span class="p">.</span><span class="nf">NewInt</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">101</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-        <span class="nx">product</span><span class="p">.</span><span class="nf">Mul</span><span class="p">(</span><span class="nx">product</span><span class="p">,</span> <span class="nx">big</span><span class="p">.</span><span class="nf">NewInt</span><span class="p">(</span><span class="nb">int64</span><span class="p">(</span><span class="nx">i</span><span class="p">)))</span>
-    <span class="p">}</span>
-    <span class="nx">sum</span> <span class="o">:=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="nx">idx</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">product</span><span class="p">.</span><span class="nf">String</span><span class="p">()</span> <span class="p">{</span>
-        <span class="nx">tmp</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">Atoi</span><span class="p">(</span><span class="nx">product</span><span class="p">.</span><span class="nf">String</span><span class="p">()[</span><span class="nx">idx</span> <span class="p">:</span> <span class="nx">idx</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
-        <span class="nx">sum</span> <span class="o">+=</span> <span class="nx">tmp</span>
-    <span class="p">}</span>
-    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">sum</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>I&rsquo;m the 100089th person to have solved this problem.</p>
-]]></description></item><item><title>Project Euler Problem 19 Solved</title><link>http://0x3f.org/post/project-euler-19/</link><pubDate>Sat, 12 Apr 2014 21:21:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/project-euler-19/</guid><description><![CDATA[<h2 id="counting-sundays">Counting Sundays</h2>
-<p>You are given the following information, but you may prefer to do some research for yourself.</p>
-<ul>
-<li>1 Jan 1900 was a Monday.</li>
-<li>Thirty days has September,
-April, June and November.<br>
-All the rest have thirty-one,<br>
-Saving February alone,<br>
-Which has twenty-eight, rain or shine.<br>
-And on leap years, twenty-nine.</li>
-<li>A leap year occurs on any year evenly divisible by 4, but not on a century unless it is divisible by 400.</li>
-</ul>
-<p>How many Sundays fell on the first of the month during the twentieth century (1 Jan 1901 to 31 Dec 2000)?</p>
-<h2 id="solution">Solution</h2>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="ch">#!/usr/bin/python</span>
-<span class="c1"># -*- coding: utf-8 -*-</span>
-
-
-<span class="k">def</span> <span class="nf">is_leap</span><span class="p">(</span><span class="n">year</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">year</span> <span class="o">%</span> <span class="mi">400</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">year</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">year</span> <span class="o">%</span> <span class="mi">4</span> <span class="o">==</span> <span class="mi">0</span>
-
-
-<span class="k">def</span> <span class="nf">count_days</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">):</span>
-    <span class="n">days</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1900</span><span class="p">,</span> <span class="n">year</span><span class="p">):</span>
-        <span class="n">days</span> <span class="o">+=</span> <span class="n">is_leap</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="ow">and</span> <span class="mi">366</span> <span class="ow">or</span> <span class="mi">365</span>
-    <span class="n">thirties</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">11</span><span class="p">]</span>
-    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">month</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">m</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="n">days</span> <span class="o">+=</span> <span class="n">is_leap</span><span class="p">(</span><span class="n">year</span><span class="p">)</span> <span class="ow">and</span> <span class="mi">29</span> <span class="ow">or</span> <span class="mi">28</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">days</span> <span class="o">+=</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">thirties</span> <span class="ow">and</span> <span class="mi">30</span> <span class="ow">or</span> <span class="mi">31</span>
-    <span class="k">return</span> <span class="n">days</span> <span class="o">+</span> <span class="n">day</span>
-
-
-<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">year</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1901</span><span class="p">,</span> <span class="mi">2001</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">month</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">13</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">count_days</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">7</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
-    <span class="k">print</span> <span class="n">count</span>
-
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">main</span><span class="p">()</span>
-</code></pre></td></tr></table>
-</div>
-</div><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span><span class="lnt">39
-</span><span class="lnt">40
-</span><span class="lnt">41
-</span><span class="lnt">42
-</span><span class="lnt">43
-</span><span class="lnt">44
-</span><span class="lnt">45
-</span><span class="lnt">46
-</span><span class="lnt">47
-</span><span class="lnt">48
-</span><span class="lnt">49
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-    <span class="s">&#34;fmt&#34;</span>
-    <span class="s">&#34;math&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">func</span> <span class="nf">is_leap</span><span class="p">(</span><span class="nx">year</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">math</span><span class="p">.</span><span class="nf">Mod</span><span class="p">(</span><span class="nb">float64</span><span class="p">(</span><span class="nx">year</span><span class="p">),</span> <span class="mi">400</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">math</span><span class="p">.</span><span class="nf">Mod</span><span class="p">(</span><span class="nb">float64</span><span class="p">(</span><span class="nx">year</span><span class="p">),</span> <span class="mi">100</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">math</span><span class="p">.</span><span class="nf">Mod</span><span class="p">(</span><span class="nb">float64</span><span class="p">(</span><span class="nx">year</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">count_days</span><span class="p">(</span><span class="nx">year</span><span class="p">,</span> <span class="nx">month</span><span class="p">,</span> <span class="nx">day</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
-    <span class="nx">days</span> <span class="o">:=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="nx">y</span> <span class="o">:=</span> <span class="mi">1900</span><span class="p">;</span> <span class="nx">y</span> <span class="p">&lt;</span> <span class="nx">year</span><span class="p">;</span> <span class="nx">y</span><span class="o">++</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="nf">is_leap</span><span class="p">(</span><span class="nx">y</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">days</span> <span class="o">+=</span> <span class="mi">366</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="nx">days</span> <span class="o">+=</span> <span class="mi">365</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-    <span class="k">for</span> <span class="nx">m</span> <span class="o">:=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">m</span> <span class="p">&lt;</span> <span class="nx">month</span><span class="p">;</span> <span class="nx">m</span><span class="o">++</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="nx">m</span> <span class="o">==</span> <span class="mi">2</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="nf">is_leap</span><span class="p">(</span><span class="nx">year</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">days</span> <span class="o">+=</span> <span class="mi">29</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="nx">days</span> <span class="o">+=</span> <span class="mi">28</span>
-            <span class="p">}</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="nx">m</span> <span class="o">==</span> <span class="mi">4</span> <span class="o">||</span> <span class="nx">m</span> <span class="o">==</span> <span class="mi">6</span> <span class="o">||</span> <span class="nx">m</span> <span class="o">==</span> <span class="mi">9</span> <span class="o">||</span> <span class="nx">m</span> <span class="o">==</span> <span class="mi">11</span> <span class="p">{</span>
-                <span class="nx">days</span> <span class="o">+=</span> <span class="mi">30</span>
-            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                <span class="nx">days</span> <span class="o">+=</span> <span class="mi">31</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="nx">days</span> <span class="o">+</span> <span class="nx">day</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">count</span> <span class="o">:=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="nx">year</span> <span class="o">:=</span> <span class="mi">1901</span><span class="p">;</span> <span class="nx">year</span> <span class="p">&lt;</span> <span class="mi">2001</span><span class="p">;</span> <span class="nx">year</span><span class="o">++</span> <span class="p">{</span>
-        <span class="k">for</span> <span class="nx">month</span> <span class="o">:=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">month</span> <span class="p">&lt;</span> <span class="mi">13</span><span class="p">;</span> <span class="nx">month</span><span class="o">++</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="nx">math</span><span class="p">.</span><span class="nf">Mod</span><span class="p">(</span><span class="nb">float64</span><span class="p">(</span><span class="nf">count_days</span><span class="p">(</span><span class="nx">year</span><span class="p">,</span> <span class="nx">month</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="mi">7</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
-                <span class="nx">count</span><span class="o">++</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">count</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>I&rsquo;m the 65183rd person to have solved this problem.</p>
-]]></description></item><item><title>Project Euler Problem 18&amp;67 Solved</title><link>http://0x3f.org/post/project-euler-18-and-67/</link><pubDate>Thu, 10 Apr 2014 21:28:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/project-euler-18-and-67/</guid><description><![CDATA[<h2 id="maximum-path-sum-i">Maximum path sum I</h2>
-<p>By starting at the top of the triangle below and moving to adjacent numbers on the row below, the maximum total from top to bottom is 23.</p>
-<p>3<br>
-7 4<br>
-2 4 6<br>
-8 5 9 3</p>
-<p>That is, 3 + 7 + 4 + 9 = 23.</p>
-<p>Find the maximum total from top to bottom of the triangle below:</p>
-<p>75<br>
-95 64<br>
-17 47 82<br>
-18 35 87 10<br>
-20 04 82 47 65<br>
-19 01 23 75 03 34<br>
-88 02 77 73 07 63 67<br>
-99 65 04 28 06 16 70 92<br>
-41 41 26 56 83 40 80 70 33<br>
-41 48 72 33 47 32 37 16 94 29<br>
-53 71 44 65 25 43 91 52 97 51 14<br>
-70 11 33 28 77 73 17 78 39 68 17 57<br>
-91 71 52 38 17 14 91 43 58 50 27 29 48<br>
-63 66 04 68 89 53 67 30 73 16 69 87 40 31<br>
-04 62 98 27 23 09 70 98 73 93 38 53 60 04 23</p>
-<p><strong>NOTE</strong>: As there are only 16384 routes, it is possible to solve this problem by trying every route. However, Problem 67, is the same challenge with a triangle containing one-hundred rows; it cannot be solved by brute force, and requires a clever method! ;o)</p>
-<h2 id="solution">Solution</h2>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="ch">#!/usr/bin/python</span>
-<span class="c1"># -*- coding: utf-8 -*-</span>
-
-
-<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-    <span class="n">matrix</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="nb">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;data_p18.txt&#39;</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">file</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
-        <span class="n">matrix</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)))</span>
-
-    <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">matrix</span><span class="p">)):</span>
-        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">matrix</span><span class="p">[</span><span class="n">y</span><span class="p">])):</span>
-            <span class="k">if</span> <span class="n">y</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">greaterParentPathValue</span> <span class="o">=</span> <span class="mi">0</span>
-                <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">greaterParentPathValue</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">[</span><span class="n">y</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">x</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
-                <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">matrix</span><span class="p">[</span><span class="n">y</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span> <span class="ow">and</span> <span class="n">matrix</span><span class="p">[</span><span class="n">y</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">x</span><span class="p">]</span> \
-                    <span class="o">&gt;</span> <span class="n">greaterParentPathValue</span><span class="p">:</span>
-                    <span class="n">greaterParentPathValue</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">[</span><span class="n">y</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">x</span><span class="p">]</span>
-                <span class="n">matrix</span><span class="p">[</span><span class="n">y</span><span class="p">][</span><span class="n">x</span><span class="p">]</span> <span class="o">+=</span> <span class="n">greaterParentPathValue</span>
-
-    <span class="k">print</span> <span class="nb">max</span><span class="p">(</span><span class="n">matrix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">main</span><span class="p">()</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>I&rsquo;m the 70471st person to have solved this problem.</p>
-<h2 id="maximum-path-sum-ii">Maximum path sum II</h2>
-<p>By starting at the top of the triangle below and moving to adjacent numbers on the row below, the maximum total from top to bottom is 23.</p>
-<p><strong>3</strong><br>
-<strong>7</strong> 4<br>
-2 <strong>4</strong> 6<br>
-8 5 <strong>9</strong> 3</p>
-<p>That is, 3 + 7 + 4 + 9 = 23.</p>
-<p>Find the maximum total from top to bottom in <a href="http://projecteuler.net/project/triangle.txt" target="_blank" rel="noopener noreffer">triangle.txt</a> (right click and &lsquo;Save Link/Target As&hellip;'), a 15K text file containing a triangle with one-hundred rows.</p>
-<p><strong>NOTE</strong>: This is a much more difficult version of Problem 18. It is not possible to try every route to solve this problem, as there are 2^99 altogether! If you could check one trillion (10^12) routes every second it would take over twenty billion years to check them all. There is an efficient algorithm to solve it. ;o)</p>
-<h2 id="solution-1">Solution</h2>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span><span class="lnt">39
-</span><span class="lnt">40
-</span><span class="lnt">41
-</span><span class="lnt">42
-</span><span class="lnt">43
-</span><span class="lnt">44
-</span><span class="lnt">45
-</span><span class="lnt">46
-</span><span class="lnt">47
-</span><span class="lnt">48
-</span><span class="lnt">49
-</span><span class="lnt">50
-</span><span class="lnt">51
-</span><span class="lnt">52
-</span><span class="lnt">53
-</span><span class="lnt">54
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-    <span class="s">&#34;bufio&#34;</span>
-    <span class="s">&#34;fmt&#34;</span>
-    <span class="s">&#34;io&#34;</span>
-    <span class="s">&#34;os&#34;</span>
-    <span class="s">&#34;sort&#34;</span>
-    <span class="s">&#34;strconv&#34;</span>
-    <span class="s">&#34;strings&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="nx">f</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;data_p67.txt&#34;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="kc">nil</span> <span class="o">!=</span> <span class="nx">err</span> <span class="p">{</span>
-        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-        <span class="nx">os</span><span class="p">.</span><span class="nf">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="p">}</span>
-    <span class="k">defer</span> <span class="nx">f</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
-
-    <span class="nx">matrix</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([][]</span><span class="kt">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="nx">reader</span> <span class="o">:=</span> <span class="nx">bufio</span><span class="p">.</span><span class="nf">NewReader</span><span class="p">(</span><span class="nx">f</span><span class="p">)</span>
-    <span class="k">for</span> <span class="p">{</span>
-        <span class="nx">line</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">reader</span><span class="p">.</span><span class="nf">ReadString</span><span class="p">(</span><span class="sc">&#39;\n&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="kc">nil</span> <span class="o">!=</span> <span class="nx">err</span> <span class="o">||</span> <span class="nx">io</span><span class="p">.</span><span class="nx">EOF</span> <span class="o">==</span> <span class="nx">err</span> <span class="p">{</span>
-            <span class="k">break</span>
-        <span class="p">}</span>
-        <span class="nx">row</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="nx">numbers</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">Split</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nf">Replace</span><span class="p">(</span><span class="nx">line</span><span class="p">,</span> <span class="s">&#34;\n&#34;</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="s">&#34; &#34;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">numbers</span> <span class="p">{</span>
-            <span class="nx">number</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">Atoi</span><span class="p">(</span><span class="nx">numbers</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span>
-            <span class="nx">row</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">row</span><span class="p">,</span> <span class="nx">number</span><span class="p">)</span>
-        <span class="p">}</span>
-        <span class="nx">matrix</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">matrix</span><span class="p">,</span> <span class="nx">row</span><span class="p">)</span>
-    <span class="p">}</span>
-
-    <span class="k">for</span> <span class="nx">y</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">y</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">matrix</span><span class="p">);</span> <span class="nx">y</span><span class="o">++</span> <span class="p">{</span>
-        <span class="k">for</span> <span class="nx">x</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">x</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">matrix</span><span class="p">[</span><span class="nx">y</span><span class="p">]);</span> <span class="nx">x</span><span class="o">++</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="nx">y</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="p">{</span>
-                <span class="nx">greaterParentPathValue</span> <span class="o">:=</span> <span class="mi">0</span>
-                <span class="k">if</span> <span class="nx">x</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="p">{</span>
-                    <span class="nx">greaterParentPathValue</span> <span class="p">=</span> <span class="nx">matrix</span><span class="p">[</span><span class="nx">y</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="nx">x</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-                <span class="p">}</span>
-                <span class="k">if</span> <span class="nx">x</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">matrix</span><span class="p">[</span><span class="nx">y</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="nx">matrix</span><span class="p">[</span><span class="nx">y</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="nx">x</span><span class="p">]</span> <span class="p">&gt;</span> <span class="nx">greaterParentPathValue</span> <span class="p">{</span>
-                    <span class="nx">greaterParentPathValue</span> <span class="p">=</span> <span class="nx">matrix</span><span class="p">[</span><span class="nx">y</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="nx">x</span><span class="p">]</span>
-                <span class="p">}</span>
-                <span class="nx">matrix</span><span class="p">[</span><span class="nx">y</span><span class="p">][</span><span class="nx">x</span><span class="p">]</span> <span class="o">+=</span> <span class="nx">greaterParentPathValue</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-
-    <span class="nx">sort</span><span class="p">.</span><span class="nf">Sort</span><span class="p">(</span><span class="nx">sort</span><span class="p">.</span><span class="nf">Reverse</span><span class="p">(</span><span class="nx">sort</span><span class="p">.</span><span class="nf">IntSlice</span><span class="p">(</span><span class="nx">matrix</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="nx">matrix</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">])))</span>
-    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">matrix</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="nx">matrix</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>I&rsquo;m the 50650th person to have solved this problem.</p>
-]]></description></item><item><title>Project Euler Problem 17 Solved</title><link>http://0x3f.org/post/project-euler-17/</link><pubDate>Wed, 09 Apr 2014 22:29:00 +0000</pubDate><author>作者</author><guid>http://0x3f.org/post/project-euler-17/</guid><description><![CDATA[<h2 id="number-letter-counts">Number letter counts</h2>
-<p>If the numbers 1 to 5 are written out in words: one, two, three, four, five, then there are 3 + 3 + 5 + 4 + 4 = 19 letters used in total.</p>
-<p>If all the numbers from 1 to 1000 (one thousand) inclusive were written out in words, how many letters would be used?</p>
-<p><strong>NOTE</strong>: Do not count spaces or hyphens. For example, 342 (three hundred and forty-two) contains 23 letters and 115 (one hundred and fifteen) contains 20 letters. The use of &ldquo;and&rdquo; when writing out numbers is in compliance with British usage.</p>
-<h2 id="solution">Solution</h2>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span><span class="lnt">39
-</span><span class="lnt">40
-</span><span class="lnt">41
-</span><span class="lnt">42
-</span><span class="lnt">43
-</span><span class="lnt">44
-</span><span class="lnt">45
-</span><span class="lnt">46
-</span><span class="lnt">47
-</span><span class="lnt">48
-</span><span class="lnt">49
-</span><span class="lnt">50
-</span><span class="lnt">51
-</span><span class="lnt">52
-</span><span class="lnt">53
-</span><span class="lnt">54
-</span><span class="lnt">55
-</span><span class="lnt">56
-</span><span class="lnt">57
-</span><span class="lnt">58
-</span><span class="lnt">59
-</span><span class="lnt">60
-</span><span class="lnt">61
-</span><span class="lnt">62
-</span><span class="lnt">63
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="ch">#!/usr/bin/python</span>
-<span class="c1"># -*- coding: utf-8 -*-</span>
-
-
-<span class="k">def</span> <span class="nf">translate_number</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
-    <span class="n">words</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
-        <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;one&#39;</span><span class="p">,</span>
-        <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;two&#39;</span><span class="p">,</span>
-        <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;three&#39;</span><span class="p">,</span>
-        <span class="mi">4</span><span class="p">:</span> <span class="s1">&#39;four&#39;</span><span class="p">,</span>
-        <span class="mi">5</span><span class="p">:</span> <span class="s1">&#39;five&#39;</span><span class="p">,</span>
-        <span class="mi">6</span><span class="p">:</span> <span class="s1">&#39;six&#39;</span><span class="p">,</span>
-        <span class="mi">7</span><span class="p">:</span> <span class="s1">&#39;seven&#39;</span><span class="p">,</span>
-        <span class="mi">8</span><span class="p">:</span> <span class="s1">&#39;eight&#39;</span><span class="p">,</span>
-        <span class="mi">9</span><span class="p">:</span> <span class="s1">&#39;nine&#39;</span><span class="p">,</span>
-        <span class="mi">10</span><span class="p">:</span> <span class="s1">&#39;ten&#39;</span><span class="p">,</span>
-        <span class="mi">11</span><span class="p">:</span> <span class="s1">&#39;eleven&#39;</span><span class="p">,</span>
-        <span class="mi">12</span><span class="p">:</span> <span class="s1">&#39;twelve&#39;</span><span class="p">,</span>
-        <span class="mi">13</span><span class="p">:</span> <span class="s1">&#39;thirteen&#39;</span><span class="p">,</span>
-        <span class="mi">14</span><span class="p">:</span> <span class="s1">&#39;fourteen&#39;</span><span class="p">,</span>
-        <span class="mi">15</span><span class="p">:</span> <span class="s1">&#39;fifteen&#39;</span><span class="p">,</span>
-        <span class="mi">16</span><span class="p">:</span> <span class="s1">&#39;sixteen&#39;</span><span class="p">,</span>
-        <span class="mi">17</span><span class="p">:</span> <span class="s1">&#39;seventeen&#39;</span><span class="p">,</span>
-        <span class="mi">18</span><span class="p">:</span> <span class="s1">&#39;eighteen&#39;</span><span class="p">,</span>
-        <span class="mi">19</span><span class="p">:</span> <span class="s1">&#39;nineteen&#39;</span><span class="p">,</span>
-        <span class="mi">20</span><span class="p">:</span> <span class="s1">&#39;twenty&#39;</span><span class="p">,</span>
-        <span class="mi">30</span><span class="p">:</span> <span class="s1">&#39;thirty&#39;</span><span class="p">,</span>
-        <span class="mi">40</span><span class="p">:</span> <span class="s1">&#39;forty&#39;</span><span class="p">,</span>
-        <span class="mi">50</span><span class="p">:</span> <span class="s1">&#39;fifty&#39;</span><span class="p">,</span>
-        <span class="mi">60</span><span class="p">:</span> <span class="s1">&#39;sixty&#39;</span><span class="p">,</span>
-        <span class="mi">70</span><span class="p">:</span> <span class="s1">&#39;seventy&#39;</span><span class="p">,</span>
-        <span class="mi">80</span><span class="p">:</span> <span class="s1">&#39;eighty&#39;</span><span class="p">,</span>
-        <span class="mi">90</span><span class="p">:</span> <span class="s1">&#39;ninety&#39;</span><span class="p">,</span>
-        <span class="p">}</span>
-
-    <span class="n">english</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-
-    <span class="k">if</span> <span class="n">num</span> <span class="o">/</span> <span class="mi">1000</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">english</span> <span class="o">+=</span> <span class="n">translate_number</span><span class="p">(</span><span class="n">num</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; thousand&#39;</span>
-        <span class="n">tmp</span> <span class="o">=</span> <span class="n">translate_number</span><span class="p">(</span><span class="n">num</span> <span class="o">%</span> <span class="mi">1000</span><span class="p">)</span>
-        <span class="n">english</span> <span class="o">+=</span> <span class="p">((</span><span class="n">tmp</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">or</span> <span class="n">tmp</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;hundred&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-                    <span class="ow">and</span> <span class="s1">&#39; &#39;</span> <span class="ow">or</span> <span class="s1">&#39; and &#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">tmp</span>
-    <span class="k">elif</span> <span class="n">num</span> <span class="o">/</span> <span class="mi">100</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">english</span> <span class="o">+=</span> <span class="n">translate_number</span><span class="p">(</span><span class="n">num</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; hundred&#39;</span>
-        <span class="n">tmp</span> <span class="o">=</span> <span class="n">translate_number</span><span class="p">(</span><span class="n">num</span> <span class="o">%</span> <span class="mi">100</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">tmp</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
-            <span class="n">english</span> <span class="o">+=</span> <span class="s1">&#39; and &#39;</span> <span class="o">+</span> <span class="n">tmp</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">words</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
-            <span class="n">english</span> <span class="o">+=</span> <span class="n">words</span><span class="p">[</span><span class="n">num</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">english</span> <span class="o">+=</span> <span class="n">words</span><span class="p">[</span><span class="n">num</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">*</span> <span class="mi">10</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="n">words</span><span class="p">[</span><span class="n">num</span> <span class="o">%</span> <span class="mi">10</span><span class="p">]</span>
-
-    <span class="k">return</span> <span class="n">english</span>
-
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1001</span><span class="p">):</span>
-        <span class="n">count</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">translate_number</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">,</span>
-                     <span class="s1">&#39;&#39;</span><span class="p">))</span>
-    <span class="k">print</span> <span class="n">count</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>I&rsquo;m the 71762nd person to have solved this problem.</p>
-]]></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Python on 晴耕雨讀</title><link>http://0x3f.org/tags/python/</link><description>Recent content in Python on 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><copyright>© 淘气 2021</copyright><lastBuildDate>Sun, 30 Jul 2017 08:40:11 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/python/index.xml" rel="self" type="application/rss+xml"/><item><title>Python 2还是3是个纠结的问题</title><link>http://0x3f.org/posts/bothered-by-python-2-vs-3/</link><pubDate>Sun, 30 Jul 2017 08:40:11 +0000</pubDate><guid>http://0x3f.org/posts/bothered-by-python-2-vs-3/</guid><description>前些天用denite取代unite，用--with-python3重装了vim，结果发现vdebug只支持python 2。
+vim同时只能在py2和py3中选一个，据说可以通过重新编译python实现共存，但是我在编译py3的时候失败。
+neovim同时支持两个版本，但是尝试deoplete失败，报「Invalid Channel」的错误，似乎是python-neovim的锅。而且由于neovim内建lua、不支持has('lua')，所以不能fall back到neocomplete。
+万般无奈，只好换回unite。</description></item><item><title>Project Euler Problem 24 Solved</title><link>http://0x3f.org/posts/project-euler-24/</link><pubDate>Sun, 27 Apr 2014 21:17:00 +0000</pubDate><guid>http://0x3f.org/posts/project-euler-24/</guid><description>Lexicographic permutations A permutation is an ordered arrangement of objects. For example, 3124 is one possible permutation of the digits 1, 2, 3 and 4. If all of the permutations are listed numerically or alphabetically, we call it lexicographic order. The lexicographic permutations of 0, 1 and 2 are:
+012 021 102 120 201 210
+What is the millionth lexicographic permutation of the digits 0, 1, 2, 3, 4, 5, 6, 7, 8 and 9?</description></item><item><title>Project Euler Problem 23 Solved</title><link>http://0x3f.org/posts/project-euler-23/</link><pubDate>Fri, 25 Apr 2014 23:56:00 +0000</pubDate><guid>http://0x3f.org/posts/project-euler-23/</guid><description>Non-abundant sums A perfect number is a number for which the sum of its proper divisors is exactly equal to the number. For example, the sum of the proper divisors of 28 would be 1 + 2 + 4 + 7 + 14 = 28, which means that 28 is a perfect number.
+A number n is called deficient if the sum of its proper divisors is less than n and it is called abundant if this sum exceeds n.</description></item><item><title>UltraBlog.vim v3.6.1: 文章分类自动补全</title><link>http://0x3f.org/posts/ultrablog-v361-released/</link><pubDate>Sun, 20 Apr 2014 22:50:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v361-released/</guid><description>春节期间收到两个issue，一直拖到今天才有时间完成。
+增加了一个功能，在文章编辑视图的元数据中分类那行，使用热键&amp;lt;C-X&amp;gt;&amp;lt;C-U&amp;gt;自动完成文章的分类。在配置数组ub_blog中增加键值对“categories”，默认使用这一项的值实现自动完成，如下：
+1 2 3 4 5 6 7 let ub_blog = {&amp;#39;login_name&amp;#39;:&amp;#39;admin&amp;#39;, \&amp;#39;password&amp;#39;:&amp;#39;pass2011&amp;#39;, \&amp;#39;url&amp;#39;:&amp;#39;http://www.sample.com/&amp;#39;, \&amp;#39;xmlrpc_uri&amp;#39;:&amp;#39;xmlrpc.php&amp;#39;, \&amp;#39;db&amp;#39;:&amp;#39;$VIM/UltraBlog.db&amp;#39;, \&amp;#39;categories&amp;#39;: &amp;#39;News|Computer|Image&amp;#39; \} 如果这一项不存在，将从博客中拉取分类数据。
+自从迁移到Octopress，有两年不用Wordpress了，没想到居然还有人在用UltraBlog.vim。</description></item><item><title>Project Euler Problem 22 Solved</title><link>http://0x3f.org/posts/project-euler-22/</link><pubDate>Sun, 20 Apr 2014 08:03:00 +0000</pubDate><guid>http://0x3f.org/posts/project-euler-22/</guid><description>Names scores Using names.txt (right click and &amp;lsquo;Save Link/Target As&amp;hellip;'), a 46K text file containing over five-thousand first names, begin by sorting it into alphabetical order. Then working out the alphabetical value for each name, multiply this value by its alphabetical position in the list to obtain a name score.
+For example, when the list is sorted into alphabetical order, COLIN, which is worth 3 + 15 + 12 + 9 + 14 = 53, is the 938th name in the list.</description></item><item><title>Project Euler Problem 21 Solved</title><link>http://0x3f.org/posts/project-euler-21/</link><pubDate>Thu, 17 Apr 2014 22:18:00 +0000</pubDate><guid>http://0x3f.org/posts/project-euler-21/</guid><description>Amicable numbers Let d(n) be defined as the sum of proper divisors of n (numbers less than n which divide evenly into n).
+If d(a) = b and d(b) = a, where a ≠ b, then a and b are an amicable pair and each of a and b are called amicable numbers.
+For example, the proper divisors of 220 are 1, 2, 4, 5, 10, 11, 20, 22, 44, 55 and 110; therefore d(220) = 284.</description></item><item><title>Project Euler Problem 20 Solved</title><link>http://0x3f.org/posts/project-euler-20/</link><pubDate>Mon, 14 Apr 2014 22:19:00 +0000</pubDate><guid>http://0x3f.org/posts/project-euler-20/</guid><description>Factorial digit sum n! means n × (n − 1) × &amp;hellip; × 3 × 2 × 1
+For example, 10! = 10 × 9 × &amp;hellip; × 3 × 2 × 1 = 3628800,
+and the sum of the digits in the number 10! is 3 + 6 + 2 + 8 + 8 + 0 + 0 = 27.
+Find the sum of the digits in the number 100!</description></item><item><title>Project Euler Problem 19 Solved</title><link>http://0x3f.org/posts/project-euler-19/</link><pubDate>Sat, 12 Apr 2014 21:21:00 +0000</pubDate><guid>http://0x3f.org/posts/project-euler-19/</guid><description>Counting Sundays You are given the following information, but you may prefer to do some research for yourself.
+1 Jan 1900 was a Monday. Thirty days has September, April, June and November.
+All the rest have thirty-one,
+Saving February alone,
+Which has twenty-eight, rain or shine.
+And on leap years, twenty-nine. A leap year occurs on any year evenly divisible by 4, but not on a century unless it is divisible by 400.</description></item><item><title>Project Euler Problem 18&amp;67 Solved</title><link>http://0x3f.org/posts/project-euler-18-and-67/</link><pubDate>Thu, 10 Apr 2014 21:28:00 +0000</pubDate><guid>http://0x3f.org/posts/project-euler-18-and-67/</guid><description>Maximum path sum I By starting at the top of the triangle below and moving to adjacent numbers on the row below, the maximum total from top to bottom is 23.
+3
+7 4
+2 4 6
+8 5 9 3
+That is, 3 + 7 + 4 + 9 = 23.
+Find the maximum total from top to bottom of the triangle below:
+75
+95 64
+17 47 82</description></item><item><title>Project Euler Problem 17 Solved</title><link>http://0x3f.org/posts/project-euler-17/</link><pubDate>Wed, 09 Apr 2014 22:29:00 +0000</pubDate><guid>http://0x3f.org/posts/project-euler-17/</guid><description>Number letter counts If the numbers 1 to 5 are written out in words: one, two, three, four, five, then there are 3 + 3 + 5 + 4 + 4 = 19 letters used in total.
+If all the numbers from 1 to 1000 (one thousand) inclusive were written out in words, how many letters would be used?
+NOTE: Do not count spaces or hyphens. For example, 342 (three hundred and forty-two) contains 23 letters and 115 (one hundred and fifteen) contains 20 letters.</description></item><item><title>Project Euler Problem 16 Solved</title><link>http://0x3f.org/posts/project-euler-16/</link><pubDate>Tue, 08 Apr 2014 21:57:00 +0000</pubDate><guid>http://0x3f.org/posts/project-euler-16/</guid><description>Power digit sum 2^15 = 32768 and the sum of its digits is 3 + 2 + 7 + 6 + 8 = 26.
+What is the sum of the digits of the number 2^1000?
+Solution 1 2 3 4 5 6 7 8 9 10 11 #!/usr/bin/python # -*- coding: utf-8 -*- import math if __name__ == &amp;#39;__main__&amp;#39;: str = format(math.pow(2, 1000), &amp;#39;f&amp;#39;) sum = 0 for c in str[:str.</description></item><item><title>Project Euler Problem 15 Solved</title><link>http://0x3f.org/posts/project-euler-15/</link><pubDate>Wed, 02 Apr 2014 21:44:00 +0000</pubDate><guid>http://0x3f.org/posts/project-euler-15/</guid><description>Lattice paths Starting in the top left corner of a 2×2 grid, and only being able to move to the right and down, there are exactly 6 routes to the bottom right corner.
+How many such routes are there through a 20×20 grid?
+Solution 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 #!/usr/bin/python # -*- coding: utf-8 -*- if __name__ == &amp;#39;__main__&amp;#39;: (steps, a, b) = (20, 1, 1) i = steps * 2 while i &amp;gt; steps: a *= i i -= 1 while steps &amp;gt; 1: b *= steps steps -= 1 print a / b I&amp;rsquo;m the 86747th person to have solved this problem.</description></item><item><title>PySide: How to Get the Position of a Widget-Value-Changed Cell in QTableWidget</title><link>http://0x3f.org/posts/get-position-in-qtablewidget-for-changed-cellwidgets/</link><pubDate>Mon, 01 Jul 2013 00:57:00 +0000</pubDate><guid>http://0x3f.org/posts/get-position-in-qtablewidget-for-changed-cellwidgets/</guid><description>Assume we have created an instance of QTableWidget, in which cells are filled with widgets like QComboBox, QCheckBox, etc. When values are changed, we need to get the row and column indexes of the cells. But the QTableWidget.cellChanged() and QTableWidget.itemChanged() signals are only effective for cells containing QTableWidgetItem instances, for those in which widgets are filled in with QTableWidget.setCellWidget(), this doesn&amp;rsquo;t work.
+This problem nearly made me crazy last weekend. So how can I make it ?</description></item><item><title>UltraBlog.vim v3.5.0: 内建浏览器</title><link>http://0x3f.org/posts/ultrablog-v350-released/</link><pubDate>Mon, 30 Apr 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v350-released/</guid><description>此前预览文章是通过调用系统默认的网络浏览器实现的，缺点是这些功能完备的浏览器启动速度不甚理想，尤其是火狐，谁用谁知道。
+前两天看了TuxRadar的一个Podcast，几分钟内就可以用pywebkitgtk拼装出一个五脏俱全的网络浏览器，pywebkitgtk这个东西实在是非常的好用。不过我实测后发现这东西加载页面的速度比较慢，而且貌似是单线程的，因为图片都是放在最后才加载，不知道是这个绑定本身的问题，还是有API可以实现的。于是突然想到拿这个东西实现一个简单的浏览器，很适合在UB里预览文章。
+增加了一个选项“ub_use_ubviewer”，默认值是1，即默认使用这个内建的浏览器预览文章。当这个选项的值被设为0时，仍然使用系统的默认浏览器，并且在Vim启动时不会加载内建的浏览器。这样做一是为了多一种选择，再一个也可以避开烦人的GTK警告：
+** (gvim:13629): WARNING **: Trying to register gtype 'GMountMountFlags' as enum when in fact it is of type 'GFlags'
+** (gvim:13629): WARNING **: Trying to register gtype 'GDriveStartFlags' as enum when in fact it is of type 'GFlags'
+** (gvim:13629): WARNING **: Trying to register gtype 'GSocketMsgFlags' as enum when in fact it is of type 'GFlags'
+这些警告是GTK或其它一些程序库的Bug造成的，虽然只在虚拟终端中启动Vim时会显示并且不影响使用，但总会有警告恐惧症患者会觉得这种东西很闹心。如果这样，就把这个选项的值设成0，用回巨型浏览器好了。
+本次更新的全部内容如下：
+Feature: Add a tiny web browser to do previewing, which starts much faster than full-functional browsers like firefox and chromium.</description></item><item><title>UltraBlog.vim v3.4.0: 正则表达式、批量替换和调试模式</title><link>http://0x3f.org/posts/ultrablog-v340-released/</link><pubDate>Sun, 29 Apr 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v340-released/</guid><description>这次的更新主要引入了支持正则表达式的全文检索、批量替换和调试模式。
+正则表达式 我一直觉得原来的全文检索有一个遗憾，虽然可以通过多个关键词实现较为精确的查询，但还是不如正则表达式灵活和精确。
+这是个蓄谋已久的需求，但直到真正做起来，才发现很多有意思的东西。虽然SQLite3提供支持正则表达式查询的“REGEX”关键词，但并没有实际实现这个功能，而是需要写程序实现并在数据库接口中注册这个函数：
+```python import sqlite3 conn = sqlite3.connect('/tmp/your-database-file.db') # 使用正则表达式匹配给定内容的函数，返回布尔类型 def regexp_search(expr, item): """Check if the item has a sub-string which matches the expr""" reg = re.compile(expr) return reg.search(item) is not None # 在数据库中注册这个函数 conn.create_function('REGEXP', 2, regexp_search) cur = conn.execute('select id,title from post where content REGEXP ?', '\babc\b') row = cur.fetchone() print row conn.close() ``` 在SQLAlchemy中具体的实现方式是：
+```python # 注册函数 dbe = sqlalchemy.create_engine("sqlite:///tmp/your-database-file.db") conn = dbe.connect() conn.connection.create_function('REGEXP', 2, regexp_search) # 在SQL Expression Language中创建查询条件 tbl = Post.</description></item><item><title>UltraBlog.vim v3.3.0：I18N、超时时间和其它</title><link>http://0x3f.org/posts/ultrablog-v330-released/</link><pubDate>Sun, 15 Apr 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v330-released/</guid><description>UB一岁了，这算是个周年纪念版吧。
+在这一年里，因为各种原因，博客写得没有以前多了，但每篇都是用这个插件写的，我觉得很好用。断断续续地做了一些修改，因为一切都是一个人在做，所以大的变化不多。这次这个版本里有些改动还是要感谢荒野无灯童鞋，他的建议很大程度上催生了这个新版本：比如加入保存命令的热键映射选项，这样可以使用保存普通文件的热键保存UB中的内容，我自己以前也经常习惯性地用错热键；还有socket超时时间的选项，最近我这里也经常性地在UB操作博客时报超时的异常，荒童鞋关于自定义socket超时时间的建议一语惊醒了梦中人。
+此外，似乎与近期Vim的一次升级有关，在Vim中调用Python接口打印任何内容到标准IO都会导致Vim崩溃，所以这次把所有的输出都改成了调用Vim的输出命令来做。
+本次修改的内容中，还有一项比较重要的内容就是实现了国际化，目前只提供英文和简体中文两种语言，由于Vimball不能处理二进制文件，所以从此以后UB改用zip格式压缩包打包。
+以下是本次更新的详细内容：
+Feature: Add i18n support ! Feature: Add a new option ub_hotkey_save_current_item, users can define their own hotkey for :UBSave. Feature: Add a new option ub_socket_timeout, users can customize the timeout period in seconds, useful for slow networks. Bugfix: Exception raised when one event is processed by more than one event handlers. Change: Echoing messages now uses the command :echoerr instead of python's sys.stderr, because Vim crashes on this due to an upgrade recently.</description></item><item><title>TurboCRM Cluster Express v1.0 释出</title><link>http://0x3f.org/posts/turbocrm-cluster-express-v1-released/</link><pubDate>Sun, 08 Apr 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/turbocrm-cluster-express-v1-released/</guid><description>TurboCRM Cluster Express是TurboCRM的集群实施工具。
+去年我曾经写过一个配置集群的Bash脚本“cluster.sh”，TCE是对这个脚本的图形界面封装，通过可视化的操作简化集群的实施工作。
+TCE的最新版本和使用说明可以在这里找到。
+Posted via UltraBlog.vim.</description></item><item><title>关于PyGTK.CellRenderer的回调方法中聚焦异常的问题</title><link>http://0x3f.org/posts/the-focus-issue-of-pygtk-cellrenderer/</link><pubDate>Sun, 25 Mar 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/the-focus-issue-of-pygtk-cellrenderer/</guid><description>遇到这样一个问题：
+在pygtk.TreeView中，需要在一个Cell的值被修改后做一个校验，如果不合法，则重新聚焦该Cell并选中其中的内容。
+示意代码如下：
+```python # pygtk.CellRenderer的edited事件的回调方法 def onCellEdited(self, cell, path, newText, userData): store,colNum = userData # 使用事件驱动的设计理念，创建一个自定义的事件 evt = ServerTypeChangedEvent(self, cell, usrData) # 事件入队列 EventQueue.fireEvent(evt) # 处理事件队列，如果截获异常，提示并重新聚焦Cell try: EventQueue.processEvents() except Exception,e: self.alert(e.message) col = self.treeView.get_column(colNum-1) # 聚焦Cell，并选中Cell中的内容 self.treeView.set_cursor_on_cell(path, col, cell, True) ``` 关键的代码在最后一行，通过调用TreeView的set_cursor_on_cell方法聚焦Cell并选中其内容。但就是这一步出了问题，报如下警告：
+GtkWarning: _gtk_tree_view_column_start_editing: assertion `tree_column-editable_widget == NULL' failed
+此后整个TreeView的行为表现不正常，表现为可直接修改其它Cell的内容，且原Cell一直处于聚焦状态。
+此问题的原因是：edited事件在Cell的输入控件被销毁前就发出了，这时在事件的回调方法中重新聚焦该Cell就导致了这个问题（详见这里）。
+解决方法是借助glib.idle_add函数，在PyGTK空闲的时候再调用set_cursor_on_cell方法，由于此时原控件已被销毁，所以不会有问题。
+修改后的代码如下：
+```python def onCellEdited(self, cell, path, newText, userData): store,colNum = userData evt = ServerTypeChangedEvent(self, cell, usrData) EventQueue.</description></item><item><title>YYeTs.py：人人影视BT种子下载辅助脚本</title><link>http://0x3f.org/posts/yyets-torrents-download-script/</link><pubDate>Mon, 14 Nov 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/yyets-torrents-download-script/</guid><description>这是最好的时代，这是最坏的时代。现在还有像人人影视的BT种子FTP这样的站点，实在不容易。但是所有种子列在一块，想看看最近几天都更新了甚么都很困难，于是早想写个脚本省时省力。这周末终于实现了这个想法。
+主要功能 按关键词查询种子 限制查询范围为最近几天新增的 下载符合查询条件的种子，允许下载前编辑任务列表 使用说明 环境 Python 2.7，不支持Python3 Mac OS X Lion，Archlinux测试通过，理论上支持Windows 配置 如果需要编辑下载任务列表（即使用-s选项），应事先配置环境变量YYETS_EDITOR，将值设定为一个文本编辑器的路径，或者修改脚本的私有属性__editor__也一样。如果这两个位置都没有设置，则使用环境变量EDITOR。否则，将报“Command not found”的错误。
+有一点提示，如果使用GVim或MacVim，需要加上选项-f，以阻塞的方式启动它，否则会导致下载结果不能达到预期。例如对于MacVim，可配置YYETS_EDITOR为：
+mvim -f
+使用举例 ```bash # 列出所有种子 ./yyets.py # 搜索关键词 ./yyets.py 猩球崛起 1080p # 搜索最近三天新增的种子 ./yyets.py --past=3 # 搜索最近七天内新增的、满足关键词条件的种子 ./yyets.py --past=7 蓝精灵 # 下载满足查询条件的种子 ./yyets.py -d --past=30 1080p # 下载满足查询条件的种子，下载前编辑任务列表 ./yyets.py -d -p --past=30 1080p # 更多详细信息，参阅帮助 ./yyets.py -h ./yyets.py --help ``` 下载 移步GitHub获取最新版本：
+https://github.com/xbot/shell
+Posted via UltraBlog.</description></item><item><title>UltraBlog.vim v3.1释出：代码重构与MacVim支持</title><link>http://0x3f.org/posts/ultrablog-v310-released/</link><pubDate>Sat, 05 Nov 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v310-released/</guid><description>距离上一个版本的释出已经有三个月了，这次新版并没有增加多少功能性的内容，主要是代码的重构和对在MacVim下稳定性的改进。
+对依赖关系检查的不细致导致了一些麻烦，抛出的错误信息有时与实际原因相距甚远。由于开始时是以实现功能为主，所以都是直接用函数实现的，之后修修补补，代码冗余而且维护麻烦。于是著手重构主要功能的源码，面向对象，把所有检查逻辑放到父类中去实现，子类只关注自身逻辑，最后新版减少了二百多行的代码量。
+在重构的过程中偶然发现，在MacVim中，程序抛出任何异常，即便是有捕获逻辑，也会导致编辑器崩溃。在这里简略地提到：
+the failure was actual a crash, through some strange combination of threading, matplotlib pyplot backend, and ssh X11 forwarding, sys.stderr had somehow been assigned to something which python complained wasn't a file-like object
+于是将所有标准输出与标准错误输出语句换成另一种形式：
+```python # 原形式 sys.stdout.write('xxx') sys.stderr.write('xxx') # 新形式 print sys.stdout, 'xxx' print sys.stderr, 'xxx' ``` 以上是新版主要变更的内容，此外，也顺便解决了开发过程中发现的个别Bug和做了其它一些改动：
+Change: The key "xmlrpc" of the settings list is dropped, a new one with the name "</description></item><item><title>UltraBlog.vim v3.0释出：全文检索与事件驱动</title><link>http://0x3f.org/posts/ultrablog-v300-released/</link><pubDate>Mon, 25 Jul 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v300-released/</guid><description>用了一周的业余时间，昨天我释出了UltraBlog.vim的3.0版。新版本主要加入了全文检索的功能，并引入事件驱动的模式。
+全文检索是我蓄谋已久的功能，一个不能搜索的博客客户端的管理功能是大打折扣的。得益于SQLite数据库和SQLAlchemy框架，全文检索的实现是很简单的，新增加的:UBFind命令将在所有文章和页面的标题与内容中查询，并将搜索结果显示在一个可分页的列表中。这个命令支持任意多个关键词，各关键词之间遵循与的关系。此外，检索结果中，所有的关键词将被自动标记为高亮。
+事件驱动模式的引入是我悍然将版本号跳跃到3.x的主要原因。
+在前几个版本中，我实现了对多窗口的支持，它使得用户可以在新窗口中打开列表中的文章。但UltraBlog.vim最初开发的时候并没有考虑到多窗口的问题，所有命令都只针对当前窗口进行操作。这就有了缓冲区内容同步的问题，假如在一个新的缓冲区中打开了和另一个缓冲区相同的文章，则一个缓冲区内容的改变不会同步到另外一个中，这多少是有些隐患的。
+最直接的做法是在所有可能改变缓冲区内容的功能中加入对其它缓冲区的处理，但这样做有不少问题：
+代码耦合度太高，违反K.I.S.S原则，不利于今后的开发和维护 函数体过长，我讨厌难看的代码 代码冗余，重复劳动 事件驱动模式可以很好的解决以上问题，一个函数只干一件事，做完后一个事件抛出去，至于连带著要做什么，谁监听这个事件谁去处理，代码的耦合度很低，复用度很高，易于维护和阅读。
+UltraBlog.vim引入事件驱动模式处理缓冲区同步的问题。不同的操作抛出不同的事件，所有的事件继承自父类UBEvent：
+```python class UBEvent: def __init__(self, srcObj): self.srcObj = srcObj class UBDebugEvent(UBEvent): pass class UBTmplDelEvent(UBEvent): pass class UBTmplSaveEvent(UBEvent): pass class UBLocalPostDelEvent(UBEvent): pass class UBRemotePostDelEvent(UBEvent): pass class UBPostSendEvent(UBEvent): pass class UBPostSaveEvent(UBEvent): pass ``` 一个可能改变缓冲区内容的操作执行完后，创建一个特定的事件并将其加入到事件队列中。事件队列类中存放两个列表，一是事件队列，二是事件监听器列表；提供三个方法，分别用来注册事件监听器、对事件执行入队列操作和处理队列中所有事件：
+```python class UBEventQueue: queue = [] listeners = [] @classmethod def fireEvent(cls, evt): cls.queue.append(evt) @classmethod def processEvents(cls): for evt in cls.queue: for listener in cls.listeners: if listener.</description></item><item><title>UltraBlog.vim v2.3.0 Released With Templates</title><link>http://0x3f.org/posts/ultrablog-v230-released/</link><pubDate>Mon, 13 Jun 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v230-released/</guid><description>I released the new version 2.3.0 of UltraBlog.vim last week. The main improvement in this version is that templates are introduced in.
+Templates are simply HTML strings, they are used to preview posts/pages in the browser locally. This feature is a reparation for the remote previewing, due to the limit of the API, users cannot send a post to Wordpress as draft and preview it without affecting the post status if the post has been published.</description></item><item><title>UltraBlog.vim开发手记</title><link>http://0x3f.org/posts/ultrablog-development-note/</link><pubDate>Mon, 11 Apr 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-development-note/</guid><description>对于博客已死的说法，我一点都不感到奇怪。早在几年前博客还比较火的时候我就表达过对博客泡沫的看法。
+经历了短暂的tumblog的风头，微博成为现在最火的媒介。说博客已死，无非就是说微博将成为个人信息传播的主流。好吧，现在我知道那时候我所说的不懂什么是博客的人都去干什么了。
+但是博客还是会继续发展，微博的兴起只会减少滥竽充数。因为微博突出的是时效性，最缺乏的是系统性和可重复更新的能力。微博的短处，正是博客的长处。这让我对博客有了一个新的、迟到了很久的认识──一个好的博客，它的文章不应该是写掉就忘的，而应该是不断地更新著的。
+UltraBlog.vim就是出于这个需要而写的。
+我对博客客户端的使用大概可以追溯到四五年前，那时候博客正火，在比较了几个BSP后选择了中国博客网，就是因为他们提供桌面客户端。后来独博之后也试用过几个通用的客户端，但都没坚持多久，最根本的原因是它们几乎无一例外地都是WYSIWYG。而WYSIWYG的编辑器生成的HTML源码几乎都使用inline的样式，这就导致文章的排版布局很难控制，我对WYSIWYG其实是很抵触的，至今都不怎么用Office这类东西。
+后来我意识到，我所需要的是样式与内容分离，于是准备自己写一个客户端，后来由于工作的原因不了了之。与此同时，我自定义了一套文章格式并用Java写了一个转换文章到HTML的工具，直到后来发现Markdown，我才知道我其实是需要一个轻量标记语言。
+使用Markdown之后，写博客开始变得轻松愉快。我一度用过一段时间SciTE，还用Lua写了个辅助脚本。但是我需要一个完整的客户端来管理文章，而这是一个编辑器所不能胜任的，所以就著手实现一个支持Markdown的客户端。这一次走得比较远，ForeverFantasy最终达到了可用的程度，我一度用它写过一段时间的博客。但是作为一个Vim重症患者，wxPython的编辑器部件是远远达不到我需要的水平的。虽然后来还实现了调用外部程序处理文章内容（当然也可以调用Vim），但总归觉得不舒服，至今已经一年没更新了。
+直到前段时间试用了一下VimRepress，在修改这个插件的时候突然受到启发，我这几年的需求原来是可以这么简单地解决的。
+其实在几年前vimpress刚刚发布的时候我就了解过这个东西，包括此后接连发布的几个Vim写博客的插件，它们和我原来写的SciTE的那个辅助脚本没有本质的区别，都是博客编辑器。与完整的客户端相比，编辑器缺少对本地文章源码的管理，而且它们不记录文章源码和发布的文章的关联关系，简单地说是无状态的。这不符合博客文章持续更新的观点。
+UltraBlog.vim使用SQLAlchemy做数据库抽象层，将所有文章的源码及其状态保存在本地的一个SQLite数据库中，并且以此为基础，通过XMLRPC接口实现对博客文章、页面的CRUD操作。同时利用Vim分模式的特点实现了可分页的文章列表和文章编辑视图。
+UltraBlog.vim目前支持Markdown和HTML两种格式的文章，它最大的特点是在Markdown格式的源码和发布到博客中的文章之间建立联系，你可以随时修改本地数据库中的Markdown源码并更新博客中对应的文章。
+新的功能还会不断地加入。
+Posted via UltraBlog.vim.</description></item><item><title>UltraBlog.vim: Ultimate Vim Blogging Plugin</title><link>http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/</link><pubDate>Sat, 02 Apr 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/</guid><description>UltraBlog.vim is yet another Vim blogging script for Wordpress.
+The biggest difference between UB and other similar scripts is that UB is an ultimate client, which stores posts locally in an SQLite database, while others just operate remotely. In this way, many things can be done easily by the advantage of local storage and many other utilities, for example, you can search for posts stored in the database with a few keywords by typing a simple command, also you can preview drafts with any of your favorite templates as soon as you want to.</description></item><item><title>使用Vim写博客</title><link>http://0x3f.org/posts/blogging-with-vim/</link><pubDate>Sat, 19 Mar 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/blogging-with-vim/</guid><description>VimRepress是Vim写博客的插件中较新的一个，是久未更新的Vimpress的一个衍生版。
+虽然不是所有此类插件中功能最多的一个，但VimRepress非常实用，除包含最常用的几个功能外，还支持Markdown。但是当前版本的VimRepress在转换Markdown格式的字符串到HTML时，是通过直接调用外部命令markdown来实现的，这显然只是针对Linux（及其它类UNIX）系统设计的。
+为了使VimRepress支持在Windows下使用Markdown写文章，可以对它做一些改进。
+修改VimRepress的源文件blog.vim，在if __name__ == "__main__":这一行的上方加入如下两个函数：
+```python def markdown_preview2(): import sys reload(sys) sys.setdefaultencoding('utf-8') import markdown2 as mkd global vimpress_temp_dir if vimpress_temp_dir == '': vimpress_temp_dir = tempfile.mkdtemp(suffix="vimpress") temp_htm = os.path.join(vimpress_temp_dir, "vimpress_temp.htm") html_heads = \ """ """ tmp_file = open(temp_htm, 'w') tmp_file.write(html_heads) txt = "\n".join(vim.current.buffer[:]) #txt = unicode(txt,'cp936') tmp_file.write(mkd.markdown(txt)) #tmp_file.write(mkd.markdown("\n".join(vim.current.buffer[:]))) tmp_file.close() webbrowser.open("file://%s" % temp_htm) def markdown_newpost2(): import sys reload(sys) sys.setdefaultencoding('utf-8') import markdown2 as mkd global vimpress_temp_dir if vimpress_temp_dir == '': vimpress_temp_dir = tempfile.</description></item><item><title>搭建自己的Twitter API</title><link>http://0x3f.org/posts/howto-setup-twitter-api-of-your-own/</link><pubDate>Fri, 01 Oct 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-setup-twitter-api-of-your-own/</guid><description>从2010年9月起，twitter只支持第三方应用程序使用oauth方式登录。要使用第三方API程序，就必须先在twitter中创建应用程序。
+申请地址如下：
+https://twitter.com/apps/
+填写信息时，Application Type应该选Browser，Default Access type应选Read &amp;amp; Write，User Twitter for login不选，其它随便。
+创建成功后，该应用程序的Consumer key和Consumer secret在部署API时一般都要用到。
+gtap使用python开发，可部署在appspot上。
+部署前，先修改app.yaml，填写在appspot上创建的应用程序的ID，并使用符号#注释掉secure: always，因为GFW屏蔽了appspot的https。
+然后修改main.py，填写Consumer key和Consumer secret。
+最后安装App Engine SDK，使用其中的appcfg.py上传gtap文件夹：
+1 appcfg.py update gtap 在浏览器中（此时应使用可以翻墙的代理）访问在appspot上创建的应用程序的URL地址（如：http://xxx.appspot.com ），在打开的页面中点击Sign in with Twitter，然后在跳转到的页面中点击Allow按钮。在跳转到的页面上修改API的密码（据说有些客户端要求API的密码与Twitter的密码一致）。
+在客户端中使用API的地址如下：
+其中，xxx是appspot应用程序的ID，末尾的斜杠必不可少。
+twip使用php开发，应部署在支持PHP的服务器上。
+首先将config-example.php改名为config.php，然后修改其中的OAUTH_KEY/OAUTH_SECRET/BASE_URL三项内容，前两项分别是Consumer key和Consumer secret，base_url应该是twip部署到服务器上后的URL地址（如http://myblog.com/twip/ ，最后的斜杠必不可少）。
+然后在浏览器中访问上面的base_url，选择使用o模式，API地址会在最后的页面中输出。</description></item><item><title>在Vim中检查语法和执行代码</title><link>http://0x3f.org/posts/syntax-checking-and-code-executing-in-vim/</link><pubDate>Sat, 17 Apr 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/syntax-checking-and-code-executing-in-vim/</guid><description>《The Pragmatic Programmer》的确是本好书，虽然中文译名极为恶俗。为践行书中提到的DRY原则，我开始反思平时编码时总是重复出现的问题，其中之一就是很低级的语法错误，有时忘了语句最后的分号，有时忘了声明变量，凡此种种，不一而足。
+相对于IDE，我更喜欢Vim，这也是语法错误没有检查出来的原因。因此就产生了给Vim添加语法检查功能的需求。下面是检查PHP代码的vimrc内容：
+```vim " Check the syntax of a PHP file function! CheckPHPSyntax() if &amp;filetype != 'php' echohl WarningMsg | echo 'This is not a PHP file !' | echohl None return endif setlocal makeprg=php\ -l\ -n\ -d\ html_errors=off\ % setlocal errorformat=%m\ in\ %f\ on\ line\ %l echohl WarningMsg | echo 'Syntax checking output:' | echohl None if &amp;modified == 1 silent write endif silent make clist endfunction au filetype php map :call CheckPHPSyntax() au filetype php imap :call CheckPHPSyntax() ``` 以上脚本为Vim添加了一个检查PHP语法错误的函数和两个快捷键映射，此后可按F5键即时检查当前Buffer中的PHP当面的语法。和网上其它同类的函数相比，这个函数的优点在于改进了检查结果的显示，使用silent命令隐藏了所有不必要的输出。</description></item><item><title>phpsh：PHP的交互式解释器</title><link>http://0x3f.org/posts/phpsh/</link><pubDate>Mon, 29 Mar 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/phpsh/</guid><description>时常需要测试一些简短的代码是否能得到需要的结果，如果去写测试脚本再执行，显然太麻烦。虽然PHP自身也支持通过-a参数启动交互模式，但功能较为局限。如果PHP有像bpython那样的交互式解释器，就太好了。
+phpsh就是这样一个工具，它是由facebook的开发者用Python实现的PHP的交互式解释器，并具备以下特性：
+命令行历史回溯 tab键自动补全 快速文档索引</description></item><item><title>使用cx_Freeze的distutils脚本打包Python程序</title><link>http://0x3f.org/posts/cx-freeze/</link><pubDate>Fri, 26 Mar 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/cx-freeze/</guid><description>cx_Freeze打包Python程序的命令基本格式如下：
+```python cxfreeze main.py --target-dir appdir ``` 它表示把脚本main.py或以main.py为程序入口的程序打包并导出到当前路径中名为appdir的目录中。
+对于Windows下的GUI应用程序，以上面的命令导出后，运行时会弹出cmd命令行的黑窗口，须加上如下命令中的参数：
+```python cxfreeze main.py --target-dir appdir --base-name=win32gui ``` 对于比较复杂的程序，cx_Freeze支持distutils格式的打包脚本，当然，彼此之间在引入的模块和支持的参数上还是有差别的。
+cx_Freeze的文档中有其支持的全部命令参数及说明，写到setup.py脚本中时，所有参数中的-符号应换成下划线。
+我的setup.py内容大致如下：
+```python #!/usr/bin/python # -*- coding: utf-8 -*- from cx_Freeze import setup,Executable includefiles = [('settings.ini.jctest','settings.ini') ,'README.mkd'] includes = [] excludes = ['Tkinter'] packages = ['sqlalchemy.engine', 'sqlalchemy.orm', 'sqlalchemy.dialects.mssql'] setup( name = 'pyutil', version = '0.1', description = 'A general enhancement utility for XXX', author = 'Lenin Lee', author_email = 'lenin.lee@xxx.com', options = {'build_exe':{'excludes':excludes,'packages':packages,'include_files':includefiles}}, executables = [Executable('jcitk.</description></item><item><title>Python控制外部进程的灵异事件</title><link>http://0x3f.org/posts/supernatural-phenomenon-of-controlling-external-processes-in-python/</link><pubDate>Mon, 08 Mar 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/supernatural-phenomenon-of-controlling-external-processes-in-python/</guid><description>春节前的一段时间，重新拾起近一年没动过的ForeverFantasy。
+虽然一年内没什么更新，但是我却一直都在用，基本上只限于将用Vim写好的Markdown格式的文档转换成HTML。
+重写了相当一部分代码，较大程度地改变了界面布局，突然发现经过一年的沉淀，对wxPython的理解增进了不少，开发起来比起去年这个时候清楚了很多。
+这些天来一直坚持着每天或多或少的做一些，如果说有什么主要的进展的话，那就是界面的重构，以及昨天实现了调用Vim编辑文档并回收文档内容的功能。
+ForeverFantasy和Vim协同的一个最大的问题就是如何判断Vim已经退出。Python调用外部程序的方法有很多，比如传统的commands模块、os.system()等，subprocess是致力于替代这些旧有的方式的一个模块，它的一个特点是可以在启动一个外部程序作为子进程后还能监控这个进程的运行状态。这为ForeverFantasy在Vim退出后回收文档内容提供了更简捷的途径。
+下面的代码可以说明如何使用subprocess运行外部程序并监控运行状态：
+```python import subprocess process = subprocess.Popen('gvim', shell=True) status = process.poll() if 0 == status: print 'The external program exited.' if status is None: print 'The external program is still running.' ``` 理论上，可以拿实例process的poll()方法监视进程的运行状态，而且这一点在Windows上也确实可以做到，但是到了Linux下，诡异的事出现了，即使刚刚打开gvim，poll()方法也会马上返回一个0，同时process.pid的值总是和实际在运行的那个gvim进程的pid的值差3，而且在虚拟终端中输入gvim命令也不会阻塞终端，就像别的命令加上“&amp;amp;”符号的效果一样。尝试用strace跟踪gvim的运行，试图找到问题原因，无果。我猜想可能/usr/bin/gvim是一个跳板，它启动后会启动一个新的gvim进程。总之，这个方法在Linux下是行不通的。
+因此我觉得只能另寻出路了，既然不能监控gvim进程，那就监控gvim进程所编辑的文件，只要这个文件不被任何进程占用，就可以判定gvim已退出。这一点，在Linux下易如反掌，不用说，lsof当仁不让。
+用commands.getstatusoutput('lsof file.txt')测试发现，如果文件file.txt被某进程占用，则返回的状态值为0，反之，返回256。
+最终，我在程序中使用了两种判断方式，在Windows平台使用subprocess跟踪gvim.exe进程，而在Linux及Unix平台使用lsof检查文档占用情况。
+剩下的就是进行这个判断的时间问题了。
+很显然，如果在子进程被启动后马上使用while循环不停的检查，一来必须使用多线程，二来系统资源占用也会很高。这时就需要利用wxPython的事件机制了，当ForeverFantasy启动Gvim时，主窗口失去焦点，而当Gvim退出时，ForeverFantasy又会获得焦点，只要能在ForeverFantasy窗口获得焦点时做一次检查即可。不过，在选择最合适的事件的问题上，又是一波三折。
+在wxPython的API文档中没有找到事件列表，倒是在Wiki中找到了。顾名思义，觉得wx.EVT_SET_FOCUS比较靠谱，但试用失败，看API中关于FocusEvent的说明，这个事件适用于窗口控件；然后又试了wx.EVT_CHILD_FOCUS，只有在窗口包含的控件中有获得焦点的情况才会触发；最后才发现wx.EVT_ACTIVATE，这个事件会在窗口失去焦点和获得焦点时各触发一次，使用GetActive()方法可以判断是获得焦点还是失去焦点。
+完成与Vim的协同使ForeverFantasy在我手上由原来单纯的格式转换工具进化为基本可用的文档编辑器，就算是Milestone 2吧。
+此外，还有一些小的经验：
+1. 调用非环境变量下的程序，即命令中必须带程序所在的路径时，应当将程序所在目录的完整路径以自然字符串的形式传递给subprocess.Popen类的构造方法的cwd参数，即如下所示：
+```python process = subprocess.Popen('gvim.exe', cwd=r'C:\program files\vim\vim72', shell=True) ``` 这样可以有效避免路径中的空格和特殊字符对命令执行的影响。
+2. Vim编辑一个文档时，实际操作的是一个临时文件，而不是原文件，这个临时文件与原文件同路径，名称为在原文件名的基础上，前面加一个句点，后面加后缀“.swp”。应该用lsof监控这个临时文件，才可以判断出编辑该文档的Vim进程的运行状态。由于对于不存在的文件使用lsof命令的返回值也是256，故可以同时判断临时文件和原文件的占用情况，这样就为对其它编辑器的支持奠定了基础。
+2010-03-10 Wednesday 22:52:13 更新
+感谢KL童鞋和依云童鞋指教，果然加上-f参数就可以了。</description></item><item><title>SQLAlchemy操作SQL Server的中文问题</title><link>http://0x3f.org/posts/chinese-problem-of-sqlalchemy-with-sqlserver/</link><pubDate>Wed, 24 Feb 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/chinese-problem-of-sqlalchemy-with-sqlserver/</guid><description>最初将脚本的文件编码和coding行都设定为UTF-8，在windows下执行时，中文无法保存，报编码错误。将上述两个编码改为GBK后，保存正常，但查询时报错。
+Traceback内容如下：
+``` Traceback (most recent call last): File "test.py", line 36, in &amp;lt;module&amp;gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;for obj in session.query(User): File "C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\orm\query.py", line 1411, in instances &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;rows = [process[0](row, None) for row in fetch] File "C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\orm\mapper.py", line 1788, in _instance &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;populate_state(state, dict_, row, isnew, only_load_props) File "C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\orm\mapper.py", line 1677, in populate_state &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;populator(state, dict_, row, isnew=isnew, **flags) File "C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\orm\strategies.py", line 118, in new_execute &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;dict_[key] = row[col] File "C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\engine\base.py", line 1634, in __getitem__ &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;return self.</description></item><item><title>欧拉工程第十一解</title><link>http://0x3f.org/posts/project-euler-11/</link><pubDate>Tue, 12 May 2009 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/project-euler-11/</guid><description>In the 20×20 grid below, four numbers along a diagonal line have been marked in red.
+08 02 22 97 38 15 00 40 00 75 04 05 07 78 52 12 50 77 91 08 49 49 99 40 17 81 18 57 60 87 17 40 98 43 69 48 04 56 62 00 81 49 31 73 55 79 14 29 93 71 40 67 53 88 30 03 49 13 36 65 52 70 95 23 04 60 11 42 69 24 68 56 01 32 56 71 37 02 36 91 22 31 16 71 51 67 63 89 41 92 36 54 22 40 40 28 66 33 13 80 24 47 32 60 99 03 45 02 44 75 33 53 78 36 84 20 35 17 12 50 32 98 81 28 64 23 67 10 26 38 40 67 59 54 70 66 18 38 64 70 67 26 20 68 02 62 12 20 95 63 94 39 63 08 40 91 66 49 94 21 24 55 58 05 66 73 99 26 97 17 78 78 96 83 14 88 34 89 63 72 21 36 23 09 75 00 76 44 20 45 35 14 00 61 33 97 34 31 33 95 78 17 53 28 22 75 31 67 15 94 03 80 04 62 16 14 09 53 56 92 16 39 05 42 96 35 31 47 55 58 88 24 00 17 54 24 36 29 85 57 86 56 00 48 35 71 89 07 05 44 44 37 44 60 21 58 51 54 17 58 19 80 81 68 05 94 47 69 28 73 92 13 86 52 17 77 04 89 55 40 04 52 08 83 97 35 99 16 07 97 57 32 16 26 26 79 33 27 98 66 88 36 68 87 57 62 20 72 03 46 33 67 46 55 12 32 63 93 53 69 04 42 16 73 38 25 39 11 24 94 72 18 08 46 29 32 40 62 76 36 20 69 36 41 72 30 23 88 34 62 99 69 82 67 59 85 74 04 36 16 20 73 35 29 78 31 90 01 74 31 49 71 48 86 81 16 23 57 05 54 01 70 54 71 83 51 54 69 16 92 33 48 61 43 52 01 89 19 67 48</description></item><item><title>欧拉工程第十解</title><link>http://0x3f.org/posts/project-euler-10/</link><pubDate>Tue, 18 Nov 2008 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/project-euler-10/</guid><description>The sum of the primes below 10 is 2 + 3 + 5 + 7 = 17.
+Find the sum of all the primes below two million.
+题目越来越变态，开始好玩儿了。
+第七解里的算法在这里算是废了，一万个素数都算得那么费劲，两百万以下的素数有十几万个，不得不用筛选法了。
+普通的筛选效率也不行，当初就是因为这个原因才没用它。不过优化过的筛选法就很奇妙了，下面是Lua的实现：
+```lua require('math') local limit = 2000000 local primes = {} for i=1,limit do table.insert(primes,true) end primes[0] = false primes[1] = false for i=0,math.floor(math.sqrt(limit)) do if primes[i] then for j=math.pow(i,2),limit,i do primes[j] = false end end end local sumVal = 0 for i,j in ipairs(primes) do if j then sumVal = sumVal + i end end print(sumVal) ``` 在我这里两秒半就出结果了，Python的表现也不错，四秒半出结果：</description></item><item><title>欧拉工程第九解</title><link>http://0x3f.org/posts/project-euler-9/</link><pubDate>Mon, 10 Nov 2008 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/project-euler-9/</guid><description>A Pythagorean triplet is a set of three natural numbers, a b c, for which,
+a2 + b2 = c2
+For example, 32 + 42 = 9 + 16 = 25 = 52.
+There exists exactly one Pythagorean triplet for which a + b + c = 1000. Find the product abc. 解：
+```python flag = False for a in range(1,1000): for b in range(1,1000): if a ** 2 + b ** 2 == (1000 - a - b) ** 2: print a,b,(1000 - a - b) print a * b * (1000 - a - b) flag = True break if flag: break ```</description></item><item><title>欧拉工程第八解</title><link>http://0x3f.org/posts/project-euler-8/</link><pubDate>Sun, 09 Nov 2008 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/project-euler-8/</guid><description>Find the greatest product of five consecutive digits in the 1000-digit number.
+73167176531330624919225119674426574742355349194934 96983520312774506326239578318016984801869478851843 85861560789112949495459501737958331952853208805511 12540698747158523863050715693290963295227443043557 66896648950445244523161731856403098711121722383113 62229893423380308135336276614282806444486645238749 30358907296290491560440772390713810515859307960866 70172427121883998797908792274921901699720888093776 65727333001053367881220235421809751254540594752243 52584907711670556013604839586446706324415722155397 53697817977846174064955149290862569321978468622482 83972241375657056057490261407972968652414535100474 82166370484403199890008895243450658541227588666881 16427171479924442928230863465674813919123162824586 17866458359124566529476545682848912883142607690042 24219022671055626321111109370544217506941658960408 07198403850962455444362981230987879927244284909188 84580156166097919133875499200524063689912560717606 05886116467109405077541002256983155200055935729725 71636269561882670428252483600823257530420752963450
+穷举，解：
+```python def MakeProduct(strNum): prod = 1 for char in strNum: prod = prod * int(char) return prod def GetTheFirstProduct(strNum): if len(strNum) = 5: tmp = GetTheFirstProduct(num) if tmp == (0,0): break num = tmp[1] if largestProduct 如果先找到下五个均不为零的连续整数，然后计算它们的积并以之参与比较，效率会更高：</description></item><item><title>欧拉工程第七解</title><link>http://0x3f.org/posts/project-euler-7/</link><pubDate>Fri, 31 Oct 2008 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/project-euler-7/</guid><description>第七解：
+By listing the first six prime numbers: 2, 3, 5, 7, 11, and 13, we can see that the 6th prime is 13.
+What is the 10001st prime number?
+穷举，并加以最大程度的优化：对大于2的素数，只判断奇数；判断一个奇数是否素数时，只拿已经找到的素数中小于第这个数平方根的数来相除，如果均不能整除，就是素数。Python的实现：
+```python def IsPrimeNum(num,feed): from math import sqrt tmp = feed[:] while tmp[-1] int(sqrt(num)): tmp.pop() for i in tmp: if num % i == 0: return False return True limit = 10001 feed = [2,3,5,7] temp = 7 counter = 4 while counter 执行了一下，在我这里居然用了五百秒才出结果，神啊，差不多十分钟啊。想到PHP号称速度很快，于是用PHP重新实现了一下：</description></item><item><title>欧拉工程第六解</title><link>http://0x3f.org/posts/project-euler-6/</link><pubDate>Wed, 29 Oct 2008 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/project-euler-6/</guid><description>第六解：
+The sum of the squares of the first ten natural numbers is, 12 + 22 + &amp;hellip; + 102 = 385
+The square of the sum of the first ten natural numbers is, (1 + 2 + &amp;hellip; + 10)2 = 552 = 3025
+Hence the difference between the sum of the squares of the first ten natural numbers and the square of the sum is 3025 385 = 2640.</description></item><item><title>欧拉工程第五解</title><link>http://0x3f.org/posts/project-euler-5/</link><pubDate>Mon, 27 Oct 2008 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/project-euler-5/</guid><description>第五解：
+2520 is the smallest number that can be divided by each of the numbers from 1 to 10 without any remainder. What is the smallest number that is evenly divisible by all of the numbers from 1 to 20?
+解：
+```python #为简洁明了，此处不作校验 def GetGreatestCommonDivisor(min,max): '''辗转相除法求最大公约数''' while min 0: tmp = min min = max % min max = tmp return max def GetLeastCommonMultiple(a,b): if a b: max = a min = b else: max = b min = a div = GetGreatestCommonDivisor(min,max) return min * max / div temp = 1 for i in range(1,21): temp = GetLeastCommonMultiple(i,temp) print temp ``` 本题旨在求最小公倍数。此算法有意思的是，它的精华在于如何求解两个正整数的最大公约数，有点围魏救赵的意思。</description></item><item><title>欧拉工程第四解</title><link>http://0x3f.org/posts/project-euler-4/</link><pubDate>Wed, 22 Oct 2008 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/project-euler-4/</guid><description>第四解：
+A palindromic number reads the same both ways. The largest palindrome made from the product of two 2-digit numbers is 9009 = 91 × 99. Find the largest palindrome made from the product of two 3-digit numbers.
+解：
+```python largestPalindrome = 0 for i in range(100,1000): for j in range(100,1000): product = i * j if int(str(product)[::-1]) == product and product largestPalindrome: largestPalindrome = product print largestPalindrome ``` 穷举，有没有效率高的办法？</description></item><item><title>欧拉工程第三解</title><link>http://0x3f.org/posts/project-euler-3/</link><pubDate>Tue, 21 Oct 2008 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/project-euler-3/</guid><description>第三解：
+The prime factors of 13195 are 5, 7, 13 and 29. What is the largest prime factor of the number 600851475143 ?
+解：
+```python feed = 600851475143 def GetFactor(feed,footmark): while footmark</description></item><item><title>欧拉工程第二解</title><link>http://0x3f.org/posts/project-euler-2/</link><pubDate>Sun, 19 Oct 2008 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/project-euler-2/</guid><description>第二解：
+Each new term in the Fibonacci sequence is generated by adding the previous two terms. By starting with 1 and 2, the first 10 terms will be: 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, &amp;hellip; Find the sum of all the even-valued terms in the sequence which do not exceed four million.
+解：
+```python i = 1 j = 2 sum = 0 while j</description></item><item><title>欧拉工程第一解</title><link>http://0x3f.org/posts/project-euler-1/</link><pubDate>Mon, 06 Oct 2008 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/project-euler-1/</guid><description>“欧拉工程”是一个很有意思的网站，它每周会提供一道数学题，要求访问者使用任一种编程语言设计一个计算机程序求解。到现在为止已经出了二百一十一道题，当然，题的难度是依次递增的。几十个国家的程序员已参与了这个工程，截至目前，中国有四百多人参与，但是解决所有的二百多道题的只有一个人。 我觉得没事儿的时候做一道很有意思，下面是第一道，很简单： If we list all the natural numbers below 10 that are multiples of 3 or 5, we get 3, 5, 6 and 9. The sum of these multiples is 23. Find the sum of all the multiples of 3 or 5 below 1000. 最容易想到的一算法就是依次取出一到一千的整数，只要是三或五的倍数，就累加起来，最终的和就是结果： ```python sum = 0 for num in range(1,1000): if not (num % 3 != 0 and num % 5 !</description></item></channel></rss>
