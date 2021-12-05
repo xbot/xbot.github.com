@@ -12,9 +12,6 @@ tags:
 status: publish
 published: true
 comments: true
-meta:
-  _edit_last: '1'
-  views: '1031'
 ---
 这是去年晚些时侯发现的一个问题。
 
