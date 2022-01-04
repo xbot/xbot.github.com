@@ -10,7 +10,7 @@ tags:
 ---
 # 生成工作日志
 
-[generate-work-journal.omnijs](https://github.com/xbot/omnifocus-plugins/blob/3db61166c7470d4fc7698c84852bac64cd330e2c/generate-work-journal.omnijs)
+[generate-work-journal.omnijs](https://github.com/xbot/omnifocus-plugins/blob/main/generate-work-journal.omnijs)
 
 用于每天下班前一键生成工作日志。
 
@@ -18,13 +18,13 @@ tags:
 
 # 打开 Jira Ticket
 
-[open-jira-ticket.omnijs](https://github.com/xbot/omnifocus-plugins/blob/3db61166c7470d4fc7698c84852bac64cd330e2c/open-jira-ticket.omnijs)
+[open-jira-ticket.omnijs](https://github.com/xbot/omnifocus-plugins/blob/main/open-jira-ticket.omnijs)
 
 从被选中的 Project 标题中解析 Jira Ticket 序号，并根据配置的 Jira URL 打开对应的 Ticket 。如果选中的是 Task ，使用其所属的 Project 。
 
 # 在 Flomo 中搜索当前 Project
 
-[search-flomo-by-project.omnijs](https://github.com/xbot/omnifocus-plugins/blob/3db61166c7470d4fc7698c84852bac64cd330e2c/search-flomo-by-project.omnijs)
+[search-flomo-by-project.omnijs](https://github.com/xbot/omnifocus-plugins/blob/main/search-flomo-by-project.omnijs)
 
 从被选中的 Project 标题中按自定义规则解析关键词，并在 Flomo 中搜索相关的笔记。可以指定一个 Tag 辅助过滤。
 
@@ -34,15 +34,21 @@ Flomo 目前只支持通过单个 Tag 过滤，所以配置界面只能指定一
 
 # 转换 Tasks 为指定目录下的 Projects
 
-[convert-tasks-to-projects.omnijs](https://github.com/xbot/omnifocus-plugins/blob/3db61166c7470d4fc7698c84852bac64cd330e2c/convert-tasks-to-projects.omnijs)
+[convert-tasks-to-projects.omnijs](https://github.com/xbot/omnifocus-plugins/blob/main/convert-tasks-to-projects.omnijs)
 
 OmniFocus 自带的转换功能会把新 Project 追加到库的末尾，需要先跳转到 Projects Perspective 再拖动到目标目录。所以写了这个插件，转换前先指定目标目录，转换后自动跳转到新的 Projects 。
 
 选中的目录会被记录，下次执行转换操作时默认选中上次使用的目录。
 
+# 重置 Review 视图
+
+[reset-review-status.omnijs](https://github.com/xbot/omnifocus-plugins/blob/main/reset-review-status.omnijs)
+
+我希望实现早晚两次 Review ，这个插件可以帮我做到这一点。
+
 # 使用当前网页或邮件创建 Task
 
-[omnifocus.lua](https://github.com/xbot/hammerspoon/blob/9a2abed9d9997e1f602cc34fb4381d235a2079d2/modules/omnifocus.lua)
+[omnifocus.lua](https://github.com/xbot/hammerspoon/blob/master/modules/omnifocus.lua)
 
 这个不是 OmniFocus 插件，是 Hammerspoon 的脚本。
 
