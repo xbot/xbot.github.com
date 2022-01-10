@@ -46,6 +46,23 @@ OmniFocus 自带的转换功能会把新 Project 追加到库的末尾，需要�
 
 我希望实现早晚两次 Review ，这个插件可以帮我做到这一点。
 
+# 重新排期
+
+[rearrange-object-timescales.omnijs](https://github.com/xbot/omnifocus-plugins/blob/main/rearrange-object-timescales.omnijs)
+
+为选中的 Tasks 或 Projects 重新指定 Defer 和 Due 时间。
+
+可用的时间段有：
+
+- Morning   ：9:30  ~ 12:00
+- Noon      ：12:00 ~ 14:00
+- Afternoon ：14:00 ~ 18:30
+- Evening   ：18:30 ~ 23:00
+- Daytime   ：9:30  ~ 18:30
+- Whole Day ：9:30  ~ 23:00
+
+目前时间段是按我的时间制定的，暂时不可自定义。
+
 # 使用当前网页或邮件创建 Task
 
 [omnifocus.lua](https://github.com/xbot/hammerspoon/blob/master/modules/omnifocus.lua)
