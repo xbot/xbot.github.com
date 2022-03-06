@@ -51,40 +51,32 @@ ForeverFantasy和Vim协同的一个最大的问题就是如何判断Vim已经退
 2. Vim编辑一个文档时，实际操作的是一个临时文件，而不是原文件，这个临时文件与原文件同路径，名称为在原文件名的基础上，前面加一个句点，后面加后缀“.swp”。应该用lsof监控这个临时文件，才可以判断出编辑该文档的Vim进程的运行状态。由于对于不存在的文件使用lsof命令的返回值也是256，故可以同时判断临时文件和原文件的占用情况，这样就为对其它编辑器的支持奠定了基础。
 2010-03-10 Wednesday 22:52:13 更新
 感谢KL童鞋和依云童鞋指教，果然加上-f参数就可以了。">
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-93233020-1','auto'),ga('send','pageview'))</script>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(e,o,i,a,t,n,s){e.GoogleAnalyticsObject=t,e[t]=e[t]||function(){(e[t].q=e[t].q||[]).push(arguments)},e[t].l=1*new Date,n=o.createElement(i),s=o.getElementsByTagName(i)[0],n.async=1,n.src=a,s.parentNode.insertBefore(n,s)}(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-93233020-1","auto"),ga("send","pageview"))</script>
 <meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name=theme-color media="(prefers-color-scheme: dark)" content="#262d33">
 <title>
 晴耕雨讀 - Python控制外部进程的灵异事件
-</title>
-<link rel="shortcut icon" href=/favicon.ico type=image/x-icon>
+</title><link rel="shortcut icon" href=/favicon.ico type=image/x-icon>
 <link rel=preconnect href=https://fonts.googleapis.com>
 <link rel=preconnect href=https://fonts.gstatic.com crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel=stylesheet>
-<link rel=stylesheet href=/minima.1644819155.css>
-<script defer type=text/javascript src=/minima.1644819155.js></script>
-</head>
-<script>let theme_2b_used=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';try{if(!('theme'in localStorage)){const a='';(a==='dark'||a==='light')&&(theme_2b_used=a),localStorage.theme=theme_2b_used}document.querySelector('html').classList.add(localStorage.theme)}catch(a){console.error(a)}</script>
+<link rel=stylesheet href=/minima.1646564240.css>
+<script defer type=text/javascript src=/minima.1646564240.js></script>
+</head><script>let theme_2b_used=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";try{if(!("theme"in localStorage)){const e='';(e==="dark"||e==="light")&&(theme_2b_used=e),localStorage.theme=theme_2b_used}document.querySelector("html").classList.add(localStorage.theme)}catch(e){console.error(e)}</script>
 <body class="sm:mx-5 sm:my-0">
 <header class="flex justify-between items-center mb-6 sm:my-3">
 <div class="flex items-center">
-<div id=theme-switcher class="text-4xl cursor-pointer">🌚</div>
-</div>
-<nav class="flex items-center
+<div id=theme-switcher class="text-4xl cursor-pointer">🌚</div></div><nav class="flex items-center
 whitespace-nowrap overflow-x-auto overflow-y-hidden">
 <a class=ml-5 href=/>主頁</a>
 <a class=ml-5 href=/posts>文章</a>
 <a class=ml-5 href=/tags>標籤</a>
 <a class=ml-5 href=/categories>分類</a>
 <a class=ml-5 href=/about>關於</a>
-</nav>
-</header>
-<h1 class="mt-6 mb-6">Python控制外部进程的灵异事件</h1>
-<div class="mb-3 text-xs flex justify-between sm:flex-col">
+</nav></header><h1 class="mt-6 mb-6">Python控制外部进程的灵异事件</h1><div class="mb-3 text-xs flex justify-between sm:flex-col">
 <div>
 Posted at &mdash; Mar 08, 2010
-</div>
-<div class=sm:mt-4>
+</div><div class=sm:mt-4>
 <a class=not-first:ml-3 href=/tags/ForeverFantasy>#ForeverFantasy</a>
 <a class=not-first:ml-3 href=/tags/Markdown>#Markdown</a>
 <a class=not-first:ml-3 href=/tags/Python>#Python</a>
@@ -95,19 +87,9 @@ Posted at &mdash; Mar 08, 2010
 <a class=not-first:ml-3 href=/tags/%e7%ac%94%e8%ae%b0>#笔记</a>
 <a class=not-first:ml-3 href=/tags/%e7%bc%96%e7%a8%8b>#编程</a>
 <a class=not-first:ml-3 href=/tags/%e9%9a%8f%e7%ac%94>#随笔</a>
-</div>
-</div>
-<main>
-<p></p>
-<article class=md>
-<p>春节前的一段时间，重新拾起近一年没动过的<a href="http://0x3f.org/?tag=foreverfantasy">ForeverFantasy</a>。</p>
-<p>虽然一年内没什么更新，但是我却一直都在用，基本上只限于将用Vim写好的<a href=http://en.wikipedia.org/wiki/Markdown>Markdown</a>格式的文档转换成HTML。</p>
-<p>重写了相当一部分代码，较大程度地改变了界面布局，突然发现经过一年的沉淀，对<a href=http://en.wikipedia.org/wiki/WxPython>wxPython</a>的理解增进了不少，开发起来比起去年这个时候清楚了很多。</p>
-<p><a href="http://picasaweb.google.com/lh/photo/bNRGQr0g6aLuqDUm8EQ6mg?feat=embedwebsite"><img src=http://lh6.ggpht.com/_ceUJ_lBTHzc/S5UYPQmTAzI/AAAAAAAABUc/znMRxXuE8dE/s400/2010-03-08.23%3A27%3A03.%E5%B7%A5%E4%BD%9C%E5%8C%BA%201.01.png></a></p>
-<p>这些天来一直坚持着每天或多或少的做一些，如果说有什么主要的进展的话，那就是界面的重构，以及昨天实现了调用Vim编辑文档并回收文档内容的功能。</p>
-<p>ForeverFantasy和Vim协同的一个最大的问题就是如何判断Vim已经退出。Python调用外部程序的方法有很多，比如传统的<a href=http://docs.python.org/library/commands.html>commands</a>模块、<a href=http://docs.python.org/library/os.html>os</a>.system()等，<a href=http://docs.python.org/library/subprocess.html>subprocess</a>是致力于替代这些旧有的方式的一个模块，它的一个特点是可以在启动一个外部程序作为子进程后还能监控这个进程的运行状态。这为ForeverFantasy在Vim退出后回收文档内容提供了更简捷的途径。</p>
-<p>下面的代码可以说明如何使用subprocess运行外部程序并监控运行状态：</p>
-<p>
+</div></div><main>
+<p></p><article class=md>
+<p>春节前的一段时间，重新拾起近一年没动过的<a href="http://0x3f.org/?tag=foreverfantasy">ForeverFantasy</a>。</p><p>虽然一年内没什么更新，但是我却一直都在用，基本上只限于将用Vim写好的<a href=http://en.wikipedia.org/wiki/Markdown>Markdown</a>格式的文档转换成HTML。</p><p>重写了相当一部分代码，较大程度地改变了界面布局，突然发现经过一年的沉淀，对<a href=http://en.wikipedia.org/wiki/WxPython>wxPython</a>的理解增进了不少，开发起来比起去年这个时候清楚了很多。</p><p><a href="http://picasaweb.google.com/lh/photo/bNRGQr0g6aLuqDUm8EQ6mg?feat=embedwebsite"><img src=http://lh6.ggpht.com/_ceUJ_lBTHzc/S5UYPQmTAzI/AAAAAAAABUc/znMRxXuE8dE/s400/2010-03-08.23%3A27%3A03.%E5%B7%A5%E4%BD%9C%E5%8C%BA%201.01.png></a></p><p>这些天来一直坚持着每天或多或少的做一些，如果说有什么主要的进展的话，那就是界面的重构，以及昨天实现了调用Vim编辑文档并回收文档内容的功能。</p><p>ForeverFantasy和Vim协同的一个最大的问题就是如何判断Vim已经退出。Python调用外部程序的方法有很多，比如传统的<a href=http://docs.python.org/library/commands.html>commands</a>模块、<a href=http://docs.python.org/library/os.html>os</a>.system()等，<a href=http://docs.python.org/library/subprocess.html>subprocess</a>是致力于替代这些旧有的方式的一个模块，它的一个特点是可以在启动一个外部程序作为子进程后还能监控这个进程的运行状态。这为ForeverFantasy在Vim退出后回收文档内容提供了更简捷的途径。</p><p>下面的代码可以说明如何使用subprocess运行外部程序并监控运行状态：</p><p>
 ```python
 import subprocess
 process = subprocess.Popen('gvim', shell=True)
@@ -117,41 +99,19 @@ print 'The external program exited.'
 if status is None:
 print 'The external program is still running.'
 ```
-</p>
-<p>理论上，可以拿实例process的poll()方法监视进程的运行状态，而且这一点在Windows上也确实可以做到，但是到了Linux下，诡异的事出现了，即使刚刚打开gvim，poll()方法也会马上返回一个0，同时process.pid的值总是和实际在运行的那个gvim进程的pid的值差3，而且在虚拟终端中输入gvim命令也不会阻塞终端，就像别的命令加上“<strong>&</strong>”符号的效果一样。尝试用<a href=http://en.wikipedia.org/wiki/Strace>strace</a>跟踪gvim的运行，试图找到问题原因，无果。我猜想可能/usr/bin/gvim是一个跳板，它启动后会启动一个新的gvim进程。总之，这个方法在Linux下是行不通的。</p>
-<p>因此我觉得只能另寻出路了，既然不能监控gvim进程，那就监控gvim进程所编辑的文件，只要这个文件不被任何进程占用，就可以判定gvim已退出。这一点，在Linux下易如反掌，不用说，<a href=http://en.wikipedia.org/wiki/Lsof>lsof</a>当仁不让。</p>
-<p>用<strong>commands.getstatusoutput('lsof file.txt')</strong>测试发现，如果文件file.txt被某进程占用，则返回的状态值为0，反之，返回256。</p>
-<p>最终，我在程序中使用了两种判断方式，在Windows平台使用subprocess跟踪gvim.exe进程，而在Linux及Unix平台使用lsof检查文档占用情况。</p>
-<p>剩下的就是进行这个判断的时间问题了。</p>
-<p>很显然，如果在子进程被启动后马上使用while循环不停的检查，一来必须使用多线程，二来系统资源占用也会很高。这时就需要利用wxPython的事件机制了，当ForeverFantasy启动Gvim时，主窗口失去焦点，而当Gvim退出时，ForeverFantasy又会获得焦点，只要能在ForeverFantasy窗口获得焦点时做一次检查即可。不过，在选择最合适的事件的问题上，又是一波三折。</p>
-<p>在wxPython的<a href=http://www.wxpython.org/docs/api/frames.html>API</a>文档中没有找到<a href=http://wiki.wxpython.org/ListOfEvents>事件列表</a>，倒是在<a href=http://wiki.wxpython.org>Wiki</a>中找到了。顾名思义，觉得wx.EVT_SET_FOCUS比较靠谱，但试用失败，看API中关于FocusEvent的说明，这个事件适用于窗口控件；然后又试了wx.EVT_CHILD_FOCUS，只有在窗口包含的控件中有获得焦点的情况才会触发；最后才发现<strong>wx.EVT_ACTIVATE</strong>，这个事件会在窗口失去焦点和获得焦点时各触发一次，使用GetActive()方法可以判断是获得焦点还是失去焦点。</p>
-<p>完成与Vim的协同使ForeverFantasy在我手上由原来单纯的格式转换工具进化为基本可用的文档编辑器，就算是<strong>Milestone 2</strong>吧。</p>
-<p>此外，还有一些小的经验：</p>
-<p>1. 调用非环境变量下的程序，即命令中必须带程序所在的路径时，应当将程序所在目录的完整路径以自然字符串的形式传递给subprocess.Popen类的构造方法的cwd参数，即如下所示：</p>
-<p>
+</p><p>理论上，可以拿实例process的poll()方法监视进程的运行状态，而且这一点在Windows上也确实可以做到，但是到了Linux下，诡异的事出现了，即使刚刚打开gvim，poll()方法也会马上返回一个0，同时process.pid的值总是和实际在运行的那个gvim进程的pid的值差3，而且在虚拟终端中输入gvim命令也不会阻塞终端，就像别的命令加上“<strong>&</strong>”符号的效果一样。尝试用<a href=http://en.wikipedia.org/wiki/Strace>strace</a>跟踪gvim的运行，试图找到问题原因，无果。我猜想可能/usr/bin/gvim是一个跳板，它启动后会启动一个新的gvim进程。总之，这个方法在Linux下是行不通的。</p><p>因此我觉得只能另寻出路了，既然不能监控gvim进程，那就监控gvim进程所编辑的文件，只要这个文件不被任何进程占用，就可以判定gvim已退出。这一点，在Linux下易如反掌，不用说，<a href=http://en.wikipedia.org/wiki/Lsof>lsof</a>当仁不让。</p><p>用<strong>commands.getstatusoutput('lsof file.txt')</strong>测试发现，如果文件file.txt被某进程占用，则返回的状态值为0，反之，返回256。</p><p>最终，我在程序中使用了两种判断方式，在Windows平台使用subprocess跟踪gvim.exe进程，而在Linux及Unix平台使用lsof检查文档占用情况。</p><p>剩下的就是进行这个判断的时间问题了。</p><p>很显然，如果在子进程被启动后马上使用while循环不停的检查，一来必须使用多线程，二来系统资源占用也会很高。这时就需要利用wxPython的事件机制了，当ForeverFantasy启动Gvim时，主窗口失去焦点，而当Gvim退出时，ForeverFantasy又会获得焦点，只要能在ForeverFantasy窗口获得焦点时做一次检查即可。不过，在选择最合适的事件的问题上，又是一波三折。</p><p>在wxPython的<a href=http://www.wxpython.org/docs/api/frames.html>API</a>文档中没有找到<a href=http://wiki.wxpython.org/ListOfEvents>事件列表</a>，倒是在<a href=http://wiki.wxpython.org>Wiki</a>中找到了。顾名思义，觉得wx.EVT_SET_FOCUS比较靠谱，但试用失败，看API中关于FocusEvent的说明，这个事件适用于窗口控件；然后又试了wx.EVT_CHILD_FOCUS，只有在窗口包含的控件中有获得焦点的情况才会触发；最后才发现<strong>wx.EVT_ACTIVATE</strong>，这个事件会在窗口失去焦点和获得焦点时各触发一次，使用GetActive()方法可以判断是获得焦点还是失去焦点。</p><p>完成与Vim的协同使ForeverFantasy在我手上由原来单纯的格式转换工具进化为基本可用的文档编辑器，就算是<strong>Milestone 2</strong>吧。</p><p>此外，还有一些小的经验：</p><p>1. 调用非环境变量下的程序，即命令中必须带程序所在的路径时，应当将程序所在目录的完整路径以自然字符串的形式传递给subprocess.Popen类的构造方法的cwd参数，即如下所示：</p><p>
 ```python
 process = subprocess.Popen('gvim.exe', cwd=r'C:\program files\vim\vim72', shell=True)
 ```
-</p>
-<p>这样可以有效避免路径中的空格和特殊字符对命令执行的影响。</p>
-<p>2. Vim编辑一个文档时，实际操作的是一个临时文件，而不是原文件，这个临时文件与原文件同路径，名称为在原文件名的基础上，前面加一个句点，后面加后缀“.swp”。应该用lsof监控这个临时文件，才可以判断出编辑该文档的Vim进程的运行状态。由于对于不存在的文件使用lsof命令的返回值也是256，故可以同时判断临时文件和原文件的占用情况，这样就为对其它编辑器的支持奠定了基础。</p>
-<p><strong>2010-03-10 Wednesday 22:52:13 更新</strong></p>
-<p>感谢KL童鞋和依云童鞋指教，果然加上<strong>-f</strong>参数就可以了。</p>
-</article>
-</main>
-<script>const repo='xbot/blog-comments',issueTerm='pathname',theme=localStorage.theme?`github-${localStorage.theme}`:'preferred-color-scheme',script=document.createElement('script');script.src='https://utteranc.es/client.js',script.async=!0,script.crossOrigin='anonymous',script.setAttribute('repo',repo),script.setAttribute('issue-term',issueTerm),script.setAttribute('theme',theme),script.setAttribute('label','comment'),document.querySelector('main').appendChild(script)</script>
+</p><p>这样可以有效避免路径中的空格和特殊字符对命令执行的影响。</p><p>2. Vim编辑一个文档时，实际操作的是一个临时文件，而不是原文件，这个临时文件与原文件同路径，名称为在原文件名的基础上，前面加一个句点，后面加后缀“.swp”。应该用lsof监控这个临时文件，才可以判断出编辑该文档的Vim进程的运行状态。由于对于不存在的文件使用lsof命令的返回值也是256，故可以同时判断临时文件和原文件的占用情况，这样就为对其它编辑器的支持奠定了基础。</p><p><strong>2010-03-10 Wednesday 22:52:13 更新</strong></p><p>感谢KL童鞋和依云童鞋指教，果然加上<strong>-f</strong>参数就可以了。</p></article></main><script>const repo="xbot/blog-comments",issueTerm="pathname",theme=localStorage.theme?`github-${localStorage.theme}`:"preferred-color-scheme",script=document.createElement("script");script.src="https://utteranc.es/client.js",script.async=!0,script.crossOrigin="anonymous",script.setAttribute("repo",repo),script.setAttribute("issue-term",issueTerm),script.setAttribute("theme",theme),script.setAttribute("label","comment"),document.querySelector("main").appendChild(script)</script>
 <footer class="mt-8 flex sm:flex-col-reverse justify-between items-center">
 <p class="mt-0 text-sm">
 © 淘气 2021 |
 <a href=https://gohugo.io target=_blank rel="noopener noreferrer">Hugo</a> on
 <a href=https://github.com/mivinci/hugo-theme-minima target=_blank rel="noopener noreferrer">Minima</a>
-</p>
-<p class="flex items-center mt-0">
+</p><p class="flex items-center mt-0">
 <a class="icon mx-2" href=https://github.com/xbot title=github><svg fill="#63636f" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>GitHub</title><path d="M12 .297c-6.63.0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577.0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93.0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176.0.0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22.0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22.0 1.606-.015 2.896-.015 3.286.0.315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
 </a>
 <a class="icon mx-2" href=/index.xml title=rss><svg fill="#63636f" t="1626591563876" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" p-id="1984" width="18" height="16"><path d="M128 768a128 128 0 100 256 128 128 0 000-256zM0 368v176c265.104.0 480 214.912 480 480h176c0-362.32-293.696-656-656-656zM0 0v176c468.336.0 848 379.664 848 848h176C1024 458.464 565.536.0.0.0z" p-id="1985"/></svg>
 </a>
-</p>
-</footer>
-</body>
-</html>
+</p></footer></body></html>

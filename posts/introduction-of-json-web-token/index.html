@@ -41,117 +41,59 @@ JWT标准数据常见的有：
 signature signature也是个base64字符串，解密后是个使用header里描述的加密方法针对header和payload加密的字符串。目的是防止这两部分的数据被篡改。
 JWT的使用原则  不存放敏感信息 保护好私钥 结合https使用  都是出于安全角度考虑。token存储在客户端，而且base64可以被解密，所以不能存储敏感数据。如果私钥泄漏，意味著签名可以被随意伪造。使用https可以更好的保护数据，防止中间人攻击。
 JWT相关开发资源 jwt.io有各种语言的JWT开发资源。">
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-93233020-1','auto'),ga('send','pageview'))</script>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(e,o,i,a,t,n,s){e.GoogleAnalyticsObject=t,e[t]=e[t]||function(){(e[t].q=e[t].q||[]).push(arguments)},e[t].l=1*new Date,n=o.createElement(i),s=o.getElementsByTagName(i)[0],n.async=1,n.src=a,s.parentNode.insertBefore(n,s)}(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-93233020-1","auto"),ga("send","pageview"))</script>
 <meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name=theme-color media="(prefers-color-scheme: dark)" content="#262d33">
 <title>
 晴耕雨讀 - JSON Web Token简介
-</title>
-<link rel="shortcut icon" href=/favicon.ico type=image/x-icon>
+</title><link rel="shortcut icon" href=/favicon.ico type=image/x-icon>
 <link rel=preconnect href=https://fonts.googleapis.com>
 <link rel=preconnect href=https://fonts.gstatic.com crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel=stylesheet>
-<link rel=stylesheet href=/minima.1644819155.css>
-<script defer type=text/javascript src=/minima.1644819155.js></script>
-</head>
-<script>let theme_2b_used=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';try{if(!('theme'in localStorage)){const a='';(a==='dark'||a==='light')&&(theme_2b_used=a),localStorage.theme=theme_2b_used}document.querySelector('html').classList.add(localStorage.theme)}catch(a){console.error(a)}</script>
+<link rel=stylesheet href=/minima.1646564241.css>
+<script defer type=text/javascript src=/minima.1646564241.js></script>
+</head><script>let theme_2b_used=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";try{if(!("theme"in localStorage)){const e='';(e==="dark"||e==="light")&&(theme_2b_used=e),localStorage.theme=theme_2b_used}document.querySelector("html").classList.add(localStorage.theme)}catch(e){console.error(e)}</script>
 <body class="sm:mx-5 sm:my-0">
 <header class="flex justify-between items-center mb-6 sm:my-3">
 <div class="flex items-center">
-<div id=theme-switcher class="text-4xl cursor-pointer">🌚</div>
-</div>
-<nav class="flex items-center
+<div id=theme-switcher class="text-4xl cursor-pointer">🌚</div></div><nav class="flex items-center
 whitespace-nowrap overflow-x-auto overflow-y-hidden">
 <a class=ml-5 href=/>主頁</a>
 <a class=ml-5 href=/posts>文章</a>
 <a class=ml-5 href=/tags>標籤</a>
 <a class=ml-5 href=/categories>分類</a>
 <a class=ml-5 href=/about>關於</a>
-</nav>
-</header>
-<h1 class="mt-6 mb-6">JSON Web Token简介</h1>
-<div class="mb-3 text-xs flex justify-between sm:flex-col">
+</nav></header><h1 class="mt-6 mb-6">JSON Web Token简介</h1><div class="mb-3 text-xs flex justify-between sm:flex-col">
 <div>
 Posted at &mdash; Apr 23, 2017
-</div>
-<div class=sm:mt-4>
+</div><div class=sm:mt-4>
 <a class=not-first:ml-3 href=/tags/%e7%ac%94%e8%ae%b0>#笔记</a>
 <a class=not-first:ml-3 href=/tags/%e7%bc%96%e7%a8%8b>#编程</a>
-</div>
-</div>
-<main>
-<p></p>
-<article class=md>
-<h2 id=什么是jwt>什么是JWT？</h2>
-<p>JSON Web Token（简称JWT）是一种token格式，通常用来解决身份认证的问题，和会话（session）作用相同，常用在RESTful API或者OAuth认证上。</p>
-<p>和session相比，JWT有以下优势：</p>
-<ul>
-<li>服务器端的开销低</li>
-<li>服务器端扩展方便</li>
-<li>不用专门处理CSRF</li>
-</ul>
-<p>由于session的实现方式需要在服务器端存储会话数据，所以当存在大量会话时，服务器端的存储压力会很大，并由此带来扩展上的复杂度（共享session）。而JWT可以把这些数据存储在token里，不需要服务器端存储，优势自然很明显。</p>
-<p>对于CSRF，由于session一般使用cookie实现，所以需要专门处理这个安全隐患。JWT借助HTTP请求的header传递，所以伪造成本更高。</p>
-<h3 id=jwt和bearer-token的关系>JWT和Bearer Token的关系</h3>
-<p>JWT在使用的时候要在token前面加上字符串「bearer」再填到HTTP请求的header里，这个值就是「Bearer Token」。为什么要这么做？它和JWT是什么关系？</p>
-<p>简单地说，JWT是一种token格式，Bearer Token是一种鉴权方案。</p>
-<p>HTTP的header项「Authorization」是在HTTP 1.0引入的，它的值的格式是<code>类型+token</code>，支持多种鉴权方案，bearer只是其中的一种。bearer方案中使用的token是JWT格式，这就是它们之间的关系。</p>
-<h2 id=jwt的格式>JWT的格式</h2>
-<p>JWT是一个用英文点号连接起来的、分成三个部分的字符串：header、payload和signature。</p>
-<h3 id=header>header</h3>
-<p>header是个base64字符串，解密后是个JSON对象，包含一些元数据。例如：</p>
-<div class=highlight><div class=chroma>
+</div></div><main>
+<p></p><article class=md>
+<h2 id=什么是jwt>什么是JWT？</h2><p>JSON Web Token（简称JWT）是一种token格式，通常用来解决身份认证的问题，和会话（session）作用相同，常用在RESTful API或者OAuth认证上。</p><p>和session相比，JWT有以下优势：</p><ul>
+<li>服务器端的开销低</li><li>服务器端扩展方便</li><li>不用专门处理CSRF</li></ul><p>由于session的实现方式需要在服务器端存储会话数据，所以当存在大量会话时，服务器端的存储压力会很大，并由此带来扩展上的复杂度（共享session）。而JWT可以把这些数据存储在token里，不需要服务器端存储，优势自然很明显。</p><p>对于CSRF，由于session一般使用cookie实现，所以需要专门处理这个安全隐患。JWT借助HTTP请求的header传递，所以伪造成本更高。</p><h3 id=jwt和bearer-token的关系>JWT和Bearer Token的关系</h3><p>JWT在使用的时候要在token前面加上字符串「bearer」再填到HTTP请求的header里，这个值就是「Bearer Token」。为什么要这么做？它和JWT是什么关系？</p><p>简单地说，JWT是一种token格式，Bearer Token是一种鉴权方案。</p><p>HTTP的header项「Authorization」是在HTTP 1.0引入的，它的值的格式是<code>类型+token</code>，支持多种鉴权方案，bearer只是其中的一种。bearer方案中使用的token是JWT格式，这就是它们之间的关系。</p><h2 id=jwt的格式>JWT的格式</h2><p>JWT是一个用英文点号连接起来的、分成三个部分的字符串：header、payload和signature。</p><h3 id=header>header</h3><p>header是个base64字符串，解密后是个JSON对象，包含一些元数据。例如：</p><div class=highlight><div class=chroma>
 <table class=lntable><tr><td class=lntd>
 <pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=p>{</span>
-  <span class=err>&#39;typ&#39;:</span> <span class=err>&#39;JWT&#39;,</span>
-  <span class=err>&#39;alg&#39;:</span> <span class=err>&#39;HS256&#39;</span>
-<span class=p>}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>「typ」是格式，「alg」是加密方法。</p>
-<h3 id=payload>payload</h3>
-<p>payload也是个base64字符串，解密后也是个JSON对象，一般包含两种数据：JWT标准数据和自定义数据。</p>
-<p>JWT标准数据常见的有：</p>
-<ul>
-<li>iss：提供方。</li>
-<li>sub：主题，一般是用户ID。</li>
-<li>exp：过期时间。</li>
-<li>iat：创建时间。</li>
-<li>jti：token的唯一标识。</li>
-</ul>
-<p>此外，和session一样，可以把一些自定义的数据存储在payload里。但由于token存储在客户端，所以不应该在这里存储敏感数据。</p>
-<h3 id=signature>signature</h3>
-<p>signature也是个base64字符串，解密后是个使用header里描述的加密方法针对header和payload加密的字符串。目的是防止这两部分的数据被篡改。</p>
-<h2 id=jwt的使用原则>JWT的使用原则</h2>
-<ul>
-<li>不存放敏感信息</li>
-<li>保护好私钥</li>
-<li>结合https使用</li>
-</ul>
-<p>都是出于安全角度考虑。token存储在客户端，而且base64可以被解密，所以不能存储敏感数据。如果私钥泄漏，意味著签名可以被随意伪造。使用https可以更好的保护数据，防止中间人攻击。</p>
-<h2 id=jwt相关开发资源>JWT相关开发资源</h2>
-<p><a href=https://jwt.io/>jwt.io</a>有各种语言的JWT开发资源。</p>
-</article>
-</main>
-<script>const repo='xbot/blog-comments',issueTerm='pathname',theme=localStorage.theme?`github-${localStorage.theme}`:'preferred-color-scheme',script=document.createElement('script');script.src='https://utteranc.es/client.js',script.async=!0,script.crossOrigin='anonymous',script.setAttribute('repo',repo),script.setAttribute('issue-term',issueTerm),script.setAttribute('theme',theme),script.setAttribute('label','comment'),document.querySelector('main').appendChild(script)</script>
+</span></code></pre></td><td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=err>&#39;typ&#39;:</span> <span class=err>&#39;JWT&#39;,</span>
+</span></span><span class=line><span class=cl>  <span class=err>&#39;alg&#39;:</span> <span class=err>&#39;HS256&#39;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>「typ」是格式，「alg」是加密方法。</p><h3 id=payload>payload</h3><p>payload也是个base64字符串，解密后也是个JSON对象，一般包含两种数据：JWT标准数据和自定义数据。</p><p>JWT标准数据常见的有：</p><ul>
+<li>iss：提供方。</li><li>sub：主题，一般是用户ID。</li><li>exp：过期时间。</li><li>iat：创建时间。</li><li>jti：token的唯一标识。</li></ul><p>此外，和session一样，可以把一些自定义的数据存储在payload里。但由于token存储在客户端，所以不应该在这里存储敏感数据。</p><h3 id=signature>signature</h3><p>signature也是个base64字符串，解密后是个使用header里描述的加密方法针对header和payload加密的字符串。目的是防止这两部分的数据被篡改。</p><h2 id=jwt的使用原则>JWT的使用原则</h2><ul>
+<li>不存放敏感信息</li><li>保护好私钥</li><li>结合https使用</li></ul><p>都是出于安全角度考虑。token存储在客户端，而且base64可以被解密，所以不能存储敏感数据。如果私钥泄漏，意味著签名可以被随意伪造。使用https可以更好的保护数据，防止中间人攻击。</p><h2 id=jwt相关开发资源>JWT相关开发资源</h2><p><a href=https://jwt.io/>jwt.io</a>有各种语言的JWT开发资源。</p></article></main><script>const repo="xbot/blog-comments",issueTerm="pathname",theme=localStorage.theme?`github-${localStorage.theme}`:"preferred-color-scheme",script=document.createElement("script");script.src="https://utteranc.es/client.js",script.async=!0,script.crossOrigin="anonymous",script.setAttribute("repo",repo),script.setAttribute("issue-term",issueTerm),script.setAttribute("theme",theme),script.setAttribute("label","comment"),document.querySelector("main").appendChild(script)</script>
 <footer class="mt-8 flex sm:flex-col-reverse justify-between items-center">
 <p class="mt-0 text-sm">
 © 淘气 2021 |
 <a href=https://gohugo.io target=_blank rel="noopener noreferrer">Hugo</a> on
 <a href=https://github.com/mivinci/hugo-theme-minima target=_blank rel="noopener noreferrer">Minima</a>
-</p>
-<p class="flex items-center mt-0">
+</p><p class="flex items-center mt-0">
 <a class="icon mx-2" href=https://github.com/xbot title=github><svg fill="#63636f" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>GitHub</title><path d="M12 .297c-6.63.0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577.0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93.0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176.0.0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22.0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22.0 1.606-.015 2.896-.015 3.286.0.315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
 </a>
 <a class="icon mx-2" href=/index.xml title=rss><svg fill="#63636f" t="1626591563876" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" p-id="1984" width="18" height="16"><path d="M128 768a128 128 0 100 256 128 128 0 000-256zM0 368v176c265.104.0 480 214.912 480 480h176c0-362.32-293.696-656-656-656zM0 0v176c468.336.0 848 379.664 848 848h176C1024 458.464 565.536.0.0.0z" p-id="1985"/></svg>
 </a>
-</p>
-</footer>
-</body>
-</html>
+</p></footer></body></html>

@@ -23,70 +23,40 @@
 实践 这里针对Laravel实现一个日志工具类，实现以下功能：
  兼容Laravel自己的日志系统 自动记录关键的业务数据 自动记录日志所属的接口名 自动记录接口的实参 记录接口的返回值 生成简洁规范的日志内容  代码：
 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100  <?">
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-93233020-1','auto'),ga('send','pageview'))</script>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(e,o,i,a,t,n,s){e.GoogleAnalyticsObject=t,e[t]=e[t]||function(){(e[t].q=e[t].q||[]).push(arguments)},e[t].l=1*new Date,n=o.createElement(i),s=o.getElementsByTagName(i)[0],n.async=1,n.src=a,s.parentNode.insertBefore(n,s)}(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-93233020-1","auto"),ga("send","pageview"))</script>
 <meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name=theme-color media="(prefers-color-scheme: dark)" content="#262d33">
 <title>
 晴耕雨讀 - 接口编程中记录日志的最佳实践
-</title>
-<link rel="shortcut icon" href=/favicon.ico type=image/x-icon>
+</title><link rel="shortcut icon" href=/favicon.ico type=image/x-icon>
 <link rel=preconnect href=https://fonts.googleapis.com>
 <link rel=preconnect href=https://fonts.gstatic.com crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel=stylesheet>
-<link rel=stylesheet href=/minima.1644819155.css>
-<script defer type=text/javascript src=/minima.1644819155.js></script>
-</head>
-<script>let theme_2b_used=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';try{if(!('theme'in localStorage)){const a='';(a==='dark'||a==='light')&&(theme_2b_used=a),localStorage.theme=theme_2b_used}document.querySelector('html').classList.add(localStorage.theme)}catch(a){console.error(a)}</script>
+<link rel=stylesheet href=/minima.1646564241.css>
+<script defer type=text/javascript src=/minima.1646564241.js></script>
+</head><script>let theme_2b_used=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";try{if(!("theme"in localStorage)){const e='';(e==="dark"||e==="light")&&(theme_2b_used=e),localStorage.theme=theme_2b_used}document.querySelector("html").classList.add(localStorage.theme)}catch(e){console.error(e)}</script>
 <body class="sm:mx-5 sm:my-0">
 <header class="flex justify-between items-center mb-6 sm:my-3">
 <div class="flex items-center">
-<div id=theme-switcher class="text-4xl cursor-pointer">🌚</div>
-</div>
-<nav class="flex items-center
+<div id=theme-switcher class="text-4xl cursor-pointer">🌚</div></div><nav class="flex items-center
 whitespace-nowrap overflow-x-auto overflow-y-hidden">
 <a class=ml-5 href=/>主頁</a>
 <a class=ml-5 href=/posts>文章</a>
 <a class=ml-5 href=/tags>標籤</a>
 <a class=ml-5 href=/categories>分類</a>
 <a class=ml-5 href=/about>關於</a>
-</nav>
-</header>
-<h1 class="mt-6 mb-6">接口编程中记录日志的最佳实践</h1>
-<div class="mb-3 text-xs flex justify-between sm:flex-col">
+</nav></header><h1 class="mt-6 mb-6">接口编程中记录日志的最佳实践</h1><div class="mb-3 text-xs flex justify-between sm:flex-col">
 <div>
 Posted at &mdash; Apr 25, 2017
-</div>
-<div class=sm:mt-4>
+</div><div class=sm:mt-4>
 <a class=not-first:ml-3 href=/tags/%e7%bc%96%e7%a8%8b>#编程</a>
 <a class=not-first:ml-3 href=/tags/%e6%9c%80%e4%bd%b3%e5%ae%9e%e8%b7%b5>#最佳实践</a>
 <a class=not-first:ml-3 href=/tags/Laravel/Lumen>#Laravel/Lumen</a>
-</div>
-</div>
-<main>
-<p></p>
-<article class=md>
-<h2 id=解决什么问题>解决什么问题</h2>
-<ul>
-<li>快速定位日志</li>
-<li>降低记录成本</li>
-<li>提高代码可读性</li>
-</ul>
-<p>日志框架是项目开始阶段应该最先搭建好的内容之一，有助于极大地节约以后解决问题的时间和成本。但这也是最让我头疼的问题之一，因为记日志不光包括用什么记、怎么记，也包括记什么内容，这恰恰是最容易被忽略的问题。</p>
-<p>一条好的日志需要做到能让问题的跟踪者快速定位它在程序中的位置且包含关键数据。工作中不乏这样的团队成员，在移交接口问题的时候没有主动提供关键信息的意识，所谓关键信息，是指像问题发生的环境、接口名、传递的实参和返回结果这样的内容，使得面向契约编程本来是很好的开发模式，却得不到最好的应用。这时我们可以从自己接口的日志中得到一些弥补。</p>
-<p>但是日志的记录不应该占用很大的代码量，一来降低了代码的可读性，二来会耗费太多的时间精力。</p>
-<p>本文目的在于讨论一种日志记录的最佳实践方式，使得可以兼顾以上这些问题。</p>
-<h2 id=实践>实践</h2>
-<p>这里针对Laravel实现一个日志工具类，实现以下功能：</p>
-<ul>
-<li>兼容Laravel自己的日志系统</li>
-<li>自动记录关键的业务数据</li>
-<li>自动记录日志所属的接口名</li>
-<li>自动记录接口的实参</li>
-<li>记录接口的返回值</li>
-<li>生成简洁规范的日志内容</li>
-</ul>
-<p>代码：</p>
-<div class=highlight><div class=chroma>
+</div></div><main>
+<p></p><article class=md>
+<h2 id=解决什么问题>解决什么问题</h2><ul>
+<li>快速定位日志</li><li>降低记录成本</li><li>提高代码可读性</li></ul><p>日志框架是项目开始阶段应该最先搭建好的内容之一，有助于极大地节约以后解决问题的时间和成本。但这也是最让我头疼的问题之一，因为记日志不光包括用什么记、怎么记，也包括记什么内容，这恰恰是最容易被忽略的问题。</p><p>一条好的日志需要做到能让问题的跟踪者快速定位它在程序中的位置且包含关键数据。工作中不乏这样的团队成员，在移交接口问题的时候没有主动提供关键信息的意识，所谓关键信息，是指像问题发生的环境、接口名、传递的实参和返回结果这样的内容，使得面向契约编程本来是很好的开发模式，却得不到最好的应用。这时我们可以从自己接口的日志中得到一些弥补。</p><p>但是日志的记录不应该占用很大的代码量，一来降低了代码的可读性，二来会耗费太多的时间精力。</p><p>本文目的在于讨论一种日志记录的最佳实践方式，使得可以兼顾以上这些问题。</p><h2 id=实践>实践</h2><p>这里针对Laravel实现一个日志工具类，实现以下功能：</p><ul>
+<li>兼容Laravel自己的日志系统</li><li>自动记录关键的业务数据</li><li>自动记录日志所属的接口名</li><li>自动记录接口的实参</li><li>记录接口的返回值</li><li>生成简洁规范的日志内容</li></ul><p>代码：</p><div class=highlight><div class=chroma>
 <table class=lntable><tr><td class=lntd>
 <pre tabindex=0 class=chroma><code><span class=lnt>  1
 </span><span class=lnt>  2
@@ -188,124 +158,113 @@ Posted at &mdash; Apr 25, 2017
 </span><span class=lnt> 98
 </span><span class=lnt> 99
 </span><span class=lnt>100
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-php data-lang=php><span class=o>&lt;?</span><span class=nx>php</span>
-
-<span class=k>namespace</span> <span class=nx>Ox3f\LaravelUtils\Log</span><span class=p>;</span>
-
-<span class=k>use</span> <span class=nx>Illuminate\Support\Facades\Log</span> <span class=k>as</span> <span class=nx>LaravelLog</span><span class=p>;</span>
-<span class=k>use</span> <span class=nx>Illuminate\Support\Facades\Auth</span><span class=p>;</span>
-<span class=k>use</span> <span class=nx>Illuminate\Support\Facades\Request</span><span class=p>;</span>
-
-<span class=sd>/**
-</span><span class=sd> * Class Log
-</span><span class=sd> * @author donie
-</span><span class=sd> */</span>
-<span class=k>class</span> <span class=nc>Log</span>
-<span class=p>{</span>
-    <span class=k>private</span> <span class=k>static</span> <span class=nv>$instance</span><span class=p>;</span>
-
-    <span class=k>private</span> <span class=nv>$id</span><span class=p>;</span>              <span class=c1>// Identity of the log, username by default.
-</span><span class=c1></span>    <span class=k>private</span> <span class=nv>$referer</span><span class=p>;</span>         <span class=c1>// Request path for RESTful APIs, method name for ordinary class methods.
-</span><span class=c1></span>    <span class=k>private</span> <span class=nv>$isHttp</span><span class=p>;</span>          <span class=c1>// True for RESTful APIs, otherwise, false.
-</span><span class=c1></span>    <span class=k>private</span> <span class=nv>$callStackParsed</span><span class=p>;</span> <span class=c1>// Whether call stack has been parsed.
-</span><span class=c1></span>
-    <span class=k>private</span> <span class=k>function</span> <span class=fm>__construct</span><span class=p>()</span> <span class=p>{</span>
-        <span class=nv>$user</span> <span class=o>=</span> <span class=nx>Auth</span><span class=o>::</span><span class=na>user</span><span class=p>();</span>
-        <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>id</span> <span class=o>=</span> <span class=o>!</span><span class=k>empty</span><span class=p>(</span><span class=nv>$user</span><span class=o>-&gt;</span><span class=na>name</span><span class=p>)</span> <span class=o>?</span> <span class=nv>$user</span><span class=o>-&gt;</span><span class=na>name</span> <span class=o>:</span> <span class=s1>&#39;anonymous&#39;</span><span class=p>;</span>
-    <span class=p>}</span>
-    <span class=k>private</span> <span class=k>function</span> <span class=fm>__clone</span><span class=p>()</span> <span class=p>{}</span>
-
-    <span class=k>public</span> <span class=k>static</span> <span class=k>function</span> <span class=nf>getInstance</span><span class=p>()</span> <span class=p>{</span>
-        <span class=k>if</span> <span class=p>(</span><span class=o>!</span><span class=nx>self</span><span class=o>::</span><span class=nv>$instance</span><span class=p>)</span> <span class=p>{</span>
-            <span class=nx>self</span><span class=o>::</span><span class=nv>$instance</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>self</span><span class=p>;</span>
-        <span class=p>}</span>
-        <span class=k>return</span> <span class=nx>self</span><span class=o>::</span><span class=nv>$instance</span><span class=p>;</span>
-    <span class=p>}</span>
-
-    <span class=sd>/**
-</span><span class=sd>     * Parse the call stack
-</span><span class=sd>     *
-</span><span class=sd>     * @return void
-</span><span class=sd>     */</span>
-    <span class=k>private</span> <span class=k>function</span> <span class=nf>parseCallStack</span><span class=p>()</span> <span class=p>{</span>
-        <span class=nv>$traceInfo</span> <span class=o>=</span> <span class=nx>debug_backtrace</span><span class=p>(</span><span class=nx>DEBUG_BACKTRACE_PROVIDE_OBJECT</span><span class=o>|</span><span class=nx>DEBUG_BACKTRACE_IGNORE_ARGS</span><span class=p>,</span> <span class=mi>5</span><span class=p>);</span>
-        <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>referer</span> <span class=o>=</span> <span class=s1>&#39;&#39;</span><span class=p>;</span>
-        <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>isHttp</span> <span class=o>=</span> <span class=k>false</span><span class=p>;</span>
-        <span class=k>foreach</span> <span class=p>(</span><span class=nv>$traceInfo</span> <span class=k>as</span> <span class=nv>$callInfo</span><span class=p>)</span> <span class=p>{</span>
-            <span class=k>if</span> <span class=p>(</span><span class=nv>$callInfo</span><span class=p>[</span><span class=s1>&#39;class&#39;</span><span class=p>]</span> <span class=o>!=</span> <span class=no>__CLASS__</span><span class=p>)</span> <span class=p>{</span>
-                <span class=k>if</span> <span class=p>(</span><span class=nx>preg_match</span><span class=p>(</span><span class=s1>&#39;/Controller$/&#39;</span><span class=p>,</span> <span class=nv>$callInfo</span><span class=p>[</span><span class=s1>&#39;class&#39;</span><span class=p>]))</span> <span class=p>{</span>
-                    <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>referer</span> <span class=o>=</span> <span class=nx>Request</span><span class=o>::</span><span class=na>path</span><span class=p>();</span>
-                    <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>isHttp</span> <span class=o>=</span> <span class=k>true</span><span class=p>;</span>
-                <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
-                    <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>referer</span> <span class=o>=</span> <span class=nv>$callInfo</span><span class=p>[</span><span class=s1>&#39;class&#39;</span><span class=p>]</span><span class=o>.</span><span class=nv>$callInfo</span><span class=p>[</span><span class=s1>&#39;type&#39;</span><span class=p>]</span><span class=o>.</span><span class=nv>$callInfo</span><span class=p>[</span><span class=s1>&#39;function&#39;</span><span class=p>];</span>
-                <span class=p>}</span>
-                <span class=k>break</span><span class=p>;</span>
-            <span class=p>}</span>
-        <span class=p>}</span>
-        <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>callStackParsed</span> <span class=o>=</span> <span class=k>true</span><span class=p>;</span>
-    <span class=p>}</span>
-
-    <span class=sd>/**
-</span><span class=sd>     * Wrapper of the laravel log facade
-</span><span class=sd>     *
-</span><span class=sd>     * @return void
-</span><span class=sd>     */</span>
-    <span class=k>public</span> <span class=k>static</span> <span class=k>function</span> <span class=fm>__callStatic</span><span class=p>(</span><span class=nv>$name</span><span class=p>,</span> <span class=nv>$args</span><span class=p>)</span>
-    <span class=p>{</span>
-        <span class=k>if</span> <span class=p>(</span><span class=o>!</span><span class=nx>self</span><span class=o>::</span><span class=na>getInstance</span><span class=p>()</span><span class=o>-&gt;</span><span class=na>callStackParsed</span><span class=p>)</span>
-            <span class=nx>self</span><span class=o>::</span><span class=na>getInstance</span><span class=p>()</span><span class=o>-&gt;</span><span class=na>parseCallStack</span><span class=p>();</span>
-
-        <span class=nv>$id</span>      <span class=o>=</span> <span class=nx>self</span><span class=o>::</span><span class=na>getInstance</span><span class=p>()</span><span class=o>-&gt;</span><span class=na>id</span><span class=p>;</span>
-        <span class=nv>$referer</span> <span class=o>=</span> <span class=nx>self</span><span class=o>::</span><span class=na>getInstance</span><span class=p>()</span><span class=o>-&gt;</span><span class=na>referer</span><span class=p>;</span>
-        <span class=nv>$msg</span>     <span class=o>=</span> <span class=o>!</span><span class=k>empty</span><span class=p>(</span><span class=nv>$args</span><span class=p>)</span> <span class=o>?</span> <span class=nv>$args</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span> <span class=o>:</span> <span class=s1>&#39;&#39;</span><span class=p>;</span>
-        <span class=nx>LaravelLog</span><span class=o>::</span><span class=nv>$name</span><span class=p>(</span><span class=s2>&#34;</span><span class=si>{</span><span class=nv>$id</span><span class=si>}</span><span class=s2> | </span><span class=si>{</span><span class=nv>$referer</span><span class=si>}</span><span class=s2> | </span><span class=si>{</span><span class=nv>$msg</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>);</span>
-
-        <span class=nx>self</span><span class=o>::</span><span class=na>getInstance</span><span class=p>()</span><span class=o>-&gt;</span><span class=na>callStackParsed</span> <span class=o>=</span> <span class=k>false</span><span class=p>;</span>
-    <span class=p>}</span>
-    
-    <span class=sd>/**
-</span><span class=sd>     * Save parameters of the request or arguments of the method to log at debug level
-</span><span class=sd>     *
-</span><span class=sd>     * @param mixed $args Empty for HTTP calls, needed for ordinary class methods
-</span><span class=sd>     * @return void
-</span><span class=sd>     */</span>
-    <span class=k>public</span> <span class=k>static</span> <span class=k>function</span> <span class=nf>saveInput</span><span class=p>(</span><span class=nv>$args</span><span class=o>=</span><span class=k>null</span><span class=p>)</span>
-    <span class=p>{</span>
-        <span class=nx>self</span><span class=o>::</span><span class=na>getInstance</span><span class=p>()</span><span class=o>-&gt;</span><span class=na>parseCallStack</span><span class=p>();</span>
-        <span class=k>if</span> <span class=p>(</span><span class=nx>self</span><span class=o>::</span><span class=na>getInstance</span><span class=p>()</span><span class=o>-&gt;</span><span class=na>isHttp</span><span class=p>)</span> <span class=nv>$args</span> <span class=o>=</span> <span class=nx>Request</span><span class=o>::</span><span class=na>except</span><span class=p>(</span><span class=s1>&#39;_url&#39;</span><span class=p>);</span>
-        <span class=nx>self</span><span class=o>::</span><span class=na>debug</span><span class=p>(</span><span class=s1>&#39;Input:&#39;</span><span class=o>.</span><span class=nx>json_encode</span><span class=p>(</span><span class=nv>$args</span><span class=p>));</span>
-    <span class=p>}</span>
-    
-    <span class=sd>/**
-</span><span class=sd>     * Save the output to log at debug level
-</span><span class=sd>     *
-</span><span class=sd>     * @param mixed $result Result to be saved
-</span><span class=sd>     * @return void
-</span><span class=sd>     */</span>
-    <span class=k>public</span> <span class=k>static</span> <span class=k>function</span> <span class=nf>saveOutput</span><span class=p>(</span><span class=nv>$result</span><span class=p>)</span>
-    <span class=p>{</span>
-        <span class=nx>self</span><span class=o>::</span><span class=na>getInstance</span><span class=p>()</span><span class=o>-&gt;</span><span class=na>parseCallStack</span><span class=p>();</span>
-        <span class=nx>self</span><span class=o>::</span><span class=na>debug</span><span class=p>(</span><span class=s1>&#39;Output:&#39;</span><span class=o>.</span><span class=nx>json_encode</span><span class=p>(</span><span class=nv>$result</span><span class=p>));</span>
-    <span class=p>}</span>
-<span class=p>}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>这是一个单例类，核心在于<code>parseCallStack()</code>方法，通过<code>debug_backtrace()</code>函数获取日志所在的接口，对于REST接口，得到HTTP请求的路径，对于接口类的方法，得到包含类名的接口名。此外，日志中还会记录当前的用户名，方便定位和复现问题。</p>
-<p><code>saveInput()</code>和<code>saveOutput()</code>是在此基础上封装的两个高级方法，用于记录接口的输入和输出，对于界定问题是否出在自己的接口或复现问题都有很重要的作用。对于REST接口，<code>saveInput()</code>可以自动获取请求中的参数，而对于接口类的方法，出于性能和内存占用考虑，没有允许<code>debug_backtrace()</code>返回参数信息，需要用户手动指定要记录的数据。</p>
-<h3 id=使用方法>使用方法</h3>
-<h4 id=安装>安装</h4>
-<div class=highlight><div class=chroma>
+</span></code></pre></td><td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-php data-lang=php><span class=line><span class=cl><span class=o>&lt;?</span><span class=nx>php</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>namespace</span> <span class=nx>Ox3f\LaravelUtils\Log</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>use</span> <span class=nx>Illuminate\Support\Facades\Log</span> <span class=k>as</span> <span class=nx>LaravelLog</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>use</span> <span class=nx>Illuminate\Support\Facades\Auth</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>use</span> <span class=nx>Illuminate\Support\Facades\Request</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=sd>/**
+</span></span></span><span class=line><span class=cl><span class=sd> * Class Log
+</span></span></span><span class=line><span class=cl><span class=sd> * @author donie
+</span></span></span><span class=line><span class=cl><span class=sd> */</span>
+</span></span><span class=line><span class=cl><span class=k>class</span> <span class=nc>Log</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>private</span> <span class=k>static</span> <span class=nv>$instance</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>private</span> <span class=nv>$id</span><span class=p>;</span>              <span class=c1>// Identity of the log, username by default.
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>private</span> <span class=nv>$referer</span><span class=p>;</span>         <span class=c1>// Request path for RESTful APIs, method name for ordinary class methods.
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>private</span> <span class=nv>$isHttp</span><span class=p>;</span>          <span class=c1>// True for RESTful APIs, otherwise, false.
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>private</span> <span class=nv>$callStackParsed</span><span class=p>;</span> <span class=c1>// Whether call stack has been parsed.
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl>    <span class=k>private</span> <span class=k>function</span> <span class=fm>__construct</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nv>$user</span> <span class=o>=</span> <span class=nx>Auth</span><span class=o>::</span><span class=na>user</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>        <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>id</span> <span class=o>=</span> <span class=o>!</span><span class=k>empty</span><span class=p>(</span><span class=nv>$user</span><span class=o>-&gt;</span><span class=na>name</span><span class=p>)</span> <span class=o>?</span> <span class=nv>$user</span><span class=o>-&gt;</span><span class=na>name</span> <span class=o>:</span> <span class=s1>&#39;anonymous&#39;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=k>private</span> <span class=k>function</span> <span class=fm>__clone</span><span class=p>()</span> <span class=p>{}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>public</span> <span class=k>static</span> <span class=k>function</span> <span class=nf>getInstance</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=o>!</span><span class=nx>self</span><span class=o>::</span><span class=nv>$instance</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nx>self</span><span class=o>::</span><span class=nv>$instance</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>self</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=nx>self</span><span class=o>::</span><span class=nv>$instance</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=sd>/**
+</span></span></span><span class=line><span class=cl><span class=sd>     * Parse the call stack
+</span></span></span><span class=line><span class=cl><span class=sd>     *
+</span></span></span><span class=line><span class=cl><span class=sd>     * @return void
+</span></span></span><span class=line><span class=cl><span class=sd>     */</span>
+</span></span><span class=line><span class=cl>    <span class=k>private</span> <span class=k>function</span> <span class=nf>parseCallStack</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nv>$traceInfo</span> <span class=o>=</span> <span class=nx>debug_backtrace</span><span class=p>(</span><span class=nx>DEBUG_BACKTRACE_PROVIDE_OBJECT</span><span class=o>|</span><span class=nx>DEBUG_BACKTRACE_IGNORE_ARGS</span><span class=p>,</span> <span class=mi>5</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>referer</span> <span class=o>=</span> <span class=s1>&#39;&#39;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>isHttp</span> <span class=o>=</span> <span class=k>false</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=k>foreach</span> <span class=p>(</span><span class=nv>$traceInfo</span> <span class=k>as</span> <span class=nv>$callInfo</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=p>(</span><span class=nv>$callInfo</span><span class=p>[</span><span class=s1>&#39;class&#39;</span><span class=p>]</span> <span class=o>!=</span> <span class=no>__CLASS__</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=k>if</span> <span class=p>(</span><span class=nx>preg_match</span><span class=p>(</span><span class=s1>&#39;/Controller$/&#39;</span><span class=p>,</span> <span class=nv>$callInfo</span><span class=p>[</span><span class=s1>&#39;class&#39;</span><span class=p>]))</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                    <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>referer</span> <span class=o>=</span> <span class=nx>Request</span><span class=o>::</span><span class=na>path</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>                    <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>isHttp</span> <span class=o>=</span> <span class=k>true</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>                <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                    <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>referer</span> <span class=o>=</span> <span class=nv>$callInfo</span><span class=p>[</span><span class=s1>&#39;class&#39;</span><span class=p>]</span><span class=o>.</span><span class=nv>$callInfo</span><span class=p>[</span><span class=s1>&#39;type&#39;</span><span class=p>]</span><span class=o>.</span><span class=nv>$callInfo</span><span class=p>[</span><span class=s1>&#39;function&#39;</span><span class=p>];</span>
+</span></span><span class=line><span class=cl>                <span class=p>}</span>
+</span></span><span class=line><span class=cl>                <span class=k>break</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>callStackParsed</span> <span class=o>=</span> <span class=k>true</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=sd>/**
+</span></span></span><span class=line><span class=cl><span class=sd>     * Wrapper of the laravel log facade
+</span></span></span><span class=line><span class=cl><span class=sd>     *
+</span></span></span><span class=line><span class=cl><span class=sd>     * @return void
+</span></span></span><span class=line><span class=cl><span class=sd>     */</span>
+</span></span><span class=line><span class=cl>    <span class=k>public</span> <span class=k>static</span> <span class=k>function</span> <span class=fm>__callStatic</span><span class=p>(</span><span class=nv>$name</span><span class=p>,</span> <span class=nv>$args</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=o>!</span><span class=nx>self</span><span class=o>::</span><span class=na>getInstance</span><span class=p>()</span><span class=o>-&gt;</span><span class=na>callStackParsed</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=nx>self</span><span class=o>::</span><span class=na>getInstance</span><span class=p>()</span><span class=o>-&gt;</span><span class=na>parseCallStack</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=nv>$id</span>      <span class=o>=</span> <span class=nx>self</span><span class=o>::</span><span class=na>getInstance</span><span class=p>()</span><span class=o>-&gt;</span><span class=na>id</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=nv>$referer</span> <span class=o>=</span> <span class=nx>self</span><span class=o>::</span><span class=na>getInstance</span><span class=p>()</span><span class=o>-&gt;</span><span class=na>referer</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=nv>$msg</span>     <span class=o>=</span> <span class=o>!</span><span class=k>empty</span><span class=p>(</span><span class=nv>$args</span><span class=p>)</span> <span class=o>?</span> <span class=nv>$args</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span> <span class=o>:</span> <span class=s1>&#39;&#39;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=nx>LaravelLog</span><span class=o>::</span><span class=nv>$name</span><span class=p>(</span><span class=s2>&#34;</span><span class=si>{</span><span class=nv>$id</span><span class=si>}</span><span class=s2> | </span><span class=si>{</span><span class=nv>$referer</span><span class=si>}</span><span class=s2> | </span><span class=si>{</span><span class=nv>$msg</span><span class=si>}</span><span class=s2>&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=nx>self</span><span class=o>::</span><span class=na>getInstance</span><span class=p>()</span><span class=o>-&gt;</span><span class=na>callStackParsed</span> <span class=o>=</span> <span class=k>false</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    
+</span></span><span class=line><span class=cl>    <span class=sd>/**
+</span></span></span><span class=line><span class=cl><span class=sd>     * Save parameters of the request or arguments of the method to log at debug level
+</span></span></span><span class=line><span class=cl><span class=sd>     *
+</span></span></span><span class=line><span class=cl><span class=sd>     * @param mixed $args Empty for HTTP calls, needed for ordinary class methods
+</span></span></span><span class=line><span class=cl><span class=sd>     * @return void
+</span></span></span><span class=line><span class=cl><span class=sd>     */</span>
+</span></span><span class=line><span class=cl>    <span class=k>public</span> <span class=k>static</span> <span class=k>function</span> <span class=nf>saveInput</span><span class=p>(</span><span class=nv>$args</span><span class=o>=</span><span class=k>null</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>self</span><span class=o>::</span><span class=na>getInstance</span><span class=p>()</span><span class=o>-&gt;</span><span class=na>parseCallStack</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=nx>self</span><span class=o>::</span><span class=na>getInstance</span><span class=p>()</span><span class=o>-&gt;</span><span class=na>isHttp</span><span class=p>)</span> <span class=nv>$args</span> <span class=o>=</span> <span class=nx>Request</span><span class=o>::</span><span class=na>except</span><span class=p>(</span><span class=s1>&#39;_url&#39;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=nx>self</span><span class=o>::</span><span class=na>debug</span><span class=p>(</span><span class=s1>&#39;Input:&#39;</span><span class=o>.</span><span class=nx>json_encode</span><span class=p>(</span><span class=nv>$args</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    
+</span></span><span class=line><span class=cl>    <span class=sd>/**
+</span></span></span><span class=line><span class=cl><span class=sd>     * Save the output to log at debug level
+</span></span></span><span class=line><span class=cl><span class=sd>     *
+</span></span></span><span class=line><span class=cl><span class=sd>     * @param mixed $result Result to be saved
+</span></span></span><span class=line><span class=cl><span class=sd>     * @return void
+</span></span></span><span class=line><span class=cl><span class=sd>     */</span>
+</span></span><span class=line><span class=cl>    <span class=k>public</span> <span class=k>static</span> <span class=k>function</span> <span class=nf>saveOutput</span><span class=p>(</span><span class=nv>$result</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>self</span><span class=o>::</span><span class=na>getInstance</span><span class=p>()</span><span class=o>-&gt;</span><span class=na>parseCallStack</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>        <span class=nx>self</span><span class=o>::</span><span class=na>debug</span><span class=p>(</span><span class=s1>&#39;Output:&#39;</span><span class=o>.</span><span class=nx>json_encode</span><span class=p>(</span><span class=nv>$result</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>这是一个单例类，核心在于<code>parseCallStack()</code>方法，通过<code>debug_backtrace()</code>函数获取日志所在的接口，对于REST接口，得到HTTP请求的路径，对于接口类的方法，得到包含类名的接口名。此外，日志中还会记录当前的用户名，方便定位和复现问题。</p><p><code>saveInput()</code>和<code>saveOutput()</code>是在此基础上封装的两个高级方法，用于记录接口的输入和输出，对于界定问题是否出在自己的接口或复现问题都有很重要的作用。对于REST接口，<code>saveInput()</code>可以自动获取请求中的参数，而对于接口类的方法，出于性能和内存占用考虑，没有允许<code>debug_backtrace()</code>返回参数信息，需要用户手动指定要记录的数据。</p><h3 id=使用方法>使用方法</h3><h4 id=安装>安装</h4><div class=highlight><div class=chroma>
 <table class=lntable><tr><td class=lntd>
 <pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>composer require xbot/laravel-utils
-</code></pre></td></tr></table>
-</div>
-</div><h4 id=使用>使用</h4>
-<div class=highlight><div class=chroma>
+</span></code></pre></td><td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>composer require xbot/laravel-utils
+</span></span></code></pre></td></tr></table></div></div><h4 id=使用>使用</h4><div class=highlight><div class=chroma>
 <table class=lntable><tr><td class=lntd>
 <pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
@@ -313,38 +272,24 @@ Posted at &mdash; Apr 25, 2017
 </span><span class=lnt>4
 </span><span class=lnt>5
 </span><span class=lnt>6
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-php data-lang=php><span class=k>use</span> <span class=nx>Ox3f\LaravelUtils\Log\Log</span><span class=p>;</span>
-
-<span class=nx>Log</span><span class=o>::</span><span class=na>saveInput</span><span class=p>();</span>                   <span class=c1>// REST接口中自动保存请求数据
-</span><span class=c1></span><span class=nx>Log</span><span class=o>::</span><span class=na>saveInput</span><span class=p>(</span><span class=nx>func_get_args</span><span class=p>());</span>    <span class=c1>// 接口类的方法中保存实参
-</span><span class=c1></span><span class=nx>Log</span><span class=o>::</span><span class=na>error</span><span class=p>(</span><span class=s1>&#39;This is an error.&#39;</span><span class=p>);</span>    <span class=c1>// 记录一条错误日志
-</span><span class=c1></span><span class=nx>Log</span><span class=o>::</span><span class=na>saveOutput</span><span class=p>(</span><span class=nv>$result</span><span class=p>);</span>           <span class=c1>// 保存接口返回值
-</span></code></pre></td></tr></table>
-</div>
-</div><h4 id=日志示例>日志示例</h4>
-<pre tabindex=0><code>[2017-04-25 06:46:11] local.DEBUG: donie | users/groups/33 | Input:{&quot;check&quot;:&quot;1&quot;}
+</span></code></pre></td><td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-php data-lang=php><span class=line><span class=cl><span class=k>use</span> <span class=nx>Ox3f\LaravelUtils\Log\Log</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nx>Log</span><span class=o>::</span><span class=na>saveInput</span><span class=p>();</span>                   <span class=c1>// REST接口中自动保存请求数据
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nx>Log</span><span class=o>::</span><span class=na>saveInput</span><span class=p>(</span><span class=nx>func_get_args</span><span class=p>());</span>    <span class=c1>// 接口类的方法中保存实参
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nx>Log</span><span class=o>::</span><span class=na>error</span><span class=p>(</span><span class=s1>&#39;This is an error.&#39;</span><span class=p>);</span>    <span class=c1>// 记录一条错误日志
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nx>Log</span><span class=o>::</span><span class=na>saveOutput</span><span class=p>(</span><span class=nv>$result</span><span class=p>);</span>           <span class=c1>// 保存接口返回值
+</span></span></span></code></pre></td></tr></table></div></div><h4 id=日志示例>日志示例</h4><pre tabindex=0><code>[2017-04-25 06:46:11] local.DEBUG: donie | users/groups/33 | Input:{&#34;check&#34;:&#34;1&#34;}
 [2017-04-25 06:46:11] local.ERROR: donie | users/groups/33 | This is an error.
-</code></pre><h2 id=待讨论的问题>待讨论的问题</h2>
-<p>最佳实践需要持续改进，以下问题有待讨论：</p>
-<h3 id=关键业务数据中是否应该包含request-id>关键业务数据中是否应该包含Request ID？</h3>
-<p>是否有必要对每次请求生成一个ID？这样可以很简单地过滤出一次请求中所有的日志。</p>
-</article>
-</main>
-<script>const repo='xbot/blog-comments',issueTerm='pathname',theme=localStorage.theme?`github-${localStorage.theme}`:'preferred-color-scheme',script=document.createElement('script');script.src='https://utteranc.es/client.js',script.async=!0,script.crossOrigin='anonymous',script.setAttribute('repo',repo),script.setAttribute('issue-term',issueTerm),script.setAttribute('theme',theme),script.setAttribute('label','comment'),document.querySelector('main').appendChild(script)</script>
+</code></pre><h2 id=待讨论的问题>待讨论的问题</h2><p>最佳实践需要持续改进，以下问题有待讨论：</p><h3 id=关键业务数据中是否应该包含request-id>关键业务数据中是否应该包含Request ID？</h3><p>是否有必要对每次请求生成一个ID？这样可以很简单地过滤出一次请求中所有的日志。</p></article></main><script>const repo="xbot/blog-comments",issueTerm="pathname",theme=localStorage.theme?`github-${localStorage.theme}`:"preferred-color-scheme",script=document.createElement("script");script.src="https://utteranc.es/client.js",script.async=!0,script.crossOrigin="anonymous",script.setAttribute("repo",repo),script.setAttribute("issue-term",issueTerm),script.setAttribute("theme",theme),script.setAttribute("label","comment"),document.querySelector("main").appendChild(script)</script>
 <footer class="mt-8 flex sm:flex-col-reverse justify-between items-center">
 <p class="mt-0 text-sm">
 © 淘气 2021 |
 <a href=https://gohugo.io target=_blank rel="noopener noreferrer">Hugo</a> on
 <a href=https://github.com/mivinci/hugo-theme-minima target=_blank rel="noopener noreferrer">Minima</a>
-</p>
-<p class="flex items-center mt-0">
+</p><p class="flex items-center mt-0">
 <a class="icon mx-2" href=https://github.com/xbot title=github><svg fill="#63636f" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>GitHub</title><path d="M12 .297c-6.63.0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577.0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93.0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176.0.0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22.0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22.0 1.606-.015 2.896-.015 3.286.0.315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
 </a>
 <a class="icon mx-2" href=/index.xml title=rss><svg fill="#63636f" t="1626591563876" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" p-id="1984" width="18" height="16"><path d="M128 768a128 128 0 100 256 128 128 0 000-256zM0 368v176c265.104.0 480 214.912 480 480h176c0-362.32-293.696-656-656-656zM0 0v176c468.336.0 848 379.664 848 848h176C1024 458.464 565.536.0.0.0z" p-id="1985"/></svg>
 </a>
-</p>
-</footer>
-</body>
-</html>
+</p></footer></body></html>

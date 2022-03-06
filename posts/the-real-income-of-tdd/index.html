@@ -23,71 +23,47 @@
 这时候如果用单元测试并mock出依赖关系，就可以随时随地、无限制地执行相关的业务逻辑。对效率的提高不言而喻。
 特别的，mock并不是随时可以抓起的救命稻草，它的原罪在于：不负责任地滥用mock会导致很多问题被掩盖。因此，对mock的使用应该是节制的、目标明确的。
 当然，这并不包括单纯地为了提高代码覆盖率而使用mock，只所以这是个在很多强制TDD的团队里的普遍现象，归根结底是因为KPI是万恶之源，任何好的方法论，一旦沦为KPI，就离死不远了。">
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-93233020-1','auto'),ga('send','pageview'))</script>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(e,o,i,a,t,n,s){e.GoogleAnalyticsObject=t,e[t]=e[t]||function(){(e[t].q=e[t].q||[]).push(arguments)},e[t].l=1*new Date,n=o.createElement(i),s=o.getElementsByTagName(i)[0],n.async=1,n.src=a,s.parentNode.insertBefore(n,s)}(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-93233020-1","auto"),ga("send","pageview"))</script>
 <meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff">
 <meta name=theme-color media="(prefers-color-scheme: dark)" content="#262d33">
 <title>
 晴耕雨讀 - 测试驱动开发的实际收益
-</title>
-<link rel="shortcut icon" href=/favicon.ico type=image/x-icon>
+</title><link rel="shortcut icon" href=/favicon.ico type=image/x-icon>
 <link rel=preconnect href=https://fonts.googleapis.com>
 <link rel=preconnect href=https://fonts.gstatic.com crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel=stylesheet>
-<link rel=stylesheet href=/minima.1644819155.css>
-<script defer type=text/javascript src=/minima.1644819155.js></script>
-</head>
-<script>let theme_2b_used=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';try{if(!('theme'in localStorage)){const a='';(a==='dark'||a==='light')&&(theme_2b_used=a),localStorage.theme=theme_2b_used}document.querySelector('html').classList.add(localStorage.theme)}catch(a){console.error(a)}</script>
+<link rel=stylesheet href=/minima.1646564241.css>
+<script defer type=text/javascript src=/minima.1646564241.js></script>
+</head><script>let theme_2b_used=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";try{if(!("theme"in localStorage)){const e='';(e==="dark"||e==="light")&&(theme_2b_used=e),localStorage.theme=theme_2b_used}document.querySelector("html").classList.add(localStorage.theme)}catch(e){console.error(e)}</script>
 <body class="sm:mx-5 sm:my-0">
 <header class="flex justify-between items-center mb-6 sm:my-3">
 <div class="flex items-center">
-<div id=theme-switcher class="text-4xl cursor-pointer">🌚</div>
-</div>
-<nav class="flex items-center
+<div id=theme-switcher class="text-4xl cursor-pointer">🌚</div></div><nav class="flex items-center
 whitespace-nowrap overflow-x-auto overflow-y-hidden">
 <a class=ml-5 href=/>主頁</a>
 <a class=ml-5 href=/posts>文章</a>
 <a class=ml-5 href=/tags>標籤</a>
 <a class=ml-5 href=/categories>分類</a>
 <a class=ml-5 href=/about>關於</a>
-</nav>
-</header>
-<h1 class="mt-6 mb-6">测试驱动开发的实际收益</h1>
-<div class="mb-3 text-xs flex justify-between sm:flex-col">
+</nav></header><h1 class="mt-6 mb-6">测试驱动开发的实际收益</h1><div class="mb-3 text-xs flex justify-between sm:flex-col">
 <div>
 Posted at &mdash; Dec 17, 2017
-</div>
-<div class=sm:mt-4>
+</div><div class=sm:mt-4>
 <a class=not-first:ml-3 href=/tags/%e6%9c%80%e4%bd%b3%e5%ae%9e%e8%b7%b5>#最佳实践</a>
 <a class=not-first:ml-3 href=/tags/%e9%9a%8f%e7%ac%94>#随笔</a>
 <a class=not-first:ml-3 href=/tags/%e7%bc%96%e7%a8%8b>#编程</a>
 <a class=not-first:ml-3 href=/tags/%e5%8d%95%e5%85%83%e6%b5%8b%e8%af%95>#单元测试</a>
-</div>
-</div>
-<main>
-<p></p>
-<article class=md>
-<p>我并不试图系统地谈TDD，因为我在这方面的经验还不足以做到这一点。但是TDD的一些方法论和工具确实解决了我在实际开发过程中遇到的一些问题。</p>
-<p>第一个问题是健壮性。尤其是对于我这样思维发散、容易迷失又喜欢重构的人，TDD给了我一个明确的目标，在一切刚开始的时候，我要做的只是满足测试用例，让它们由红变绿。到了重构阶段，我就可以把精力放到优化代码上面，且不必对健壮性有过多的担心。在此之前，由于手动测试比较麻烦，很多时候惰性会说服潜意识告诉自己这部分逻辑很简单、不会有什么bug，结果提交测试后却一再地发生问题。</p>
-<p>第二个问题是效率。曾经只有不忙的时候才会写测试用例，但是现在一般都会写，因为确实可以提高开发效率，而不只是保证重构的健壮性。可能对于所有对单元测试不熟悉的人来说，这都是匪夷所思的，我也曾认为单元测试只是用来保证健壮性的，必然和开发效率是一对矛盾，因为要花很多时间写测试代码。这种想法首先是因为对单元测试不熟悉，所以才需要花很多时间在上面。其次是没有看到它所带来的好处。</p>
-<p>例如你要实现一整套退款单的功能，退款单是依赖订单的，这意味著你需要不只一条符合条件的订单数据。但是订单是有状态的，随著时间的推移、人为的操作或者开发过程中程序的影响，状态会变得不再符合你的要求，这时候你就必须停下来去做更多符合要求的订单。而创建订单也存在很多麻烦，你需要找到有库存的商品，有时候还要去库管系统中补充库存，然后下单并支付。最后花了很多时间做出来的订单，因为正在开发的退款单的程序出现的一个小问题变得不能使用！时间被大量浪费在创建所依赖的上游数据上。</p>
-<p>这时候如果用单元测试并mock出依赖关系，就可以随时随地、无限制地执行相关的业务逻辑。对效率的提高不言而喻。</p>
-<p>特别的，mock并不是随时可以抓起的救命稻草，它的原罪在于：不负责任地滥用mock会导致很多问题被掩盖。因此，对mock的使用应该是节制的、目标明确的。</p>
-<p>当然，这并不包括单纯地为了提高代码覆盖率而使用mock，只所以这是个在很多强制TDD的团队里的普遍现象，归根结底是因为KPI是万恶之源，任何好的方法论，一旦沦为KPI，就离死不远了。</p>
-</article>
-</main>
-<script>const repo='xbot/blog-comments',issueTerm='pathname',theme=localStorage.theme?`github-${localStorage.theme}`:'preferred-color-scheme',script=document.createElement('script');script.src='https://utteranc.es/client.js',script.async=!0,script.crossOrigin='anonymous',script.setAttribute('repo',repo),script.setAttribute('issue-term',issueTerm),script.setAttribute('theme',theme),script.setAttribute('label','comment'),document.querySelector('main').appendChild(script)</script>
+</div></div><main>
+<p></p><article class=md>
+<p>我并不试图系统地谈TDD，因为我在这方面的经验还不足以做到这一点。但是TDD的一些方法论和工具确实解决了我在实际开发过程中遇到的一些问题。</p><p>第一个问题是健壮性。尤其是对于我这样思维发散、容易迷失又喜欢重构的人，TDD给了我一个明确的目标，在一切刚开始的时候，我要做的只是满足测试用例，让它们由红变绿。到了重构阶段，我就可以把精力放到优化代码上面，且不必对健壮性有过多的担心。在此之前，由于手动测试比较麻烦，很多时候惰性会说服潜意识告诉自己这部分逻辑很简单、不会有什么bug，结果提交测试后却一再地发生问题。</p><p>第二个问题是效率。曾经只有不忙的时候才会写测试用例，但是现在一般都会写，因为确实可以提高开发效率，而不只是保证重构的健壮性。可能对于所有对单元测试不熟悉的人来说，这都是匪夷所思的，我也曾认为单元测试只是用来保证健壮性的，必然和开发效率是一对矛盾，因为要花很多时间写测试代码。这种想法首先是因为对单元测试不熟悉，所以才需要花很多时间在上面。其次是没有看到它所带来的好处。</p><p>例如你要实现一整套退款单的功能，退款单是依赖订单的，这意味著你需要不只一条符合条件的订单数据。但是订单是有状态的，随著时间的推移、人为的操作或者开发过程中程序的影响，状态会变得不再符合你的要求，这时候你就必须停下来去做更多符合要求的订单。而创建订单也存在很多麻烦，你需要找到有库存的商品，有时候还要去库管系统中补充库存，然后下单并支付。最后花了很多时间做出来的订单，因为正在开发的退款单的程序出现的一个小问题变得不能使用！时间被大量浪费在创建所依赖的上游数据上。</p><p>这时候如果用单元测试并mock出依赖关系，就可以随时随地、无限制地执行相关的业务逻辑。对效率的提高不言而喻。</p><p>特别的，mock并不是随时可以抓起的救命稻草，它的原罪在于：不负责任地滥用mock会导致很多问题被掩盖。因此，对mock的使用应该是节制的、目标明确的。</p><p>当然，这并不包括单纯地为了提高代码覆盖率而使用mock，只所以这是个在很多强制TDD的团队里的普遍现象，归根结底是因为KPI是万恶之源，任何好的方法论，一旦沦为KPI，就离死不远了。</p></article></main><script>const repo="xbot/blog-comments",issueTerm="pathname",theme=localStorage.theme?`github-${localStorage.theme}`:"preferred-color-scheme",script=document.createElement("script");script.src="https://utteranc.es/client.js",script.async=!0,script.crossOrigin="anonymous",script.setAttribute("repo",repo),script.setAttribute("issue-term",issueTerm),script.setAttribute("theme",theme),script.setAttribute("label","comment"),document.querySelector("main").appendChild(script)</script>
 <footer class="mt-8 flex sm:flex-col-reverse justify-between items-center">
 <p class="mt-0 text-sm">
 © 淘气 2021 |
 <a href=https://gohugo.io target=_blank rel="noopener noreferrer">Hugo</a> on
 <a href=https://github.com/mivinci/hugo-theme-minima target=_blank rel="noopener noreferrer">Minima</a>
-</p>
-<p class="flex items-center mt-0">
+</p><p class="flex items-center mt-0">
 <a class="icon mx-2" href=https://github.com/xbot title=github><svg fill="#63636f" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>GitHub</title><path d="M12 .297c-6.63.0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577.0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93.0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176.0.0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22.0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22.0 1.606-.015 2.896-.015 3.286.0.315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
 </a>
 <a class="icon mx-2" href=/index.xml title=rss><svg fill="#63636f" t="1626591563876" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" p-id="1984" width="18" height="16"><path d="M128 768a128 128 0 100 256 128 128 0 000-256zM0 368v176c265.104.0 480 214.912 480 480h176c0-362.32-293.696-656-656-656zM0 0v176c468.336.0 848 379.664 848 848h176C1024 458.464 565.536.0.0.0z" p-id="1985"/></svg>
 </a>
-</p>
-</footer>
-</body>
-</html>
+</p></footer></body></html>
