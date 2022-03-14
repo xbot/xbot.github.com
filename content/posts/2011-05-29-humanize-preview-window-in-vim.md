@@ -10,13 +10,10 @@ tags:
 status: publish
 published: true
 comments: true
-meta:
-  aktt_notify_twitter: 'no'
-  views: '1072'
 ---
-<p>Vim的预览窗口由<code>:ptag</code>等命令触发，可用于预览函数定义。但在缺省情况下，预览窗口的高度是固定的，对于注释信息较多的函数，往往不能完全显示注释，而对于注释较少的函数，又会有多余的行浪费屏幕空间。</p>
+Vim的预览窗口由 `:ptag` 等命令触发，可用于预览函数定义。但在缺省情况下，预览窗口的高度是固定的，对于注释信息较多的函数，往往不能完全显示注释，而对于注释较少的函数，又会有多余的行浪费屏幕空间。
 
-<p>下面的函数用于解决这个问题：</p>
+下面的函数用于解决这个问题：
 
 ```vim
 " 调用:ptag命令预览光标所在<word>的定义
@@ -60,7 +57,7 @@ nmap <leader>pp :call PTagIt()<CR>
 nmap <leader>pc :pclose<CR>
 ```
 
-<p>例如对于如下的函数定义：</p>
+例如对于如下的函数定义：
 
 ```php
 /*
@@ -72,6 +69,6 @@ nmap <leader>pc :pclose<CR>
 function foo($bar1, $bar2) {...}
 ```
 
-<p>实际效果为打开的预览窗口将完全显示并只显示以上内容。</p>
+实际效果为打开的预览窗口将完全显示并只显示以上内容。
 
-<p>Posted via <a href="http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/">UltraBlog.vim</a>.</p>
+Posted via [UltraBlog.vim](/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/).
