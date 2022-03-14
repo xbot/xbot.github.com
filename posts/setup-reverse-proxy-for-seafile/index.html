@@ -1,75 +1,22 @@
-<!doctype html><html lang=en>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta property="og:title" content="为 Seafile 配置反向代理的问题">
-<meta property="og:description" content="我目前用 SWAG 做 Homelab 的反向代理，在和其它服务一样为 Seafile 配置好后，访问时却报如下错误：
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta property="og:title" content="为 Seafile 配置反向代理的问题"><meta property="og:description" content="我目前用 SWAG 做 Homelab 的反向代理，在和其它服务一样为 Seafile 配置好后，访问时却报如下错误：
  Contradictory scheme headers
  原因是 Seafile 的 Docker 镜像里已经使用了 NGINX 做反代，而且配置里包含和 SWAG 反代相同的配置项：
 1  proxy_set_header X-Forwarded-Proto $scheme；   此时，通过 HTTPS 访问的 SWAG 反代传递的 HEADER 里 X-Forwarded-Proto 是 https ，而通过 HTTP 访问的 Seafile 传递的是 http ，就会报以上错误。
 一种解决方法是，把 Seafile 的 /etc/nginx/conf.d/seafile.nginx.conf 复制到宿主机，把文件中 X-Forwarded-Proto 这一行注释掉，然后映射到 Docker 容器的上述路径上：
-1  -v '/mnt/user/appdata/seafile/seafile.nginx.conf':'/etc/nginx/conf.d/seafile.nginx.conf':'ro'   需要注意的是，不同版本的 Seafile 镜像里该文件的路径可能不同。">
-<meta property="og:type" content="article">
-<meta property="og:url" content="http://0x3f.org/posts/setup-reverse-proxy-for-seafile/"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2022-01-10T23:27:08+08:00">
-<meta property="article:modified_time" content="2022-01-10T23:27:08+08:00">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="为 Seafile 配置反向代理的问题">
-<meta name=twitter:description content="我目前用 SWAG 做 Homelab 的反向代理，在和其它服务一样为 Seafile 配置好后，访问时却报如下错误：
+1  -v '/mnt/user/appdata/seafile/seafile.nginx.conf':'/etc/nginx/conf.d/seafile.nginx.conf':'ro'   需要注意的是，不同版本的 Seafile 镜像里该文件的路径可能不同。"><meta property="og:type" content="article"><meta property="og:url" content="http://0x3f.org/posts/setup-reverse-proxy-for-seafile/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-01-10T23:27:08+08:00"><meta property="article:modified_time" content="2022-01-10T23:27:08+08:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="为 Seafile 配置反向代理的问题"><meta name=twitter:description content="我目前用 SWAG 做 Homelab 的反向代理，在和其它服务一样为 Seafile 配置好后，访问时却报如下错误：
  Contradictory scheme headers
  原因是 Seafile 的 Docker 镜像里已经使用了 NGINX 做反代，而且配置里包含和 SWAG 反代相同的配置项：
 1  proxy_set_header X-Forwarded-Proto $scheme；   此时，通过 HTTPS 访问的 SWAG 反代传递的 HEADER 里 X-Forwarded-Proto 是 https ，而通过 HTTP 访问的 Seafile 传递的是 http ，就会报以上错误。
 一种解决方法是，把 Seafile 的 /etc/nginx/conf.d/seafile.nginx.conf 复制到宿主机，把文件中 X-Forwarded-Proto 这一行注释掉，然后映射到 Docker 容器的上述路径上：
-1  -v '/mnt/user/appdata/seafile/seafile.nginx.conf':'/etc/nginx/conf.d/seafile.nginx.conf':'ro'   需要注意的是，不同版本的 Seafile 镜像里该文件的路径可能不同。">
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(e,o,i,a,t,n,s){e.GoogleAnalyticsObject=t,e[t]=e[t]||function(){(e[t].q=e[t].q||[]).push(arguments)},e[t].l=1*new Date,n=o.createElement(i),s=o.getElementsByTagName(i)[0],n.async=1,n.src=a,s.parentNode.insertBefore(n,s)}(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-93233020-1","auto"),ga("send","pageview"))</script>
-<meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff">
-<meta name=theme-color media="(prefers-color-scheme: dark)" content="#262d33">
-<title>
-晴耕雨讀 - 为 Seafile 配置反向代理的问题
-</title><link rel="shortcut icon" href=/favicon.ico type=image/x-icon>
-<link rel=preconnect href=https://fonts.googleapis.com>
-<link rel=preconnect href=https://fonts.gstatic.com crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel=stylesheet>
-<link rel=stylesheet href=/minima.1646564265.css>
-<script defer type=text/javascript src=/minima.1646564265.js></script>
-</head><script>let theme_2b_used=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";try{if(!("theme"in localStorage)){const e='';(e==="dark"||e==="light")&&(theme_2b_used=e),localStorage.theme=theme_2b_used}document.querySelector("html").classList.add(localStorage.theme)}catch(e){console.error(e)}</script>
-<body class="sm:mx-5 sm:my-0">
-<header class="flex justify-between items-center mb-6 sm:my-3">
-<div class="flex items-center">
-<div id=theme-switcher class="text-4xl cursor-pointer">🌚</div></div><nav class="flex items-center
-whitespace-nowrap overflow-x-auto overflow-y-hidden">
-<a class=ml-5 href=/>主頁</a>
+1  -v '/mnt/user/appdata/seafile/seafile.nginx.conf':'/etc/nginx/conf.d/seafile.nginx.conf':'ro'   需要注意的是，不同版本的 Seafile 镜像里该文件的路径可能不同。"><script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(e,o,i,a,t,n,s){e.GoogleAnalyticsObject=t,e[t]=e[t]||function(){(e[t].q=e[t].q||[]).push(arguments)},e[t].l=1*new Date,n=o.createElement(i),s=o.getElementsByTagName(i)[0],n.async=1,n.src=a,s.parentNode.insertBefore(n,s)}(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-93233020-1","auto"),ga("send","pageview"))</script><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#262d33"><title>晴耕雨讀 - 为 Seafile 配置反向代理的问题</title><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=preconnect href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel=stylesheet><link rel=stylesheet href=/minima.1647241093.css><script defer type=text/javascript src=/minima.1647241093.js></script></head><script>let theme_2b_used=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";try{if(!("theme"in localStorage)){const e='';(e==="dark"||e==="light")&&(theme_2b_used=e),localStorage.theme=theme_2b_used}document.querySelector("html").classList.add(localStorage.theme)}catch(e){console.error(e)}</script><body class="sm:mx-5 sm:my-0"><header class="flex justify-between items-center mb-6 sm:my-3"><div class="flex items-center"><div id=theme-switcher class="text-4xl cursor-pointer">🌚</div></div><nav class="flex items-center
+whitespace-nowrap overflow-x-auto overflow-y-hidden"><a class=ml-5 href=/>主頁</a>
 <a class=ml-5 href=/posts>文章</a>
 <a class=ml-5 href=/tags>標籤</a>
 <a class=ml-5 href=/categories>分類</a>
-<a class=ml-5 href=/about>關於</a>
-</nav></header><h1 class="mt-6 mb-6">为 Seafile 配置反向代理的问题</h1><div class="mb-3 text-xs flex justify-between sm:flex-col">
-<div>
-Posted at &mdash; Jan 10, 2022
-</div><div class=sm:mt-4>
-<a class=not-first:ml-3 href=/tags/NAS>#NAS</a>
-</div></div><main>
-<p></p><article class=md>
-<p>我目前用 SWAG 做 Homelab 的反向代理，在和其它服务一样为 Seafile 配置好后，访问时却报如下错误：</p><blockquote>
-<p>Contradictory scheme headers</p></blockquote><p>原因是 Seafile 的 Docker 镜像里已经使用了 NGINX 做反代，而且配置里包含和 SWAG 反代相同的配置项：</p><div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td><td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-NGINX data-lang=NGINX><span class=line><span class=cl><span class=k>proxy_set_header</span> <span class=s>X-Forwarded-Proto</span> <span class=nv>$scheme；</span>
-</span></span></code></pre></td></tr></table></div></div><p>此时，通过 HTTPS 访问的 SWAG 反代传递的 HEADER 里 <code>X-Forwarded-Proto</code> 是 <code>https</code> ，而通过 HTTP 访问的 Seafile 传递的是 <code>http</code> ，就会报以上错误。</p><p>一种解决方法是，把 Seafile 的 <code>/etc/nginx/conf.d/seafile.nginx.conf</code> 复制到宿主机，把文件中 <code>X-Forwarded-Proto</code> 这一行注释掉，然后映射到 Docker 容器的上述路径上：</p><div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td><td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>-v <span class=s1>&#39;/mnt/user/appdata/seafile/seafile.nginx.conf&#39;</span>:<span class=s1>&#39;/etc/nginx/conf.d/seafile.nginx.conf&#39;</span>:<span class=s1>&#39;ro&#39;</span>
-</span></span></code></pre></td></tr></table></div></div><p>需要注意的是，不同版本的 Seafile 镜像里该文件的路径可能不同。</p></article></main><script>const repo="xbot/blog-comments",issueTerm="pathname",theme=localStorage.theme?`github-${localStorage.theme}`:"preferred-color-scheme",script=document.createElement("script");script.src="https://utteranc.es/client.js",script.async=!0,script.crossOrigin="anonymous",script.setAttribute("repo",repo),script.setAttribute("issue-term",issueTerm),script.setAttribute("theme",theme),script.setAttribute("label","comment"),document.querySelector("main").appendChild(script)</script>
-<footer class="mt-8 flex sm:flex-col-reverse justify-between items-center">
-<p class="mt-0 text-sm">
-© 淘气 2021 |
+<a class=ml-5 href=/about>關於</a></nav></header><h1 class="mt-6 mb-6">为 Seafile 配置反向代理的问题</h1><div class="mb-3 text-xs flex justify-between sm:flex-col"><div>Posted at &mdash; Jan 10, 2022</div><div class=sm:mt-4><a class=not-first:ml-3 href=/tags/NAS>#NAS</a></div></div><main><p></p><article class=md><p>我目前用 SWAG 做 Homelab 的反向代理，在和其它服务一样为 Seafile 配置好后，访问时却报如下错误：</p><blockquote><p>Contradictory scheme headers</p></blockquote><p>原因是 Seafile 的 Docker 镜像里已经使用了 NGINX 做反代，而且配置里包含和 SWAG 反代相同的配置项：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-NGINX data-lang=NGINX><span class=line><span class=cl><span class=k>proxy_set_header</span> <span class=s>X-Forwarded-Proto</span> <span class=nv>$scheme；</span>
+</span></span></code></pre></td></tr></table></div></div><p>此时，通过 HTTPS 访问的 SWAG 反代传递的 HEADER 里 <code>X-Forwarded-Proto</code> 是 <code>https</code> ，而通过 HTTP 访问的 Seafile 传递的是 <code>http</code> ，就会报以上错误。</p><p>一种解决方法是，把 Seafile 的 <code>/etc/nginx/conf.d/seafile.nginx.conf</code> 复制到宿主机，把文件中 <code>X-Forwarded-Proto</code> 这一行注释掉，然后映射到 Docker 容器的上述路径上：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>-v <span class=s1>&#39;/mnt/user/appdata/seafile/seafile.nginx.conf&#39;</span>:<span class=s1>&#39;/etc/nginx/conf.d/seafile.nginx.conf&#39;</span>:<span class=s1>&#39;ro&#39;</span>
+</span></span></code></pre></td></tr></table></div></div><p>需要注意的是，不同版本的 Seafile 镜像里该文件的路径可能不同。</p></article></main><script>const repo="xbot/blog-comments",issueTerm="pathname",theme=localStorage.theme?`github-${localStorage.theme}`:"preferred-color-scheme",script=document.createElement("script");script.src="https://utteranc.es/client.js",script.async=!0,script.crossOrigin="anonymous",script.setAttribute("repo",repo),script.setAttribute("issue-term",issueTerm),script.setAttribute("theme",theme),script.setAttribute("label","comment"),document.querySelector("main").appendChild(script)</script><footer class="mt-8 flex sm:flex-col-reverse justify-between items-center"><p class="mt-0 text-sm">© 淘气 2021 |
 <a href=https://gohugo.io target=_blank rel="noopener noreferrer">Hugo</a> on
-<a href=https://github.com/mivinci/hugo-theme-minima target=_blank rel="noopener noreferrer">Minima</a>
-</p><p class="flex items-center mt-0">
-<a class="icon mx-2" href=https://github.com/xbot title=github><svg fill="#63636f" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>GitHub</title><path d="M12 .297c-6.63.0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577.0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93.0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176.0.0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22.0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22.0 1.606-.015 2.896-.015 3.286.0.315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
-</a>
-<a class="icon mx-2" href=/index.xml title=rss><svg fill="#63636f" t="1626591563876" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" p-id="1984" width="18" height="16"><path d="M128 768a128 128 0 100 256 128 128 0 000-256zM0 368v176c265.104.0 480 214.912 480 480h176c0-362.32-293.696-656-656-656zM0 0v176c468.336.0 848 379.664 848 848h176C1024 458.464 565.536.0.0.0z" p-id="1985"/></svg>
-</a>
-</p></footer></body></html>
+<a href=https://github.com/mivinci/hugo-theme-minima target=_blank rel="noopener noreferrer">Minima</a></p><p class="flex items-center mt-0"><a class="icon mx-2" href=https://github.com/xbot title=github><svg fill="#63636f" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>GitHub</title><path d="M12 .297c-6.63.0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577.0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93.0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176.0.0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22.0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22.0 1.606-.015 2.896-.015 3.286.0.315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a><a class="icon mx-2" href=/index.xml title=rss><svg fill="#63636f" t="1626591563876" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" p-id="1984" width="18" height="16"><path d="M128 768a128 128 0 100 256 128 128 0 000-256zM0 368v176c265.104.0 480 214.912 480 480h176c0-362.32-293.696-656-656-656zM0 0v176c468.336.0 848 379.664 848 848h176C1024 458.464 565.536.0.0.0z" p-id="1985"/></svg></a></p></footer></body></html>

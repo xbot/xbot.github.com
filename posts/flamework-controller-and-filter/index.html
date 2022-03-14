@@ -1,69 +1,26 @@
-<!doctype html><html lang=en>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta property="og:title" content="PHP框架实战（三）：实现Controller和Filter">
-<meta property="og:description" content="目标 实现Controller和Filter，程序可以从HTTP请求中解析Controller和Action，并在这两个切面级别实现Filter链。此外，在Controller中，可以使用Action的参数直接访问HTTP请求中的同名参数。
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta property="og:title" content="PHP框架实战（三）：实现Controller和Filter"><meta property="og:description" content="目标 实现Controller和Filter，程序可以从HTTP请求中解析Controller和Action，并在这两个切面级别实现Filter链。此外，在Controller中，可以使用Action的参数直接访问HTTP请求中的同名参数。
 获取代码 项目目录结构做了调整，framework目录存放Flamework框架源码，demo目录存放示例项目。
 1  git checkout v0.3   设计与实现 Controller的实现
 要求请求URL的格式如下：
  http://www.mydomain.com/index.php?r=post/save
  r表示Route，斜杠前面的post表示Controller的名称，后面的save表示Action的名称。对HTTP请求的各种处理逻辑封装在新对象HttpRequest中：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119  <?">
-<meta property="og:type" content="article">
-<meta property="og:url" content="http://0x3f.org/posts/flamework-controller-and-filter/"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2013-12-29T20:40:00+00:00">
-<meta property="article:modified_time" content="2013-12-29T20:40:00+00:00">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="PHP框架实战（三）：实现Controller和Filter">
-<meta name=twitter:description content="目标 实现Controller和Filter，程序可以从HTTP请求中解析Controller和Action，并在这两个切面级别实现Filter链。此外，在Controller中，可以使用Action的参数直接访问HTTP请求中的同名参数。
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119  <?"><meta property="og:type" content="article"><meta property="og:url" content="http://0x3f.org/posts/flamework-controller-and-filter/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2013-12-29T20:40:00+00:00"><meta property="article:modified_time" content="2013-12-29T20:40:00+00:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="PHP框架实战（三）：实现Controller和Filter"><meta name=twitter:description content="目标 实现Controller和Filter，程序可以从HTTP请求中解析Controller和Action，并在这两个切面级别实现Filter链。此外，在Controller中，可以使用Action的参数直接访问HTTP请求中的同名参数。
 获取代码 项目目录结构做了调整，framework目录存放Flamework框架源码，demo目录存放示例项目。
 1  git checkout v0.3   设计与实现 Controller的实现
 要求请求URL的格式如下：
  http://www.mydomain.com/index.php?r=post/save
  r表示Route，斜杠前面的post表示Controller的名称，后面的save表示Action的名称。对HTTP请求的各种处理逻辑封装在新对象HttpRequest中：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119  <?">
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(e,o,i,a,t,n,s){e.GoogleAnalyticsObject=t,e[t]=e[t]||function(){(e[t].q=e[t].q||[]).push(arguments)},e[t].l=1*new Date,n=o.createElement(i),s=o.getElementsByTagName(i)[0],n.async=1,n.src=a,s.parentNode.insertBefore(n,s)}(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-93233020-1","auto"),ga("send","pageview"))</script>
-<meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff">
-<meta name=theme-color media="(prefers-color-scheme: dark)" content="#262d33">
-<title>
-晴耕雨讀 - PHP框架实战（三）：实现Controller和Filter
-</title><link rel="shortcut icon" href=/favicon.ico type=image/x-icon>
-<link rel=preconnect href=https://fonts.googleapis.com>
-<link rel=preconnect href=https://fonts.gstatic.com crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel=stylesheet>
-<link rel=stylesheet href=/minima.1646564264.css>
-<script defer type=text/javascript src=/minima.1646564264.js></script>
-</head><script>let theme_2b_used=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";try{if(!("theme"in localStorage)){const e='';(e==="dark"||e==="light")&&(theme_2b_used=e),localStorage.theme=theme_2b_used}document.querySelector("html").classList.add(localStorage.theme)}catch(e){console.error(e)}</script>
-<body class="sm:mx-5 sm:my-0">
-<header class="flex justify-between items-center mb-6 sm:my-3">
-<div class="flex items-center">
-<div id=theme-switcher class="text-4xl cursor-pointer">🌚</div></div><nav class="flex items-center
-whitespace-nowrap overflow-x-auto overflow-y-hidden">
-<a class=ml-5 href=/>主頁</a>
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119  <?"><script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(e,o,i,a,t,n,s){e.GoogleAnalyticsObject=t,e[t]=e[t]||function(){(e[t].q=e[t].q||[]).push(arguments)},e[t].l=1*new Date,n=o.createElement(i),s=o.getElementsByTagName(i)[0],n.async=1,n.src=a,s.parentNode.insertBefore(n,s)}(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-93233020-1","auto"),ga("send","pageview"))</script><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#262d33"><title>晴耕雨讀 - PHP框架实战（三）：实现Controller和Filter</title><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=preconnect href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel=stylesheet><link rel=stylesheet href=/minima.1647241092.css><script defer type=text/javascript src=/minima.1647241092.js></script></head><script>let theme_2b_used=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";try{if(!("theme"in localStorage)){const e='';(e==="dark"||e==="light")&&(theme_2b_used=e),localStorage.theme=theme_2b_used}document.querySelector("html").classList.add(localStorage.theme)}catch(e){console.error(e)}</script><body class="sm:mx-5 sm:my-0"><header class="flex justify-between items-center mb-6 sm:my-3"><div class="flex items-center"><div id=theme-switcher class="text-4xl cursor-pointer">🌚</div></div><nav class="flex items-center
+whitespace-nowrap overflow-x-auto overflow-y-hidden"><a class=ml-5 href=/>主頁</a>
 <a class=ml-5 href=/posts>文章</a>
 <a class=ml-5 href=/tags>標籤</a>
 <a class=ml-5 href=/categories>分類</a>
-<a class=ml-5 href=/about>關於</a>
-</nav></header><h1 class="mt-6 mb-6">PHP框架实战（三）：实现Controller和Filter</h1><div class="mb-3 text-xs flex justify-between sm:flex-col">
-<div>
-Posted at &mdash; Dec 29, 2013
-</div><div class=sm:mt-4>
-<a class=not-first:ml-3 href=/tags/PHP>#PHP</a>
+<a class=ml-5 href=/about>關於</a></nav></header><h1 class="mt-6 mb-6">PHP框架实战（三）：实现Controller和Filter</h1><div class="mb-3 text-xs flex justify-between sm:flex-col"><div>Posted at &mdash; Dec 29, 2013</div><div class=sm:mt-4><a class=not-first:ml-3 href=/tags/PHP>#PHP</a>
 <a class=not-first:ml-3 href=/tags/Flamework>#Flamework</a>
 <a class=not-first:ml-3 href=/tags/%e6%a1%86%e6%9e%b6>#框架</a>
-<a class=not-first:ml-3 href=/tags/%e7%bc%96%e7%a8%8b>#编程</a>
-</div></div><main>
-<p></p><article class=md>
-<h2 id=目标>目标</h2><p>实现Controller和Filter，程序可以从HTTP请求中解析Controller和Action，并在这两个切面级别实现Filter链。此外，在Controller中，可以使用Action的参数直接访问HTTP请求中的同名参数。</p><h2 id=获取代码>获取代码</h2><p>项目目录结构做了调整，framework目录存放Flamework框架源码，demo目录存放示例项目。</p><div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td><td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>git checkout v0.3
-</span></span></code></pre></td></tr></table></div></div><h2 id=设计与实现>设计与实现</h2><p><strong>Controller的实现</strong></p><p>要求请求URL的格式如下：</p><blockquote>
-<p><a href="http://www.mydomain.com/index.php?r=post/save">http://www.mydomain.com/index.php?r=post/save</a></p></blockquote><p><strong>r</strong>表示Route，斜杠前面的<strong>post</strong>表示Controller的名称，后面的<strong>save</strong>表示Action的名称。对HTTP请求的各种处理逻辑封装在新对象HttpRequest中：</p><div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>  1
+<a class=not-first:ml-3 href=/tags/%e7%bc%96%e7%a8%8b>#编程</a></div></div><main><p></p><article class=md><h2 id=目标>目标</h2><p>实现Controller和Filter，程序可以从HTTP请求中解析Controller和Action，并在这两个切面级别实现Filter链。此外，在Controller中，可以使用Action的参数直接访问HTTP请求中的同名参数。</p><h2 id=获取代码>获取代码</h2><p>项目目录结构做了调整，framework目录存放Flamework框架源码，demo目录存放示例项目。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>git checkout v0.3
+</span></span></code></pre></td></tr></table></div></div><h2 id=设计与实现>设计与实现</h2><p><strong>Controller的实现</strong></p><p>要求请求URL的格式如下：</p><blockquote><p><a href="http://www.mydomain.com/index.php?r=post/save">http://www.mydomain.com/index.php?r=post/save</a></p></blockquote><p><strong>r</strong>表示Route，斜杠前面的<strong>post</strong>表示Controller的名称，后面的<strong>save</strong>表示Action的名称。对HTTP请求的各种处理逻辑封装在新对象HttpRequest中：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>  1
 </span><span class=lnt>  2
 </span><span class=lnt>  3
 </span><span class=lnt>  4
@@ -182,8 +139,7 @@ Posted at &mdash; Dec 29, 2013
 </span><span class=lnt>117
 </span><span class=lnt>118
 </span><span class=lnt>119
-</span></code></pre></td><td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-php data-lang=php><span class=line><span class=cl><span class=o>&lt;?</span><span class=nx>php</span>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-php data-lang=php><span class=line><span class=cl><span class=o>&lt;?</span><span class=nx>php</span>
 </span></span><span class=line><span class=cl><span class=k>namespace</span> <span class=nx>org\x3f\flamework\base</span><span class=p>;</span>
 </span></span><span class=line><span class=cl><span class=k>use</span> <span class=nx>org\x3f\flamework\Flame</span> <span class=k>as</span> <span class=nx>Flame</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>
@@ -302,9 +258,7 @@ Posted at &mdash; Dec 29, 2013
 </span></span><span class=line><span class=cl><span class=p>}</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=cp>?&gt;</span><span class=err>
-</span></span></span></code></pre></td></tr></table></div></div><p>考虑到HttpRequest可能在多个地方被调用，所以用单例模式实现。</p><p>WebApplication中添加如下内容：</p><div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></span></span></code></pre></td></tr></table></div></div><p>考虑到HttpRequest可能在多个地方被调用，所以用单例模式实现。</p><p>WebApplication中添加如下内容：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -362,8 +316,7 @@ Posted at &mdash; Dec 29, 2013
 </span><span class=lnt>56
 </span><span class=lnt>57
 </span><span class=lnt>58
-</span></code></pre></td><td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-php data-lang=php><span class=line><span class=cl><span class=o>&lt;?</span><span class=nx>php</span>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-php data-lang=php><span class=line><span class=cl><span class=o>&lt;?</span><span class=nx>php</span>
 </span></span><span class=line><span class=cl><span class=k>class</span> <span class=nc>WebApplication</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>    <span class=c1>// ...
@@ -421,9 +374,7 @@ Posted at &mdash; Dec 29, 2013
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=p>}</span>
 </span></span><span class=line><span class=cl><span class=cp>?&gt;</span><span class=err>
-</span></span></span></code></pre></td></tr></table></div></div><p>程序应指定一个缺省的Controller，覆盖$defaultController属性即可，默认为“default”。Controller的类名应在名称后面加“Controller”字样的后缀。由于需要包含命名空间的完整类名来动态实例化Controller，故Controller的源码中都应在最后返回其命名空间（<em>return __NAMESPACE__;</em>）。</p><p>增加Controller类，作为所有Controller的父类：</p><div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></span></span></code></pre></td></tr></table></div></div><p>程序应指定一个缺省的Controller，覆盖$defaultController属性即可，默认为“default”。Controller的类名应在名称后面加“Controller”字样的后缀。由于需要包含命名空间的完整类名来动态实例化Controller，故Controller的源码中都应在最后返回其命名空间（<em>return __NAMESPACE__;</em>）。</p><p>增加Controller类，作为所有Controller的父类：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -505,8 +456,7 @@ Posted at &mdash; Dec 29, 2013
 </span><span class=lnt>80
 </span><span class=lnt>81
 </span><span class=lnt>82
-</span></code></pre></td><td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-php data-lang=php><span class=line><span class=cl><span class=o>&lt;?</span><span class=nx>php</span>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-php data-lang=php><span class=line><span class=cl><span class=o>&lt;?</span><span class=nx>php</span>
 </span></span><span class=line><span class=cl><span class=k>namespace</span> <span class=nx>org\x3f\flamework\base</span><span class=p>;</span>
 </span></span><span class=line><span class=cl><span class=k>use</span> <span class=nx>org\x3f\flamework\exceptions\HttpException</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>
@@ -588,9 +538,7 @@ Posted at &mdash; Dec 29, 2013
 </span></span><span class=line><span class=cl>    
 </span></span><span class=line><span class=cl><span class=p>}</span>
 </span></span><span class=line><span class=cl><span class=cp>?&gt;</span><span class=err>
-</span></span></span></code></pre></td></tr></table></div></div><p>Controller::process()是入口方法，它会通过反射机制实现HTTP参数与Action参数的绑定，并指定Action。</p><p><strong>Filter与Filter链的实现</strong></p><p>Filter中实现before()和after()方法，Filter链通过对Filter按顺序递归调用，实现所有Filter::before()方法在切面之前顺序执行，并且所有Filter::after()方法在切面之后逆序执行。</p><div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></span></span></code></pre></td></tr></table></div></div><p>Controller::process()是入口方法，它会通过反射机制实现HTTP参数与Action参数的绑定，并指定Action。</p><p><strong>Filter与Filter链的实现</strong></p><p>Filter中实现before()和after()方法，Filter链通过对Filter按顺序递归调用，实现所有Filter::before()方法在切面之前顺序执行，并且所有Filter::after()方法在切面之后逆序执行。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -638,8 +586,7 @@ Posted at &mdash; Dec 29, 2013
 </span><span class=lnt>46
 </span><span class=lnt>47
 </span><span class=lnt>48
-</span></code></pre></td><td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-php data-lang=php><span class=line><span class=cl><span class=o>&lt;?</span><span class=nx>php</span>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-php data-lang=php><span class=line><span class=cl><span class=o>&lt;?</span><span class=nx>php</span>
 </span></span><span class=line><span class=cl><span class=k>namespace</span> <span class=nx>org\x3f\flamework\base</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=sd>/**
@@ -687,9 +634,7 @@ Posted at &mdash; Dec 29, 2013
 </span></span><span class=line><span class=cl>    <span class=p>}</span>
 </span></span><span class=line><span class=cl><span class=p>}</span>
 </span></span><span class=line><span class=cl><span class=cp>?&gt;</span><span class=err>
-</span></span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -768,8 +713,7 @@ Posted at &mdash; Dec 29, 2013
 </span><span class=lnt>77
 </span><span class=lnt>78
 </span><span class=lnt>79
-</span></code></pre></td><td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-php data-lang=php><span class=line><span class=cl><span class=o>&lt;?</span><span class=nx>php</span>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-php data-lang=php><span class=line><span class=cl><span class=o>&lt;?</span><span class=nx>php</span>
 </span></span><span class=line><span class=cl><span class=k>namespace</span> <span class=nx>org\x3f\flamework\base</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=sd>/**
@@ -848,9 +792,7 @@ Posted at &mdash; Dec 29, 2013
 </span></span><span class=line><span class=cl>    
 </span></span><span class=line><span class=cl><span class=p>}</span>
 </span></span><span class=line><span class=cl><span class=cp>?&gt;</span><span class=err>
-</span></span></span></code></pre></td></tr></table></div></div><p>对FilterChain和Filter的使用方法在前面的WebApplication::run()和Controller::process()中均有包含。Controller级的Filter在配置文件中设置，内容如下：</p><div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></span></span></code></pre></td></tr></table></div></div><p>对FilterChain和Filter的使用方法在前面的WebApplication::run()和Controller::process()中均有包含。Controller级的Filter在配置文件中设置，内容如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -864,8 +806,7 @@ Posted at &mdash; Dec 29, 2013
 </span><span class=lnt>12
 </span><span class=lnt>13
 </span><span class=lnt>14
-</span></code></pre></td><td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-php data-lang=php><span class=line><span class=cl><span class=o>&lt;?</span><span class=nx>php</span>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-php data-lang=php><span class=line><span class=cl><span class=o>&lt;?</span><span class=nx>php</span>
 </span></span><span class=line><span class=cl><span class=k>return</span> <span class=k>array</span><span class=p>(</span>
 </span></span><span class=line><span class=cl>    
 </span></span><span class=line><span class=cl>    <span class=c1>// ...
@@ -879,9 +820,7 @@ Posted at &mdash; Dec 29, 2013
 </span></span><span class=line><span class=cl>    <span class=p>),</span>
 </span></span><span class=line><span class=cl><span class=p>);</span>
 </span></span><span class=line><span class=cl><span class=cp>?&gt;</span><span class=err>
-</span></span></span></code></pre></td></tr></table></div></div><p>Action级的Filter在Controller里覆盖$filters属性：</p><div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></span></span></code></pre></td></tr></table></div></div><p>Action级的Filter在Controller里覆盖$filters属性：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
@@ -890,8 +829,7 @@ Posted at &mdash; Dec 29, 2013
 </span><span class=lnt>7
 </span><span class=lnt>8
 </span><span class=lnt>9
-</span></code></pre></td><td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-php data-lang=php><span class=line><span class=cl><span class=o>&lt;?</span><span class=nx>php</span>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-php data-lang=php><span class=line><span class=cl><span class=o>&lt;?</span><span class=nx>php</span>
 </span></span><span class=line><span class=cl>    <span class=c1>// ...
 </span></span></span><span class=line><span class=cl><span class=c1></span>
 </span></span><span class=line><span class=cl>    <span class=k>protected</span> <span class=nv>$filters</span> <span class=o>=</span> <span class=k>array</span><span class=p>(</span>
@@ -900,22 +838,12 @@ Posted at &mdash; Dec 29, 2013
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>    <span class=c1>// ...
 </span></span></span><span class=line><span class=cl><span class=c1></span><span class=cp>?&gt;</span><span class=err>
-</span></span></span></code></pre></td></tr></table></div></div><p>Action级别的Filter通过$filters数组中的正则表达式选择适用的Action。</p><h2 id=demo验证>Demo验证</h2><p>Demo中实现了两个Controller级别的Filter（<em>GlobalFilterA和GlobalFilterB</em>），一个Action级别的Filter（<em>ActionFilterC</em>），访问demo项目，页面打印如下结果：</p><blockquote>
-<p>org\x3f\flamedemo\filter\GlobalFilterA::before
+</span></span></span></code></pre></td></tr></table></div></div><p>Action级别的Filter通过$filters数组中的正则表达式选择适用的Action。</p><h2 id=demo验证>Demo验证</h2><p>Demo中实现了两个Controller级别的Filter（<em>GlobalFilterA和GlobalFilterB</em>），一个Action级别的Filter（<em>ActionFilterC</em>），访问demo项目，页面打印如下结果：</p><blockquote><p>org\x3f\flamedemo\filter\GlobalFilterA::before
 org\x3f\flamedemo\filter\GlobalFilterB::before
 org\x3f\flamedemo\filter\ActionFilterC::before
 org\x3f\flamedemo\controller\Defaultcontroller::index
 org\x3f\flamedemo\filter\ActionFilterC::after
 org\x3f\flamedemo\filter\GlobalFilterB::after
-org\x3f\flamedemo\filter\GlobalFilterA::after</p></blockquote><h2 id=总结>总结</h2><p>WebApplication作为程序的统一入口，通过对HTTP请求的解析动态创建Controller，并借此实现了Controller级别的Filter链。Controller通过反射机制实现了HTTP参数与Action参数的绑定，以及Action级别的Filter链。而通过对Filter的递归执行，Filter链实现了面向切面编程。</p></article></main><script>const repo="xbot/blog-comments",issueTerm="pathname",theme=localStorage.theme?`github-${localStorage.theme}`:"preferred-color-scheme",script=document.createElement("script");script.src="https://utteranc.es/client.js",script.async=!0,script.crossOrigin="anonymous",script.setAttribute("repo",repo),script.setAttribute("issue-term",issueTerm),script.setAttribute("theme",theme),script.setAttribute("label","comment"),document.querySelector("main").appendChild(script)</script>
-<footer class="mt-8 flex sm:flex-col-reverse justify-between items-center">
-<p class="mt-0 text-sm">
-© 淘气 2021 |
+org\x3f\flamedemo\filter\GlobalFilterA::after</p></blockquote><h2 id=总结>总结</h2><p>WebApplication作为程序的统一入口，通过对HTTP请求的解析动态创建Controller，并借此实现了Controller级别的Filter链。Controller通过反射机制实现了HTTP参数与Action参数的绑定，以及Action级别的Filter链。而通过对Filter的递归执行，Filter链实现了面向切面编程。</p></article></main><script>const repo="xbot/blog-comments",issueTerm="pathname",theme=localStorage.theme?`github-${localStorage.theme}`:"preferred-color-scheme",script=document.createElement("script");script.src="https://utteranc.es/client.js",script.async=!0,script.crossOrigin="anonymous",script.setAttribute("repo",repo),script.setAttribute("issue-term",issueTerm),script.setAttribute("theme",theme),script.setAttribute("label","comment"),document.querySelector("main").appendChild(script)</script><footer class="mt-8 flex sm:flex-col-reverse justify-between items-center"><p class="mt-0 text-sm">© 淘气 2021 |
 <a href=https://gohugo.io target=_blank rel="noopener noreferrer">Hugo</a> on
-<a href=https://github.com/mivinci/hugo-theme-minima target=_blank rel="noopener noreferrer">Minima</a>
-</p><p class="flex items-center mt-0">
-<a class="icon mx-2" href=https://github.com/xbot title=github><svg fill="#63636f" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>GitHub</title><path d="M12 .297c-6.63.0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577.0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93.0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176.0.0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22.0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22.0 1.606-.015 2.896-.015 3.286.0.315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
-</a>
-<a class="icon mx-2" href=/index.xml title=rss><svg fill="#63636f" t="1626591563876" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" p-id="1984" width="18" height="16"><path d="M128 768a128 128 0 100 256 128 128 0 000-256zM0 368v176c265.104.0 480 214.912 480 480h176c0-362.32-293.696-656-656-656zM0 0v176c468.336.0 848 379.664 848 848h176C1024 458.464 565.536.0.0.0z" p-id="1985"/></svg>
-</a>
-</p></footer></body></html>
+<a href=https://github.com/mivinci/hugo-theme-minima target=_blank rel="noopener noreferrer">Minima</a></p><p class="flex items-center mt-0"><a class="icon mx-2" href=https://github.com/xbot title=github><svg fill="#63636f" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>GitHub</title><path d="M12 .297c-6.63.0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577.0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93.0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176.0.0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22.0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22.0 1.606-.015 2.896-.015 3.286.0.315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a><a class="icon mx-2" href=/index.xml title=rss><svg fill="#63636f" t="1626591563876" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" p-id="1984" width="18" height="16"><path d="M128 768a128 128 0 100 256 128 128 0 000-256zM0 368v176c265.104.0 480 214.912 480 480h176c0-362.32-293.696-656-656-656zM0 0v176c468.336.0 848 379.664 848 848h176C1024 458.464 565.536.0.0.0z" p-id="1985"/></svg></a></p></footer></body></html>
