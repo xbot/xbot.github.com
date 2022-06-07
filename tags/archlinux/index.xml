@@ -63,8 +63,10 @@ Archlinux下安装AUR中的fcitx-config时报如下错误：
 解决办法是在grub的启动菜单中，给内核加上参数acpi_osi=“Linux”，如：
 1 2 3 4 5 # (0) Arch Linux title Arch Linux root (hd0,2) kernel /boot/vmlinuz26 root=/dev/sda3 resume=/dev/sda4 ro acpi_osi=&amp;#34;Linux&amp;#34; initrd /boot/kernel26.img 从查到的资料看，acpi_osi参数是用来指定操作系统接口的，据说有些硬件都只针对Windows做了测试或优化，对于这些硬件，如果将内核的操作系统接口指定为Linux，则有可能会出问题。所以内核从2.6.23版本开始，此参数的默认值被改成了“!Linux”，以保证更广泛的兼容性和稳定性。
 而根据这里的说法，thinkpad一直以来在对Linux的兼容程度上有很好的口碑，故可以放心添加这个参数。
-另外，xfce下使用OSD需要安装xfce4-volumed。</description></item><item><title>Linux下pppoe连接建立后仍不能上网的问题</title><link>http://0x3f.org/posts/problem-on-pppoe-connections-on-linux/</link><pubDate>Sat, 10 Jul 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/problem-on-pppoe-connections-on-linux/</guid><description>问题描述pppoe可以连接，ifconfig可以看到ppp0接口，一切正常，只是不能上网。
-解决办法使用如下命令查看路由表：
+另外，xfce下使用OSD需要安装xfce4-volumed。</description></item><item><title>Linux下pppoe连接建立后仍不能上网的问题</title><link>http://0x3f.org/posts/problem-on-pppoe-connections-on-linux/</link><pubDate>Sat, 10 Jul 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/problem-on-pppoe-connections-on-linux/</guid><description>问题描述
+pppoe可以连接，ifconfig可以看到ppp0接口，一切正常，只是不能上网。
+解决办法
+使用如下命令查看路由表：
 1 route 正常情况下返回的结果中应该有如下内容：
 如果没有，可手工添加：
 1 route add default dev ppp0 如果可以上网，就成功了。
@@ -72,7 +74,8 @@ Archlinux下安装AUR中的fcitx-config时报如下错误：
 1 2 3 4 5 6 #!/bin/sh if ifconfig ppp0 &amp;gt; /dev/null 2&amp;gt;&amp;amp;1 ; then route del default route add default dev ppp0 fi 将上述内容保存成名为01-route.sh的文件，权限755，放到/etc/ppp/ip-up.d目录下。
 然后创建以下两个脚本：
 1 2 3 4 5 6 7 8 9 10 11 12 #!/bin/bash if ifconfig ppp0 &amp;gt; /dev/null 2&amp;gt;&amp;amp;1 ; then echo &amp;#39;PPPOE has already been switched on !</description></item><item><title>低碳生活：使用 cpufrequtils降低CPU温度</title><link>http://0x3f.org/posts/using-cpufrequtils-to-reduce-cpu-temperature/</link><pubDate>Fri, 11 Jun 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/using-cpufrequtils-to-reduce-cpu-temperature/</guid><description>cpufrequtils可以根据不同的方案自动调节CPU的频率，从而达到在系统空闲时降低CPU温度、节省电力的目的。
-Archlinux官方wiki已经介绍得很明白了：http://wiki.archlinux.org/index.php/Cpufrequtils_(简体中文)使用后效果明显，CPU温度有所下降，下面是cpufrequtils在Arch上的工作情况：
+Archlinux官方wiki已经介绍得很明白了：http://wiki.archlinux.org/index.php/Cpufrequtils_(简体中文)
+使用后效果明显，CPU温度有所下降，下面是cpufrequtils在Arch上的工作情况：
 [lenin@archer ~]$ cpufreq-info cpufrequtils 007: cpufreq-info (C) Dominik Brodowski 2004-2009 Report errors and bugs to cpufreq@vger.kernel.org, please. analyzing CPU 0: driver: acpi-cpufreq CPUs which run at the same hardware frequency: 0 1 CPUs which need to have their frequency coordinated by software: 0 maximum transition latency: 10.0 us. hardware limits: 800 MHz - 2.53 GHz available frequency steps: 2.53 GHz, 2.53 GHz, 1.60 GHz, 800 MHz available cpufreq governors: ondemand, performance current policy: frequency should be within 800 MHz and 1.</description></item><item><title>Archlinux升级到GNOME2.30后的光标主题问题</title><link>http://0x3f.org/posts/problem-about-icon-theme-on-gnome230/</link><pubDate>Sun, 04 Apr 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/problem-about-icon-theme-on-gnome230/</guid><description>Archlinux下的GNOME升级到2.30后，若启用了Compiz，则光标主题只能使用X默认的主题，无法自定义。尚不清楚是GNOME新版本自身的问题还是仅限于Arch发行版。
 在官方提供解决方案或更新之前，可以先使用Xdefault或Xresource文件实现。
 以后者为例，编辑用户主目录下的.Xresource，在文件最后添加如下内容：

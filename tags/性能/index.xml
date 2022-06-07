@@ -2,7 +2,7 @@
 下面是对这个文件改造前后效率跟踪结果的对比：
 define()方案（ms） apc_define_constants()方案（ms） 启动Web服务和PHP，第一次运行 58 4 不重启Web服务和PHP，第二次运行 65 1 不重启Web服务和PHP，第三次运行 66 1 由此可见，apc_define_constants()不但在初次调用时效能就超过define()，而且由于APC自身的缓存功能，在后续调用时效率会有进一步的提高，而define()基本没有变化。
 以下是apc_define_constants()的代码示例：
-```php 1, 'TWO' = 2, 'THREE' = 3, ); apc_define_constants('my_constants', $constants); } ? ``` Posted via UltraBlog.vim.</description></item><item><title>慎用PHP的fsockopen()连接localhost</title><link>http://0x3f.org/posts/fsockopen-fails-connecting-localhost/</link><pubDate>Tue, 24 Apr 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/fsockopen-fails-connecting-localhost/</guid><description>使用xdebug跟踪程序性能时发现fsockopen()函数耗时一秒，单步调试发现实际在这里超时了，而超时时间设置的就是一秒。
+```php &lt;?php if(!apc_load_constants('my_constants')) { $constants = array( 'ONE' => 1, 'TWO' => 2, 'THREE' => 3, ); apc_define_constants('my_constants', $constants); } ?> ``` Posted via UltraBlog.vim.</description></item><item><title>慎用PHP的fsockopen()连接localhost</title><link>http://0x3f.org/posts/fsockopen-fails-connecting-localhost/</link><pubDate>Tue, 24 Apr 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/fsockopen-fails-connecting-localhost/</guid><description>使用xdebug跟踪程序性能时发现fsockopen()函数耗时一秒，单步调试发现实际在这里超时了，而超时时间设置的就是一秒。
 如果把目标地址由原来的“localhost”换成“127.0.0.1”，马上就可以连上。在PHP的Bug跟踪系统中找到这个问题：
 https://bugs.php.net/bug.php?id=50953
 看起来像是在5.2.12以后已修改，但我发现在5.2.17中仍存在这个问题。另有说法在5.3中不存在这个问题，我没有测试。
