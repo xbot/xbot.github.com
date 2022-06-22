@@ -3,22 +3,10 @@ layout: post
 title: 搭建自己的Twitter API
 slug: howto setup twitter api of your own
 date: 2010-10-01 00:00:00
-tags:
-- GFW
-- Google
-- PHP
-- Python
-- Twitter
+categories:
 - 计算机
-status: publish
-published: true
-comments: true
-meta:
-  _edit_last: '1'
-  _oembed_353f85737e519de7010ff9e16c8c112c: ! '{{unknown}}'
-  _oembed_edd50bd674dd4a0832ac257761bd3f22: ! '{{unknown}}'
-  views: '1292'
-  _wp_old_slug: ''
+tags:
+- Twitter
 ---
 <h2> 创建Twitter应用程序 </h2>
 
