@@ -18,7 +18,7 @@ https://github.com/xbot/Leaderf-phpnamespace
 ## Features
 
 - Insert `use` statements for FQCNs.
-- TODO: Expand class names to FQCNs. 
+- Expand class names to FQCNs. 
 - TODO: Insert namespace for the current file.
 - All the above features support the fuzzy searching function and all the three modes (nameonly, fullpath and regex) provided by LeaderF.
 
