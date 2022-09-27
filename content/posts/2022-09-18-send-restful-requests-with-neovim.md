@@ -56,8 +56,8 @@ Cookie: {{header_cookie_debug_session}}
 Content-Type: {{header_content_type_json}}
 
 {
-	"title": "Hello world",
-	"Content": "This is a dummy post."
+    "title": "Hello world",
+    "Content": "This is a dummy post."
 }
 ```
 
@@ -68,3 +68,43 @@ Content-Type: {{header_content_type_json}}
 {{< gist xbot ec76bf726f64f285f1fe1ccdc76f0668 >}}
 
 这样，每次请求完登录接口就会自动把 cookie 写入 `.env` 文件中了。
+
+---
+## 2022-09-27 更新
+
+关于会话的保持，有种更简单的实现方式。
+
+rest.nvim 支持在请求中使用 curl 命令的参数，所以上述请求文件可以写成如下形式：
+
+```http
+### Login
+POST {{base_url}}/v1/sessions
+Accept: {{header_accept_json}}
+Content-Type: {{header_content_type_json}}
+
+-c cookies
+
+{"email": "{{user_email}}", "password": "{{user_password}}"}
+
+### Get an article
+GET {{base_url}}/v1/articles/DiJeb7IQHo8FOFkXulieyA
+Accept: {{header_accept_json}}
+
+-b cookies
+
+### Create an article
+POST {{base_url}}/v1/articles
+Accept: {{header_accept_json}}
+Content-Type: {{header_content_type_json}}
+
+-b cookies
+
+{
+    "title": "Hello world",
+    "Content": "This is a dummy post."
+}
+```
+
+通过 `-c` 参数将响应中的 cookie 自动存储到名为 `cookies` 的文件中，并通过 `-b` 参数指定发送请求时使用该文件中的 cookie 。不过，当前版本存在一个小问题，生成的文件名前会带一个空格，不影响正常使用，但如果要加入 `.gitignore` 中的话需要注意这点。
+
+之前的实现方法对于其它鉴权方式仍有意义。
