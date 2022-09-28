@@ -18,8 +18,9 @@ https://github.com/xbot/Leaderf-phpnamespace
 ## Features
 
 - Insert `use` statements for FQCNs.
+- Sort `use` statements alphabetically.
 - Expand class names to FQCNs. 
-- TODO: Insert namespace for the current file.
+- Insert namespace for the current file.
 - All the above features support the fuzzy searching function and all the three modes (nameonly, fullpath and regex) provided by LeaderF.
 
 ## Requirements
@@ -49,14 +50,16 @@ noremap <leader>ec :<C-U><C-R>=printf("Leaderf phpns --input %s --expand", expan
 
 ## Commands
 
-```vim
-:LeaderfPhpns
-```
+| Command            | Description                            |
+| ---                | ---                                    |
+| LeaderfPhpns       | Choose an FQCN to import.              |
+| PHPNamespaceInsert | Insert namespace for the current file. |
 
 Press `F1` in the popup window to get more help.
 
 ## Options
 
-```vim
-let g:Lf_PHPNamespaceExpandToAbsolute=1
-```
+| Option                            | Default | Description                                                             |
+| ---                               | ---     | ---                                                                     |
+| g:Lf_PHPNamespaceExpandToAbsolute | 1       | Expand the classname under cursor to absolute FQCN.                     |
+| g:Lf_PHPNamespaceSortAfterImport  | 1       | Sort the `use` statements block alphabetically after importing a class. |
