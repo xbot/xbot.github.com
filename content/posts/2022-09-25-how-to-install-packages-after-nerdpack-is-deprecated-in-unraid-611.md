@@ -37,3 +37,7 @@ un-get upgrade
 这个命令目前不解决依赖关系，而且存在部分包无法下载或找不到的现象，还是需要手动干预。
 
 作者没有在项目主页写安装说明，而是写在 [Reddit 帖子](https://www.reddit.com/r/unRAID/comments/wy9nft/unget_a_simple_command_line_tool_to_install/)里了。
+
+---
+### 2022-10-07 更新
+出了个新的 NerdTools ，界面和 NerdPack 一样难用，包的数量现在还很少，但版本较新，还有一些 un-get 目前搜不到的包（比如: fzf）。可以作为补充。
