@@ -7,7 +7,7 @@ categories:
 tags:
 - 效率
 - 快捷指令
-- iOS
+- iPhone
 - Kindle
 ---
 

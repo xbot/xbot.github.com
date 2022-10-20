@@ -7,7 +7,7 @@ categories:
 tags:
 - 效率
 - workflow
-- iOS
+- iPhone
 ---
 
 RSS真是没落了，很多网站都没有明确输出Feed地址，每次想订阅都要浪费不少时间，所以写了这个[Workflow](https://workflow.is/workflows/7f02a38a6c21414a96a4f96600c94662)。

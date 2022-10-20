@@ -7,7 +7,7 @@ categories:
 tags:
 - 翻墙
 - shadowsocks
-- iOS
+- iPhone
 ---
 
 导入[这里](http://www.abclite.cn/1995.html)提供的配置文件。
