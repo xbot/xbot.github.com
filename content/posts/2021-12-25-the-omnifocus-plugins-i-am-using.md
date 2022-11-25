@@ -7,10 +7,21 @@ categories:
 tags:
 - OmniFocus
 - GTD
+- 效率工具
 ---
+# 检查列表
+
+[xbot/omnifocus-plugin-checklist](https://github.com/xbot/omnifocus-plugin-checklist)
+
+在 OmniFocus 中指定一个 folder ，其下的所有 project 都将作为 checklist 的模板。
+
+选中一或多个 projects 并触发这个插件的 action ，在弹出的对话框中选择要用的模板，将会在目标 projects 中创建同名 task ，模板中的 tasks 创建为该 task 的子任务。
+
+模板的 Parallel 、 Complete with last action 、 tags 和 note 会被同步过去。
+
 # 生成工作日志
 
-[generate-work-journal.omnijs](https://github.com/xbot/omnifocus-plugins/blob/main/generate-work-journal.omnijs)
+[xbot/omnifocus-plugin-generate-work-journal](https://github.com/xbot/omnifocus-plugin-generate-work-journal)
 
 用于每天下班前一键生成工作日志。
 
@@ -18,13 +29,13 @@ tags:
 
 # 打开 Jira Ticket
 
-[open-jira-ticket.omnijs](https://github.com/xbot/omnifocus-plugins/blob/main/open-jira-ticket.omnijs)
+[xbot/omnifocus-plugin-open-jira-ticket](https://github.com/xbot/omnifocus-plugin-open-jira-ticket)
 
 从被选中的 Project 标题中解析 Jira Ticket 序号，并根据配置的 Jira URL 打开对应的 Ticket 。如果选中的是 Task ，使用其所属的 Project 。
 
 # 在 Flomo 中搜索当前 Project
 
-[search-flomo-by-project.omnijs](https://github.com/xbot/omnifocus-plugins/blob/main/search-flomo-by-project.omnijs)
+[xbot/omnifocus-plugin-find-in-flomo](https://github.com/xbot/omnifocus-plugin-find-in-flomo)
 
 从被选中的 Project 标题中按自定义规则解析关键词，并在 Flomo 中搜索相关的笔记。可以指定一个 Tag 辅助过滤。
 
@@ -34,7 +45,7 @@ Flomo 目前只支持通过单个 Tag 过滤，所以配置界面只能指定一
 
 # 转换 Tasks 为指定目录下的 Projects
 
-[convert-tasks-to-projects.omnijs](https://github.com/xbot/omnifocus-plugins/blob/main/convert-tasks-to-projects.omnijs)
+[xbot/omnifocus-plugin-convert-to-projects](https://github.com/xbot/omnifocus-plugin-convert-to-projects)
 
 OmniFocus 自带的转换功能会把新 Project 追加到库的末尾，需要先跳转到 Projects Perspective 再拖动到目标目录。所以写了这个插件，转换前先指定目标目录，转换后自动跳转到新的 Projects 。
 
@@ -42,13 +53,13 @@ OmniFocus 自带的转换功能会把新 Project 追加到库的末尾，需要�
 
 # 重置 Review 视图
 
-[reset-review-status.omnijs](https://github.com/xbot/omnifocus-plugins/blob/main/reset-review-status.omnijs)
+[xbot/omnifocus-plugin-reset-review-status](https://github.com/xbot/omnifocus-plugin-reset-review-status)
 
 我希望实现早晚两次 Review ，这个插件可以帮我做到这一点。
 
 # 重新排期
 
-[rearrange-object-timescales.omnijs](https://github.com/xbot/omnifocus-plugins/blob/main/rearrange-object-timescales.omnijs)
+[xbot/omnifocus-plugin-reschedule-objects](https://github.com/xbot/omnifocus-plugin-reschedule-objects)
 
 为选中的 Tasks 或 Projects 重新指定 Defer 和 Due 时间。
 
@@ -72,3 +83,11 @@ OmniFocus 自带的转换功能会把新 Project 追加到库的末尾，需要�
 通过快捷键把当前浏览器（Chrome 及其衍生物）页签或电邮（Outlook 或 Mail）添加到 OmniFocus 。
 
 主要使用 Hammerspoon 的 Spoon [SendToOmniFocus](https://www.hammerspoon.org/Spoons/SendToOmniFocus.html) 实现，但它会在创建的 Task 标题前插入 “Review:”前缀，所以我增加了一个快捷键用于过滤它，如果新建的是 Jira Ticket 的 Task ，还会过滤掉无用的后缀。
+
+# 写日记
+
+[每日回顾](https://www.icloud.com/shortcuts/e7ab81894e6a4a0992e7f67bab90d5dc)
+
+这是个快捷指令。
+
+可以列出指定日期从 0 点到第二天凌晨 3 点之间完成的所有任务，你可以选择重要的内容并粘贴到 Day One 中新创建的日记里。
