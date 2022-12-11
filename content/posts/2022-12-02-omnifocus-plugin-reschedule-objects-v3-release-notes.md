@@ -8,11 +8,11 @@ tags:
 - 效率工具
 toc: false
 ---
-OmniFocus 是个非常强大的待办列表 App ，最大的特点之一是支持​开发插件。如果你跟我一样有各种稀奇古怪的需求且其它待办 App 不能满足时，可以试试它，尽管很贵，但是很值。
+OmniFocus 是个非常强大的待办列表 App ，最大的特点之一是支持开发插件。如果你跟我一样有各种稀奇古怪的需求且其它待办 App 不能满足时，可以试试它，尽管很贵，但是很值。
 
-reschedule-objects 是一个给选中的任务或项目快速排期的插件​，源自我特定的时间做特定的事的需求。
+[reschedule-objects](https://github.com/xbot/omnifocus-plugin-reschedule-objects) 是一个给选中的任务或项目快速排期的插件，源自我特定的时间做特定的事的需求。
 
-今天 [reschedule-objects](https://github.com/xbot/omnifocus-plugin-reschedule-objects) 发布了 3.0 版本，主要包括三部分的变化。
+今天 reschedule-objects 发布了 3.0 版本，主要包括三部分的变化。
 
 首先是重构。随着我写的插件数的增加，有些代码可以复用，有些 Omni Automation API 比较烦琐，所以有了封装一个工具类的想法，正好 Omni 应用也支持这样，所以封装了 [libdev](https://github.com/xbot/omnifocus-plugin-libdev) 开发库。另外，之前很多地方写得很差劲，这次也一并优化了一下。
 
