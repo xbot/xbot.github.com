@@ -5,7 +5,6 @@ slug: got kindle dxg
 date: 2011-02-20 00:00:00
 tags:
 - kindle
-- 玩物
 - 数码
 categories:
 - 青梅煮酒
