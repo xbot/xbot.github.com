@@ -7,7 +7,6 @@ tags:
 - 变形金刚
 - 玩具
 toc: false
-draft: true
 ---
 
 我对 MPM-13 的感受比较复杂。
