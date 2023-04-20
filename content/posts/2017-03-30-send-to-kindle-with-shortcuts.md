@@ -13,7 +13,7 @@ tags:
 
 转换成 PDF 和 FiveFilters 都不完美， `send.reabble.cn` 是迄今最好的解决方案，所以写了这个快捷指令：
 
-[Send to Kindle](https://www.icloud.com/shortcuts/7335257de252447db732250739929ad4)
+[Send to Kindle](https://www.icloud.com/shortcuts/4570dd39486c4d3fb35ee0bb1254e324)
 
 注意：
 
@@ -21,6 +21,10 @@ tags:
 - 用 Kindle 接收邮箱创建一个联系人，并在快捷指令里选择他。
 
 ---
+
+> **2023-04-20**
+>
+> 优化了提示信息。
 
 > **2021-10-05**
 >
