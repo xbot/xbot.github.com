@@ -16,13 +16,13 @@ tags:
 
 参考[官方文档](http://docs.phalconphp.com/zh/latest/reference/unit-testing.html)，稍作修改。
 
-在项目下创建目录unittests，进入目录执行：
+在项目下创建目录 unittests ，进入目录执行：
 
 ```bash
 composer require phpunit/phpunit
 ```
 
-创建tests目录并在其中创建文件Bootstrap.php：
+创建 tests 目录并在其中创建文件 Bootstrap.php ：
 
 ```php
 <?php
@@ -58,13 +58,13 @@ require_once PROJECT_DIR.'/web/config/services.php';
 DI::setDefault($di);
 ```
 
-安装phalcon的phpunit辅助库：
+安装 phalcon 的 phpunit 辅助库：
 
 ```bash
 composer require phalcon/incubator
 ```
 
-创建phpunit.xml：
+创建 phpunit.xml ：
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -85,7 +85,7 @@ composer require phalcon/incubator
 </phpunit>
 ```
 
-创建单元测试基类UnitTestCase.php：
+创建单元测试基类 UnitTestCase.php ：
 
 ```php
 <?php
@@ -136,7 +136,7 @@ abstract class UnitTestCase extends PhalconTestCase {
 }
 ```
 
-创建单元测试类testsTestUnitTest.php：
+创建单元测试类 testsTestUnitTest.php ：
 
 ```php
 <?php
@@ -156,11 +156,11 @@ class UnitTests extends \UnitTestCase {
 }
 ```
 
-在tests目录下建立phpunit的软连接并执行测试：
+在 tests 目录下建立 phpunit 的软连接并执行测试：
 
 ```bash
 ln -sf ../vendor/bin/phpunit run
 ./run
 ```
 
-**另**：发现个诡异的问题，如果Model中不覆盖getSource()方法，单元测试中会自动找用下划线分隔的表名，即假如Model名为FooBar，会去找foo_bar的表名，但正常执行程序时找的是foobar。在官方论坛问的[问题](http://forum.phalconphp.com/discussion/4078/whats-the-principle-when-phalcon-gets-the-table-name-of-a-model)还木有解决。phalcon坑挺多的。
+**另**：发现个诡异的问题，如果 Model 中不覆盖 getSource() 方法，单元测试中会自动找用下划线分隔的表名，即假如 Model 名为 FooBar ，会去找 foo_bar 的表名，但正常执行程序时找的是 foobar 。在官方论坛问的[问题](http://forum.phalconphp.com/discussion/4078/whats-the-principle-when-phalcon-gets-the-table-name-of-a-model)还木有解决。phalcon 坑挺多的。
