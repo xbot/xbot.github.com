@@ -8,7 +8,6 @@ tags:
 - 数据迁移
 - 数据备份
 toc: false
-draft: true
 ---
 
 ![2023-08-05-22-44-49-IMG_0191](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-08-05-22-44-49-IMG_0191.jpeg)
