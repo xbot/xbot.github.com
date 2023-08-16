@@ -5,8 +5,8 @@ date: 2021-12-13T00:38:06+08:00
 categories:
 - 计算机
 tags:
-- Lua
-- Hammerspoon
+- lua
+- hammerspoon
 - 编程
 ---
 

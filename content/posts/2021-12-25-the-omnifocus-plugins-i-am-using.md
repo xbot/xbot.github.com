@@ -5,7 +5,7 @@ date: 2021-12-25T22:05:40+08:00
 categories:
 - 青梅煮酒
 tags:
-- OmniFocus
+- omnifocus
 - GTD
 - 效率工具
 ---

@@ -4,7 +4,7 @@ slug: "omnifocus plugin reschedule objects v3.0 release notes"
 date: 2022-12-02T19:53:34+08:00
 categories: ["青梅煮酒"]
 tags:
-- OmniFocus
+- omnifocus
 - 效率工具
 toc: false
 ---

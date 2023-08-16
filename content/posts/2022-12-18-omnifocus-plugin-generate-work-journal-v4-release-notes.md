@@ -4,7 +4,7 @@ slug: "omnifocus plugin generate work journal v2.0 release notes"
 date: 2022-12-18T16:32:34+08:00
 categories: ["青梅煮酒"]
 tags:
-- OmniFocus
+- omnifocus
 - 效率工具
 toc: false
 ---
