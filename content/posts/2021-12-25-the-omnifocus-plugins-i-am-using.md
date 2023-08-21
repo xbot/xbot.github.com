@@ -91,3 +91,9 @@ OmniFocus 自带的转换功能会把新 Project 追加到库的末尾，需要�
 这是个快捷指令。
 
 可以列出指定日期从 0 点到第二天凌晨 3 点之间完成的所有任务，你可以选择重要的内容并粘贴到 Day One 中新创建的日记里。
+
+# 从 Tweet 里提炼待办事项
+
+[xbot/omnifocus-plugin-refine-task](https://github.com/xbot/omnifocus-plugin-refine-task)
+
+我用快捷指令“[收集 Tweet 到 OmniFocus](https://www.icloud.com/shortcuts/dd3a5d430a434d39aff4e3092e7abfee)”收集 tweets ，然后用快捷指令“[提炼 OmniFocus](https://www.icloud.com/shortcuts/899467b735304519aa4b26b8c7756433)”利用 ChatGPT 提炼待办事项并复制到剪贴板，接着这个快捷指令会调用插件 refine-task 把条目原文移动到备注里并打开输入框由用户粘贴或者输入待办事项。
