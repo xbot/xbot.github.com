@@ -6,16 +6,9 @@ categories:
 - 行见
 tags:
 - 旅行
-- 图片
-- 随笔
+- 北京
 ---
 
-![](https://ww4.sinaimg.cn/large/006tNbRwly1feafquavwvj30wu0ih7ip.jpg)
+有一小片樱花集中的地方还是不错的，风来，落英缤纷。
 
-终于还是去了。
-
-十年，不喜闹市，或宅，或远方。
-
-期望本不高，故无惊亦无喜。
-
-有一小片集中的地方还是不错的，风来，落英缤纷。
+![2023-08-25-11-27-14-2FC4E1F6-5DDF-4F5A-B952-B12F45516E5B_1_105_c](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-08-25-11-27-14-2FC4E1F6-5DDF-4F5A-B952-B12F45516E5B_1_105_c.jpeg)
