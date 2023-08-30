@@ -11,7 +11,7 @@ toc: false
 
 [refine-task](https://github.com/xbot/omnifocus-plugin-refine-task) 的功能非常简单，它为选中的任务打开一个输入框，将用户输入的内容作为新的任务内容保存，原来的任务内容会被挪到备注里：
 
-<video controls width="100%">
+<video controls autoplay loop width="100%">
   <source src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-08-30-22-04-08-Kapture 2023-08-30 at 19.33.05.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
