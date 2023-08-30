@@ -10,11 +10,11 @@
 TCE的最新版本和使用说明可以在这里找到。
 Posted via UltraBlog.vim.</description></item><item><title>禁止屏幕在播放视频时自动关闭</title><link>http://0x3f.org/posts/how-to-keep-monitor-active-while-watching-flv/</link><pubDate>Wed, 04 Apr 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/how-to-keep-monitor-active-while-watching-flv/</guid><description>貌似Lose系统下看在线视频的时候不会超时自动关闭屏幕，但是我在Arch下就一直晃鼠标、按键盘来著，这严重违反了DRY原则。于是昨天终于写了这个脚本，当全屏播放视频的时候，关闭屏保和显示器的节能特性，否则则激活它们。由于是在X的级别实现，理论上应当适合所有桌面环境。
 ```bash #!/bin/bash # Baby-sitter of the monitor's DPMS idle_period=60 ss_switch_off=0 ss_is_off=0 while true; do # Read DPMS state xset -q|grep "DPMS is Disabled" > /dev/null &amp;&amp; ss_is_off=1 || ss_is_off=0 # Get pid of the current window active_window_id=`xprop -root | grep "_NET_ACTIVE_WINDOW(WINDOW)" | cut -d" " -f5` decimal_id=`xprop -id $active_window_id | grep PID | cut -d" " -f3` # Traverse all libflashplayer.so for pid in `ps -ef|grep -v grep|grep libflashplayer.so|awk '{print $2}'`; do # If the current window is libflashplayer.</description></item><item><title>Linux的内存使用机制</title><link>http://0x3f.org/posts/linux-memory-usage/</link><pubDate>Fri, 24 Dec 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/linux-memory-usage/</guid><description>在top中，内存使用情况显示为如下格式：
-根据内存的使用情况，将内存空间划分为四种类型：已使用（used），未使用（free），缓冲区（buffers）和已缓存（cached）。
+Mem: 3056828k total, 2624472k used, 432356k free, 185196k buffers Swap: 2096476k total, 0k used, 2096476k free, 1613592k cached 根据内存的使用情况，将内存空间划分为四种类型：已使用（used），未使用（free），缓冲区（buffers）和已缓存（cached）。
 “已使用”是指目前正被使用的活跃的内存区域。“未使用”是指当前空闲的内存区域。“缓冲区”是用于存放即将写入存储介质的数据的区域。“已缓存”是指曾因需要而被读入内存、但目前已不被使用的数据。Linux通常会在资源使用完毕后保留一部分数据在内存中而不全部释放，这就是“已缓存”区域，这样当这些数据再次被使用时，系统就可以直接从内存中读取。而“缓冲区”用于将对存储介质的写操作集中进行。因此，“缓冲区”和“已缓存”特性对减少存储介质IO和加速系统运行都具有非常重要的作用。
 所以，Linux运行一段时间后，通常看起来空闲内存都很小，其实是因为很大一部分被用作“已缓存”区域，这部分内存会在内存资源紧张时被自动释放，也可以通过如下命令手工释放：
 1 echo 1 &amp;gt; /proc/sys/vm/drop_caches</description></item><item><title>screen曰：$TERM too long - sorry.</title><link>http://0x3f.org/posts/screen-is-sorry-for-term-being-too-long/</link><pubDate>Wed, 01 Dec 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/screen-is-sorry-for-term-being-too-long/</guid><description>最近rxvt-unicode-256color的一次更新触发了screen的一个缺陷。新的版本将默认的环境变量$TERM由rxvt-256color改成了rxvt-unicode-256color，这导致在rxvt中启动screen时报这样的错误：
-虽然可以在.Xdefaults中指定$TERM的值，但是据说这样会导致rxvt加载错误的terminfo，并导致终端的颜色由256色降低到88色。另外虽然按照同样的说法，可以在screenrc中设置$TERM的值，但是不知道是我写的格式不对还是什么原因，无效。
+$TERM too long - sorry. 虽然可以在.Xdefaults中指定$TERM的值，但是据说这样会导致rxvt加载错误的terminfo，并导致终端的颜色由256色降低到88色。另外虽然按照同样的说法，可以在screenrc中设置$TERM的值，但是不知道是我写的格式不对还是什么原因，无效。
 最终还是设了个别名：
 1 2 3 # vi ~/.bashrc alias screenx=&amp;#39;export TERM=screen-256color &amp;amp;&amp;amp; screen&amp;#39;</description></item><item><title>批量下载视频的BASH脚本</title><link>http://0x3f.org/posts/a-bash-script-downloading-videos-in-batch/</link><pubDate>Sat, 28 Aug 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/a-bash-script-downloading-videos-in-batch/</guid><description>两周前为了批量下载某视频网站中的电视剧，写了个BASH脚本。将电视剧列表页面的URL地址作为唯一参数传给脚本，然后就会把所有视频下载到当前目录下，并自动重命名，同时生成一个M3U格式的播放列表。
 由于在线视频不支持断点续传，所以对于单个视频来说无法实现。但对于整个批量下载任务来说，实现了宏观上的断点续传，已经下载的视频不会被重复下载。由于有些视频网站会在午夜更改视频地址，所以这一点很有用。
@@ -25,7 +25,7 @@ pppoe可以连接，ifconfig可以看到ppp0接口，一切正常，只是不能
 解决办法
 使用如下命令查看路由表：
 1 route 正常情况下返回的结果中应该有如下内容：
-如果没有，可手工添加：
+default * 0.0.0.0 U 0 0 0 ppp0 如果没有，可手工添加：
 1 route add default dev ppp0 如果可以上网，就成功了。
 使用如下脚本在pppoe连接成功时自动添加路由表项：
 1 2 3 4 5 6 #!/bin/sh if ifconfig ppp0 &amp;gt; /dev/null 2&amp;gt;&amp;amp;1 ; then route del default route add default dev ppp0 fi 将上述内容保存成名为01-route.sh的文件，权限755，放到/etc/ppp/ip-up.d目录下。

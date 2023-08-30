@@ -12,23 +12,23 @@ Dokan是一个为Windows提供实现新文件系统的开发库，而Dokan SSHFS
 如果从安装SSH服务做起，步骤是：
 在Linux主机上安装openssh 修改Linux主机的/etc/hosts.allow，加入sshd: ALL，以允许外部访问 启动sshd守护进程 在Windows主机上安装Dokan和Dokan SSHFS 通过SSHFS的图形配置工具挂载SSH通道 这种方式的好处是简单，但是存在安全隐患，不管怎样，公布SSH连接绝非好事，这意味著接入用户可以远程控制Linux主机，尤其是当SSH账户的权限较高时。因此，这种方式只适用于虚拟机或家庭网络，例如对Host-Guests共享支持不佳的KVM虚拟机来说就是个好的选择。即便如此，也要注意相应的Windows主机的安全防范，否则，入侵者可以通过Windows主机做跳板来进入Linux主机。</description></item><item><title>darkstat: 网络流量监测工具</title><link>http://0x3f.org/posts/darkstat-as-a-network-discharge-meter/</link><pubDate>Sun, 26 Dec 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/darkstat-as-a-network-discharge-meter/</guid><description>darkstat是一个跨平台的网络流量监测工具，可显示最大一个月内操作系统的各项网络流量指标。
 具有以下特性：
-具有以下不足：
-darkstat启动时需要手工指定监视的网络接口，因此需要用根权限启动：
+以守护进程方式运行，提供Web用户界面，零配置，易于使用 可显示较为详细的网络流量指标 性能表现好，占用资源少 跨平台，支持多个UNIX、类UNIX操作系统，并有非官方的Windows移植版 具有以下不足：
+功能较为简单，以易用性换灵活性 日志记录功能比较单薄，需要编写辅助脚本并设置定时任务 darkstat启动时需要手工指定监视的网络接口，因此需要用根权限启动：
 1 sudo darkstat -i eth0 darkstat默认使用667端口提供Web访问，可以用-p参数指定端口：
 1 sudo darkstat -i eth0 -p 8080 darkstat的Web用户界面分为Graph、Hosts和Host三部分。Graph是缺省主页，用于显示最近一分钟、一小时、一天和一个月的流量统计直方图，将光标置于任何一个直方条上可查看对应时刻的流量指标：
 Hosts界面按主机显示各自的流量统计指标的值：
 单击Hosts界面上的IP进入对应主机的Host界面，此界面按TCP/UDP类型显示对应的主机的各端口的网络流量指标的值：
 可通过如下命令查看占用指定端口的进程：
-darkstat区别于其它流量监测工具的最大的优点就是简单易用，非常适合对流量监测应用不复杂的场景。前段时间公司的一台RHEL服务器因为流量过大多次被网管拔线，后来用darkstat监测到大部分流量被几个UDP端口占去，进而发现原来是服务器被入侵并被安装了一个扫描器SIPVicious。</description></item><item><title>Vim保存文件时移除尾行换行符的方法</title><link>http://0x3f.org/posts/howto-remove-eof-in-vim/</link><pubDate>Sun, 05 Dec 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-remove-eof-in-vim/</guid><description>Vim认为一个文本文件的每一行都应该由一换行符结束，即使文件的最后一行也不例外。这就使得Vim保存过的文本文件在其它文本编辑器中查看时可能会在文件末尾多出一个空行。一般来说，这不是个问题，但对于程序员来说，有时候一些不规范的运行环境或其它组件就要求文件的最后一行不能有换行符，否则就会出莫名其妙的问题，尤其是在Windows环境下最常见。
+[lenin@archer ~]$ lsof -i tcp:58062 -n COMMAND PID USER FD TYPE DEVICE SIZE/OFF NODE NAME mlnet 18660 lenin 74u IPv4 251788 0t0 TCP 192.168.1.3:58062->122.116.212.89:http (ESTABLISHED) darkstat区别于其它流量监测工具的最大的优点就是简单易用，非常适合对流量监测应用不复杂的场景。前段时间公司的一台RHEL服务器因为流量过大多次被网管拔线，后来用darkstat监测到大部分流量被几个UDP端口占去，进而发现原来是服务器被入侵并被安装了一个扫描器SIPVicious。</description></item><item><title>Vim保存文件时移除尾行换行符的方法</title><link>http://0x3f.org/posts/howto-remove-eof-in-vim/</link><pubDate>Sun, 05 Dec 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-remove-eof-in-vim/</guid><description>Vim认为一个文本文件的每一行都应该由一换行符结束，即使文件的最后一行也不例外。这就使得Vim保存过的文本文件在其它文本编辑器中查看时可能会在文件末尾多出一个空行。一般来说，这不是个问题，但对于程序员来说，有时候一些不规范的运行环境或其它组件就要求文件的最后一行不能有换行符，否则就会出莫名其妙的问题，尤其是在Windows环境下最常见。
 要在保存文件时不在最后一行添加换行符，最常见、最简单的方法就是：
 1 2 :set binary :set noendofline 但是这样做有一个问题，就是会把DOS格式的文件自动转换成UNIX格式，WinSlave们肯定不希望这么做。
 因此，可在vimrc中加入如下内容：
 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 &amp;#34; Save the current buffer as a file with no EOF sign. function! SaveAsNOEOF(filename) let a=getline(1,line(&amp;#39;$&amp;#39;)-1) let b=map(a, &amp;#39;iconv(v:val,&amp;#34;&amp;#39;.&amp;amp;enc.&amp;#39;&amp;#34;,&amp;#34;&amp;#39;.&amp;amp;fenc.&amp;#39;&amp;#34;) . nr2char(13)&amp;#39;) call extend(b, getline(&amp;#39;$&amp;#39;, &amp;#39;$&amp;#39;)) call writefile(b,a:filename, &amp;#39;b&amp;#39;) if a:filename == bufname(&amp;#39;%&amp;#39;) set nomodified endif endfunction &amp;#34; Save the current buffer and get rid of the EOF sign.</description></item><item><title>virtio可能导致windows蓝屏</title><link>http://0x3f.org/posts/virto-may-breakdown-windows/</link><pubDate>Sat, 04 Dec 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/virto-may-breakdown-windows/</guid><description>前段时间突然发现kvm中的windows在启动时蓝屏，开始以为是kvm新版本的bug，后来发现如果不启用虚拟机硬盘的virtio就不会出现蓝屏。
 于是下载了最新版的virtio，然而更新后，蓝屏的问题并没有解决，所以目前只能暂时不使用virtio。不过网卡的virtio是没有问题的。</description></item><item><title>WinMerge：开源的差异比较工具</title><link>http://0x3f.org/posts/winmerge-as-a-free-diff-tool/</link><pubDate>Mon, 29 Nov 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/winmerge-as-a-free-diff-tool/</guid><description>WinMerge是开源的差异比较工具，只运行于Windows平台。
 具有以下实用特性：
-具有以下不足：
-使用时的注意事项：
-相较于商业的Beyong Compare等工具，WinMerge在操作的直观度和功能细节上存在不足，但是在差异比较的主要功能上，WinMerge完全可以胜任日常工作。同时，由于免费，WinMerge可以作为这些商业软件很好的替代工具。
+支持文件内容和文件、文件夹差异比较 文件内容比较采用左右双栏显示，支持语法高亮 提供Windows资源管理器右键菜单，以选择文件或文件夹进行比较 具有以下不足：
+文件夹比较结果以单栏显示，不直观 仅支持两方比较，不支持多方比较 使用时的注意事项：
+使用树状的列表显示文件夹比较结果可以稍微缓解单栏显示导致的不直观的问题 Windows资源管理器的右键菜单需要在设置界面手工设置才能加入选取不同目标进行比较的菜单项 相较于商业的Beyong Compare等工具，WinMerge在操作的直观度和功能细节上存在不足，但是在差异比较的主要功能上，WinMerge完全可以胜任日常工作。同时，由于免费，WinMerge可以作为这些商业软件很好的替代工具。
 后记：这些天越来越对使用未授权的商业软件感到不安，于是开始寻找这些工具的开源、免费替代品。</description></item><item><title>调整Arch的磁盘分区</title><link>http://0x3f.org/posts/adjust-disk-partitions-in-archlinux/</link><pubDate>Sat, 13 Nov 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/adjust-disk-partitions-in-archlinux/</guid><description>简述
 目标：移除Windows 7，整块硬盘完全分配给Archlinux。
 原分区结构：
