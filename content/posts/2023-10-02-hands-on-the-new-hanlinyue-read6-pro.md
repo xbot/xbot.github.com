@@ -12,6 +12,8 @@ draft: false
 
 ![2023-10-02-17-08-57-DSC00101](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-10-02-17-08-57-DSC00101.jpg)
 
+之前[试用过第一次发售的版本](/posts/hands-on-hanlinyue-read6-pro/)，体验非常糟糕。前不久发现翰林阅又发了预售通知，原来经过上次哀鸿遍野的退货潮，他们迭代了产品重新上市了。
+
 # 新的工业设计比之前好看
 
 - 外壳正面由原来内嵌到背盖里改成了覆盖式，隐藏了边缝。
