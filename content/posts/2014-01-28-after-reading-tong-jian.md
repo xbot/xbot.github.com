@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "读完《资治通鉴》"
+title: 读完《资治通鉴》
 slug: after reading tong jian
 date: 2014-01-28 20:53:00
 comments: true
 categories:
-- 青梅煮酒
+  - 青梅煮酒
 tags:
-- 读书
-- Kindle
-- 电子书
+  - 读书
+  - 历史
 ---
 
 ![](http://pic.yupoo.com/leninlee/DuMqtc1v/medish.jpg)

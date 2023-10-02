@@ -3,11 +3,11 @@ title: 全新Kindle Oasis使用感受
 slug: the all new kindle oasis
 date: 2017-12-09 14:03:08
 categories:
-- 青梅煮酒
+  - 青梅煮酒
 tags:
-- 数码
-- 最佳实践
-- kindle
+  - 最佳实践
+  - kindle
+  - 电子书阅读器
 ---
 ![fullsizeoutput_358](https://wx3.sinaimg.cn/large/006tNbRwly1fwvwzr2sbyj31kw1kwe83.jpg)
 

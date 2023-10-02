@@ -1,16 +1,14 @@
 ---
 layout: post
-title: "读完《Go Web编程》"
+title: 读完《Go Web编程》
 slug: after reading build web application with golang
 date: 2014-02-02 15:52:00
 comments: true
 categories:
-- 青梅煮酒
+  - 青梅煮酒
 tags:
-- 读书
-- Kindle
-- 电子书
-- golang
+  - 读书
+  - golang
 ---
 
 ![](http://pic.yupoo.com/leninlee/DvvA9fkE/medish.jpg)

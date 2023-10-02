@@ -1,17 +1,14 @@
 ---
-title: "MacBook Pro 维修记"
+title: MacBook Pro 维修记
 slug: story of repairing macbook pro
 date: 2020-06-26T23:29:24+08:00
-
 categories:
-- 青梅煮酒
+  - 青梅煮酒
 tags:
-- Mac
-- 随笔
-- 数码
-- 生活
-- 电脑
-
+  - Mac
+  - 随笔
+  - 生活
+  - 电脑
 ---
 
 ![img](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2020-06-26-23-36-49-三里屯太古里南区.jpg)

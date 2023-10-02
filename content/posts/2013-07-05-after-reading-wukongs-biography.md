@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "读完《悟空传》"
+title: 读完《悟空传》
 slug: after reading wukongs biography
 date: 2013-07-05 23:12:00
 comments: true
 categories:
-- 青梅煮酒
+  - 青梅煮酒
 tags:
-- 读书
-- Kindle
-- 电子书
+  - 读书
+  - 小说
 ---
 **我要这天，再遮不住我眼；要这地，再埋不了我心；要这众生，都明白我意；要那诸佛，都烟消云散！**
 

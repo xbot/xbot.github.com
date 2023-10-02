@@ -1,13 +1,13 @@
 ---
 layout: post
-title: "那些年我用过的鼠标"
+title: 那些年我用过的鼠标
 slug: my mouses of all those years
 date: 2013-06-29 19:53:00
 comments: true
 categories:
-- 计算机
+  - 计算机
 tags:
-- 数码
+  - 鼠标
 ---
 第四款，罗技M185，卖相不错，无光，一节五号电池驱动，据说很省电，握感不错，正在用。
 

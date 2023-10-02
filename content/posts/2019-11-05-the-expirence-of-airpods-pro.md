@@ -3,10 +3,10 @@ title: AirPods Pro的使用感受
 slug: the expirence of airpods pro
 tags:
   - 最佳实践
-  - 数码
+  - 耳机
 date: 2019-11-05 16:18:54
 categories:
-- 青梅煮酒
+  - 青梅煮酒
 ---
 
 

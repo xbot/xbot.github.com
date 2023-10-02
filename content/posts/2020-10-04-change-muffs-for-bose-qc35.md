@@ -1,14 +1,12 @@
 ---
-title: "给 Bose QC35 更换新耳罩"
+title: 给 Bose QC35 更换新耳罩
 slug: Change Muffs for Bose Qc35
 date: 2020-10-04T18:43:16+08:00
 categories:
-- 青梅煮酒
+  - 青梅煮酒
 tags:
-- 数码
-- 耳机
-- 生活
-
+  - 耳机
+  - 生活
 ---
 
 尽管我用东西很爱惜，QC35 的耳罩表面在前年也开始了剥落，并终于在今年早些时候裂开了。

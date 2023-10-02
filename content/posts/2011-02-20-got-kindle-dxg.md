@@ -4,10 +4,10 @@ title: 初入Kindle DX Graphite
 slug: got kindle dxg
 date: 2011-02-20 00:00:00
 tags:
-- kindle
-- 数码
+  - kindle
+  - 电子书阅读器
 categories:
-- 青梅煮酒
+  - 青梅煮酒
 ---
 垂涎已久，昨天终于出手，今天上午就收到了。
 

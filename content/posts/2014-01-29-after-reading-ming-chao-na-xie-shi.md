@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "读完《明朝那些事儿》"
+title: 读完《明朝那些事儿》
 slug: after reading ming chao na xie shi
 date: 2014-01-29 12:14:00
 comments: true
 categories:
-- 青梅煮酒
+  - 青梅煮酒
 tags:
-- 读书
-- Kindle
-- 电子书
+  - 读书
+  - 历史
 ---
 
 ![](http://pic.yupoo.com/leninlee/DuSsCV8B/medish.jpg)

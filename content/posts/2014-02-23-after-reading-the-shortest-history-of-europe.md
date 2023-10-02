@@ -1,16 +1,14 @@
 ---
 layout: post
-title: "读完《你一定爱读的极简欧洲史》"
+title: 读完《你一定爱读的极简欧洲史》
 slug: after reading the shortest history of europe
 date: 2014-02-23 20:57:00
 comments: true
 categories:
-- 青梅煮酒
+  - 青梅煮酒
 tags:
-- 读书
-- Kindle
-- 电子书
-- 历史
+  - 读书
+  - 历史
 ---
 
 ![](http://pic.yupoo.com/leninlee/DyJGJDhw/medish.jpg)

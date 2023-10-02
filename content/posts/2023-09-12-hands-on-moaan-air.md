@@ -6,8 +6,6 @@ categories:
   - 青梅煮酒
 tags:
   - 电子书阅读器
-  - 数码
-  - 评测
   - 微信读书
 toc: false
 draft: false

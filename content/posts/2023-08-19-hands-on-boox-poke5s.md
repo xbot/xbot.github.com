@@ -1,13 +1,12 @@
 ---
-title: "文石 Poke5S 的使用感受"
-slug: "Hands on BOOX Poke5S"
+title: 文石 Poke5S 的使用感受
+slug: Hands on BOOX Poke5S
 date: 2023-08-19T18:25:50+08:00
-categories: ["青梅煮酒"]
+categories:
+  - 青梅煮酒
 tags:
-- 电子书阅读器
-- 数码
-- 微信读书
-- 评测
+  - 电子书阅读器
+  - 微信读书
 toc: false
 ---
 
