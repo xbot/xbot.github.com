@@ -5,7 +5,7 @@ date: 2020-07-21T16:25:09+08:00
 categories:
 - 计算机
 tags:
-- MySQL
+- mysql
 - 数据库
 - 编程
 

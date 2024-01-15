@@ -6,7 +6,7 @@ categories:
   - 计算机
 tags:
   - mariadb
-  - MySQL
+  - mysql
   - docker
   - logrotate
   - 日志轮转

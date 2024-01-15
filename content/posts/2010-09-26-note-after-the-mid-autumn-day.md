@@ -9,7 +9,7 @@ tags:
 - Dumperor
 - firefox
 - Google
-- MySQL
+- mysql
 - Opera
 - oracle
 - Plugin

@@ -5,7 +5,7 @@ slug: howto run sql scripts in mysql oracle within installshield
 date: 2010-08-24 00:00:00
 tags:
 - InstallShield
-- MySQL
+- mysql
 - oracle
 - SQL
 - 安装
