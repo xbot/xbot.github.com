@@ -79,7 +79,6 @@ GRANT RELOAD ON *.* TO 'root'@'localhost';`
         then
            docker exec mariadb /usr/bin/mysqladmin --local flush-error-log \
               flush-engine-log flush-general-log flush-slow-log
-           docker exec mariadb sh -c '/bin/kill -HUP $(cat /var/run/mysqld/mysqld.pid)'
         fi
     endscript
 }
