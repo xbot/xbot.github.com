@@ -17,13 +17,13 @@ draft: false
 
 在当今数据中心管理中，数据备份是确保业务连续性和灾难恢复的关键环节。即使是 Home Lab ，也需要保证重要数据的安全。Proxmox Virtual Environment (PVE) 提供了一个强大的平台来管理虚拟化基础设施，而 Proxmox Backup Server (PBS) 则是其官方推荐的备份解决方案。本文将详细介绍如何使用 PBS 对 Proxmox VE 的虚拟机或容器（Guest）和宿主机（Host）进行备份，以及如何设置自动化备份流程。
 
-### Guest 的备份
+# Guest 的备份
 
-#### 使用 PBS
+## 使用 PBS
 
 Proxmox Backup Server (PBS) 是一个功能强大的备份工具，它提供了多种备份选项，包括增量备份、加密备份、自动备份以及自动修剪等功能。这些功能使得 PBS 成为与 PVE 结合紧密的理想选择。
 
-##### 优势
+### 优势
 
 - **增量备份**：只备份自上次备份以来发生变化的数据，节省存储空间和时间。
 - **加密备份**：确保备份数据的安全性。
@@ -31,7 +31,7 @@ Proxmox Backup Server (PBS) 是一个功能强大的备份工具，它提供了�
 - **自动修剪**：自动清理旧的备份，保持存储空间的合理使用。
 - **与 PVE 结合紧密**：PBS 专为 PVE 设计，备份和恢复过程无缝对接。
 
-##### 步骤
+### 步骤
 
 1. **安装 PBS**
 
@@ -61,15 +61,15 @@ Proxmox Backup Server (PBS) 是一个功能强大的备份工具，它提供了�
 
    在 Datacenter → Storage 中添加 Proxmox Backup Server，然后在 Datacenter → Backup 中创建备份计划。
 
-### Host 的备份
+# Host 的备份
 
 在 PBS 支持备份 PVE 主机之前，我们可以使用脚本通过 `proxmox-backup-client` 将重要文件备份到 PBS。
 
-#### 脚本
+## 脚本
 
 https://raw.githubusercontent.com/xbot/homelab/main/pve/backup.sh。
 
-#### 配置
+## 配置
 
 在 `/root/.profile` 中添加以下环境变量：
 
@@ -79,7 +79,7 @@ export PBS_PASSWORD="[PBS 备份用户的密码]"
 export PBS_REPOSITORY="[备份用户名]@pbs@[PBS主机名或IP]:[Datastore名称]"
 ```
 
-#### 执行
+## 执行
 
 1. 手动执行脚本以确保一切正常。
 2. 使用 `cron` 定时任务自动执行脚本。
