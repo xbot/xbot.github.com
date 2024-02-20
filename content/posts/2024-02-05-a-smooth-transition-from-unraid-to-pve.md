@@ -32,6 +32,10 @@ draft: false
 
 2. **主板与扩展卡：** 主板只有一个 M.2 插槽，我选择在这里安装了 PVE。为了加装第二款 NVME 固态硬盘，我购买了 PCIe 转 M.2 扩展卡，将 Unraid 的缓存盘插到了这个扩展卡上。小火炉铠侠 RC10 在加装了扩展卡附带的散热片后降温效果显著，目测温度下降了大约 15℃，Unraid 系统再也没有出现过报警。
 
+![2024-02-20-21-15-19-IMG_1203](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-20-21-15-19-IMG_1203.jpeg)
+
+![2024-02-20-21-17-07-1E419BB6-4057-41B4-B7A5-6F3033154257_4_5005_c](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-20-21-17-07-1E419BB6-4057-41B4-B7A5-6F3033154257_4_5005_c.jpeg)
+
 3. **视频采集卡：** 为了在没有额外显示器的情况下管理 Homelab ，我购买了视频采集卡，并配合 iPad 使用，作为临时显示器。
 
 ![2024-02-05-23-20-26-IMG_1079](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-05-23-20-26-IMG_1079.jpeg)
