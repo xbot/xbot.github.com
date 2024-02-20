@@ -47,6 +47,7 @@ draft: false
 2. **显卡优化：** 对于 i5-8600t 的集成显卡 UHD630，我开启了 GVT-g（Intel® Graphics Virtualization Technology –g）功能，并增加了显存孔径（Aperture Size）。默认的孔径只有 256MB，这限制了虚拟机的显卡性能，只能支持一个 1200p 或两个 768p 的显卡。通过将孔径增加到 1024MB，虚拟机现在可以共享更强大的显卡资源，为运行更高分辨率或更多虚拟机提供了可能。
 
 ![2024-02-05-23-04-11-WFhOJe](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-05-23-04-11-WFhOJe.png)
+
 3. **修改 Docker 网络：** 在运行了一段时间后，我发现 Unraid 几乎每天都会失联一次，表现为 CPU 、内存负载正常，但 IP 地址丢失。所以我把 Unraid 里 Docker 服务的默认自定义网络类型从 macvlan 改成了 ipvlan ，到目前为止，没有再发生同样的问题。但这又带来一个新的问题：使用 bridge 网络的容器无法和使用 ipvlan 网络的容器通讯，我的解决办法是创建一个 bridge 类型的网络并把需要互相通讯的容器添加进去。
 
 # 结语
