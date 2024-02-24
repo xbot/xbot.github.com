@@ -42,9 +42,9 @@ draft: false
 
 # 软件配置
 
-1. **直通设备：** 在 PVE 中，我将 Unraid 系统 U 盘、Sata 控制器、外置硬盘以及 NVME 缓存盘直通（passthrough）给了 Unraid 虚拟机。这样做的好处是，仍然使用 Unraid 作为 NAS 系统管理所有存储资源，并继续使用 Unraid 优秀的应用社区，同时使 Jellyfin 可以直接使用硬件加速解码，提高了性能和响应速度。
+1. **直通设备：** 在 PVE 中，我将 Unraid 系统 U 盘、Sata 控制器、外置硬盘以及 NVME 缓存盘直通（passthrough）给了 Unraid 虚拟机。这样做的好处是，仍然使用 Unraid 作为 NAS 系统管理所有存储资源，并继续使用 Unraid 优秀的应用社区。同时把主板的第二块网卡做了直通，防止 NAS 吞吐量较大时影响访问宿主机及其它客户机的稳定性。
 
-2. **显卡优化：** 对于 i5-8600t 的集成显卡 UHD630，我开启了 GVT-g（Intel® Graphics Virtualization Technology –g）功能，并增加了显存孔径（Aperture Size）。默认的孔径只有 256MB，这限制了虚拟机的显卡性能，只能支持一个 1200p 或两个 768p 的显卡。通过将孔径增加到 1024MB，虚拟机现在可以共享更强大的显卡资源，为运行更高分辨率或更多虚拟机提供了可能。
+2. **显卡优化：** 对于 i5-8600t 的集成显卡 UHD630，我开启了 GVT-g（Intel® Graphics Virtualization Technology –g）功能，并增加了显存孔径（Aperture Size）。默认的孔径只有 256MB，这限制了虚拟机的显卡性能，只能支持一个 1200p 或两个 768p 的显卡。通过将孔径增加到 1024MB，虚拟机现在可以共享更强大的显卡资源，使 Jellyfin 可以直接使用硬件加速解码，提高了性能和响应速度，也为运行更高分辨率或更多虚拟机提供了可能。
 
 ![2024-02-05-23-04-11-WFhOJe](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-05-23-04-11-WFhOJe.png)
 
