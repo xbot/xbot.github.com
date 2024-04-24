@@ -11,6 +11,8 @@ draft: false
 ---
 拥有一辆绝版老车 Jifo ，就像拥有一个珍贵的老友。然而，当它出现问题时，维修之路往往充满挑战。
 
+![2024-01-15-20-16-20-e3e356bd402bd5fcb4157225c29f5966](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-01-15-20-16-20-e3e356bd402bd5fcb4157225c29f5966.jpg)
+
 在前不久的一次骑行中，我的 Jifo 飞轮突然发生跳齿。回家后，我检查发现问题出在张链器的弹簧上——它断了。
 
 ![2024-04-24-15-49-17-IMG_1541](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-04-24-15-49-17-IMG_1541.jpeg)
@@ -52,6 +54,8 @@ draft: false
 最终，我决定回归使用原装的张链器。尽管价格昂贵，且未来寻找替换件同样困难，但它体积小、重量轻，安装方便，且不需要截断链条。
 
 ![2024-04-24-15-48-37-IMG_1533](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-04-24-15-48-37-IMG_1533.jpeg)
+
+![2024-04-24-16-19-54-IMG_1683](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-04-24-16-19-54-IMG_1683.jpeg)
 
 # 结语
 
