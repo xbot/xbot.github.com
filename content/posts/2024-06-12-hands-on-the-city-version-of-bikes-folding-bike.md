@@ -1,5 +1,5 @@
 ---
-title: 佰客国布城市版的骑行感受
+title: 体验精致与舒适：佰客城市版国产小布折叠车详评
 slug: hands on the city version of bike's folding bike
 date: 2024-06-12T15:31:07+08:00
 categories:
