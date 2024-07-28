@@ -54,6 +54,14 @@ draft: false
 
 # 更新
 
+## 2024-07-28
+
+- [走线的问题](/posts/wiring-issue-of-the-bikes-folding-bike)
+
+## 2024-07-23
+
+- [换了 MKS 塑料脚踏](/posts/mks-ux-d-pedal)
+
 ## 2024-06-29
 
 - **换掉了原装脚踏**：踩踏过程中出现了异响，而且鞋底沾水之后非常滑，不光影响骑感，也不安全。
