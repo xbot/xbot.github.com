@@ -54,6 +54,10 @@ draft: false
 
 # 更新
 
+## 2024-07-29
+
+- [更换青春版货架](/posts/replacing-the-rack-of-bikes-folding-bike-with-the-se-version)
+
 ## 2024-07-28
 
 - [走线的问题](/posts/wiring-issue-of-the-bikes-folding-bike)
