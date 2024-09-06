@@ -1,51 +1,169 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>UltraBlog.vim on 晴耕雨讀</title><link>http://0x3f.org/tags/ultrablog.vim/</link><description>Recent content in UltraBlog.vim on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Sun, 20 Apr 2014 22:50:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/ultrablog.vim/index.xml" rel="self" type="application/rss+xml"/><item><title>UltraBlog.vim v3.6.1: 文章分类自动补全</title><link>http://0x3f.org/posts/ultrablog-v361-released/</link><pubDate>Sun, 20 Apr 2014 22:50:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v361-released/</guid><description>春节期间收到两个issue，一直拖到今天才有时间完成。
-增加了一个功能，在文章编辑视图的元数据中分类那行，使用热键&amp;lt;C-X&amp;gt;&amp;lt;C-U&amp;gt;自动完成文章的分类。在配置数组ub_blog中增加键值对“categories”，默认使用这一项的值实现自动完成，如下：
-1 2 3 4 5 6 7 let ub_blog = {&amp;#39;login_name&amp;#39;:&amp;#39;admin&amp;#39;, \&amp;#39;password&amp;#39;:&amp;#39;pass2011&amp;#39;, \&amp;#39;url&amp;#39;:&amp;#39;http://www.sample.com/&amp;#39;, \&amp;#39;xmlrpc_uri&amp;#39;:&amp;#39;xmlrpc.php&amp;#39;, \&amp;#39;db&amp;#39;:&amp;#39;$VIM/UltraBlog.db&amp;#39;, \&amp;#39;categories&amp;#39;: &amp;#39;News|Computer|Image&amp;#39; \} 如果这一项不存在，将从博客中拉取分类数据。
-自从迁移到Octopress，有两年不用Wordpress了，没想到居然还有人在用UltraBlog.vim。</description></item><item><title>UltraBlog.vim v3.5.0: 内建浏览器</title><link>http://0x3f.org/posts/ultrablog-v350-released/</link><pubDate>Mon, 30 Apr 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v350-released/</guid><description>此前预览文章是通过调用系统默认的网络浏览器实现的，缺点是这些功能完备的浏览器启动速度不甚理想，尤其是火狐，谁用谁知道。
-前两天看了TuxRadar的一个Podcast，几分钟内就可以用pywebkitgtk拼装出一个五脏俱全的网络浏览器，pywebkitgtk这个东西实在是非常的好用。不过我实测后发现这东西加载页面的速度比较慢，而且貌似是单线程的，因为图片都是放在最后才加载，不知道是这个绑定本身的问题，还是有API可以实现的。于是突然想到拿这个东西实现一个简单的浏览器，很适合在UB里预览文章。
-增加了一个选项“ub_use_ubviewer”，默认值是1，即默认使用这个内建的浏览器预览文章。当这个选项的值被设为0时，仍然使用系统的默认浏览器，并且在Vim启动时不会加载内建的浏览器。这样做一是为了多一种选择，再一个也可以避开烦人的GTK警告：
-** (gvim:13629): WARNING **: Trying to register gtype 'GMountMountFlags' as enum when in fact it is of type 'GFlags'
-** (gvim:13629): WARNING **: Trying to register gtype 'GDriveStartFlags' as enum when in fact it is of type 'GFlags'
-** (gvim:13629): WARNING **: Trying to register gtype 'GSocketMsgFlags' as enum when in fact it is of type 'GFlags'
-这些警告是GTK或其它一些程序库的Bug造成的，虽然只在虚拟终端中启动Vim时会显示并且不影响使用，但总会有警告恐惧症患者会觉得这种东西很闹心。如果这样，就把这个选项的值设成0，用回巨型浏览器好了。
-本次更新的全部内容如下：
-Feature: Add a tiny web browser to do previewing, which starts much faster than full-functional browsers like firefox and chromium.</description></item><item><title>UltraBlog.vim v3.4.0: 正则表达式、批量替换和调试模式</title><link>http://0x3f.org/posts/ultrablog-v340-released/</link><pubDate>Sun, 29 Apr 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v340-released/</guid><description>这次的更新主要引入了支持正则表达式的全文检索、批量替换和调试模式。
-正则表达式 我一直觉得原来的全文检索有一个遗憾，虽然可以通过多个关键词实现较为精确的查询，但还是不如正则表达式灵活和精确。
-这是个蓄谋已久的需求，但直到真正做起来，才发现很多有意思的东西。虽然SQLite3提供支持正则表达式查询的“REGEX”关键词，但并没有实际实现这个功能，而是需要写程序实现并在数据库接口中注册这个函数：
-```python import sqlite3 conn = sqlite3.connect('/tmp/your-database-file.db') # 使用正则表达式匹配给定内容的函数，返回布尔类型 def regexp_search(expr, item): """Check if the item has a sub-string which matches the expr""" reg = re.compile(expr) return reg.search(item) is not None # 在数据库中注册这个函数 conn.create_function('REGEXP', 2, regexp_search) cur = conn.execute('select id,title from post where content REGEXP ?', '\babc\b') row = cur.fetchone() print row conn.close() ``` 在SQLAlchemy中具体的实现方式是：
-```python # 注册函数 dbe = sqlalchemy.create_engine("sqlite:///tmp/your-database-file.db") conn = dbe.connect() conn.connection.create_function('REGEXP', 2, regexp_search) # 在SQL Expression Language中创建查询条件 tbl = Post.</description></item><item><title>UltraBlog.vim v3.3.0：I18N、超时时间和其它</title><link>http://0x3f.org/posts/ultrablog-v330-released/</link><pubDate>Sun, 15 Apr 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v330-released/</guid><description>UB一岁了，这算是个周年纪念版吧。
-在这一年里，因为各种原因，博客写得没有以前多了，但每篇都是用这个插件写的，我觉得很好用。断断续续地做了一些修改，因为一切都是一个人在做，所以大的变化不多。这次这个版本里有些改动还是要感谢荒野无灯童鞋，他的建议很大程度上催生了这个新版本：比如加入保存命令的热键映射选项，这样可以使用保存普通文件的热键保存UB中的内容，我自己以前也经常习惯性地用错热键；还有socket超时时间的选项，最近我这里也经常性地在UB操作博客时报超时的异常，荒童鞋关于自定义socket超时时间的建议一语惊醒了梦中人。
-此外，似乎与近期Vim的一次升级有关，在Vim中调用Python接口打印任何内容到标准IO都会导致Vim崩溃，所以这次把所有的输出都改成了调用Vim的输出命令来做。
-本次修改的内容中，还有一项比较重要的内容就是实现了国际化，目前只提供英文和简体中文两种语言，由于Vimball不能处理二进制文件，所以从此以后UB改用zip格式压缩包打包。
-以下是本次更新的详细内容：
-Feature: Add i18n support ! Feature: Add a new option ub_hotkey_save_current_item, users can define their own hotkey for :UBSave. Feature: Add a new option ub_socket_timeout, users can customize the timeout period in seconds, useful for slow networks. Bugfix: Exception raised when one event is processed by more than one event handlers. Change: Echoing messages now uses the command :echoerr instead of python's sys.stderr, because Vim crashes on this due to an upgrade recently.</description></item><item><title>UltraBlog.vim v3.1释出：代码重构与MacVim支持</title><link>http://0x3f.org/posts/ultrablog-v310-released/</link><pubDate>Sat, 05 Nov 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v310-released/</guid><description>距离上一个版本的释出已经有三个月了，这次新版并没有增加多少功能性的内容，主要是代码的重构和对在MacVim下稳定性的改进。
-对依赖关系检查的不细致导致了一些麻烦，抛出的错误信息有时与实际原因相距甚远。由于开始时是以实现功能为主，所以都是直接用函数实现的，之后修修补补，代码冗余而且维护麻烦。于是著手重构主要功能的源码，面向对象，把所有检查逻辑放到父类中去实现，子类只关注自身逻辑，最后新版减少了二百多行的代码量。
-在重构的过程中偶然发现，在MacVim中，程序抛出任何异常，即便是有捕获逻辑，也会导致编辑器崩溃。在这里简略地提到：
-the failure was actual a crash, through some strange combination of threading, matplotlib pyplot backend, and ssh X11 forwarding, sys.stderr had somehow been assigned to something which python complained wasn't a file-like object
-于是将所有标准输出与标准错误输出语句换成另一种形式：
-```python # 原形式 sys.stdout.write('xxx') sys.stderr.write('xxx') # 新形式 print >> sys.stdout, 'xxx' print >> sys.stderr, 'xxx' ``` 以上是新版主要变更的内容，此外，也顺便解决了开发过程中发现的个别Bug和做了其它一些改动：
-Change: The key "xmlrpc" of the settings list is dropped, a new one with the name "</description></item><item><title>Enable Code Snippet Highlighting For UltraBlog.vim Templates</title><link>http://0x3f.org/posts/enable-code-snippet-highlighting-for-ultrablog-vim-templates/</link><pubDate>Sat, 27 Aug 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/enable-code-snippet-highlighting-for-ultrablog-vim-templates/</guid><description>Templates make it possible for users previewing posts in custom formats in UltraBlog.vim. However, there is more you can do with our highly customizable templates. This article discusses how to highlight code snippets in posts by the use of some third-party open-source tools.
-Before setting out to work, let me introduce the tools we are about to use:
-highlight.js: A javascript library which highlights code blocks in web pages automatically. jquery: The famous RIA development javascript library.</description></item><item><title>UltraBlog.vim v3.0释出：全文检索与事件驱动</title><link>http://0x3f.org/posts/ultrablog-v300-released/</link><pubDate>Mon, 25 Jul 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v300-released/</guid><description>用了一周的业余时间，昨天我释出了UltraBlog.vim的3.0版。新版本主要加入了全文检索的功能，并引入事件驱动的模式。
-全文检索是我蓄谋已久的功能，一个不能搜索的博客客户端的管理功能是大打折扣的。得益于SQLite数据库和SQLAlchemy框架，全文检索的实现是很简单的，新增加的:UBFind命令将在所有文章和页面的标题与内容中查询，并将搜索结果显示在一个可分页的列表中。这个命令支持任意多个关键词，各关键词之间遵循与的关系。此外，检索结果中，所有的关键词将被自动标记为高亮。
-事件驱动模式的引入是我悍然将版本号跳跃到3.x的主要原因。
-在前几个版本中，我实现了对多窗口的支持，它使得用户可以在新窗口中打开列表中的文章。但UltraBlog.vim最初开发的时候并没有考虑到多窗口的问题，所有命令都只针对当前窗口进行操作。这就有了缓冲区内容同步的问题，假如在一个新的缓冲区中打开了和另一个缓冲区相同的文章，则一个缓冲区内容的改变不会同步到另外一个中，这多少是有些隐患的。
-最直接的做法是在所有可能改变缓冲区内容的功能中加入对其它缓冲区的处理，但这样做有不少问题：
-代码耦合度太高，违反K.I.S.S原则，不利于今后的开发和维护 函数体过长，我讨厌难看的代码 代码冗余，重复劳动 事件驱动模式可以很好的解决以上问题，一个函数只干一件事，做完后一个事件抛出去，至于连带著要做什么，谁监听这个事件谁去处理，代码的耦合度很低，复用度很高，易于维护和阅读。
-UltraBlog.vim引入事件驱动模式处理缓冲区同步的问题。不同的操作抛出不同的事件，所有的事件继承自父类UBEvent：
-```python class UBEvent: def __init__(self, srcObj): self.srcObj = srcObj class UBDebugEvent(UBEvent): pass class UBTmplDelEvent(UBEvent): pass class UBTmplSaveEvent(UBEvent): pass class UBLocalPostDelEvent(UBEvent): pass class UBRemotePostDelEvent(UBEvent): pass class UBPostSendEvent(UBEvent): pass class UBPostSaveEvent(UBEvent): pass ``` 一个可能改变缓冲区内容的操作执行完后，创建一个特定的事件并将其加入到事件队列中。事件队列类中存放两个列表，一是事件队列，二是事件监听器列表；提供三个方法，分别用来注册事件监听器、对事件执行入队列操作和处理队列中所有事件：
-```python class UBEventQueue: queue = [] listeners = [] @classmethod def fireEvent(cls, evt): cls.queue.append(evt) @classmethod def processEvents(cls): for evt in cls.queue: for listener in cls.listeners: if listener.isTarget(evt): cls.queue.remove(evt) listener.</description></item><item><title>UltraBlog.vim v2.3.0 Released With Templates</title><link>http://0x3f.org/posts/ultrablog-v230-released/</link><pubDate>Mon, 13 Jun 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v230-released/</guid><description>I released the new version 2.3.0 of UltraBlog.vim last week. The main improvement in this version is that templates are introduced in.
-Templates are simply HTML strings, they are used to preview posts/pages in the browser locally. This feature is a reparation for the remote previewing, due to the limit of the API, users cannot send a post to Wordpress as draft and preview it without affecting the post status if the post has been published.</description></item><item><title>UltraBlog.vim开发手记</title><link>http://0x3f.org/posts/ultrablog-development-note/</link><pubDate>Mon, 11 Apr 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-development-note/</guid><description>对于博客已死的说法，我一点都不感到奇怪。早在几年前博客还比较火的时候我就表达过对博客泡沫的看法。
-经历了短暂的tumblog的风头，微博成为现在最火的媒介。说博客已死，无非就是说微博将成为个人信息传播的主流。好吧，现在我知道那时候我所说的不懂什么是博客的人都去干什么了。
-但是博客还是会继续发展，微博的兴起只会减少滥竽充数。因为微博突出的是时效性，最缺乏的是系统性和可重复更新的能力。微博的短处，正是博客的长处。这让我对博客有了一个新的、迟到了很久的认识──一个好的博客，它的文章不应该是写掉就忘的，而应该是不断地更新著的。
-UltraBlog.vim就是出于这个需要而写的。
-我对博客客户端的使用大概可以追溯到四五年前，那时候博客正火，在比较了几个BSP后选择了中国博客网，就是因为他们提供桌面客户端。后来独博之后也试用过几个通用的客户端，但都没坚持多久，最根本的原因是它们几乎无一例外地都是WYSIWYG。而WYSIWYG的编辑器生成的HTML源码几乎都使用inline的样式，这就导致文章的排版布局很难控制，我对WYSIWYG其实是很抵触的，至今都不怎么用Office这类东西。
-后来我意识到，我所需要的是样式与内容分离，于是准备自己写一个客户端，后来由于工作的原因不了了之。与此同时，我自定义了一套文章格式并用Java写了一个转换文章到HTML的工具，直到后来发现Markdown，我才知道我其实是需要一个轻量标记语言。
-使用Markdown之后，写博客开始变得轻松愉快。我一度用过一段时间SciTE，还用Lua写了个辅助脚本。但是我需要一个完整的客户端来管理文章，而这是一个编辑器所不能胜任的，所以就著手实现一个支持Markdown的客户端。这一次走得比较远，ForeverFantasy最终达到了可用的程度，我一度用它写过一段时间的博客。但是作为一个Vim重症患者，wxPython的编辑器部件是远远达不到我需要的水平的。虽然后来还实现了调用外部程序处理文章内容（当然也可以调用Vim），但总归觉得不舒服，至今已经一年没更新了。
-直到前段时间试用了一下VimRepress，在修改这个插件的时候突然受到启发，我这几年的需求原来是可以这么简单地解决的。
-其实在几年前vimpress刚刚发布的时候我就了解过这个东西，包括此后接连发布的几个Vim写博客的插件，它们和我原来写的SciTE的那个辅助脚本没有本质的区别，都是博客编辑器。与完整的客户端相比，编辑器缺少对本地文章源码的管理，而且它们不记录文章源码和发布的文章的关联关系，简单地说是无状态的。这不符合博客文章持续更新的观点。
-UltraBlog.vim使用SQLAlchemy做数据库抽象层，将所有文章的源码及其状态保存在本地的一个SQLite数据库中，并且以此为基础，通过XMLRPC接口实现对博客文章、页面的CRUD操作。同时利用Vim分模式的特点实现了可分页的文章列表和文章编辑视图。
-UltraBlog.vim目前支持Markdown和HTML两种格式的文章，它最大的特点是在Markdown格式的源码和发布到博客中的文章之间建立联系，你可以随时修改本地数据库中的Markdown源码并更新博客中对应的文章。
-新的功能还会不断地加入。
-Posted via UltraBlog.vim.</description></item><item><title>UltraBlog.vim: Ultimate Vim Blogging Plugin</title><link>http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/</link><pubDate>Sat, 02 Apr 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/</guid><description>Introduction UltraBlog.vim is yet another Vim blogging script for Wordpress.
-The biggest difference between UB and other similar scripts is that UB is an ultimate client, which stores posts locally in an SQLite database, while others just operate remotely. In this way, many things can be done easily by the advantage of local storage and many other utilities, for example, you can search for posts stored in the database with a few keywords by typing a simple command, also you can preview drafts with any of your favorite templates as soon as you want to.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>UltraBlog.vim on 晴耕雨讀</title><link>http://0x3f.org/tags/ultrablog.vim/</link><description>Recent content in UltraBlog.vim on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Sun, 20 Apr 2014 22:50:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/ultrablog.vim/index.xml" rel="self" type="application/rss+xml"/><item><title>UltraBlog.vim v3.6.1: 文章分类自动补全</title><link>http://0x3f.org/posts/ultrablog-v361-released/</link><pubDate>Sun, 20 Apr 2014 22:50:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v361-released/</guid><description>&lt;p>春节期间收到两个issue，一直拖到今天才有时间完成。&lt;/p>
+&lt;p>增加了一个功能，在文章编辑视图的元数据中分类那行，使用热键&amp;lt;C-X&amp;gt;&amp;lt;C-U&amp;gt;自动完成文章的分类。在配置数组&lt;strong>ub_blog&lt;/strong>中增加键值对“categories”，默认使用这一项的值实现自动完成，如下：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-vim" data-lang="vim">&lt;span class="line">&lt;span class="cl">&lt;span class="k">let&lt;/span> &lt;span class="nx">ub_blog&lt;/span> &lt;span class="p">=&lt;/span> {&lt;span class="s1">&amp;#39;login_name&amp;#39;&lt;/span>:&lt;span class="s1">&amp;#39;admin&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> \&lt;span class="s1">&amp;#39;password&amp;#39;&lt;/span>:&lt;span class="s1">&amp;#39;pass2011&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> \&lt;span class="s1">&amp;#39;url&amp;#39;&lt;/span>:&lt;span class="s1">&amp;#39;http://www.sample.com/&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> \&lt;span class="s1">&amp;#39;xmlrpc_uri&amp;#39;&lt;/span>:&lt;span class="s1">&amp;#39;xmlrpc.php&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> \&lt;span class="s1">&amp;#39;db&amp;#39;&lt;/span>:&lt;span class="s1">&amp;#39;$VIM/UltraBlog.db&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> \&lt;span class="s1">&amp;#39;categories&amp;#39;&lt;/span>: &lt;span class="s1">&amp;#39;News|Computer|Image&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> \}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>UltraBlog.vim v3.5.0: 内建浏览器</title><link>http://0x3f.org/posts/ultrablog-v350-released/</link><pubDate>Mon, 30 Apr 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v350-released/</guid><description>&lt;p>此前预览文章是通过调用系统默认的网络浏览器实现的，缺点是这些功能完备的浏览器启动速度不甚理想，尤其是火狐，谁用谁知道。&lt;/p>
+&lt;p>前两天看了TuxRadar的一个Podcast，几分钟内就可以用pywebkitgtk拼装出一个五脏俱全的网络浏览器，pywebkitgtk这个东西实在是非常的好用。不过我实测后发现这东西加载页面的速度比较慢，而且貌似是单线程的，因为图片都是放在最后才加载，不知道是这个绑定本身的问题，还是有API可以实现的。于是突然想到拿这个东西实现一个简单的浏览器，很适合在UB里预览文章。&lt;/p>
+&lt;p>增加了一个选项&lt;strong>“ub_use_ubviewer”&lt;/strong>，默认值是1，即默认使用这个内建的浏览器预览文章。当这个选项的值被设为0时，仍然使用系统的默认浏览器，并且在Vim启动时不会加载内建的浏览器。这样做一是为了多一种选择，再一个也可以避开烦人的GTK警告：&lt;/p>
+&lt;blockquote>
+&lt;p>** (gvim:13629): WARNING **: Trying to register gtype 'GMountMountFlags' as enum when in fact it is of type 'GFlags'&lt;/p>
+&lt;p>** (gvim:13629): WARNING **: Trying to register gtype 'GDriveStartFlags' as enum when in fact it is of type 'GFlags'&lt;/p>
+&lt;p>** (gvim:13629): WARNING **: Trying to register gtype 'GSocketMsgFlags' as enum when in fact it is of type 'GFlags'&lt;/p>
+&lt;/blockquote>
+&lt;p>这些警告是GTK或其它一些程序库的Bug造成的，虽然只在虚拟终端中启动Vim时会显示并且不影响使用，但总会有警告恐惧症患者会觉得这种东西很闹心。如果这样，就把这个选项的值设成0，用回巨型浏览器好了。&lt;/p>
+&lt;p>本次更新的全部内容如下：&lt;/p></description></item><item><title>UltraBlog.vim v3.4.0: 正则表达式、批量替换和调试模式</title><link>http://0x3f.org/posts/ultrablog-v340-released/</link><pubDate>Sun, 29 Apr 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v340-released/</guid><description>&lt;p>这次的更新主要引入了支持正则表达式的全文检索、批量替换和调试模式。&lt;/p>
+&lt;h2>正则表达式&lt;/h2>
+&lt;p>我一直觉得原来的全文检索有一个遗憾，虽然可以通过多个关键词实现较为精确的查询，但还是不如正则表达式灵活和精确。&lt;/p>
+&lt;p>这是个蓄谋已久的需求，但直到真正做起来，才发现很多有意思的东西。虽然SQLite3提供支持正则表达式查询的&lt;strong>“REGEX”&lt;/strong>关键词，但并没有实际实现这个功能，而是需要写程序实现并在数据库接口中注册这个函数：&lt;/p>
+```python
+import sqlite3
+
+conn = sqlite3.connect('/tmp/your-database-file.db')
+
+# 使用正则表达式匹配给定内容的函数，返回布尔类型
+def regexp_search(expr, item):
+ """Check if the item has a sub-string which matches the expr"""
+ reg = re.compile(expr)
+ return reg.search(item) is not None
+
+# 在数据库中注册这个函数
+conn.create_function('REGEXP', 2, regexp_search)
+
+cur = conn.execute('select id,title from post where content REGEXP ?', '\babc\b')
+row = cur.fetchone()
+print row
+
+conn.close()
+```
+
+&lt;p>在SQLAlchemy中具体的实现方式是：&lt;/p></description></item><item><title>UltraBlog.vim v3.3.0：I18N、超时时间和其它</title><link>http://0x3f.org/posts/ultrablog-v330-released/</link><pubDate>Sun, 15 Apr 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v330-released/</guid><description>&lt;p>UB一岁了，这算是个周年纪念版吧。&lt;/p>
+
+&lt;p>在这一年里，因为各种原因，博客写得没有以前多了，但每篇都是用这个插件写的，我觉得很好用。断断续续地做了一些修改，因为一切都是一个人在做，所以大的变化不多。这次这个版本里有些改动还是要感谢&lt;a href="http://ihacklog.com/">荒野无灯&lt;/a>童鞋，他的&lt;a href="https://github.com/xbot/UltraBlog.vim/issues/3">建议&lt;/a>很大程度上催生了这个新版本：比如加入保存命令的热键映射选项，这样可以使用保存普通文件的热键保存UB中的内容，我自己以前也经常习惯性地用错热键；还有socket超时时间的选项，最近我这里也经常性地在UB操作博客时报超时的异常，荒童鞋关于自定义socket超时时间的建议一语惊醒了梦中人。&lt;/p>
+
+&lt;p>此外，似乎与近期Vim的一次升级&lt;a href="http://comments.gmane.org/gmane.editors.vim.devel/34092">有关&lt;/a>，在Vim中调用Python接口打印任何内容到标准IO都会导致Vim崩溃，所以这次把所有的输出都改成了调用Vim的输出命令来做。&lt;/p>
+
+&lt;p>本次修改的内容中，还有一项比较重要的内容就是实现了国际化，目前只提供英文和简体中文两种语言，由于Vimball不能处理二进制文件，所以从此以后UB改用zip格式压缩包打包。&lt;/p>
+
+&lt;p>以下是本次更新的详细内容：&lt;/p>
+
+&lt;ul>
+&lt;li>Feature: Add i18n support !&lt;/li>
+&lt;li>Feature: Add a new option &lt;strong>ub_hotkey_save_current_item&lt;/strong>, users can define their own hotkey for &lt;strong>:UBSave&lt;/strong>.&lt;/li>
+&lt;li>Feature: Add a new option &lt;strong>ub_socket_timeout&lt;/strong>, users can customize the timeout period in seconds, useful for slow networks.&lt;/li>
+&lt;li>Bugfix: Exception raised when one event is processed by more than one event handlers.&lt;/li>
+&lt;li>Change: Echoing messages now uses the command :echoerr instead of python's sys.stderr, because Vim crashes on this due to an upgrade recently.&lt;/li>
+&lt;li>Change: Change commands &lt;strong>:UBSave&lt;/strong>, &lt;strong>:UBSend&lt;/strong>, &lt;strong>:UBUpload&lt;/strong>, &lt;strong>:UBConv&lt;/strong>, &lt;strong>:UBPreview&lt;/strong> to be available only in their effective views.&lt;/li>
+&lt;li>Change: Lists are set nowrapped.&lt;/li>
+&lt;li>Bugfix: Stop complaining '&lt;strong>_pop from empty list_&lt;/strong>' while doing almost everything.&lt;/li>
+&lt;/ul>
+
+&lt;p>关于UB的详细信息在&lt;a href="http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/">这里&lt;/a>。&lt;/p></description></item><item><title>UltraBlog.vim v3.1释出：代码重构与MacVim支持</title><link>http://0x3f.org/posts/ultrablog-v310-released/</link><pubDate>Sat, 05 Nov 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v310-released/</guid><description>&lt;p>距离上一个版本的释出已经有三个月了，这次新版并没有增加多少功能性的内容，主要是代码的重构和对在MacVim下稳定性的改进。&lt;/p>
+
+&lt;p>对依赖关系检查的不细致导致了一些麻烦，抛出的错误信息有时与实际原因相距甚远。由于开始时是以实现功能为主，所以都是直接用函数实现的，之后修修补补，代码冗余而且维护麻烦。于是著手重构主要功能的源码，面向对象，把所有检查逻辑放到父类中去实现，子类只关注自身逻辑，最后新版减少了二百多行的代码量。&lt;/p>
+
+&lt;p>在重构的过程中偶然发现，在MacVim中，程序抛出任何异常，即便是有捕获逻辑，也会导致编辑器崩溃。在&lt;a href="http://stackoverflow.com/questions/5574702/how-to-print-to-stderr-in-python">这里&lt;/a>简略地提到：&lt;/p>
+
+&lt;blockquote>
+ &lt;p>the failure was actual a crash, through some strange combination of threading, matplotlib pyplot backend, and ssh X11 forwarding, sys.stderr had somehow been assigned to something which python complained wasn't a file-like object&lt;/p>
+&lt;/blockquote>
+
+&lt;p>于是将所有标准输出与标准错误输出语句换成另一种形式：&lt;/p>
+
+```python
+# 原形式
+sys.stdout.write('xxx')
+sys.stderr.write('xxx')
+
+# 新形式
+print >> sys.stdout, 'xxx'
+print >> sys.stderr, 'xxx'
+```
+
+&lt;p>以上是新版主要变更的内容，此外，也顺便解决了开发过程中发现的个别Bug和做了其它一些改动：&lt;/p></description></item><item><title>Enable Code Snippet Highlighting For UltraBlog.vim Templates</title><link>http://0x3f.org/posts/enable-code-snippet-highlighting-for-ultrablog-vim-templates/</link><pubDate>Sat, 27 Aug 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/enable-code-snippet-highlighting-for-ultrablog-vim-templates/</guid><description>&lt;p>Templates make it possible for users previewing posts in custom formats in &lt;a href="http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/">UltraBlog.vim&lt;/a>. However, there is more you can do with our highly customizable templates. This article discusses how to highlight code snippets in posts by the use of some third-party open-source tools.&lt;/p>
+
+&lt;p>Before setting out to work, let me introduce the tools we are about to use:&lt;/p>
+
+&lt;ul>
+&lt;li>&lt;a href="http://softwaremaniacs.org/soft/highlight/en/">highlight.js&lt;/a>: A javascript library which highlights code blocks in web pages automatically.&lt;/li>
+&lt;li>&lt;a href="http://jquery.com/">jquery&lt;/a>: The famous RIA development javascript library.&lt;/li>
+&lt;/ul>
+
+&lt;p>Download the upper two libraries and put them under any folder accessible to your webbrowser, in my case, it is &lt;strong>/home/lenin/.vim/bundle/ultrablog/vendor/&lt;/strong>.&lt;/p></description></item><item><title>UltraBlog.vim v3.0释出：全文检索与事件驱动</title><link>http://0x3f.org/posts/ultrablog-v300-released/</link><pubDate>Mon, 25 Jul 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v300-released/</guid><description>&lt;p>用了一周的业余时间，昨天我释出了&lt;a href="http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/">UltraBlog.vim&lt;/a>的3.0版。新版本主要加入了全文检索的功能，并引入事件驱动的模式。&lt;/p>
+
+&lt;p>全文检索是我蓄谋已久的功能，一个不能搜索的博客客户端的管理功能是大打折扣的。得益于SQLite数据库和SQLAlchemy框架，全文检索的实现是很简单的，新增加的&lt;code>:UBFind&lt;/code>命令将在所有文章和页面的标题与内容中查询，并将搜索结果显示在一个可分页的列表中。这个命令支持任意多个关键词，各关键词之间遵循与的关系。此外，检索结果中，所有的关键词将被自动标记为高亮。&lt;/p>
+
+&lt;p>事件驱动模式的引入是我悍然将版本号跳跃到3.x的主要原因。&lt;/p>
+
+&lt;p>在前几个版本中，我实现了对多窗口的支持，它使得用户可以在新窗口中打开列表中的文章。但UltraBlog.vim最初开发的时候并没有考虑到多窗口的问题，所有命令都只针对当前窗口进行操作。这就有了缓冲区内容同步的问题，假如在一个新的缓冲区中打开了和另一个缓冲区相同的文章，则一个缓冲区内容的改变不会同步到另外一个中，这多少是有些隐患的。&lt;/p>
+
+&lt;p>最直接的做法是在所有可能改变缓冲区内容的功能中加入对其它缓冲区的处理，但这样做有不少问题：&lt;/p>
+
+&lt;ul>
+&lt;li>代码耦合度太高，违反K.I.S.S原则，不利于今后的开发和维护&lt;/li>
+&lt;li>函数体过长，我讨厌难看的代码&lt;/li>
+&lt;li>代码冗余，重复劳动&lt;/li>
+&lt;/ul>
+
+&lt;p>事件驱动模式可以很好的解决以上问题，一个函数只干一件事，做完后一个事件抛出去，至于连带著要做什么，谁监听这个事件谁去处理，代码的耦合度很低，复用度很高，易于维护和阅读。&lt;/p>
+
+&lt;p>UltraBlog.vim引入事件驱动模式处理缓冲区同步的问题。不同的操作抛出不同的事件，所有的事件继承自父类&lt;strong>UBEvent&lt;/strong>：&lt;/p>
+
+```python
+class UBEvent:
+ def __init__(self, srcObj):
+ self.srcObj = srcObj
+
+class UBDebugEvent(UBEvent): pass
+class UBTmplDelEvent(UBEvent): pass
+class UBTmplSaveEvent(UBEvent): pass
+class UBLocalPostDelEvent(UBEvent): pass
+class UBRemotePostDelEvent(UBEvent): pass
+class UBPostSendEvent(UBEvent): pass
+class UBPostSaveEvent(UBEvent): pass
+```
+
+&lt;p>一个可能改变缓冲区内容的操作执行完后，创建一个特定的事件并将其加入到事件队列中。事件队列类中存放两个列表，一是事件队列，二是事件监听器列表；提供三个方法，分别用来注册事件监听器、对事件执行入队列操作和处理队列中所有事件：&lt;/p></description></item><item><title>UltraBlog.vim v2.3.0 Released With Templates</title><link>http://0x3f.org/posts/ultrablog-v230-released/</link><pubDate>Mon, 13 Jun 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v230-released/</guid><description>&lt;p>I released the new version 2.3.0 of &lt;a href="http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/">UltraBlog.vim&lt;/a> last week. The main improvement in this version is that templates are introduced in.&lt;/p>
+
+&lt;p>Templates are simply HTML strings, they are used to preview posts/pages in the browser locally. This feature is a reparation for the remote previewing, due to the limit of the API, users cannot send a post to Wordpress as draft and preview it without affecting the post status if the post has been published. With templates, they do not have to send drafts to blogs to preview the final effect, but preview drafts directly in the browser in a pre-defined style. Templates can be created as many as users like and their looks can be customized with CSS, HTML and Javascript.&lt;/p></description></item><item><title>UltraBlog.vim开发手记</title><link>http://0x3f.org/posts/ultrablog-development-note/</link><pubDate>Mon, 11 Apr 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-development-note/</guid><description>&lt;p>对于&lt;a href="http://blog.sina.com.cn/s/blog_694377f90100rmko.html">博客已死&lt;/a>的说法，我一点都不感到奇怪。早在几年前博客还比较火的时候我就表达过对博客泡沫的&lt;a href="http://0x3f.org/?p=209">看法&lt;/a>。&lt;/p>
+
+&lt;p>经历了短暂的&lt;a href="http://0x3f.org/?p=354">tumblog&lt;/a>的风头，微博成为现在最火的媒介。说博客已死，无非就是说微博将成为个人信息传播的主流。好吧，现在我知道那时候我所说的不懂什么是博客的人都去干什么了。&lt;/p>
+
+&lt;p>但是博客还是会继续发展，微博的兴起只会减少滥竽充数。因为微博突出的是时效性，最缺乏的是系统性和可重复更新的能力。微博的短处，正是博客的长处。这让我对博客有了一个新的、迟到了很久的认识──一个好的博客，它的文章不应该是写掉就忘的，而应该是不断地更新著的。&lt;/p>
+
+&lt;p>&lt;a href="http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/">UltraBlog.vim&lt;/a>就是出于这个需要而写的。&lt;/p>
+
+&lt;p>我对博客客户端的使用大概可以追溯到四五年前，那时候博客正火，在比较了几个&lt;a href="http://en.wikipedia.org/wiki/Blog_service_provider">BSP&lt;/a>后选择了&lt;a href="http://www.blogcn.com/">中国博客网&lt;/a>，就是因为他们提供桌面客户端。后来独博之后也试用过几个通用的客户端，但都没坚持多久，最根本的原因是它们几乎无一例外地都是&lt;a href="http://zh.wikipedia.org/wiki/%E6%89%80%E8%A6%8B%E5%8D%B3%E6%89%80%E5%BE%97">WYSIWYG&lt;/a>。而WYSIWYG的编辑器生成的HTML源码几乎都使用inline的样式，这就导致文章的排版布局很难控制，我对WYSIWYG其实是很抵触的，至今都不怎么用Office这类东西。&lt;/p>
+
+&lt;p>后来我意识到，我所需要的是样式与内容分离，于是准备自己写一个&lt;a href="http://0x3f.org/?p=331">客户端&lt;/a>，后来由于工作的原因不了了之。与此同时，我自定义了一套文章格式并用Java写了一个转换文章到HTML的&lt;a href="http://0x3f.org/?p=342">工具&lt;/a>，直到后来发现&lt;a href="http://0x3f.org/?p=383">Markdown&lt;/a>，我才知道我其实是需要一个轻量标记语言。&lt;/p>
+
+&lt;p>使用Markdown之后，写博客开始变得轻松愉快。我一度用过一段时间&lt;a href="http://www.scintilla.org/SciTE.html">SciTE&lt;/a>，还用&lt;a href="http://zh.wikipedia.org/wiki/Lua">Lua&lt;/a>写了个&lt;a href="http://0x3f.org/?p=499">辅助脚本&lt;/a>。但是我需要一个完整的客户端来管理文章，而这是一个编辑器所不能胜任的，所以就著手实现一个支持Markdown的&lt;a href="http://0x3f.org/?p=812">客户端&lt;/a>。这一次走得比较远，&lt;a href="http://0x3f.org/?p=812">ForeverFantasy&lt;/a>最终达到了可用的程度，我一度用它写过一段时间的博客。但是作为一个Vim重症患者，wxPython的编辑器部件是远远达不到我需要的水平的。虽然后来还&lt;a href="http://0x3f.org/?p=1409">实现&lt;/a>了调用外部程序处理文章内容（&lt;em>当然也可以调用Vim&lt;/em>），但总归觉得不舒服，至今已经一年没更新了。&lt;/p>
+
+&lt;p>直到前段时间试用了一下&lt;a href="http://0x3f.org/?p=1861">VimRepress&lt;/a>，在修改这个插件的时候突然受到启发，我这几年的需求原来是可以这么简单地解决的。&lt;/p>
+
+&lt;p>其实在几年前&lt;a href="http://www.vim.org/scripts/script.php?script_id=1953">vimpress&lt;/a>刚刚发布的时候我就了解过这个东西，包括此后接连发布的几个Vim写博客的插件，它们和我原来写的SciTE的那个辅助脚本没有本质的区别，都是博客编辑器。与完整的客户端相比，编辑器缺少对本地文章源码的管理，而且它们不记录文章源码和发布的文章的关联关系，简单地说是无状态的。这不符合博客文章持续更新的观点。&lt;/p>
+
+&lt;p>UltraBlog.vim使用&lt;a href="http://www.sqlalchemy.org/">SQLAlchemy&lt;/a>做数据库抽象层，将所有文章的源码及其状态保存在本地的一个SQLite数据库中，并且以此为基础，通过&lt;a href="http://en.wikipedia.org/wiki/XML-RPC">XMLRPC&lt;/a>接口实现对博客文章、页面的&lt;a href="http://en.wikipedia.org/wiki/Create,_read,_update_and_delete">CRUD&lt;/a>操作。同时利用Vim分模式的特点实现了可分页的文章列表和文章编辑视图。&lt;/p>
+
+&lt;p>UltraBlog.vim目前支持Markdown和HTML两种格式的文章，它最大的特点是在Markdown格式的源码和发布到博客中的文章之间建立联系，你可以随时修改本地数据库中的Markdown源码并更新博客中对应的文章。&lt;/p>
+
+&lt;p>新的功能还会不断地加入。&lt;/p>
+
+&lt;p>Posted via &lt;a href="http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/">UltraBlog.vim&lt;/a>.&lt;/p></description></item><item><title>UltraBlog.vim: Ultimate Vim Blogging Plugin</title><link>http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/</link><pubDate>Sat, 02 Apr 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/</guid><description>&lt;h2>Introduction&lt;/h2>
+&lt;p>UltraBlog.vim is yet another Vim blogging script for Wordpress.&lt;/p>
+&lt;p>The biggest difference between UB and other similar scripts is that UB is an ultimate client, which stores posts locally in an SQLite database, while others just operate remotely. In this way, many things can be done easily by the advantage of local storage and many other utilities, for example, you can search for posts stored in the database with a few keywords by typing a simple command, also you can preview drafts with any of your favorite templates as soon as you want to.&lt;/p></description></item></channel></rss>

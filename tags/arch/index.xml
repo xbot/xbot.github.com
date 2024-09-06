@@ -1,14 +1,49 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Arch on 晴耕雨讀</title><link>http://0x3f.org/tags/arch/</link><description>Recent content in Arch on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Sat, 18 Sep 2010 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/arch/index.xml" rel="self" type="application/rss+xml"/><item><title>Arch不完全降温笔记</title><link>http://0x3f.org/posts/howto-cool-archlinux-down/</link><pubDate>Sat, 18 Sep 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-cool-archlinux-down/</guid><description>主要目标是解决我的X200在Archlinux（本文内容均基于此发行版）下CPU温度长期居高不下的问题，基本原理是使用cpufrequtils根据CPU负载状况自动变频，和使用laptop-mode-tools实现其它硬件设备的自动节能。最直接的效果是省电，从而延长电池的使用时间，产生的附加影响就是CPU及笔记本整体的温度下降。我几乎不用电池，所以节能不是我的关注点，但降温却是我所欲也。
-首先安装cpufrequtils，并将acpi-cpufreq、cpufreq_ondemand、cpufreq_powersave加入rc.conf的MODULES中，使系统在启动时加载这些模块。
-默认情况下，内核采用cpufreq的performance模式，以获得最高性能，现在用ondemand模式使CPU根据负载状况自动变频。修改/etc/conf.d/cpufreq文件，将governor项设为ondemand。
-将cpufreq加入rc.conf的DAEMONS中，此守护进程会在系统启动时读取配置文件/etc/conf.d/cpufreq中的设置项，故上面设置的ondemand模式会在系统启动时得以自动生效。
-然后安装laptop-mode-tools，并修改/etc/laptop-mode/laptop-mode.conf，打开所有的三个以ENABLE开头的选项，和所有以CONTROL开头的选项。
-将laptop-mode加入rc.conf的DAEMONS中，使其随系统自动启动。
-修改/etc/laptop-mode/conf.d/usb-autosuspend.conf，此配置文件用来配置laptop-mode如何管理USB设备的电源使用。我希望在任何时候都启用USB设备自动节能，但需要把我的无线鼠标排除在外，故作如下配置：
-```bash # 启用USB设备自动挂起 CONTROL_USB_AUTOSUSPEND="auto" # 将不使用自动挂起的USB设备的ID填在下面，使用lsusb命令查看ID AUTOSUSPEND_USBID_BLACKLIST="04fc:05dc" # 总是启用USB自动挂起 BATT_SUSPEND_USB=1 LM_AC_SUSPEND_USB=1 NOLM_AC_SUSPEND_USB=1 ``` 类似地，修改intel-hda-powersave.conf，此配置文件用于配置laptop-mode如何管理Intel HDA音频芯片的电源使用。我希望一直启用声卡自动节能，并适当地将自动进入节电模式的空闲时间增加到30秒，故配置如下：
-```bash # 启用Intel音频芯片电源管理 CONTROL_INTEL_HDA_POWER="auto" # 总是启用 BATT_INTEL_HDA_POWERSAVE=1 LM_AC_INTEL_HDA_POWERSAVE=1 NOLM_AC_INTEL_HDA_POWERSAVE=1 # 适当地设置声卡进入节电模式的超时时间 INTEL_HDA_DEVICE_TIMEOUT=30 ``` 类似地，修改intel-sata-powermgmt.conf，启用sata硬盘接口的电源管理。由于我用Blueman控制蓝牙设备，一般不用时都将其关闭，同时经常使用wifi，故蓝牙和无线网卡均未作配置。
-最后，关闭conky,Firefox和Chromium，powertop显示conky是个很吵闹的东西，关掉它可以使Wakeups-from-idle per second的值下降很多，另外Chromium和Firefox也是耗电大户。
-在此之前，系统空闲时CPU温度一般是50多度，普通使用时一般在60多度，如果开了kvm虚拟机会达到60至90度间。经过以上设置，系统空闲时CPU温度一度下降到39度，即使开了虚拟机，一般也可维持在50到80度间。
-另外，对于以上内容，我还有些没搞明白的地方和要补充说明的东西：
-虽然将laptop-mode加入rc.conf且已随系统启动，但使用命令“cat /proc/sys/vm/laptop_mode”查询得到的结果仍然是0，也就是说没有自动启用laptop-mode，必须使用命令“sudo /etc/rc.d/laptop-mode restart”手动重启才行。目前没有找到解决办法。 虽然启用laptop-mode接管声卡电源管理，但没找到查看是否生效的方法，于是在/etc/rc.local中加入命令“echo 1 &amp;gt; /sys/module/sndhdaintel/parameters/power_save”以强制声卡节电。 Intel的powertop是个好东西，用它可以查看哪些进程最影响CPU节能。我们优化的标准之一就是使powertop中显示的“Wakeups-from-idle per second”尽可能地减少。powertop的另一个特点就是通过自动检查当前系统中电源使用的配置情况给出优化的建议，这是个很贴心的功能。 鉴于目前存疑较多并将继续尝试，所以在标题中特别注明“不完全”三个字……
-参考 http://itgen.blogspot.com/2009/03/energy-management-in-linux.html http://www.ibm.com/developerworks/cn/linux/l-cpufreq-1/index.html http://www.lesswatts.org/</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Arch on 晴耕雨讀</title><link>http://0x3f.org/tags/arch/</link><description>Recent content in Arch on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Sat, 18 Sep 2010 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/arch/index.xml" rel="self" type="application/rss+xml"/><item><title>Arch不完全降温笔记</title><link>http://0x3f.org/posts/howto-cool-archlinux-down/</link><pubDate>Sat, 18 Sep 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-cool-archlinux-down/</guid><description>&lt;p>主要目标是解决我的X200在Archlinux&lt;em>（本文内容均基于此发行版）&lt;/em>下CPU温度长期居高不下的问题，基本原理是使用&lt;a href="http://wiki.archlinux.org/index.php/Cpufrequtils">cpufrequtils&lt;/a>根据CPU负载状况自动变频，和使用&lt;a href="http://wiki.archlinux.org/index.php/Laptop_Mode_Tools">laptop-mode-tools&lt;/a>实现其它硬件设备的自动节能。最直接的效果是省电，从而延长电池的使用时间，产生的附加影响就是CPU及笔记本整体的温度下降。我几乎不用电池，所以节能不是我的关注点，但降温却是我所欲也。&lt;/p>
+
+&lt;p>首先安装cpufrequtils，并将&lt;strong>acpi-cpufreq&lt;/strong>、&lt;strong>cpufreq_ondemand&lt;/strong>、&lt;strong>cpufreq_powersave&lt;/strong>加入&lt;strong>rc.conf&lt;/strong>的&lt;strong>MODULES&lt;/strong>中，使系统在启动时加载这些模块。&lt;/p>
+
+&lt;p>默认情况下，内核采用cpufreq的performance模式，以获得最高性能，现在用ondemand模式使CPU根据负载状况自动变频。修改&lt;strong>/etc/conf.d/cpufreq&lt;/strong>文件，将&lt;strong>governor&lt;/strong>项设为&lt;strong>ondemand&lt;/strong>。&lt;/p>
+
+&lt;p>将&lt;strong>cpufreq&lt;/strong>加入&lt;strong>rc.conf&lt;/strong>的&lt;strong>DAEMONS&lt;/strong>中，此守护进程会在系统启动时读取配置文件&lt;strong>/etc/conf.d/cpufreq&lt;/strong>中的设置项，故上面设置的ondemand模式会在系统启动时得以自动生效。&lt;/p>
+
+&lt;p>然后安装laptop-mode-tools，并修改&lt;strong>/etc/laptop-mode/laptop-mode.conf&lt;/strong>，打开所有的三个以&lt;strong>ENABLE&lt;/strong>开头的选项，和所有以&lt;strong>CONTROL&lt;/strong>开头的选项。&lt;/p>
+
+&lt;p>将&lt;strong>laptop-mode&lt;/strong>加入&lt;strong>rc.conf&lt;/strong>的&lt;strong>DAEMONS&lt;/strong>中，使其随系统自动启动。&lt;/p>
+
+&lt;p>修改&lt;strong>/etc/laptop-mode/conf.d/usb-autosuspend.conf&lt;/strong>，此配置文件用来配置laptop-mode如何管理USB设备的电源使用。我希望在任何时候都启用USB设备自动节能，但需要把我的无线鼠标排除在外，故作如下配置：&lt;/p>
+
+```bash
+# 启用USB设备自动挂起
+CONTROL_USB_AUTOSUSPEND="auto"
+
+# 将不使用自动挂起的USB设备的ID填在下面，使用lsusb命令查看ID
+AUTOSUSPEND_USBID_BLACKLIST="04fc:05dc"
+
+# 总是启用USB自动挂起
+BATT_SUSPEND_USB=1
+LM_AC_SUSPEND_USB=1
+NOLM_AC_SUSPEND_USB=1
+```
+
+&lt;p>类似地，修改&lt;strong>intel-hda-powersave.conf&lt;/strong>，此配置文件用于配置laptop-mode如何管理Intel HDA音频芯片的电源使用。我希望一直启用声卡自动节能，并适当地将自动进入节电模式的空闲时间增加到30秒，故配置如下：&lt;/p>
+
+```bash
+# 启用Intel音频芯片电源管理
+CONTROL_INTEL_HDA_POWER="auto"
+
+# 总是启用
+BATT_INTEL_HDA_POWERSAVE=1
+LM_AC_INTEL_HDA_POWERSAVE=1
+NOLM_AC_INTEL_HDA_POWERSAVE=1
+
+# 适当地设置声卡进入节电模式的超时时间
+INTEL_HDA_DEVICE_TIMEOUT=30
+```
+
+&lt;p>类似地，修改&lt;strong>intel-sata-powermgmt.conf&lt;/strong>，启用sata硬盘接口的电源管理。由于我用Blueman控制蓝牙设备，一般不用时都将其关闭，同时经常使用wifi，故蓝牙和无线网卡均未作配置。&lt;/p>
+
+&lt;p>最后，关闭conky,Firefox和Chromium，&lt;a href="http://www.lesswatts.org/projects/powertop/">powertop&lt;/a>显示conky是个很吵闹的东西，关掉它可以使&lt;strong>Wakeups-from-idle per second&lt;/strong>的值下降很多，另外Chromium和Firefox也是耗电大户。&lt;/p>
+
+&lt;p>&lt;em>在此之前，系统空闲时CPU温度一般是50多度，普通使用时一般在60多度，如果开了kvm虚拟机会达到60至90度间。经过以上设置，系统空闲时CPU温度一度下降到39度，即使开了虚拟机，一般也可维持在50到80度间。&lt;/em>&lt;/p>
+
+&lt;p>另外，对于以上内容，我还有些没搞明白的地方和要补充说明的东西：&lt;/p></description></item></channel></rss>

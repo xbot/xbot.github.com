@@ -1,18 +1,69 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>XFCE on 晴耕雨讀</title><link>http://0x3f.org/tags/xfce/</link><description>Recent content in XFCE on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Sat, 18 Feb 2012 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/xfce/index.xml" rel="self" type="application/rss+xml"/><item><title>登入XFCE后自动关闭蓝牙的方法</title><link>http://0x3f.org/posts/how-to-disable-bluetooth-after-login-to-xfce/</link><pubDate>Sat, 18 Feb 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/how-to-disable-bluetooth-after-login-to-xfce/</guid><description>Blueman不能记忆蓝牙的关闭状态，每次登入桌面都会自动打开蓝牙，既费电又不安全。
-一种方法是禁止bluetooth服务自动启动，缺点是使用蓝牙时不方便，还要手工启动bluetooth服务。
-另一种方法是登入桌面后自动关闭蓝牙，即使用如下命令：
-```bash sudo rfkill block bluetooth ``` 但XFCE不能定制自动启动程序的顺序，所以可以写下面这么个脚本，然后添加到自动启动程序列表中：
-```bash #!/bin/bash blueman-applet &amp; sleep 5 sudo rfkill block bluetooth ``` 当然，还要取消自动启动程序列表中原来的Blueman。
-Posted via UltraBlog.vim.</description></item><item><title>在非GNOME环境中使用TweetDeck</title><link>http://0x3f.org/posts/howto-use-tweetdeck-out-of-gnome/</link><pubDate>Tue, 05 Apr 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-use-tweetdeck-out-of-gnome/</guid><description>在非GNOME桌面环境中，运行TweetDeck会报如下错误：
-Ooops, TweetDeck can't find your data TweetDeck is having trouble using some of your passwords that are stored securely on your machine. Clicking submit will clear this data so that you continue to use TweetDeck.
-原因是Adobe Air将密码保存在GNOME的Keyring里，而此时Air找不到GNOME的相关守护进程gnome-keyring-daemon。
-使用如下脚本启动之：
-```bash #!/bin/bash GNOME_KEYRING=`pidof gnome-keyring-daemon` GNOME_DESKTOP_SESSION_ID=$GNOME_KEYRING /usr/bin/tweetdeck &amp; ``` Posted via UltraBlog.vim.</description></item><item><title>开启自定义GTK程序菜单快捷键的方法</title><link>http://0x3f.org/posts/howto-enable-hotkey-for-gtk-menus/</link><pubDate>Sat, 04 Dec 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-enable-hotkey-for-gtk-menus/</guid><description>基于GTK的程序菜单本身支持通过在焦点所在的菜单项上按下组合键来定义该菜单项的快捷键，但默认并不开启。
-一般来说，对于支持X的会话管理的桌面环境，可以通过修改相应的设置来开启这个功能：
-GNOME中该设置项所在的路径是：主选单 > 桌面 > 偏好设定 > 选单及功具列 > 可编辑选单捷径键 XFCE中该设置项所在的路径是：主选单 > 设置 > 外观 > 设置 > 开启可编辑快捷键 对于不支持会话管理的桌面环境，可在~/.gtkrc-2.0中添加如下配置内容：
-gtk-can-change-accels = 1</description></item><item><title>Oxygen Refit：适用于xfce的Oxygen图标集</title><link>http://0x3f.org/posts/oxygen-iconset-fit-for-xfce/</link><pubDate>Mon, 29 Nov 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/oxygen-iconset-fit-for-xfce/</guid><description>Oxygen是KDE桌面环境中的一套著名的图标集，但是据说基于GTK的桌面环境如GNOME、XFCE等对其支持得不好，我这里在GNOME下倒没发现问题，不过在XFCE下文件夹的图标显示的是缺省的图标，不好看。
-Oxygen Refit是针对GTK的桌面环境修改的Oxygen图标集，在XFCE下可以正常显示，但是缺点是最大分辨率只有48×48，不能显示较大的高清图标。Archlinux下可以安装AUR中的oxygenrefit2-icon-theme。</description></item><item><title>使Thinkpad的静音按钮能被识别的方法</title><link>http://0x3f.org/posts/howto-make-thinkpad-mute-button-detected-on-linux/</link><pubDate>Mon, 09 Aug 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-make-thinkpad-mute-button-detected-on-linux/</guid><description>我的型号是X200，问题表现为在GNOME或XFCE下静音按钮无效，使用xev也捕获不到输入信号，而音量增加和减小按钮可以正常使用且有OSD。
-解决办法是在grub的启动菜单中，给内核加上参数acpi_osi=“Linux”，如：
-1 2 3 4 5 # (0) Arch Linux title Arch Linux root (hd0,2) kernel /boot/vmlinuz26 root=/dev/sda3 resume=/dev/sda4 ro acpi_osi=&amp;#34;Linux&amp;#34; initrd /boot/kernel26.img 从查到的资料看，acpi_osi参数是用来指定操作系统接口的，据说有些硬件都只针对Windows做了测试或优化，对于这些硬件，如果将内核的操作系统接口指定为Linux，则有可能会出问题。所以内核从2.6.23版本开始，此参数的默认值被改成了“!Linux”，以保证更广泛的兼容性和稳定性。
-而根据这里的说法，thinkpad一直以来在对Linux的兼容程度上有很好的口碑，故可以放心添加这个参数。
-另外，xfce下使用OSD需要安装xfce4-volumed。</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>XFCE on 晴耕雨讀</title><link>http://0x3f.org/tags/xfce/</link><description>Recent content in XFCE on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Sat, 18 Feb 2012 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/xfce/index.xml" rel="self" type="application/rss+xml"/><item><title>登入XFCE后自动关闭蓝牙的方法</title><link>http://0x3f.org/posts/how-to-disable-bluetooth-after-login-to-xfce/</link><pubDate>Sat, 18 Feb 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/how-to-disable-bluetooth-after-login-to-xfce/</guid><description>&lt;p>Blueman不能记忆蓝牙的关闭状态，每次登入桌面都会自动打开蓝牙，既费电又不安全。&lt;/p>
+
+&lt;p>一种方法是禁止bluetooth服务自动启动，缺点是使用蓝牙时不方便，还要手工启动bluetooth服务。&lt;/p>
+
+&lt;p>另一种方法是登入桌面后自动关闭蓝牙，即使用如下命令：&lt;/p>
+
+```bash
+sudo rfkill block bluetooth
+```
+
+&lt;p>但XFCE不能定制自动启动程序的顺序，所以可以写下面这么个脚本，然后添加到自动启动程序列表中：&lt;/p>
+
+```bash
+#!/bin/bash
+
+blueman-applet &amp;
+sleep 5
+sudo rfkill block bluetooth
+```
+
+&lt;p>当然，还要取消自动启动程序列表中原来的Blueman。&lt;/p>
+
+&lt;p>Posted via &lt;a href="http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/">UltraBlog.vim&lt;/a>.&lt;/p></description></item><item><title>在非GNOME环境中使用TweetDeck</title><link>http://0x3f.org/posts/howto-use-tweetdeck-out-of-gnome/</link><pubDate>Tue, 05 Apr 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-use-tweetdeck-out-of-gnome/</guid><description>&lt;p>在非GNOME桌面环境中，运行TweetDeck会报如下错误：&lt;/p>
+
+&lt;blockquote>
+ &lt;p>Ooops, TweetDeck can't find your data
+ TweetDeck is having trouble using some of your passwords that are stored securely on your machine. Clicking submit will clear this data so that you continue to use TweetDeck.&lt;/p>
+&lt;/blockquote>
+
+&lt;p>原因是Adobe Air将密码保存在GNOME的Keyring里，而此时Air找不到GNOME的相关守护进程&lt;strong>gnome-keyring-daemon&lt;/strong>。&lt;/p>
+
+&lt;p>使用如下脚本启动之：&lt;/p>
+
+&lt;p>
+```bash
+#!/bin/bash
+GNOME_KEYRING=`pidof gnome-keyring-daemon`
+GNOME_DESKTOP_SESSION_ID=$GNOME_KEYRING /usr/bin/tweetdeck &amp;
+```
+&lt;/p>
+
+&lt;p>Posted via &lt;a href="http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/">UltraBlog.vim&lt;/a>.&lt;/p></description></item><item><title>开启自定义GTK程序菜单快捷键的方法</title><link>http://0x3f.org/posts/howto-enable-hotkey-for-gtk-menus/</link><pubDate>Sat, 04 Dec 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-enable-hotkey-for-gtk-menus/</guid><description>&lt;p>基于GTK的程序菜单本身支持通过在焦点所在的菜单项上按下组合键来定义该菜单项的快捷键，但默认并不开启。&lt;/p>
+&lt;p>一般来说，对于支持X的会话管理的桌面环境，可以通过修改相应的设置来开启这个功能：&lt;/p>
+&lt;ol>
+	&lt;li>GNOME中该设置项所在的路径是：主选单 > 桌面 > 偏好设定 > 选单及功具列 > 可编辑选单捷径键&lt;/li>
+	&lt;li>XFCE中该设置项所在的路径是：主选单 > 设置 > 外观 > 设置 > 开启可编辑快捷键&lt;/li>
+&lt;/ol>
+&lt;p>对于不支持会话管理的桌面环境，可在~/.gtkrc-2.0中添加如下配置内容：&lt;/p>
+&lt;blockquote>
+gtk-can-change-accels = 1
+&lt;/blockquote></description></item><item><title>Oxygen Refit：适用于xfce的Oxygen图标集</title><link>http://0x3f.org/posts/oxygen-iconset-fit-for-xfce/</link><pubDate>Mon, 29 Nov 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/oxygen-iconset-fit-for-xfce/</guid><description>&lt;p>Oxygen是KDE桌面环境中的一套著名的图标集，但是据说基于GTK的桌面环境如GNOME、XFCE等对其支持得不好，我这里在GNOME下倒没发现问题，不过在XFCE下文件夹的图标显示的是缺省的图标，不好看。&lt;/p>
+&lt;p>&lt;a href="http://gnome-look.org/content/show.php/Oxygen+Refit+2?content=79756">Oxygen Refit&lt;/a>是针对GTK的桌面环境修改的Oxygen图标集，在XFCE下可以正常显示，但是缺点是最大分辨率只有48×48，不能显示较大的高清图标。Archlinux下可以安装AUR中的&lt;a href="http://aur.archlinux.org/packages.php?ID=18673">oxygenrefit2-icon-theme&lt;/a>。&lt;/p>
+&lt;p>&lt;a href="http://picasaweb.google.com/lh/photo/cURosgqNAesp47LgLj4LpA?feat=embedwebsite">&lt;img src="http://lh5.ggpht.com/_ceUJ_lBTHzc/TPJ4grT0drI/AAAAAAAABf0/R22H_Nv6kbA/s400/2010-11-28.23%3A33%3A01.-usr-share-icons-oxygen-256x256-places%20%28%E9%A1%AF%E7%A4%BA%E7%B8%AE%E5%9C%96%29%20.01.png" height="249" width="400" />&lt;/a>&lt;/p></description></item><item><title>使Thinkpad的静音按钮能被识别的方法</title><link>http://0x3f.org/posts/howto-make-thinkpad-mute-button-detected-on-linux/</link><pubDate>Mon, 09 Aug 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-make-thinkpad-mute-button-detected-on-linux/</guid><description>&lt;p>我的型号是X200，问题表现为在GNOME或XFCE下静音按钮无效，使用xev也捕获不到输入信号，而音量增加和减小按钮可以正常使用且有OSD。&lt;/p>
+&lt;p>解决办法是在grub的启动菜单中，给内核加上参数&lt;strong>acpi_osi=“Linux”&lt;/strong>，如：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># (0) Arch Linux&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">title Arch Linux
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">root &lt;span class="o">(&lt;/span>hd0,2&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">kernel /boot/vmlinuz26 &lt;span class="nv">root&lt;/span>&lt;span class="o">=&lt;/span>/dev/sda3 &lt;span class="nv">resume&lt;/span>&lt;span class="o">=&lt;/span>/dev/sda4 ro &lt;span class="nv">acpi_osi&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s2">&amp;#34;Linux&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">initrd /boot/kernel26.img
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item></channel></rss>

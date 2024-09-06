@@ -1,8 +1,15 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Git on 晴耕雨讀</title><link>http://0x3f.org/tags/git/</link><description>Recent content in Git on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Sat, 28 Mar 2020 23:17:45 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/git/index.xml" rel="self" type="application/rss+xml"/><item><title>用 SSH 命令调试 Git 的连接问题</title><link>http://0x3f.org/posts/debug-git-connection-with-ssh/</link><pubDate>Sat, 28 Mar 2020 23:17:45 +0000</pubDate><guid>http://0x3f.org/posts/debug-git-connection-with-ssh/</guid><description>昨天执行git pull的时候发现会一直卡在那儿，排除了各种可能，而且 Github 上的项目也是可以正常拉取的，说明跟网络、代理等关系应该不大，git 命令本身也工作正常。
-问题集中在公司的项目上，所有项目都无法拉取代码。起先怀疑是公司自建的 Gitlab 出了问题，但是其他人那里又是正常的，甚至跟我同一局域网的电脑上也是正常的。
-也就是说问题应该出在我自己的电脑上。考虑到前两天还能正常使用，之后唯一一件相关的事就是升级 macOS 到 10.15.4 了。
-然而用 Homebrew 重新安装 git 等相关的几个包也没能解决问题，于是用ssh -T -v git@gitlab.xxx.com -p 8848调试，输出如下：
-donie@Donies  ~  ssh -T -v git@gitlab.xxx.com -p 8848 OpenSSH_8.1p1, LibreSSL 2.7.3 debug1: Reading configuration data /Users/donie/.ssh/config debug1: /Users/donie/.ssh/config line 9: Applying options for gitlab.xxx.com debug1: Reading configuration data /etc/ssh/ssh_config debug1: /etc/ssh/ssh_config line 47: Applying options for * debug1: Connecting to gitlab.xxx.com port 8848. 卡在了“Connecting to gitlab.</description></item><item><title>Git工作流调研报告</title><link>http://0x3f.org/posts/investigation-report-of-git-flows/</link><pubDate>Wed, 15 May 2019 16:14:17 +0000</pubDate><guid>http://0x3f.org/posts/investigation-report-of-git-flows/</guid><description>&lt;h2 id="面临的问题">面临的问题&lt;/h2>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Git on 晴耕雨讀</title><link>http://0x3f.org/tags/git/</link><description>Recent content in Git on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Sat, 28 Mar 2020 23:17:45 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/git/index.xml" rel="self" type="application/rss+xml"/><item><title>用 SSH 命令调试 Git 的连接问题</title><link>http://0x3f.org/posts/debug-git-connection-with-ssh/</link><pubDate>Sat, 28 Mar 2020 23:17:45 +0000</pubDate><guid>http://0x3f.org/posts/debug-git-connection-with-ssh/</guid><description>&lt;p>昨天执行&lt;code>git pull&lt;/code>的时候发现会一直卡在那儿，排除了各种可能，而且 Github 上的项目也是可以正常拉取的，说明跟网络、代理等关系应该不大，git 命令本身也工作正常。&lt;/p>
+&lt;p>问题集中在公司的项目上，所有项目都无法拉取代码。起先怀疑是公司自建的 Gitlab 出了问题，但是其他人那里又是正常的，甚至跟我同一局域网的电脑上也是正常的。&lt;/p>
+&lt;p>也就是说问题应该出在我自己的电脑上。考虑到前两天还能正常使用，之后唯一一件相关的事就是升级 macOS 到 10.15.4 了。&lt;/p>
+&lt;p>然而用 Homebrew 重新安装 git 等相关的几个包也没能解决问题，于是用&lt;code>ssh -T -v git@gitlab.xxx.com -p 8848&lt;/code>调试，输出如下：&lt;/p>
+&lt;pre tabindex="0">&lt;code>donie@Donies  ~  ssh -T -v git@gitlab.xxx.com -p 8848
+OpenSSH_8.1p1, LibreSSL 2.7.3
+debug1: Reading configuration data /Users/donie/.ssh/config
+debug1: /Users/donie/.ssh/config line 9: Applying options for gitlab.xxx.com
+debug1: Reading configuration data /etc/ssh/ssh_config
+debug1: /etc/ssh/ssh_config line 47: Applying options for *
+debug1: Connecting to gitlab.xxx.com port 8848.
+&lt;/code>&lt;/pr</description></item><item><title>Git工作流调研报告</title><link>http://0x3f.org/posts/investigation-report-of-git-flows/</link><pubDate>Wed, 15 May 2019 16:14:17 +0000</pubDate><guid>http://0x3f.org/posts/investigation-report-of-git-flows/</guid><description>&lt;h2 id="面临的问题">面临的问题&lt;/h2>
 &lt;ol>
 &lt;li>
 &lt;p>测试环境杂乱导致的问题&lt;/p>
@@ -24,31 +31,137 @@ donie@Donies  ~  ssh -T -v git@gitlab.xxx.com -p 8848 OpenSSH_8.1p1, Libre
 &lt;p>不能保证所有上线的代码都经过测试&lt;/p>
 &lt;p>直接把feature分支合并到master分支，不能保证所有代码都经过测试。&lt;/p>
 &lt;/li>
-&lt;/ol></description></item><item><title>用gv.vim查看git提交历史</title><link>http://0x3f.org/posts/gv-vim/</link><pubDate>Wed, 18 Oct 2017 13:28:16 +0000</pubDate><guid>http://0x3f.org/posts/gv-vim/</guid><description>gv.vim是fugitive的插件，用于查看git提交历史，特点是速度快、好用。我现在用它做code review。
-1 2 3 4 nnoremap &amp;lt;leader&amp;gt;gll :GV --no-merges&amp;lt;CR&amp;gt; nnoremap &amp;lt;leader&amp;gt;glc :GV!&amp;lt;CR&amp;gt; nnoremap &amp;lt;leader&amp;gt;gla :GV --no-merges --author&amp;lt;space&amp;gt; nnoremap &amp;lt;leader&amp;gt;glg :GV --no-merges --grep&amp;lt;space&amp;gt;</description></item><item><title>Git的衍合</title><link>http://0x3f.org/posts/git-rebase/</link><pubDate>Wed, 22 Feb 2017 18:44:37 +0000</pubDate><guid>http://0x3f.org/posts/git-rebase/</guid><description>合并分支有两种方式，merge和rebase。merge是根据三方合并的差异，创建一个新的提交。rebase是将上游分支的各个提交在比较差异后在下游分支上重演一遍。
-rebase适合对没有推送到远程的提交对象做合并，这样可以保持一个整洁的提交历史。若对已推送的提交对象使用rebase，可能导致其它已经拉取并创建了新的提交的人不得不重新合并，进而导致提交历史变得很混乱。
-基本的rebase：
-1 2 3 git rebase master unstable git checkout master git merge unstable 复杂的情况：存在三个分支，unstable基于master的某个提交创建，feature基于unstable的某个提交创建，要把feature合并到master而不合并unstable。更多分支时方法也一样。
-1 2 3 git rebase --onto master unstable feature git checkout master git merge feature rebase过程中如果存在冲突，合并后用git add标记已解决，再用git rebase --continue继续。如果解决冲突后仍然不能继续，可能是当前补丁的内容在下游分支已存在，可以用git rebase --skip跳过。</description></item><item><title>Git Reset、Revert和Checkout的区别</title><link>http://0x3f.org/posts/differences-among-reset-checkout-revert-of-git/</link><pubDate>Thu, 09 Feb 2017 19:27:47 +0000</pubDate><guid>http://0x3f.org/posts/differences-among-reset-checkout-revert-of-git/</guid><description>reset在提交层面，是将HEAD设定到指定的提交，通常用来舍弃最新的几个提交。在文件层面，是将指定的提交中的该文件保存到暂存区，工作区中的文件不变。
-reset有三个常用的参数：--mixed、--soft和--hard。
-在提交层面，--mixed是默认值，影响暂存区，不影响工作区；--soft将HEAD版本保存到暂存区，并将HEAD设定到指定的提交，用来合并提交历史；--hard既影响暂存区，也影响工作区。
-在文件层面，--soft和--hard均会报错，不支持这两个选项。
-在提交层面，执行过reset后如果需要撤销，使用reflog命令查看之前HEAD的hash，通过reset --hard恢复到该版本。
-checkout在提交层面，用来切换分支或检出到指定的提交。对于后者，如果增加了新的提交，在切换到其它分支后，再切换回来时，这些提交将会丢失，如果希望保存这些提交，在切换到其它分支前，创建一个新的分支。
-revert用来通过创建一个新的提交来回滚一个提交，因此，和reset不同，并不会改变提交的历史。
-对于回滚一次提交的场景，revert比reset安全，所以revert适用于公共分支，reset适用于私有分支。</description></item><item><title>Vultr基配可以部署Gitlab</title><link>http://0x3f.org/posts/setup-gitlab-on-vultr-basic-vps/</link><pubDate>Sat, 24 Dec 2016 17:18:00 +0000</pubDate><guid>http://0x3f.org/posts/setup-gitlab-on-vultr-basic-vps/</guid><description>想在Vultr上部署Gitlab，但是官方文档上说最低要求1GB RAM + 3GB swap，而我的VPS是基础配置：768MB RAM。
-忐忑地试了一下，居然可以用，只是重启防火墙的时候CPU一直100%，最后reboot了事。
-环境 CentOS 7 x64 Gitlab CE 8.15 参考 Setup Swap File on Linux - Vultr.com Installation Guide of GitLab Community Edition | GitLab</description></item><item><title>用好代码时光机</title><link>http://0x3f.org/posts/leverage-code-time-machine/</link><pubDate>Fri, 21 Nov 2014 23:19:00 +0000</pubDate><guid>http://0x3f.org/posts/leverage-code-time-machine/</guid><description>今天看了篇文章，讲几种常见的、糟糕的注释用法。其中之一是把废弃的代码注释起来，而不是直接删掉，原因是担心以后可能会用。
-这个其实就是版本控制系统（VCS）要解决的问题之一。包括对于团队协作的项目，经常需要看某段代码是谁改的、什么时间、什么原因。都是可以用VCS很方便地解决的问题。
-我以前是用二分法在提交列表里找的。其实有更好的解决方法，思路是列出源码在历次提交中修改的内容，然后在其中查找要找的东西就行了。
-git的解决方法：
-1 git log -p abc.php svn的解决方法：
-1 svn log --diff --internal-diff abc.php vim的辅助函数：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 &amp;#34; Show commit history of the current file under the given VCS in a new window function! ShowCommitHistory(vcs) &amp;#34; Check parameter if a:vcs != &amp;#39;svn&amp;#39; &amp;amp;&amp;amp; a:vcs != &amp;#39;git&amp;#39; echoerr &amp;#39;Unknow VCS: &amp;#39;.</description></item><item><title>迁移到 Octopress</title><link>http://0x3f.org/posts/migrate-blog-to-octopress/</link><pubDate>Sat, 23 Jun 2012 23:13:00 +0000</pubDate><guid>http://0x3f.org/posts/migrate-blog-to-octopress/</guid><description>关于迁移 前段时间，用了五年的虚拟主机突然限制了PHP内存上限，导致Wordpress只能启用有限的几个插件，根本不能满足需要。
-所以毅然决定迁移到JeckyII+GitHub，在摸索的过程中发现octopress比JeckyII易用，于是导出所有文章，开始迁移。因为我这几年博客写得比较乱，无论是内容上，还是发表方式上，结果用了几个导出脚本，效果都不甚理想，还是有很多地方需要手工修改。六百篇文章，正好趁这个机会挑拣一下，较早的文章质量低的比较多。断断续续地迁移了一些，剩下的工作量还是很大的，留著以后慢慢来吧。另外这次把URL也改成永久格式了，这一来真的伤筋动骨了，连永久重定向都没的做。
-至于Feed输出，以前订阅Feedburner烧录的两个地址的读者不受影响，直接订阅Wordpress输出的地址的就丢了，这里再公布一下：
-本博客聚合输出：http://feeds.feedburner.com/sinolog 我的全部资讯聚合：http://feeds.feedburner.com/leninlee 迁移那点事 Python 版本的问题 Archlinux很激进，早已把Python的缺省版本进化到了3.x，octopress会用到2.x，结果在生成全站的时候，会报如下错误：
-File &amp;#34;&amp;lt;string&amp;gt;&amp;#34;, line 1 import sys; print sys.executable ^ SyntaxError: invalid syntax 在这里找到解决方法。在octopress的plugins目录里创建文件：
-1 2 3 4 5 require &amp;#39;pygments&amp;#39; if !!RUBY_PLATFORM[&amp;#39;linux&amp;#39;] RubyPython.configure :python_exe =&amp;gt; &amp;#39;/usr/bin/python2&amp;#39; end 不足 用了这段时间octopress，感觉缺点也不小，每次修改后都要重新生成全站，占用系统资源不小，而且理论上以后会越来越慢。</description></item><item><title>读完《Pro Git》</title><link>http://0x3f.org/posts/after-reading-pro-git/</link><pubDate>Mon, 14 Nov 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/after-reading-pro-git/</guid><description>花了大约一周的时间，周日晚上读完《Pro Git》的最后几页。
-高效、安全的分布式和强大的分枝合并是Git的杀手级特性，这本书在语言上浅显易懂、简明扼要，在章节安排上循序渐进，在内容讲解上有较深入的挖掘，当属眼下Git方面最好的教材。此外，这本书的中译水平也很高，必要的地方还有译注，能看出译者不是外行。
-Posted via UltraBlog.vim.</description></item></channel></rss>
+&lt;/ol></description></item><item><title>用gv.vim查看git提交历史</title><link>http://0x3f.org/posts/gv-vim/</link><pubDate>Wed, 18 Oct 2017 13:28:16 +0000</pubDate><guid>http://0x3f.org/posts/gv-vim/</guid><description>&lt;p>&lt;a href="https://github.com/junegunn/gv.vim">gv.vim&lt;/a>是fugitive的插件，用于查看git提交历史，特点是速度快、好用。我现在用它做code review。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-vim" data-lang="vim">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">nnoremap&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">leader&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="nx">gll&lt;/span> :&lt;span class="nx">GV&lt;/span> &lt;span class="p">--&lt;/span>&lt;span class="nx">no&lt;/span>&lt;span class="p">-&lt;/span>&lt;span class="nx">merges&lt;/span>&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">CR&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">nnoremap&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">leader&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="nx">glc&lt;/span> :&lt;span class="nx">GV&lt;/span>&lt;span class="p">!&amp;lt;&lt;/span>&lt;span class="nx">CR&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">nnoremap&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">leader&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="nx">gla&lt;/span> :&lt;span class="nx">GV&lt;/span> &lt;span class="p">--&lt;/span>&lt;span class="nx">no&lt;/span>&lt;span class="p">-&lt;/span>&lt;span class="nx">merges&lt;/span> &lt;span class="p">--&lt;/span>&lt;span class="nx">author&lt;/span>&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">space&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">nnoremap&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">leader&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="nx">glg&lt;/span> :&lt;span class="nx">GV&lt;/span> &lt;span class="p">--&lt;/span>&lt;span class="nx">no&lt;/span>&lt;span class="p">-&lt;/span>&lt;span class="nx">merges&lt;/span> &lt;span class="p">--&lt;/span>&lt;span class="nx">grep&lt;/span>&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">space&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>Git的衍合</title><link>http://0x3f.org/posts/git-rebase/</link><pubDate>Wed, 22 Feb 2017 18:44:37 +0000</pubDate><guid>http://0x3f.org/posts/git-rebase/</guid><description>&lt;p>合并分支有两种方式，merge和rebase。merge是根据三方合并的差异，创建一个新的提交。rebase是将上游分支的各个提交在比较差异后在下游分支上重演一遍。&lt;/p>
+&lt;p>rebase适合对没有推送到远程的提交对象做合并，这样可以保持一个整洁的提交历史。若对已推送的提交对象使用rebase，可能导致其它已经拉取并创建了新的提交的人不得不重新合并，进而导致提交历史变得很混乱。&lt;/p>
+&lt;p>基本的rebase：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">git rebase master unstable
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">git checkout master
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">git merge unstable
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>复杂的情况：存在三个分支，unstable基于master的某个提交创建，feature基于unstable的某个提交创建，要把feature合并到master而不合并unstable。更多分支时方法也一样。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">git rebase --onto master unstable feature
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">git checkout master
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">git merge feature
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>Git Reset、Revert和Checkout的区别</title><link>http://0x3f.org/posts/differences-among-reset-checkout-revert-of-git/</link><pubDate>Thu, 09 Feb 2017 19:27:47 +0000</pubDate><guid>http://0x3f.org/posts/differences-among-reset-checkout-revert-of-git/</guid><description>&lt;p>reset在提交层面，是将HEAD设定到指定的提交，通常用来舍弃最新的几个提交。在文件层面，是将指定的提交中的该文件保存到暂存区，工作区中的文件不变。&lt;/p>
+&lt;p>reset有三个常用的参数：--mixed、--soft和--hard。&lt;/p>
+&lt;p>在提交层面，--mixed是默认值，影响暂存区，不影响工作区；--soft将HEAD版本保存到暂存区，并将HEAD设定到指定的提交，用来合并提交历史；--hard既影响暂存区，也影响工作区。&lt;/p>
+&lt;p>在文件层面，--soft和--hard均会报错，不支持这两个选项。&lt;/p>
+&lt;p>在提交层面，执行过reset后如果需要撤销，使用reflog命令查看之前HEAD的hash，通过reset --hard恢复到该版本。&lt;/p>
+&lt;p>checkout在提交层面，用来切换分支或检出到指定的提交。对于后者，如果增加了新的提交，在切换到其它分支后，再切换回来时，这些提交将会丢失，如果希望保存这些提交，在切换到其它分支前，创建一个新的分支。&lt;/p>
+&lt;p>revert用来通过创建一个新的提交来回滚一个提交，因此，和reset不同，并不会改变提交的历史。&lt;/p>
+&lt;p>对于回滚一次提交的场景，revert比reset安全，所以revert适用于公共分支，reset适用于私有分支。&lt;/p></description></item><item><title>Vultr基配可以部署Gitlab</title><link>http://0x3f.org/posts/setup-gitlab-on-vultr-basic-vps/</link><pubDate>Sat, 24 Dec 2016 17:18:00 +0000</pubDate><guid>http://0x3f.org/posts/setup-gitlab-on-vultr-basic-vps/</guid><description>&lt;p>想在Vultr上部署Gitlab，但是官方文档上说最低要求1GB RAM + 3GB swap，而我的VPS是基础配置：768MB RAM。&lt;/p>
+&lt;p>忐忑地试了一下，居然可以用，只是重启防火墙的时候CPU一直100%，最后reboot了事。&lt;/p>
+&lt;h2 id="环境">环境&lt;/h2>
+&lt;ul>
+&lt;li>CentOS 7 x64&lt;/li>
+&lt;li>Gitlab CE 8.15&lt;/li>
+&lt;/ul>
+&lt;h2 id="参考">参考&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="https://www.vultr.com/docs/setup-swap-file-on-linux">Setup Swap File on Linux - Vultr.com&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://about.gitlab.com/downloads/#centos7">Installation Guide of GitLab Community Edition | GitLab&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>用好代码时光机</title><link>http://0x3f.org/posts/leverage-code-time-machine/</link><pubDate>Fri, 21 Nov 2014 23:19:00 +0000</pubDate><guid>http://0x3f.org/posts/leverage-code-time-machine/</guid><description>&lt;p>今天看了篇文章，讲几种常见的、糟糕的注释用法。其中之一是把废弃的代码注释起来，而不是直接删掉，原因是担心以后可能会用。&lt;/p>
+&lt;p>这个其实就是版本控制系统（VCS）要解决的问题之一。包括对于团队协作的项目，经常需要看某段代码是谁改的、什么时间、什么原因。都是可以用VCS很方便地解决的问题。&lt;/p>
+&lt;p>我以前是用二分法在提交列表里找的。其实有更好的解决方法，思路是列出源码在历次提交中修改的内容，然后在其中查找要找的东西就行了。&lt;/p>
+&lt;p>git的解决方法：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">git log -p abc.php
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>svn的解决方法：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">svn log --diff --internal-diff abc.php
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>vim的辅助函数：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>迁移到 Octopress</title><link>http://0x3f.org/posts/migrate-blog-to-octopress/</link><pubDate>Sat, 23 Jun 2012 23:13:00 +0000</pubDate><guid>http://0x3f.org/posts/migrate-blog-to-octopress/</guid><description>&lt;h2 id="关于迁移">关于迁移&lt;/h2>
+&lt;p>前段时间，用了五年的虚拟主机突然限制了PHP内存上限，导致Wordpress只能启用有限的几个插件，根本不能满足需要。&lt;/p>
+&lt;p>所以毅然决定迁移到JeckyII+GitHub，在摸索的过程中发现octopress比JeckyII易用，于是导出所有文章，开始迁移。因为我这几年博客写得比较乱，无论是内容上，还是发表方式上，结果用了几个导出脚本，效果都不甚理想，还是有很多地方需要手工修改。六百篇文章，正好趁这个机会挑拣一下，较早的文章质量低的比较多。断断续续地迁移了一些，剩下的工作量还是很大的，留著以后慢慢来吧。另外这次把URL也改成永久格式了，这一来真的伤筋动骨了，连永久重定向都没的做。&lt;/p>
+&lt;p>至于Feed输出，以前订阅Feedburner烧录的两个地址的读者不受影响，直接订阅Wordpress输出的地址的就丢了，这里再公布一下：&lt;/p>
+&lt;ul>
+&lt;li>本博客聚合输出：http://feeds.feedburner.com/sinolog&lt;/li>
+&lt;li>我的全部资讯聚合：http://feeds.feedburner.com/leninlee&lt;/li>
+&lt;/ul>
+&lt;h2 id="迁移那点事">迁移那点事&lt;/h2>
+&lt;h3 id="python-版本的问题">Python 版本的问题&lt;/h3>
+&lt;p>Archlinux很激进，早已把Python的缺省版本进化到了3.x，octopress会用到2.x，结果在生成全站的时候，会报如下错误：&lt;/p>
+&lt;pre tabindex="0">&lt;code> File &amp;#34;&amp;lt;string&amp;gt;&amp;#34;, line 1
+ import sys; print sys.executable
+ ^
+SyntaxError: invalid syntax
+&lt;/code>&lt;/pre>&lt;p>在&lt;a href="http://blog.dayanjia.com/2012/04/fix-rubypython-bug-in-arch-linux/">这里&lt;/a>找到解决方法。在octopress的plugins目录里创建文件：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>读完《Pro Git》</title><link>http://0x3f.org/posts/after-reading-pro-git/</link><pubDate>Mon, 14 Nov 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/after-reading-pro-git/</guid><description>&lt;p>花了大约一周的时间，周日晚上读完&lt;a href="http://progit.org">《Pro Git》&lt;/a>的最后几页。&lt;/p>
+
+&lt;p>高效、安全的分布式和强大的分枝合并是Git的杀手级特性，这本书在语言上浅显易懂、简明扼要，在章节安排上循序渐进，在内容讲解上有较深入的挖掘，当属眼下Git方面最好的教材。此外，这本书的中译水平也很高，必要的地方还有译注，能看出译者不是外行。&lt;/p>
+
+&lt;p>&lt;a href="https://picasaweb.google.com/lh/photo/RuILnzirn3HwuJzk5Wp2Zw?feat=embedwebsite">&lt;img src="https://lh4.googleusercontent.com/-JaRvkCJzpFE/Tr_4ifkfXMI/AAAAAAAAB0w/K_4h24C2fis/s800/A9781430218333-3d_6.png" height="350" width="277" />&lt;/a>&lt;/p>
+
+&lt;p>Posted via &lt;a href="http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/">UltraBlog.vim&lt;/a>.&lt;/p></description></item></channel></rss>

@@ -1,51 +1,160 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Homelab on 晴耕雨讀</title><link>http://0x3f.org/tags/homelab/</link><description>Recent content in Homelab on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Fri, 23 Feb 2024 16:23:33 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/homelab/index.xml" rel="self" type="application/rss+xml"/><item><title>Unraid 启动 U 盘损坏：症状、解决方案与备份恢复</title><link>http://0x3f.org/posts/how-to-recover-from-a-crash-of-the-unraid-flash-drive/</link><pubDate>Fri, 23 Feb 2024 16:23:33 +0800</pubDate><guid>http://0x3f.org/posts/how-to-recover-from-a-crash-of-the-unraid-flash-drive/</guid><description>在 Unraid 操作系统的日常使用中，启动 U 盘的损坏可能会导致一系列问题，从而影响到整个系统的稳定性和数据的安全性。本文将探讨启动 U 盘损坏时的表现、解决办法，以及如何通过备份恢复系统。
-启动 U 盘损坏的表现 当你的 Unraid 系统遇到以下情况时，很可能是启动 U 盘出现了问题：
-只读模式：在尝试启动 Unraid 时，系统可能会提示文件系统为只读，导致无法正常启动。这种情况下，服务器可能会卡住，无法进入操作界面。 磁盘工具无法修复：如果尝试将 U 盘插入 Mac 电脑，并使用磁盘工具的 First Aid 功能，但无法修复问题，这进一步证实了 U 盘的损坏。 恢复备份的步骤 面对启动 U 盘的损坏，恢复备份是解决这一问题的有效方法。以下是详细的恢复步骤：
-下载闪存备份：首先，你需要从 Unraid Connect 下载你的闪存备份。这通常可以通过 Unraid 的 WebGUI 界面完成。 使用 Unraid USB Creator：接下来，使用 Unraid USB Creator 工具将备份恢复到一个新的 U 盘。这个工具可以在 Windows 或 macOS 上运行，并且可以从 Unraid 官网下载。 启动并重新授权：在新的 U 盘上恢复备份后，你需要启动 Unraid 系统。启动后，进入 Main 页面，获取你的 Key 文件，并按照提示重新授权。这将确保你的 Unraid 系统能够识别新的启动 U 盘。 参考资源 在处理启动 U 盘损坏的问题时，以下官方文档提供了宝贵的指导：</description></item><item><title>Proxmox VE 备份指南</title><link>http://0x3f.org/posts/proxmox-ve-backup-guide/</link><pubDate>Tue, 06 Feb 2024 18:48:31 +0800</pubDate><guid>http://0x3f.org/posts/proxmox-ve-backup-guide/</guid><description>在当今数据中心管理中，数据备份是确保业务连续性和灾难恢复的关键环节。即使是 Home Lab ，也需要保证重要数据的安全。Proxmox Virtual Environment (PVE) 提供了一个强大的平台来管理虚拟化基础设施，而 Proxmox Backup Server (PBS) 则是其官方推荐的备份解决方案。本文将详细介绍如何使用 PBS 对 Proxmox VE 的虚拟机或容器（Guest）和宿主机（Host）进行备份，以及如何设置自动化备份流程。
-Guest 的备份 使用 PBS Proxmox Backup Server (PBS) 是一个功能强大的备份工具，它提供了多种备份选项，包括增量备份、加密备份、自动备份以及自动修剪等功能。这些功能使得 PBS 成为与 PVE 结合紧密的理想选择。
-优势 增量备份：只备份自上次备份以来发生变化的数据，节省存储空间和时间。 加密备份：确保备份数据的安全性。 自动备份：设置定时任务，无需手动干预。 自动修剪：自动清理旧的备份，保持存储空间的合理使用。 与 PVE 结合紧密：PBS 专为 PVE 设计，备份和恢复过程无缝对接。 步骤 安装 PBS
-LXC 方式：创建一个 Debian 容器，然后添加 PBS 的源。这种方式轻量级，但 LXC 容器只能使用 RAW 格式的镜像。 ISO 方式：通过 PBS 官方 ISO 镜像创建虚拟机。这种方式限制较少，能适应更多硬件环境。 创建 PBS 备份用户
-在 PBS 中，进入 Configuration → Access Control → User Management 创建一个新用户，例如 dataguard。</description></item><item><title>榨干 Intel 核显潜能，让更多虚拟机用上显卡</title><link>http://0x3f.org/posts/guide-to-increasing-intel-graphics-aperture-size/</link><pubDate>Tue, 06 Feb 2024 12:30:40 +0800</pubDate><guid>http://0x3f.org/posts/guide-to-increasing-intel-graphics-aperture-size/</guid><description>在虚拟化环境中，尤其是使用 Proxmox VE 或其他虚拟化平台时，有时我们需要增加 Intel 核显的显存孔径（Aperture Size），以便让更多虚拟机用上显卡的硬件加速。例如，我的 i5-8600t CPU 的核显是 UHD630 ，它的显存孔径被限制为 256M ，这只能提供一个 1200p 或两个 768p 的虚拟 GPU ，显然太少了。而当我们把这个值上调到 1024M ，就能获得更多或性能更高的虚拟 GPU 。
-这可以通过修改 BIOS 设置来实现，但通常主板 BIOS 不提供直接的选项来调整这个值。幸运的是，我们可以通过一些工具来间接修改这个设置。以下是详细的步骤：
-步骤 1: 下载和主板上同版本的 BIOS 首先，你需要从主板制造商的官方网站下载与你的主板型号相匹配的 BIOS 文件。确保下载的是与你的主板上安装的 BIOS 版本相同的文件，以便后续操作不会引发兼容性问题。
-步骤 2: 使用 UEFITool 打开 BIOS 接下来，你需要使用 UEFITool，这是一个 UEFI 固件图像查看器和编辑器。下载并安装 UEFITool，然后使用它打开你下载的 BIOS 文件。
-步骤 3: 搜索“aperture size” 在 UEFITool 中，打开搜索对话框并选择“Text”类型，然后输入“aperture size”进行搜索。搜索结果中可能会有多个匹配项。
-步骤 4: 导出 Body 并转换 选择一个搜索结果，导出其 Body。然后，使用 IFRExtractor-RS，这是一个 Rust 实用程序，可以将 UEFI IFR 数据提取成人类可读的文本。运行 IFRExtractor-RS 并指定你刚刚导出的文件，它会生成一个文本文件。</description></item><item><title>GVT-g 配置指南：实现多虚拟机共享 Intel 核显硬件加速</title><link>http://0x3f.org/posts/guide-to-configuring-gvt-g-graphics-acceleration/</link><pubDate>Tue, 06 Feb 2024 11:25:58 +0800</pubDate><guid>http://0x3f.org/posts/guide-to-configuring-gvt-g-graphics-acceleration/</guid><description>Proxmox Virtual Environment（PVE）是一个功能强大的开源虚拟化管理平台。它允许用户在单个主机上运行多个虚拟机，每个虚拟机都可以拥有自己的操作系统。为了进一步提升虚拟机的性能，特别是对于那些需要图形处理能力的应用，我们可以通过配置 Intel® Graphics Virtualization Technology –g (GVT-g) 来实现。GVT-g 是一种硬件辅助的虚拟化技术，它允许虚拟机直接访问宿主机的图形处理单元（GPU），从而提高图形性能。本文将详细介绍如何在 PVE 中为 Intel 核显开启 GVT-g 。
-本文环境：
-操作系统：PVE 8.0 CPU： Intel Core i5-8600t 核显：UHD630 步骤 1 ：修改 GRUB 配置 首先，我们需要确保 GRUB 引导加载器在启动时启用了必要的参数。打开/etc/default/grub文件，并找到GRUB_CMDLINE_LINUX_DEFAULT行。添加以下参数：
-1 GRUB_CMDLINE_LINUX_DEFAULT=&amp;#34;quiet intel_iommu=on iommu=pt i915.enable_gvt=1&amp;#34; 这将启用 Intel IOMMU（Input/Output Memory Management Unit）和 GVT-g 。保存文件后，运行以下命令来更新 GRUB 配置：
-1 sudo update-grub 步骤 2 ：添加内核模块 接下来，我们需要确保 PVE 在启动时加载必要的内核模块。编辑/etc/modules文件，添加以下模块：
-1 2 3 4 5 vfio vfio_iommu_type1 vfio_pci vfio_virqfd kvmgt 如果你之前因为配置直通核显而在/etc/modprobe.d/pve-blacklist.conf中屏蔽了显卡驱动，现在需要解除屏蔽。这可以通过注释掉或删除相关行来实现。
-完成修改后，运行以下命令来更新 initramfs ：</description></item><item><title>Homelab 升级记：从 Unraid 到 Proxmox VE 的平滑过渡</title><link>http://0x3f.org/posts/a-smooth-transition-from-unraid-to-pve/</link><pubDate>Mon, 05 Feb 2024 22:22:57 +0800</pubDate><guid>http://0x3f.org/posts/a-smooth-transition-from-unraid-to-pve/</guid><description>最近，我对我的 Homelab 进行了一次重大调整，从 Unraid 迁移到了 Proxmox VE（PVE），并用它实现了对 Unraid 的虚拟化，这一转变不仅提高了系统的稳定性、灵活性，还带来了一系列令人惊喜的改进。在这篇文章中，我将分享这次调整的动机、硬件升级以及软件配置的详细过程。
-动机：解耦虚拟机与 Unraid 我决定将虚拟机从 Unraid 中分离出来，这样做的目的是为了减轻 Unraid 重启时对整个网络环境的影响，降低磁盘阵列卡住的风险，并加速 Unraid 的重启过程。
-此外，这样的调整也使得使用 Proxmox Backup Server (PBS) 进行备份变得更加方便，减少了对 Unraid 缓存盘的占用，并优化了硬盘的休眠策略，减少了不必要的唤醒次数。
-最后，减少虚拟化嵌套层数，简化了架构，提高了整体效率。
-硬件升级 机箱改造： 为了适应新的硬件配置，我用角磨机切掉了蜗牛星际机箱 B 款的横梁，因为它挡住了 PCIe 插槽。这一小小的改动为后续的硬件安装提供了空间。 主板与扩展卡： 主板只有一个 M.2 插槽，我选择在这里安装了 PVE。为了加装第二款 NVME 固态硬盘，我购买了 PCIe 转 M.2 扩展卡，将 Unraid 的缓存盘插到了这个扩展卡上。小火炉铠侠 RC10 在加装了扩展卡附带的散热片后降温效果显著，目测温度下降了大约 15℃，Unraid 系统再也没有出现过报警。 视频采集卡： 为了在没有额外显示器的情况下管理 Homelab ，我购买了视频采集卡，并配合 iPad 使用，作为临时显示器。 软件配置 直通设备： 在 PVE 中，我将 Unraid 系统 U 盘、Sata 控制器、外置硬盘以及 NVME 缓存盘直通（passthrough）给了 Unraid 虚拟机。这样做的好处是，仍然使用 Unraid 作为 NAS 系统管理所有存储资源，并继续使用 Unraid 优秀的应用社区。同时把主板的第二块网卡做了直通，防止 NAS 吞吐量较大时影响访问宿主机及其它客户机的稳定性。</description></item><item><title>我的家庭数据备份方案</title><link>http://0x3f.org/posts/my-homelab-backup-strategy/</link><pubDate>Wed, 31 Jan 2024 20:02:08 +0800</pubDate><guid>http://0x3f.org/posts/my-homelab-backup-strategy/</guid><description>在这个数字化时代，数据安全比以往任何时候都更加重要。无论是个人生活还是工作，我们都需要一个可靠的备份方案来确保数据的安全。今天，我想分享我的家庭数据备份方案，它不仅涵盖了我所有的虚拟机、容器和配置数据，还包括了 NAS 上的重要文件，如照片、密码、笔记和待办事项。这个方案遵循了著名的 3-2-1 备份策略，并且通过精心选择的备份工具，确保了数据的安全性和高效性。
-数据种类 首先，让我们来了解我需要备份的数据种类。我有两个 PVE（Proxmox Virtual Environment）宿主机，上面运行着多个虚拟机和容器。这些虚拟机和容器包含了我所有的工作和个人项目。为了备份这些数据，我选择了 PBS（Proxmox Backup Server）作为备份存储。同时，我还使用 proxmox-backup-client 将 PVE 的配置数据也备份到 PBS 。
-除了虚拟机和容器，我的 NAS 上还存储着许多重要数据，包括家庭照片、密码管理器的数据库、个人笔记以及待办事项列表。这些数据对我来说同样重要，因此我也将它们纳入了备份计划。
-备份策略 我遵循的备份策略是 3-2-1 原则，即至少有三份备份，存储在两种不同的媒介上，且至少有一份在其他地方。这个策略可以有效地防止数据丢失。
-3-2-1策略的具体实现 为了实现这一策略，我部署了两个 Kopia 实例，并行运行，分别将数据备份到阿里云盘和我的移动硬盘。这样做的原因是 KopiaUI 目前只支持同时连接一个仓库，而并行备份可以确保即使上游备份出现问题，也不会影响下游的备份进程。
-为什么选择并行而不是串行 串行备份可能会导致一个问题：如果上游的备份过程中出现错误，那么这个错误会被传递到下游的备份。通过并行备份，我们可以避免这种情况，确保每个备份都是独立的。
-备份工具的选择 在选择备份工具时，我考虑了以下几个标准：
-支持本地和云备份：这样可以确保数据在本地和远程都有备份。 支持增量备份：只备份自上次备份以来发生变化的数据，节省时间和存储空间。 支持压缩和加密：保护数据安全的同时，减少存储需求。 支持将备份数据分割成一定大小：这对于远程备份尤其有用，可以提高小文件的上传速度，降低大文件上传失败的风险。 支持定时备份：自动化的定时备份可以确保数据始终是最新的。 稳定性和易用性：工具需要稳定运行，并且用户界面友好，易于操作。 在对比了多个备份工具后，我选择了 Kopia 和 Duplicati 。以下是它们的优缺点对比：
-Duplicati 优点：
-易于部署，通过 Docker 部署非常简单。 用户界面友好，易于操作。 支持同时连接多个仓库。 缺点：
-使用 .Net 实现，可能会占用更多的系统资源。 有关于稳定性的传闻，尽管这可能因环境而异。 Kopia 优点：
-稳定性的负面反馈较少，运行效率高。 占用资源相对较少，对系统的影响小。 用户界面简洁，易于理解。 缺点：
-部署和上手难度较高，相关资料较少，官方文档不够详尽。 不支持同时连接多个仓库，这在某些情况下可能会造成不便。 高级功能通常需要通过命令行实现，对于不熟悉命令行的用户来说可能不够友好。 结语 通过这样的备份方案，我可以确保我的数据在多种情况下都能得到保护。无论是硬件故障还是意外删除，我都有办法恢复我的数据。这给了我极大的安心，让我可以专注于我的工作和家庭生活，而不必担心数据安全问题。希望我的分享能为你的家庭数据备份提供一些启示。</description></item><item><title>用 Caddy 做 Home Lab 的反向代理</title><link>http://0x3f.org/posts/reverse-proxying-home-lab-with-caddy/</link><pubDate>Sun, 16 Oct 2022 22:37:08 +0800</pubDate><guid>http://0x3f.org/posts/reverse-proxying-home-lab-with-caddy/</guid><description>我原本用 SWAG 做 Home Lab 的反向代理，它自带很多服务的配置模板，只需要复制后改几个参数就能工作，还有通过 ACME 自动更新 SSL 证书的功能，但是从某个时间起，首次访问经由它代理的服务会报 404 或 502 的错误，刷新页面就恢复正常，然后隔段时间后又会再次发生，另外还会偶尔出现页面无法显示最新的状态的问题，尤以当服务出错时发生居多。
-最近尝试用 Caddy 代替 SWAG ，效果非常好，再也没有出现上述问题。而且 Caddy 的使用很简单，只需要在 Caddyfile 中加几行配置信息就能实现对一个服务的反向代理。当然，它也集成了自动更新 SSL 证书的功能。此外，它的镜像只有 80 多 MB ，在我测试的几个反向代理服务里是最节省空间的。
-出于安全考虑，我没有把 Home Lab 的服务暴露在公网上，所以需要通过 DNS challenge 的方式申请 SSL 证书。我的 Docker 容器部署在 Unraid 上，官方软件仓库里的 Caddy 镜像并不包含 Cloudflare 的模块，所以找了个打包了该模块的镜像，看起来更新得还很及时。
-镜像的 README 里有申请 Cloudflare API Token 的说明，部署容器前填到环境变量里即可。这里有个小坑，创建容器前需要手动创建 Caddyfile ，空文件就行，否则会报错：
-Are you trying to mount a directory onto a file
-Caddy 不如 SWAG 的地方是没有为服务提供配置模板，所以我保留了后者的配置目录，作为在前者中配置服务时的参考。以下是我的 Caddyfile 的示例，展示了怎样配置泛域名的反向代理和 SSL 证书的自动申请，以及服务的几种典型反向代理配置：</description></item><item><title>Unraid 6.11 弃用 NerdPack 的解决办法</title><link>http://0x3f.org/posts/how-to-install-packages-after-nerdpack-is-deprecated-in-unraid-6.11/</link><pubDate>Sun, 25 Sep 2022 21:29:41 +0800</pubDate><guid>http://0x3f.org/posts/how-to-install-packages-after-nerdpack-is-deprecated-in-unraid-6.11/</guid><description>Unraid 6.11 的 release note 没提弃用 NerdPack ，浪费了我很多时间。😞
-当前版本的 Unraid 是基于 Slackware 15.0 的，可以手动从以下站点下载软件包手动安装：
-https://slackware.pkgs.org/15.0/slackware-x86_64/ https://slackonly.com/pub/packages/15.0-x86_64/ 把下载的软件包放到运行中的 Unraid 的 /boot/extra 目录（不存在就手动创建）下，重启系统后自动安装或者通过 installpkg 命令手动安装。例如：
-1 installpkg vim-8.2.4256-x86_64-1.txz 更简单的方法是使用 un-get ：
-1 2 3 4 5 6 un-get search vim un-get install python3 python-pip python-setuptools un-get remove vim un-get update un-get cleanup un-get upgrade 这个命令目前不解决依赖关系，而且存在部分包无法下载或找不到的现象，还是需要手动干预。
-作者没有在项目主页写安装说明，而是写在 Reddit 帖子里了。
-2022-10-07 更新 出了个新的 NerdTools ，界面和 NerdPack 一样难用，包的数量现在还很少，但版本较新，还有一些 un-get 目前搜不到的包（比如: fzf）。可以作为补充。</description></item><item><title>让 AdGuard Home 和 OpenClash 协同工作</title><link>http://0x3f.org/posts/make-adguard-home-and-openclash-work-together/</link><pubDate>Sun, 06 Mar 2022 12:12:10 +0800</pubDate><guid>http://0x3f.org/posts/make-adguard-home-and-openclash-work-together/</guid><description>家庭网络环境 使用 OpenWrt （以下简称 OP ）做旁路网关 OP 内建 OpenClash （以下简称 OC ）访问不存在的网站 OP 内建 WireGuard （以下简称 WG ）做内网穿透 使用 AdGuard Home （以下简称 AH ）做内网 DNS 和广告过滤 之前遇到的问题 不管怎样配置，内网和 WG 下的内网主机名解析和科学上网这 4 种场景总有至少一个不工作。
-期间创建过一个虚拟机做独立的 WG Server ，内建 SmartDNS （以下简称 SD ）做 AH 的上游，其它场景工作得很好，只是无法通过旁路网关访问不存在的网站。
-解决方法 首先如果要正常使用 OC ，就必须使用它的 DNS 解析。
-同时，又要达到使用 AH 做内网主机名解析和广告过滤的目的，所以要把 OC 设成 AH 的唯一上游。
-然后最棘手的问题来了。如果把 AH 设成 dnsmasq 的上游， WG 下不能解析内网主机名。如果把 AH 设成监听 53 端口，则内网无法解析主机名。
-想到之前在独立的 WG Server 上用 SD 在两种场景下都可以正常解析，就试着用它代替 dnsmasq ，结果柳暗花明，所以场景都跑通了。</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Homelab on 晴耕雨讀</title><link>http://0x3f.org/tags/homelab/</link><description>Recent content in Homelab on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Fri, 06 Sep 2024 16:27:57 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/homelab/index.xml" rel="self" type="application/rss+xml"/><item><title>用 n8n 优化 Homelab 通知流程：从邮件到 Telegram</title><link>http://0x3f.org/posts/optimize-homelab-notifications-with-n8n-from-email-to-telegram/</link><pubDate>Fri, 06 Sep 2024 16:27:57 +0800</pubDate><guid>http://0x3f.org/posts/optimize-homelab-notifications-with-n8n-from-email-to-telegram/</guid><description>&lt;p>最近，我对 Homelab 的通知系统进行了一次升级，将繁琐的邮件通知转变为简洁的 Telegram 消息。这个过程不仅提高了效率，还大大改善了我的使用体验。&lt;/p>
+&lt;h2 id="背景">背景&lt;/h2>
+&lt;p>我的 Homelab 基础设施主要由 Proxmox Virtual Environment (PVE) 和 Proxmox Backup Server (PBS) 构成。这些系统每天都会发送各种通知，包括系统更新、虚拟机和容器备份、备份数据仓库垃圾回收等任务的执行结果。&lt;/p>
+&lt;p>长期以来，我一直通过邮件接收这些通知。然而，邮件作为一种信息接收方式，显得既重量级又低效。每天删除这些通知邮件成了一件烦人的琐事，我急需一种更轻量、更即时高效的通知方式。&lt;/p>
+&lt;h2 id="为什么选择-telegram">为什么选择 Telegram？&lt;/h2>
+&lt;p>我已经在使用 Telegram 接收 Unraid 的通知消息，体验一直很不错。考虑到这点，我决定将基础平台的通知也集中到 Telegram 上来。&lt;/p>
+&lt;h2 id="初步尝试gotify-和-gotify2telegram">初步尝试：Gotify 和 gotify2telegram&lt;/h2>
+&lt;p>PVE 和 PBS 除了支持邮件通知，还支持 Gotify 这个消息收集服务。理论上，我可以使用 &lt;a href="https://github.com/anhbh310/gotify2telegram">gotify2telegram&lt;/a> 插件将 Gotify 的消息转发到 Telegram。&lt;/p>
+&lt;p>但是，这个方案存在两个问题：&lt;/p>
+&lt;ol>
+&lt;li>不支持通过 Gotify 的 Application 过滤消息，导致所有发送到 Gotify 的消息都会被无差别转发。&lt;/li>
+&lt;li>不支持对消息内容进行处理，降低了通知的可读性。比如，PVE 在备份客户机后会发送冗长的备份过程信息，这些信息在 Telegram 中会被截断成多条消息展示，非常不便于阅读。&lt;/li>
+&lt;/ol>
+&lt;h2 id="最终方案n8n--gotify-webhook">最终方案：n8n + gotify-webhook&lt;/h2>
+&lt;p>为了解决上述问题，我找到了 &lt;a href="https://github.com/wuxs/gotify-webhook">gotify-webhook&lt;/a> 插件。我的想法是通过这个插件将消息转发给 n8n 处理，然后再发送到 Telegram。&lt;/p></description></item><item><title>Unraid 启动 U 盘损坏：症状、解决方案与备份恢复</title><link>http://0x3f.org/posts/how-to-recover-from-a-crash-of-the-unraid-flash-drive/</link><pubDate>Fri, 23 Feb 2024 16:23:33 +0800</pubDate><guid>http://0x3f.org/posts/how-to-recover-from-a-crash-of-the-unraid-flash-drive/</guid><description>&lt;p>在 Unraid 操作系统的日常使用中，启动 U 盘的损坏可能会导致一系列问题，从而影响到整个系统的稳定性和数据的安全性。本文将探讨启动 U 盘损坏时的表现、解决办法，以及如何通过备份恢复系统。&lt;/p>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-23-16-33-19-Aid1Uo.png" alt="2024-02-23-16-33-19-Aid1Uo">&lt;/p>
+&lt;h2 id="启动-u-盘损坏的表现">启动 U 盘损坏的表现&lt;/h2>
+&lt;p>当你的 Unraid 系统遇到以下情况时，很可能是启动 U 盘出现了问题：&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>只读模式&lt;/strong>：在尝试启动 Unraid 时，系统可能会提示文件系统为只读，导致无法正常启动。这种情况下，服务器可能会卡住，无法进入操作界面。&lt;/li>
+&lt;li>&lt;strong>磁盘工具无法修复&lt;/strong>：如果尝试将 U 盘插入 Mac 电脑，并使用磁盘工具的 First Aid 功能，但无法修复问题，这进一步证实了 U 盘的损坏。&lt;/li>
+&lt;/ul>
+&lt;h2 id="恢复备份的步骤">恢复备份的步骤&lt;/h2>
+&lt;p>面对启动 U 盘的损坏，恢复备份是解决这一问题的有效方法。以下是详细的恢复步骤：&lt;/p>
+&lt;ol>
+&lt;li>&lt;strong>下载闪存备份&lt;/strong>：首先，你需要从 Unraid Connect 下载你的闪存备份。这通常可以通过 Unraid 的 WebGUI 界面完成。&lt;/li>
+&lt;li>&lt;strong>使用 Unraid USB Creator&lt;/strong>：接下来，使用 Unraid USB Creator 工具将备份恢复到一个新的 U 盘。这个工具可以在 Windows 或 macOS 上运行，并且可以从 Unraid 官网下载。&lt;/li>
+&lt;li>&lt;strong>启动并重新授权&lt;/strong>：在新的 U 盘上恢复备份后，你需要启动 Unraid 系统。启动后，进入 Main 页面，获取你的 Key 文件，并按照提示重新授权。这将确保你的 Unraid 系统能够识别新的启动 U 盘。&lt;/li>
+&lt;/ol>
+&lt;h2 id="参考资源">参考资源&lt;/h2>
+&lt;p>在处理启动 U 盘损坏的问题时，以下官方文档提供了宝贵的指导：&lt;/p></description></item><item><title>Proxmox VE 备份指南</title><link>http://0x3f.org/posts/proxmox-ve-backup-guide/</link><pubDate>Tue, 06 Feb 2024 18:48:31 +0800</pubDate><guid>http://0x3f.org/posts/proxmox-ve-backup-guide/</guid><description>&lt;p>在当今数据中心管理中，数据备份是确保业务连续性和灾难恢复的关键环节。即使是 Home Lab ，也需要保证重要数据的安全。Proxmox Virtual Environment (PVE) 提供了一个强大的平台来管理虚拟化基础设施，而 Proxmox Backup Server (PBS) 则是其官方推荐的备份解决方案。本文将详细介绍如何使用 PBS 对 Proxmox VE 的虚拟机或容器（Guest）和宿主机（Host）进行备份，以及如何设置自动化备份流程。&lt;/p>
+&lt;h1 id="guest-的备份">Guest 的备份&lt;/h1>
+&lt;h2 id="使用-pbs">使用 PBS&lt;/h2>
+&lt;p>Proxmox Backup Server (PBS) 是一个功能强大的备份工具，它提供了多种备份选项，包括增量备份、加密备份、自动备份以及自动修剪等功能。这些功能使得 PBS 成为与 PVE 结合紧密的理想选择。&lt;/p>
+&lt;h3 id="优势">优势&lt;/h3>
+&lt;ul>
+&lt;li>&lt;strong>增量备份&lt;/strong>：只备份自上次备份以来发生变化的数据，节省存储空间和时间。&lt;/li>
+&lt;li>&lt;strong>加密备份&lt;/strong>：确保备份数据的安全性。&lt;/li>
+&lt;li>&lt;strong>自动备份&lt;/strong>：设置定时任务，无需手动干预。&lt;/li>
+&lt;li>&lt;strong>自动修剪&lt;/strong>：自动清理旧的备份，保持存储空间的合理使用。&lt;/li>
+&lt;li>&lt;strong>与 PVE 结合紧密&lt;/strong>：PBS 专为 PVE 设计，备份和恢复过程无缝对接。&lt;/li>
+&lt;/ul>
+&lt;h3 id="步骤">步骤&lt;/h3>
+&lt;ol>
+&lt;li>
+&lt;p>&lt;strong>安装 PBS&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>LXC 方式&lt;/strong>：创建一个 Debian 容器，然后添加 PBS 的源。这种方式轻量级，但 LXC 容器只能使用 RAW 格式的镜像。&lt;/li>
+&lt;li>&lt;strong>ISO 方式&lt;/strong>：通过 PBS 官方 ISO 镜像创建虚拟机。这种方式限制较少，能适应更多硬件环境。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>创建 PBS 备份用户&lt;/strong>&lt;/p></description></item><item><title>榨干 Intel 核显潜能，让更多虚拟机用上显卡</title><link>http://0x3f.org/posts/guide-to-increasing-intel-graphics-aperture-size/</link><pubDate>Tue, 06 Feb 2024 12:30:40 +0800</pubDate><guid>http://0x3f.org/posts/guide-to-increasing-intel-graphics-aperture-size/</guid><description>&lt;p>在虚拟化环境中，尤其是使用 Proxmox VE 或其他虚拟化平台时，有时我们需要增加 Intel 核显的显存孔径（Aperture Size），以便让更多虚拟机用上显卡的硬件加速。例如，我的 i5-8600t CPU 的核显是 UHD630 ，它的显存孔径被限制为 256M ，这只能提供一个 1200p 或两个 768p 的虚拟 GPU ，显然太少了。而当我们把这个值上调到 1024M ，就能获得更多或性能更高的虚拟 GPU 。&lt;/p>
+&lt;p>这可以通过修改 BIOS 设置来实现，但通常主板 BIOS 不提供直接的选项来调整这个值。幸运的是，我们可以通过一些工具来间接修改这个设置。以下是详细的步骤：&lt;/p>
+&lt;h3 id="步骤-1-下载和主板上同版本的-bios">步骤 1: 下载和主板上同版本的 BIOS&lt;/h3>
+&lt;p>首先，你需要从主板制造商的官方网站下载与你的主板型号相匹配的 BIOS 文件。确保下载的是与你的主板上安装的 BIOS 版本相同的文件，以便后续操作不会引发兼容性问题。&lt;/p>
+&lt;h3 id="步骤-2-使用-uefitool-打开-bios">步骤 2: 使用 UEFITool 打开 BIOS&lt;/h3>
+&lt;p>接下来，你需要使用 &lt;a href="https://github.com/LongSoft/UEFITool">UEFITool&lt;/a>，这是一个 UEFI 固件图像查看器和编辑器。下载并安装 UEFITool，然后使用它打开你下载的 BIOS 文件。&lt;/p>
+&lt;h3 id="步骤-3-搜索aperture-size">步骤 3: 搜索“aperture size”&lt;/h3>
+&lt;p>在 UEFITool 中，打开搜索对话框并选择“Text”类型，然后输入“aperture size”进行搜索。搜索结果中可能会有多个匹配项。&lt;/p>
+&lt;h3 id="步骤-4-导出-body-并转换">步骤 4: 导出 Body 并转换&lt;/h3>
+&lt;p>选择一个搜索结果，导出其 Body。然后，使用 &lt;a href="https://github.com/LongSoft/IFRExtractor-RS">IFRExtractor-RS&lt;/a>，这是一个 Rust 实用程序，可以将 UEFI IFR 数据提取成人类可读的文本。运行 IFRExtractor-RS 并指定你刚刚导出的文件，它会生成一个文本文件。&lt;/p></description></item><item><title>GVT-g 配置指南：实现多虚拟机共享 Intel 核显硬件加速</title><link>http://0x3f.org/posts/guide-to-configuring-gvt-g-graphics-acceleration/</link><pubDate>Tue, 06 Feb 2024 11:25:58 +0800</pubDate><guid>http://0x3f.org/posts/guide-to-configuring-gvt-g-graphics-acceleration/</guid><description>&lt;p>Proxmox Virtual Environment（PVE）是一个功能强大的开源虚拟化管理平台。它允许用户在单个主机上运行多个虚拟机，每个虚拟机都可以拥有自己的操作系统。为了进一步提升虚拟机的性能，特别是对于那些需要图形处理能力的应用，我们可以通过配置 Intel® Graphics Virtualization Technology –g (GVT-g) 来实现。GVT-g 是一种硬件辅助的虚拟化技术，它允许虚拟机直接访问宿主机的图形处理单元（GPU），从而提高图形性能。本文将详细介绍如何在 PVE 中为 Intel 核显开启 GVT-g 。&lt;/p>
+&lt;p>本文环境：&lt;/p>
+&lt;ul>
+&lt;li>操作系统：PVE 8.0&lt;/li>
+&lt;li>CPU： Intel Core i5-8600t&lt;/li>
+&lt;li>核显：UHD630&lt;/li>
+&lt;/ul>
+&lt;h3 id="步骤-1-修改-grub-配置">步骤 1 ：修改 GRUB 配置&lt;/h3>
+&lt;p>首先，我们需要确保 GRUB 引导加载器在启动时启用了必要的参数。打开&lt;code>/etc/default/grub&lt;/code>文件，并找到&lt;code>GRUB_CMDLINE_LINUX_DEFAULT&lt;/code>行。添加以下参数：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">GRUB_CMDLINE_LINUX_DEFAULT&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s2">&amp;#34;quiet intel_iommu=on iommu=pt i915.enable_gvt=1&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>这将启用 Intel IOMMU（Input/Output Memory Management Unit）和 GVT-g 。保存文件后，运行以下命令来更新 GRUB 配置：&lt;/p></description></item><item><title>Homelab 升级记：从 Unraid 到 Proxmox VE 的平滑过渡</title><link>http://0x3f.org/posts/a-smooth-transition-from-unraid-to-pve/</link><pubDate>Mon, 05 Feb 2024 22:22:57 +0800</pubDate><guid>http://0x3f.org/posts/a-smooth-transition-from-unraid-to-pve/</guid><description>&lt;p>最近，我对我的 Homelab 进行了一次重大调整，从 Unraid 迁移到了 Proxmox VE（PVE），并用它实现了对 Unraid 的虚拟化，这一转变不仅提高了系统的稳定性、灵活性，还带来了一系列令人惊喜的改进。在这篇文章中，我将分享这次调整的动机、硬件升级以及软件配置的详细过程。&lt;/p>
+&lt;h1 id="动机解耦虚拟机与-unraid">动机：解耦虚拟机与 Unraid&lt;/h1>
+&lt;p>我决定将虚拟机从 Unraid 中分离出来，这样做的目的是为了减轻 Unraid 重启时对整个网络环境的影响，降低磁盘阵列卡住的风险，并加速 Unraid 的重启过程。&lt;/p>
+&lt;p>此外，这样的调整也使得使用 Proxmox Backup Server (PBS) 进行备份变得更加方便，减少了对 Unraid 缓存盘的占用，并优化了硬盘的休眠策略，减少了不必要的唤醒次数。&lt;/p>
+&lt;p>最后，减少虚拟化嵌套层数，简化了架构，提高了整体效率。&lt;/p>
+&lt;h1 id="硬件升级">硬件升级&lt;/h1>
+&lt;ol>
+&lt;li>&lt;strong>机箱改造：&lt;/strong> 为了适应新的硬件配置，我用角磨机切掉了蜗牛星际机箱 B 款的横梁，因为它挡住了 PCIe 插槽。这一小小的改动为后续的硬件安装提供了空间。&lt;/li>
+&lt;/ol>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-05-22-40-47-IMG_1058.jpeg" alt="2024-02-05-22-40-47-IMG_1058">&lt;/p>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-05-22-42-35-DSC00141.jpg" alt="2024-02-05-22-42-35-DSC00141">&lt;/p>
+&lt;ol start="2">
+&lt;li>&lt;strong>主板与扩展卡：&lt;/strong> 主板只有一个 M.2 插槽，我选择在这里安装了 PVE。为了加装第二款 NVME 固态硬盘，我购买了 PCIe 转 M.2 扩展卡，将 Unraid 的缓存盘插到了这个扩展卡上。小火炉铠侠 RC10 在加装了扩展卡附带的散热片后降温效果显著，目测温度下降了大约 15℃，Unraid 系统再也没有出现过报警。&lt;/li>
+&lt;/ol>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-20-21-15-19-IMG_1203.jpeg" alt="2024-02-20-21-15-19-IMG_1203">&lt;/p></description></item><item><title>我的家庭数据备份方案</title><link>http://0x3f.org/posts/my-homelab-backup-strategy/</link><pubDate>Wed, 31 Jan 2024 20:02:08 +0800</pubDate><guid>http://0x3f.org/posts/my-homelab-backup-strategy/</guid><description>&lt;p>在这个数字化时代，数据安全比以往任何时候都更加重要。无论是个人生活还是工作，我们都需要一个可靠的备份方案来确保数据的安全。今天，我想分享我的家庭数据备份方案，它不仅涵盖了我所有的虚拟机、容器和配置数据，还包括了 NAS 上的重要文件，如照片、密码、笔记和待办事项。这个方案遵循了著名的 3-2-1 备份策略，并且通过精心选择的备份工具，确保了数据的安全性和高效性。&lt;/p>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-01-31-20-40-32-_d0c7d6aa-d312-4749-89ce-d3996aaaddf6.jpeg" alt="2024-01-31-20-40-32-_d0c7d6aa-d312-4749-89ce-d3996aaaddf6">&lt;/p>
+&lt;h3 id="数据种类">数据种类&lt;/h3>
+&lt;p>首先，让我们来了解我需要备份的数据种类。我有两个 PVE（Proxmox Virtual Environment）宿主机，上面运行着多个虚拟机和容器。这些虚拟机和容器包含了我所有的工作和个人项目。为了备份这些数据，我选择了 PBS（Proxmox Backup Server）作为备份存储。同时，我还使用 proxmox-backup-client 将 PVE 的配置数据也备份到 PBS 。&lt;/p>
+&lt;p>除了虚拟机和容器，我的 NAS 上还存储着许多重要数据，包括家庭照片、密码管理器的数据库、个人笔记以及待办事项列表。这些数据对我来说同样重要，因此我也将它们纳入了备份计划。&lt;/p>
+&lt;h3 id="备份策略">备份策略&lt;/h3>
+&lt;p>我遵循的备份策略是 3-2-1 原则，即至少有三份备份，存储在两种不同的媒介上，且至少有一份在其他地方。这个策略可以有效地防止数据丢失。&lt;/p>
+&lt;h4 id="3-2-1策略的具体实现">3-2-1策略的具体实现&lt;/h4>
+&lt;p>为了实现这一策略，我部署了两个 Kopia 实例，并行运行，分别将数据备份到阿里云盘和我的移动硬盘。这样做的原因是 KopiaUI 目前只支持同时连接一个仓库，而并行备份可以确保即使上游备份出现问题，也不会影响下游的备份进程。&lt;/p>
+&lt;h4 id="为什么选择并行而不是串行">为什么选择并行而不是串行&lt;/h4>
+&lt;p>串行备份可能会导致一个问题：如果上游的备份过程中出现错误，那么这个错误会被传递到下游的备份。通过并行备份，我们可以避免这种情况，确保每个备份都是独立的。&lt;/p>
+&lt;h4 id="备份工具的选择">备份工具的选择&lt;/h4>
+&lt;p>在选择备份工具时，我考虑了以下几个标准：&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>支持本地和云备份&lt;/strong>：这样可以确保数据在本地和远程都有备份。&lt;/li>
+&lt;li>&lt;strong>支持增量备份&lt;/strong>：只备份自上次备份以来发生变化的数据，节省时间和存储空间。&lt;/li>
+&lt;li>&lt;strong>支持压缩和加密&lt;/strong>：保护数据安全的同时，减少存储需求。&lt;/li>
+&lt;li>&lt;strong>支持将备份数据分割成一定大小&lt;/strong>：这对于远程备份尤其有用，可以提高小文件的上传速度，降低大文件上传失败的风险。&lt;/li>
+&lt;li>&lt;strong>支持定时备份&lt;/strong>：自动化的定时备份可以确保数据始终是最新的。&lt;/li>
+&lt;li>&lt;strong>稳定性和易用性&lt;/strong>：工具需要稳定运行，并且用户界面友好，易于操作。&lt;/li>
+&lt;/ul>
+&lt;p>在对比了多个备份工具后，我选择了 Kopia 和 Duplicati 。以下是它们的优缺点对比：&lt;/p>
+&lt;h5 id="duplicati">Duplicati&lt;/h5>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;strong>优点&lt;/strong>：&lt;/p></description></item><item><title>用 Caddy 做 Home Lab 的反向代理</title><link>http://0x3f.org/posts/reverse-proxying-home-lab-with-caddy/</link><pubDate>Sun, 16 Oct 2022 22:37:08 +0800</pubDate><guid>http://0x3f.org/posts/reverse-proxying-home-lab-with-caddy/</guid><description>&lt;p>我原本用 &lt;a href="https://docs.linuxserver.io/general/swag">SWAG&lt;/a> 做 Home Lab 的反向代理，它自带很多服务的配置模板，只需要复制后改几个参数就能工作，还有通过 ACME 自动更新 SSL 证书的功能，但是从某个时间起，首次访问经由它代理的服务会报 404 或 502 的错误，刷新页面就恢复正常，然后隔段时间后又会再次发生，另外还会偶尔出现页面无法显示最新的状态的问题，尤以当服务出错时发生居多。&lt;/p>
+&lt;p>最近尝试用 &lt;a href="https://caddyserver.com/docs/">Caddy&lt;/a> 代替 SWAG ，效果非常好，再也没有出现上述问题。而且 Caddy 的使用很简单，只需要在 Caddyfile 中加几行配置信息就能实现对一个服务的反向代理。当然，它也集成了自动更新 SSL 证书的功能。此外，它的镜像只有 80 多 MB ，在我测试的几个反向代理服务里是最节省空间的。&lt;/p>
+&lt;p>出于安全考虑，我没有把 Home Lab 的服务暴露在公网上，所以需要通过 DNS challenge 的方式申请 SSL 证书。我的 Docker 容器部署在 Unraid 上，官方软件仓库里的 Caddy 镜像并不包含 Cloudflare 的模块，所以找了个打包了该模块的&lt;a href="https://github.com/SlothCroissant/caddy-cloudflaredns">镜像&lt;/a>，看起来更新得还很及时。&lt;/p>
+&lt;p>镜像的 README 里有申请 Cloudflare API Token 的说明，部署容器前填到环境变量里即可。这里有个小坑，创建容器前需要手动创建 Caddyfile ，空文件就行，否则会报错：&lt;/p>
+&lt;blockquote>
+&lt;p>Are you trying to mount a directory onto a file&lt;/p></description></item><item><title>Unraid 6.11 弃用 NerdPack 的解决办法</title><link>http://0x3f.org/posts/how-to-install-packages-after-nerdpack-is-deprecated-in-unraid-6.11/</link><pubDate>Sun, 25 Sep 2022 21:29:41 +0800</pubDate><guid>http://0x3f.org/posts/how-to-install-packages-after-nerdpack-is-deprecated-in-unraid-6.11/</guid><description>&lt;p>Unraid 6.11 的 release note 没提弃用 NerdPack ，浪费了我很多时间。😞&lt;/p>
+&lt;p>当前版本的 Unraid 是基于 Slackware 15.0 的，可以手动从以下站点下载软件包手动安装：&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://slackware.pkgs.org/15.0/slackware-x86_64/">https://slackware.pkgs.org/15.0/slackware-x86_64/&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://slackonly.com/pub/packages/15.0-x86_64/">https://slackonly.com/pub/packages/15.0-x86_64/&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;p>把下载的软件包放到运行中的 Unraid 的 &lt;code>/boot/extra&lt;/code> 目录（不存在就手动创建）下，重启系统后自动安装或者通过 &lt;code>installpkg&lt;/code> 命令手动安装。例如：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">installpkg vim-8.2.4256-x86_64-1.txz
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>更简单的方法是使用 &lt;a href="https://github.com/ich777/un-get">un-get&lt;/a> ：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>让 AdGuard Home 和 OpenClash 协同工作</title><link>http://0x3f.org/posts/make-adguard-home-and-openclash-work-together/</link><pubDate>Sun, 06 Mar 2022 12:12:10 +0800</pubDate><guid>http://0x3f.org/posts/make-adguard-home-and-openclash-work-together/</guid><description>&lt;h1 id="家庭网络环境">家庭网络环境&lt;/h1>
+&lt;ul>
+&lt;li>使用 OpenWrt （&lt;em>以下简称 OP&lt;/em> ）做旁路网关&lt;/li>
+&lt;li>OP 内建 OpenClash （&lt;em>以下简称 OC&lt;/em> ）访问不存在的网站&lt;/li>
+&lt;li>OP 内建 WireGuard （&lt;em>以下简称 WG&lt;/em> ）做内网穿透&lt;/li>
+&lt;li>使用 AdGuard Home （&lt;em>以下简称 AH&lt;/em> ）做内网 DNS 和广告过滤&lt;/li>
+&lt;/ul>
+&lt;h1 id="之前遇到的问题">之前遇到的问题&lt;/h1>
+&lt;p>不管怎样配置，内网和 WG 下的内网主机名解析和科学上网这 4 种场景总有至少一个不工作。&lt;/p>
+&lt;p>期间创建过一个虚拟机做独立的 WG Server ，内建 SmartDNS （&lt;em>以下简称 SD&lt;/em> ）做 AH 的上游，其它场景工作得很好，只是无法通过旁路网关访问不存在的网站。&lt;/p>
+&lt;h1 id="解决方法">解决方法&lt;/h1>
+&lt;p>首先如果要正常使用 OC ，就必须使用它的 DNS 解析。&lt;/p>
+&lt;p>同时，又要达到使用 AH 做内网主机名解析和广告过滤的目的，所以要把 OC 设成 AH 的唯一上游。&lt;/p>
+&lt;p>然后最棘手的问题来了。如果把 AH 设成 dnsmasq 的上游， WG 下不能解析内网主机名。如果把 AH 设成监听 53 端口，则内网无法解析主机名。&lt;/p></description></item></channel></rss>

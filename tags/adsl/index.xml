@@ -1,19 +1,84 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>ADSL on 晴耕雨讀</title><link>http://0x3f.org/tags/adsl/</link><description>Recent content in ADSL on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Sun, 18 Jul 2010 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/adsl/index.xml" rel="self" type="application/rss+xml"/><item><title>网通ADSL猫开启路由和自动拨号功能的方法之二</title><link>http://0x3f.org/posts/howto-enable-routing-and-auto-dialing-for-unicom-adsl-modem-2/</link><pubDate>Sun, 18 Jul 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-enable-routing-and-auto-dialing-for-unicom-adsl-modem-2/</guid><description>之前提到过对华为HG522、HG527的超级用户的破解方法。网通附送的另一种猫，是中兴ZXV10 H108B无线猫，体积更小，而且天线是内置的。
-上次的方法不能用在这个型号的猫上，但可以用ftp的方式破解。以下步骤基于Linux，并只在硬件版本为V1.1.02、软件版本为V1.1.02T18_N的H108B上测试通过：
-使用普通用户进入猫的设置页面并开启FTP服务，将用户名和密码均设为admin
-连接ftp服务器：
-ftp 192.168.1.1 输入用户名和密码，成功登录FTP服务器：
-[lenin@archer ~]$ ftp 192.168.1.1 Connected to 192.168.1.1. 220 Welcome to virtual FTP service. Name (192.168.1.1:lenin): admin 331 Please specify the password. Password: 230 Login successful. Remote system type is UNIX. Using binary mode to transfer files. ftp> 切换到/etc目录并下载配置文件board.conf： cd ../ cd etc get board.conf 如下所示：
-ftp> cd ../ 250 Directory successfully changed. ftp> cd etc 250 Directory successfully changed. ftp> get board.conf 200 PORT command successful.</description></item><item><title>Linux下pppoe连接建立后仍不能上网的问题</title><link>http://0x3f.org/posts/problem-on-pppoe-connections-on-linux/</link><pubDate>Sat, 10 Jul 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/problem-on-pppoe-connections-on-linux/</guid><description>问题描述
-pppoe可以连接，ifconfig可以看到ppp0接口，一切正常，只是不能上网。
-解决办法
-使用如下命令查看路由表：
-1 route 正常情况下返回的结果中应该有如下内容：
-default * 0.0.0.0 U 0 0 0 ppp0 如果没有，可手工添加：
-1 route add default dev ppp0 如果可以上网，就成功了。
-使用如下脚本在pppoe连接成功时自动添加路由表项：
-1 2 3 4 5 6 #!/bin/sh if ifconfig ppp0 &amp;gt; /dev/null 2&amp;gt;&amp;amp;1 ; then route del default route add default dev ppp0 fi 将上述内容保存成名为01-route.sh的文件，权限755，放到/etc/ppp/ip-up.d目录下。
-然后创建以下两个脚本：
-1 2 3 4 5 6 7 8 9 10 11 12 #!/bin/bash if ifconfig ppp0 &amp;gt; /dev/null 2&amp;gt;&amp;amp;1 ; then echo &amp;#39;PPPOE has already been switched on !</description></item><item><title>网通ADSL猫开启路由和自动拨号功能的方法之一</title><link>http://0x3f.org/posts/howto-enable-routing-and-auto-dialing-for-unicom-adsl-modem-1/</link><pubDate>Sun, 04 Jul 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-enable-routing-and-auto-dialing-for-unicom-adsl-modem-1/</guid><description>北京网通送的无线猫有的是华为HG522，有的是HG527，屏蔽了路由和PPPOE自动拨号功能，须使用超级用户登入才能使用这些功能。
-假设网关为默认的192.168.1.1，先使用普通用户登录，然后访问地址： http://192.168.1.1/downloadconfigfile.conf 下载该文件并搜索username，找到超级用户的用户名和密码，如：
-1 &amp;lt;X_ATP_UserInfoInstance InstanceID=&amp;#34;1&amp;#34; Username=&amp;#34;bjcnchgw&amp;#34; Userpassword=&amp;#34;bjcnchgw27852654&amp;#34; Userlevel=&amp;#34;2&amp;#34; Busy=&amp;#34;0&amp;#34; LoginIP=&amp;#34;&amp;#34;/&amp;gt; 在如下地址使用超级用户登录： http://192.168.1.1/cnc.html 设置内容如下图： 终于不用再忍受公共网络了……</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>ADSL on 晴耕雨讀</title><link>http://0x3f.org/tags/adsl/</link><description>Recent content in ADSL on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Sun, 18 Jul 2010 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/adsl/index.xml" rel="self" type="application/rss+xml"/><item><title>网通ADSL猫开启路由和自动拨号功能的方法之二</title><link>http://0x3f.org/posts/howto-enable-routing-and-auto-dialing-for-unicom-adsl-modem-2/</link><pubDate>Sun, 18 Jul 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-enable-routing-and-auto-dialing-for-unicom-adsl-modem-2/</guid><description>&lt;p>之前提到过对华为HG522、HG527的超级用户的&lt;a href="http://0x3f.org/?p=1528">破解方法&lt;/a>。网通附送的另一种猫，是&lt;strong>中兴ZXV10 H108B&lt;/strong>无线猫，体积更小，而且天线是内置的。&lt;/p>
+&lt;p>上次的方法不能用在这个型号的猫上，但可以用&lt;strong>ftp&lt;/strong>的方式破解。以下步骤基于Linux，并只在硬件版本为&lt;strong>V1.1.02&lt;/strong>、软件版本为&lt;strong>V1.1.02T18_N&lt;/strong>的H108B上测试通过：&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>使用&lt;strong>普通用户&lt;/strong>进入猫的设置页面并开启FTP服务，将用户名和密码均设为&lt;strong>admin&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>连接ftp服务器：&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;blockquote>
+ftp 192.168.1.1
+&lt;/blockquote>
+&lt;p>输入用户名和密码，成功登录FTP服务器：&lt;/p>
+&lt;blockquote>
+[lenin@archer ~]$ ftp 192.168.1.1
+Connected to 192.168.1.1.
+220 Welcome to virtual FTP service.
+Name (192.168.1.1:lenin): admin
+331 Please specify the password.
+Password:
+230 Login successful.
+Remote system type is UNIX.
+Using binary mode to transfer files.
+ftp> 
+&lt;/blockquote>
+&lt;ol start="3">
+&lt;li>切换到&lt;strong>/etc&lt;/strong>目录并下载配置文件&lt;strong>board.conf&lt;/strong>：&lt;/li>
+&lt;/ol>
+&lt;blockquote>
+cd ../
+cd etc
+get board.conf
+&lt;/blockquote>
+&lt;p>如下所示：&lt;/p></description></item><item><title>Linux下pppoe连接建立后仍不能上网的问题</title><link>http://0x3f.org/posts/problem-on-pppoe-connections-on-linux/</link><pubDate>Sat, 10 Jul 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/problem-on-pppoe-connections-on-linux/</guid><description>&lt;p>&lt;strong>问题描述&lt;/strong>&lt;/p>
+&lt;p>pppoe可以连接，ifconfig可以看到ppp0接口，一切正常，只是不能上网。&lt;/p>
+&lt;p>&lt;strong>解决办法&lt;/strong>&lt;/p>
+&lt;p>使用如下命令查看路由表：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">route
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>正常情况下返回的结果中应该有如下内容：&lt;/p>
+&lt;blockquote>
+default * 0.0.0.0 U 0 0 0 ppp0
+&lt;/blockquote>
+&lt;p>如果没有，可手工添加：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">route add default dev ppp0
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>网通ADSL猫开启路由和自动拨号功能的方法之一</title><link>http://0x3f.org/posts/howto-enable-routing-and-auto-dialing-for-unicom-adsl-modem-1/</link><pubDate>Sun, 04 Jul 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-enable-routing-and-auto-dialing-for-unicom-adsl-modem-1/</guid><description>&lt;p>北京网通送的无线猫有的是华为HG522，有的是HG527，屏蔽了路由和PPPOE自动拨号功能，须使用超级用户登入才能使用这些功能。&lt;/p>
+&lt;ol>
+&lt;li>假设网关为默认的192.168.1.1，先使用普通用户登录，然后访问地址：&lt;/li>
+&lt;/ol>
+&lt;blockquote>
+http://192.168.1.1/downloadconfigfile.conf
+&lt;/blockquote>
+&lt;p>下载该文件并搜索&lt;strong>username&lt;/strong>，找到超级用户的用户名和密码，如：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-xml" data-lang="xml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">&amp;lt;X_ATP_UserInfoInstance&lt;/span> &lt;span class="na">InstanceID=&lt;/span>&lt;span class="s">&amp;#34;1&amp;#34;&lt;/span> &lt;span class="na">Username=&lt;/span>&lt;span class="s">&amp;#34;bjcnchgw&amp;#34;&lt;/span> &lt;span class="na">Userpassword=&lt;/span>&lt;span class="s">&amp;#34;bjcnchgw27852654&amp;#34;&lt;/span> &lt;span class="na">Userlevel=&lt;/span>&lt;span class="s">&amp;#34;2&amp;#34;&lt;/span> &lt;span class="na">Busy=&lt;/span>&lt;span class="s">&amp;#34;0&amp;#34;&lt;/span> &lt;span class="na">LoginIP=&lt;/span>&lt;span class="s">&amp;#34;&amp;#34;&lt;/span>&lt;span class="nt">/&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ol start="2">
+&lt;li>在如下地址使用超级用户登录：&lt;/li>
+&lt;/ol>
+&lt;blockquote>
+http://192.168.1.1/cnc.html
+&lt;/blockquote>
+&lt;ol start="3">
+&lt;li>设置内容如下图：&lt;/li>
+&lt;/ol>
+&lt;p>&lt;a href="http://picasaweb.google.com/lh/photo/MwzSxgWShGMJmYJdSQRw8w?feat=embedwebsite">&lt;img src="http://lh6.ggpht.com/_ceUJ_lBTHzc/TDAy1kazOFI/AAAAAAAABa8/jRmlkSC4MaM/s400/32144754dc04625b375cf1d83f3587fc.media.812x604.png" />&lt;/a>&lt;/p>
+&lt;p>&lt;em>终于不用再忍受公共网络了……&lt;/em>&lt;/p></description></item></channel></rss>

@@ -1,52 +1,202 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Mysql on 晴耕雨讀</title><link>http://0x3f.org/tags/mysql/</link><description>Recent content in Mysql on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Mon, 15 Jan 2024 16:48:09 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/mysql/index.xml" rel="self" type="application/rss+xml"/><item><title>轻松管理 Docker 下的 MariaDB 错误日志：重定向到日志控制台和日志轮转</title><link>http://0x3f.org/posts/steps-to-implement-redirection-and-rotation-for-error-logs-of-docker-deployed-mariadb/</link><pubDate>Mon, 15 Jan 2024 16:48:09 +0800</pubDate><guid>http://0x3f.org/posts/steps-to-implement-redirection-and-rotation-for-error-logs-of-docker-deployed-mariadb/</guid><description>本文旨在通过把 MariaDB 的错误日志重定向到 Docker 的错误控制台以实现通过 Loki 收集日志，并使用日志轮转控制日志文件大小。
-指定固定的日志文件名 1 2 [mariadb] log_error=/config/databases/mariadb.err 把容器中的错误日志重定向到 Docker 日志控制台 在容器的环境变量中添加以下内容：
-1 2 DOCKER_MODS=lscr.io/linuxserver/mods:universal-stdout-logs LOGS_TO_STDOUT=/config/databases/mariadb.err 设置 MariaDB 的 root@localhost 用户的鉴权方式 创建 root@localhost 用户：
-1 CREATE USER &amp;#39;root&amp;#39;@&amp;#39;localhost&amp;#39; IDENTIFIED VIA &amp;#39;unix_socket&amp;#39;; 或更改已存在的 root@localhost 用户的鉴权方式：
-1 ALTER USER &amp;#39;root&amp;#39;@&amp;#39;localhost&amp;#39; IDENTIFIED VIA &amp;#39;unix_socket&amp;#39;; 受权 RELOAD 给 root@localhost 用户 1 GRANT RELOAD ON *.* TO &amp;#39;root&amp;#39;@&amp;#39;localhost&amp;#39;;` 配置 logrotate 在宿主机创建 /etc/logrotate.d/mariadb：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 /mnt/user/appdata/mariadb/databases/mariadb.</description></item><item><title>MySQL 事务的一致性、隔离级别与幻读问题</title><link>http://0x3f.org/posts/isolation-levels-and-phantom-reads-in-mysql/</link><pubDate>Tue, 21 Jul 2020 16:25:09 +0800</pubDate><guid>http://0x3f.org/posts/isolation-levels-and-phantom-reads-in-mysql/</guid><description>数据库事务的一致性 数据库事务有四个特性：原子性（Atomicity）、一致性（Consistency）、隔离性（Isolation）、持久性（Durability），简称“ACID”。
-其中，“一致性”指的是数据库层面的一致性，与应用层面的一致性不同。
-数据库层面的一致性是说，事务具备把数据库从一个正确的状态迁移到另一个正确的状态的特性。所谓正确的状态，是指任何写入数据库的数据都满足数据库既定的规则，这些规则包括各种约束、级联回滚、触发器以及任何它们的组合。
-与数据库层面的一致性不同，应用层面的一致性要求保证结果的正确性。例如，当执行如下 SQL 语句时：
-1 update accounts set balance = balance + 1 where id = 3 我希望最终的结果是在事务开始时 id = 3 的这行数据 balance 列的值的基础上加一，否则，结果就是不正确的。
-因此，只要写入的数据满足数据库的规则，就保证了数据库层面的一致性。数据库层面的一致性并不保证数据正确1。
-MySQL 事务的隔离级别与幻读问题 隔离级别 隔离性是指：多个事务并发执行时，每个事务对数据库所做的更改必须与其它事务隔离。
-隔离性是并发控制的主要目标2，并发控制用来实现在保证应用层面一致性的前提下，尽可能快地对并发请求做出响应。由此可见，隔离性和并发能力是一对此消彼长的关系。极端情况下，如果并发的请求按顺序执行，隔离性是最好的，但是响应最慢，反之亦然。
-在此基础上，产生了四个隔离级别的划分。由低到高依次为：读未提交、读已提交、可重复读、序列化。据前所述，它们的并发能力是依次下降的。
-因此，隔离级别的本质是通过适度地破坏隔离性来提高并发能力。
-隔离级别的问题 隔离级别不同，存在的问题也不一样。
-“读未提交”的级别最低、并发能力最高，存在的问题也最多，包括：脏读、不可重复读、幻读。其中，脏读是这个级别独有的，即事务 A 读取了并发事务 B 未提交的数据。
-“读已提交”顾名思义，事务 A 不会读取并发事务 B 未提交的数据，但可以读取其已提交的。因此，这个级别存在不可重复读和幻读的问题。
-在“可重复读”级别下，同一事务中两次同样的查询结果一致，不会受并发事务的影响，它因此也解决了不可重复读的问题。但还会存在幻读问题。
-“序列化”级别要求对查询的对象加范围锁并保持到事务结束，因此，它避免了幻读的问题。
-幻读问题（Phantom Reads） 幻读问题是个很 tricky 的问题，以至于网上找到的很多文章对它的理解都是不全面甚至是错误的。
-幻读即同一事务中两次相同查询的结果集不一致。乍一看，好像和不可重复读是一样的。那它们的区别是什么呢？
-事实上，幻读是不可重复读的一种特殊情况。换句话说，只要存在幻行（Phantom Rows），就是幻读问题。
-所谓幻行，即同一事务中两次相同的查询结果集的非空差集里的元素，或者说第二次查询后发现不存在于前一次结果集中的行。
-幻行产生的原因主要是除“序列化”之外的隔离级别不要求对查询结果加范围锁，导致并发事务在查询范围内插入新的行后被当前事务查到。
-MVCC 在此基础上，MySQL 的 InnoDB 引擎实现了“多版本并发控制”（MVCC: Multiversion Concurrency Control）。
-简单地说，InnoDB 的表存在两个隐藏列，用于记录每行数据的版本信息。当插入一行数据时，InnoDB 将当前事务的版本信息一并写入。当修改一行数据时，InnoDB 先将该行做一次复制，并把当前版本信息写入进去。查询时，只返回版本小于等于当前事务版本的数据。通过这样保证一个事务中查询到的是事务开始前已经存在的数据或当前事务写入的数据。其它事务写入的数据则不会被读取。</description></item><item><title>用MySQL的全文检索实现相关性排序</title><link>http://0x3f.org/posts/fulltext-searching-in-mysql/</link><pubDate>Mon, 19 Jun 2017 23:10:41 +0000</pubDate><guid>http://0x3f.org/posts/fulltext-searching-in-mysql/</guid><description>实现根据文章的关键词搜索出相关的文章，并按相关性排序。
-数据库版本是5.6.x，还不能像5.7那样支持中文的全文检索，所以另外创建一列保存关键词的编码。方法为base64转码并去掉「%」符号：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 &amp;lt;?php /** * 转换关键词到全文检索的格式 * * @param mixed $keywords 关键词数组或英文逗号分隔的字符串 * @return string */ function encode_keywords($keywords) { $encoder = function ($keyword) { return str_replace(&amp;#39;%&amp;#39;, &amp;#39;&amp;#39;, urlencode(trim($keyword))); }; if (!is_array($keywords)) { $keywords = explode(&amp;#39;,&amp;#39;, $keywords); } return implode(&amp;#39; &amp;#39;, array_map($encoder, $keywords)); } 对该列创建全文检索的索引：
-1 CREATE FULLTEXT INDEX idx_post_keywords ON posts (keywords_ft); 查询语句：</description></item><item><title>MySQL升级后执行mysql_upgrade</title><link>http://0x3f.org/posts/execute-mysql-upgrade-after-upgrading/</link><pubDate>Fri, 11 Feb 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/execute-mysql-upgrade-after-upgrading/</guid><description>最近把MySQL从5.1升级到5.5，之后创建存储过程时报如下错误：
-ERROR 1548 (HY000) at line 5: Cannot load from mysql.proc. The table is probably corrupted
-解决办法是执行如下命令： ```bash mysql_upgrade -p ``` mysql_upgrade是MySQL提供的一个指令，作用是检查MySQL中的各个表与当前版本的数据库是否匹配并尝试修复所有发现的问题。MySQL官方文档中推荐在每次升级后执行一下这个指令。</description></item><item><title>中秋后记</title><link>http://0x3f.org/posts/note-after-the-mid-autumn-day/</link><pubDate>Sun, 26 Sep 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/note-after-the-mid-autumn-day/</guid><description>可以让回忆放肆一些。
-中秋的晚上公司餐厅放电影，《邻家特工》和《越光宝盒》，本来打算看完《越光》就走，结果先放的是《特工》。也好，复习一下，好在这片子不错，再看也挺有意思。《越光》纯属烂片，但是如今看看这种不费脑子的东西也变得无可无不可。免费的零食很烘托气氛，唯一的惊喜是居然还有罐装啤酒。
-回到住处的当夜就发布了Dumperor。其实这个东西很早就开始做了，起初的目的是为了判断数据库脚本从SQL Server迁移到Oracle和MySQL是否成功。单纯的迁移只能保证修改后的脚本在这两个数据库中执行不会报错，但究竟是不是该执行的东西都成功执行了，一般很难判断，尤其是那帮家伙总是在发版前一两天才告诉我要迁移脚本，那么多不规范的语句，能保证不报错就已经不错了，遑论没有遗漏。所以就著手做一个数据库表结构和数据的导出工具，这样只需用diff工具比较标准数据库和测试数据库导出的脚本就可以了。
-从一开始我就决定不使用公司产品的一行代码。其实做这个东西最大的麻烦不是来自来自于如何查询不同的数据库的表结构，而是数据库抽象层。如果要白手起家搞个抽象层的话，我想可能代码量比Dumperor本身都大，于是选择了Yii框架。后来在Dumperor基本成型时又觉得为了仅仅使用最基本的数据库查询功能就捆绑这么大一个框架，有点搞笑，谢天谢地，我终于花时间学了PDO。
-中秋节放假的第二天，开始读Google Code上关于Chrome扩展开发的官方文档。这事源于本尊被另一个Chrome扩展作者无视了。
-一直强迫自己喜欢上Firefox，但都败了。本来对Opera充满希望，但是从10.0起它带给我的除了失望就是更多的失望，这个东西的发展就像它的国家的位置一样怪异，你永远不能以常人的思维去臆测Opera的开发者，他们就像一群母系氏族社会的娘们儿一样整天跟著感觉走。
-于是不知道什么时候我就开始经常用Chrome了，前段时间开始用一个扩展辅助MLDonkey下载。这个东西会在工具栏里添加一个图标，唯一的作用就是打开选项设置页面设置那个也许这辈子都只需要设置一次的MLDonkey的URL地址。于是我给那个扩展的作者写了封邮件，那家伙居然到现在都没有回复。
-所以本尊决定无视他了。太祖武皇帝的那句丰衣足食的圣谕真是至理名言，读完文档我就发现这个扩展完全应该用Chrome的Page Action取代Browser Action，简单地说就是当且仅当本页面中包含有可下载的资源时才在地址栏中显示一个图标，而不应该总是在工具栏占用一个图标的位置。
-随后要做的就是用AJAX请求取代弹出新窗口的方式添加下载任务，我嫌每次添加一个下载任务后都要关闭一个弹出窗口太麻烦。我的目标是用AJAX请求将要下载的任务在后台传递给MLDonkey，并用Chrome的Desktop Notification功能弹出桌面提示对话框显示结果状态。这样很优雅。
-但是实际去做的时候问题来了，虽然Chrome本身允许扩展使用跨域的AJAX，但是至少在和MLDonkey进行通讯时，无论成功与否，得到的返回信息都是空的，状态码也都是0。这个问题浪费了我几乎一整天的时间，最终我决定用AJAX的请求响应时间来判断失败或成功，因为一次AJAX请求响应过程在MLDonkey没启动的时候耗费的时间一般会比正在运行时要长。这就要求每个用户都要根据自己的情况设定合适的超时时间。为了避免麻烦，最后还是实现了通过弹窗添加下载任务的模式，毕竟这个东西总是可靠的。
-要发布的时候发现如今在Chrome Extension Gallery中发布扩展居然要收费了，虽然只是一次性的。最后花了八两银子注册了Google Checkout账户，又付了五刀美帝币，才把DonkeyBuddy传上去。发布个免费扩展还得倒贴，本尊也太背了吧。
-节后收到了Dell sk8115键盘、HP百灵无线鼠标和Nokia BH-105蓝牙耳机，sk8115是用来让我的纤纤玉手撒野的，百灵鼠是用来接替即将退役的雷柏7100的，而BH-105和我的小七搭配得天衣无缝。
-很久没有安静地整理一下头绪了，感谢我那价值四十两银子的Dell sk8115，它让我显得如此的语无伦次。</description></item><item><title>InstallShield在MySQL和Oracle中执行SQL脚本的方法</title><link>http://0x3f.org/posts/howto-run-sql-scripts-in-mysql-oracle-within-installshield/</link><pubDate>Tue, 24 Aug 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-run-sql-scripts-in-mysql-oracle-within-installshield/</guid><description>简述 InstallShield已经内建了对MySQL和Oracle的支持。但是这个功能是通过ODBC实现的，它对SQL脚本的格式要求非常严格，因此已经通过官方客户端测试的脚本在IS中执行时往往就会报错。
-一般来说，数据库脚本只保证通过官方客户端测试即可，同时维护一份供IS执行的脚本费时费力。因此，考虑安装程序对两数据库的支持通过官方客户端实现。
-MySQL
-function InstallMySQLComponent(szComponent) NUMBER nResult; STRING szServer,szDB,szUser,szPassword,sCMD,sOPT,sResult1,sResult2,svLine,sMsg,sPath; NUMBER nvFileHandle,nvCount; LIST listStatus; begin sMsg = &amp;#39;安装&amp;#39;+szComponent+&amp;#39; ...&amp;#39;; SdShowMsg(sMsg, TRUE); // source命令不认识windows路径中的反斜杠，故将SRCDIR中的反斜杠替换成斜杠 sPath = SRCDIR; StrReplace(sPath, &amp;#39;\\&amp;#39;, &amp;#39;/&amp;#39;, 0); // Fetch database connection information SQLRTGetConnectionInfo( &amp;#39;mysql&amp;#39;, szServer, szDB, szUser, szPassword ); sCMD = WINSYSDIR^&amp;#39;cmd.exe&amp;#39;; sOPT = &amp;#39; /c &amp;#39;+SRCDIR^&amp;#39;mysql.exe -h&amp;#39;+szServer+&amp;#39; -u&amp;#39;+szUser+&amp;#39; -p&amp;#39;+szPassword+&amp;#39; -D&amp;#39;+szDB; sOPT = sOPT+&amp;#39; -e &amp;#34;source &amp;#39;+sPath^szComponent+&amp;#39;.sql&amp;#34; &amp;gt; &amp;#39;+SRCDIR^&amp;#39;dbstatus.txt 2&amp;gt;&amp;amp;1&amp;#39;; // Execute the script associated with the given component in database nResult=LaunchAppAndWait(sCMD, sOPT, WAIT|LAAW_OPTION_HIDDEN); if (nResult &amp;lt; 0) then MessageBox(&amp;#39;Failed installing &amp;#39;+szComponent+&amp;#39; !</description></item><item><title>Inno Setup执行SQL脚本的方法</title><link>http://0x3f.org/posts/howto-execute-sql-scripts-in-inno-setup/</link><pubDate>Mon, 17 May 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-execute-sql-scripts-in-inno-setup/</guid><description>作为和NSIS并立的、两个最流行的免费Windows应用程序安装包制作工具之一，Inno在学习难度上相对要低一些，非常适合对一些简单的桌面程序打包。但对于较复杂的安装过程，或者Web应用程序来说，我个人觉得不是Inno的强项。当然，既然Inno内嵌了Pascal语言用以扩展功能，理论上不是不可以应付复杂的安装过程，但实现起来要复杂一些。
-比如对于在安装过程中连接数据库并执行SQL脚本这样的需求，使用InstallShield应该会简单地多，而Inno却不支持直接操作数据库，并且相关的资料说明少之又少，还不如NSIS丰富，以至于我踏破铁鞋无觅处，最终却在NSIS的资料中找到了思路。
-主要的思路是，在安装过程中，调用数据库客户端连接数据库并执行SQL脚本，然后将执行结果或错误信息输出到文件中，最后通过分析这个文件来判断命令执行的结果。但是，既然是调用特定的客户端，那么对不同数据库的操作自然就有所区别，具体情况如下所述。
-首先在打包脚本的[Files]段将必需的文件包含进来：
-```ini [Files] Source: "D:\Development\MyDemoApp\code\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs Source: "D:\Development\MyDemoApp\sqlcmd.exe"; Flags: dontcopy Source: "D:\Development\MyDemoApp\sqlcmd.rll"; Flags: dontcopy Source: "D:\Development\MyDemoApp\mysql.exe"; Flags: dontcopy Source: "D:\Development\MyDemoApp\script_mssql.sql"; Flags: dontcopy Source: "D:\Development\MyDemoApp\script_mysql.sql"; Flags: dontcopy Source: "D:\Development\MyDemoApp\script_oracle.sql"; Flags: dontcopy ``` 在SQL Server中执行脚本的代码片断：
-```pascal function ExecScriptInMSSQL(DBHost, DBLogin, DBPass, DBName: String): Boolean; var ConnectExe: String; ConnectParam: String; begin {解压临时文件} ExtractTemporaryFile('sqlcmd.exe'); ExtractTemporaryFile('sqlcmd.rll'); ExtractTemporaryFile('script_mssql.sql'); {构造数据库连接字符串} ConnectExe := ExpandConstant('{tmp}') + '\sqlcmd.exe'; ConnectParam := ' -S ' + DBHost + ' -U ' + DBLogin + ' -P ' + DBPass + ' -d ' + DBName + ' -i script_mssql.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Mysql on 晴耕雨讀</title><link>http://0x3f.org/tags/mysql/</link><description>Recent content in Mysql on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Mon, 15 Jan 2024 16:48:09 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/mysql/index.xml" rel="self" type="application/rss+xml"/><item><title>轻松管理 Docker 下的 MariaDB 错误日志：重定向到日志控制台和日志轮转</title><link>http://0x3f.org/posts/steps-to-implement-redirection-and-rotation-for-error-logs-of-docker-deployed-mariadb/</link><pubDate>Mon, 15 Jan 2024 16:48:09 +0800</pubDate><guid>http://0x3f.org/posts/steps-to-implement-redirection-and-rotation-for-error-logs-of-docker-deployed-mariadb/</guid><description>&lt;p>本文旨在通过把 MariaDB 的错误日志重定向到 Docker 的错误控制台以实现通过 Loki 收集日志，并使用日志轮转控制日志文件大小。&lt;/p>
+&lt;h1 id="指定固定的日志文件名">指定固定的日志文件名&lt;/h1>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-ini" data-lang="ini">&lt;span class="line">&lt;span class="cl">&lt;span class="k">[mariadb]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">log_error&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">/config/databases/mariadb.err&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h1 id="把容器中的错误日志重定向到-docker-日志控制台">把容器中的错误日志重定向到 Docker 日志控制台&lt;/h1>
+&lt;p>在容器的环境变量中添加以下内容：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-ini" data-lang="ini">&lt;span class="line">&lt;span class="cl">&lt;span class="na">DOCKER_MODS&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">lscr.io/linuxserver/mods:universal-stdout-logs&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">LOGS_TO_STDOUT&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">/config/databases/mariadb.err&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>MySQL 事务的一致性、隔离级别与幻读问题</title><link>http://0x3f.org/posts/isolation-levels-and-phantom-reads-in-mysql/</link><pubDate>Tue, 21 Jul 2020 16:25:09 +0800</pubDate><guid>http://0x3f.org/posts/isolation-levels-and-phantom-reads-in-mysql/</guid><description>&lt;h2 id="数据库事务的一致性">数据库事务的一致性&lt;/h2>
+&lt;p>数据库事务有四个特性：原子性（Atomicity）、一致性（Consistency）、隔离性（Isolation）、持久性（Durability），简称“ACID”。&lt;/p>
+&lt;p>其中，“一致性”指的是数据库层面的一致性，与应用层面的一致性不同。&lt;/p>
+&lt;p>数据库层面的一致性是说，事务具备把数据库从一个正确的状态迁移到另一个正确的状态的特性。所谓正确的状态，是指任何写入数据库的数据都满足数据库既定的规则，这些规则包括各种约束、级联回滚、触发器以及任何它们的组合。&lt;/p>
+&lt;p>与数据库层面的一致性不同，应用层面的一致性要求保证结果的正确性。例如，当执行如下 SQL 语句时：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-sql" data-lang="sql">&lt;span class="line">&lt;span class="cl">&lt;span class="k">update&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">accounts&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">set&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">balance&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">balance&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">where&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">id&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">3&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>我希望最终的结果是在事务开始时 id = 3 的这行数据 balance 列的值的基础上加一，否则，结果就是不正确的。&lt;/p></description></item><item><title>用MySQL的全文检索实现相关性排序</title><link>http://0x3f.org/posts/fulltext-searching-in-mysql/</link><pubDate>Mon, 19 Jun 2017 23:10:41 +0000</pubDate><guid>http://0x3f.org/posts/fulltext-searching-in-mysql/</guid><description>&lt;p>实现根据文章的关键词搜索出相关的文章，并按相关性排序。&lt;/p>
+&lt;p>数据库版本是5.6.x，还不能像5.7那样支持中文的全文检索，所以另外创建一列保存关键词的编码。方法为base64转码并去掉「%」符号：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-php" data-lang="php">&lt;span class="line">&lt;span class="cl">&lt;span class="o">&amp;lt;?&lt;/span>&lt;span class="nx">php&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> * 转换关键词到全文检索的格式
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> *
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> * @param mixed $keywords 关键词数组或英文逗号分隔的字符串
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> * @return string
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">function&lt;/span> &lt;span class="nf">encode_keywords&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$keywords&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nv">$encoder&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="k">function&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nv">$keyword&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="nx">str_replace&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;%&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">urlencode&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">trim&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$keyword&lt;/span>&lt;span class="p">)));&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">};&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="o">!&lt;/span>&lt;span class="nx">is_array&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$keywords&lt;/span>&lt;span class="p">))&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nv">$keywords&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">explode&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;,&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">$keywords&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="nx">implode&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39; &amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">array_map&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$encoder&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">$keywords&lt;/span>&lt;span class="p">));&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>MySQL升级后执行mysql_upgrade</title><link>http://0x3f.org/posts/execute-mysql-upgrade-after-upgrading/</link><pubDate>Fri, 11 Feb 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/execute-mysql-upgrade-after-upgrading/</guid><description>&lt;p>最近把MySQL从5.1升级到5.5，之后创建存储过程时报如下错误：&lt;/p>&lt;blockquote>&lt;p>ERROR 1548 (HY000) at line 5: Cannot load from mysql.proc. The table is probably corrupted&lt;/p>&lt;/blockquote>&lt;p>解决办法是执行如下命令：
+
+```bash
+mysql_upgrade -p
+```
+
+&lt;a href="http://dev.mysql.com/doc/refman/5.0/en/mysql-upgrade.html" target="_blank">mysql_upgrade&lt;/a>是MySQL提供的一个指令，作用是检查MySQL中的各个表与当前版本的数据库是否匹配并尝试修复所有发现的问题。MySQL官方文档中推荐在每次升级后执行一下这个指令。&lt;/p></description></item><item><title>中秋后记</title><link>http://0x3f.org/posts/note-after-the-mid-autumn-day/</link><pubDate>Sun, 26 Sep 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/note-after-the-mid-autumn-day/</guid><description>&lt;p>可以让回忆放肆一些。&lt;/p>
+&lt;p>中秋的晚上公司餐厅放电影，《邻家特工》和《越光宝盒》，本来打算看完《越光》就走，结果先放的是《特工》。也好，复习一下，好在这片子不错，再看也挺有意思。《越光》纯属烂片，但是如今看看这种不费脑子的东西也变得无可无不可。免费的零食很烘托气氛，唯一的惊喜是居然还有罐装啤酒。&lt;/p>
+&lt;p>回到住处的当夜就发布了Dumperor。其实这个东西很早就开始做了，起初的目的是为了判断数据库脚本从SQL Server迁移到Oracle和MySQL是否成功。单纯的迁移只能保证修改后的脚本在这两个数据库中执行不会报错，但究竟是不是该执行的东西都成功执行了，一般很难判断，尤其是那帮家伙总是在发版前一两天才告诉我要迁移脚本，那么多不规范的语句，能保证不报错就已经不错了，遑论没有遗漏。所以就著手做一个数据库表结构和数据的导出工具，这样只需用diff工具比较标准数据库和测试数据库导出的脚本就可以了。&lt;/p>
+&lt;p>从一开始我就决定不使用公司产品的一行代码。其实做这个东西最大的麻烦不是来自来自于如何查询不同的数据库的表结构，而是数据库抽象层。如果要白手起家搞个抽象层的话，我想可能代码量比Dumperor本身都大，于是选择了Yii框架。后来在Dumperor基本成型时又觉得为了仅仅使用最基本的数据库查询功能就捆绑这么大一个框架，有点搞笑，谢天谢地，我终于花时间学了PDO。&lt;/p>
+&lt;p>中秋节放假的第二天，开始读Google Code上关于Chrome扩展开发的官方文档。这事源于本尊被另一个Chrome扩展作者无视了。&lt;/p>
+&lt;p>一直强迫自己喜欢上Firefox，但都败了。本来对Opera充满希望，但是从10.0起它带给我的除了失望就是更多的失望，这个东西的发展就像它的国家的位置一样怪异，你永远不能以常人的思维去臆测Opera的开发者，他们就像一群母系氏族社会的娘们儿一样整天跟著感觉走。&lt;/p>
+&lt;p>于是不知道什么时候我就开始经常用Chrome了，前段时间开始用一个扩展辅助MLDonkey下载。这个东西会在工具栏里添加一个图标，唯一的作用就是打开选项设置页面设置那个也许这辈子都只需要设置一次的MLDonkey的URL地址。于是我给那个扩展的作者写了封邮件，那家伙居然到现在都没有回复。&lt;/p>
+&lt;p>所以本尊决定无视他了。太祖武皇帝的那句丰衣足食的圣谕真是至理名言，读完文档我就发现这个扩展完全应该用Chrome的Page Action取代Browser Action，简单地说就是当且仅当本页面中包含有可下载的资源时才在地址栏中显示一个图标，而不应该总是在工具栏占用一个图标的位置。&lt;/p>
+&lt;p>随后要做的就是用AJAX请求取代弹出新窗口的方式添加下载任务，我嫌每次添加一个下载任务后都要关闭一个弹出窗口太麻烦。我的目标是用AJAX请求将要下载的任务在后台传递给MLDonkey，并用Chrome的Desktop Notification功能弹出桌面提示对话框显示结果状态。这样很优雅。&lt;/p>
+&lt;p>但是实际去做的时候问题来了，虽然Chrome本身允许扩展使用跨域的AJAX，但是至少在和MLDonkey进行通讯时，无论成功与否，得到的返回信息都是空的，状态码也都是0。这个问题浪费了我几乎一整天的时间，最终我决定用AJAX的请求响应时间来判断失败或成功，因为一次AJAX请求响应过程在MLDonkey没启动的时候耗费的时间一般会比正在运行时要长。这就要求每个用户都要根据自己的情况设定合适的超时时间。为了避免麻烦，最后还是实现了通过弹窗添加下载任务的模式，毕竟这个东西总是可靠的。&lt;/p>
+&lt;p>要发布的时候发现如今在Chrome Extension Gallery中发布扩展居然要收费了，虽然只是一次性的。最后花了八两银子注册了Google Checkout账户，又付了五刀美帝币，才把DonkeyBuddy传上去。发布个免费扩展还得倒贴，本尊也太背了吧。&lt;/p>
+&lt;p>节后收到了Dell sk8115键盘、HP百灵无线鼠标和Nokia BH-105蓝牙耳机，sk8115是用来让我的纤纤玉手撒野的，百灵鼠是用来接替即将退役的雷柏7100的，而BH-105和我的小七搭配得天衣无缝。&lt;/p>
+&lt;p>很久没有安静地整理一下头绪了，感谢我那价值四十两银子的Dell sk8115，它让我显得如此的语无伦次。&lt;/p></description></item><item><title>InstallShield在MySQL和Oracle中执行SQL脚本的方法</title><link>http://0x3f.org/posts/howto-run-sql-scripts-in-mysql-oracle-within-installshield/</link><pubDate>Tue, 24 Aug 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-run-sql-scripts-in-mysql-oracle-within-installshield/</guid><description>&lt;h2>简述&lt;/h2>
+&lt;p>InstallShield已经内建了对MySQL和Oracle的支持。但是这个功能是通过ODBC实现的，它对SQL脚本的格式要求非常严格，因此已经通过官方客户端测试的脚本在IS中执行时往往就会报错。&lt;/p>
+&lt;p>一般来说，数据库脚本只保证通过官方客户端测试即可，同时维护一份供IS执行的脚本费时费力。因此，考虑安装程序对两数据库的支持通过官方客户端实现。&lt;/p>
+&lt;h2>MySQL&lt;/h2>&lt;br>
+&lt;pre tabindex="0">&lt;code>function InstallMySQLComponent(szComponent)
+ NUMBER nResult;
+ STRING szServer,szDB,szUser,szPassword,sCMD,sOPT,sResult1,sResult2,svLine,sMsg,sPath;
+ NUMBER nvFileHandle,nvCount;
+ LIST listStatus;
+begin
+ sMsg = &amp;#39;安装&amp;#39;+szComponent+&amp;#39; ...&amp;#39;;
+ SdShowMsg(sMsg, TRUE);
+ // source命令不认识windows路径中的反斜杠，故将SRCDIR中的反斜杠替换成斜杠
+ sPath = SRCDIR;
+ StrReplace(sPath, &amp;#39;\\&amp;#39;, &amp;#39;/&amp;#39;, 0);
+ // Fetch database connection information
+ SQLRTGetConnectionInfo( &amp;#39;mysql&amp;#39;, szServer, szDB, szUser, szPassword );
+ sCMD = WINSYSDIR^&amp;#39;cmd.exe&amp;#39;;
+ sOPT = &amp;#39; /c &amp;#39;+SRCDIR^&amp;#39;mysql.exe -h&amp;#39;+szServer+&amp;#39; -u&amp;#39;+szUser+&amp;#39; -p&amp;#39;+szPassword+&amp;#39; -D&amp;#39;+szDB;
+ sOPT = sOPT+&amp;#39; -e &amp;#34;source &amp;#39;+sPath^szComponent+&amp;#39;.sql&amp;#34; &amp;gt; &amp;#39;+SRCDIR^&amp;#39;dbstatus.txt 2&amp;gt;&amp;amp;1&amp;#39;;
+ // Execute the script associated with the given component in database
+ nResult=LaunchAppAndWait(sCMD, sOPT, WAIT|LAAW_OPTION_HIDDEN);
+ if (nResult &amp;lt; 0) then
+ MessageBox(&amp;#39;Failed installing &amp;#39;+szComponent+&amp;#39; !&amp;#39;, SEVERE);
+ abort;
+ endif;
+ // 关闭安装提示
+ SdShowMsg(&amp;#39;&amp;#39;, FALSE);
+ // Read dbstatus.txt
+ OpenFileMode(FILE_MODE_NORMAL);
+ if (OpenFile(nvFileHandle, SRCDIR, &amp;#39;dbstatus.txt&amp;#39;)&amp;lt;0) then
+ MessageBox(&amp;#39;Failed checking the status of installing &amp;#39;+szComponent+&amp;#39; !&amp;#39;, SEVERE);
+ abort;
+ endif;
+ listStatus = ListCreate(STRINGLIST);
+ while GetLine(nvFileHandle, svLine) = 0
+ ListAddString(listStatus, svLine, AFTER);
+ endwhile;
+ CloseFile(nvFileHandle);
+ // Count how many lines fetched from dbstatus.txt
+ nvCount = ListCount(listStatus);
+ if nvCount &amp;gt; 0 then
+ sMsg = &amp;#34;更新数据库出错，点“是”打开日志文件并退出安装，点“否”直接退出安装。\n&amp;#34;;
+ sMsg = sMsg+&amp;#34;若错误可忽略，可选择数据库类型“none”以跳过数据库更新并直接更新程序，\n&amp;#34;;
+ sMsg = sMsg+&amp;#34;然后在数据库中手工执行SQL脚本（安装后保存在script目录下）&amp;#34;;
+ nResult = AskYesNo(sMsg, YES);
+ if (nResult = YES) then
+ LaunchApp(WINSYSDIR^&amp;#39;notepad.exe&amp;#39;, SRCDIR^&amp;#39;dbstatus.txt&amp;#39;);
+	endif; 
+ abort;
+ endif;
+end;
+&lt;/code>&lt;/pr</description></item><item><title>Inno Setup执行SQL脚本的方法</title><link>http://0x3f.org/posts/howto-execute-sql-scripts-in-inno-setup/</link><pubDate>Mon, 17 May 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-execute-sql-scripts-in-inno-setup/</guid><description>&lt;p>作为和&lt;a href="http://zh.wikipedia.org/zh-cn/Nullsoft%E8%85%B3%E6%9C%AC%E5%AE%89%E8%A3%9D%E7%B3%BB%E7%B5%B1">NSIS&lt;/a>并立的、两个最流行的免费Windows应用程序安装包制作工具之一，&lt;a href="http://en.wikipedia.org/wiki/Inno_Setup">Inno&lt;/a>在学习难度上相对要低一些，非常适合对一些简单的桌面程序打包。但对于较复杂的安装过程，或者Web应用程序来说，我个人觉得不是Inno的强项。当然，既然Inno内嵌了&lt;a href="http://zh.wikipedia.org/zh-cn/Pascal">Pascal&lt;/a>语言用以扩展功能，理论上不是不可以应付复杂的安装过程，但实现起来要复杂一些。&lt;/p>
+
+&lt;p>比如对于在安装过程中连接数据库并执行SQL脚本这样的需求，使用&lt;a href="http://en.wikipedia.org/wiki/InstallShield">InstallShield&lt;/a>应该会简单地多，而Inno却不支持直接操作数据库，并且相关的资料说明少之又少，还不如NSIS丰富，以至于我踏破铁鞋无觅处，最终却在NSIS的资料中找到了思路。&lt;/p>
+
+&lt;p>主要的思路是，在安装过程中，调用数据库客户端连接数据库并执行SQL脚本，然后将执行结果或错误信息输出到文件中，最后通过分析这个文件来判断命令执行的结果。但是，既然是调用特定的客户端，那么对不同数据库的操作自然就有所区别，具体情况如下所述。&lt;/p>
+
+&lt;p>首先在打包脚本的&lt;strong>[Files]&lt;/strong>段将必需的文件包含进来：&lt;/p>
+
+```ini
+[Files]
+Source: "D:\Development\MyDemoApp\code\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "D:\Development\MyDemoApp\sqlcmd.exe"; Flags: dontcopy
+Source: "D:\Development\MyDemoApp\sqlcmd.rll"; Flags: dontcopy
+Source: "D:\Development\MyDemoApp\mysql.exe"; Flags: dontcopy
+Source: "D:\Development\MyDemoApp\script_mssql.sql"; Flags: dontcopy
+Source: "D:\Development\MyDemoApp\script_mysql.sql"; Flags: dontcopy
+Source: "D:\Development\MyDemoApp\script_oracle.sql"; Flags: dontcopy
+```
+
+&lt;p>在SQL Server中执行脚本的代码片断：&lt;/p>
+
+```pascal
+function ExecScriptInMSSQL(DBHost, DBLogin, DBPass, DBName: String): Boolean;
+var
+ ConnectExe: String;
+ ConnectParam: String;
+begin
+ {解压临时文件}
+ ExtractTemporaryFile('sqlcmd.exe');
+ ExtractTemporaryFile('sqlcmd.rll');
+ ExtractTemporaryFile('script_mssql.sql');
+ {构造数据库连接字符串}
+ ConnectExe := ExpandConstant('{tmp}') + '\sqlcmd.exe';
+ ConnectParam := ' -S ' + DBHost
+ + ' -U ' + DBLogin
+ + ' -P ' + DBPass
+ + ' -d ' + DBName
+ + ' -i script_mssql.sql -o '
+ + ExpandConstant('{tmp}') + '\dbstatus.txt';
+ {建立数据库连接并执行脚本}
+ if Exec(ConnectExe, ConnectParam, '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then begin
+ Result := ResultCode = 0;
+ LoadStringFromFile(ExpandConstant('{tmp}') + '\dbstatus.txt', StatusString);
+ if StatusString &lt;> '' then begin
+ MsgBox(StatusString, mbError, MB_OK);
+ Result := False;
+ end else begin
+ Result := True;
+ end;
+ end else begin
+ MsgBox('Database update failed:'#10#10 + SysErrorMessage(ResultCode), mbError, MB_OK);
+ Result := False;
+ end;
+end;
+```
+
+&lt;p>在MySQL中执行脚本的代码片断：&lt;/p></description></item></channel></rss>

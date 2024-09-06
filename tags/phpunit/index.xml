@@ -1,18 +1,120 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Phpunit on 晴耕雨讀</title><link>http://0x3f.org/tags/phpunit/</link><description>Recent content in Phpunit on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Thu, 23 Jun 2022 14:42:34 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/phpunit/index.xml" rel="self" type="application/rss+xml"/><item><title>解决 PHPUnit 生成代码覆盖报告时抛出重复定义类的错误的办法</title><link>http://0x3f.org/posts/the-solution-of-class-redeclaration-error-raised-while-generating-php-code-coverage-report/</link><pubDate>Thu, 23 Jun 2022 14:42:34 +0800</pubDate><guid>http://0x3f.org/posts/the-solution-of-class-redeclaration-error-raised-while-generating-php-code-coverage-report/</guid><description>在生成 Cobertura 格式的代码覆盖报告时程序报了如下错误：
-Generating code coverage report in Cobertura XML format &amp;hellip; PHP Fatal error: Cannot declare class App\FakeNamespace\GenericProvider, because the name is already in use in /builds/fake_project/app/FakeNamespace/GenericProvider.php on line 17
-对应的代码和单元测试执行均无问题。
-经排查，直接原因是使用了 Mockery 的 Instance Mocking 1特性 mock 代码中的硬依赖关系（Hard Dependency）。
-该特性的实现利用了类的自动加载机制和依赖注入技术。对依赖关系 mock 的实例保存在 Mockery 的容器中，同时生成一个 stub 文件：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 &amp;lt;?php namespace Mockery; class Mockery_App_FakeNamespace_GenericProvider { private Container $container; function doSomething($param) { // internal code check expectations return $this-&amp;gt;container-&amp;gt;get(&amp;#39;App\FakeNamespace\GenericProvider::doSomething&amp;#39;)-&amp;gt;expectations(); } } 当代码中实例化这个类的时候，Mockery 自动加载该文件，从而代替了对原类文件的加载。</description></item><item><title>PHPUnit 9.x 性能分析的方法</title><link>http://0x3f.org/posts/method-for-phpunit-9.x-performance-analysis/</link><pubDate>Tue, 17 Aug 2021 14:48:12 +0800</pubDate><guid>http://0x3f.org/posts/method-for-phpunit-9.x-performance-analysis/</guid><description>利用 PHPUnit 9.x 的 extension 特性，可以记录每个测试用例的耗时并存储到 CSV 文件中。
-Extension 代码：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 &amp;lt;?php declare(strict_types=1); namespace Tests; use PHPUnit\Runner\AfterTestHook; class LongRunningTestsLogger implements AfterTestHook { public function __construct(private string $log_file) { } public function executeAfterTest(string $test, float $time): void { $fp = fopen($this-&amp;gt;log_file . &amp;#39;.csv&amp;#39;, &amp;#39;a&amp;#39;); fputcsv($fp, [$test, $time]); fclose($fp); } } phpunit.xml 的配置：</description></item><item><title>在 VS Code 中快速创建 PHPUnit 测试类的方法</title><link>http://0x3f.org/posts/quickly-create-phpunit-test-cases-with-vscode/</link><pubDate>Tue, 18 Feb 2020 22:49:45 +0000</pubDate><guid>http://0x3f.org/posts/quickly-create-phpunit-test-cases-with-vscode/</guid><description>&lt;p>通过单元测试解决问题或者调试代码，可以避开错综复杂的依赖关系、直击问题的核心，从而极大地节约时间、提高效率。&lt;/p>
-&lt;p>但是，当创建测试类成为一个经常发生的操作时，每次都手动创建类、引入基类、添加测试方法就显得很烦琐。我需要这样一个解决方案，让我可以立即开始着手写测试代码。&lt;/p></description></item><item><title>PHPUnit代码覆盖率的统计方法</title><link>http://0x3f.org/posts/how-to-count-code-coverage-of-phpunit/</link><pubDate>Sun, 30 Apr 2017 14:20:41 +0000</pubDate><guid>http://0x3f.org/posts/how-to-count-code-coverage-of-phpunit/</guid><description>关于PHPUnit代码覆盖率的很多概念，官方文档中讲的十分清楚，本文仅就部分语焉不详的细节做些补充。
-虽然phpunit.xml不是必需，但每次都输入完整的命令很不方便，所以一般都要生成这个配置文件。用phpunit --generate-configuration生成的phpunit.xml默认包含forceCoversAnnotation=&amp;quot;true&amp;quot;，它表示必须在测试方法头部的注释里显式使用@covers标签声明统计范围，例如：
-1 2 3 4 5 6 7 8 9 10 /** * @covers Ox3f\LaravelUtils\Log\Log::&amp;lt;public&amp;gt; * @covers Ox3f\LaravelUtils\Log\Log::parseCallStack * @covers Ox3f\LaravelUtils\Log\Log::__construct * @covers Ox3f\LaravelUtils\Log\Log::__callStatic */ public function testAll() { // ... } 否则在执行统计代码覆盖率的命令时，会报risk：
-There was 1 risky test:
-Ox3f\LaravelUtils\Log\LogTest::testAll This test does not have a @covers annotation but is expected to have one 如果希望单元测试覆盖全部代码、且不用一一显式声明，可以将此选项的值改成 false。
-之后即可使用明令phpunit —coverage-html ./report统计代码覆盖率，统计结果保存在report目录中。
-参考 官方文档：第11章-代码覆盖率分析</description></item><item><title>Phalcon项目中PHPUnit的初始化</title><link>http://0x3f.org/posts/testing-with-phpunit-in-phalcon/</link><pubDate>Sat, 29 Nov 2014 09:58:00 +0000</pubDate><guid>http://0x3f.org/posts/testing-with-phpunit-in-phalcon/</guid><description>参考官方文档，稍作修改。
-在项目下创建目录 unittests ，进入目录执行：
-1 composer require phpunit/phpunit 创建 tests 目录并在其中创建文件 Bootstrap.php ：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 &amp;lt;?php use Phalcon\DI, Phalcon\DI\FactoryDefault; ini_set(&amp;#39;display_errors&amp;#39;,1); error_reporting(E_ALL); define(&amp;#39;ROOT_PATH&amp;#39;, __DIR__); define(&amp;#39;PROJECT_DIR&amp;#39;, &amp;#39;/home/taoqi/workspace&amp;#39;); set_include_path( ROOT_PATH . PATH_SEPARATOR . get_include_path() ); // required for phalcon/incubator include __DIR__ . &amp;#34;/../vendor/autoload.php&amp;#34;; // 加载项目文件 $config = require_once PROJECT_DIR.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Phpunit on 晴耕雨讀</title><link>http://0x3f.org/tags/phpunit/</link><description>Recent content in Phpunit on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Thu, 23 Jun 2022 14:42:34 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/phpunit/index.xml" rel="self" type="application/rss+xml"/><item><title>解决 PHPUnit 生成代码覆盖报告时抛出重复定义类的错误的办法</title><link>http://0x3f.org/posts/the-solution-of-class-redeclaration-error-raised-while-generating-php-code-coverage-report/</link><pubDate>Thu, 23 Jun 2022 14:42:34 +0800</pubDate><guid>http://0x3f.org/posts/the-solution-of-class-redeclaration-error-raised-while-generating-php-code-coverage-report/</guid><description>&lt;p>在生成 Cobertura 格式的代码覆盖报告时程序报了如下错误：&lt;/p>
+&lt;blockquote>
+&lt;p>Generating code coverage report in Cobertura XML format &amp;hellip; PHP Fatal error: Cannot declare class App\FakeNamespace\GenericProvider, because the name is already in use in /builds/fake_project/app/FakeNamespace/GenericProvider.php on line 17&lt;/p>
+&lt;/blockquote>
+&lt;p>对应的代码和单元测试执行均无问题。&lt;/p>
+&lt;p>经排查，直接原因是使用了 Mockery 的 &lt;a href="http://docs.mockery.io/en/latest/reference/instance_mocking.html">Instance Mocking&lt;/a> &lt;sup id="fnref:1">&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref">1&lt;/a>&lt;/sup>特性 mock 代码中的硬依赖关系（&lt;a href="https://robertbasic.com/blog/mocking-hard-dependencies-with-mockery/">Hard Dependency&lt;/a>）。&lt;/p>
+&lt;p>该特性的实现利用了类的自动加载机制和依赖注入技术。对依赖关系 mock 的实例保存在 Mockery 的容器中，同时生成一个 stub 文件：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>PHPUnit 9.x 性能分析的方法</title><link>http://0x3f.org/posts/method-for-phpunit-9.x-performance-analysis/</link><pubDate>Tue, 17 Aug 2021 14:48:12 +0800</pubDate><guid>http://0x3f.org/posts/method-for-phpunit-9.x-performance-analysis/</guid><description>&lt;p>利用 PHPUnit 9.x 的 extension 特性，可以记录每个测试用例的耗时并存储到 CSV 文件中。&lt;/p>
+&lt;p>Extension 代码：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>在 VS Code 中快速创建 PHPUnit 测试类的方法</title><link>http://0x3f.org/posts/quickly-create-phpunit-test-cases-with-vscode/</link><pubDate>Tue, 18 Feb 2020 22:49:45 +0000</pubDate><guid>http://0x3f.org/posts/quickly-create-phpunit-test-cases-with-vscode/</guid><description>&lt;p>通过单元测试解决问题或者调试代码，可以避开错综复杂的依赖关系、直击问题的核心，从而极大地节约时间、提高效率。&lt;/p>
+&lt;p>但是，当创建测试类成为一个经常发生的操作时，每次都手动创建类、引入基类、添加测试方法就显得很烦琐。我需要这样一个解决方案，让我可以立即开始着手写测试代码。&lt;/p></description></item><item><title>PHPUnit代码覆盖率的统计方法</title><link>http://0x3f.org/posts/how-to-count-code-coverage-of-phpunit/</link><pubDate>Sun, 30 Apr 2017 14:20:41 +0000</pubDate><guid>http://0x3f.org/posts/how-to-count-code-coverage-of-phpunit/</guid><description>&lt;p>关于PHPUnit代码覆盖率的很多概念，官方文档中讲的十分清楚，本文仅就部分语焉不详的细节做些补充。&lt;/p>
+&lt;p>虽然phpunit.xml不是必需，但每次都输入完整的命令很不方便，所以一般都要生成这个配置文件。用&lt;code>phpunit --generate-configuration&lt;/code>生成的phpunit.xml默认包含&lt;code>forceCoversAnnotation=&amp;quot;true&amp;quot;&lt;/code>，它表示必须在测试方法头部的注释里显式使用&lt;code>@covers&lt;/code>标签声明统计范围，例如：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-php" data-lang="php">&lt;span class="line">&lt;span class="cl">&lt;span class="sd">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> * @covers Ox3f\LaravelUtils\Log\Log::&amp;lt;public&amp;gt;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> * @covers Ox3f\LaravelUtils\Log\Log::parseCallStack
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> * @covers Ox3f\LaravelUtils\Log\Log::__construct
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> * @covers Ox3f\LaravelUtils\Log\Log::__callStatic
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">public&lt;/span> &lt;span class="k">function&lt;/span> &lt;span class="nf">testAll&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// ...
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>Phalcon项目中PHPUnit的初始化</title><link>http://0x3f.org/posts/testing-with-phpunit-in-phalcon/</link><pubDate>Sat, 29 Nov 2014 09:58:00 +0000</pubDate><guid>http://0x3f.org/posts/testing-with-phpunit-in-phalcon/</guid><description>&lt;p>参考&lt;a href="http://docs.phalconphp.com/zh/latest/reference/unit-testing.html">官方文档&lt;/a>，稍作修改。&lt;/p>
+&lt;p>在项目下创建目录 unittests ，进入目录执行：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">composer require phpunit/phpunit
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>创建 tests 目录并在其中创建文件 Bootstrap.php ：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;span class="lnt">30
+&lt;/span>&lt;span class="lnt">31
+&lt;/span>&lt;/code>&lt;/pr</description></item></channel></rss>

@@ -1,3 +1,49 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>热键 on 晴耕雨讀</title><link>http://0x3f.org/tags/%E7%83%AD%E9%94%AE/</link><description>Recent content in 热键 on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Fri, 10 Sep 2010 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/%E7%83%AD%E9%94%AE/index.xml" rel="self" type="application/rss+xml"/><item><title>使用热键切换Vim的QuickFix窗口打开状态</title><link>http://0x3f.org/posts/howto-toggle-quickfix-in-vim-using-hotkeys/</link><pubDate>Fri, 10 Sep 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-toggle-quickfix-in-vim-using-hotkeys/</guid><description>QuickFix窗口只有打开和关闭的命令，而使用一个热键来切换打开状态可以减少热键资源的浪费，使用也更方便。
-从这里找到使用自定义函数完成此功能的方法：使用一个全局变量记录QuickFix窗口的打开状态，从而判断是应该关闭还是打开。但其提供的函数存在状态同步的问题，假如在QuickFix窗口中使用“:q”退出窗口，此方法将不能正常工作。评论中给出了很好的解决方法，但其提供的代码有些小问题，修改之后如下：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 nmap &amp;lt;leader&amp;gt;co :QFix&amp;lt;CR&amp;gt; nmap &amp;lt;leader&amp;gt;ct :call QFixToggle(1)&amp;lt;CR&amp;gt; command! -bang -nargs=? QFix call QFixToggle(&amp;lt;bang&amp;gt;0) function! QFixToggle(forced) if exists(&amp;#34;g:qfix_win&amp;#34;) &amp;amp;&amp;amp; a:forced != 0 cclose else if exists(&amp;#34;g:my_quickfix_win_height&amp;#34;) execute &amp;#34;copen &amp;#34;.g:my_quickfix_win_height else copen endif endif endfunction augroup QFixToggle autocmd! autocmd BufWinEnter quickfix let g:qfix_win = bufnr(&amp;#34;$&amp;#34;) autocmd BufWinLeave * if exists(&amp;#34;g:qfix_win&amp;#34;) &amp;amp;&amp;amp; expand(&amp;#34;&amp;lt;abuf&amp;gt;&amp;#34;) == g:qfix_win | unlet!</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>热键 on 晴耕雨讀</title><link>http://0x3f.org/tags/%E7%83%AD%E9%94%AE/</link><description>Recent content in 热键 on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Fri, 10 Sep 2010 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/%E7%83%AD%E9%94%AE/index.xml" rel="self" type="application/rss+xml"/><item><title>使用热键切换Vim的QuickFix窗口打开状态</title><link>http://0x3f.org/posts/howto-toggle-quickfix-in-vim-using-hotkeys/</link><pubDate>Fri, 10 Sep 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-toggle-quickfix-in-vim-using-hotkeys/</guid><description>&lt;p>QuickFix窗口只有打开和关闭的命令，而使用一个热键来切换打开状态可以减少热键资源的浪费，使用也更方便。&lt;/p>
+&lt;p>从&lt;a href="http://vim.wikia.com/wiki/Toggle_to_open_or_close_the_quickfix_window">这里&lt;/a>找到使用自定义函数完成此功能的方法：使用一个全局变量记录QuickFix窗口的打开状态，从而判断是应该关闭还是打开。但其提供的函数存在状态同步的问题，假如在QuickFix窗口中使用“:q”退出窗口，此方法将不能正常工作。评论中给出了很好的解决方法，但其提供的代码有些小问题，修改之后如下：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-vim" data-lang="vim">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">nmap&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">leader&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="nx">co&lt;/span> :&lt;span class="nx">QFix&lt;/span>&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">CR&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">nmap&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">leader&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="nx">ct&lt;/span> :&lt;span class="nx">call&lt;/span> &lt;span class="nx">QFixToggle&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="m">1&lt;/span>&lt;span class="p">)&amp;lt;&lt;/span>&lt;span class="nx">CR&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">command&lt;/span>&lt;span class="p">!&lt;/span> &lt;span class="p">-&lt;/span>&lt;span class="nx">bang&lt;/span> &lt;span class="p">-&lt;/span>&lt;span class="nx">nargs&lt;/span>&lt;span class="p">=&lt;/span>? &lt;span class="nx">QFix&lt;/span> &lt;span class="nx">call&lt;/span> &lt;span class="nx">QFixToggle&lt;/span>&lt;span class="p">(&amp;lt;&lt;/span>&lt;span class="nx">bang&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="m">0&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">function&lt;/span>&lt;span class="p">!&lt;/span> &lt;span class="nx">QFixToggle&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">forced&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="nx">exists&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;g:qfix_win&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span> &amp;amp;&amp;amp; &lt;span class="nx">a&lt;/span>:&lt;span class="nx">forced&lt;/span> &lt;span class="p">!=&lt;/span> &lt;span class="m">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">cclose&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">else&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="nx">exists&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;g:my_quickfix_win_height&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">execute&lt;/span> &lt;span class="s2">&amp;#34;copen &amp;#34;&lt;/span>.&lt;span class="nx">g&lt;/span>:&lt;span class="nx">my_quickfix_win_height&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">else&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">copen&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">endif&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">endif&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">endfunction&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">augroup&lt;/span> &lt;span class="nx">QFixToggle&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">autocmd&lt;/span>&lt;span class="p">!&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">autocmd&lt;/span> &lt;span class="nx">BufWinEnter&lt;/span> &lt;span class="nx">quickfix&lt;/span> &lt;span class="k">let&lt;/span> &lt;span class="nx">g&lt;/span>:&lt;span class="nx">qfix_win&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="nx">bufnr&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;$&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">autocmd&lt;/span> &lt;span class="nx">BufWinLeave&lt;/span> * &lt;span class="k">if&lt;/span> &lt;span class="nx">exists&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;g:qfix_win&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span> &amp;amp;&amp;amp; &lt;span class="nx">expand&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;&amp;lt;abuf&amp;gt;&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">==&lt;/span> &lt;span class="nx">g&lt;/span>:&lt;span class="nx">qfix_win&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="nx">unlet&lt;/span>&lt;span class="p">!&lt;/span> &lt;span class="nx">g&lt;/span>:&lt;span class="nx">qfix_win&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="k">endif&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">augroup&lt;/span> &lt;span class="nx">END&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item></channel></rss>

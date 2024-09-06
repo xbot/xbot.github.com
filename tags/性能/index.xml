@@ -1,9 +1,36 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>性能 on 晴耕雨讀</title><link>http://0x3f.org/tags/%E6%80%A7%E8%83%BD/</link><description>Recent content in 性能 on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Tue, 24 Apr 2012 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/%E6%80%A7%E8%83%BD/index.xml" rel="self" type="application/rss+xml"/><item><title>PHP大量常量应集中使用APC定义</title><link>http://0x3f.org/posts/define-massive-constants-using-apc/</link><pubDate>Tue, 24 Apr 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/define-massive-constants-using-apc/</guid><description>用xdebug跟踪程序性能时，发现一个定义了约七百个常量的文件，include_once()时消耗约六十毫秒的时间。事实上define()的效率比较低，如果需要定义大量常量，使用APC扩展提供的apc_define_constants()效果会好得多。
-下面是对这个文件改造前后效率跟踪结果的对比：
-define()方案（ms） apc_define_constants()方案（ms） 启动Web服务和PHP，第一次运行 58 4 不重启Web服务和PHP，第二次运行 65 1 不重启Web服务和PHP，第三次运行 66 1 由此可见，apc_define_constants()不但在初次调用时效能就超过define()，而且由于APC自身的缓存功能，在后续调用时效率会有进一步的提高，而define()基本没有变化。
-以下是apc_define_constants()的代码示例：
-```php &lt;?php if(!apc_load_constants('my_constants')) { $constants = array( 'ONE' => 1, 'TWO' => 2, 'THREE' => 3, ); apc_define_constants('my_constants', $constants); } ?> ``` Posted via UltraBlog.vim.</description></item><item><title>慎用PHP的fsockopen()连接localhost</title><link>http://0x3f.org/posts/fsockopen-fails-connecting-localhost/</link><pubDate>Tue, 24 Apr 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/fsockopen-fails-connecting-localhost/</guid><description>使用xdebug跟踪程序性能时发现fsockopen()函数耗时一秒，单步调试发现实际在这里超时了，而超时时间设置的就是一秒。
-如果把目标地址由原来的“localhost”换成“127.0.0.1”，马上就可以连上。在PHP的Bug跟踪系统中找到这个问题：
-https://bugs.php.net/bug.php?id=50953
-看起来像是在5.2.12以后已修改，但我发现在5.2.17中仍存在这个问题。另有说法在5.3中不存在这个问题，我没有测试。
-Posted via UltraBlog.vim.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>性能 on 晴耕雨讀</title><link>http://0x3f.org/tags/%E6%80%A7%E8%83%BD/</link><description>Recent content in 性能 on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Tue, 24 Apr 2012 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/%E6%80%A7%E8%83%BD/index.xml" rel="self" type="application/rss+xml"/><item><title>PHP大量常量应集中使用APC定义</title><link>http://0x3f.org/posts/define-massive-constants-using-apc/</link><pubDate>Tue, 24 Apr 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/define-massive-constants-using-apc/</guid><description>&lt;p>用xdebug跟踪程序性能时，发现一个定义了约七百个常量的文件，include_once()时消耗约六十毫秒的时间。事实上define()的效率比较低，如果需要定义大量常量，使用APC扩展提供的apc_define_constants()效果会好得多。&lt;/p>
+
+&lt;p>下面是对这个文件改造前后效率跟踪结果的对比：&lt;/p>
+
+&lt;table>
+ &lt;tr>
+ &lt;th>&lt;/th>
+ &lt;th>define()方案（ms）&lt;/th>
+ &lt;th>apc_define_constants()方案（ms）&lt;/th>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>启动Web服务和PHP，第一次运行&lt;/td>
+ &lt;td>58&lt;/td>
+ &lt;td>4&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>不重启Web服务和PHP，第二次运行&lt;/td>
+ &lt;td>65&lt;/td>
+ &lt;td>1&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>不重启Web服务和PHP，第三次运行&lt;/td>
+ &lt;td>66&lt;/td>
+ &lt;td>1&lt;/td>
+ &lt;/tr>
+&lt;/table>
+
+&lt;p>由此可见，apc_define_constants()不但在初次调用时效能就超过define()，而且由于APC自身的缓存功能，在后续调用时效率会有进一步的提高，而define()基本没有变化。&lt;/p></description></item><item><title>慎用PHP的fsockopen()连接localhost</title><link>http://0x3f.org/posts/fsockopen-fails-connecting-localhost/</link><pubDate>Tue, 24 Apr 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/fsockopen-fails-connecting-localhost/</guid><description>&lt;p>使用xdebug跟踪程序性能时发现fsockopen()函数耗时一秒，单步调试发现实际在这里超时了，而超时时间设置的就是一秒。&lt;/p>
+
+&lt;p>如果把目标地址由原来的“localhost”换成“127.0.0.1”，马上就可以连上。在PHP的Bug跟踪系统中找到这个问题：&lt;/p>
+
+&lt;p>https://bugs.php.net/bug.php?id=50953&lt;/p>
+
+&lt;p>看起来像是在5.2.12以后已修改，但我发现在5.2.17中仍存在这个问题。另有说法在5.3中不存在这个问题，我没有测试。&lt;/p>
+
+&lt;p>Posted via &lt;a href="http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/">UltraBlog.vim&lt;/a>.&lt;/p></description></item></channel></rss>

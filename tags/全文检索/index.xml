@@ -1,4 +1,41 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>全文检索 on 晴耕雨讀</title><link>http://0x3f.org/tags/%E5%85%A8%E6%96%87%E6%A3%80%E7%B4%A2/</link><description>Recent content in 全文检索 on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Mon, 19 Jun 2017 23:10:41 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/%E5%85%A8%E6%96%87%E6%A3%80%E7%B4%A2/index.xml" rel="self" type="application/rss+xml"/><item><title>用MySQL的全文检索实现相关性排序</title><link>http://0x3f.org/posts/fulltext-searching-in-mysql/</link><pubDate>Mon, 19 Jun 2017 23:10:41 +0000</pubDate><guid>http://0x3f.org/posts/fulltext-searching-in-mysql/</guid><description>实现根据文章的关键词搜索出相关的文章，并按相关性排序。
-数据库版本是5.6.x，还不能像5.7那样支持中文的全文检索，所以另外创建一列保存关键词的编码。方法为base64转码并去掉「%」符号：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 &amp;lt;?php /** * 转换关键词到全文检索的格式 * * @param mixed $keywords 关键词数组或英文逗号分隔的字符串 * @return string */ function encode_keywords($keywords) { $encoder = function ($keyword) { return str_replace(&amp;#39;%&amp;#39;, &amp;#39;&amp;#39;, urlencode(trim($keyword))); }; if (!is_array($keywords)) { $keywords = explode(&amp;#39;,&amp;#39;, $keywords); } return implode(&amp;#39; &amp;#39;, array_map($encoder, $keywords)); } 对该列创建全文检索的索引：
-1 CREATE FULLTEXT INDEX idx_post_keywords ON posts (keywords_ft); 查询语句：</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>全文检索 on 晴耕雨讀</title><link>http://0x3f.org/tags/%E5%85%A8%E6%96%87%E6%A3%80%E7%B4%A2/</link><description>Recent content in 全文检索 on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Mon, 19 Jun 2017 23:10:41 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/%E5%85%A8%E6%96%87%E6%A3%80%E7%B4%A2/index.xml" rel="self" type="application/rss+xml"/><item><title>用MySQL的全文检索实现相关性排序</title><link>http://0x3f.org/posts/fulltext-searching-in-mysql/</link><pubDate>Mon, 19 Jun 2017 23:10:41 +0000</pubDate><guid>http://0x3f.org/posts/fulltext-searching-in-mysql/</guid><description>&lt;p>实现根据文章的关键词搜索出相关的文章，并按相关性排序。&lt;/p>
+&lt;p>数据库版本是5.6.x，还不能像5.7那样支持中文的全文检索，所以另外创建一列保存关键词的编码。方法为base64转码并去掉「%」符号：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-php" data-lang="php">&lt;span class="line">&lt;span class="cl">&lt;span class="o">&amp;lt;?&lt;/span>&lt;span class="nx">php&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> * 转换关键词到全文检索的格式
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> *
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> * @param mixed $keywords 关键词数组或英文逗号分隔的字符串
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> * @return string
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">function&lt;/span> &lt;span class="nf">encode_keywords&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$keywords&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nv">$encoder&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="k">function&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nv">$keyword&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="nx">str_replace&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;%&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">urlencode&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">trim&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$keyword&lt;/span>&lt;span class="p">)));&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">};&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="o">!&lt;/span>&lt;span class="nx">is_array&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$keywords&lt;/span>&lt;span class="p">))&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nv">$keywords&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">explode&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;,&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">$keywords&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="nx">implode&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39; &amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">array_map&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$encoder&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">$keywords&lt;/span>&lt;span class="p">));&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item></channel></rss>

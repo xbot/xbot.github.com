@@ -1,76 +1,544 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Flamework on 晴耕雨讀</title><link>http://0x3f.org/tags/flamework/</link><description>Recent content in Flamework on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Sun, 30 Mar 2014 10:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/flamework/index.xml" rel="self" type="application/rss+xml"/><item><title>PHP框架实战（六）：依赖注入</title><link>http://0x3f.org/posts/flamework-dependency-injection/</link><pubDate>Sun, 30 Mar 2014 10:00:00 +0000</pubDate><guid>http://0x3f.org/posts/flamework-dependency-injection/</guid><description>简述 依赖注入是个很好的解耦方法，也可以优雅的实现懒加载。
-以数据库连接为例，当一个组件用到数据库时，最简单粗暴的办法是在使用前创建连接：
-1 2 3 4 5 6 7 8 9 10 11 &amp;lt;?php class Component { public function doSth() { // ... $db = new DatabaseConnection($schema, $host, $port, $login, $password); // ... } } ?&amp;gt; 这样做的缺点是代码一旦执行，Component行为将不可更改，有时我们需要在程序执行的过程中决定其行为。很直接地，可以想到给Component添加一个Setter方法：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 &amp;lt;?php class Component { private $__db; public function doSth() { // ... if ($this-&amp;gt;__db !</description></item><item><title>PHP框架实战（∝）：烈焰之终章</title><link>http://0x3f.org/posts/flamework-summary/</link><pubDate>Thu, 02 Jan 2014 15:15:00 +0000</pubDate><guid>http://0x3f.org/posts/flamework-summary/</guid><description>写“烈焰”（Flame）用了一周的业余时间，主要是对平时一些想法的总结和验证。实现了比较完整的控制器层和视图层，对模型层的ActiveRecord实现思路做了一下梳理。
-当然，一个可实用的框架需要包含的东西远不止这些。比如框架中用到代码动态调用的地方，一定要做好语言安全子集的过滤，否则就是很大的安全漏洞。再比如需要支持依赖反转的缓存机制，实现对多种缓存方式的平滑支持。此外，像URI路由、可扩展、多模板方案支持也都是现代框架的标配。这些留待以后有时间再讨论。然而在这次练习的过程中，我突然想到一个问题——PHP是不是适合实现一个完备的框架。
-曾见过一句话，说PHP本身就是一个框架，后来明白，这才是微言大义。PHP有很多高级选项、高级函数和扩展，用得好事半功倍，用不好就是魔鬼。
-PHP本身有很多问题，协议不统一、函数命名混乱、命名空间语法怪异而且鸡肋等等都是老生常谈。在运行模式上，无论是Apache+PHP模块，还是NGINX+FastCGI，都只能实现在纵向层面上对一次请求的处理，由于缺乏在内存中持续运行程序的机制，凡是对程序全局共享并持续占有的东西都不能实现，比如数据库连接池等，以至于很多初始化的工作对于每次请求都要重新执行一次，这意味著面向对象越彻底、封装越多，系统资源的重复消耗越厉害，所以PHP的程序在性能和内存占用上与Java相比有一定缺陷。因此PHP更适合短平快的应用场景，不适合实现复杂的业务逻辑。
-基于这个观点，我认同混合编程。没有哪种语言是完美的，用对的工具做对的事是最理想的。用PHP实现一个完备的框架也许不是个明智的选择，从短平快的角度出发，它更适合用来实现微框架。
-现在微框架是个比较热门的话题，我最早接触的是Python的Bottle和Flask，短小精悍，非常容易上手。微框架主要实现控制器层和视图层，一般不包括模型层。为了以最快的速度将请求路由到处理逻辑，一般以最直接的方式建立URI模板和回调物件之间的映射，控制器层可以以极简的方式实现，例如只做一个像本文后面例子中那样简单的约定。微框架应该尽可能少地包含配置，大部分时候并不需要像Java的S.S.H那样滥用配置，CoC原则就持这样的观点，约定可以解决的问题就不要用配置去做。
-下面只使用两个函数和五条约定实现一个微框架：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 &amp;lt;?php /** * 路由定义与应用 * @param string $route 用作定义路由规则时，此参数为模板字符串， * 使用冒号加参数名作为参数占位符，例如： * on(&amp;#39;/post/edit/:id&amp;#39;, function($id){}); * 用做应用路由规则时，此参数为URI，例如： * on($_SERVER[&amp;#39;REQUEST_URI&amp;#39;]); * @param callable $callback 路由规则的回调逻辑，如果路由规则中 * 含有参数占位符，回调中需存在同名的参数；当函数作为应用路 * 由规则使用时，此参数不指定 * @return void * @since 1.</description></item><item><title>PHP框架实战（五）：ORM与ActiveRecord</title><link>http://0x3f.org/posts/flamework-active-record/</link><pubDate>Wed, 01 Jan 2014 20:45:00 +0000</pubDate><guid>http://0x3f.org/posts/flamework-active-record/</guid><description>简述 Model是MVC框架中最复杂的部分，它要提供与业务逻辑相关的数据及数据处理方法的封装，一般要提供数据对象、数据库连接、事务管理、SQL语句构造、数据CRUD、高级通用业务逻辑等一系列功能。由于Model与Controller和View是解耦的，并且本身具备很高的通用性和复杂性，所以有很多独立的实现。本文希望能通过开发一个简单的ActiveRecord，验证这种Model实现方案的原理和过程。
-ORM：对象关系映射 ORM的全称是Object Relational Mapping，即对象关系映射。它是为了解决关系数据库的数学模型和编程语言的对象模型之间的阻抗不匹配问题而提出的解决方案。
-阻抗不匹配是个逼格很高的词。
-阻抗是指电路中的电容、电感、电阻对交流电的障碍作用，就像电阻对直流电的障碍作用。两个系统传递信号可以形象地看成电压的传递，公式为：
-U(out) * Z(in)
-U(in) = &amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;ndash;
-Z(in) + Z(out)
-即输入电压等于输出电压与输入阻抗的积除以输入阻抗与输出阻抗的和。
-理想情况肯定是输入电压等于输出电压，这时信号是没有失真的，也就是要求Z(in)与Z(in)+Z(out)之商无限逼近1，这个过程就叫阻抗匹配。关系型数据库是建立在数学模型的基础上，而编程语言中的对象是建立在人对客观世界认知的具象模型上。说白了，阻抗不匹配问题就是说因这两种模型不一致而导致的问题。
-ORM通过建立表与对象、列与属性（这只是一般情况）之间的映射关系而解决问题，这可以实现像操作对象一样对数据库中的数据进行增删改查，简化了开发过程。不过ORM的缺点是不能很好地处理复杂数据关系，会出现效率低下的问题，因此必要时仍然需要直接使用SQL。
-ActiveRecord ActiveRecord是Ruby on Rails提出的一个概念，其实就是ORM的一种实现，它是对象类型、数据、CRUD方法的合体，使对数据的操作以更具象化的方式实现。下面介绍在Flamework中实现一个简单的ActiveRecord的过程。
-首先实现数据库的接口，提供数据库连接、查询、执行SQL语句、事务管理等基本功能。这里使用PDO实现：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 &amp;lt;?</description></item><item><title>PHP框架实战（四）：View的模板与渲染</title><link>http://0x3f.org/posts/flamework-view-rendering/</link><pubDate>Mon, 30 Dec 2013 21:05:00 +0000</pubDate><guid>http://0x3f.org/posts/flamework-view-rendering/</guid><description>目标 实现MVC模型的View层，Controller的Action中应可以将从Model层获取的数据填充到View模板中，并将渲染结果返回给访问者。本文并不志在实现一个完备的模板框架，相应的需求可借助Smarty这样现有的实现。
-获取代码 1 git checkout v0.4 设计与实现 View的模板是最好实现的，因为PHP本身就是一个模板语言，所以这里实现的模板主要是指几条约定：
-模板文件本身是一个普通PHP文件，文件名后缀是“.php”； 模板文件应存储在项目指定的模板基础目录中； 模板名称指模板文件相对于项目的模板基础目录的路径，并且去掉文件后缀； 模板本身的实际效果等同于在Controller的Action中执行的代码，故可以调用Controller的所有方法以及Flame对象的方法等内容； 所有要填充到模板中的数据以键值对的形式存储在一个关联数组中，并传递给渲染模板的方法，在模板中使用与键名相同的变量调用数据； View的渲染方法
-添加Controller::render()方法：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 &amp;lt;?php // ... /** * Render the view template with data * @param string $view View template relative path to base path of the templates * For example, &amp;#39;post/list&amp;#39; point to file /srv/http/mysite/protected/view/post/list.</description></item><item><title>PHP框架实战（三）：实现Controller和Filter</title><link>http://0x3f.org/posts/flamework-controller-and-filter/</link><pubDate>Sun, 29 Dec 2013 20:40:00 +0000</pubDate><guid>http://0x3f.org/posts/flamework-controller-and-filter/</guid><description>目标 实现Controller和Filter，程序可以从HTTP请求中解析Controller和Action，并在这两个切面级别实现Filter链。此外，在Controller中，可以使用Action的参数直接访问HTTP请求中的同名参数。
-获取代码 项目目录结构做了调整，framework目录存放Flamework框架源码，demo目录存放示例项目。
-1 git checkout v0.3 设计与实现 Controller的实现
-要求请求URL的格式如下：
-http://www.mydomain.com/index.php?r=post/save
-r表示Route，斜杠前面的post表示Controller的名称，后面的save表示Action的名称。对HTTP请求的各种处理逻辑封装在新对象HttpRequest中：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 &amp;lt;?</description></item><item><title>PHP框架实战（二）：错误和异常的自动处理</title><link>http://0x3f.org/posts/flamework-error-auto-handling/</link><pubDate>Sat, 28 Dec 2013 13:40:00 +0000</pubDate><guid>http://0x3f.org/posts/flamework-error-auto-handling/</guid><description>目标 实现错误和异常的自动捕获和处理。
-获取代码 1 git checkout v0.2 设计与实现 使用set_error_handler()和set_exception_handler()两个函数注册错误和异常的处理方法，并在两个处理方法中先调用用户自定义的错误和异常处理逻辑，如果自定义逻辑不存在或者返回false，继续调用框架缺省的处理逻辑，输出错误信息到页面。
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144 &amp;lt;?</description></item><item><title>PHP框架实战（一）：框架入口与类的自动加载</title><link>http://0x3f.org/posts/flamework-entry/</link><pubDate>Sat, 28 Dec 2013 01:56:00 +0000</pubDate><guid>http://0x3f.org/posts/flamework-entry/</guid><description>目标 实现框架入口和类的自动加载。
-获取代码 1 git checkout v0.1 设计与实现 通过两个类实现本次目标。
-静态类Flame作为整个框架的入口，实现一系列框架级公用静态方法（例如创建应用实例和自动加载类）。
-WebApplication是应用的抽象层，实现应用的入口和其它应用级（即运行时）公用方法（例如读取配置文件）。
-程序入口
-1 2 3 4 &amp;lt;?php // ... Flame::createApplication($config)-&amp;gt;run(); ?&amp;gt; 此处传入的$config是应用配置文件的路径，该配置文件内容格式如下：
-1 2 3 4 5 6 &amp;lt;?php return array( &amp;#39;opt1&amp;#39; =&amp;gt; &amp;#39;val1&amp;#39;, // ... ); ?&amp;gt; 在文件中直接return一个关联数组的好处是，加载该文件时，include()函数的返回值就是该数组，代码更简洁，效率比解析其它格式配置文件高。
-类的自动加载
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 &amp;lt;?php // ... class Flame { // .</description></item><item><title>PHP框架实战（零）：代码规范</title><link>http://0x3f.org/posts/flamework-code-spec/</link><pubDate>Thu, 26 Dec 2013 22:07:00 +0000</pubDate><guid>http://0x3f.org/posts/flamework-code-spec/</guid><description>类C语言语法风格最大的问题就是用花括号区分代码块，这导致源码排版容易混乱，对于我这种有代码洁癖的人来说非常痛苦，所以我最喜欢的语法风格是Python的，用缩进区分代码块，排版不规范直接判处语法错误。
-命名规范 所有命名使用驼峰风格。
-源码开头定义命名空间，Flamework框架入口类的命名空间为“org\x3f\flamework”，其余类的命名空间应在此基础上追加与所在目录路径匹配的内容。例如，框架源码目录下一级子目录“base”中的类文件的命名空间均为“org\x3f\flamework\base”。
-类名必须是名词，不允许添加任何无意义的前缀或后缀，只允许使用大小写英文字母且首字母大写。
-方法名必须是“动词+名词”的形式（如果动词意义明确且不需要宾语，可省略后者），只允许使用大小写英文字母及阿拉伯数字和下划线，首字母小写。
-属性名分两种情况，对于存储普通数据的属性，名称必须是名词；对于布尔型属性，名称必须是“动词+名词”的形式。只允许使用大小写英文字母及阿拉伯数字和下划线，首字母小写。
-源码文件名必须与类名相同，后缀统一使用“.php”。
-注释规范 统一使用phpDocumenter的注释规范。
-类注释必须注明@author、@since。
-属性和方法的作者如果和类的创建者不同，必须注明@author，此外必须注明@since。
-文件格式 所有文本文件统一使用UNIX格式和UTF-8编码。
-严禁使用制表符缩进代码，必须使用4个空格替代制表符。
-类、属性、方法、方法内部代码块都必须严格按照层级缩进。</description></item><item><title>PHP框架实战：Flamework</title><link>http://0x3f.org/posts/flamework/</link><pubDate>Thu, 26 Dec 2013 20:24:00 +0000</pubDate><guid>http://0x3f.org/posts/flamework/</guid><description>从今天开始，逐步实现一个PHP的MVC框架，以践行平时对这方面的一些想法。
-项目信息 名称：Flamework (Flame Framework) 源码：https://github.com/xbot/flamework 框架特性 激进
-用PHP高版本引入的新特性，不考虑向前兼容问题，没有历史包袱。
-命名空间
-PHP 5.3引入的命名空间可以有效避免类命名冲突，这样可以使类名看起来更自然，不用再在类名前面加难看的前缀了。
-类的自动加载
-手动include会增加维护的难度，因为经常会出现一个类被从源码中移除而它的include行还在的问题，这会拖慢程序执行速度、增加内存占用。
-实现类的自动加载可以在类被引用时自动include相应的源码。
-异常的自动处理
-在设计程序时，一般应该把用户级的错误返回给页面显示，或者对一些HTTP错误显示个性化的页面（例如人民群众喜闻乐见的404页面），所以在业务逻辑、数据操作这些层一般应该逐级向上抛异常，然后在Controller里捕获并加工成页面可识别的格式（例如JSON）。这样做的缺点是Controller里每个Action都包含重复的try&amp;hellip;catch块。
-异常的自动处理允许开发者指定自定义的异常处理逻辑，将异常处理与普通逻辑解耦，这样每个Action只需实现它所关注的功能即可。
-过滤器
-过滤器允许面向切面编程，是将横向逻辑与纵向逻辑解耦的重要工具。Flamework要实现针对Controller和Action两个级别的过滤器链，过滤器可在该级别逻辑前后执行，并能停止该级别逻辑及后续过滤器的执行。
-懒加载
-对尽可能多的资源实现懒加载，例如数据库连接、类、组件等，目的是提高效率、节约资源。
-参数绑定
-自动将请求中的参数与Action方法的参数绑定，从而避免在Action里出现通过$_POST、$_GET这些数组取参数的脏代码，也可以自动实现参数的校验和错误处理。
-ActiveRecord
-ORM是对关系模型和对象模型的阻抗不匹配问题的解决方案，ActiveRecord是目前最流行的一种ORM的实现方式。通过AR，可以以更对象化的方式操作关系数据库的数据。
-依赖注入
-依赖注入是个很好的解耦方法，也可以很优雅地实现懒加载。
-目录 零：代码规范 一：框架入口与类的自动加载 二：错误和异常的自动处理 三：实现Controller和Filter 四：视图的模板与渲染 五：ORM与ActiveRecord 六：依赖注入 ∝：烈焰之终章</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Flamework on 晴耕雨讀</title><link>http://0x3f.org/tags/flamework/</link><description>Recent content in Flamework on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Sun, 30 Mar 2014 10:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/flamework/index.xml" rel="self" type="application/rss+xml"/><item><title>PHP框架实战（六）：依赖注入</title><link>http://0x3f.org/posts/flamework-dependency-injection/</link><pubDate>Sun, 30 Mar 2014 10:00:00 +0000</pubDate><guid>http://0x3f.org/posts/flamework-dependency-injection/</guid><description>&lt;h2 id="简述">简述&lt;/h2>
+&lt;p>依赖注入是个很好的解耦方法，也可以优雅的实现懒加载。&lt;/p>
+&lt;p>以数据库连接为例，当一个组件用到数据库时，最简单粗暴的办法是在使用前创建连接：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-php" data-lang="php">&lt;span class="line">&lt;span class="cl">&lt;span class="o">&amp;lt;?&lt;/span>&lt;span class="nx">php&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">class&lt;/span> &lt;span class="nc">Component&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">public&lt;/span> &lt;span class="k">function&lt;/span> &lt;span class="nf">doSth&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// ...
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nv">$db&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="k">new&lt;/span> &lt;span class="nx">DatabaseConnection&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$schema&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">$host&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">$port&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">$login&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">$password&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// ...
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cp">?&amp;gt;&lt;/span>&lt;span class="err">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>PHP框架实战（∝）：烈焰之终章</title><link>http://0x3f.org/posts/flamework-summary/</link><pubDate>Thu, 02 Jan 2014 15:15:00 +0000</pubDate><guid>http://0x3f.org/posts/flamework-summary/</guid><description>&lt;p>写“烈焰”（Flame）用了一周的业余时间，主要是对平时一些想法的总结和验证。实现了比较完整的控制器层和视图层，对模型层的ActiveRecord实现思路做了一下梳理。&lt;/p>
+&lt;p>当然，一个可实用的框架需要包含的东西远不止这些。比如框架中用到代码动态调用的地方，一定要做好语言安全子集的过滤，否则就是很大的安全漏洞。再比如需要支持依赖反转的缓存机制，实现对多种缓存方式的平滑支持。此外，像URI路由、可扩展、多模板方案支持也都是现代框架的标配。这些留待以后有时间再讨论。然而在这次练习的过程中，我突然想到一个问题——PHP是不是适合实现一个完备的框架。&lt;/p>
+&lt;p>曾见过一句话，说PHP本身就是一个框架，后来明白，这才是微言大义。PHP有很多高级选项、高级函数和扩展，用得好事半功倍，用不好就是魔鬼。&lt;/p>
+&lt;p>PHP本身有很多问题，协议不统一、函数命名混乱、命名空间语法怪异而且鸡肋等等都是老生常谈。在运行模式上，无论是Apache+PHP模块，还是NGINX+FastCGI，都只能实现在纵向层面上对一次请求的处理，由于缺乏在内存中持续运行程序的机制，凡是对程序全局共享并持续占有的东西都不能实现，比如数据库连接池等，以至于很多初始化的工作对于每次请求都要重新执行一次，这意味著面向对象越彻底、封装越多，系统资源的重复消耗越厉害，所以PHP的程序在性能和内存占用上与Java相比有一定缺陷。因此PHP更适合短平快的应用场景，不适合实现复杂的业务逻辑。&lt;/p>
+&lt;p>基于这个观点，我认同混合编程。没有哪种语言是完美的，用对的工具做对的事是最理想的。用PHP实现一个完备的框架也许不是个明智的选择，从短平快的角度出发，它更适合用来实现微框架。&lt;/p>
+&lt;p>现在微框架是个比较热门的话题，我最早接触的是Python的Bottle和Flask，短小精悍，非常容易上手。微框架主要实现控制器层和视图层，一般不包括模型层。为了以最快的速度将请求路由到处理逻辑，一般以最直接的方式建立URI模板和回调物件之间的映射，控制器层可以以极简的方式实现，例如只做一个像本文后面例子中那样简单的约定。微框架应该尽可能少地包含配置，大部分时候并不需要像Java的S.S.H那样滥用配置，&lt;a href="http://en.wikipedia.org/wiki/Convention_over_configuration">CoC原则&lt;/a>就持这样的观点，约定可以解决的问题就不要用配置去做。&lt;/p>
+&lt;p>下面只使用两个函数和五条约定实现一个微框架：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;span class="lnt">30
+&lt;/span>&lt;span class="lnt">31
+&lt;/span>&lt;span class="lnt">32
+&lt;/span>&lt;span class="lnt">33
+&lt;/span>&lt;span class="lnt">34
+&lt;/span>&lt;span class="lnt">35
+&lt;/span>&lt;span class="lnt">36
+&lt;/span>&lt;span class="lnt">37
+&lt;/span>&lt;span class="lnt">38
+&lt;/span>&lt;span class="lnt">39
+&lt;/span>&lt;span class="lnt">40
+&lt;/span>&lt;span class="lnt">41
+&lt;/span>&lt;span class="lnt">42
+&lt;/span>&lt;span class="lnt">43
+&lt;/span>&lt;span class="lnt">44
+&lt;/span>&lt;span class="lnt">45
+&lt;/span>&lt;span class="lnt">46
+&lt;/span>&lt;span class="lnt">47
+&lt;/span>&lt;span class="lnt">48
+&lt;/span>&lt;span class="lnt">49
+&lt;/span>&lt;span class="lnt">50
+&lt;/span>&lt;span class="lnt">51
+&lt;/span>&lt;span class="lnt">52
+&lt;/span>&lt;span class="lnt">53
+&lt;/span>&lt;span class="lnt">54
+&lt;/span>&lt;span class="lnt">55
+&lt;/span>&lt;span class="lnt">56
+&lt;/span>&lt;span class="lnt">57
+&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>PHP框架实战（五）：ORM与ActiveRecord</title><link>http://0x3f.org/posts/flamework-active-record/</link><pubDate>Wed, 01 Jan 2014 20:45:00 +0000</pubDate><guid>http://0x3f.org/posts/flamework-active-record/</guid><description>&lt;h2 id="简述">简述&lt;/h2>
+&lt;p>Model是MVC框架中最复杂的部分，它要提供与业务逻辑相关的数据及数据处理方法的封装，一般要提供数据对象、数据库连接、事务管理、SQL语句构造、数据CRUD、高级通用业务逻辑等一系列功能。由于Model与Controller和View是解耦的，并且本身具备很高的通用性和复杂性，所以有很多独立的实现。本文希望能通过开发一个简单的ActiveRecord，验证这种Model实现方案的原理和过程。&lt;/p>
+&lt;h2 id="orm对象关系映射">ORM：对象关系映射&lt;/h2>
+&lt;p>ORM的全称是Object Relational Mapping，即对象关系映射。它是为了解决关系数据库的数学模型和编程语言的对象模型之间的阻抗不匹配问题而提出的解决方案。&lt;/p>
+&lt;p>阻抗不匹配是个逼格很高的词。&lt;/p>
+&lt;p>阻抗是指电路中的电容、电感、电阻对交流电的障碍作用，就像电阻对直流电的障碍作用。两个系统传递信号可以形象地看成电压的传递，公式为：&lt;/p>
+&lt;blockquote>
+&lt;p>                &lt;strong>U&lt;/strong>(out) * &lt;strong>Z&lt;/strong>(in)&lt;br>
+&lt;strong>U&lt;/strong>(in) = &amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;ndash;&lt;br>
+                &lt;strong>Z&lt;/strong>(in) + &lt;strong>Z&lt;/strong>(out)&lt;/p>
+&lt;/blockquote>
+&lt;p>即输入电压等于输出电压与输入阻抗的积除以输入阻抗与输出阻抗的和。&lt;/p>
+&lt;p>理想情况肯定是输入电压等于输出电压，这时信号是没有失真的，也就是要求Z(in)与Z(in)+Z(out)之商无限逼近1，这个过程就叫阻抗匹配。关系型数据库是建立在数学模型的基础上，而编程语言中的对象是建立在人对客观世界认知的具象模型上。说白了，阻抗不匹配问题就是说因这两种模型不一致而导致的问题。&lt;/p>
+&lt;p>ORM通过建立表与对象、列与属性（&lt;em>这只是一般情况&lt;/em>）之间的映射关系而解决问题，这可以实现像操作对象一样对数据库中的数据进行增删改查，简化了开发过程。不过ORM的缺点是不能很好地处理复杂数据关系，会出现效率低下的问题，因此必要时仍然需要直接使用SQL。&lt;/p>
+&lt;h2 id="activerecord">ActiveRecord&lt;/h2>
+&lt;p>ActiveRecord是Ruby on Rails提出的一个概念，其实就是ORM的一种实现，它是对象类型、数据、CRUD方法的合体，使对数据的操作以更具象化的方式实现。下面介绍在Flamework中实现一个简单的ActiveRecord的过程。&lt;/p></description></item><item><title>PHP框架实战（四）：View的模板与渲染</title><link>http://0x3f.org/posts/flamework-view-rendering/</link><pubDate>Mon, 30 Dec 2013 21:05:00 +0000</pubDate><guid>http://0x3f.org/posts/flamework-view-rendering/</guid><description>&lt;h2 id="目标">目标&lt;/h2>
+&lt;p>实现MVC模型的&lt;strong>V&lt;/strong>iew层，Controller的Action中应可以将从Model层获取的数据填充到View模板中，并将渲染结果返回给访问者。本文并不志在实现一个完备的模板框架，相应的需求可借助Smarty这样现有的实现。&lt;/p>
+&lt;h2 id="获取代码">获取代码&lt;/h2>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">git checkout v0.4
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="设计与实现">设计与实现&lt;/h2>
+&lt;p>View的模板是最好实现的，因为PHP本身就是一个模板语言，所以这里实现的模板主要是指几条约定：&lt;/p>
+&lt;ol>
+&lt;li>模板文件本身是一个普通PHP文件，文件名后缀是“.php”；&lt;/li>
+&lt;/ol>
+&lt;ul>
+&lt;li>模板文件应存储在项目指定的模板基础目录中；&lt;/li>
+&lt;li>模板名称指模板文件相对于项目的模板基础目录的路径，并且去掉文件后缀；&lt;/li>
+&lt;li>模板本身的实际效果等同于在Controller的Action中执行的代码，故可以调用Controller的所有方法以及Flame对象的方法等内容；&lt;/li>
+&lt;li>所有要填充到模板中的数据以键值对的形式存储在一个关联数组中，并传递给渲染模板的方法，在模板中使用与键名相同的变量调用数据；&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>View的渲染方法&lt;/strong>&lt;/p>
+&lt;p>添加Controller::render()方法：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>PHP框架实战（三）：实现Controller和Filter</title><link>http://0x3f.org/posts/flamework-controller-and-filter/</link><pubDate>Sun, 29 Dec 2013 20:40:00 +0000</pubDate><guid>http://0x3f.org/posts/flamework-controller-and-filter/</guid><description>&lt;h2 id="目标">目标&lt;/h2>
+&lt;p>实现Controller和Filter，程序可以从HTTP请求中解析Controller和Action，并在这两个切面级别实现Filter链。此外，在Controller中，可以使用Action的参数直接访问HTTP请求中的同名参数。&lt;/p>
+&lt;h2 id="获取代码">获取代码&lt;/h2>
+&lt;p>项目目录结构做了调整，framework目录存放Flamework框架源码，demo目录存放示例项目。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">git checkout v0.3
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="设计与实现">设计与实现&lt;/h2>
+&lt;p>&lt;strong>Controller的实现&lt;/strong>&lt;/p>
+&lt;p>要求请求URL的格式如下：&lt;/p>
+&lt;blockquote>
+&lt;p>&lt;a href="http://www.mydomain.com/index.php?r=post/save">http://www.mydomain.com/index.php?r=post/save&lt;/a>&lt;/p>
+&lt;/blockquote>
+&lt;p>&lt;strong>r&lt;/strong>表示Route，斜杠前面的&lt;strong>post&lt;/strong>表示Controller的名称，后面的&lt;strong>save&lt;/strong>表示Action的名称。对HTTP请求的各种处理逻辑封装在新对象HttpRequest中：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt"> 10
+&lt;/span>&lt;span class="lnt"> 11
+&lt;/span>&lt;span class="lnt"> 12
+&lt;/span>&lt;span class="lnt"> 13
+&lt;/span>&lt;span class="lnt"> 14
+&lt;/span>&lt;span class="lnt"> 15
+&lt;/span>&lt;span class="lnt"> 16
+&lt;/span>&lt;span class="lnt"> 17
+&lt;/span>&lt;span class="lnt"> 18
+&lt;/span>&lt;span class="lnt"> 19
+&lt;/span>&lt;span class="lnt"> 20
+&lt;/span>&lt;span class="lnt"> 21
+&lt;/span>&lt;span class="lnt"> 22
+&lt;/span>&lt;span class="lnt"> 23
+&lt;/span>&lt;span class="lnt"> 24
+&lt;/span>&lt;span class="lnt"> 25
+&lt;/span>&lt;span class="lnt"> 26
+&lt;/span>&lt;span class="lnt"> 27
+&lt;/span>&lt;span class="lnt"> 28
+&lt;/span>&lt;span class="lnt"> 29
+&lt;/span>&lt;span class="lnt"> 30
+&lt;/span>&lt;span class="lnt"> 31
+&lt;/span>&lt;span class="lnt"> 32
+&lt;/span>&lt;span class="lnt"> 33
+&lt;/span>&lt;span class="lnt"> 34
+&lt;/span>&lt;span class="lnt"> 35
+&lt;/span>&lt;span class="lnt"> 36
+&lt;/span>&lt;span class="lnt"> 37
+&lt;/span>&lt;span class="lnt"> 38
+&lt;/span>&lt;span class="lnt"> 39
+&lt;/span>&lt;span class="lnt"> 40
+&lt;/span>&lt;span class="lnt"> 41
+&lt;/span>&lt;span class="lnt"> 42
+&lt;/span>&lt;span class="lnt"> 43
+&lt;/span>&lt;span class="lnt"> 44
+&lt;/span>&lt;span class="lnt"> 45
+&lt;/span>&lt;span class="lnt"> 46
+&lt;/span>&lt;span class="lnt"> 47
+&lt;/span>&lt;span class="lnt"> 48
+&lt;/span>&lt;span class="lnt"> 49
+&lt;/span>&lt;span class="lnt"> 50
+&lt;/span>&lt;span class="lnt"> 51
+&lt;/span>&lt;span class="lnt"> 52
+&lt;/span>&lt;span class="lnt"> 53
+&lt;/span>&lt;span class="lnt"> 54
+&lt;/span>&lt;span class="lnt"> 55
+&lt;/span>&lt;span class="lnt"> 56
+&lt;/span>&lt;span class="lnt"> 57
+&lt;/span>&lt;span class="lnt"> 58
+&lt;/span>&lt;span class="lnt"> 59
+&lt;/span>&lt;span class="lnt"> 60
+&lt;/span>&lt;span class="lnt"> 61
+&lt;/span>&lt;span class="lnt"> 62
+&lt;/span>&lt;span class="lnt"> 63
+&lt;/span>&lt;span class="lnt"> 64
+&lt;/span>&lt;span class="lnt"> 65
+&lt;/span>&lt;span class="lnt"> 66
+&lt;/span>&lt;span class="lnt"> 67
+&lt;/span>&lt;span class="lnt"> 68
+&lt;/span>&lt;span class="lnt"> 69
+&lt;/span>&lt;span class="lnt"> 70
+&lt;/span>&lt;span class="lnt"> 71
+&lt;/span>&lt;span class="lnt"> 72
+&lt;/span>&lt;span class="lnt"> 73
+&lt;/span>&lt;span class="lnt"> 74
+&lt;/span>&lt;span class="lnt"> 75
+&lt;/span>&lt;span class="lnt"> 76
+&lt;/span>&lt;span class="lnt"> 77
+&lt;/span>&lt;span class="lnt"> 78
+&lt;/span>&lt;span class="lnt"> 79
+&lt;/span>&lt;span class="lnt"> 80
+&lt;/span>&lt;span class="lnt"> 81
+&lt;/span>&lt;span class="lnt"> 82
+&lt;/span>&lt;span class="lnt"> 83
+&lt;/span>&lt;span class="lnt"> 84
+&lt;/span>&lt;span class="lnt"> 85
+&lt;/span>&lt;span class="lnt"> 86
+&lt;/span>&lt;span class="lnt"> 87
+&lt;/span>&lt;span class="lnt"> 88
+&lt;/span>&lt;span class="lnt"> 89
+&lt;/span>&lt;span class="lnt"> 90
+&lt;/span>&lt;span class="lnt"> 91
+&lt;/span>&lt;span class="lnt"> 92
+&lt;/span>&lt;span class="lnt"> 93
+&lt;/span>&lt;span class="lnt"> 94
+&lt;/span>&lt;span class="lnt"> 95
+&lt;/span>&lt;span class="lnt"> 96
+&lt;/span>&lt;span class="lnt"> 97
+&lt;/span>&lt;span class="lnt"> 98
+&lt;/span>&lt;span class="lnt"> 99
+&lt;/span>&lt;span class="lnt">100
+&lt;/span>&lt;span class="lnt">101
+&lt;/span>&lt;span class="lnt">102
+&lt;/span>&lt;span class="lnt">103
+&lt;/span>&lt;span class="lnt">104
+&lt;/span>&lt;span class="lnt">105
+&lt;/span>&lt;span class="lnt">106
+&lt;/span>&lt;span class="lnt">107
+&lt;/span>&lt;span class="lnt">108
+&lt;/span>&lt;span class="lnt">109
+&lt;/span>&lt;span class="lnt">110
+&lt;/span>&lt;span class="lnt">111
+&lt;/span>&lt;span class="lnt">112
+&lt;/span>&lt;span class="lnt">113
+&lt;/span>&lt;span class="lnt">114
+&lt;/span>&lt;span class="lnt">115
+&lt;/span>&lt;span class="lnt">116
+&lt;/span>&lt;span class="lnt">117
+&lt;/span>&lt;span class="lnt">118
+&lt;/span>&lt;span class="lnt">119
+&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>PHP框架实战（二）：错误和异常的自动处理</title><link>http://0x3f.org/posts/flamework-error-auto-handling/</link><pubDate>Sat, 28 Dec 2013 13:40:00 +0000</pubDate><guid>http://0x3f.org/posts/flamework-error-auto-handling/</guid><description>&lt;h2 id="目标">目标&lt;/h2>
+&lt;p>实现错误和异常的自动捕获和处理。&lt;/p>
+&lt;h2 id="获取代码">获取代码&lt;/h2>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">git checkout v0.2
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="设计与实现">设计与实现&lt;/h2>
+&lt;p>使用set_error_handler()和set_exception_handler()两个函数注册错误和异常的处理方法，并在两个处理方法中先调用用户自定义的错误和异常处理逻辑，如果自定义逻辑不存在或者返回false，继续调用框架缺省的处理逻辑，输出错误信息到页面。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt"> 10
+&lt;/span>&lt;span class="lnt"> 11
+&lt;/span>&lt;span class="lnt"> 12
+&lt;/span>&lt;span class="lnt"> 13
+&lt;/span>&lt;span class="lnt"> 14
+&lt;/span>&lt;span class="lnt"> 15
+&lt;/span>&lt;span class="lnt"> 16
+&lt;/span>&lt;span class="lnt"> 17
+&lt;/span>&lt;span class="lnt"> 18
+&lt;/span>&lt;span class="lnt"> 19
+&lt;/span>&lt;span class="lnt"> 20
+&lt;/span>&lt;span class="lnt"> 21
+&lt;/span>&lt;span class="lnt"> 22
+&lt;/span>&lt;span class="lnt"> 23
+&lt;/span>&lt;span class="lnt"> 24
+&lt;/span>&lt;span class="lnt"> 25
+&lt;/span>&lt;span class="lnt"> 26
+&lt;/span>&lt;span class="lnt"> 27
+&lt;/span>&lt;span class="lnt"> 28
+&lt;/span>&lt;span class="lnt"> 29
+&lt;/span>&lt;span class="lnt"> 30
+&lt;/span>&lt;span class="lnt"> 31
+&lt;/span>&lt;span class="lnt"> 32
+&lt;/span>&lt;span class="lnt"> 33
+&lt;/span>&lt;span class="lnt"> 34
+&lt;/span>&lt;span class="lnt"> 35
+&lt;/span>&lt;span class="lnt"> 36
+&lt;/span>&lt;span class="lnt"> 37
+&lt;/span>&lt;span class="lnt"> 38
+&lt;/span>&lt;span class="lnt"> 39
+&lt;/span>&lt;span class="lnt"> 40
+&lt;/span>&lt;span class="lnt"> 41
+&lt;/span>&lt;span class="lnt"> 42
+&lt;/span>&lt;span class="lnt"> 43
+&lt;/span>&lt;span class="lnt"> 44
+&lt;/span>&lt;span class="lnt"> 45
+&lt;/span>&lt;span class="lnt"> 46
+&lt;/span>&lt;span class="lnt"> 47
+&lt;/span>&lt;span class="lnt"> 48
+&lt;/span>&lt;span class="lnt"> 49
+&lt;/span>&lt;span class="lnt"> 50
+&lt;/span>&lt;span class="lnt"> 51
+&lt;/span>&lt;span class="lnt"> 52
+&lt;/span>&lt;span class="lnt"> 53
+&lt;/span>&lt;span class="lnt"> 54
+&lt;/span>&lt;span class="lnt"> 55
+&lt;/span>&lt;span class="lnt"> 56
+&lt;/span>&lt;span class="lnt"> 57
+&lt;/span>&lt;span class="lnt"> 58
+&lt;/span>&lt;span class="lnt"> 59
+&lt;/span>&lt;span class="lnt"> 60
+&lt;/span>&lt;span class="lnt"> 61
+&lt;/span>&lt;span class="lnt"> 62
+&lt;/span>&lt;span class="lnt"> 63
+&lt;/span>&lt;span class="lnt"> 64
+&lt;/span>&lt;span class="lnt"> 65
+&lt;/span>&lt;span class="lnt"> 66
+&lt;/span>&lt;span class="lnt"> 67
+&lt;/span>&lt;span class="lnt"> 68
+&lt;/span>&lt;span class="lnt"> 69
+&lt;/span>&lt;span class="lnt"> 70
+&lt;/span>&lt;span class="lnt"> 71
+&lt;/span>&lt;span class="lnt"> 72
+&lt;/span>&lt;span class="lnt"> 73
+&lt;/span>&lt;span class="lnt"> 74
+&lt;/span>&lt;span class="lnt"> 75
+&lt;/span>&lt;span class="lnt"> 76
+&lt;/span>&lt;span class="lnt"> 77
+&lt;/span>&lt;span class="lnt"> 78
+&lt;/span>&lt;span class="lnt"> 79
+&lt;/span>&lt;span class="lnt"> 80
+&lt;/span>&lt;span class="lnt"> 81
+&lt;/span>&lt;span class="lnt"> 82
+&lt;/span>&lt;span class="lnt"> 83
+&lt;/span>&lt;span class="lnt"> 84
+&lt;/span>&lt;span class="lnt"> 85
+&lt;/span>&lt;span class="lnt"> 86
+&lt;/span>&lt;span class="lnt"> 87
+&lt;/span>&lt;span class="lnt"> 88
+&lt;/span>&lt;span class="lnt"> 89
+&lt;/span>&lt;span class="lnt"> 90
+&lt;/span>&lt;span class="lnt"> 91
+&lt;/span>&lt;span class="lnt"> 92
+&lt;/span>&lt;span class="lnt"> 93
+&lt;/span>&lt;span class="lnt"> 94
+&lt;/span>&lt;span class="lnt"> 95
+&lt;/span>&lt;span class="lnt"> 96
+&lt;/span>&lt;span class="lnt"> 97
+&lt;/span>&lt;span class="lnt"> 98
+&lt;/span>&lt;span class="lnt"> 99
+&lt;/span>&lt;span class="lnt">100
+&lt;/span>&lt;span class="lnt">101
+&lt;/span>&lt;span class="lnt">102
+&lt;/span>&lt;span class="lnt">103
+&lt;/span>&lt;span class="lnt">104
+&lt;/span>&lt;span class="lnt">105
+&lt;/span>&lt;span class="lnt">106
+&lt;/span>&lt;span class="lnt">107
+&lt;/span>&lt;span class="lnt">108
+&lt;/span>&lt;span class="lnt">109
+&lt;/span>&lt;span class="lnt">110
+&lt;/span>&lt;span class="lnt">111
+&lt;/span>&lt;span class="lnt">112
+&lt;/span>&lt;span class="lnt">113
+&lt;/span>&lt;span class="lnt">114
+&lt;/span>&lt;span class="lnt">115
+&lt;/span>&lt;span class="lnt">116
+&lt;/span>&lt;span class="lnt">117
+&lt;/span>&lt;span class="lnt">118
+&lt;/span>&lt;span class="lnt">119
+&lt;/span>&lt;span class="lnt">120
+&lt;/span>&lt;span class="lnt">121
+&lt;/span>&lt;span class="lnt">122
+&lt;/span>&lt;span class="lnt">123
+&lt;/span>&lt;span class="lnt">124
+&lt;/span>&lt;span class="lnt">125
+&lt;/span>&lt;span class="lnt">126
+&lt;/span>&lt;span class="lnt">127
+&lt;/span>&lt;span class="lnt">128
+&lt;/span>&lt;span class="lnt">129
+&lt;/span>&lt;span class="lnt">130
+&lt;/span>&lt;span class="lnt">131
+&lt;/span>&lt;span class="lnt">132
+&lt;/span>&lt;span class="lnt">133
+&lt;/span>&lt;span class="lnt">134
+&lt;/span>&lt;span class="lnt">135
+&lt;/span>&lt;span class="lnt">136
+&lt;/span>&lt;span class="lnt">137
+&lt;/span>&lt;span class="lnt">138
+&lt;/span>&lt;span class="lnt">139
+&lt;/span>&lt;span class="lnt">140
+&lt;/span>&lt;span class="lnt">141
+&lt;/span>&lt;span class="lnt">142
+&lt;/span>&lt;span class="lnt">143
+&lt;/span>&lt;span class="lnt">144
+&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>PHP框架实战（一）：框架入口与类的自动加载</title><link>http://0x3f.org/posts/flamework-entry/</link><pubDate>Sat, 28 Dec 2013 01:56:00 +0000</pubDate><guid>http://0x3f.org/posts/flamework-entry/</guid><description>&lt;h2 id="目标">目标&lt;/h2>
+&lt;p>实现框架入口和类的自动加载。&lt;/p>
+&lt;h2 id="获取代码">获取代码&lt;/h2>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">git checkout v0.1
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="设计与实现">设计与实现&lt;/h2>
+&lt;p>通过两个类实现本次目标。&lt;/p>
+&lt;p>静态类Flame作为整个框架的入口，实现一系列框架级公用静态方法（&lt;em>例如创建应用实例和自动加载类&lt;/em>）。&lt;/p>
+&lt;p>WebApplication是应用的抽象层，实现应用的入口和其它应用级（&lt;strong>即运行时&lt;/strong>）公用方法（&lt;em>例如读取配置文件&lt;/em>）。&lt;/p>
+&lt;p>&lt;strong>程序入口&lt;/strong>&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-php" data-lang="php">&lt;span class="line">&lt;span class="cl">&lt;span class="o">&amp;lt;?&lt;/span>&lt;span class="nx">php&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// ...
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="nx">Flame&lt;/span>&lt;span class="o">::&lt;/span>&lt;span class="na">createApplication&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$config&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="na">run&lt;/span>&lt;span class="p">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cp">?&amp;gt;&lt;/span>&lt;span class="err">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>PHP框架实战（零）：代码规范</title><link>http://0x3f.org/posts/flamework-code-spec/</link><pubDate>Thu, 26 Dec 2013 22:07:00 +0000</pubDate><guid>http://0x3f.org/posts/flamework-code-spec/</guid><description>&lt;p>类C语言语法风格最大的问题就是用花括号区分代码块，这导致源码排版容易混乱，对于我这种有代码洁癖的人来说非常痛苦，所以我最喜欢的语法风格是Python的，用缩进区分代码块，排版不规范直接判处语法错误。&lt;/p>
+&lt;h2 id="命名规范">命名规范&lt;/h2>
+&lt;p>所有命名使用驼峰风格。&lt;/p>
+&lt;p>源码开头定义命名空间，Flamework框架入口类的命名空间为“&lt;strong>org\x3f\flamework&lt;/strong>”，其余类的命名空间应在此基础上追加与所在目录路径匹配的内容。例如，框架源码目录下一级子目录“base”中的类文件的命名空间均为“org\x3f\flamework\base”。&lt;/p>
+&lt;p>类名必须是名词，不允许添加任何无意义的前缀或后缀，只允许使用大小写英文字母且首字母大写。&lt;/p>
+&lt;p>方法名必须是“动词+名词”的形式（&lt;em>如果动词意义明确且不需要宾语，可省略后者&lt;/em>），只允许使用大小写英文字母及阿拉伯数字和下划线，首字母小写。&lt;/p>
+&lt;p>属性名分两种情况，对于存储普通数据的属性，名称必须是名词；对于布尔型属性，名称必须是“动词+名词”的形式。只允许使用大小写英文字母及阿拉伯数字和下划线，首字母小写。&lt;/p>
+&lt;p>源码文件名必须与类名相同，后缀统一使用“.php”。&lt;/p>
+&lt;h2 id="注释规范">注释规范&lt;/h2>
+&lt;p>统一使用&lt;a href="http://www.phpdoc.org/">phpDocumenter&lt;/a>的注释规范。&lt;/p>
+&lt;p>类注释必须注明@author、@since。&lt;/p>
+&lt;p>属性和方法的作者如果和类的创建者不同，必须注明@author，此外必须注明@since。&lt;/p>
+&lt;h2 id="文件格式">文件格式&lt;/h2>
+&lt;p>所有文本文件统一使用UNIX格式和UTF-8编码。&lt;/p>
+&lt;p>严禁使用制表符缩进代码，必须使用4个空格替代制表符。&lt;/p>
+&lt;p>类、属性、方法、方法内部代码块都必须严格按照层级缩进。&lt;/p></description></item><item><title>PHP框架实战：Flamework</title><link>http://0x3f.org/posts/flamework/</link><pubDate>Thu, 26 Dec 2013 20:24:00 +0000</pubDate><guid>http://0x3f.org/posts/flamework/</guid><description>&lt;p>从今天开始，逐步实现一个PHP的MVC框架，以践行平时对这方面的一些想法。&lt;/p>
+&lt;h2 id="项目信息">项目信息&lt;/h2>
+&lt;ul>
+&lt;li>名称：Flamework (&lt;em>Flame Framework&lt;/em>)&lt;/li>
+&lt;li>源码：https://github.com/xbot/flamework&lt;/li>
+&lt;/ul>
+&lt;h2 id="框架特性">框架特性&lt;/h2>
+&lt;p>&lt;strong>激进&lt;/strong>&lt;/p>
+&lt;p>用PHP高版本引入的新特性，不考虑向前兼容问题，没有历史包袱。&lt;/p>
+&lt;p>&lt;strong>命名空间&lt;/strong>&lt;/p>
+&lt;p>PHP 5.3引入的命名空间可以有效避免类命名冲突，这样可以使类名看起来更自然，不用再在类名前面加难看的前缀了。&lt;/p>
+&lt;p>&lt;strong>类的自动加载&lt;/strong>&lt;/p>
+&lt;p>手动include会增加维护的难度，因为经常会出现一个类被从源码中移除而它的include行还在的问题，这会拖慢程序执行速度、增加内存占用。&lt;/p>
+&lt;p>实现类的自动加载可以在类被引用时自动include相应的源码。&lt;/p>
+&lt;p>&lt;strong>异常的自动处理&lt;/strong>&lt;/p>
+&lt;p>在设计程序时，一般应该把用户级的错误返回给页面显示，或者对一些HTTP错误显示个性化的页面（&lt;em>例如人民群众喜闻乐见的404页面&lt;/em>），所以在业务逻辑、数据操作这些层一般应该逐级向上抛异常，然后在Controller里捕获并加工成页面可识别的格式（&lt;em>例如JSON&lt;/em>）。这样做的缺点是Controller里每个Action都包含重复的try&amp;hellip;catch块。&lt;/p>
+&lt;p>异常的自动处理允许开发者指定自定义的异常处理逻辑，将异常处理与普通逻辑解耦，这样每个Action只需实现它所关注的功能即可。&lt;/p>
+&lt;p>&lt;strong>过滤器&lt;/strong>&lt;/p>
+&lt;p>过滤器允许面向切面编程，是将横向逻辑与纵向逻辑解耦的重要工具。Flamework要实现针对Controller和Action两个级别的过滤器链，过滤器可在该级别逻辑前后执行，并能停止该级别逻辑及后续过滤器的执行。&lt;/p>
+&lt;p>&lt;strong>懒加载&lt;/strong>&lt;/p>
+&lt;p>对尽可能多的资源实现懒加载，例如数据库连接、类、组件等，目的是提高效率、节约资源。&lt;/p>
+&lt;p>&lt;strong>参数绑定&lt;/strong>&lt;/p>
+&lt;p>自动将请求中的参数与Action方法的参数绑定，从而避免在Action里出现通过$_POST、$_GET这些数组取参数的脏代码，也可以自动实现参数的校验和错误处理。&lt;/p>
+&lt;p>&lt;strong>ActiveRecord&lt;/strong>&lt;/p>
+&lt;p>ORM是对关系模型和对象模型的阻抗不匹配问题的解决方案，ActiveRecord是目前最流行的一种ORM的实现方式。通过AR，可以以更对象化的方式操作关系数据库的数据。&lt;/p>
+&lt;p>&lt;strong>依赖注入&lt;/strong>&lt;/p>
+&lt;p>依赖注入是个很好的解耦方法，也可以很优雅地实现懒加载。&lt;/p>
+&lt;h2 id="目录">目录&lt;/h2>
+&lt;ol>
+&lt;li>&lt;a href="http://0x3f.org/post/flamework-code-spec">零：代码规范&lt;/a>&lt;/li>
+&lt;/ol>
+&lt;ul>
+&lt;li>&lt;a href="http://0x3f.org/post/flamework-entry">一：框架入口与类的自动加载&lt;/a>&lt;/li>
+&lt;li>&lt;a href="http://0x3f.org/post/flamework-error-auto-handling">二：错误和异常的自动处理&lt;/a>&lt;/li>
+&lt;li>&lt;a href="http://0x3f.org/post/flamework-controller-and-filter">三：实现Controller和Filter&lt;/a>&lt;/li>
+&lt;li>&lt;a href="http://0x3f.org/post/flamework-view-rendering">四：视图的模板与渲染&lt;/a>&lt;/li>
+&lt;li>&lt;a href="http://0x3f.org/post/flamework-active-record">五：ORM与ActiveRecord&lt;/a>&lt;/li>
+&lt;li>&lt;a href="http://0x3f.org/post/flamework-dependency-injection">六：依赖注入&lt;/a>&lt;/li>
+&lt;li>&lt;a href="http://0x3f.org/post/flamework-summary">∝：烈焰之终章&lt;/a>&lt;/li>
+&lt;/ul></description></item></channel></rss>

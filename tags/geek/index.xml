@@ -1,13 +1,109 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Geek on 晴耕雨讀</title><link>http://0x3f.org/tags/geek/</link><description>Recent content in Geek on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Mon, 25 May 2015 15:30:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/geek/index.xml" rel="self" type="application/rss+xml"/><item><title>在Archlinux ARM上使用DS18B20温度传感器</title><link>http://0x3f.org/posts/setup-ds18b20-on-archlinux/</link><pubDate>Mon, 25 May 2015 15:30:00 +0000</pubDate><guid>http://0x3f.org/posts/setup-ds18b20-on-archlinux/</guid><description>线路图：
-修改/boot/config.txt，启用w1内核模块。配置文件中有两部分关于w1的内容，一个只使用一个GPIO引脚，需要自行添加上拉电阻，另一个使用一个额外的GPIO引脚作上拉。
-使用Python模块w1thermsensor读数，用法见这里。</description></item><item><title>用树苺派做家庭监控</title><link>http://0x3f.org/posts/monitor-home-with-raspberry-pi/</link><pubDate>Tue, 07 Apr 2015 10:56:00 +0000</pubDate><guid>http://0x3f.org/posts/monitor-home-with-raspberry-pi/</guid><description>用树苺派做视频监控，当视野内有物体移动时，自动拍照、录视频、同步到远程主机，并提醒到远程电脑和手机。
-用Motion做视频监控 安装Motion，修改几项必要的配置：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 # 照片和视频存储路径 target_dir = /media/sda1/cam # 允许局域网内其它主机访问视频 webcam_localhost off # 监测到移动物体时，创建作为标识的临时文件 on_event_start &amp;#34;echo 1 &amp;gt; /tmp/invasion_detected&amp;#34; # 移动物体消失时，移除临时文件 on_event_end &amp;#34;rm /tmp/invasion_detected&amp;#34; # 监测到移动物体并在保存第一张照片时，发送提醒到电脑和手机 on_picture_save [ -f /tmp/invasion_detected ] &amp;amp;&amp;amp; [ `cat /tmp/invasion_detected` -gt 0 ] &amp;amp;&amp;amp; echo 0 &amp;gt; /tmp/invasion_detected &amp;amp;&amp;amp; proxychains /root/SmartHome/script/alert.py -f %f 用Lsyncd同步到VPS 安装lsyncd并配置：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 settings{ pidfile = &amp;#34;/var/log/lsyncd/lsyncd.</description></item><item><title>用树苺派搭NAS</title><link>http://0x3f.org/posts/make-nas-with-raspberry-pi/</link><pubDate>Fri, 03 Apr 2015 15:13:00 +0000</pubDate><guid>http://0x3f.org/posts/make-nas-with-raspberry-pi/</guid><description>为了让盒子能直接播放远程下载的电影，继续在树苺派上搭NAS。
-安装samba，然后配置：
-1 2 3 4 5 6 7 [nas] path = /media/sda1 valid users = @users force group = users create mask = 0660 directory mask = 0771 read only = no 把Linux用户添加到samba并设置密码：
-1 smbpasswd -a pi 盒子上的Kodi硬解有问题，用ES+MX Player替代。电脑上用Kodi。</description></item><item><title>用树苺派实现远程下载</title><link>http://0x3f.org/posts/remote-downloading-with-raspberry-pi/</link><pubDate>Sat, 28 Mar 2015 19:14:00 +0000</pubDate><guid>http://0x3f.org/posts/remote-downloading-with-raspberry-pi/</guid><description>远程用树苺派利用空闲时间下载大文件，需要百度云、aria2和VPS。因为网络运营商给的IP不是真的公网IP，而且免费的动态域名服务不稳定，所以用VPS把树苺派上的端口转发到外网。
-树苺派 在树苺派上部署aria2下载服务，并发布到VPS。
-安装aria2，创建以下配置文件，修改/media/sda1为实际下载目录：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 dir=/media/sda1 file-allocation=prealloc continue=true log-level=info #log-level=debug max-connection-per-server=10 summary-interval=120 daemon=true enable-rpc=true rpc-listen-port=6800 rpc-listen-all=true max-concurrent-downloads=3 save-session=/etc/aria2/save-session.list input-file=/etc/aria2/save-session.list log=/media/sda1/aria.log disable-ipv6=true disk-cache=25M timeout=600 retry-wait=30 max-tries=0 user-agent=netdisk;4.4.0.6;PC;PC-Windows;6.2.9200;WindowsBaiduYunGuanJia 我的树苺派用Archlinux，创建systemd的服务配置文件：
-1 2 3 4 5 6 7 8 9 10 11 12 13 [Unit] Description=aria2c -- file download manager After=network.target [Service] Type=forking User=%i WorkingDirectory=%h Environment=VAR=/var/%i ExecStart=/usr/bin/aria2c --daemon --enable-rpc --rpc-listen-all --rpc-allow-origin-all -c -D --conf-path=/etc/aria2/aria2.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Geek on 晴耕雨讀</title><link>http://0x3f.org/tags/geek/</link><description>Recent content in Geek on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Mon, 25 May 2015 15:30:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/geek/index.xml" rel="self" type="application/rss+xml"/><item><title>在Archlinux ARM上使用DS18B20温度传感器</title><link>http://0x3f.org/posts/setup-ds18b20-on-archlinux/</link><pubDate>Mon, 25 May 2015 15:30:00 +0000</pubDate><guid>http://0x3f.org/posts/setup-ds18b20-on-archlinux/</guid><description>&lt;p>线路图：&lt;/p>
+&lt;p>&lt;img src="http://pic.yupoo.com/leninlee/EG46yU99/medish.jpg" alt="">&lt;/p>
+&lt;p>修改/boot/config.txt，启用w1内核模块。配置文件中有两部分关于w1的内容，一个只使用一个GPIO引脚，需要自行添加上拉电阻，另一个使用一个额外的GPIO引脚作上拉。&lt;/p>
+&lt;p>使用Python模块w1thermsensor读数，用法见&lt;a href="https://github.com/timofurrer/w1thermsensor">这里&lt;/a>。&lt;/p></description></item><item><title>用树苺派做家庭监控</title><link>http://0x3f.org/posts/monitor-home-with-raspberry-pi/</link><pubDate>Tue, 07 Apr 2015 10:56:00 +0000</pubDate><guid>http://0x3f.org/posts/monitor-home-with-raspberry-pi/</guid><description>&lt;p>用树苺派做视频监控，当视野内有物体移动时，自动拍照、录视频、同步到远程主机，并提醒到远程电脑和手机。&lt;/p>
+&lt;h2 id="用motion做视频监控">用Motion做视频监控&lt;/h2>
+&lt;p>安装Motion，修改几项必要的配置：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-ini" data-lang="ini">&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 照片和视频存储路径&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">target_dir&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s">/media/sda1/cam&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 允许局域网内其它主机访问视频&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">webcam_localhost off&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 监测到移动物体时，创建作为标识的临时文件&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">on_event_start &amp;#34;echo 1 &amp;gt; /tmp/invasion_detected&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 移动物体消失时，移除临时文件&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">on_event_end &amp;#34;rm /tmp/invasion_detected&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 监测到移动物体并在保存第一张照片时，发送提醒到电脑和手机&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">on_picture_save [ -f /tmp/invasion_detected ] &amp;amp;&amp;amp; [ `cat /tmp/invasion_detected` -gt 0 ] &amp;amp;&amp;amp; echo 0 &amp;gt; /tmp/invasion_detected &amp;amp;&amp;amp; proxychains /root/SmartHome/script/alert.py -f %f&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>用树苺派搭NAS</title><link>http://0x3f.org/posts/make-nas-with-raspberry-pi/</link><pubDate>Fri, 03 Apr 2015 15:13:00 +0000</pubDate><guid>http://0x3f.org/posts/make-nas-with-raspberry-pi/</guid><description>&lt;p>为了让盒子能直接播放&lt;a href="http://0x3f.org/post/remote-downloading-with-raspberry-pi/">远程下载&lt;/a>的电影，继续在树苺派上搭NAS。&lt;/p>
+&lt;p>安装samba，然后配置：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-ini" data-lang="ini">&lt;span class="line">&lt;span class="cl">&lt;span class="k">[nas]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">path&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s">/media/sda1&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">valid users&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s">@users&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">force group&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s">users&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">create mask&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s">0660&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">directory mask&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s">0771&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">read only&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s">no&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>用树苺派实现远程下载</title><link>http://0x3f.org/posts/remote-downloading-with-raspberry-pi/</link><pubDate>Sat, 28 Mar 2015 19:14:00 +0000</pubDate><guid>http://0x3f.org/posts/remote-downloading-with-raspberry-pi/</guid><description>&lt;p>远程用树苺派利用空闲时间下载大文件，需要百度云、aria2和VPS。因为网络运营商给的IP不是真的公网IP，而且免费的动态域名服务不稳定，所以用VPS把树苺派上的端口转发到外网。&lt;/p>
+&lt;h2 id="树苺派">树苺派&lt;/h2>
+&lt;p>在树苺派上部署aria2下载服务，并发布到VPS。&lt;/p>
+&lt;p>安装aria2，创建以下配置文件，修改/media/sda1为实际下载目录：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-ini" data-lang="ini">&lt;span class="line">&lt;span class="cl">&lt;span class="na">dir&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">/media/sda1&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">file-allocation&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">prealloc&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">continue&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">log-level&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">info&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">#log-level=debug&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">max-connection-per-server&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">10&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">summary-interval&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">120&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">daemon&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">enable-rpc&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">rpc-listen-port&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">6800&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">rpc-listen-all&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">max-concurrent-downloads&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">3&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">save-session&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">/etc/aria2/save-session.list&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">input-file&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">/etc/aria2/save-session.list&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">log&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">/media/sda1/aria.log&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">disable-ipv6&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">disk-cache&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">25M&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">timeout&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">600&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">retry-wait&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">30&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">max-tries&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">user-agent&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">netdisk;4.4.0.6;PC;PC-Windows;6.2.9200;WindowsBaiduYunGuanJia&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item></channel></rss>

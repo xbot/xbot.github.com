@@ -1,19 +1,66 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Dojo on 晴耕雨讀</title><link>http://0x3f.org/tags/dojo/</link><description>Recent content in Dojo on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Tue, 05 Nov 2013 16:58:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/dojo/index.xml" rel="self" type="application/rss+xml"/><item><title>用 Dojo 实现拖放操作的最佳实践</title><link>http://0x3f.org/posts/practical-drag-and-drop-implementation-with-dojo/</link><pubDate>Tue, 05 Nov 2013 16:58:00 +0000</pubDate><guid>http://0x3f.org/posts/practical-drag-and-drop-implementation-with-dojo/</guid><description>在研究 Dojo 实现拖放操作时，我花了很多时间处理一些细节问题，比如创建自定义样式的拖拽物件以及将光标放置在拖拽开始位置等。这些细节在实现个性化的拖放操作时非常重要，但是我几乎没有找到直接相关的资料可供参考。
-创建自定义样式的拖拽物件 Dojo 缺省的拖拽物件样式很丑，通过覆盖官方文档里列出的几个 CSS 的 class 可以有限地调整部分样式，如果需要更多个性化，就需要使用自定义的物件模板。
-通过重载 Source 对象的 creator 方法可以实现这一点。这个方法会在创建拖拽物件的时候被调用，如果 hint 参数的值为“avatar”就表示将被创建的是被拖拽物件，此时可以使用预先定义好的模板 avatarTmpl 创建物件的 node 。
-1 2 3 4 5 6 7 8 9 10 11 this.dndSrc = new Source(this.itemList.domNode, { copyOnly:true, selfAccept:true, creator: function(item, hint) { var n; if (hint == &amp;#39;avatar&amp;#39;) { n = domConstruct.toDom(lang.replace(avatarTmpl, item)); } return {node:n, data:item, type:[&amp;#39;text&amp;#39;]}; } }); 置光标位置于拖拽起始处 在拖拽开始后，Dojo 默认将光标置于被拖拽物件的左上角，而一般把光标置于拖拽开始时相对于物件的位置处显得比较自然。
-实现方式是先记录拖拽开始时光标的位置，然后设置 dojo.dnd.Manager 的两个位移属性。
-1 2 3 4 5 6 7 8 9 10 on(this.</description></item><item><title>IE中使用IFrame上传文件报错——TypeError:拒绝访问</title><link>http://0x3f.org/posts/typeerror-access-denied/</link><pubDate>Sat, 03 Aug 2013 01:03:00 +0000</pubDate><guid>http://0x3f.org/posts/typeerror-access-denied/</guid><description>场景为：
-点击一个图标，打开文件选择对话框，选择好文件后即时上传。
-之前的实现方式是在一个隐藏表单中放一个file类型的input元素，通过调用input.click()打开对话框，同时监听input.onchange，最后通过dojo/request/iframe上传文件。
-这个实现方式在Chrome和Firefox里都没问题，但是在IE里报错：“TypeError:拒绝访问”。原因是IE要求必须通过点击file类型的input的按钮打开选择对话框，否则就报这个错误。
-解决办法是修改input元素的样式，或者直接用dojox.form.Uploader替代。
-因为这个破问题又血战到半夜，只支持IE9+的世界你们好吗，还支持IE7+的屌丝伤不起……不起……起……啊。IE不死，吾难未已！！！</description></item><item><title>Dojo DnD: Cannot read property 'type' of undefined</title><link>http://0x3f.org/posts/dojo-dnd-cannot-read-property-type-of-undefined/</link><pubDate>Thu, 11 Jul 2013 22:44:00 +0000</pubDate><guid>http://0x3f.org/posts/dojo-dnd-cannot-read-property-type-of-undefined/</guid><description>场景如下：
-假设有两个Widget：ItemListWidget和ItemWidget，后者要被创建多份并追加到前者内部，同时ItemListWidget要作为dojo/dnd/Source，每个ItemWidget作为一个单元可被拖拽到另外一个dojo/dnd/Target容器中。
-问题是，当Source被创建后，再添加到ItemListWidget的ItemWidget实例在被拖拽时会报如下错误：
-Uncaught TypeError: Cannot read property &amp;rsquo;type&amp;rsquo; of undefined
-在Chrome开发工具中点开这个错误，显示以下内容：
-从方法的注释或API中可以看到，checkAcceptance()是用来判断当前拖拽对象是否在这个target接受的范围之内，接受规则用Source和Target的构造参数中的“accept”定义。在这个方法里通过Source.getItem()方法拿到的对象是null，上述错误就是从这儿报出来的。
-接合API和Reference Guide发现，每个Source中的可拖拽项目在Source中都要有一个对应的对象，这个对象至少包括两个属性：“data”和“type”。在Reference Guide中，对这两个属性有详细说明，简言之，data是向Target传递的数据，type是被Target用来判断拖拽个体是否属于接受范围的依据。
-当Source实例被创建时，已经存在于ItemListWidget中的ItemWidget实例会被自动创建对应的上述对象，但之后加入的不会。解决的办法是调用Source.setItem()方法为每一个新加入的ItemWidget关联相应的对象，或在ItemWidget中添加一个构造参数，用于指定Source，并在postCreate()方法中为当前ItemWidget实例关联相应的对象:
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 define([ &amp;#34;dojo/_base/declare&amp;#34;, &amp;#34;dijit/_WidgetBase&amp;#34;, ], function(declare, _WidgetBase){ return declare(&amp;#34;ItemWidget&amp;#34;, [_WidgetBase], { // 本Widget实例所属的Source实例 dndSrc: null, postCreate: function() { this.inherited(arguments); // 不需要传递数据时，可忽略data参数 if (this.dndSrc !== null) this.dndSrc.setItem(this.id, {type:[&amp;#34;text&amp;#34;]}); } }); });</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Dojo on 晴耕雨讀</title><link>http://0x3f.org/tags/dojo/</link><description>Recent content in Dojo on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Tue, 05 Nov 2013 16:58:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/dojo/index.xml" rel="self" type="application/rss+xml"/><item><title>用 Dojo 实现拖放操作的最佳实践</title><link>http://0x3f.org/posts/practical-drag-and-drop-implementation-with-dojo/</link><pubDate>Tue, 05 Nov 2013 16:58:00 +0000</pubDate><guid>http://0x3f.org/posts/practical-drag-and-drop-implementation-with-dojo/</guid><description>&lt;p>在研究 Dojo 实现拖放操作时，我花了很多时间处理一些细节问题，比如创建自定义样式的拖拽物件以及将光标放置在拖拽开始位置等。这些细节在实现个性化的拖放操作时非常重要，但是我几乎没有找到直接相关的资料可供参考。&lt;/p>
+&lt;h2 id="创建自定义样式的拖拽物件">创建自定义样式的拖拽物件&lt;/h2>
+&lt;p>Dojo 缺省的拖拽物件样式很丑，通过覆盖官方文档里列出的几个 CSS 的 class 可以有限地调整部分样式，如果需要更多个性化，就需要使用自定义的物件模板。&lt;/p>
+&lt;p>通过重载 Source 对象的 creator 方法可以实现这一点。这个方法会在创建拖拽物件的时候被调用，如果 hint 参数的值为“avatar”就表示将被创建的是被拖拽物件，此时可以使用预先定义好的模板 avatarTmpl 创建物件的 node 。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-javascript" data-lang="javascript">&lt;span class="line">&lt;span class="cl">&lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">dndSrc&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="k">new&lt;/span> &lt;span class="nx">Source&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">itemList&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">domNode&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">copyOnly&lt;/span>&lt;span class="o">:&lt;/span>&lt;span class="kc">true&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">selfAccept&lt;/span>&lt;span class="o">:&lt;/span>&lt;span class="kc">true&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">creator&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="kd">function&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">item&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">hint&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">var&lt;/span> &lt;span class="nx">n&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">hint&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="s1">&amp;#39;avatar&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">n&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">domConstruct&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">toDom&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">lang&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">replace&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">avatarTmpl&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">item&lt;/span>&lt;span class="p">));&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="p">{&lt;/span>&lt;span class="nx">node&lt;/span>&lt;span class="o">:&lt;/span>&lt;span class="nx">n&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">data&lt;/span>&lt;span class="o">:&lt;/span>&lt;span class="nx">item&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">type&lt;/span>&lt;span class="o">:&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="s1">&amp;#39;text&amp;#39;&lt;/span>&lt;span class="p">]};&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">});&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>IE中使用IFrame上传文件报错——TypeError:拒绝访问</title><link>http://0x3f.org/posts/typeerror-access-denied/</link><pubDate>Sat, 03 Aug 2013 01:03:00 +0000</pubDate><guid>http://0x3f.org/posts/typeerror-access-denied/</guid><description>&lt;p>场景为：&lt;/p>
+&lt;p>点击一个图标，打开文件选择对话框，选择好文件后即时上传。&lt;/p>
+&lt;p>之前的实现方式是在一个隐藏表单中放一个file类型的input元素，通过调用input.click()打开对话框，同时监听input.onchange，最后通过dojo/request/iframe上传文件。&lt;/p>
+&lt;p>这个实现方式在Chrome和Firefox里都没问题，但是在IE里报错：“&lt;strong>TypeError:拒绝访问&lt;/strong>”。原因是IE要求必须通过点击file类型的input的按钮打开选择对话框，否则就报这个错误。&lt;/p>
+&lt;p>解决办法是修改input元素的样式，或者直接用dojox.form.Uploader替代。&lt;/p>
+&lt;p>&lt;em>因为这个破问题又血战到半夜，只支持IE9+的世界你们好吗，还支持IE7+的屌丝伤不起……不起……起……啊。&lt;strong>IE不死，吾难未已！！！&lt;/strong>&lt;/em>&lt;/p></description></item><item><title>Dojo DnD: Cannot read property 'type' of undefined</title><link>http://0x3f.org/posts/dojo-dnd-cannot-read-property-type-of-undefined/</link><pubDate>Thu, 11 Jul 2013 22:44:00 +0000</pubDate><guid>http://0x3f.org/posts/dojo-dnd-cannot-read-property-type-of-undefined/</guid><description>&lt;p>场景如下：&lt;/p>
+&lt;p>假设有两个Widget：ItemListWidget和ItemWidget，后者要被创建多份并追加到前者内部，同时ItemListWidget要作为dojo/dnd/Source，每个ItemWidget作为一个单元可被拖拽到另外一个dojo/dnd/Target容器中。&lt;/p>
+&lt;p>问题是，当Source被创建后，再添加到ItemListWidget的ItemWidget实例在被拖拽时会报如下错误：&lt;/p>
+&lt;blockquote>
+&lt;p>Uncaught TypeError: Cannot read property &amp;rsquo;type&amp;rsquo; of undefined&lt;/p>
+&lt;/blockquote>
+&lt;p>在Chrome开发工具中点开这个错误，显示以下内容：&lt;/p>
+&lt;p>&lt;img src="http://pic.yupoo.com/leninlee/D0dD4euT/cULuA.png" alt="">&lt;/p>
+&lt;p>从方法的注释或API中可以看到，checkAcceptance()是用来判断当前拖拽对象是否在这个target接受的范围之内，接受规则用Source和Target的构造参数中的“accept”定义。在这个方法里通过Source.getItem()方法拿到的对象是null，上述错误就是从这儿报出来的。&lt;/p>
+&lt;p>接合API和Reference Guide发现，每个Source中的可拖拽项目在Source中都要有一个对应的对象，这个对象至少包括两个属性：“data”和“type”。在&lt;a href="http://dojotoolkit.org/reference-guide/1.9/dojo/dnd.html">Reference Guide&lt;/a>中，对这两个属性有详细说明，简言之，data是向Target传递的数据，type是被Target用来判断拖拽个体是否属于接受范围的依据。&lt;/p>
+&lt;p>当Source实例被创建时，已经存在于ItemListWidget中的ItemWidget实例会被自动创建对应的上述对象，但之后加入的不会。解决的办法是调用Source.setItem()方法为每一个新加入的ItemWidget关联相应的对象，或在ItemWidget中添加一个构造参数，用于指定Source，并在postCreate()方法中为当前ItemWidget实例关联相应的对象:&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;/code>&lt;/pr</description></item></channel></rss>

@@ -1,17 +1,206 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>测试 on 晴耕雨讀</title><link>http://0x3f.org/tags/%E6%B5%8B%E8%AF%95/</link><description>Recent content in 测试 on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Mon, 03 Jul 2017 13:17:30 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/%E6%B5%8B%E8%AF%95/index.xml" rel="self" type="application/rss+xml"/><item><title>怎样测试PHP的Private或Protected方法</title><link>http://0x3f.org/posts/how-to-test-private-or-protected-methods-in-php/</link><pubDate>Mon, 03 Jul 2017 13:17:30 +0000</pubDate><guid>http://0x3f.org/posts/how-to-test-private-or-protected-methods-in-php/</guid><description>利用闭包绑定：
-1 2 3 4 5 6 7 $ctrlr = new UserController; $tester = function () use ($uid) { $this-&amp;gt;getUser($uid); }; $runner = $tester-&amp;gt;bindTo($ctrlr, $ctrlr); $runner();</description></item><item><title>通过比较截图检查网页变化</title><link>http://0x3f.org/posts/check-changes-of-webpage-by-comparing-screenshots/</link><pubDate>Sun, 30 Apr 2017 17:21:52 +0000</pubDate><guid>http://0x3f.org/posts/check-changes-of-webpage-by-comparing-screenshots/</guid><description>有时候我们希望检查代码或数据的更新对网页产生的影响，如果能把这个过程集成到git等版本控制系统中，在提交成果的同时自动批量执行，将会极大地提高生产力。
-首先网页的截图可以用PhantomJS、Headless Chrome实现：
-1 2 3 4 5 var page = require(&amp;#39;webpage&amp;#39;).create(); page.open(&amp;#39;http://github.com/&amp;#39;, function() { page.render(&amp;#39;github.png&amp;#39;); phantom.exit(); }); 图片的差异比较用GraphicsMagick实现：
-1 gm compare old.png new.png -file diff.png -highlight-style assign 为方便查看，还可以把截图做成gif动图：
-1 gm convert -delay 20 old.png diff.png new.png diff.gif</description></item><item><title>利用依赖注入Mock PHP的内建函数</title><link>http://0x3f.org/posts/mock-php-built-in-functions-using-dependency-injection/</link><pubDate>Sun, 30 Apr 2017 09:57:50 +0000</pubDate><guid>http://0x3f.org/posts/mock-php-built-in-functions-using-dependency-injection/</guid><description>简述 上篇文章讨论了如何利用命名空间实现对PHP内建函数的mocking，本文介绍另一种实现方法——依赖注入。
-出于编写可测试代码的需要，依赖注入是经常使用的一种技术。通过把代码中依赖的其它数据获取服务提取出来、和原有逻辑解耦，提高代码的可测试性。只需mock这些依赖并注入到测试对象中即可。
-实现 对原有代码的重构 先把原有代码用依赖注入的方式重构（为突出重点，省略了和上篇文章中重复的部分）：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 // ... use Ox3f\LaravelUtils\Services\Builtins; /** * Class Log * @author donie */ class Log { // ... private $builtins; // Builtin functions private function __construct() { $this-&amp;gt;builtins = new Builtins(); // .</description></item><item><title>利用命名空间Mock PHP的内建函数</title><link>http://0x3f.org/posts/mock-php-built-in-functions-using-namespace/</link><pubDate>Sun, 30 Apr 2017 09:06:17 +0000</pubDate><guid>http://0x3f.org/posts/mock-php-built-in-functions-using-namespace/</guid><description>简述 Mock PHP的内建函数一般有两种方法：命名空间法和依赖注入法。
-命名空间法是利用PHP优先使用同命名空间内函数的特性，在测试对象的命名空间内重载内建函数来实现。前提是内建函数在被调用时没有使用命名空间，例如：\debug_backtrace()是不能使用本方法的。
-上篇文章《接口编程中记录日志的最佳实践》中实现的日志类中，核心部分调用了debug_backtrace()函数获取方法调用堆栈。下面讨论下如何利用命名空间法实现对此函数的mock。
-实现 先看代码：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 &amp;lt;?</description></item><item><title>Postman的Pre-request Script和Tests</title><link>http://0x3f.org/posts/pre-request-script-and-tests-in-postman/</link><pubDate>Wed, 19 Apr 2017 17:05:55 +0000</pubDate><guid>http://0x3f.org/posts/pre-request-script-and-tests-in-postman/</guid><description>Pre-request Script和Tests都是Javascript代码块。前者在请求发起前执行，通常用来生成请求数据，例如对用户注册接口随机生成用户名。后者在请求结束后执行，通常用来测试和处理返回值。
-以下是随机生成用户名的Pre-request Script：
-1 postman.setEnvironmentVariable(&amp;#34;random_username&amp;#34;, &amp;#34;测试用户&amp;#34; + Math.floor(Math.random()*1000000)); 产生的值存储在环境变量里，表单里直接引用环境变量即可。
-对于REST接口普遍使用的JWT，可以在登录接口的Tests里直接把返回的token更新到环境变量里，这样其它接口直接引用这个环境变量即可：
-1 2 3 4 var data = JSON.parse(responseBody); tests[&amp;#34;token is returned&amp;#34;] = typeof(data.token) == &amp;#34;string&amp;#34; &amp;amp;&amp;amp; data.token.length &amp;gt; 0 postman.setEnvironmentVariable(&amp;#34;token&amp;#34;, data.token);</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>测试 on 晴耕雨讀</title><link>http://0x3f.org/tags/%E6%B5%8B%E8%AF%95/</link><description>Recent content in 测试 on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Mon, 03 Jul 2017 13:17:30 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/%E6%B5%8B%E8%AF%95/index.xml" rel="self" type="application/rss+xml"/><item><title>怎样测试PHP的Private或Protected方法</title><link>http://0x3f.org/posts/how-to-test-private-or-protected-methods-in-php/</link><pubDate>Mon, 03 Jul 2017 13:17:30 +0000</pubDate><guid>http://0x3f.org/posts/how-to-test-private-or-protected-methods-in-php/</guid><description>&lt;p>利用闭包绑定：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-php" data-lang="php">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">$ctrlr&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="k">new&lt;/span> &lt;span class="nx">UserController&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">$tester&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="k">function&lt;/span> &lt;span class="p">()&lt;/span> &lt;span class="k">use&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nv">$uid&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nv">$this&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="na">getUser&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$uid&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">};&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">$runner&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nv">$tester&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="na">bindTo&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$ctrlr&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">$ctrlr&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">$runner&lt;/span>&lt;span class="p">();&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>通过比较截图检查网页变化</title><link>http://0x3f.org/posts/check-changes-of-webpage-by-comparing-screenshots/</link><pubDate>Sun, 30 Apr 2017 17:21:52 +0000</pubDate><guid>http://0x3f.org/posts/check-changes-of-webpage-by-comparing-screenshots/</guid><description>&lt;p>有时候我们希望检查代码或数据的更新对网页产生的影响，如果能把这个过程集成到git等版本控制系统中，在提交成果的同时自动批量执行，将会极大地提高生产力。&lt;/p>
+&lt;p>首先网页的截图可以用PhantomJS、Headless Chrome实现：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-javascript" data-lang="javascript">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">var&lt;/span> &lt;span class="nx">page&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">require&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;webpage&amp;#39;&lt;/span>&lt;span class="p">).&lt;/span>&lt;span class="nx">create&lt;/span>&lt;span class="p">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">page&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">open&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;http://github.com/&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kd">function&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">page&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">render&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;github.png&amp;#39;&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">phantom&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">exit&lt;/span>&lt;span class="p">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">});&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>利用依赖注入Mock PHP的内建函数</title><link>http://0x3f.org/posts/mock-php-built-in-functions-using-dependency-injection/</link><pubDate>Sun, 30 Apr 2017 09:57:50 +0000</pubDate><guid>http://0x3f.org/posts/mock-php-built-in-functions-using-dependency-injection/</guid><description>&lt;h2 id="简述">简述&lt;/h2>
+&lt;p>&lt;a href="http://0x3f.org/post/mock-php-built-in-functions-using-namespace/">上篇文章&lt;/a>讨论了如何利用命名空间实现对PHP内建函数的mocking，本文介绍另一种实现方法——依赖注入。&lt;/p>
+&lt;p>出于编写可测试代码的需要，依赖注入是经常使用的一种技术。通过把代码中依赖的其它数据获取服务提取出来、和原有逻辑解耦，提高代码的可测试性。只需mock这些依赖并注入到测试对象中即可。&lt;/p>
+&lt;h2 id="实现">实现&lt;/h2>
+&lt;h3 id="对原有代码的重构">对原有代码的重构&lt;/h3>
+&lt;p>先把原有代码用依赖注入的方式重构（&lt;em>为突出重点，省略了和上篇文章中重复的部分&lt;/em>）：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;span class="lnt">30
+&lt;/span>&lt;span class="lnt">31
+&lt;/span>&lt;span class="lnt">32
+&lt;/span>&lt;span class="lnt">33
+&lt;/span>&lt;span class="lnt">34
+&lt;/span>&lt;span class="lnt">35
+&lt;/span>&lt;span class="lnt">36
+&lt;/span>&lt;span class="lnt">37
+&lt;/span>&lt;span class="lnt">38
+&lt;/span>&lt;span class="lnt">39
+&lt;/span>&lt;span class="lnt">40
+&lt;/span>&lt;span class="lnt">41
+&lt;/span>&lt;span class="lnt">42
+&lt;/span>&lt;span class="lnt">43
+&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>利用命名空间Mock PHP的内建函数</title><link>http://0x3f.org/posts/mock-php-built-in-functions-using-namespace/</link><pubDate>Sun, 30 Apr 2017 09:06:17 +0000</pubDate><guid>http://0x3f.org/posts/mock-php-built-in-functions-using-namespace/</guid><description>&lt;h2 id="简述">简述&lt;/h2>
+&lt;p>Mock PHP的内建函数一般有两种方法：命名空间法和依赖注入法。&lt;/p>
+&lt;p>命名空间法是利用PHP优先使用同命名空间内函数的特性，在测试对象的命名空间内重载内建函数来实现。前提是内建函数在被调用时没有使用命名空间，例如：&lt;code>\debug_backtrace()&lt;/code>是不能使用本方法的。&lt;/p>
+&lt;p>上篇文章&lt;a href="http://0x3f.org/post/the-best-practice-of-logging-in-api-programming/">《接口编程中记录日志的最佳实践》&lt;/a>中实现的日志类中，核心部分调用了&lt;code>debug_backtrace()&lt;/code>函数获取方法调用堆栈。下面讨论下如何利用命名空间法实现对此函数的mock。&lt;/p>
+&lt;h2 id="实现">实现&lt;/h2>
+&lt;p>先看代码：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;span class="lnt">30
+&lt;/span>&lt;span class="lnt">31
+&lt;/span>&lt;span class="lnt">32
+&lt;/span>&lt;span class="lnt">33
+&lt;/span>&lt;span class="lnt">34
+&lt;/span>&lt;span class="lnt">35
+&lt;/span>&lt;span class="lnt">36
+&lt;/span>&lt;span class="lnt">37
+&lt;/span>&lt;span class="lnt">38
+&lt;/span>&lt;span class="lnt">39
+&lt;/span>&lt;span class="lnt">40
+&lt;/span>&lt;span class="lnt">41
+&lt;/span>&lt;span class="lnt">42
+&lt;/span>&lt;span class="lnt">43
+&lt;/span>&lt;span class="lnt">44
+&lt;/span>&lt;span class="lnt">45
+&lt;/span>&lt;span class="lnt">46
+&lt;/span>&lt;span class="lnt">47
+&lt;/span>&lt;span class="lnt">48
+&lt;/span>&lt;span class="lnt">49
+&lt;/span>&lt;span class="lnt">50
+&lt;/span>&lt;span class="lnt">51
+&lt;/span>&lt;span class="lnt">52
+&lt;/span>&lt;span class="lnt">53
+&lt;/span>&lt;span class="lnt">54
+&lt;/span>&lt;span class="lnt">55
+&lt;/span>&lt;span class="lnt">56
+&lt;/span>&lt;span class="lnt">57
+&lt;/span>&lt;span class="lnt">58
+&lt;/span>&lt;span class="lnt">59
+&lt;/span>&lt;span class="lnt">60
+&lt;/span>&lt;span class="lnt">61
+&lt;/span>&lt;span class="lnt">62
+&lt;/span>&lt;span class="lnt">63
+&lt;/span>&lt;span class="lnt">64
+&lt;/span>&lt;span class="lnt">65
+&lt;/span>&lt;span class="lnt">66
+&lt;/span>&lt;span class="lnt">67
+&lt;/span>&lt;span class="lnt">68
+&lt;/span>&lt;span class="lnt">69
+&lt;/span>&lt;span class="lnt">70
+&lt;/span>&lt;span class="lnt">71
+&lt;/span>&lt;span class="lnt">72
+&lt;/span>&lt;span class="lnt">73
+&lt;/span>&lt;span class="lnt">74
+&lt;/span>&lt;span class="lnt">75
+&lt;/span>&lt;span class="lnt">76
+&lt;/span>&lt;span class="lnt">77
+&lt;/span>&lt;span class="lnt">78
+&lt;/span>&lt;span class="lnt">79
+&lt;/span>&lt;span class="lnt">80
+&lt;/span>&lt;span class="lnt">81
+&lt;/span>&lt;span class="lnt">82
+&lt;/span>&lt;span class="lnt">83
+&lt;/span>&lt;span class="lnt">84
+&lt;/span>&lt;span class="lnt">85
+&lt;/span>&lt;span class="lnt">86
+&lt;/span>&lt;span class="lnt">87
+&lt;/span>&lt;span class="lnt">88
+&lt;/span>&lt;span class="lnt">89
+&lt;/span>&lt;span class="lnt">90
+&lt;/span>&lt;span class="lnt">91
+&lt;/span>&lt;span class="lnt">92
+&lt;/span>&lt;span class="lnt">93
+&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>Postman的Pre-request Script和Tests</title><link>http://0x3f.org/posts/pre-request-script-and-tests-in-postman/</link><pubDate>Wed, 19 Apr 2017 17:05:55 +0000</pubDate><guid>http://0x3f.org/posts/pre-request-script-and-tests-in-postman/</guid><description>&lt;p>Pre-request Script和Tests都是Javascript代码块。前者在请求发起前执行，通常用来生成请求数据，例如对用户注册接口随机生成用户名。后者在请求结束后执行，通常用来测试和处理返回值。&lt;/p>
+&lt;p>以下是随机生成用户名的Pre-request Script：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-javascript" data-lang="javascript">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">postman&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">setEnvironmentVariable&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;random_username&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;测试用户&amp;#34;&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="nb">Math&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">floor&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nb">Math&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">random&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="mi">1000000&lt;/span>&lt;span class="p">));&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>产生的值存储在环境变量里，表单里直接引用环境变量即可。&lt;/p>
+&lt;p>对于REST接口普遍使用的JWT，可以在登录接口的Tests里直接把返回的token更新到环境变量里，这样其它接口直接引用这个环境变量即可：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pr</description></item></channel></rss>

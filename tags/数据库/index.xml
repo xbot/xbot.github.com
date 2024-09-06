@@ -1,49 +1,279 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>数据库 on 晴耕雨讀</title><link>http://0x3f.org/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/</link><description>Recent content in 数据库 on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Tue, 21 Jul 2020 16:25:09 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/index.xml" rel="self" type="application/rss+xml"/><item><title>MySQL 事务的一致性、隔离级别与幻读问题</title><link>http://0x3f.org/posts/isolation-levels-and-phantom-reads-in-mysql/</link><pubDate>Tue, 21 Jul 2020 16:25:09 +0800</pubDate><guid>http://0x3f.org/posts/isolation-levels-and-phantom-reads-in-mysql/</guid><description>数据库事务的一致性 数据库事务有四个特性：原子性（Atomicity）、一致性（Consistency）、隔离性（Isolation）、持久性（Durability），简称“ACID”。
-其中，“一致性”指的是数据库层面的一致性，与应用层面的一致性不同。
-数据库层面的一致性是说，事务具备把数据库从一个正确的状态迁移到另一个正确的状态的特性。所谓正确的状态，是指任何写入数据库的数据都满足数据库既定的规则，这些规则包括各种约束、级联回滚、触发器以及任何它们的组合。
-与数据库层面的一致性不同，应用层面的一致性要求保证结果的正确性。例如，当执行如下 SQL 语句时：
-1 update accounts set balance = balance + 1 where id = 3 我希望最终的结果是在事务开始时 id = 3 的这行数据 balance 列的值的基础上加一，否则，结果就是不正确的。
-因此，只要写入的数据满足数据库的规则，就保证了数据库层面的一致性。数据库层面的一致性并不保证数据正确1。
-MySQL 事务的隔离级别与幻读问题 隔离级别 隔离性是指：多个事务并发执行时，每个事务对数据库所做的更改必须与其它事务隔离。
-隔离性是并发控制的主要目标2，并发控制用来实现在保证应用层面一致性的前提下，尽可能快地对并发请求做出响应。由此可见，隔离性和并发能力是一对此消彼长的关系。极端情况下，如果并发的请求按顺序执行，隔离性是最好的，但是响应最慢，反之亦然。
-在此基础上，产生了四个隔离级别的划分。由低到高依次为：读未提交、读已提交、可重复读、序列化。据前所述，它们的并发能力是依次下降的。
-因此，隔离级别的本质是通过适度地破坏隔离性来提高并发能力。
-隔离级别的问题 隔离级别不同，存在的问题也不一样。
-“读未提交”的级别最低、并发能力最高，存在的问题也最多，包括：脏读、不可重复读、幻读。其中，脏读是这个级别独有的，即事务 A 读取了并发事务 B 未提交的数据。
-“读已提交”顾名思义，事务 A 不会读取并发事务 B 未提交的数据，但可以读取其已提交的。因此，这个级别存在不可重复读和幻读的问题。
-在“可重复读”级别下，同一事务中两次同样的查询结果一致，不会受并发事务的影响，它因此也解决了不可重复读的问题。但还会存在幻读问题。
-“序列化”级别要求对查询的对象加范围锁并保持到事务结束，因此，它避免了幻读的问题。
-幻读问题（Phantom Reads） 幻读问题是个很 tricky 的问题，以至于网上找到的很多文章对它的理解都是不全面甚至是错误的。
-幻读即同一事务中两次相同查询的结果集不一致。乍一看，好像和不可重复读是一样的。那它们的区别是什么呢？
-事实上，幻读是不可重复读的一种特殊情况。换句话说，只要存在幻行（Phantom Rows），就是幻读问题。
-所谓幻行，即同一事务中两次相同的查询结果集的非空差集里的元素，或者说第二次查询后发现不存在于前一次结果集中的行。
-幻行产生的原因主要是除“序列化”之外的隔离级别不要求对查询结果加范围锁，导致并发事务在查询范围内插入新的行后被当前事务查到。
-MVCC 在此基础上，MySQL 的 InnoDB 引擎实现了“多版本并发控制”（MVCC: Multiversion Concurrency Control）。
-简单地说，InnoDB 的表存在两个隐藏列，用于记录每行数据的版本信息。当插入一行数据时，InnoDB 将当前事务的版本信息一并写入。当修改一行数据时，InnoDB 先将该行做一次复制，并把当前版本信息写入进去。查询时，只返回版本小于等于当前事务版本的数据。通过这样保证一个事务中查询到的是事务开始前已经存在的数据或当前事务写入的数据。其它事务写入的数据则不会被读取。</description></item><item><title>调校mycli</title><link>http://0x3f.org/posts/fine-tune-mycli/</link><pubDate>Mon, 26 Jun 2017 18:05:31 +0000</pubDate><guid>http://0x3f.org/posts/fine-tune-mycli/</guid><description>做以下配置，使mycli按需使用pager，并在数据过多时不破坏表格格式：
-1 2 3 4 # ~/.my.cnf [client] pager = less -FSXR</description></item><item><title>用MySQL的全文检索实现相关性排序</title><link>http://0x3f.org/posts/fulltext-searching-in-mysql/</link><pubDate>Mon, 19 Jun 2017 23:10:41 +0000</pubDate><guid>http://0x3f.org/posts/fulltext-searching-in-mysql/</guid><description>实现根据文章的关键词搜索出相关的文章，并按相关性排序。
-数据库版本是5.6.x，还不能像5.7那样支持中文的全文检索，所以另外创建一列保存关键词的编码。方法为base64转码并去掉「%」符号：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 &amp;lt;?php /** * 转换关键词到全文检索的格式 * * @param mixed $keywords 关键词数组或英文逗号分隔的字符串 * @return string */ function encode_keywords($keywords) { $encoder = function ($keyword) { return str_replace(&amp;#39;%&amp;#39;, &amp;#39;&amp;#39;, urlencode(trim($keyword))); }; if (!is_array($keywords)) { $keywords = explode(&amp;#39;,&amp;#39;, $keywords); } return implode(&amp;#39; &amp;#39;, array_map($encoder, $keywords)); } 对该列创建全文检索的索引：
-1 CREATE FULLTEXT INDEX idx_post_keywords ON posts (keywords_ft); 查询语句：</description></item><item><title>读完《MongoDB权威指南》第二版</title><link>http://0x3f.org/posts/after-reading-mongodb-the-definitive-guide/</link><pubDate>Sun, 26 Oct 2014 10:01:00 +0000</pubDate><guid>http://0x3f.org/posts/after-reading-mongodb-the-definitive-guide/</guid><description>第二版比第一版补充了很多内容，介绍得很详细，是学习mongodb的好书。
-但是翻译版有很多印刷错误，个别译句也有问题。</description></item><item><title>Navicat: 轻量的多数据库客户端</title><link>http://0x3f.org/posts/navicat-a-light-weight-database-client/</link><pubDate>Wed, 06 Apr 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/navicat-a-light-weight-database-client/</guid><description>Navicat是一套商业软件，但是它的免费版Navicat Lite已足够好用。作为一套数据库客户端，它具有以下特性：
-支持Microsoft SQL Server、Oracle、MySQL、PostgreSQL、SQLite五个最常见的关系数据库。 占用系统资源少，轻便快捷 功能较为全面，使用方便 跨平台 我使用Navicat完成一般的数据库操作，这样可以无须在多种数据库的官方客户端之间来回切换，而且对于速度不快的机器来说，Navicat轻量的优势是很明显的。
-Navicat另外一个为人所忽略的优点是对SQLite的支持，我曾花不少时间找一个好的SQLite的客户端，大部分搜索结果都介绍的是另外一个Sqliteman，但是我始终不能习惯它，感觉这个东西功能少而且不好用。直到发现Navicat，才算找到一个完善的SQLite客户端。
-对于跨平台的特性，Navicat对Linux平台的支持其实是通过wine实现的，好在其安装包对wine已做过定制，运行状况良好。
-Posted via UltraBlog.vim.</description></item><item><title>InstallShield在MySQL和Oracle中执行SQL脚本的方法</title><link>http://0x3f.org/posts/howto-run-sql-scripts-in-mysql-oracle-within-installshield/</link><pubDate>Tue, 24 Aug 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-run-sql-scripts-in-mysql-oracle-within-installshield/</guid><description>简述 InstallShield已经内建了对MySQL和Oracle的支持。但是这个功能是通过ODBC实现的，它对SQL脚本的格式要求非常严格，因此已经通过官方客户端测试的脚本在IS中执行时往往就会报错。
-一般来说，数据库脚本只保证通过官方客户端测试即可，同时维护一份供IS执行的脚本费时费力。因此，考虑安装程序对两数据库的支持通过官方客户端实现。
-MySQL
-function InstallMySQLComponent(szComponent) NUMBER nResult; STRING szServer,szDB,szUser,szPassword,sCMD,sOPT,sResult1,sResult2,svLine,sMsg,sPath; NUMBER nvFileHandle,nvCount; LIST listStatus; begin sMsg = &amp;#39;安装&amp;#39;+szComponent+&amp;#39; ...&amp;#39;; SdShowMsg(sMsg, TRUE); // source命令不认识windows路径中的反斜杠，故将SRCDIR中的反斜杠替换成斜杠 sPath = SRCDIR; StrReplace(sPath, &amp;#39;\\&amp;#39;, &amp;#39;/&amp;#39;, 0); // Fetch database connection information SQLRTGetConnectionInfo( &amp;#39;mysql&amp;#39;, szServer, szDB, szUser, szPassword ); sCMD = WINSYSDIR^&amp;#39;cmd.exe&amp;#39;; sOPT = &amp;#39; /c &amp;#39;+SRCDIR^&amp;#39;mysql.exe -h&amp;#39;+szServer+&amp;#39; -u&amp;#39;+szUser+&amp;#39; -p&amp;#39;+szPassword+&amp;#39; -D&amp;#39;+szDB; sOPT = sOPT+&amp;#39; -e &amp;#34;source &amp;#39;+sPath^szComponent+&amp;#39;.sql&amp;#34; &amp;gt; &amp;#39;+SRCDIR^&amp;#39;dbstatus.txt 2&amp;gt;&amp;amp;1&amp;#39;; // Execute the script associated with the given component in database nResult=LaunchAppAndWait(sCMD, sOPT, WAIT|LAAW_OPTION_HIDDEN); if (nResult &amp;lt; 0) then MessageBox(&amp;#39;Failed installing &amp;#39;+szComponent+&amp;#39; !</description></item><item><title>Linux下使用freetds连接SQL Server</title><link>http://0x3f.org/posts/connect-to-sqlserver-using-freetds-on-linux/</link><pubDate>Sun, 20 Jun 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/connect-to-sqlserver-using-freetds-on-linux/</guid><description>freetds是第三方、开源的数据库客户端和连接库，支持Sybase和Microsoft SQL Server，它最大的好处是允许非Windows平台的程序连接SQL Server。
-freetds的编译和安装命令如下：
-1 2 3 ./configure --with-tdsver=8.0 --enable-msdblib make make install configure的这两个参数是必不可少的，否则可能无法连接SQL Server。
-安装后修改freetds.conf（一般应该在/usr/local/etc/freetds.conf），添加如下内容：
-[mysvr] host = 10.1.29.40 port = 1433 tds version = 8.0 client charset = utf-8 上述参数应根据实际情况修改。
-最后使用如下命令测试连接：
-1 tsql -S mysvr -U sa -P 123456 给公司产品做Linux下的安装包，把开发环境放在了Cygwin中，非常享受在全屏、半透明的mintty下敲命令。今天发现在Cygwin下也是可以编译安装Linux下的程序的，只是效率非常低下。故上述内容对Cygwin环境同样成立。</description></item><item><title>Inno Setup执行SQL脚本的方法</title><link>http://0x3f.org/posts/howto-execute-sql-scripts-in-inno-setup/</link><pubDate>Mon, 17 May 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-execute-sql-scripts-in-inno-setup/</guid><description>作为和NSIS并立的、两个最流行的免费Windows应用程序安装包制作工具之一，Inno在学习难度上相对要低一些，非常适合对一些简单的桌面程序打包。但对于较复杂的安装过程，或者Web应用程序来说，我个人觉得不是Inno的强项。当然，既然Inno内嵌了Pascal语言用以扩展功能，理论上不是不可以应付复杂的安装过程，但实现起来要复杂一些。
-比如对于在安装过程中连接数据库并执行SQL脚本这样的需求，使用InstallShield应该会简单地多，而Inno却不支持直接操作数据库，并且相关的资料说明少之又少，还不如NSIS丰富，以至于我踏破铁鞋无觅处，最终却在NSIS的资料中找到了思路。
-主要的思路是，在安装过程中，调用数据库客户端连接数据库并执行SQL脚本，然后将执行结果或错误信息输出到文件中，最后通过分析这个文件来判断命令执行的结果。但是，既然是调用特定的客户端，那么对不同数据库的操作自然就有所区别，具体情况如下所述。
-首先在打包脚本的[Files]段将必需的文件包含进来：
-```ini [Files] Source: "D:\Development\MyDemoApp\code\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs Source: "D:\Development\MyDemoApp\sqlcmd.exe"; Flags: dontcopy Source: "D:\Development\MyDemoApp\sqlcmd.rll"; Flags: dontcopy Source: "D:\Development\MyDemoApp\mysql.exe"; Flags: dontcopy Source: "D:\Development\MyDemoApp\script_mssql.sql"; Flags: dontcopy Source: "D:\Development\MyDemoApp\script_mysql.sql"; Flags: dontcopy Source: "D:\Development\MyDemoApp\script_oracle.sql"; Flags: dontcopy ``` 在SQL Server中执行脚本的代码片断：
-```pascal function ExecScriptInMSSQL(DBHost, DBLogin, DBPass, DBName: String): Boolean; var ConnectExe: String; ConnectParam: String; begin {解压临时文件} ExtractTemporaryFile('sqlcmd.exe'); ExtractTemporaryFile('sqlcmd.rll'); ExtractTemporaryFile('script_mssql.sql'); {构造数据库连接字符串} ConnectExe := ExpandConstant('{tmp}') + '\sqlcmd.exe'; ConnectParam := ' -S ' + DBHost + ' -U ' + DBLogin + ' -P ' + DBPass + ' -d ' + DBName + ' -i script_mssql.</description></item><item><title>SQL Server的自定义函数：统计两日期之间工作日的数量</title><link>http://0x3f.org/posts/counting-days-between-dates-in-sqlserver/</link><pubDate>Sat, 13 Mar 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/counting-days-between-dates-in-sqlserver/</guid><description>前段时间工作中遇到的一个需求，要求计算两个日期之间工作日的数量，即排除期间所有的周六和周日之后的天数。
-在网上找到一个自定义函数，原函数有些小问题，例如如果传入的截止日期如果有时间且足够大，则计算结果可能出错，修正后代码如下：
-```sql --函数：类似datediff，不统计期间所有的周六和周日 if exists (select * from dbo.sysobjects where id=object_id(N'[dbo].[f_WorkDay]') and xtype in (N'FN',N'IF',N'TF')) drop function [dbo].[f_WorkDay] GO CREATE FUNCTION f_WorkDay( @dt_begin datetime, @dt_end datetime )RETURNS int AS BEGIN DECLARE @workday int,@i int,@bz bit,@dt datetime set @dt_begin = convert(datetime, convert(nvarchar(32), @dt_begin, 23)) set @dt_end = convert(datetime, convert(nvarchar(32), @dt_end, 23)) IF @dt_begin>@dt_end SELECT @bz=1,@dt=@dt_begin,@dt_begin=@dt_end,@dt_end=@dt ELSE SET @bz=0 SELECT @i=DATEDIFF(Day,@dt_begin,@dt_end),@workday=@i/7*5,@dt_begin=DATEADD(Day,@i/7*7,@dt_begin) WHILE @dt_begin&lt;@dt_end BEGIN SELECT @workday=CASE WHEN (@@DATEFIRST+DATEPART(Weekday,@dt_begin)-1)%7 BETWEEN 1 AND 5 THEN @workday+1 ELSE @workday END,@dt_begin=@dt_begin+1 END RETURN(CASE WHEN @bz=1 THEN -@workday ELSE @workday END) END GO ``` 此函数的原理是，使用datediff计算两日期之间的差值A，然后取A与7的商，即计算期间内有几个整周。然后使用这个商与5相乘，得到所有整周内的工作日天数B。接着，使用A除以7再乘以7得到C，这就约去了A中最后不到一个整周的天数。再在起始日期的基础上加上C，得到一个新的起始日期，然后从这个新的起始日期开始遍历至截止日期的每一天，每增加一天，判断若此日期是工作日，则在C的基础上累加一。判断一个日期（假设使用@dt_begin表示）是否是工作日的方法是：(@@datefirst+datepart(Weekday, @dt_begin)-1)%7的值在1和5之间。</description></item><item><title>SQLAlchemy操作SQL Server的中文问题</title><link>http://0x3f.org/posts/chinese-problem-of-sqlalchemy-with-sqlserver/</link><pubDate>Wed, 24 Feb 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/chinese-problem-of-sqlalchemy-with-sqlserver/</guid><description>最初将脚本的文件编码和coding行都设定为UTF-8，在windows下执行时，中文无法保存，报编码错误。将上述两个编码改为GBK后，保存正常，但查询时报错。
-Traceback内容如下：
-``` Traceback (most recent call last): File "test.py", line 36, in &amp;lt;module&amp;gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;for obj in session.query(User): File "C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\orm\query.py", line 1411, in instances &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;rows = [process[0](row, None) for row in fetch] File "C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\orm\mapper.py", line 1788, in _instance &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;populate_state(state, dict_, row, isnew, only_load_props) File "C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\orm\mapper.py", line 1677, in populate_state &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;populator(state, dict_, row, isnew=isnew, **flags) File "C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\orm\strategies.py", line 118, in new_execute &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;dict_[key] = row[col] File "C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\engine\base.py", line 1634, in __getitem__ &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;return self.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>数据库 on 晴耕雨讀</title><link>http://0x3f.org/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/</link><description>Recent content in 数据库 on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Tue, 21 Jul 2020 16:25:09 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/index.xml" rel="self" type="application/rss+xml"/><item><title>MySQL 事务的一致性、隔离级别与幻读问题</title><link>http://0x3f.org/posts/isolation-levels-and-phantom-reads-in-mysql/</link><pubDate>Tue, 21 Jul 2020 16:25:09 +0800</pubDate><guid>http://0x3f.org/posts/isolation-levels-and-phantom-reads-in-mysql/</guid><description>&lt;h2 id="数据库事务的一致性">数据库事务的一致性&lt;/h2>
+&lt;p>数据库事务有四个特性：原子性（Atomicity）、一致性（Consistency）、隔离性（Isolation）、持久性（Durability），简称“ACID”。&lt;/p>
+&lt;p>其中，“一致性”指的是数据库层面的一致性，与应用层面的一致性不同。&lt;/p>
+&lt;p>数据库层面的一致性是说，事务具备把数据库从一个正确的状态迁移到另一个正确的状态的特性。所谓正确的状态，是指任何写入数据库的数据都满足数据库既定的规则，这些规则包括各种约束、级联回滚、触发器以及任何它们的组合。&lt;/p>
+&lt;p>与数据库层面的一致性不同，应用层面的一致性要求保证结果的正确性。例如，当执行如下 SQL 语句时：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-sql" data-lang="sql">&lt;span class="line">&lt;span class="cl">&lt;span class="k">update&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">accounts&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">set&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">balance&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">balance&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">where&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">id&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">3&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>我希望最终的结果是在事务开始时 id = 3 的这行数据 balance 列的值的基础上加一，否则，结果就是不正确的。&lt;/p></description></item><item><title>调校mycli</title><link>http://0x3f.org/posts/fine-tune-mycli/</link><pubDate>Mon, 26 Jun 2017 18:05:31 +0000</pubDate><guid>http://0x3f.org/posts/fine-tune-mycli/</guid><description>&lt;p>做以下配置，使mycli按需使用pager，并在数据过多时不破坏表格格式：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-ini" data-lang="ini">&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># ~/.my.cnf&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">[client]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">pager&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s">less -FSXR&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div></description></item><item><title>用MySQL的全文检索实现相关性排序</title><link>http://0x3f.org/posts/fulltext-searching-in-mysql/</link><pubDate>Mon, 19 Jun 2017 23:10:41 +0000</pubDate><guid>http://0x3f.org/posts/fulltext-searching-in-mysql/</guid><description>&lt;p>实现根据文章的关键词搜索出相关的文章，并按相关性排序。&lt;/p>
+&lt;p>数据库版本是5.6.x，还不能像5.7那样支持中文的全文检索，所以另外创建一列保存关键词的编码。方法为base64转码并去掉「%」符号：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-php" data-lang="php">&lt;span class="line">&lt;span class="cl">&lt;span class="o">&amp;lt;?&lt;/span>&lt;span class="nx">php&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> * 转换关键词到全文检索的格式
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> *
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> * @param mixed $keywords 关键词数组或英文逗号分隔的字符串
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> * @return string
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">function&lt;/span> &lt;span class="nf">encode_keywords&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$keywords&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nv">$encoder&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="k">function&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nv">$keyword&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="nx">str_replace&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;%&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">urlencode&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">trim&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$keyword&lt;/span>&lt;span class="p">)));&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">};&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="o">!&lt;/span>&lt;span class="nx">is_array&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$keywords&lt;/span>&lt;span class="p">))&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nv">$keywords&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">explode&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;,&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">$keywords&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="nx">implode&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39; &amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">array_map&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$encoder&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">$keywords&lt;/span>&lt;span class="p">));&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>读完《MongoDB权威指南》第二版</title><link>http://0x3f.org/posts/after-reading-mongodb-the-definitive-guide/</link><pubDate>Sun, 26 Oct 2014 10:01:00 +0000</pubDate><guid>http://0x3f.org/posts/after-reading-mongodb-the-definitive-guide/</guid><description>&lt;p>&lt;img src="http://pic.yupoo.com/leninlee/E9VWUjut/medish.jpg" alt="">&lt;/p>
+&lt;p>第二版比第一版补充了很多内容，介绍得很详细，是学习mongodb的好书。&lt;/p>
+&lt;p>但是翻译版有很多印刷错误，个别译句也有问题。&lt;/p></description></item><item><title>Navicat: 轻量的多数据库客户端</title><link>http://0x3f.org/posts/navicat-a-light-weight-database-client/</link><pubDate>Wed, 06 Apr 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/navicat-a-light-weight-database-client/</guid><description>&lt;p>&lt;a href="http://www.navicat.com/en/">Navicat&lt;/a>是一套商业软件，但是它的免费版Navicat Lite已足够好用。作为一套数据库客户端，它具有以下特性：&lt;/p>
+
+&lt;ul>
+&lt;li>支持Microsoft SQL Server、Oracle、MySQL、PostgreSQL、SQLite五个最常见的关系数据库。&lt;/li>
+&lt;li>占用系统资源少，轻便快捷&lt;/li>
+&lt;li>功能较为全面，使用方便&lt;/li>
+&lt;li>跨平台&lt;/li>
+&lt;/ul>
+
+&lt;p>我使用Navicat完成一般的数据库操作，这样可以无须在多种数据库的官方客户端之间来回切换，而且对于速度不快的机器来说，Navicat轻量的优势是很明显的。&lt;/p>
+
+&lt;p>Navicat另外一个为人所忽略的优点是对SQLite的支持，我曾花不少时间找一个好的SQLite的客户端，大部分搜索结果都介绍的是另外一个&lt;a href="http://sqliteman.com/">Sqliteman&lt;/a>，但是我始终不能习惯它，感觉这个东西功能少而且不好用。直到发现Navicat，才算找到一个完善的SQLite客户端。&lt;/p>
+
+&lt;p>对于跨平台的特性，Navicat对Linux平台的支持其实是通过wine实现的，好在其安装包对wine已做过定制，运行状况良好。&lt;/p>
+
+&lt;p>Posted via &lt;a href="http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/">UltraBlog.vim&lt;/a>.&lt;/p></description></item><item><title>InstallShield在MySQL和Oracle中执行SQL脚本的方法</title><link>http://0x3f.org/posts/howto-run-sql-scripts-in-mysql-oracle-within-installshield/</link><pubDate>Tue, 24 Aug 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-run-sql-scripts-in-mysql-oracle-within-installshield/</guid><description>&lt;h2>简述&lt;/h2>
+&lt;p>InstallShield已经内建了对MySQL和Oracle的支持。但是这个功能是通过ODBC实现的，它对SQL脚本的格式要求非常严格，因此已经通过官方客户端测试的脚本在IS中执行时往往就会报错。&lt;/p>
+&lt;p>一般来说，数据库脚本只保证通过官方客户端测试即可，同时维护一份供IS执行的脚本费时费力。因此，考虑安装程序对两数据库的支持通过官方客户端实现。&lt;/p>
+&lt;h2>MySQL&lt;/h2>&lt;br>
+&lt;pre tabindex="0">&lt;code>function InstallMySQLComponent(szComponent)
+ NUMBER nResult;
+ STRING szServer,szDB,szUser,szPassword,sCMD,sOPT,sResult1,sResult2,svLine,sMsg,sPath;
+ NUMBER nvFileHandle,nvCount;
+ LIST listStatus;
+begin
+ sMsg = &amp;#39;安装&amp;#39;+szComponent+&amp;#39; ...&amp;#39;;
+ SdShowMsg(sMsg, TRUE);
+ // source命令不认识windows路径中的反斜杠，故将SRCDIR中的反斜杠替换成斜杠
+ sPath = SRCDIR;
+ StrReplace(sPath, &amp;#39;\\&amp;#39;, &amp;#39;/&amp;#39;, 0);
+ // Fetch database connection information
+ SQLRTGetConnectionInfo( &amp;#39;mysql&amp;#39;, szServer, szDB, szUser, szPassword );
+ sCMD = WINSYSDIR^&amp;#39;cmd.exe&amp;#39;;
+ sOPT = &amp;#39; /c &amp;#39;+SRCDIR^&amp;#39;mysql.exe -h&amp;#39;+szServer+&amp;#39; -u&amp;#39;+szUser+&amp;#39; -p&amp;#39;+szPassword+&amp;#39; -D&amp;#39;+szDB;
+ sOPT = sOPT+&amp;#39; -e &amp;#34;source &amp;#39;+sPath^szComponent+&amp;#39;.sql&amp;#34; &amp;gt; &amp;#39;+SRCDIR^&amp;#39;dbstatus.txt 2&amp;gt;&amp;amp;1&amp;#39;;
+ // Execute the script associated with the given component in database
+ nResult=LaunchAppAndWait(sCMD, sOPT, WAIT|LAAW_OPTION_HIDDEN);
+ if (nResult &amp;lt; 0) then
+ MessageBox(&amp;#39;Failed installing &amp;#39;+szComponent+&amp;#39; !&amp;#39;, SEVERE);
+ abort;
+ endif;
+ // 关闭安装提示
+ SdShowMsg(&amp;#39;&amp;#39;, FALSE);
+ // Read dbstatus.txt
+ OpenFileMode(FILE_MODE_NORMAL);
+ if (OpenFile(nvFileHandle, SRCDIR, &amp;#39;dbstatus.txt&amp;#39;)&amp;lt;0) then
+ MessageBox(&amp;#39;Failed checking the status of installing &amp;#39;+szComponent+&amp;#39; !&amp;#39;, SEVERE);
+ abort;
+ endif;
+ listStatus = ListCreate(STRINGLIST);
+ while GetLine(nvFileHandle, svLine) = 0
+ ListAddString(listStatus, svLine, AFTER);
+ endwhile;
+ CloseFile(nvFileHandle);
+ // Count how many lines fetched from dbstatus.txt
+ nvCount = ListCount(listStatus);
+ if nvCount &amp;gt; 0 then
+ sMsg = &amp;#34;更新数据库出错，点“是”打开日志文件并退出安装，点“否”直接退出安装。\n&amp;#34;;
+ sMsg = sMsg+&amp;#34;若错误可忽略，可选择数据库类型“none”以跳过数据库更新并直接更新程序，\n&amp;#34;;
+ sMsg = sMsg+&amp;#34;然后在数据库中手工执行SQL脚本（安装后保存在script目录下）&amp;#34;;
+ nResult = AskYesNo(sMsg, YES);
+ if (nResult = YES) then
+ LaunchApp(WINSYSDIR^&amp;#39;notepad.exe&amp;#39;, SRCDIR^&amp;#39;dbstatus.txt&amp;#39;);
+	endif; 
+ abort;
+ endif;
+end;
+&lt;/code>&lt;/pr</description></item><item><title>Linux下使用freetds连接SQL Server</title><link>http://0x3f.org/posts/connect-to-sqlserver-using-freetds-on-linux/</link><pubDate>Sun, 20 Jun 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/connect-to-sqlserver-using-freetds-on-linux/</guid><description>&lt;p>&lt;a href="http://www.freetds.org">freetds&lt;/a>是第三方、开源的数据库客户端和连接库，支持Sybase和Microsoft SQL Server，它最大的好处是允许非Windows平台的程序连接SQL Server。&lt;/p>
+&lt;p>freetds的编译和安装命令如下：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">./configure --with-tdsver&lt;span class="o">=&lt;/span>8.0 --enable-msdblib
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">make
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">make install
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>configure的这两个参数是必不可少的，否则可能无法连接SQL Server。&lt;/p>
+&lt;p>安装后修改&lt;strong>freetds.conf&lt;/strong>（&lt;em>一般应该在/usr/local/etc/freetds.conf&lt;/em>），添加如下内容：&lt;/p>
+&lt;blockquote>
+[mysvr]
+ host = 10.1.29.40
+ port = 1433
+ tds version = 8.0
+ client charset = utf-8
+&lt;/blockquote>
+&lt;p>上述参数应根据实际情况修改。&lt;/p></description></item><item><title>Inno Setup执行SQL脚本的方法</title><link>http://0x3f.org/posts/howto-execute-sql-scripts-in-inno-setup/</link><pubDate>Mon, 17 May 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-execute-sql-scripts-in-inno-setup/</guid><description>&lt;p>作为和&lt;a href="http://zh.wikipedia.org/zh-cn/Nullsoft%E8%85%B3%E6%9C%AC%E5%AE%89%E8%A3%9D%E7%B3%BB%E7%B5%B1">NSIS&lt;/a>并立的、两个最流行的免费Windows应用程序安装包制作工具之一，&lt;a href="http://en.wikipedia.org/wiki/Inno_Setup">Inno&lt;/a>在学习难度上相对要低一些，非常适合对一些简单的桌面程序打包。但对于较复杂的安装过程，或者Web应用程序来说，我个人觉得不是Inno的强项。当然，既然Inno内嵌了&lt;a href="http://zh.wikipedia.org/zh-cn/Pascal">Pascal&lt;/a>语言用以扩展功能，理论上不是不可以应付复杂的安装过程，但实现起来要复杂一些。&lt;/p>
+
+&lt;p>比如对于在安装过程中连接数据库并执行SQL脚本这样的需求，使用&lt;a href="http://en.wikipedia.org/wiki/InstallShield">InstallShield&lt;/a>应该会简单地多，而Inno却不支持直接操作数据库，并且相关的资料说明少之又少，还不如NSIS丰富，以至于我踏破铁鞋无觅处，最终却在NSIS的资料中找到了思路。&lt;/p>
+
+&lt;p>主要的思路是，在安装过程中，调用数据库客户端连接数据库并执行SQL脚本，然后将执行结果或错误信息输出到文件中，最后通过分析这个文件来判断命令执行的结果。但是，既然是调用特定的客户端，那么对不同数据库的操作自然就有所区别，具体情况如下所述。&lt;/p>
+
+&lt;p>首先在打包脚本的&lt;strong>[Files]&lt;/strong>段将必需的文件包含进来：&lt;/p>
+
+```ini
+[Files]
+Source: "D:\Development\MyDemoApp\code\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "D:\Development\MyDemoApp\sqlcmd.exe"; Flags: dontcopy
+Source: "D:\Development\MyDemoApp\sqlcmd.rll"; Flags: dontcopy
+Source: "D:\Development\MyDemoApp\mysql.exe"; Flags: dontcopy
+Source: "D:\Development\MyDemoApp\script_mssql.sql"; Flags: dontcopy
+Source: "D:\Development\MyDemoApp\script_mysql.sql"; Flags: dontcopy
+Source: "D:\Development\MyDemoApp\script_oracle.sql"; Flags: dontcopy
+```
+
+&lt;p>在SQL Server中执行脚本的代码片断：&lt;/p>
+
+```pascal
+function ExecScriptInMSSQL(DBHost, DBLogin, DBPass, DBName: String): Boolean;
+var
+ ConnectExe: String;
+ ConnectParam: String;
+begin
+ {解压临时文件}
+ ExtractTemporaryFile('sqlcmd.exe');
+ ExtractTemporaryFile('sqlcmd.rll');
+ ExtractTemporaryFile('script_mssql.sql');
+ {构造数据库连接字符串}
+ ConnectExe := ExpandConstant('{tmp}') + '\sqlcmd.exe';
+ ConnectParam := ' -S ' + DBHost
+ + ' -U ' + DBLogin
+ + ' -P ' + DBPass
+ + ' -d ' + DBName
+ + ' -i script_mssql.sql -o '
+ + ExpandConstant('{tmp}') + '\dbstatus.txt';
+ {建立数据库连接并执行脚本}
+ if Exec(ConnectExe, ConnectParam, '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then begin
+ Result := ResultCode = 0;
+ LoadStringFromFile(ExpandConstant('{tmp}') + '\dbstatus.txt', StatusString);
+ if StatusString &lt;> '' then begin
+ MsgBox(StatusString, mbError, MB_OK);
+ Result := False;
+ end else begin
+ Result := True;
+ end;
+ end else begin
+ MsgBox('Database update failed:'#10#10 + SysErrorMessage(ResultCode), mbError, MB_OK);
+ Result := False;
+ end;
+end;
+```
+
+&lt;p>在MySQL中执行脚本的代码片断：&lt;/p></description></item><item><title>SQL Server的自定义函数：统计两日期之间工作日的数量</title><link>http://0x3f.org/posts/counting-days-between-dates-in-sqlserver/</link><pubDate>Sat, 13 Mar 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/counting-days-between-dates-in-sqlserver/</guid><description>&lt;p>前段时间工作中遇到的一个需求，要求计算两个日期之间工作日的数量，即排除期间所有的周六和周日之后的天数。&lt;/p>
+
+&lt;p>在网上找到一个自定义函数，原函数有些小问题，例如如果传入的截止日期如果有时间且足够大，则计算结果可能出错，修正后代码如下：&lt;/p>
+
+&lt;p>
+```sql
+--函数：类似datediff，不统计期间所有的周六和周日
+if exists (select * from dbo.sysobjects where id=object_id(N'[dbo].[f_WorkDay]') and xtype in (N'FN',N'IF',N'TF')) 
+drop function [dbo].[f_WorkDay] 
+GO
+
+CREATE FUNCTION f_WorkDay(
+@dt_begin datetime,
+@dt_end datetime 
+)RETURNS int 
+AS 
+BEGIN 
+ DECLARE @workday int,@i int,@bz bit,@dt datetime 
+
+ set @dt_begin = convert(datetime, convert(nvarchar(32), @dt_begin, 23))
+ set @dt_end = convert(datetime, convert(nvarchar(32), @dt_end, 23)) 
+
+ IF @dt_begin>@dt_end 
+ SELECT @bz=1,@dt=@dt_begin,@dt_begin=@dt_end,@dt_end=@dt 
+ ELSE 
+ SET @bz=0 
+
+ SELECT @i=DATEDIFF(Day,@dt_begin,@dt_end),@workday=@i/7*5,@dt_begin=DATEADD(Day,@i/7*7,@dt_begin) 
+
+ WHILE @dt_begin&lt;@dt_end 
+ BEGIN 
+ SELECT @workday=CASE WHEN (@@DATEFIRST+DATEPART(Weekday,@dt_begin)-1)%7 BETWEEN 1 AND 5 THEN @workday+1 ELSE @workday END,@dt_begin=@dt_begin+1 
+ END 
+
+ RETURN(CASE WHEN @bz=1 THEN -@workday ELSE @workday END) 
+END 
+GO
+```
+&lt;/p></description></item><item><title>SQLAlchemy操作SQL Server的中文问题</title><link>http://0x3f.org/posts/chinese-problem-of-sqlalchemy-with-sqlserver/</link><pubDate>Wed, 24 Feb 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/chinese-problem-of-sqlalchemy-with-sqlserver/</guid><description>&lt;p>最初将脚本的文件编码和coding行都设定为UTF-8，在windows下执行时，中文无法保存，报编码错误。将上述两个编码改为GBK后，保存正常，但查询时报错。&lt;/p>
+
+&lt;p>Traceback内容如下：&lt;/p>
+
+```
+Traceback (most recent call last):
+File "test.py", line 36, in &lt;code>&amp;lt;module&amp;gt;&lt;/code>
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;for obj in session.query(User):
+File "C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\orm\query.py", line 1411, in instances
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;rows = [process[0](row, None) for row in fetch]
+File "C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\orm\mapper.py", line 1788, in _instance
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;populate_state(state, dict_, row, isnew, only_load_props)
+File "C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\orm\mapper.py", line 1677, in populate_state
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;populator(state, dict_, row, isnew=isnew, **flags)
+File "C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\orm\strategies.py", line 118, in new_execute
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;dict_[key] = row[col]
+File "C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\engine\base.py", line 1634, in __getitem__
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;return self.__colfuncs[key][0](self.__row)
+File "C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\engine\base.py", line 1716, in getcol
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;return processor(row[index])
+File "C:\Python26\lib\site-packages\sqlalchemy-0.6beta1-py2.6.egg\sqlalchemy\types.py", line 568, in process
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;return decoder(value)[0]
+File "C:\Python26\lib\encodings\utf_8.py", line 16, in decode
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;return codecs.utf_8_decode(input, errors, True)
+UnicodeEncodeError: 'ascii' codec can't encode characters in position 0-1: ordinal not in range(128)&lt;/p></description></item></channel></rss>

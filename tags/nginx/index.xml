@@ -1,13 +1,133 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Nginx on 晴耕雨讀</title><link>http://0x3f.org/tags/nginx/</link><description>Recent content in Nginx on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Tue, 14 Feb 2017 13:35:41 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/nginx/index.xml" rel="self" type="application/rss+xml"/><item><title>用NGINX实现WSS</title><link>http://0x3f.org/posts/implement-wss-with-nginx/</link><pubDate>Tue, 14 Feb 2017 13:35:41 +0000</pubDate><guid>http://0x3f.org/posts/implement-wss-with-nginx/</guid><description>实现基于SSL的安全的WebSocket。
-NGINX配置 server { listen 4431; server_name ws.sample.com; ssl on; ssl_certificate ssl/server.crt; ssl_certificate_key ssl/server.key; ssl_session_timeout 5m; ssl_session_cache shared:SSL:50m; ssl_protocols SSLv3 SSLv2 TLSv1 TLSv1.1 TLSv1.2; ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP; location / { proxy_pass http://127.0.0.1:4759; proxy_http_version 1.1; proxy_set_header Upgrade $http_upgrade; proxy_set_header Connection &amp;#34;Upgrade&amp;#34;; proxy_set_header X-Real-IP $remote_addr; proxy_read_timeout 60s; } } 常见问题 连不上或连接时报错 WebSocket network error: OSStatus Error -9807: Invalid certificate chain
-如果使用的是自签证书或者证书针对的域名和连接所指定的不符，会出这种问题。
-wss一分钟自动断开 NGINX里设置proxy_read_timeout或者程序实现心跳。</description></item><item><title>用OpenResty自动转换silk到MP3</title><link>http://0x3f.org/posts/convert-silk-to-mp3-with-openresty/</link><pubDate>Wed, 25 Jan 2017 18:59:00 +0000</pubDate><guid>http://0x3f.org/posts/convert-silk-to-mp3-with-openresty/</guid><description>PHP没有原生的转换silk格式音频到mp3的方案，所以考虑用NGINX+Lua调用命令行工具实现。
-思路 当访问以「.silk.mp3」为后缀的文件时，查找对应的mp3文件，存在则返回，否则，如果对应的silk文件存在，调用命令行工具转换文件格式，然后内部重定向到新生成的mp3。
-安装 OpenResty silk-v3-decoder ffmpeg NGINX配置 1 2 3 location ~* /.*\.silk\.mp3$ { content_by_lua_file &amp;#34;/opt/script/silk2mp3.lua&amp;#34;; } Lua脚本 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 function file_exists(name) local f=io.open(name,&amp;#34;r&amp;#34;) if f~=nil then io.close(f) return true else return false end end local resource = ngx.var.request_filename; local realResource = resource:sub(1, #resource - 9).</description></item><item><title>NGINX: 405 Not Allowed</title><link>http://0x3f.org/posts/nginx-405-not-allowed/</link><pubDate>Sun, 19 Feb 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/nginx-405-not-allowed/</guid><description>NGINX不允许向静态文件提交POST方式的请求，否则报405错误。测试方法为，使用curl向服务器上的静态文件提交POST请求：
-```bash curl -d 1=1 http://localhost/version.txt ``` 得到以下结果： ```html 405 Not Allowed 405 Not Allowed nginx/1.0.11 ``` 网上传抄的添加以下配置的解决办法不可用：
-```nginx error_page 405 =200 @405; location @405 { root /srv/http; } ``` 一种不完美但可用的方法为：
-```nginx upstream static_backend { server localhost:80; } server { listen 80; # ... error_page 405 =200 @405; location @405 { root /srv/http; proxy_method GET; proxy_pass http://static_backend; } } ``` 即转换静态文件接收的POST请求到GET方式。
-Posted via UltraBlog.vim.</description></item><item><title>读完《Nginx HTTP Server》</title><link>http://0x3f.org/posts/after-reading-nginx-http-server/</link><pubDate>Fri, 29 Apr 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/after-reading-nginx-http-server/</guid><description>昨天晚上在杭州飞北京的飞机上读完了这本书，用Kindle DXG。
-作者是江苏科技大学的一位外籍老师，所以这本书也很有教科书的风格，先用一章的篇幅介绍Linux的相关概念和日常操作，而后通过和Apache的对比讲述了Nginx的主要特性，并使用Wordpress、MediaWiki等作了实例讲解。面面俱到，简单易懂，但并不深入。
-目前介绍Nginx的书还不多，这本算得上是其中很好的一本。但是前六十页都是介绍Linux的基本概念，和后面的内容关系不大，显得很突兀，且很不KISS，对于一本只有三百多页的小书来说，这个篇幅很令人遐想。抛开这一点，这本书当属眼下入门Nginx的优秀指南。
-Posted via UltraBlog.vim.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Nginx on 晴耕雨讀</title><link>http://0x3f.org/tags/nginx/</link><description>Recent content in Nginx on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Tue, 14 Feb 2017 13:35:41 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/nginx/index.xml" rel="self" type="application/rss+xml"/><item><title>用NGINX实现WSS</title><link>http://0x3f.org/posts/implement-wss-with-nginx/</link><pubDate>Tue, 14 Feb 2017 13:35:41 +0000</pubDate><guid>http://0x3f.org/posts/implement-wss-with-nginx/</guid><description>&lt;p>实现基于SSL的安全的WebSocket。&lt;/p>
+&lt;h2 id="nginx配置">NGINX配置&lt;/h2>
+&lt;pre tabindex="0">&lt;code>server {
+ listen 4431;
+ server_name ws.sample.com;
+
+ ssl on;
+ ssl_certificate ssl/server.crt;
+ ssl_certificate_key ssl/server.key;
+ ssl_session_timeout 5m;
+ ssl_session_cache shared:SSL:50m;
+ ssl_protocols SSLv3 SSLv2 TLSv1 TLSv1.1 TLSv1.2;
+ ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP;
+
+ location /
+ {
+ proxy_pass http://127.0.0.1:4759;
+ proxy_http_version 1.1;
+ proxy_set_header Upgrade $http_upgrade;
+ proxy_set_header Connection &amp;#34;Upgrade&amp;#34;;
+ proxy_set_header X-Real-IP $remote_addr;
+ proxy_read_timeout 60s;
+ }
+}
+&lt;/code>&lt;/pr</description></item><item><title>用OpenResty自动转换silk到MP3</title><link>http://0x3f.org/posts/convert-silk-to-mp3-with-openresty/</link><pubDate>Wed, 25 Jan 2017 18:59:00 +0000</pubDate><guid>http://0x3f.org/posts/convert-silk-to-mp3-with-openresty/</guid><description>&lt;p>PHP没有原生的转换silk格式音频到mp3的方案，所以考虑用NGINX+Lua调用命令行工具实现。&lt;/p>
+&lt;h2 id="思路">思路&lt;/h2>
+&lt;p>当访问以「.silk.mp3」为后缀的文件时，查找对应的mp3文件，存在则返回，否则，如果对应的silk文件存在，调用命令行工具转换文件格式，然后内部重定向到新生成的mp3。&lt;/p>
+&lt;h2 id="安装">安装&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="https://openresty.org/cn/download.html">OpenResty&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://github.com/kn007/silk-v3-decoder">silk-v3-decoder&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://ffmpeg.org">ffmpeg&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h2 id="nginx配置">NGINX配置&lt;/h2>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-nginx" data-lang="nginx">&lt;span class="line">&lt;span class="cl">&lt;span class="k">location&lt;/span> &lt;span class="p">~&lt;/span>&lt;span class="sr">*&lt;/span> &lt;span class="s">/.*\.silk\.mp3&lt;/span>$ &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kn">content_by_lua_file&lt;/span> &lt;span class="s">&amp;#34;/opt/script/silk2mp3.lua&amp;#34;&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="lua脚本">Lua脚本&lt;/h2>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>NGINX: 405 Not Allowed</title><link>http://0x3f.org/posts/nginx-405-not-allowed/</link><pubDate>Sun, 19 Feb 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/nginx-405-not-allowed/</guid><description>&lt;p>NGINX不允许向静态文件提交POST方式的请求，否则报405错误。测试方法为，使用curl向服务器上的静态文件提交POST请求：&lt;/p>
+
+```bash
+curl -d 1=1 http://localhost/version.txt
+```
+
+得到以下结果：
+
+```html
+&lt;html>
+&lt;head>&lt;title>405 Not Allowed&lt;/title>&lt;/head>
+&lt;body bgcolor="white">
+&lt;center>&lt;h1>405 Not Allowed&lt;/h1>&lt;/center>
+&lt;hr>&lt;center>nginx/1.0.11&lt;/center>
+&lt;/body>
+&lt;/html>
+```
+
+&lt;p>网上传抄的添加以下配置的解决办法不可用：&lt;/p>
+
+```nginx
+error_page 405 =200 @405;
+location @405
+{
+ root /srv/http;
+}
+```
+
+&lt;p>一种不完美但可用的方法为：&lt;/p>
+
+```nginx
+upstream static_backend {
+ server localhost:80;
+}
+
+server {
+ listen 80;
+
+ # ...
+
+ error_page 405 =200 @405;
+ location @405 {
+ root /srv/http;
+ proxy_method GET;
+ proxy_pass http://static_backend;
+ }
+}
+```
+
+&lt;p>即转换静态文件接收的POST请求到GET方式。&lt;/p></description></item><item><title>读完《Nginx HTTP Server》</title><link>http://0x3f.org/posts/after-reading-nginx-http-server/</link><pubDate>Fri, 29 Apr 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/after-reading-nginx-http-server/</guid><description>&lt;p>昨天晚上在杭州飞北京的飞机上读完了这本书，用Kindle DXG。&lt;/p>
+
+&lt;p>作者是江苏科技大学的一位外籍老师，所以这本书也很有教科书的风格，先用一章的篇幅介绍Linux的相关概念和日常操作，而后通过和Apache的对比讲述了Nginx的主要特性，并使用Wordpress、MediaWiki等作了实例讲解。面面俱到，简单易懂，但并不深入。&lt;/p>
+
+&lt;p>目前介绍Nginx的书还不多，这本算得上是其中很好的一本。但是前六十页都是介绍Linux的基本概念，和后面的内容关系不大，显得很突兀，且很不KISS，对于一本只有三百多页的小书来说，这个篇幅很令人遐想。抛开这一点，这本书当属眼下入门Nginx的优秀指南。&lt;/p>
+
+&lt;p>&lt;a href="https://picasaweb.google.com/lh/photo/1wfTXx_Zpcr1BVlrh5KD_A?feat=embedwebsite">&lt;img src="https://lh5.googleusercontent.com/_ceUJ_lBTHzc/TbrPHzzLMJI/AAAAAAAABqY/2cOJEsushfU/s400/1.png" height="400" width="309" />&lt;/a>&lt;/p>
+
+&lt;p>Posted via &lt;a href="http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/">UltraBlog.vim&lt;/a>.&lt;/p></description></item></channel></rss>

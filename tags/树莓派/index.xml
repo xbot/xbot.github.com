@@ -1,6 +1,24 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>树莓派 on 晴耕雨讀</title><link>http://0x3f.org/tags/%E6%A0%91%E8%8E%93%E6%B4%BE/</link><description>Recent content in 树莓派 on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Mon, 17 Apr 2017 10:19:51 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/%E6%A0%91%E8%8E%93%E6%B4%BE/index.xml" rel="self" type="application/rss+xml"/><item><title>用Raspberry Pi实现音频Airplay</title><link>http://0x3f.org/posts/implement-airplay-with-raspberry-pi/</link><pubDate>Mon, 17 Apr 2017 10:19:51 +0000</pubDate><guid>http://0x3f.org/posts/implement-airplay-with-raspberry-pi/</guid><description>用树莓派做音频airplay效果不错，老书架音箱又可以用起来了。
-实现方式是shairplay-sync，利用HDMI转VGA线上的3.5mm音频输出孔，因为我的树莓派2B的3.5mm音视频输出口没有合适的转接头。
-我用的是Arch Linux ARM，需要手动开启HDMI输出。修改/boot/config.txt：
-1 2 3 4 hdmi_force_hotplug=1 hdmi_drive=2 config_hdmi_boost=4 dtparam=audio=on 重启后，用alsamixer把树莓派音量调整到最大值。
-AUR里没有针对ARM的shairplay-sync，需要手动编译：
-1 git clone https://github.com/mikebrady/shairport-sync.git 1 2 # 生成configure autoreconf -i -f 1 2 3 4 5 6 # 针对systemd编译 ./configure --sysconfdir=/etc --with-alsa --with-avahi --with-ssl=openssl --with-metadata --with-soxr --with-systemd # END 1 2 3 4 5 6 7 8 # 如果shairport-sync用户不存在，新增用户和用户组 getent group shairport-sync &amp;amp;&amp;gt;/dev/null || sudo groupadd -r shairport-sync &amp;gt;/dev/null getent passwd shairport-sync &amp;amp;&amp;gt; /dev/null || sudo useradd -r -M -g shairport-sync -s /usr/bin/nologin -G audio shairport-sync &amp;gt;/dev/null # END airplay默认的服务名和树莓派的hostname一致，可以到/etc/shairport-sync.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>树莓派 on 晴耕雨讀</title><link>http://0x3f.org/tags/%E6%A0%91%E8%8E%93%E6%B4%BE/</link><description>Recent content in 树莓派 on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Mon, 17 Apr 2017 10:19:51 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/%E6%A0%91%E8%8E%93%E6%B4%BE/index.xml" rel="self" type="application/rss+xml"/><item><title>用Raspberry Pi实现音频Airplay</title><link>http://0x3f.org/posts/implement-airplay-with-raspberry-pi/</link><pubDate>Mon, 17 Apr 2017 10:19:51 +0000</pubDate><guid>http://0x3f.org/posts/implement-airplay-with-raspberry-pi/</guid><description>&lt;p>&lt;img src="http://ww1.sinaimg.cn/large/006tKfTcly1fepi05fa8ej31kw1kwx6q.jpg" alt="">&lt;/p>
+&lt;p>用树莓派做音频airplay效果不错，老书架音箱又可以用起来了。&lt;/p>
+&lt;p>实现方式是shairplay-sync，利用HDMI转VGA线上的3.5mm音频输出孔，因为我的树莓派2B的3.5mm音视频输出口没有合适的转接头。&lt;/p>
+&lt;p>我用的是Arch Linux ARM，需要手动开启HDMI输出。修改&lt;code>/boot/config.txt&lt;/code>：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-ini" data-lang="ini">&lt;span class="line">&lt;span class="cl">&lt;span class="na">hdmi_force_hotplug&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">hdmi_drive&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">2&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">config_hdmi_boost&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">4&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">dtparam&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">audio=on&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>重启后，用alsamixer把树莓派音量调整到最大值。&lt;/p>
+&lt;p>AUR里没有针对ARM的shairplay-sync，需要手动编译：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pr</description></item></channel></rss>

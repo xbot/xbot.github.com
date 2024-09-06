@@ -1,27 +1,72 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>虚拟技术 on 晴耕雨讀</title><link>http://0x3f.org/tags/%E8%99%9A%E6%8B%9F%E6%8A%80%E6%9C%AF/</link><description>Recent content in 虚拟技术 on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Tue, 06 Feb 2024 18:48:31 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/%E8%99%9A%E6%8B%9F%E6%8A%80%E6%9C%AF/index.xml" rel="self" type="application/rss+xml"/><item><title>Proxmox VE 备份指南</title><link>http://0x3f.org/posts/proxmox-ve-backup-guide/</link><pubDate>Tue, 06 Feb 2024 18:48:31 +0800</pubDate><guid>http://0x3f.org/posts/proxmox-ve-backup-guide/</guid><description>在当今数据中心管理中，数据备份是确保业务连续性和灾难恢复的关键环节。即使是 Home Lab ，也需要保证重要数据的安全。Proxmox Virtual Environment (PVE) 提供了一个强大的平台来管理虚拟化基础设施，而 Proxmox Backup Server (PBS) 则是其官方推荐的备份解决方案。本文将详细介绍如何使用 PBS 对 Proxmox VE 的虚拟机或容器（Guest）和宿主机（Host）进行备份，以及如何设置自动化备份流程。
-Guest 的备份 使用 PBS Proxmox Backup Server (PBS) 是一个功能强大的备份工具，它提供了多种备份选项，包括增量备份、加密备份、自动备份以及自动修剪等功能。这些功能使得 PBS 成为与 PVE 结合紧密的理想选择。
-优势 增量备份：只备份自上次备份以来发生变化的数据，节省存储空间和时间。 加密备份：确保备份数据的安全性。 自动备份：设置定时任务，无需手动干预。 自动修剪：自动清理旧的备份，保持存储空间的合理使用。 与 PVE 结合紧密：PBS 专为 PVE 设计，备份和恢复过程无缝对接。 步骤 安装 PBS
-LXC 方式：创建一个 Debian 容器，然后添加 PBS 的源。这种方式轻量级，但 LXC 容器只能使用 RAW 格式的镜像。 ISO 方式：通过 PBS 官方 ISO 镜像创建虚拟机。这种方式限制较少，能适应更多硬件环境。 创建 PBS 备份用户
-在 PBS 中，进入 Configuration → Access Control → User Management 创建一个新用户，例如 dataguard。</description></item><item><title>榨干 Intel 核显潜能，让更多虚拟机用上显卡</title><link>http://0x3f.org/posts/guide-to-increasing-intel-graphics-aperture-size/</link><pubDate>Tue, 06 Feb 2024 12:30:40 +0800</pubDate><guid>http://0x3f.org/posts/guide-to-increasing-intel-graphics-aperture-size/</guid><description>在虚拟化环境中，尤其是使用 Proxmox VE 或其他虚拟化平台时，有时我们需要增加 Intel 核显的显存孔径（Aperture Size），以便让更多虚拟机用上显卡的硬件加速。例如，我的 i5-8600t CPU 的核显是 UHD630 ，它的显存孔径被限制为 256M ，这只能提供一个 1200p 或两个 768p 的虚拟 GPU ，显然太少了。而当我们把这个值上调到 1024M ，就能获得更多或性能更高的虚拟 GPU 。
-这可以通过修改 BIOS 设置来实现，但通常主板 BIOS 不提供直接的选项来调整这个值。幸运的是，我们可以通过一些工具来间接修改这个设置。以下是详细的步骤：
-步骤 1: 下载和主板上同版本的 BIOS 首先，你需要从主板制造商的官方网站下载与你的主板型号相匹配的 BIOS 文件。确保下载的是与你的主板上安装的 BIOS 版本相同的文件，以便后续操作不会引发兼容性问题。
-步骤 2: 使用 UEFITool 打开 BIOS 接下来，你需要使用 UEFITool，这是一个 UEFI 固件图像查看器和编辑器。下载并安装 UEFITool，然后使用它打开你下载的 BIOS 文件。
-步骤 3: 搜索“aperture size” 在 UEFITool 中，打开搜索对话框并选择“Text”类型，然后输入“aperture size”进行搜索。搜索结果中可能会有多个匹配项。
-步骤 4: 导出 Body 并转换 选择一个搜索结果，导出其 Body。然后，使用 IFRExtractor-RS，这是一个 Rust 实用程序，可以将 UEFI IFR 数据提取成人类可读的文本。运行 IFRExtractor-RS 并指定你刚刚导出的文件，它会生成一个文本文件。</description></item><item><title>GVT-g 配置指南：实现多虚拟机共享 Intel 核显硬件加速</title><link>http://0x3f.org/posts/guide-to-configuring-gvt-g-graphics-acceleration/</link><pubDate>Tue, 06 Feb 2024 11:25:58 +0800</pubDate><guid>http://0x3f.org/posts/guide-to-configuring-gvt-g-graphics-acceleration/</guid><description>Proxmox Virtual Environment（PVE）是一个功能强大的开源虚拟化管理平台。它允许用户在单个主机上运行多个虚拟机，每个虚拟机都可以拥有自己的操作系统。为了进一步提升虚拟机的性能，特别是对于那些需要图形处理能力的应用，我们可以通过配置 Intel® Graphics Virtualization Technology –g (GVT-g) 来实现。GVT-g 是一种硬件辅助的虚拟化技术，它允许虚拟机直接访问宿主机的图形处理单元（GPU），从而提高图形性能。本文将详细介绍如何在 PVE 中为 Intel 核显开启 GVT-g 。
-本文环境：
-操作系统：PVE 8.0 CPU： Intel Core i5-8600t 核显：UHD630 步骤 1 ：修改 GRUB 配置 首先，我们需要确保 GRUB 引导加载器在启动时启用了必要的参数。打开/etc/default/grub文件，并找到GRUB_CMDLINE_LINUX_DEFAULT行。添加以下参数：
-1 GRUB_CMDLINE_LINUX_DEFAULT=&amp;#34;quiet intel_iommu=on iommu=pt i915.enable_gvt=1&amp;#34; 这将启用 Intel IOMMU（Input/Output Memory Management Unit）和 GVT-g 。保存文件后，运行以下命令来更新 GRUB 配置：
-1 sudo update-grub 步骤 2 ：添加内核模块 接下来，我们需要确保 PVE 在启动时加载必要的内核模块。编辑/etc/modules文件，添加以下模块：
-1 2 3 4 5 vfio vfio_iommu_type1 vfio_pci vfio_virqfd kvmgt 如果你之前因为配置直通核显而在/etc/modprobe.d/pve-blacklist.conf中屏蔽了显卡驱动，现在需要解除屏蔽。这可以通过注释掉或删除相关行来实现。
-完成修改后，运行以下命令来更新 initramfs ：</description></item><item><title>virtio可能导致windows蓝屏</title><link>http://0x3f.org/posts/virto-may-breakdown-windows/</link><pubDate>Sat, 04 Dec 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/virto-may-breakdown-windows/</guid><description>前段时间突然发现kvm中的windows在启动时蓝屏，开始以为是kvm新版本的bug，后来发现如果不启用虚拟机硬盘的virtio就不会出现蓝屏。
-于是下载了最新版的virtio，然而更新后，蓝屏的问题并没有解决，所以目前只能暂时不使用virtio。不过网卡的virtio是没有问题的。</description></item><item><title>VirtualBox的Host Interface网络接入方式的配置</title><link>http://0x3f.org/posts/virtualbox-host-interface/</link><pubDate>Sun, 31 Jan 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/virtualbox-host-interface/</guid><description>VirtualBox安装后默认的网络接入方式是NAT，也是最简单的一种。但NAT网络中的虚拟机系统不具有和主机同一网段的IP地址，不能和主机直接通信。这对于开发者来说是不适用的。
-Host Interface网络接入方式可以使虚拟机系统获得与主机同一网段的IP地址，因此也使得虚拟机系统像主机所在的局域网中的一台真实的计算机一样，可以和其它计算机通信。
-对于Linux平台的VirtualBox，可以有两种方式实现Host Interface网络。一是使用系统网桥，二是使用VirtualBox内建的机制。
-第一种方式复杂但通用，尤其是对于2.1.0以前的版本来说，这是唯一的途径。从2.1.0开始，VirtuaBox内建了支持Host Interface的机制，这极大地简化了此类型网络的配置。
-首先，加载vboxnetflt模块：
-sudo modprobe vboxnetflt
-然后在VirtualBox中配置虚拟机的网络连接方式，选择“Bridged Adapter”。
-最后启动虚拟机即可。
-另外，若虚拟机系统是精简版的Windows，网卡驱动可能不会自动安装，这时需要另外下载网卡的驱动并安装。
-为方便起见，可将vboxnetflt模块加入到开机自动启动的模块列表中，每种发行版设置自启动模块的位置和方法不一样，在Archlinux下，是在/etc/rc.conf文件中的modules行中设置。
-参考文章：Archlinux Wiki: VirtualBox</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>虚拟技术 on 晴耕雨讀</title><link>http://0x3f.org/tags/%E8%99%9A%E6%8B%9F%E6%8A%80%E6%9C%AF/</link><description>Recent content in 虚拟技术 on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Tue, 06 Feb 2024 18:48:31 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/%E8%99%9A%E6%8B%9F%E6%8A%80%E6%9C%AF/index.xml" rel="self" type="application/rss+xml"/><item><title>Proxmox VE 备份指南</title><link>http://0x3f.org/posts/proxmox-ve-backup-guide/</link><pubDate>Tue, 06 Feb 2024 18:48:31 +0800</pubDate><guid>http://0x3f.org/posts/proxmox-ve-backup-guide/</guid><description>&lt;p>在当今数据中心管理中，数据备份是确保业务连续性和灾难恢复的关键环节。即使是 Home Lab ，也需要保证重要数据的安全。Proxmox Virtual Environment (PVE) 提供了一个强大的平台来管理虚拟化基础设施，而 Proxmox Backup Server (PBS) 则是其官方推荐的备份解决方案。本文将详细介绍如何使用 PBS 对 Proxmox VE 的虚拟机或容器（Guest）和宿主机（Host）进行备份，以及如何设置自动化备份流程。&lt;/p>
+&lt;h1 id="guest-的备份">Guest 的备份&lt;/h1>
+&lt;h2 id="使用-pbs">使用 PBS&lt;/h2>
+&lt;p>Proxmox Backup Server (PBS) 是一个功能强大的备份工具，它提供了多种备份选项，包括增量备份、加密备份、自动备份以及自动修剪等功能。这些功能使得 PBS 成为与 PVE 结合紧密的理想选择。&lt;/p>
+&lt;h3 id="优势">优势&lt;/h3>
+&lt;ul>
+&lt;li>&lt;strong>增量备份&lt;/strong>：只备份自上次备份以来发生变化的数据，节省存储空间和时间。&lt;/li>
+&lt;li>&lt;strong>加密备份&lt;/strong>：确保备份数据的安全性。&lt;/li>
+&lt;li>&lt;strong>自动备份&lt;/strong>：设置定时任务，无需手动干预。&lt;/li>
+&lt;li>&lt;strong>自动修剪&lt;/strong>：自动清理旧的备份，保持存储空间的合理使用。&lt;/li>
+&lt;li>&lt;strong>与 PVE 结合紧密&lt;/strong>：PBS 专为 PVE 设计，备份和恢复过程无缝对接。&lt;/li>
+&lt;/ul>
+&lt;h3 id="步骤">步骤&lt;/h3>
+&lt;ol>
+&lt;li>
+&lt;p>&lt;strong>安装 PBS&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>&lt;strong>LXC 方式&lt;/strong>：创建一个 Debian 容器，然后添加 PBS 的源。这种方式轻量级，但 LXC 容器只能使用 RAW 格式的镜像。&lt;/li>
+&lt;li>&lt;strong>ISO 方式&lt;/strong>：通过 PBS 官方 ISO 镜像创建虚拟机。这种方式限制较少，能适应更多硬件环境。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>创建 PBS 备份用户&lt;/strong>&lt;/p></description></item><item><title>榨干 Intel 核显潜能，让更多虚拟机用上显卡</title><link>http://0x3f.org/posts/guide-to-increasing-intel-graphics-aperture-size/</link><pubDate>Tue, 06 Feb 2024 12:30:40 +0800</pubDate><guid>http://0x3f.org/posts/guide-to-increasing-intel-graphics-aperture-size/</guid><description>&lt;p>在虚拟化环境中，尤其是使用 Proxmox VE 或其他虚拟化平台时，有时我们需要增加 Intel 核显的显存孔径（Aperture Size），以便让更多虚拟机用上显卡的硬件加速。例如，我的 i5-8600t CPU 的核显是 UHD630 ，它的显存孔径被限制为 256M ，这只能提供一个 1200p 或两个 768p 的虚拟 GPU ，显然太少了。而当我们把这个值上调到 1024M ，就能获得更多或性能更高的虚拟 GPU 。&lt;/p>
+&lt;p>这可以通过修改 BIOS 设置来实现，但通常主板 BIOS 不提供直接的选项来调整这个值。幸运的是，我们可以通过一些工具来间接修改这个设置。以下是详细的步骤：&lt;/p>
+&lt;h3 id="步骤-1-下载和主板上同版本的-bios">步骤 1: 下载和主板上同版本的 BIOS&lt;/h3>
+&lt;p>首先，你需要从主板制造商的官方网站下载与你的主板型号相匹配的 BIOS 文件。确保下载的是与你的主板上安装的 BIOS 版本相同的文件，以便后续操作不会引发兼容性问题。&lt;/p>
+&lt;h3 id="步骤-2-使用-uefitool-打开-bios">步骤 2: 使用 UEFITool 打开 BIOS&lt;/h3>
+&lt;p>接下来，你需要使用 &lt;a href="https://github.com/LongSoft/UEFITool">UEFITool&lt;/a>，这是一个 UEFI 固件图像查看器和编辑器。下载并安装 UEFITool，然后使用它打开你下载的 BIOS 文件。&lt;/p>
+&lt;h3 id="步骤-3-搜索aperture-size">步骤 3: 搜索“aperture size”&lt;/h3>
+&lt;p>在 UEFITool 中，打开搜索对话框并选择“Text”类型，然后输入“aperture size”进行搜索。搜索结果中可能会有多个匹配项。&lt;/p>
+&lt;h3 id="步骤-4-导出-body-并转换">步骤 4: 导出 Body 并转换&lt;/h3>
+&lt;p>选择一个搜索结果，导出其 Body。然后，使用 &lt;a href="https://github.com/LongSoft/IFRExtractor-RS">IFRExtractor-RS&lt;/a>，这是一个 Rust 实用程序，可以将 UEFI IFR 数据提取成人类可读的文本。运行 IFRExtractor-RS 并指定你刚刚导出的文件，它会生成一个文本文件。&lt;/p></description></item><item><title>GVT-g 配置指南：实现多虚拟机共享 Intel 核显硬件加速</title><link>http://0x3f.org/posts/guide-to-configuring-gvt-g-graphics-acceleration/</link><pubDate>Tue, 06 Feb 2024 11:25:58 +0800</pubDate><guid>http://0x3f.org/posts/guide-to-configuring-gvt-g-graphics-acceleration/</guid><description>&lt;p>Proxmox Virtual Environment（PVE）是一个功能强大的开源虚拟化管理平台。它允许用户在单个主机上运行多个虚拟机，每个虚拟机都可以拥有自己的操作系统。为了进一步提升虚拟机的性能，特别是对于那些需要图形处理能力的应用，我们可以通过配置 Intel® Graphics Virtualization Technology –g (GVT-g) 来实现。GVT-g 是一种硬件辅助的虚拟化技术，它允许虚拟机直接访问宿主机的图形处理单元（GPU），从而提高图形性能。本文将详细介绍如何在 PVE 中为 Intel 核显开启 GVT-g 。&lt;/p>
+&lt;p>本文环境：&lt;/p>
+&lt;ul>
+&lt;li>操作系统：PVE 8.0&lt;/li>
+&lt;li>CPU： Intel Core i5-8600t&lt;/li>
+&lt;li>核显：UHD630&lt;/li>
+&lt;/ul>
+&lt;h3 id="步骤-1-修改-grub-配置">步骤 1 ：修改 GRUB 配置&lt;/h3>
+&lt;p>首先，我们需要确保 GRUB 引导加载器在启动时启用了必要的参数。打开&lt;code>/etc/default/grub&lt;/code>文件，并找到&lt;code>GRUB_CMDLINE_LINUX_DEFAULT&lt;/code>行。添加以下参数：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">GRUB_CMDLINE_LINUX_DEFAULT&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s2">&amp;#34;quiet intel_iommu=on iommu=pt i915.enable_gvt=1&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>这将启用 Intel IOMMU（Input/Output Memory Management Unit）和 GVT-g 。保存文件后，运行以下命令来更新 GRUB 配置：&lt;/p></description></item><item><title>virtio可能导致windows蓝屏</title><link>http://0x3f.org/posts/virto-may-breakdown-windows/</link><pubDate>Sat, 04 Dec 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/virto-may-breakdown-windows/</guid><description>&lt;p>前段时间突然发现kvm中的windows在启动时蓝屏，开始以为是kvm新版本的bug，后来发现如果不启用虚拟机硬盘的virtio就不会出现蓝屏。&lt;/p>
+&lt;p>于是下载了最新版的virtio，然而更新后，蓝屏的问题并没有解决，所以目前只能暂时不使用virtio。不过网卡的virtio是没有问题的。&lt;/p></description></item><item><title>VirtualBox的Host Interface网络接入方式的配置</title><link>http://0x3f.org/posts/virtualbox-host-interface/</link><pubDate>Sun, 31 Jan 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/virtualbox-host-interface/</guid><description>&lt;p>&lt;a href="http://zh.wikipedia.org/wiki/VirtualBox">VirtualBox&lt;/a>安装后默认的网络接入方式是&lt;a href="http://zh.wikipedia.org/wiki/%E7%BD%91%E7%BB%9C%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2">NAT&lt;/a>，也是最简单的一种。但NAT网络中的虚拟机系统不具有和主机同一网段的IP地址，不能和主机直接通信。这对于开发者来说是不适用的。&lt;/p>
+
+&lt;p>Host Interface网络接入方式可以使虚拟机系统获得与主机同一网段的IP地址，因此也使得虚拟机系统像主机所在的局域网中的一台真实的计算机一样，可以和其它计算机通信。&lt;/p>
+
+&lt;p>对于Linux平台的VirtualBox，可以有两种方式实现Host Interface网络。一是使用系统网桥，二是使用VirtualBox内建的机制。&lt;/p>
+
+&lt;p>第一种方式复杂但通用，尤其是对于2.1.0以前的版本来说，这是唯一的途径。从2.1.0开始，VirtuaBox内建了支持Host Interface的机制，这极大地简化了此类型网络的配置。&lt;/p>
+
+&lt;p>首先，加载&lt;strong>vboxnetflt&lt;/strong>模块：&lt;/p>
+
+&lt;blockquote>
+ &lt;p>sudo modprobe vboxnetflt&lt;/p>
+&lt;/blockquote>
+
+&lt;p>然后在VirtualBox中配置虚拟机的网络连接方式，选择“&lt;strong>Bridged Adapter&lt;/strong>”。&lt;/p>
+
+&lt;p>最后启动虚拟机即可。&lt;/p>
+
+&lt;p>另外，若虚拟机系统是精简版的Windows，网卡驱动可能不会自动安装，这时需要另外下载网卡的驱动并安装。&lt;/p>
+
+&lt;p>为方便起见，可将vboxnetflt模块加入到开机自动启动的模块列表中，每种发行版设置自启动模块的位置和方法不一样，在Archlinux下，是在&lt;strong>/etc/rc.conf&lt;/strong>文件中的&lt;strong>modules&lt;/strong>行中设置。&lt;/p>
+
+&lt;p>&lt;em>参考文章：&lt;a href="http://wiki.archlinux.org/index.php/VirtualBox">Archlinux Wiki: VirtualBox&lt;/a>&lt;/em>&lt;/p></description></item></channel></rss>

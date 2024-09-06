@@ -1,228 +1,1252 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Vim on 晴耕雨讀</title><link>http://0x3f.org/tags/vim/</link><description>Recent content in Vim on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Mon, 21 Aug 2023 17:07:48 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/vim/index.xml" rel="self" type="application/rss+xml"/><item><title>从 macOS 桌面运行 Neovide 的方法</title><link>http://0x3f.org/posts/how-to-run-neovide-from-macos-desktop/</link><pubDate>Mon, 21 Aug 2023 17:07:48 +0800</pubDate><guid>http://0x3f.org/posts/how-to-run-neovide-from-macos-desktop/</guid><description>截至当前版本（0.11.1），Neovide 在 macOS 下只能从命令行启动，为方便起见，有时候我希望通过 RayCast 或者 Dashboard 启动它，或者通过右键菜单“Open with”用它直接打开选中的文件。
-方法是通过 Automator 创建一个“Application”类型的新文档，添加一个“Run AppleScript”的 Action 。然后填入下面的内容：
-最后将文档保存到 Application 目录，命名为“Neovide”。</description></item><item><title>Leaderf-phpnamespace: Yet another PHP namespace resolver</title><link>http://0x3f.org/posts/leaderf-phpnamespace-yet-another-php-namespace-resolver/</link><pubDate>Sun, 25 Sep 2022 22:33:13 +0800</pubDate><guid>http://0x3f.org/posts/leaderf-phpnamespace-yet-another-php-namespace-resolver/</guid><description>This plugin uses the power of LeaderF to perform PHP namespace related tasks.
-https://github.com/xbot/Leaderf-phpnamespace
-Features Insert use statements for FQCNs. Sort use statements alphabetically. Expand class names to FQCNs. Insert namespace for the current file. All the above features support the fuzzy searching function and all the three modes (nameonly, fullpath and regex) provided by LeaderF. Requirements LeaderF ctags is properly configured in Vim/Neovim. Install Use any of your favourite plugin manager to install it, for example:</description></item><item><title>用 Neovim 调试 RESTful 接口</title><link>http://0x3f.org/posts/send-restful-requests-with-neovim/</link><pubDate>Sun, 18 Sep 2022 11:31:16 +0800</pubDate><guid>http://0x3f.org/posts/send-restful-requests-with-neovim/</guid><description>纯文本有很多好处，比如可以用 Git 管理，方便备份和追溯，方便多机同步和分享。
-之前使用 VS Code 的插件 Rest Client ，从浏览器后台复制请求数据过来就可以用，很方便。但是存在一些用起来不舒服的地方，比如：
-不方便对接口分组管理。 不方便快速查找接口。 这些在对纯文本操作效率更高的 Vim 里都可以解决，但是之前尝试过的一些 Vim 的 RESTful 客户端插件还不成熟，最近发现 rest.nvim 基本可以满足日常使用需要了。
-rest.nvim 是个 Neovim 的插件，和 Rest Client 支持的格式差异较小，迁移很方便。这样我就可以用 Vim 的折叠特性对接口分组管理，用插件 Leaderf 的模糊查找特性快速定位接口，当然，对纯文本的任何编辑和操作在 Vim 里就是浑然天成、行云流水的。
-它的大致用法如下：
-在工作目录下创建环境变量文件 .env ：
-1 2 3 4 5 6 base_url=http://myapp.dev header_accept_json=application/json, application/problem+json, text/plain, */* header_content_type_json=application/json;charset=utf-8 header_cookie_debug_session=XDEBUG_SESSION=1;app_session=1ObUjvLvEYjVhJ8tbzn5BorN7TViNtI1S625140e user_email=user@test.com user_password=password 在工作目录下创建请求文件（例如 myapp.http ）：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 ### Login POST {{base_url}}/v1/sessions Accept: {{header_accept_json}} Content-Type: {{header_content_type_json}} Cookie: {{header_cookie_debug_session}} {&amp;#34;email&amp;#34;: &amp;#34;{{user_email}}&amp;#34;, &amp;#34;password&amp;#34;: &amp;#34;{{user_password}}&amp;#34;} ### Get an article GET {{base_url}}/v1/articles/DiJeb7IQHo8FOFkXulieyA Accept: {{header_accept_json}} Cookie: {{header_cookie_debug_session}} ### Create an article POST {{base_url}}/v1/articles Accept: {{header_accept_json}} Cookie: {{header_cookie_debug_session}} Content-Type: {{header_content_type_json}} { &amp;#34;title&amp;#34;: &amp;#34;Hello world&amp;#34;, &amp;#34;Content&amp;#34;: &amp;#34;This is a dummy post.</description></item><item><title>给 Vim 插件做快照</title><link>http://0x3f.org/posts/create-snapshot-for-vim-plugins/</link><pubDate>Tue, 06 Sep 2022 23:28:26 +0800</pubDate><guid>http://0x3f.org/posts/create-snapshot-for-vim-plugins/</guid><description>我的 Vim 插件数快到 150 了，弊端也越来越明显。
-最大的问题是稳定性，经常批量更新后发现某个功能不工作了，尤其是大部分问题只有在用到的时候才发现，非常影响效率。
-我用的插件管理工具是 vim-plug ，虽然有回滚到上一次的功能，但是我手比较欠，经常频繁更新，往往发现一个问题时已经更新了几次了，所以这个功能对我来说不是很适用。
-好在它提供了做快照的命令 :PlugSnapshot ，其实就是把当前所有插件的 Git 哈希值输出到一个 Vim 脚本里，恢复快照的时候只要执行这个脚本就行了。
-为了方便使用，创建一个自定义命令：
-1 command! SnapshotPlugins PlugSnapshot ~/.vim/plugin.lock 然后把生成的 plugin.lock 文件加入 Git 仓库，必要的时候可以利用 git bisect 快速找到问题出处。
-恢复的命令如下：
-1 vim -S plugin.lock</description></item><item><title>Leaderf-folder: Quickly open a subfolder</title><link>http://0x3f.org/posts/the-leaderf-folder-plugin/</link><pubDate>Sun, 07 Aug 2022 17:31:50 +0800</pubDate><guid>http://0x3f.org/posts/the-leaderf-folder-plugin/</guid><description>LeaderF-folder is a plugin for LeaderF that aims to open a subfolder quickly.
-Requirements LeaderF fd Dirbuf: Optional, can be changed to other file managers. Setup This plugin takes Dirbuf as the default solution to open the chosen subfolder. You can use the following option to customize it:
-1 let g:Lf_FolderAcceptSelectionCmd = &amp;#39;Dirbuf&amp;#39; Usage 1 :LeaderfFolder Press F1 to get more help</description></item><item><title>使用 lemonade 和 autossh 辅助 Neovim 远程开发</title><link>http://0x3f.org/posts/assisting-neovim-with-remote-development-using-lemonade-and-autossh/</link><pubDate>Thu, 19 May 2022 16:02:34 +0800</pubDate><guid>http://0x3f.org/posts/assisting-neovim-with-remote-development-using-lemonade-and-autossh/</guid><description>我的开发环境部署在 Linux VM 里，普通的远程复制用 vim-oscyank 插件是可以实现的。但是当我想用 fugitive 的 :GBrowse 命令打开 Gitlab 链接的时候遇到了困难，甚至我想退而求其次、通过 :GBrowse! 复制链接都不可得，因为 fugitive 的代码里通过 has('clipboard') 判断 Vim 是否可以使用系统剪贴板，且我的 Linux VM 不满足该特性的条件（见 :help clipboard）。所以用 lemonade 解决这个问题。
-实现方式 lemonade 虽然支持客户端和服务端直接通信，但是并不提供安全保障，所以我采取 SSH 端口远程转发的方式并用 autossh 保持连接。
-首先分别在服务端（MacOS）和客户端（Linux VM）创建 lemonade 的配置文件（~/.config/lemonade.toml）：
-服务端：
-1 2 3 port = 2489 allow = &amp;#39;127.0.0.1&amp;#39; line-ending = &amp;#39;lf&amp;#39; 客户端：
-1 2 3 4 5 port = 2489 host = &amp;#39;localhost&amp;#39; trans-loopback = true trans-localfile = true line-ending = &amp;#39;lf&amp;#39; 然后创建 MacOS 的服务配置文件：</description></item><item><title>在 gv.vim 中使用 Diffview.nvim 查看提交内容</title><link>http://0x3f.org/posts/check-commit-with-diffview-in-gv-vim/</link><pubDate>Thu, 23 Dec 2021 14:42:03 +0800</pubDate><guid>http://0x3f.org/posts/check-commit-with-diffview-in-gv-vim/</guid><description>Vim 没有很好的 Git commits viewer ，普通的 diff 模式对于很小的 commit 还行，文件较多、改动较大的 commit 看起来很糟糕。
-gv.vim + Diffview.nvim 是我目前找到的最好的解决方案，下面稍加配置，实现在 gv.vim 的 log 界面通过快捷键 vv 在 Diffview.nvim 里打开光标所在行对应的 commit ：
-1 2 3 4 5 6 7 8 9 10 11 12 lua &amp;lt;&amp;lt; EOF function _G.diff_view_commit(commit_hash) require&amp;#39;diffview&amp;#39;.open(commit_hash .. &amp;#39;~1..&amp;#39; .. commit_hash) end EOF au! FileType GV nnoremap vv &amp;lt;Esc&amp;gt;:call &amp;lt;SID&amp;gt;DiffviewCommitUnderCursor()&amp;lt;CR&amp;gt; function! s:DiffviewCommitUnderCursor() normal! ^2f w call v:lua.diff_view_commit(expand(&amp;#39;&amp;lt;cword&amp;gt;&amp;#39;)) endfunction</description></item><item><title>改变 Vim 模式时自动切换输入法的方法</title><link>http://0x3f.org/posts/auto-switch-input-method-while-changing-vim-mode/</link><pubDate>Wed, 19 Feb 2020 21:48:15 +0000</pubDate><guid>http://0x3f.org/posts/auto-switch-input-method-while-changing-vim-mode/</guid><description>VS Code的Vim插件有个很贴心的功能，可以在切换到普通模式时自动切换到英文输入法，而当切换回插入模式时再换到此前的输入法。
-设置的方法很简单。先安装im-select，然后配置如下（macOS）：
-当然，在Vim里也可以利用im-select实现这个功能。</description></item><item><title>用ALE替换了Syntastic</title><link>http://0x3f.org/posts/replace-syntastic-with-ale/</link><pubDate>Wed, 12 Dec 2018 20:42:10 +0000</pubDate><guid>http://0x3f.org/posts/replace-syntastic-with-ale/</guid><description>&lt;p>习惯频繁地保存源码，但是每次保存都有明显的卡顿，于是用Vim自己的调优功能跟踪了一下。&lt;/p></description></item><item><title>Vim最好的PHP语法高亮插件</title><link>http://0x3f.org/posts/the-best-php-syntax-file-of-vim/</link><pubDate>Tue, 28 Nov 2017 15:55:59 +0000</pubDate><guid>http://0x3f.org/posts/the-best-php-syntax-file-of-vim/</guid><description>StanAngeloff/php.vim应该是目前最新、最全的PHP语法高亮插件了，它解决了旧版本无法高亮@throws的问题。
-默认会把方法注释全部当做普通注释显示，也就是没有高亮，需要专门做配置：
-1 2 3 4 5 6 7 8 9 function! PhpSyntaxOverride() hi! def link phpDocTags phpDefine hi! def link phpDocParam phpType endfunction augroup phpSyntaxOverride autocmd! autocmd FileType php call PhpSyntaxOverride() augroup END</description></item><item><title>用gv.vim查看git提交历史</title><link>http://0x3f.org/posts/gv-vim/</link><pubDate>Wed, 18 Oct 2017 13:28:16 +0000</pubDate><guid>http://0x3f.org/posts/gv-vim/</guid><description>gv.vim是fugitive的插件，用于查看git提交历史，特点是速度快、好用。我现在用它做code review。
-1 2 3 4 nnoremap &amp;lt;leader&amp;gt;gll :GV --no-merges&amp;lt;CR&amp;gt; nnoremap &amp;lt;leader&amp;gt;glc :GV!&amp;lt;CR&amp;gt; nnoremap &amp;lt;leader&amp;gt;gla :GV --no-merges --author&amp;lt;space&amp;gt; nnoremap &amp;lt;leader&amp;gt;glg :GV --no-merges --grep&amp;lt;space&amp;gt;</description></item><item><title>解决phpqa和fugitive不兼容的问题</title><link>http://0x3f.org/posts/solve-the-incompatablility-between-fugitive-and-phpqa/</link><pubDate>Wed, 18 Oct 2017 11:05:12 +0000</pubDate><guid>http://0x3f.org/posts/solve-the-incompatablility-between-fugitive-and-phpqa/</guid><description>在:Gstatus中查看diff时，报错：
-Error detected while processing function Phpqa#PhpLint: line 8: E684: list index out of range: 0 E116: Invalid arguments for function match(l:php_list[0],&amp;ldquo;No syntax errors&amp;rdquo;) == -1 E15: Invalid expression: 0 != v:shell_error &amp;amp;&amp;amp; match(l:php_list[0],&amp;ldquo;No syntax errors&amp;rdquo;) == -1
-这是phpqa的bug，有人创建了PR，但作者没有合并，需要手工合并：
-1 curl -L https://github.com/joonty/vim-phpqa/pull/43.patch | git am</description></item><item><title>用vim-test简化单元测试的编写</title><link>http://0x3f.org/posts/make-writing-unit-tests-easier-with-vim-test/</link><pubDate>Mon, 14 Aug 2017 16:43:59 +0000</pubDate><guid>http://0x3f.org/posts/make-writing-unit-tests-easier-with-vim-test/</guid><description>vim-test允许在Vim中直接执行一个或多个单元测试，并使用预设的或自定义的执行策略。
-例如，命令:TestNearest可以执行当前测试文件中离光标最近的一个测试方法。而:TestFile、:TestSuite和:TestLast分别执行整个测试文件、测试项目和最近一次执行过的测试。这在编写测试代码时能很大地提高效率。
-执行策略是执行测试的方式和环境。例如缺省状态下，将使用:!执行测试命令，这会从Vim切换回终端。而在MacVim下，可以选择在iTerm或者系统自带的Terminal中执行。</description></item><item><title>用vim-laravel简化laravel下的开发</title><link>http://0x3f.org/posts/speed-up-artisan-with-vim-laravel/</link><pubDate>Fri, 11 Aug 2017 15:05:30 +0000</pubDate><guid>http://0x3f.org/posts/speed-up-artisan-with-vim-laravel/</guid><description>vim-laravel是个极简而实用的插件，只提供一个:Artisan命令。但它并不仅仅是artisan的一个wrapper，还可以实现一些贴心的自动化，利如自动打开artisan make:*创建的文件。</description></item><item><title>用vim-php-namespace管理PHP的命名空间</title><link>http://0x3f.org/posts/manage-php-namespaces-with-vim-php-namespace/</link><pubDate>Fri, 11 Aug 2017 14:56:12 +0000</pubDate><guid>http://0x3f.org/posts/manage-php-namespaces-with-vim-php-namespace/</guid><description>vim-php-namespace是个简单实用的插件，提供三种功能：
-自动用use语句导入光标下的类 自动把光标下的类名扩展成完整命名空间的格式 自动排序use语句 此外，还提供一个选项控制是否在导入类后自动排序use语句。</description></item><item><title>使neocomplete和ultisnips共用tab键的方法</title><link>http://0x3f.org/posts/reconcile-neocomplete-with-ultisnips/</link><pubDate>Fri, 11 Aug 2017 14:43:14 +0000</pubDate><guid>http://0x3f.org/posts/reconcile-neocomplete-with-ultisnips/</guid><description>昨天用vim-clevertab换掉了supertab，但是实际使用中总是出莫名其妙的问题。看了一下插件源码，使用全局变量判断状态，这是个很不靠谱的方案，所以还是卸掉了。
-下面的配置可以很好的解决问题：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 let g:UltiSnipsExpandTrigger=&amp;#34;&amp;lt;c-tab&amp;gt;&amp;#34; let g:UltiSnipsJumpForwardTrigger=&amp;#34;&amp;lt;c-tab&amp;gt;&amp;#34; let g:UltiSnipsJumpBackwardTrigger=&amp;#34;&amp;lt;s-tab&amp;gt;&amp;#34; let g:UltiSnipsSnippetsDir=&amp;#39;~/.vim/UltiSnips&amp;#39; let g:ulti_expand_or_jump_res = 0 function! CleverTab()&amp;#34;{{{ call UltiSnips#ExpandSnippetOrJump() if g:ulti_expand_or_jump_res return &amp;#34;&amp;#34; else if pumvisible() return &amp;#34;\&amp;lt;c-n&amp;gt;&amp;#34; else return neocomplete#start_manual_complete() endif endif endfunction&amp;#34;}}} inoremap &amp;lt;silent&amp;gt; &amp;lt;tab&amp;gt; &amp;lt;c-r&amp;gt;=CleverTab()&amp;lt;cr&amp;gt; snoremap &amp;lt;silent&amp;gt; &amp;lt;tab&amp;gt; &amp;lt;esc&amp;gt;:call UltiSnips#ExpandSnippetOrJump()&amp;lt;cr&amp;gt; ultisnips没有禁用按键映射的开关，而默认的映射会干扰上述配置，所以这里把默认的映射改成了&amp;lt;c-tab&amp;gt;。</description></item><item><title>用vim-plug换掉了vim-addon-manager</title><link>http://0x3f.org/posts/replaced-vam-with-vim-plug/</link><pubDate>Mon, 31 Jul 2017 22:44:16 +0000</pubDate><guid>http://0x3f.org/posts/replaced-vam-with-vim-plug/</guid><description>四年零两个月前，我在Vim的邮件组中征询pathogen和vundle的优劣。一个人建议我试试VAM，语气幽怨——他是它的作者。
-试过之后就从pathogen迁移到了VAM，因为它兼有前者和vundle的优点，在当时，这是最好的插件管理器。就这样用了很久，期间还写了点脚本简化插件的管理，VAM工作得很好。
-最近发现越来越多的插件的文档里提到vim-plug，亮点是支持并行安装和更新，这真是解决了VAM最大的痛点：我叠代了十年的vimrc里用了很多插件，串行的VAM每次更新都让我很痛苦。
-另外，vim-plug较VAM的另一个优势是简单。这倒不是说后者很难用，只是作者过于追求灵活性，导致有些工作实现起来相对更复杂。例如，有的插件安装之后需要做一些额外的操作，VAM需要自己实现回调函数，然后挂到post-install钩子上。而对于vim-plug，只需要在注册插件的地方增加一个选项。对于插件的懒加载，也是同样。
-VAM也有自己的优势。其中之一是可以自动处理依赖关系：当一个要被安装的插件依赖别的插件时，相应的依赖也会被自动安装。还有就是对多源的支持：既可以拉取github上的插件，也可以从vim.org或其它源安装。而vim-plug就只支持github。
-所以，vim-plug并没有全面超过VAM，只是没有明显的短板、功能又刚刚够用。</description></item><item><title>用choosewin.vim切换窗口</title><link>http://0x3f.org/posts/choosewin-vim/</link><pubDate>Sun, 30 Jul 2017 20:48:46 +0000</pubDate><guid>http://0x3f.org/posts/choosewin-vim/</guid><description>输入-显示每个窗口的hint，输入hint跳转，简单而高效：</description></item><item><title>Python 2还是3是个纠结的问题</title><link>http://0x3f.org/posts/bothered-by-python-2-vs-3/</link><pubDate>Sun, 30 Jul 2017 08:40:11 +0000</pubDate><guid>http://0x3f.org/posts/bothered-by-python-2-vs-3/</guid><description>前些天用denite取代unite，用--with-python3重装了vim，结果发现vdebug只支持python 2。
-vim同时只能在py2和py3中选一个，据说可以通过重新编译python实现共存，但是我在编译py3的时候失败。
-neovim同时支持两个版本，但是尝试deoplete失败，报「Invalid Channel」的错误，似乎是python-neovim的锅。而且由于neovim内建lua、不支持has('lua')，所以不能fall back到neocomplete。
-万般无奈，只好换回unite。</description></item><item><title>利用goyo.vim专注写作</title><link>http://0x3f.org/posts/distraction-free-writing-in-vim/</link><pubDate>Sat, 29 Jul 2017 16:48:45 +0000</pubDate><guid>http://0x3f.org/posts/distraction-free-writing-in-vim/</guid><description>goyo.vim是给vim提供专注写作模式的插件，配合markdown效果不错：
-最好在单独的vim实例中使用，已发现和vim-workspace配合不好的情况。
-对markdown文件自动开启goyo的配置如下：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 function! s:auto_goyo() if &amp;amp;ft == &amp;#39;markdown&amp;#39; Goyo 80 else let bufnr = bufnr(&amp;#39;%&amp;#39;) Goyo! execute &amp;#39;b &amp;#39;.bufnr endif endfunction augroup goyo_markdown autocmd! autocmd BufNewFile,BufRead * call s:auto_goyo() augroup END</description></item><item><title>用vim-workspace换掉了session.vim</title><link>http://0x3f.org/posts/replace-session-vim-with-vim-workspace/</link><pubDate>Wed, 19 Jul 2017 17:47:30 +0000</pubDate><guid>http://0x3f.org/posts/replace-session-vim-with-vim-workspace/</guid><description>用session.vim一直有几个痛点。一是保存会话后，退出时仍然会提示保存。二是会话会记录vimrc，恢复会话后用的仍然是旧的配置。
-vim-workspace没有这些问题，而且实现了更多功能。</description></item><item><title>用neocomplete换掉了YouCompleteMe</title><link>http://0x3f.org/posts/replace-youcompleteme-with-neocomplete/</link><pubDate>Sat, 15 Jul 2017 10:29:48 +0000</pubDate><guid>http://0x3f.org/posts/replace-youcompleteme-with-neocomplete/</guid><description>在尝试了多种方案后，我又一次换掉了自动补全插件。
-工具应该是能提高生产力的，而不是相反，很长一段时间以来，YouCompleteMe带给我的却是个疑惑，真不知道这个东东到底是提高了我的生产力，还是反之。自动补全在提高输入速度和准确度上都有助益，但是有时候补全选项弹出的又很慢。
-测试了nvim-complete-manager+LanguageClient-neovim+LanguageServer-php-neovim、deoplete+phpcd、deoplete+padawan、neocomplete+phpcomplete-extended，效果都非常不理想。最后选择了neocomplete+phpcomplete，速度可以接受，表现比YCM稳定，功能该有的都有。
-相关阅读： How to Make YouCompleteMe Compatible with UltiSnips Vim的终极自动补全插件：NeoComplCache</description></item><item><title>LeaderF，也许是Vim最好的模糊查询插件</title><link>http://0x3f.org/posts/leaderf-currently-the-best-fuzzy-finder-of-vim/</link><pubDate>Thu, 13 Jul 2017 16:45:15 +0000</pubDate><guid>http://0x3f.org/posts/leaderf-currently-the-best-fuzzy-finder-of-vim/</guid><description>之前对比过几个模糊查询插件（Fuzzy Finder），最后选定了ctrlp。
-用了下LeaderF，在速度和匹配的准确度上都明显超过了ctrlp，所以用它换掉了后者。
-只是在交互方式上，我更喜欢ctrlp，文件列表高度是动态变化的，最匹配的行和输入焦点都在窗口的最下方。LeaderF是定高的，最匹配的行在最上方，个人认为不如前者自然。
-能解决痛点的才是好东西，什么时候能换掉YouCompleteMe就好了。</description></item><item><title>自定义GVIM 8标签栏样式的方法</title><link>http://0x3f.org/posts/how-to-customize-gvim8-tab-style/</link><pubDate>Sun, 04 Jun 2017 12:42:12 +0000</pubDate><guid>http://0x3f.org/posts/how-to-customize-gvim8-tab-style/</guid><description>GVim 8用的是GTK 3，原来在~/.gtkrc-2.0里加样式的方法不能用了。
-GTK 3的样式在~/.config/gtk-3.0/gtk.css里：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 /** * Adapt to the nova colorscheme */ @define-color VIM_BG_FIX #3C4C55; window#vim-main-window { background-color: @VIM_BG_FIX; } window#vim-main-window notebook header { background-color: #1E272C; border-bottom-width: 0; } window#vim-main-window notebook tab { border-bottom-width: 0; } window#vim-main-window notebook tab label { padding-left:5px; padding-right:5px; padding-top:1px; padding-bottom:2px; color: #7CBDC6; } window#vim-main-window notebook tab:checked label { background-color: #7CBDC6; color: #1E272C; } 查看GTK 3程序的样式结构的方法是用GTK Inspector：</description></item><item><title>怎样在Vim中删除引号文本对象</title><link>http://0x3f.org/posts/how-to-delete-quoted-text-object-in-vim/</link><pubDate>Sat, 25 Feb 2017 19:33:18 +0000</pubDate><guid>http://0x3f.org/posts/how-to-delete-quoted-text-object-in-vim/</guid><description>假设有这样一段代码（光标在「|」位置）：
-$title = &amp;ldquo;Article:|&amp;rdquo; . $realTitle;
-要删除引号及其内容，并进入插入模式准备输入其它内容。
-如果执行ca&amp;quot;，会得到如下的结果：
-$title = |. $realTitle;
-连引号旁边的空格也删除了。
-如果不想删除空格，可以用c2i&amp;quot;。
-参考：Is it possible to exclude surrounding whitespace from the word-object a&amp;quot;?</description></item><item><title>在Vim中格式化Javascript、HTML和CSS</title><link>http://0x3f.org/posts/vim-js-beautify/</link><pubDate>Tue, 21 Feb 2017 14:58:08 +0000</pubDate><guid>http://0x3f.org/posts/vim-js-beautify/</guid><description>依赖 vim-jsbeautify js-beautify js-beautify的安装：
-1 2 3 npm -g install js-beautify # 或 pip install jsbeautifier 配置快捷键 1 2 3 4 vmap &amp;lt;leader&amp;gt;jsb :&amp;#39;&amp;lt;,&amp;#39;&amp;gt;!js-beautify -i&amp;lt;CR&amp;gt; autocmd FileType javascript noremap &amp;lt;buffer&amp;gt; &amp;lt;leader&amp;gt;jsb :call JsBeautify()&amp;lt;CR&amp;gt; autocmd FileType html noremap &amp;lt;buffer&amp;gt; &amp;lt;leader&amp;gt;htmlb :call HtmlBeautify()&amp;lt;CR&amp;gt; autocmd FileType css noremap &amp;lt;buffer&amp;gt; &amp;lt;leader&amp;gt;cssb :call CSSBeautify()&amp;lt;CR&amp;gt;</description></item><item><title>Vim 查找与替换的最佳实践</title><link>http://0x3f.org/posts/the-best-practice-of-searching-in-vim/</link><pubDate>Sun, 19 Feb 2017 20:37:18 +0000</pubDate><guid>http://0x3f.org/posts/the-best-practice-of-searching-in-vim/</guid><description>更新 日期 更新内容 2022-03-16 更新 80% 的内容。包含这几年所有的配置上的更新，并且把 ag 换成了 rg 。 2017-02-19 第一版。 目标 多文件搜索和替换
-使用 PCRE 正则表达式在工作目录下递归搜索 将选定文本自动转换成正则表达式 有较高的搜索速度 对搜索结果做替换 当前 buffer 内的搜索和替换
-一键将选定文本自动转换成正则表达式并执行搜索或替换 依赖 Ferret：实现对搜索和替换操作的封装。 ripgrep：搜索工具，速度快。 工具和方法 Ferret Ferret 是我用过的 vim 搜索扩展里最接近理想的一个，最大的优点是不用引号包裹搜索内容，且较大程度地支持 PCRE 正则表达式。
-EasyGrep 的缺点是正则表达式必须是 shellescape() 过的，手写不方便，也不直观。Ferret 在底层做了 shellescape() ，所以比 EasyGrep 简单一些。不过 Ferret 对反斜杠的处理仍然不直观，例如搜索App\Link，正则表达式是App\\Link，而Ferret里只能用App\\\\Link。原因是从输入到执行，存在著三层转义：Vim命令行、Shell、grep/ag。所以对于EasyGrep，要搜索一个\，必须输入\\\\\\\\。对于Ferret，由于底层做了shellescape()，只需要两层转义，即\\\\。当然这样也不方便，所以我用自定义函数XEscapeRegex()对选择的内容做这个事，不过最完美的方法当然是Ferret自己支持，或者自己再封装一下Ferret的命令，这样输入的正则表达式可读性就正常了。
-Ferret 的另一个优点是可以对搜索结果做筛选，删除不需要做替换的行，再对剩下的行执行批量替换。当执行替换命令 :Acks 时，会自动把上一个 :Ack 命令中的正则表达式或关键词补全到命令的参数中。
-Ferret 最大的问题在于，搜索使用 rg 、 ag 这样的命令行工具，而替换使用 Vim 内置的 :substitute 命令。前者使用 PCRE 正则表达式，而后者使用 Vim 自己的正则表达式。两者在格式上的不兼容导致对一些复杂的 pattern 做搜索和替换时，往往需要对 pattern 做修改才能正常对之前的搜索结果做替换。关于这个问题，后面细说。</description></item><item><title>在Vim窗口标题中显示会话名</title><link>http://0x3f.org/posts/show-session-name-in-vim-window-title/</link><pubDate>Sun, 23 Oct 2016 11:52:00 +0000</pubDate><guid>http://0x3f.org/posts/show-session-name-in-vim-window-title/</guid><description>同时处理多个项目时，在窗口标题中显示会话名，方便区分，需用session管理会话。
-1 2 3 4 5 6 7 8 9 10 11 &amp;#34; custom the window title fun! MyTitleString() let sessionName = xolox#session#find_current_session() let sessionStr = &amp;#39;&amp;#39; if len(sessionName)&amp;gt;0 let sessionStr = &amp;#39; [&amp;#39;.sessionName.&amp;#39;] &amp;#39; endif return &amp;#39;VIM&amp;#39;.sessionStr.&amp;#39;: %-25.55F %a%r%m&amp;#39; endfun au BufEnter * let &amp;amp;titlestring=MyTitleString() set titlelen=70</description></item><item><title>FastFold：Vim折叠功能的救赎</title><link>http://0x3f.org/posts/fastfold-for-vim/</link><pubDate>Wed, 24 Feb 2016 11:06:00 +0000</pubDate><guid>http://0x3f.org/posts/fastfold-for-vim/</guid><description>设置Vim的折叠规则为syntax存在两个问题。一是如果源码中有大量折叠区域，在插入模式中输入会变得很卡。二是刚输入一个折叠区域的起始符号，后面所有的折叠都会被打开。
-第一个问题是因为Vim的syntax折叠规则处理过于低效。而后一个问题对于所有自动折叠规则都会存在，原因是Vim对折叠的更新过早。
-传统的解决办法是将折叠规则置为manual，并在合适的时机重置为syntax或其它相应规则。但是工作繁复而且往往问题很多。
-FastFold是遵循上面所说的方法解决这些问题的插件，不过默认会在所有与折叠相关的时机更新折叠，会导致相关的操作变慢，例如zc和zo时都会有明显的卡顿。鉴于其它时机对折叠的更新已经足够及时，可以通过配置取消受在到明显影响的时机更新折叠：
-1 2 &amp;#34; FastFold只在za/zA/zx/zX时更新折叠信息 let g:fastfold_fold_command_suffixes = [&amp;#39;x&amp;#39;,&amp;#39;X&amp;#39;,&amp;#39;a&amp;#39;,&amp;#39;A&amp;#39;]</description></item><item><title>FZF: 又一个文件模糊查询工具</title><link>http://0x3f.org/posts/fzf-yet-another-fuzzy-finder/</link><pubDate>Mon, 01 Feb 2016 11:42:00 +0000</pubDate><guid>http://0x3f.org/posts/fzf-yet-another-fuzzy-finder/</guid><description>fzf是个独立的命令行工具，索引速度很快，可以通过fzf-vim配合使用。
-特性 功能支持还是比较全的：
-Command List Files [PATH] Files (similar to :FZF ) GitFiles Git files Buffers Open buffers Colors Color schemes Ag [PATTERN] {ag}{5} search result (ALT-A to select all, ALT-D to deselect all) Lines Lines in loaded buffers BLines Lines in the current buffer Tags Tags in the project ( ctags -R ) BTags Tags in the current buffer Marks Marks Windows Windows Locate PATTERN locate command output History v:oldfiles and open buffers History: Command history History/ Search history Snippets Snippets ({UltiSnips}{6}) Commits Git commits (requires {fugitive.</description></item><item><title>ctags vs gtags vs phpctags</title><link>http://0x3f.org/posts/ctags-vs-gtags-vs-phpctags/</link><pubDate>Fri, 29 Jan 2016 17:55:00 +0000</pubDate><guid>http://0x3f.org/posts/ctags-vs-gtags-vs-phpctags/</guid><description>这两天把源码分析工具从ctags向gtags迁移，另外尝试了一下phpctags。
-之前用ctags有两个问题，一个是如果同一tag有多个定义，按Ctrl+]只能跳转到第一处。另一个是用cscope查询tag的调用记录时，有些tag查不到结果。
-几年前接触过gtags，因为当时还不支持宇宙最好语言，所以没用。这次测试了一下，前面两个ctags的问题都可以解决。
-安装后需要手工拷贝gtags.vim和gtags-cscope.vim到vim的plugin目录，然后配置如下：
-1 2 3 4 5 6 7 let Gtags_Close_When_Single = 1 let Gtags_Auto_Update = 0 let g:cscope_silent = 1 au FileType php,python,c,cpp,javascript,go map &amp;lt;C-]&amp;gt; :Gtags&amp;lt;CR&amp;gt;&amp;lt;CR&amp;gt; au FileType php,python,c,cpp,javascript,go map &amp;lt;C-[&amp;gt; :Gtags -r&amp;lt;CR&amp;gt;&amp;lt;CR&amp;gt; nnoremap &amp;lt;leader&amp;gt;&amp;lt;C-]&amp;gt; :execute &amp;#39;Unite gtags/def:&amp;#39;.expand(&amp;#39;&amp;lt;cword&amp;gt;&amp;#39;)&amp;lt;CR&amp;gt; nnoremap &amp;lt;leader&amp;gt;&amp;lt;C-[&amp;gt; :execute &amp;#39;Unite gtags/ref:&amp;#39;.expand(&amp;#39;&amp;lt;cword&amp;gt;&amp;#39;)&amp;lt;CR&amp;gt; 其它选项参见前面两个文件里的注释。
-另外尝试了一下phpctags，据说和ctags兼容并对php做了优化。实际使用效果和ctags没发现有什么区别，不过tagbar-phpctags倒是比tagbar用ctags时效果更好。</description></item><item><title>CtrlP vs Unite vs Command-T vs FuzzyFinder</title><link>http://0x3f.org/posts/ctrlp-vs-unite-vs-command-t-vs-fuzzyfinder/</link><pubDate>Wed, 27 Jan 2016 16:16:00 +0000</pubDate><guid>http://0x3f.org/posts/ctrlp-vs-unite-vs-command-t-vs-fuzzyfinder/</guid><description>简述 Sublime在文件打开速度上的表现很惊艳，Vim有几个扩展可以实现类似功能，本文对这些扩展做个对比。
-虽然每个扩展都或多或少地实现了一些功能，我个人用得最多的也就文件、Tag、Buffer Tag的模糊查找这三个，像MRU、buffer之类的查找不觉得有多大用处，所以提高工作效率的工具一定是在热度环节有很好表现，其余偏门功能可以交给插件实现，在这点上CtrlP和Unite做得很好。所以下面针对最常用的这三个功能做下对比，更多功能的对比见下表：
-文件模糊查找 Command-T的文件索引速度最快，各方面在这几个扩展中的表现都是最好的。
-CtrlP默认使用VIM自建的globpath()，需要手工配置使用ag以获取更快的速度，据说使用find命令效率更高，实际感觉和ag差别不大。
-Unite也需要手工设置使用ag，而且可以实现异步索引，在这一点的体验上好于前两个，但是在模糊匹配的排序上表现不好，比如输入“php”，当然希望“/etc/php.ini”这样的结果排在“/home/peter/host/tmp.txt”前面，实际往往不是这样，Unite的几个sorter里，数rank的排序结果最接近于这个要求，但是表现仍然不如前两个。
-Tag模糊查找 三个扩展都是通过ctags实现，虽然Unite的排序问题仍然存在，对于Tag这么简短的东西，问题不大。
-Buffer Tag模糊查找 CtrlP的表现是最好的。
-Unite需要通过unite-outline这个source实现，但是只能列出类和方法，无法定制列举类型。而且默认选中排在第一位的类名，查询方法时很不方便。
-Command-T不支持此功能。
-我的选择 FuzzyFinder是该类扩展里的老前辈，不过早已不维护，功能上不比其它几个出彩。Command-T虽然在文件索引速度上表现最好，但是优势并不很明显，而且支持功能最少。所以排除这两个。
-在最常用的三个功能上，CtrlP的综合表现是最均衡的，所以留下它。Unite本身是一种统一的交互方式和界面，很多扩展（source）可以实现五花八门的功能，像unite-outline虽然在Buffer Tag上表现不佳，对于Markdown和Vim文档还是很有用的。
-Update: 2016-02-01 FZF: 又一个文件模糊查询工具</description></item><item><title>简化Vim Addons Manager安装扩展的操作</title><link>http://0x3f.org/posts/simplify-vim-addon-installation-issues/</link><pubDate>Wed, 20 Jan 2016 18:05:00 +0000</pubDate><guid>http://0x3f.org/posts/simplify-vim-addon-installation-issues/</guid><description>相对Sublime的Package Control，VAM安装和卸载扩展的操作很烦琐。以下脚本在安装完扩展后自动注册，无须手工添加到vimrc，另外增加命令:UninstallAddons，从注册表中删除扩展。
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 set runtimepath+=~/.vim/addons/vim-addon-manager let active_addons = [] let s:vamRegistryFile = expand(&amp;#39;~&amp;#39;).&amp;#39;/.vim/vam_registry&amp;#39; if filereadable(s:vamRegistryFile) let active_addons += readfile(s:vamRegistryFile) endif call vam#ActivateAddons(active_addons) &amp;#34; Addon post-install hook.</description></item><item><title>使用gn操作增强Vim的搜索</title><link>http://0x3f.org/posts/enhance-search-with-gn-in-vim/</link><pubDate>Sun, 14 Jun 2015 21:16:00 +0000</pubDate><guid>http://0x3f.org/posts/enhance-search-with-gn-in-vim/</guid><description>gn是Vim 7.4新增的一个操作（motion），作用是跳到并选中下一个搜索匹配项。
-具体说，Vim里执行搜索后，执行n操作只会跳转到下一个匹配项，而不选中它。但是我们往往需要对匹配项执行一些修改操作，例如替换、删除或修改大小写等，如果先跳转再执行对应操作，会比较繁琐。gn可以和相应的操作结合，简化这些过程。
-举个栗子。如果要把所有的win、linux替换成大写，可以先用正则搜索“\(win|linux\)\C”，然后执行“gUgn”，此时下一个匹配的结果就会被替换成大写，然后直接执行“.”重复上次操作即可。
-此外，常用的组合有：
-cgn: 删除下一个匹配项，并进入插入模式。 dgn: 删除下一个匹配项，并保持常规模式。 和操作“N”相同，执行“gN”是逆向操作。</description></item><item><title>开始用在线Markdown编辑器记笔记</title><link>http://0x3f.org/posts/start-taking-note-in-online-markdown-editor/</link><pubDate>Thu, 20 Nov 2014 22:35:00 +0000</pubDate><guid>http://0x3f.org/posts/start-taking-note-in-online-markdown-editor/</guid><description>开始用支持VIM模式的在线Markdown编辑器记笔记。既非鼠辈（鼠标依赖症不治者），始终忍受不了其它WYSIWYG（所见即所得）的在线笔记。
-大部分在线笔记最傻X的一点是，必须点一下编辑按钮才能开始写东西。支持VIM模式的笔记就不用说了，丝般顺滑，不是我大Vimer就不会懂个中骚柔。
-组织上一向后知后觉。智能手机刚开始的时候，组织上很不感冒，理由是屏幕易碎、电池难支、冯唐易老、李广难封。而今现在眼目下，一日不搞机，如隔三秋。在线Markdown编辑器出现也有段时间了，一直觉得这货无非就是给Markdown加了个可笑的准WYSIWYG，现在看来，真是做笔记的不二神器，罪过罪过。
-说说组织上跟Markdown的故事。很久很久以前，博客刚开始流行的时候，组织上开始写博客，和大部分人一样，注册个账号写公开日记，很快就忍受不了WYSIWYG编辑器失控的格式，于是开始手写HTML代码，很快就发现这货真TM反人类，从此恨乌及乌至今最讨厌的数据交换格式还是XML，于是自定几种格式或标记，用Java写了个解析工具，把文章源码翻译成HTML。突然有天发现这个星球上居然有种叫轻量型标记语言的东西，干的就是这么个事，只不过我的那些标记和解析工具又丑又烂而已。试了几种之后，最终选了Markdown，从此举案齐眉云云。</description></item><item><title>Vim强制在PHP中使用HTML注释的方法</title><link>http://0x3f.org/posts/force-commenting-html-in-php-files-in-vim/</link><pubDate>Thu, 13 Nov 2014 21:45:00 +0000</pubDate><guid>http://0x3f.org/posts/force-commenting-html-in-php-files-in-vim/</guid><description>对PHP页面模板中的HTML做注释，NERDCommenter是根据文件类型处理的，所以必须临时转换文件类型：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 &amp;#34; 强制使用HTML的注释 function! ForceHTMLComment(mode, type) range set ft=html if a:mode == &amp;#34;x&amp;#34; execute a:firstline.&amp;#34;,&amp;#34;.a:lastline.&amp;#34;call NERDComment(\&amp;#34;x\&amp;#34;, \&amp;#34;&amp;#34;.a:type.&amp;#34;\&amp;#34;)&amp;#34; else if a:type == &amp;#34;Sexy&amp;#34; normal ,cs else normal ,cc endif endif set ft=php endfunction au FileType php nmap &amp;lt;buffer&amp;gt; &amp;lt;leader&amp;gt;fhcc :call ForceHTMLComment(&amp;#34;n&amp;#34;, &amp;#34;Comment&amp;#34;)&amp;lt;CR&amp;gt; au FileType php vmap &amp;lt;buffer&amp;gt; &amp;lt;leader&amp;gt;fhcc :call ForceHTMLComment(&amp;#34;x&amp;#34;, &amp;#34;Comment&amp;#34;)&amp;lt;CR&amp;gt; au FileType php nmap &amp;lt;buffer&amp;gt; &amp;lt;leader&amp;gt;fhcs :call ForceHTMLComment(&amp;#34;n&amp;#34;, &amp;#34;Sexy&amp;#34;)&amp;lt;CR&amp;gt; au FileType php vmap &amp;lt;buffer&amp;gt; &amp;lt;leader&amp;gt;fhcs :call ForceHTMLComment(&amp;#34;x&amp;#34;, &amp;#34;Sexy&amp;#34;)&amp;lt;CR&amp;gt; au FileType php nmap &amp;lt;buffer&amp;gt; &amp;lt;leader&amp;gt;fhcu :call ForceHTMLComment(&amp;#34;n&amp;#34;, &amp;#34;Uncomment&amp;#34;)&amp;lt;CR&amp;gt; au FileType php vmap &amp;lt;buffer&amp;gt; &amp;lt;leader&amp;gt;fhcu :call ForceHTMLComment(&amp;#34;x&amp;#34;, &amp;#34;Uncomment&amp;#34;)&amp;lt;CR&amp;gt; 有日子没写vimscript了，手都生了。</description></item><item><title>UltraBlog.vim v3.6.1: 文章分类自动补全</title><link>http://0x3f.org/posts/ultrablog-v361-released/</link><pubDate>Sun, 20 Apr 2014 22:50:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v361-released/</guid><description>春节期间收到两个issue，一直拖到今天才有时间完成。
-增加了一个功能，在文章编辑视图的元数据中分类那行，使用热键&amp;lt;C-X&amp;gt;&amp;lt;C-U&amp;gt;自动完成文章的分类。在配置数组ub_blog中增加键值对“categories”，默认使用这一项的值实现自动完成，如下：
-1 2 3 4 5 6 7 let ub_blog = {&amp;#39;login_name&amp;#39;:&amp;#39;admin&amp;#39;, \&amp;#39;password&amp;#39;:&amp;#39;pass2011&amp;#39;, \&amp;#39;url&amp;#39;:&amp;#39;http://www.sample.com/&amp;#39;, \&amp;#39;xmlrpc_uri&amp;#39;:&amp;#39;xmlrpc.php&amp;#39;, \&amp;#39;db&amp;#39;:&amp;#39;$VIM/UltraBlog.db&amp;#39;, \&amp;#39;categories&amp;#39;: &amp;#39;News|Computer|Image&amp;#39; \} 如果这一项不存在，将从博客中拉取分类数据。
-自从迁移到Octopress，有两年不用Wordpress了，没想到居然还有人在用UltraBlog.vim。</description></item><item><title>How to Make YouCompleteMe Compatible with UltiSnips</title><link>http://0x3f.org/posts/make-youcompleteme-ultisnips-compatible/</link><pubDate>Thu, 23 May 2013 11:26:00 +0000</pubDate><guid>http://0x3f.org/posts/make-youcompleteme-ultisnips-compatible/</guid><description>I replaced NeoComplCache with YouCompleteMe today. The main reason is for the auto-complete feature and the fast speed. Besides, it seems that YCM provides more features than NCC.
-Although NCC can also do auto-completions, it was so slow that I had to turn it off. For a long time, I have been doing completions by triggering the TAB key manually. YCM is much faster in most conditions, but I found it is also slow for C source files.</description></item><item><title>Vundle vs Pathogen</title><link>http://0x3f.org/posts/vundle-vs-pathogen/</link><pubDate>Wed, 22 May 2013 21:33:00 +0000</pubDate><guid>http://0x3f.org/posts/vundle-vs-pathogen/</guid><description>I have been using Pathogen for a long time and I am happy with it. But it seems that more and more Vim scripts are recommending to use Vundle in their install references. So I made a study today, the conclusion is, although almost all the articles I found from Google have a positive attitude on Vundle, I still prefer Pathogen.
-Most supporters of Vundle praise it for one reason, that is, it can install and update scripts automatically, which is lacked by Pathogen.</description></item><item><title>UltraBlog.vim v3.5.0: 内建浏览器</title><link>http://0x3f.org/posts/ultrablog-v350-released/</link><pubDate>Mon, 30 Apr 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v350-released/</guid><description>此前预览文章是通过调用系统默认的网络浏览器实现的，缺点是这些功能完备的浏览器启动速度不甚理想，尤其是火狐，谁用谁知道。
-前两天看了TuxRadar的一个Podcast，几分钟内就可以用pywebkitgtk拼装出一个五脏俱全的网络浏览器，pywebkitgtk这个东西实在是非常的好用。不过我实测后发现这东西加载页面的速度比较慢，而且貌似是单线程的，因为图片都是放在最后才加载，不知道是这个绑定本身的问题，还是有API可以实现的。于是突然想到拿这个东西实现一个简单的浏览器，很适合在UB里预览文章。
-增加了一个选项“ub_use_ubviewer”，默认值是1，即默认使用这个内建的浏览器预览文章。当这个选项的值被设为0时，仍然使用系统的默认浏览器，并且在Vim启动时不会加载内建的浏览器。这样做一是为了多一种选择，再一个也可以避开烦人的GTK警告：
-** (gvim:13629): WARNING **: Trying to register gtype 'GMountMountFlags' as enum when in fact it is of type 'GFlags'
-** (gvim:13629): WARNING **: Trying to register gtype 'GDriveStartFlags' as enum when in fact it is of type 'GFlags'
-** (gvim:13629): WARNING **: Trying to register gtype 'GSocketMsgFlags' as enum when in fact it is of type 'GFlags'
-这些警告是GTK或其它一些程序库的Bug造成的，虽然只在虚拟终端中启动Vim时会显示并且不影响使用，但总会有警告恐惧症患者会觉得这种东西很闹心。如果这样，就把这个选项的值设成0，用回巨型浏览器好了。
-本次更新的全部内容如下：
-Feature: Add a tiny web browser to do previewing, which starts much faster than full-functional browsers like firefox and chromium.</description></item><item><title>UltraBlog.vim v3.4.0: 正则表达式、批量替换和调试模式</title><link>http://0x3f.org/posts/ultrablog-v340-released/</link><pubDate>Sun, 29 Apr 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v340-released/</guid><description>这次的更新主要引入了支持正则表达式的全文检索、批量替换和调试模式。
-正则表达式 我一直觉得原来的全文检索有一个遗憾，虽然可以通过多个关键词实现较为精确的查询，但还是不如正则表达式灵活和精确。
-这是个蓄谋已久的需求，但直到真正做起来，才发现很多有意思的东西。虽然SQLite3提供支持正则表达式查询的“REGEX”关键词，但并没有实际实现这个功能，而是需要写程序实现并在数据库接口中注册这个函数：
-```python import sqlite3 conn = sqlite3.connect('/tmp/your-database-file.db') # 使用正则表达式匹配给定内容的函数，返回布尔类型 def regexp_search(expr, item): """Check if the item has a sub-string which matches the expr""" reg = re.compile(expr) return reg.search(item) is not None # 在数据库中注册这个函数 conn.create_function('REGEXP', 2, regexp_search) cur = conn.execute('select id,title from post where content REGEXP ?', '\babc\b') row = cur.fetchone() print row conn.close() ``` 在SQLAlchemy中具体的实现方式是：
-```python # 注册函数 dbe = sqlalchemy.create_engine("sqlite:///tmp/your-database-file.db") conn = dbe.connect() conn.connection.create_function('REGEXP', 2, regexp_search) # 在SQL Expression Language中创建查询条件 tbl = Post.</description></item><item><title>UltraBlog.vim v3.3.0：I18N、超时时间和其它</title><link>http://0x3f.org/posts/ultrablog-v330-released/</link><pubDate>Sun, 15 Apr 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v330-released/</guid><description>UB一岁了，这算是个周年纪念版吧。
-在这一年里，因为各种原因，博客写得没有以前多了，但每篇都是用这个插件写的，我觉得很好用。断断续续地做了一些修改，因为一切都是一个人在做，所以大的变化不多。这次这个版本里有些改动还是要感谢荒野无灯童鞋，他的建议很大程度上催生了这个新版本：比如加入保存命令的热键映射选项，这样可以使用保存普通文件的热键保存UB中的内容，我自己以前也经常习惯性地用错热键；还有socket超时时间的选项，最近我这里也经常性地在UB操作博客时报超时的异常，荒童鞋关于自定义socket超时时间的建议一语惊醒了梦中人。
-此外，似乎与近期Vim的一次升级有关，在Vim中调用Python接口打印任何内容到标准IO都会导致Vim崩溃，所以这次把所有的输出都改成了调用Vim的输出命令来做。
-本次修改的内容中，还有一项比较重要的内容就是实现了国际化，目前只提供英文和简体中文两种语言，由于Vimball不能处理二进制文件，所以从此以后UB改用zip格式压缩包打包。
-以下是本次更新的详细内容：
-Feature: Add i18n support ! Feature: Add a new option ub_hotkey_save_current_item, users can define their own hotkey for :UBSave. Feature: Add a new option ub_socket_timeout, users can customize the timeout period in seconds, useful for slow networks. Bugfix: Exception raised when one event is processed by more than one event handlers. Change: Echoing messages now uses the command :echoerr instead of python's sys.stderr, because Vim crashes on this due to an upgrade recently.</description></item><item><title>读完《Hacking Vim7.2》</title><link>http://0x3f.org/posts/after-reading-hacking-vim72/</link><pubDate>Mon, 28 Nov 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/after-reading-hacking-vim72/</guid><description>作者对Vim很有心得，分享了很多好的经验。这本书于新手可以用来入门，于老手也多有可取之处，是本学习Vim很不错的参考书。
-Posted via UltraBlog.vim.</description></item><item><title>MatchTag.vim: 高亮配对的HTML标签</title><link>http://0x3f.org/posts/highlighting-paired-html-tags-using-matchtag-vim/</link><pubDate>Wed, 23 Nov 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/highlighting-paired-html-tags-using-matchtag-vim/</guid><description>两年前我曾在Vim邮件列表里问怎样高亮配对的HTML标签，但没能解决。今天意外收到一封邮件，Linqq童鞋在StackOverflow上问了同样的问题，有人就写了这个插件。
-Posted via UltraBlog.vim.</description></item><item><title>UltraBlog.vim v3.1释出：代码重构与MacVim支持</title><link>http://0x3f.org/posts/ultrablog-v310-released/</link><pubDate>Sat, 05 Nov 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v310-released/</guid><description>距离上一个版本的释出已经有三个月了，这次新版并没有增加多少功能性的内容，主要是代码的重构和对在MacVim下稳定性的改进。
-对依赖关系检查的不细致导致了一些麻烦，抛出的错误信息有时与实际原因相距甚远。由于开始时是以实现功能为主，所以都是直接用函数实现的，之后修修补补，代码冗余而且维护麻烦。于是著手重构主要功能的源码，面向对象，把所有检查逻辑放到父类中去实现，子类只关注自身逻辑，最后新版减少了二百多行的代码量。
-在重构的过程中偶然发现，在MacVim中，程序抛出任何异常，即便是有捕获逻辑，也会导致编辑器崩溃。在这里简略地提到：
-the failure was actual a crash, through some strange combination of threading, matplotlib pyplot backend, and ssh X11 forwarding, sys.stderr had somehow been assigned to something which python complained wasn't a file-like object
-于是将所有标准输出与标准错误输出语句换成另一种形式：
-```python # 原形式 sys.stdout.write('xxx') sys.stderr.write('xxx') # 新形式 print >> sys.stdout, 'xxx' print >> sys.stderr, 'xxx' ``` 以上是新版主要变更的内容，此外，也顺便解决了开发过程中发现的个别Bug和做了其它一些改动：
-Change: The key "xmlrpc" of the settings list is dropped, a new one with the name "</description></item><item><title>Enable Code Snippet Highlighting For UltraBlog.vim Templates</title><link>http://0x3f.org/posts/enable-code-snippet-highlighting-for-ultrablog-vim-templates/</link><pubDate>Sat, 27 Aug 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/enable-code-snippet-highlighting-for-ultrablog-vim-templates/</guid><description>Templates make it possible for users previewing posts in custom formats in UltraBlog.vim. However, there is more you can do with our highly customizable templates. This article discusses how to highlight code snippets in posts by the use of some third-party open-source tools.
-Before setting out to work, let me introduce the tools we are about to use:
-highlight.js: A javascript library which highlights code blocks in web pages automatically. jquery: The famous RIA development javascript library.</description></item><item><title>UltraBlog.vim v3.0释出：全文检索与事件驱动</title><link>http://0x3f.org/posts/ultrablog-v300-released/</link><pubDate>Mon, 25 Jul 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v300-released/</guid><description>用了一周的业余时间，昨天我释出了UltraBlog.vim的3.0版。新版本主要加入了全文检索的功能，并引入事件驱动的模式。
-全文检索是我蓄谋已久的功能，一个不能搜索的博客客户端的管理功能是大打折扣的。得益于SQLite数据库和SQLAlchemy框架，全文检索的实现是很简单的，新增加的:UBFind命令将在所有文章和页面的标题与内容中查询，并将搜索结果显示在一个可分页的列表中。这个命令支持任意多个关键词，各关键词之间遵循与的关系。此外，检索结果中，所有的关键词将被自动标记为高亮。
-事件驱动模式的引入是我悍然将版本号跳跃到3.x的主要原因。
-在前几个版本中，我实现了对多窗口的支持，它使得用户可以在新窗口中打开列表中的文章。但UltraBlog.vim最初开发的时候并没有考虑到多窗口的问题，所有命令都只针对当前窗口进行操作。这就有了缓冲区内容同步的问题，假如在一个新的缓冲区中打开了和另一个缓冲区相同的文章，则一个缓冲区内容的改变不会同步到另外一个中，这多少是有些隐患的。
-最直接的做法是在所有可能改变缓冲区内容的功能中加入对其它缓冲区的处理，但这样做有不少问题：
-代码耦合度太高，违反K.I.S.S原则，不利于今后的开发和维护 函数体过长，我讨厌难看的代码 代码冗余，重复劳动 事件驱动模式可以很好的解决以上问题，一个函数只干一件事，做完后一个事件抛出去，至于连带著要做什么，谁监听这个事件谁去处理，代码的耦合度很低，复用度很高，易于维护和阅读。
-UltraBlog.vim引入事件驱动模式处理缓冲区同步的问题。不同的操作抛出不同的事件，所有的事件继承自父类UBEvent：
-```python class UBEvent: def __init__(self, srcObj): self.srcObj = srcObj class UBDebugEvent(UBEvent): pass class UBTmplDelEvent(UBEvent): pass class UBTmplSaveEvent(UBEvent): pass class UBLocalPostDelEvent(UBEvent): pass class UBRemotePostDelEvent(UBEvent): pass class UBPostSendEvent(UBEvent): pass class UBPostSaveEvent(UBEvent): pass ``` 一个可能改变缓冲区内容的操作执行完后，创建一个特定的事件并将其加入到事件队列中。事件队列类中存放两个列表，一是事件队列，二是事件监听器列表；提供三个方法，分别用来注册事件监听器、对事件执行入队列操作和处理队列中所有事件：
-```python class UBEventQueue: queue = [] listeners = [] @classmethod def fireEvent(cls, evt): cls.queue.append(evt) @classmethod def processEvents(cls): for evt in cls.queue: for listener in cls.listeners: if listener.isTarget(evt): cls.queue.remove(evt) listener.</description></item><item><title>UltraBlog.vim v2.3.0 Released With Templates</title><link>http://0x3f.org/posts/ultrablog-v230-released/</link><pubDate>Mon, 13 Jun 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v230-released/</guid><description>I released the new version 2.3.0 of UltraBlog.vim last week. The main improvement in this version is that templates are introduced in.
-Templates are simply HTML strings, they are used to preview posts/pages in the browser locally. This feature is a reparation for the remote previewing, due to the limit of the API, users cannot send a post to Wordpress as draft and preview it without affecting the post status if the post has been published.</description></item><item><title>Vim自定义命令的参数自动补全</title><link>http://0x3f.org/posts/how-to-define-auto-completion-for-vim-commands/</link><pubDate>Sat, 11 Jun 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/how-to-define-auto-completion-for-vim-commands/</guid><description>UltraBlog.vim起初的几个版本采用增加命令个数的方式减少每个命令的参数个数，目的是降低命令格式记忆的难度。从2.3.0版本起，开始采用Vim自定义命令的一些高级特性，精简命令个数，虽然参数个数增加了，但由于实现了参数补全，反而更加直观。
-Vim对自定义命令提供了多种补全参数的方式，详见:h command-complete。其中，最常用的当属custom：
-```vim command! -nargs=? -complete=custom,StatusCmpl UBSend exec('py ub_send_item()') ``` 以上代码定义了一个自定义命令UBSend，它可以获得一个或零个参数（-nargs=?），如果指定参数，则补全方式采用custom，该方式调用一个名为StatusCmpl的函数并以其返回值作为补全的值域：
-```vim function! StatusCmpl(ArgLead, CmdLine, CursorPos) return "draft\npublish\nprivate\npending\n" endfunction ``` 从以上代码可以看出，该函数需要接受三个参数，返回值应该是一个用换行符“\n”分割的字符串，在执行补全时，Vim自动使用正则表达式匹配备选项。对于只有一个参数的情况，这种实现方式简单高效。
-对于参数较多的情况，customlist补全方式最为适用：
-```vim command! -nargs=* -complete=customlist,UBNewCmpl UBNew exec('py ub_new_item()') ``` 以上代码定义了命令UBNew，customlist补全方式调用函数UBNewCmpl获取补全的值域：
-```vim function! UBNewCmpl(ArgLead, CmdLine, CursorPos) let lst = split(a:CmdLine) if len(a:ArgLead)>0 let lst = lst[0:-2] endif let results = [] " For the first argument, complete the object type if len(lst)==1 let objects = ['post','page','tmpl'] for obj in objects if stridx(obj,a:ArgLead)==0 call add(results,obj) endif endfor "</description></item><item><title>人性化Vim的预览窗口</title><link>http://0x3f.org/posts/humanize-preview-window-in-vim/</link><pubDate>Sun, 29 May 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/humanize-preview-window-in-vim/</guid><description>Vim的预览窗口由 :ptag 等命令触发，可用于预览函数定义。但在缺省情况下，预览窗口的高度是固定的，对于注释信息较多的函数，往往不能完全显示注释，而对于注释较少的函数，又会有多余的行浪费屏幕空间。
-下面的函数用于解决这个问题：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 &amp;#34; 调用:ptag命令预览光标所在&amp;lt;word&amp;gt;的定义 &amp;#34; 对类C语言风格的函数/方法定义和注释有效，对其余情况仍沿用:ptag的原有效果 function! PTagIt() exec &amp;#34;ptag &amp;#34;.expand(&amp;#34;&amp;lt;cword&amp;gt;&amp;#34;) let cwin = winnr() silent! wincmd P let lnr = line(&amp;#39;.&amp;#39;) if lnr &amp;lt; 3 return endif if foldlevel(&amp;#39;.</description></item><item><title>UltraBlog.vim开发手记</title><link>http://0x3f.org/posts/ultrablog-development-note/</link><pubDate>Mon, 11 Apr 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-development-note/</guid><description>对于博客已死的说法，我一点都不感到奇怪。早在几年前博客还比较火的时候我就表达过对博客泡沫的看法。
-经历了短暂的tumblog的风头，微博成为现在最火的媒介。说博客已死，无非就是说微博将成为个人信息传播的主流。好吧，现在我知道那时候我所说的不懂什么是博客的人都去干什么了。
-但是博客还是会继续发展，微博的兴起只会减少滥竽充数。因为微博突出的是时效性，最缺乏的是系统性和可重复更新的能力。微博的短处，正是博客的长处。这让我对博客有了一个新的、迟到了很久的认识──一个好的博客，它的文章不应该是写掉就忘的，而应该是不断地更新著的。
-UltraBlog.vim就是出于这个需要而写的。
-我对博客客户端的使用大概可以追溯到四五年前，那时候博客正火，在比较了几个BSP后选择了中国博客网，就是因为他们提供桌面客户端。后来独博之后也试用过几个通用的客户端，但都没坚持多久，最根本的原因是它们几乎无一例外地都是WYSIWYG。而WYSIWYG的编辑器生成的HTML源码几乎都使用inline的样式，这就导致文章的排版布局很难控制，我对WYSIWYG其实是很抵触的，至今都不怎么用Office这类东西。
-后来我意识到，我所需要的是样式与内容分离，于是准备自己写一个客户端，后来由于工作的原因不了了之。与此同时，我自定义了一套文章格式并用Java写了一个转换文章到HTML的工具，直到后来发现Markdown，我才知道我其实是需要一个轻量标记语言。
-使用Markdown之后，写博客开始变得轻松愉快。我一度用过一段时间SciTE，还用Lua写了个辅助脚本。但是我需要一个完整的客户端来管理文章，而这是一个编辑器所不能胜任的，所以就著手实现一个支持Markdown的客户端。这一次走得比较远，ForeverFantasy最终达到了可用的程度，我一度用它写过一段时间的博客。但是作为一个Vim重症患者，wxPython的编辑器部件是远远达不到我需要的水平的。虽然后来还实现了调用外部程序处理文章内容（当然也可以调用Vim），但总归觉得不舒服，至今已经一年没更新了。
-直到前段时间试用了一下VimRepress，在修改这个插件的时候突然受到启发，我这几年的需求原来是可以这么简单地解决的。
-其实在几年前vimpress刚刚发布的时候我就了解过这个东西，包括此后接连发布的几个Vim写博客的插件，它们和我原来写的SciTE的那个辅助脚本没有本质的区别，都是博客编辑器。与完整的客户端相比，编辑器缺少对本地文章源码的管理，而且它们不记录文章源码和发布的文章的关联关系，简单地说是无状态的。这不符合博客文章持续更新的观点。
-UltraBlog.vim使用SQLAlchemy做数据库抽象层，将所有文章的源码及其状态保存在本地的一个SQLite数据库中，并且以此为基础，通过XMLRPC接口实现对博客文章、页面的CRUD操作。同时利用Vim分模式的特点实现了可分页的文章列表和文章编辑视图。
-UltraBlog.vim目前支持Markdown和HTML两种格式的文章，它最大的特点是在Markdown格式的源码和发布到博客中的文章之间建立联系，你可以随时修改本地数据库中的Markdown源码并更新博客中对应的文章。
-新的功能还会不断地加入。
-Posted via UltraBlog.vim.</description></item><item><title>UltraBlog.vim: Ultimate Vim Blogging Plugin</title><link>http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/</link><pubDate>Sat, 02 Apr 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/</guid><description>Introduction UltraBlog.vim is yet another Vim blogging script for Wordpress.
-The biggest difference between UB and other similar scripts is that UB is an ultimate client, which stores posts locally in an SQLite database, while others just operate remotely. In this way, many things can be done easily by the advantage of local storage and many other utilities, for example, you can search for posts stored in the database with a few keywords by typing a simple command, also you can preview drafts with any of your favorite templates as soon as you want to.</description></item><item><title>解决gVim白边问题的伪方法</title><link>http://0x3f.org/posts/the-fake-way-to-fix-white-gap-of-gvim/</link><pubDate>Mon, 21 Mar 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/the-fake-way-to-fix-white-gap-of-gvim/</guid><description>gVim的窗口大小与行数、列数、字体宽度等都有关系，并不像一般的图形界面一样可以完全地最大化或全屏，如果几个因素组合后与屏幕分辨率不符合，就会在屏幕的左边和底部出现灰色的白边。
-这是gVim非常著名的一个问题，它使最大化的gVim窗口显得非常难看。目前仅有一种变通的解决方法，就是把白边部分的颜色设置成和gVim主题背景色一致的颜色：
-```bash # 修改~/.gtkrc-2.0，加入如下内容： style "vimfix" { bg[NORMAL] = "#DBDBD2" # this matches my gvim theme 'Normal' bg color. } widget "vim-main-window.*GtkForm" style "vimfix" ``` 由于并非真正地去掉白边，所以只能算是个伪方法。
-Windows下的方法见这里。</description></item><item><title>使用Vim写博客</title><link>http://0x3f.org/posts/blogging-with-vim/</link><pubDate>Sat, 19 Mar 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/blogging-with-vim/</guid><description>VimRepress是Vim写博客的插件中较新的一个，是久未更新的Vimpress的一个衍生版。
-虽然不是所有此类插件中功能最多的一个，但VimRepress非常实用，除包含最常用的几个功能外，还支持Markdown。但是当前版本的VimRepress在转换Markdown格式的字符串到HTML时，是通过直接调用外部命令markdown来实现的，这显然只是针对Linux（及其它类UNIX）系统设计的。
-为了使VimRepress支持在Windows下使用Markdown写文章，可以对它做一些改进。
-修改VimRepress的源文件blog.vim，在if __name__ == "__main__":这一行的上方加入如下两个函数：
-```python def markdown_preview2(): import sys reload(sys) sys.setdefaultencoding('utf-8') import markdown2 as mkd global vimpress_temp_dir if vimpress_temp_dir == '': vimpress_temp_dir = tempfile.mkdtemp(suffix="vimpress") temp_htm = os.path.join(vimpress_temp_dir, "vimpress_temp.htm") html_heads = \ """&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"> """ tmp_file = open(temp_htm, 'w') tmp_file.write(html_heads) txt = "\n".join(vim.current.buffer[:]) #txt = unicode(txt,'cp936') tmp_file.write(mkd.markdown(txt)) #tmp_file.write(mkd.markdown("\n".join(vim.current.buffer[:]))) tmp_file.close() webbrowser.open("file://%s" % temp_htm) def markdown_newpost2(): import sys reload(sys) sys.setdefaultencoding('utf-8') import markdown2 as mkd global vimpress_temp_dir if vimpress_temp_dir == '': vimpress_temp_dir = tempfile.</description></item><item><title>修改Vimball默认安装路径</title><link>http://0x3f.org/posts/howto-set-the-default-vimball-install-path/</link><pubDate>Sat, 19 Mar 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-set-the-default-vimball-install-path/</guid><description>在Windows下，我希望把vba文件安装到$VIM/vimfiles目录下，而不是用户主目录中。
-Vim在安装vba文件时默认从$VIMRUNTIME中取出第一个路径作为安装路径，使用如下命令查看当前设置：
-```vim :echo &amp;rtp ``` 在Windows下，Vim默认将用户主目录放在了$VIMRUNTIME的第一个，因此才会将vba安装到用户主目录。
-修改方法为在vimrc中加入如下设置：
-```vim set rtp-=$HOME/vimfiles ```</description></item><item><title>Vim中设置关键词识别规则的方法</title><link>http://0x3f.org/posts/howto-set-keyword-identification-in-vim/</link><pubDate>Wed, 22 Dec 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-set-keyword-identification-in-vim/</guid><description>在Vim中，关键词是一个至关重要的概念。合理地利用关键词，可以快速地对光标下有特殊含义的字符串进行一系列的操作，例如通过快捷键复制关键词、查询函数定义或文档、在项目中查询所有引用当前函数的地方等等。这对工作效率的提升有极大的帮助。
-但我的Vim对PHP文件的关键词识别有问题，在选择函数名的时候总是将函数名后的小括弧一起选入。
-Vim使用选项iskeyword设定关键词的匹配规则，使用如下命令查看当前文件类型的关键词规则：
-1 set iskeyword 我这里查看PHP文件的规则结果如下：
-iskeyword=@,48-57,_,192-255,$,( 不明白为什么缺省设置中会有左括弧，在vimrc中加入如下配置取消之：
-1 au FileType php set iskeyword-=(</description></item><item><title>Vim保存文件时移除尾行换行符的方法</title><link>http://0x3f.org/posts/howto-remove-eof-in-vim/</link><pubDate>Sun, 05 Dec 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-remove-eof-in-vim/</guid><description>Vim认为一个文本文件的每一行都应该由一换行符结束，即使文件的最后一行也不例外。这就使得Vim保存过的文本文件在其它文本编辑器中查看时可能会在文件末尾多出一个空行。一般来说，这不是个问题，但对于程序员来说，有时候一些不规范的运行环境或其它组件就要求文件的最后一行不能有换行符，否则就会出莫名其妙的问题，尤其是在Windows环境下最常见。
-要在保存文件时不在最后一行添加换行符，最常见、最简单的方法就是：
-1 2 :set binary :set noendofline 但是这样做有一个问题，就是会把DOS格式的文件自动转换成UNIX格式，WinSlave们肯定不希望这么做。
-因此，可在vimrc中加入如下内容：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 &amp;#34; Save the current buffer as a file with no EOF sign. function! SaveAsNOEOF(filename) let a=getline(1,line(&amp;#39;$&amp;#39;)-1) let b=map(a, &amp;#39;iconv(v:val,&amp;#34;&amp;#39;.&amp;amp;enc.&amp;#39;&amp;#34;,&amp;#34;&amp;#39;.&amp;amp;fenc.&amp;#39;&amp;#34;) . nr2char(13)&amp;#39;) call extend(b, getline(&amp;#39;$&amp;#39;, &amp;#39;$&amp;#39;)) call writefile(b,a:filename, &amp;#39;b&amp;#39;) if a:filename == bufname(&amp;#39;%&amp;#39;) set nomodified endif endfunction &amp;#34; Save the current buffer and get rid of the EOF sign.</description></item><item><title>使用热键切换Vim的QuickFix窗口打开状态</title><link>http://0x3f.org/posts/howto-toggle-quickfix-in-vim-using-hotkeys/</link><pubDate>Fri, 10 Sep 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-toggle-quickfix-in-vim-using-hotkeys/</guid><description>QuickFix窗口只有打开和关闭的命令，而使用一个热键来切换打开状态可以减少热键资源的浪费，使用也更方便。
-从这里找到使用自定义函数完成此功能的方法：使用一个全局变量记录QuickFix窗口的打开状态，从而判断是应该关闭还是打开。但其提供的函数存在状态同步的问题，假如在QuickFix窗口中使用“:q”退出窗口，此方法将不能正常工作。评论中给出了很好的解决方法，但其提供的代码有些小问题，修改之后如下：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 nmap &amp;lt;leader&amp;gt;co :QFix&amp;lt;CR&amp;gt; nmap &amp;lt;leader&amp;gt;ct :call QFixToggle(1)&amp;lt;CR&amp;gt; command! -bang -nargs=? QFix call QFixToggle(&amp;lt;bang&amp;gt;0) function! QFixToggle(forced) if exists(&amp;#34;g:qfix_win&amp;#34;) &amp;amp;&amp;amp; a:forced != 0 cclose else if exists(&amp;#34;g:my_quickfix_win_height&amp;#34;) execute &amp;#34;copen &amp;#34;.g:my_quickfix_win_height else copen endif endif endfunction augroup QFixToggle autocmd! autocmd BufWinEnter quickfix let g:qfix_win = bufnr(&amp;#34;$&amp;#34;) autocmd BufWinLeave * if exists(&amp;#34;g:qfix_win&amp;#34;) &amp;amp;&amp;amp; expand(&amp;#34;&amp;lt;abuf&amp;gt;&amp;#34;) == g:qfix_win | unlet!</description></item><item><title>启动GVim时自动最大化窗口的方法</title><link>http://0x3f.org/posts/howto-auto-maximize-gvim-at-startup/</link><pubDate>Wed, 25 Aug 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-auto-maximize-gvim-at-startup/</guid><description>根据帮助文档，gvim在windows下的最大化是通过模拟打开窗口菜单并点击最大化菜单项实现的，而在Linux下的方法较为灵活。
-下面的方法是在vim中通过调用wmctrl实现最大化的方法：
-1 2 3 4 5 6 7 8 9 if has(&amp;#39;win32&amp;#39;) au GUIEnter * simalt ~x else au GUIEnter * call MaximizeWindow() endif function! MaximizeWindow() silent !wmctrl -r :ACTIVE: -b add,maximized_vert,maximized_horz endfunction 当然也可以通过配置窗口管理器规则实现自动最大化，但上面的方法更灵活。</description></item><item><title>在Vim中检查语法和执行代码</title><link>http://0x3f.org/posts/syntax-checking-and-code-executing-in-vim/</link><pubDate>Sat, 17 Apr 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/syntax-checking-and-code-executing-in-vim/</guid><description>《The Pragmatic Programmer》是本好书，虽然中文译名极为恶俗。为践行书中提到的DRY原则，我开始反思平时编码时总是重复出现的问题，其中之一就是很低级的语法错误，有时忘了语句最后的分号，有时忘了声明变量，凡此种种，不一而足。
-相对于IDE，我更喜欢Vim，这也是语法错误没有检查出来的原因。因此就产生了给Vim添加语法检查功能的需求。下面是检查PHP代码的vimrc内容：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 &amp;#34; Check the syntax of a PHP file function! CheckPHPSyntax() if &amp;amp;filetype != &amp;#39;php&amp;#39; echohl WarningMsg | echo &amp;#39;This is not a PHP file !&amp;#39; | echohl None return endif setlocal makeprg=php\ -l\ -n\ -d\ html_errors=off\ % setlocal errorformat=%m\ in\ %f\ on\ line\ %l echohl WarningMsg | echo &amp;#39;Syntax checking output:&amp;#39; | echohl None if &amp;amp;modified == 1 silent write endif silent make clist endfunction au filetype php map &amp;lt;F5&amp;gt; :call CheckPHPSyntax()&amp;lt;CR&amp;gt; au filetype php imap &amp;lt;F5&amp;gt; &amp;lt;ESC&amp;gt;:call CheckPHPSyntax()&amp;lt;CR&amp;gt; 以上脚本为Vim添加了一个检查PHP语法错误的函数和两个快捷键映射，此后可按F5键即时检查当前Buffer中的PHP当面的语法。和网上其它同类的函数相比，这个函数的优点在于改进了检查结果的显示，使用silent命令隐藏了所有不必要的输出。</description></item><item><title>Python控制外部进程的灵异事件</title><link>http://0x3f.org/posts/supernatural-phenomenon-of-controlling-external-processes-in-python/</link><pubDate>Mon, 08 Mar 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/supernatural-phenomenon-of-controlling-external-processes-in-python/</guid><description>春节前的一段时间，重新拾起近一年没动过的ForeverFantasy。
-虽然一年内没什么更新，但是我却一直都在用，基本上只限于将用Vim写好的Markdown格式的文档转换成HTML。
-重写了相当一部分代码，较大程度地改变了界面布局，突然发现经过一年的沉淀，对wxPython的理解增进了不少，开发起来比起去年这个时候清楚了很多。
-这些天来一直坚持着每天或多或少的做一些，如果说有什么主要的进展的话，那就是界面的重构，以及昨天实现了调用Vim编辑文档并回收文档内容的功能。
-ForeverFantasy和Vim协同的一个最大的问题就是如何判断Vim已经退出。Python调用外部程序的方法有很多，比如传统的commands模块、os.system()等，subprocess是致力于替代这些旧有的方式的一个模块，它的一个特点是可以在启动一个外部程序作为子进程后还能监控这个进程的运行状态。这为ForeverFantasy在Vim退出后回收文档内容提供了更简捷的途径。
-下面的代码可以说明如何使用subprocess运行外部程序并监控运行状态：
-```python import subprocess process = subprocess.Popen('gvim', shell=True) status = process.poll() if 0 == status: print 'The external program exited.' if status is None: print 'The external program is still running.' ``` 理论上，可以拿实例process的poll()方法监视进程的运行状态，而且这一点在Windows上也确实可以做到，但是到了Linux下，诡异的事出现了，即使刚刚打开gvim，poll()方法也会马上返回一个0，同时process.pid的值总是和实际在运行的那个gvim进程的pid的值差3，而且在虚拟终端中输入gvim命令也不会阻塞终端，就像别的命令加上“&amp;amp;”符号的效果一样。尝试用strace跟踪gvim的运行，试图找到问题原因，无果。我猜想可能/usr/bin/gvim是一个跳板，它启动后会启动一个新的gvim进程。总之，这个方法在Linux下是行不通的。
-因此我觉得只能另寻出路了，既然不能监控gvim进程，那就监控gvim进程所编辑的文件，只要这个文件不被任何进程占用，就可以判定gvim已退出。这一点，在Linux下易如反掌，不用说，lsof当仁不让。
-用commands.getstatusoutput('lsof file.txt')测试发现，如果文件file.txt被某进程占用，则返回的状态值为0，反之，返回256。
-最终，我在程序中使用了两种判断方式，在Windows平台使用subprocess跟踪gvim.exe进程，而在Linux及Unix平台使用lsof检查文档占用情况。
-剩下的就是进行这个判断的时间问题了。
-很显然，如果在子进程被启动后马上使用while循环不停的检查，一来必须使用多线程，二来系统资源占用也会很高。这时就需要利用wxPython的事件机制了，当ForeverFantasy启动Gvim时，主窗口失去焦点，而当Gvim退出时，ForeverFantasy又会获得焦点，只要能在ForeverFantasy窗口获得焦点时做一次检查即可。不过，在选择最合适的事件的问题上，又是一波三折。
-在wxPython的API文档中没有找到事件列表，倒是在Wiki中找到了。顾名思义，觉得wx.EVT_SET_FOCUS比较靠谱，但试用失败，看API中关于FocusEvent的说明，这个事件适用于窗口控件；然后又试了wx.EVT_CHILD_FOCUS，只有在窗口包含的控件中有获得焦点的情况才会触发；最后才发现wx.EVT_ACTIVATE，这个事件会在窗口失去焦点和获得焦点时各触发一次，使用GetActive()方法可以判断是获得焦点还是失去焦点。
-完成与Vim的协同使ForeverFantasy在我手上由原来单纯的格式转换工具进化为基本可用的文档编辑器，就算是Milestone 2吧。
-此外，还有一些小的经验：
-1. 调用非环境变量下的程序，即命令中必须带程序所在的路径时，应当将程序所在目录的完整路径以自然字符串的形式传递给subprocess.Popen类的构造方法的cwd参数，即如下所示：
-```python process = subprocess.Popen('gvim.exe', cwd=r'C:\program files\vim\vim72', shell=True) ``` 这样可以有效避免路径中的空格和特殊字符对命令执行的影响。
-2. Vim编辑一个文档时，实际操作的是一个临时文件，而不是原文件，这个临时文件与原文件同路径，名称为在原文件名的基础上，前面加一个句点，后面加后缀“.swp”。应该用lsof监控这个临时文件，才可以判断出编辑该文档的Vim进程的运行状态。由于对于不存在的文件使用lsof命令的返回值也是256，故可以同时判断临时文件和原文件的占用情况，这样就为对其它编辑器的支持奠定了基础。
-2010-03-10 Wednesday 22:52:13 更新
-感谢KL童鞋和依云童鞋指教，果然加上-f参数就可以了。</description></item><item><title>Vim的终极自动补全插件：NeoComplCache</title><link>http://0x3f.org/posts/neocomplcache-vim/</link><pubDate>Sat, 27 Feb 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/neocomplcache-vim/</guid><description>
-关于自动补全，最初用的是SuperTab，那个时候Vim的自动补全插件寥寥无几，也就SuperTab比较有名。不过实际使用过程中这个插件给我的体验不是很好，原因是补全的准确度不高。
-后来出了一个新插件，AutoComplPop，功能和使用都很简单。但是很快我就又用回SuperTab，原因是AutoComplPop在输入的同时实时地查询匹配的关键词，导致输入极不流畅，效率很低。
-一直就这么凑合着用着SuperTab，随着这个插件版本的更新，旧功能不断地完善，新功能也接二连三地引入，SuperTab在匹配关键词的准确度上有了一些改善，但是新的问题又出现了。SuperTab后来加入一个新功能，对于程序源文件，可以在其引入的文件以及API文件中匹配关键词。比如假设我当前正在编辑a.php，在a.php中有include 'b.php';这样的语句，当我输入array并按下Tab键时，SuperTab不但会在当前文件中查询所有匹配项，还会到b.php中查询，如果配置过vim、指定一个包含了php的API的文件，则SuperTab还会自动从这个文件中查询匹配项。按理说这个功能的理念很好，但问题就在于SuperTab做的是实时查询，如果源文件中包含的文件较多，各个文件又较大，问题就显而易见了。我不得不在写程序时小心地使用Tab键，否则有时就会出现按一下Tab键然后等着Vim在那狂搜的情况。
-前两天发现了NeoComplCache，光看名字就让我有点儿兴奋，一般使用缓存的速度都很快。这个插件会在Vim打开文件的时候对上下文作一个索引，并把索引结果保存到缓存中。同时，文件更改的内容会在保存的时候被索引。此外，NeoComplCache支持多种关键词索引模式，例如它会判断当前路径下的文件或目录的名字是否匹配补全条件，也可以从缓存的程序语言API中匹配补全条件。到此为止，它就解决了SuperTab和AutoComplPop共同的效率问题，并具备它们各自的长处。看了一遍文档，发现这个插件的功能比较细致，大概有以下一些特点：
-1、使用缓存，自动补全时效率高； 2、生成的关键词列表准确； 3、支持下划线分割的关键词，如apple_boy_cat，就可以只输入a_b_c，然后补全； 4、支持驼峰格式匹配关键词，如AppleBoyCat，就可以只输入ABC，然后补全； 5、既可以像AutoComplPop那样在Vim中输入的同时自动弹出补全列表，又可以自定义快捷键手动触发； 6、支持从文件名和目录名中匹配补全条件； 7、对于程序源文件，支持从语言API中匹配补全条件；
-NeoComplCache的缺点是文档不全，虽然从只言片语中发现它还支持Snippet，但从文档中没有找到足够的有用信息。加之一直用SnipMate感觉不错，所以目前还是用它来实现snippet功能。
-这就有个搭配问题：虽然NeoComplCache不存在补全时的效率问题，但我仍然打算只在需要补全时才用快捷键触发此功能，最主要的原因是我既希望用Tab键触发SnipMate的代码块补全功能，又希望修SuperTab那样用Tab选择补全列表中的选项。也就是要达到只用Tab键就可以完成打开自动补全列表、补全列表选项选择和SnipMate代码块替换的效果。但是，如果将Tab映射到触发自动补全，则补全列表选择和SnipMate均无法使用Tab，反之亦然。
-所以我想如果能让NeoComplCache、SuperTab、SnipMate和谐共存，那问题就解决了，几经摸索，终于找到了办法：
-1、设置NeoComplCache不自动弹出补全列表，即在vimrc中加入：
-let g:NeoComplCache_DisableAutoComplete = 1
-2、由于NeoComplCache在手工模式下使用快捷键组合&amp;lt;C-X&amp;gt;&amp;lt;C-U&amp;gt;打开补全列表，故设置SuperTab的默认补全操作为&amp;lt;C-X&amp;gt;&amp;lt;C-U&amp;gt;，即在vimrc中加入：
-let g:SuperTabDefaultCompletionType = '&amp;lt;C-X&amp;gt;&amp;lt;C-U&amp;gt;'
-这样，NeoComplCache只负责补全关键词缓存的生成，SuperTab控制Tab键的行为并在需要触发补全操作时打开补全列表、进而在列表中的选项间移动焦点，而当光标前的关键词是snippet时，SnipMate会被优先调用并完成代码块的替换。
-就在写这篇文章的时候，我突然觉得NeoComplCache自动弹出补全列表+SnipMate的方式也挺好，只是这样就不能用Tab键选择列表中的选项了。
-相关阅读： 用neocomplete换掉了YouCompleteMe How to Make YouCompleteMe Compatible with UltiSnips</description></item><item><title>Windows下GVim的全屏</title><link>http://0x3f.org/posts/fullscreen-for-gvim-on-windows/</link><pubDate>Thu, 17 Sep 2009 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/fullscreen-for-gvim-on-windows/</guid><description>下载gvim的一个扩展“gvimfullscreen_win32”，并解压缩。 将gvimfullscreen.dll复制到gvim安装目录下，与gvim.exe同目录。 修改gvim配置文件_vimrc，在其中添加如下内容： ```vim if has('win32') map :call libcallnr("gvimfullscreen.dll", "ToggleFullScreen", 0) endif ``` 此后，即可使用F11键开关gvim的全屏状态。</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Vim on 晴耕雨讀</title><link>http://0x3f.org/tags/vim/</link><description>Recent content in Vim on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Mon, 21 Aug 2023 17:07:48 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/vim/index.xml" rel="self" type="application/rss+xml"/><item><title>从 macOS 桌面运行 Neovide 的方法</title><link>http://0x3f.org/posts/how-to-run-neovide-from-macos-desktop/</link><pubDate>Mon, 21 Aug 2023 17:07:48 +0800</pubDate><guid>http://0x3f.org/posts/how-to-run-neovide-from-macos-desktop/</guid><description>&lt;p>截至当前版本（0.11.1），Neovide 在 macOS 下只能从命令行启动，为方便起见，有时候我希望通过 RayCast 或者 Dashboard 启动它，或者通过右键菜单“Open with”用它直接打开选中的文件。&lt;/p>
+&lt;p>方法是通过 Automator 创建一个“Application”类型的新文档，添加一个“Run AppleScript”的 Action 。然后填入下面的内容：&lt;/p>
+&lt;script src="https://gist.github.com/xbot/a2f1d38e8eb02665ef7cf9ba082ccd12.js">&lt;/script>
+
+&lt;p>最后将文档保存到 Application 目录，命名为“Neovide”。&lt;/p></description></item><item><title>Leaderf-phpnamespace: Yet another PHP namespace resolver</title><link>http://0x3f.org/posts/leaderf-phpnamespace-yet-another-php-namespace-resolver/</link><pubDate>Sun, 25 Sep 2022 22:33:13 +0800</pubDate><guid>http://0x3f.org/posts/leaderf-phpnamespace-yet-another-php-namespace-resolver/</guid><description>&lt;p>This plugin uses the power of &lt;a href="https://github.com/Yggdroot/LeaderF">LeaderF&lt;/a> to perform PHP namespace related tasks.&lt;/p>
+&lt;p>&lt;a href="https://github.com/xbot/Leaderf-phpnamespace">https://github.com/xbot/Leaderf-phpnamespace&lt;/a>&lt;/p>
+&lt;h2 id="features">Features&lt;/h2>
+&lt;ul>
+&lt;li>Insert &lt;code>use&lt;/code> statements for FQCNs.&lt;/li>
+&lt;li>Sort &lt;code>use&lt;/code> statements alphabetically.&lt;/li>
+&lt;li>Expand class names to FQCNs.&lt;/li>
+&lt;li>Insert namespace for the current file.&lt;/li>
+&lt;li>All the above features support the fuzzy searching function and all the three modes (nameonly, fullpath and regex) provided by LeaderF.&lt;/li>
+&lt;/ul>
+&lt;h2 id="requirements">Requirements&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="https://github.com/Yggdroot/LeaderF">LeaderF&lt;/a>&lt;/li>
+&lt;li>ctags is properly configured in Vim/Neovim.&lt;/li>
+&lt;/ul>
+&lt;h2 id="install">Install&lt;/h2>
+&lt;p>Use any of your favourite plugin manager to install it, for example:&lt;/p></description></item><item><title>用 Neovim 调试 RESTful 接口</title><link>http://0x3f.org/posts/send-restful-requests-with-neovim/</link><pubDate>Sun, 18 Sep 2022 11:31:16 +0800</pubDate><guid>http://0x3f.org/posts/send-restful-requests-with-neovim/</guid><description>&lt;p>纯文本有很多好处，比如可以用 Git 管理，方便备份和追溯，方便多机同步和分享。&lt;/p>
+&lt;p>之前使用 VS Code 的插件 Rest Client ，从浏览器后台复制请求数据过来就可以用，很方便。但是存在一些用起来不舒服的地方，比如：&lt;/p>
+&lt;ul>
+&lt;li>不方便对接口分组管理。&lt;/li>
+&lt;li>不方便快速查找接口。&lt;/li>
+&lt;/ul>
+&lt;p>这些在对纯文本操作效率更高的 Vim 里都可以解决，但是之前尝试过的一些 Vim 的 RESTful 客户端插件还不成熟，最近发现 &lt;a href="https://github.com/rest-nvim/rest.nvim">rest.nvim&lt;/a> 基本可以满足日常使用需要了。&lt;/p>
+&lt;p>rest.nvim 是个 Neovim 的插件，和 Rest Client 支持的格式差异较小，迁移很方便。这样我就可以用 Vim 的折叠特性对接口分组管理，用插件 Leaderf 的模糊查找特性快速定位接口，当然，对纯文本的任何编辑和操作在 Vim 里就是浑然天成、行云流水的。&lt;/p>
+&lt;p>它的大致用法如下：&lt;/p>
+&lt;p>在工作目录下创建环境变量文件 &lt;code>.env&lt;/code> ：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-ini" data-lang="ini">&lt;span class="line">&lt;span class="cl">&lt;span class="na">base_url&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">http://myapp.dev&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">header_accept_json&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">application/json, application/problem+json, text/plain, */*&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">header_content_type_json&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">application/json;charset=utf-8&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">header_cookie_debug_session&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">XDEBUG_SESSION=1;app_session=1ObUjvLvEYjVhJ8tbzn5BorN7TViNtI1S625140e&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">user_email&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">user@test.com&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">user_password&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">password&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>给 Vim 插件做快照</title><link>http://0x3f.org/posts/create-snapshot-for-vim-plugins/</link><pubDate>Tue, 06 Sep 2022 23:28:26 +0800</pubDate><guid>http://0x3f.org/posts/create-snapshot-for-vim-plugins/</guid><description>&lt;p>我的 Vim 插件数快到 150 了，弊端也越来越明显。&lt;/p>
+&lt;p>最大的问题是稳定性，经常批量更新后发现某个功能不工作了，尤其是大部分问题只有在用到的时候才发现，非常影响效率。&lt;/p>
+&lt;p>我用的插件管理工具是 &lt;a href="https://github.com/junegunn/vim-plug">vim-plug&lt;/a> ，虽然有回滚到上一次的功能，但是我手比较欠，经常频繁更新，往往发现一个问题时已经更新了几次了，所以这个功能对我来说不是很适用。&lt;/p>
+&lt;p>好在它提供了做快照的命令 &lt;code>:PlugSnapshot&lt;/code> ，其实就是把当前所有插件的 Git 哈希值输出到一个 Vim 脚本里，恢复快照的时候只要执行这个脚本就行了。&lt;/p>
+&lt;p>为了方便使用，创建一个自定义命令：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-vim" data-lang="vim">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">command&lt;/span>&lt;span class="p">!&lt;/span> &lt;span class="nx">SnapshotPlugins&lt;/span> &lt;span class="nx">PlugSnapshot&lt;/span> &lt;span class="p">~&lt;/span>&lt;span class="sr">/.vim/&lt;/span>&lt;span class="nx">plugin&lt;/span>.&lt;span class="nx">lock&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>然后把生成的 &lt;code>plugin.lock&lt;/code> 文件加入 Git 仓库，必要的时候可以利用 &lt;code>git bisect&lt;/code> 快速找到问题出处。&lt;/p>
+&lt;p>恢复的命令如下：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>Leaderf-folder: Quickly open a subfolder</title><link>http://0x3f.org/posts/the-leaderf-folder-plugin/</link><pubDate>Sun, 07 Aug 2022 17:31:50 +0800</pubDate><guid>http://0x3f.org/posts/the-leaderf-folder-plugin/</guid><description>&lt;p>&lt;a href="https://github.com/xbot/LeaderF-folder">LeaderF-folder&lt;/a> is a plugin for &lt;a href="https://github.com/Yggdroot/LeaderF">LeaderF&lt;/a> that aims to open a subfolder quickly.&lt;/p>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/LeaderF-folder/main/image/screencast.gif" alt="screen cast">&lt;/p>
+&lt;h2 id="requirements">Requirements&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="https://github.com/Yggdroot/LeaderF">LeaderF&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://github.com/sharkdp/fd">fd&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://github.com/elihunter173/dirbuf.nvim">Dirbuf&lt;/a>: Optional, can be changed to other file managers.&lt;/li>
+&lt;/ul>
+&lt;h2 id="setup">Setup&lt;/h2>
+&lt;p>This plugin takes &lt;a href="https://github.com/elihunter173/dirbuf.nvim">Dirbuf&lt;/a> as the default solution to open the chosen subfolder. You can use the following option to customize it:&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>使用 lemonade 和 autossh 辅助 Neovim 远程开发</title><link>http://0x3f.org/posts/assisting-neovim-with-remote-development-using-lemonade-and-autossh/</link><pubDate>Thu, 19 May 2022 16:02:34 +0800</pubDate><guid>http://0x3f.org/posts/assisting-neovim-with-remote-development-using-lemonade-and-autossh/</guid><description>&lt;p>我的开发环境部署在 Linux VM 里，普通的远程复制用 &lt;a href="https://github.com/ojroques/vim-oscyank">vim-oscyank&lt;/a> 插件是可以实现的。但是当我想用 &lt;a href="https://github.com/tpope/vim-fugitive">fugitive&lt;/a> 的 &lt;code>:GBrowse&lt;/code> 命令打开 Gitlab 链接的时候遇到了困难，甚至我想退而求其次、通过 &lt;code>:GBrowse!&lt;/code> 复制链接都不可得，因为 fugitive 的代码里通过 &lt;code>has('clipboard')&lt;/code> 判断 Vim 是否可以使用系统剪贴板，且我的 Linux VM 不满足该特性的条件（见 &lt;code>:help clipboard&lt;/code>）。所以用 &lt;a href="https://github.com/lemonade-command/lemonade">lemonade&lt;/a> 解决这个问题。&lt;/p>
+&lt;h1 id="实现方式">实现方式&lt;/h1>
+&lt;p>lemonade 虽然支持客户端和服务端直接通信，但是并不提供安全保障，所以我采取 SSH 端口远程转发的方式并用 &lt;a href="https://www.harding.motd.ca/autossh/">autossh&lt;/a> 保持连接。&lt;/p>
+&lt;p>首先分别在服务端（MacOS）和客户端（Linux VM）创建 lemonade 的配置文件（&lt;code>~/.config/lemonade.toml&lt;/code>）：&lt;/p>
+&lt;p>服务端：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-ini" data-lang="ini">&lt;span class="line">&lt;span class="cl">&lt;span class="na">port&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s">2489&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">allow&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s">&amp;#39;127.0.0.1&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">line-ending&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s">&amp;#39;lf&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>在 gv.vim 中使用 Diffview.nvim 查看提交内容</title><link>http://0x3f.org/posts/check-commit-with-diffview-in-gv-vim/</link><pubDate>Thu, 23 Dec 2021 14:42:03 +0800</pubDate><guid>http://0x3f.org/posts/check-commit-with-diffview-in-gv-vim/</guid><description>&lt;p>Vim 没有很好的 Git commits viewer ，普通的 diff 模式对于很小的 commit 还行，文件较多、改动较大的 commit 看起来很糟糕。&lt;/p>
+&lt;p>gv.vim + Diffview.nvim 是我目前找到的最好的解决方案，下面稍加配置，实现在 gv.vim 的 log 界面通过快捷键 &lt;code>vv&lt;/code> 在 Diffview.nvim 里打开光标所在行对应的 commit ：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>改变 Vim 模式时自动切换输入法的方法</title><link>http://0x3f.org/posts/auto-switch-input-method-while-changing-vim-mode/</link><pubDate>Wed, 19 Feb 2020 21:48:15 +0000</pubDate><guid>http://0x3f.org/posts/auto-switch-input-method-while-changing-vim-mode/</guid><description>&lt;p>VS Code的Vim插件有个很贴心的功能，可以在切换到普通模式时自动切换到英文输入法，而当切换回插入模式时再换到此前的输入法。&lt;/p>
+&lt;p>设置的方法很简单。先安装&lt;a href="https://github.com/daipeihust/im-select">im-select&lt;/a>，然后配置如下（macOS）：&lt;/p>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2020-02-19-21-59-02-510Ak5.png" alt="2020-02-19-21-59-02-510Ak5">&lt;/p>
+&lt;p>当然，在Vim里也可以利用im-select实现这个功能。&lt;/p></description></item><item><title>用ALE替换了Syntastic</title><link>http://0x3f.org/posts/replace-syntastic-with-ale/</link><pubDate>Wed, 12 Dec 2018 20:42:10 +0000</pubDate><guid>http://0x3f.org/posts/replace-syntastic-with-ale/</guid><description>&lt;p>习惯频繁地保存源码，但是每次保存都有明显的卡顿，于是用Vim自己的调优功能跟踪了一下。&lt;/p></description></item><item><title>Vim最好的PHP语法高亮插件</title><link>http://0x3f.org/posts/the-best-php-syntax-file-of-vim/</link><pubDate>Tue, 28 Nov 2017 15:55:59 +0000</pubDate><guid>http://0x3f.org/posts/the-best-php-syntax-file-of-vim/</guid><description>&lt;p>&lt;a href="https://github.com/StanAngeloff/php.vim">StanAngeloff/php.vim&lt;/a>应该是目前最新、最全的PHP语法高亮插件了，它解决了旧版本无法高亮&lt;code>@throws&lt;/code>的问题。&lt;/p>
+&lt;p>默认会把方法注释全部当做普通注释显示，也就是没有高亮，需要专门做配置：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;span class="lnt">9
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-vim" data-lang="vim">&lt;span class="line">&lt;span class="cl">&lt;span class="k">function&lt;/span>&lt;span class="p">!&lt;/span> &lt;span class="nx">PhpSyntaxOverride&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">hi&lt;/span>&lt;span class="p">!&lt;/span> &lt;span class="nx">def&lt;/span> &lt;span class="nx">link&lt;/span> &lt;span class="nx">phpDocTags&lt;/span> &lt;span class="nx">phpDefine&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">hi&lt;/span>&lt;span class="p">!&lt;/span> &lt;span class="nx">def&lt;/span> &lt;span class="nx">link&lt;/span> &lt;span class="nx">phpDocParam&lt;/span> &lt;span class="nx">phpType&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">endfunction&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">augroup&lt;/span> &lt;span class="nx">phpSyntaxOverride&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">autocmd&lt;/span>&lt;span class="p">!&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">autocmd&lt;/span> &lt;span class="nx">FileType&lt;/span> &lt;span class="nx">php&lt;/span> &lt;span class="nx">call&lt;/span> &lt;span class="nx">PhpSyntaxOverride&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">augroup&lt;/span> &lt;span class="nx">END&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>用gv.vim查看git提交历史</title><link>http://0x3f.org/posts/gv-vim/</link><pubDate>Wed, 18 Oct 2017 13:28:16 +0000</pubDate><guid>http://0x3f.org/posts/gv-vim/</guid><description>&lt;p>&lt;a href="https://github.com/junegunn/gv.vim">gv.vim&lt;/a>是fugitive的插件，用于查看git提交历史，特点是速度快、好用。我现在用它做code review。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-vim" data-lang="vim">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">nnoremap&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">leader&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="nx">gll&lt;/span> :&lt;span class="nx">GV&lt;/span> &lt;span class="p">--&lt;/span>&lt;span class="nx">no&lt;/span>&lt;span class="p">-&lt;/span>&lt;span class="nx">merges&lt;/span>&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">CR&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">nnoremap&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">leader&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="nx">glc&lt;/span> :&lt;span class="nx">GV&lt;/span>&lt;span class="p">!&amp;lt;&lt;/span>&lt;span class="nx">CR&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">nnoremap&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">leader&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="nx">gla&lt;/span> :&lt;span class="nx">GV&lt;/span> &lt;span class="p">--&lt;/span>&lt;span class="nx">no&lt;/span>&lt;span class="p">-&lt;/span>&lt;span class="nx">merges&lt;/span> &lt;span class="p">--&lt;/span>&lt;span class="nx">author&lt;/span>&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">space&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">nnoremap&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">leader&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="nx">glg&lt;/span> :&lt;span class="nx">GV&lt;/span> &lt;span class="p">--&lt;/span>&lt;span class="nx">no&lt;/span>&lt;span class="p">-&lt;/span>&lt;span class="nx">merges&lt;/span> &lt;span class="p">--&lt;/span>&lt;span class="nx">grep&lt;/span>&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">space&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>解决phpqa和fugitive不兼容的问题</title><link>http://0x3f.org/posts/solve-the-incompatablility-between-fugitive-and-phpqa/</link><pubDate>Wed, 18 Oct 2017 11:05:12 +0000</pubDate><guid>http://0x3f.org/posts/solve-the-incompatablility-between-fugitive-and-phpqa/</guid><description>&lt;p>在&lt;code>:Gstatus&lt;/code>中查看diff时，报错：&lt;/p>
+&lt;blockquote>
+&lt;p>Error detected while processing function Phpqa#PhpLint: &lt;br>
+line 8: &lt;br>
+E684: list index out of range: 0 &lt;br>
+E116: Invalid arguments for function match(l:php_list[0],&amp;ldquo;No syntax errors&amp;rdquo;) == -1 &lt;br>
+E15: Invalid expression: 0 != v:shell_error &amp;amp;&amp;amp; match(l:php_list[0],&amp;ldquo;No syntax errors&amp;rdquo;) == -1&lt;/p></description></item><item><title>用vim-test简化单元测试的编写</title><link>http://0x3f.org/posts/make-writing-unit-tests-easier-with-vim-test/</link><pubDate>Mon, 14 Aug 2017 16:43:59 +0000</pubDate><guid>http://0x3f.org/posts/make-writing-unit-tests-easier-with-vim-test/</guid><description>&lt;p>vim-test允许在Vim中直接执行一个或多个单元测试，并使用预设的或自定义的执行策略。&lt;/p>
+&lt;p>例如，命令&lt;code>:TestNearest&lt;/code>可以执行当前测试文件中离光标最近的一个测试方法。而&lt;code>:TestFile&lt;/code>、&lt;code>:TestSuite&lt;/code>和&lt;code>:TestLast&lt;/code>分别执行整个测试文件、测试项目和最近一次执行过的测试。这在编写测试代码时能很大地提高效率。&lt;/p>
+&lt;p>执行策略是执行测试的方式和环境。例如缺省状态下，将使用&lt;code>:!&lt;/code>执行测试命令，这会从Vim切换回终端。而在MacVim下，可以选择在iTerm或者系统自带的Terminal中执行。&lt;/p></description></item><item><title>用vim-laravel简化laravel下的开发</title><link>http://0x3f.org/posts/speed-up-artisan-with-vim-laravel/</link><pubDate>Fri, 11 Aug 2017 15:05:30 +0000</pubDate><guid>http://0x3f.org/posts/speed-up-artisan-with-vim-laravel/</guid><description>&lt;p>vim-laravel是个极简而实用的插件，只提供一个&lt;code>:Artisan&lt;/code>命令。但它并不仅仅是&lt;code>artisan&lt;/code>的一个wrapper，还可以实现一些贴心的自动化，利如自动打开&lt;code>artisan make:*&lt;/code>创建的文件。&lt;/p></description></item><item><title>用vim-php-namespace管理PHP的命名空间</title><link>http://0x3f.org/posts/manage-php-namespaces-with-vim-php-namespace/</link><pubDate>Fri, 11 Aug 2017 14:56:12 +0000</pubDate><guid>http://0x3f.org/posts/manage-php-namespaces-with-vim-php-namespace/</guid><description>&lt;p>vim-php-namespace是个简单实用的插件，提供三种功能：&lt;/p>
+&lt;ul>
+&lt;li>自动用use语句导入光标下的类&lt;/li>
+&lt;li>自动把光标下的类名扩展成完整命名空间的格式&lt;/li>
+&lt;li>自动排序use语句&lt;/li>
+&lt;/ul>
+&lt;p>此外，还提供一个选项控制是否在导入类后自动排序use语句。&lt;/p></description></item><item><title>使neocomplete和ultisnips共用tab键的方法</title><link>http://0x3f.org/posts/reconcile-neocomplete-with-ultisnips/</link><pubDate>Fri, 11 Aug 2017 14:43:14 +0000</pubDate><guid>http://0x3f.org/posts/reconcile-neocomplete-with-ultisnips/</guid><description>&lt;p>昨天用vim-clevertab换掉了supertab，但是实际使用中总是出莫名其妙的问题。看了一下插件源码，使用全局变量判断状态，这是个很不靠谱的方案，所以还是卸掉了。&lt;/p>
+&lt;p>下面的配置可以很好的解决问题：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-vim" data-lang="vim">&lt;span class="line">&lt;span class="cl">&lt;span class="k">let&lt;/span> &lt;span class="nx">g&lt;/span>:&lt;span class="nx">UltiSnipsExpandTrigger&lt;/span>&lt;span class="p">=&lt;/span>&lt;span class="s2">&amp;#34;&amp;lt;c-tab&amp;gt;&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">let&lt;/span> &lt;span class="nx">g&lt;/span>:&lt;span class="nx">UltiSnipsJumpForwardTrigger&lt;/span>&lt;span class="p">=&lt;/span>&lt;span class="s2">&amp;#34;&amp;lt;c-tab&amp;gt;&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">let&lt;/span> &lt;span class="nx">g&lt;/span>:&lt;span class="nx">UltiSnipsJumpBackwardTrigger&lt;/span>&lt;span class="p">=&lt;/span>&lt;span class="s2">&amp;#34;&amp;lt;s-tab&amp;gt;&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">let&lt;/span> &lt;span class="nx">g&lt;/span>:&lt;span class="nx">UltiSnipsSnippetsDir&lt;/span>&lt;span class="p">=&lt;/span>&lt;span class="s1">&amp;#39;~/.vim/UltiSnips&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">let&lt;/span> &lt;span class="nx">g&lt;/span>:&lt;span class="nx">ulti_expand_or_jump_res&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="m">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">function&lt;/span>&lt;span class="p">!&lt;/span> &lt;span class="nx">CleverTab&lt;/span>&lt;span class="p">()&lt;/span>&amp;#34;{{{
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">call&lt;/span> &lt;span class="nx">UltiSnips&lt;/span>#&lt;span class="nx">ExpandSnippetOrJump&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="nx">g&lt;/span>:&lt;span class="nx">ulti_expand_or_jump_res&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">return&lt;/span> &lt;span class="s2">&amp;#34;&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">else&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="nx">pumvisible&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">return&lt;/span> &lt;span class="s2">&amp;#34;\&amp;lt;c-n&amp;gt;&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">else&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">return&lt;/span> &lt;span class="nx">neocomplete&lt;/span>#&lt;span class="nx">start_manual_complete&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">endif&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">endif&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">endfunction&lt;/span>&amp;#34;}}}
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">inoremap&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">silent&lt;/span>&lt;span class="p">&amp;gt;&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">tab&lt;/span>&lt;span class="p">&amp;gt;&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">c&lt;/span>&lt;span class="p">-&lt;/span>&lt;span class="nx">r&lt;/span>&lt;span class="p">&amp;gt;=&lt;/span>&lt;span class="nx">CleverTab&lt;/span>&lt;span class="p">()&amp;lt;&lt;/span>&lt;span class="nx">cr&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">snoremap&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">silent&lt;/span>&lt;span class="p">&amp;gt;&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">tab&lt;/span>&lt;span class="p">&amp;gt;&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">esc&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>:&lt;span class="nx">call&lt;/span> &lt;span class="nx">UltiSnips&lt;/span>#&lt;span class="nx">ExpandSnippetOrJump&lt;/span>&lt;span class="p">()&amp;lt;&lt;/span>&lt;span class="nx">cr&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>用vim-plug换掉了vim-addon-manager</title><link>http://0x3f.org/posts/replaced-vam-with-vim-plug/</link><pubDate>Mon, 31 Jul 2017 22:44:16 +0000</pubDate><guid>http://0x3f.org/posts/replaced-vam-with-vim-plug/</guid><description>&lt;p>四年零两个月前，我在Vim的邮件组中&lt;a href="https://groups.google.com/forum/#!topic/vim_use/P3xpaHr8-do">征询pathogen和vundle的优劣&lt;/a>。一个人建议我试试VAM，语气幽怨——他是它的作者。&lt;/p>
+&lt;p>试过之后就从pathogen迁移到了VAM，因为它兼有前者和vundle的优点，在当时，这是最好的插件管理器。就这样用了很久，期间还写了点脚本&lt;a href="http://0x3f.org/post/simplify-vim-addon-installation-issues/">简化插件的管理&lt;/a>，VAM工作得很好。&lt;/p>
+&lt;p>最近发现越来越多的插件的文档里提到vim-plug，亮点是支持并行安装和更新，这真是解决了VAM最大的痛点：我叠代了十年的vimrc里用了很多插件，串行的VAM每次更新都让我很痛苦。&lt;/p>
+&lt;p>另外，vim-plug较VAM的另一个优势是简单。这倒不是说后者很难用，只是作者过于追求灵活性，导致有些工作实现起来相对更复杂。例如，有的插件安装之后需要做一些额外的操作，VAM需要自己实现回调函数，然后挂到post-install钩子上。而对于vim-plug，只需要在注册插件的地方增加一个选项。对于插件的懒加载，也是同样。&lt;/p>
+&lt;p>VAM也有自己的优势。其中之一是可以自动处理依赖关系：当一个要被安装的插件依赖别的插件时，相应的依赖也会被自动安装。还有就是对多源的支持：既可以拉取github上的插件，也可以从vim.org或其它源安装。而vim-plug就只支持github。&lt;/p>
+&lt;p>所以，vim-plug并没有全面超过VAM，只是没有明显的短板、功能又刚刚够用。&lt;/p></description></item><item><title>用choosewin.vim切换窗口</title><link>http://0x3f.org/posts/choosewin-vim/</link><pubDate>Sun, 30 Jul 2017 20:48:46 +0000</pubDate><guid>http://0x3f.org/posts/choosewin-vim/</guid><description>&lt;p>输入&lt;code>-&lt;/code>显示每个窗口的hint，输入hint跳转，简单而高效：&lt;/p>
+&lt;p>&lt;img src="https://wx4.sinaimg.cn/large/006tNbRwly1fwvwyakdmzj30or0gan0m.jpg" alt="">&lt;/p></description></item><item><title>Python 2还是3是个纠结的问题</title><link>http://0x3f.org/posts/bothered-by-python-2-vs-3/</link><pubDate>Sun, 30 Jul 2017 08:40:11 +0000</pubDate><guid>http://0x3f.org/posts/bothered-by-python-2-vs-3/</guid><description>&lt;p>前些天用denite取代unite，用&lt;code>--with-python3&lt;/code>重装了vim，结果发现vdebug只支持python 2。&lt;/p>
+&lt;p>vim同时只能在py2和py3中选一个，据说可以通过重新编译python实现共存，但是我在编译py3的时候失败。&lt;/p>
+&lt;p>neovim同时支持两个版本，但是尝试deoplete失败，报「Invalid Channel」的错误，似乎是python-neovim的锅。而且由于neovim内建lua、不支持&lt;code>has('lua')&lt;/code>，所以不能fall back到neocomplete。&lt;/p>
+&lt;p>万般无奈，只好换回unite。&lt;/p></description></item><item><title>利用goyo.vim专注写作</title><link>http://0x3f.org/posts/distraction-free-writing-in-vim/</link><pubDate>Sat, 29 Jul 2017 16:48:45 +0000</pubDate><guid>http://0x3f.org/posts/distraction-free-writing-in-vim/</guid><description>&lt;p>goyo.vim是给vim提供专注写作模式的插件，配合markdown效果不错：&lt;/p>
+&lt;p>&lt;img src="https://wx4.sinaimg.cn/large/006tNbRwly1fwvwwvhfjlj31400p0q6b.jpg" alt="">&lt;/p>
+&lt;p>最好在单独的vim实例中使用，已发现和vim-workspace配合不好的情况。&lt;/p>
+&lt;p>对markdown文件自动开启goyo的配置如下：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-vim" data-lang="vim">&lt;span class="line">&lt;span class="cl">&lt;span class="k">function&lt;/span>&lt;span class="p">!&lt;/span> &lt;span class="nx">s&lt;/span>:&lt;span class="nx">auto_goyo&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &amp;amp;&lt;span class="nx">ft&lt;/span> &lt;span class="p">==&lt;/span> &lt;span class="s1">&amp;#39;markdown&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">Goyo&lt;/span> &lt;span class="m">80&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">else&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">let&lt;/span> &lt;span class="nx">bufnr&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="nx">bufnr&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;%&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">Goyo&lt;/span>&lt;span class="p">!&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">execute&lt;/span> &lt;span class="s1">&amp;#39;b &amp;#39;&lt;/span>.&lt;span class="nx">bufnr&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">endif&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">endfunction&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">augroup&lt;/span> &lt;span class="nx">goyo_markdown&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">autocmd&lt;/span>&lt;span class="p">!&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">autocmd&lt;/span> &lt;span class="nx">BufNewFile&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="nx">BufRead&lt;/span> * &lt;span class="nx">call&lt;/span> &lt;span class="nx">s&lt;/span>:&lt;span class="nx">auto_goyo&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">augroup&lt;/span> &lt;span class="nx">END&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>用vim-workspace换掉了session.vim</title><link>http://0x3f.org/posts/replace-session-vim-with-vim-workspace/</link><pubDate>Wed, 19 Jul 2017 17:47:30 +0000</pubDate><guid>http://0x3f.org/posts/replace-session-vim-with-vim-workspace/</guid><description>&lt;p>用session.vim一直有几个痛点。一是保存会话后，退出时仍然会提示保存。二是会话会记录vimrc，恢复会话后用的仍然是旧的配置。&lt;/p>
+&lt;p>vim-workspace没有这些问题，而且实现了更多功能。&lt;/p></description></item><item><title>用neocomplete换掉了YouCompleteMe</title><link>http://0x3f.org/posts/replace-youcompleteme-with-neocomplete/</link><pubDate>Sat, 15 Jul 2017 10:29:48 +0000</pubDate><guid>http://0x3f.org/posts/replace-youcompleteme-with-neocomplete/</guid><description>&lt;p>在尝试了多种方案后，我又一次换掉了自动补全插件。&lt;/p>
+&lt;p>工具应该是能提高生产力的，而不是相反，很长一段时间以来，YouCompleteMe带给我的却是个疑惑，真不知道这个东东到底是提高了我的生产力，还是反之。自动补全在提高输入速度和准确度上都有助益，但是有时候补全选项弹出的又很慢。&lt;/p>
+&lt;p>测试了nvim-complete-manager+LanguageClient-neovim+LanguageServer-php-neovim、deoplete+phpcd、deoplete+padawan、neocomplete+phpcomplete-extended，效果都非常不理想。最后选择了neocomplete+phpcomplete，速度可以接受，表现比YCM稳定，功能该有的都有。&lt;/p>
+&lt;h3 id="相关阅读">相关阅读：&lt;/h3>
+&lt;ul>
+&lt;li>&lt;a href="http://0x3f.org/post/make-youcompleteme-ultisnips-compatible/">How to Make YouCompleteMe Compatible with UltiSnips&lt;/a>&lt;/li>
+&lt;li>&lt;a href="http://0x3f.org/post/neocomplcache-vim/">Vim的终极自动补全插件：NeoComplCache&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>LeaderF，也许是Vim最好的模糊查询插件</title><link>http://0x3f.org/posts/leaderf-currently-the-best-fuzzy-finder-of-vim/</link><pubDate>Thu, 13 Jul 2017 16:45:15 +0000</pubDate><guid>http://0x3f.org/posts/leaderf-currently-the-best-fuzzy-finder-of-vim/</guid><description>&lt;p>之前&lt;a href="http://0x3f.org/post/ctrlp-vs-unite-vs-command-t-vs-fuzzyfinder/">对比过几个模糊查询插件&lt;/a>（Fuzzy Finder），最后选定了ctrlp。&lt;/p>
+&lt;p>用了下&lt;a href="https://github.com/Yggdroot/LeaderF">LeaderF&lt;/a>，在速度和匹配的准确度上都明显超过了ctrlp，所以用它换掉了后者。&lt;/p>
+&lt;p>只是在交互方式上，我更喜欢ctrlp，文件列表高度是动态变化的，最匹配的行和输入焦点都在窗口的最下方。LeaderF是定高的，最匹配的行在最上方，个人认为不如前者自然。&lt;/p>
+&lt;p>能解决痛点的才是好东西，什么时候能换掉YouCompleteMe就好了。&lt;/p></description></item><item><title>自定义GVIM 8标签栏样式的方法</title><link>http://0x3f.org/posts/how-to-customize-gvim8-tab-style/</link><pubDate>Sun, 04 Jun 2017 12:42:12 +0000</pubDate><guid>http://0x3f.org/posts/how-to-customize-gvim8-tab-style/</guid><description>&lt;p>GVim 8用的是GTK 3，原来在&lt;code>~/.gtkrc-2.0&lt;/code>里加样式的方法不能用了。&lt;/p>
+&lt;p>GTK 3的样式在&lt;code>~/.config/gtk-3.0/gtk.css&lt;/code>里：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>怎样在Vim中删除引号文本对象</title><link>http://0x3f.org/posts/how-to-delete-quoted-text-object-in-vim/</link><pubDate>Sat, 25 Feb 2017 19:33:18 +0000</pubDate><guid>http://0x3f.org/posts/how-to-delete-quoted-text-object-in-vim/</guid><description>&lt;p>假设有这样一段代码（光标在「|」位置）：&lt;/p>
+&lt;blockquote>
+&lt;p>$title = &amp;ldquo;Article:|&amp;rdquo; . $realTitle;&lt;/p>
+&lt;/blockquote>
+&lt;p>要删除引号及其内容，并进入插入模式准备输入其它内容。&lt;/p>
+&lt;p>如果执行&lt;code>ca&amp;quot;&lt;/code>，会得到如下的结果：&lt;/p>
+&lt;blockquote>
+&lt;p>$title = |. $realTitle;&lt;/p>
+&lt;/blockquote>
+&lt;p>连引号旁边的空格也删除了。&lt;/p>
+&lt;p>如果不想删除空格，可以用&lt;code>c2i&amp;quot;&lt;/code>。&lt;/p>
+&lt;p>参考：&lt;a href="https://www.reddit.com/r/vim/comments/5v4gm5/is_it_possible_to_exclude_surrounding_whitespace/">Is it possible to exclude surrounding whitespace from the word-object &lt;code>a&amp;quot;&lt;/code>?&lt;/a>&lt;/p></description></item><item><title>在Vim中格式化Javascript、HTML和CSS</title><link>http://0x3f.org/posts/vim-js-beautify/</link><pubDate>Tue, 21 Feb 2017 14:58:08 +0000</pubDate><guid>http://0x3f.org/posts/vim-js-beautify/</guid><description>&lt;h2 id="依赖">依赖&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="https://github.com/maksimr/vim-jsbeautify">vim-jsbeautify&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://github.com/beautify-web/js-beautify">js-beautify&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;p>js-beautify的安装：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">npm -g install js-beautify
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 或&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">pip install jsbeautifier
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="配置快捷键">配置快捷键&lt;/h2>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>Vim 查找与替换的最佳实践</title><link>http://0x3f.org/posts/the-best-practice-of-searching-in-vim/</link><pubDate>Sun, 19 Feb 2017 20:37:18 +0000</pubDate><guid>http://0x3f.org/posts/the-best-practice-of-searching-in-vim/</guid><description>&lt;h2 id="更新">更新&lt;/h2>
+&lt;table>
+ &lt;thead>
+ &lt;tr>
+ &lt;th style="text-align: left">日期&lt;/th>
+ &lt;th style="text-align: left">更新内容&lt;/th>
+ &lt;/tr>
+ &lt;/thead>
+ &lt;tbody>
+ &lt;tr>
+ &lt;td style="text-align: left">2022-03-16&lt;/td>
+ &lt;td style="text-align: left">更新 80% 的内容。包含这几年所有的配置上的更新，并且把 ag 换成了 rg 。&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: left">2017-02-19&lt;/td>
+ &lt;td style="text-align: left">第一版。&lt;/td>
+ &lt;/tr>
+ &lt;/tbody>
+&lt;/table>
+&lt;h2 id="目标">目标&lt;/h2>
+&lt;ol>
+&lt;li>
+&lt;p>多文件搜索和替换&lt;/p></description></item><item><title>在Vim窗口标题中显示会话名</title><link>http://0x3f.org/posts/show-session-name-in-vim-window-title/</link><pubDate>Sun, 23 Oct 2016 11:52:00 +0000</pubDate><guid>http://0x3f.org/posts/show-session-name-in-vim-window-title/</guid><description>&lt;p>同时处理多个项目时，在窗口标题中显示会话名，方便区分，需用&lt;a href="https://github.com/xolox/vim-session">session&lt;/a>管理会话。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-vim" data-lang="vim">&lt;span class="line">&lt;span class="cl">&lt;span class="c">&amp;#34; custom the window title&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">fun&lt;/span>&lt;span class="p">!&lt;/span> &lt;span class="nx">MyTitleString&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">let&lt;/span> &lt;span class="nx">sessionName&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="nx">xolox&lt;/span>#&lt;span class="nx">session&lt;/span>#&lt;span class="nx">find_current_session&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">let&lt;/span> &lt;span class="nx">sessionStr&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="s1">&amp;#39;&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="nx">len&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">sessionName&lt;/span>&lt;span class="p">)&amp;gt;&lt;/span>&lt;span class="m">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">let&lt;/span> &lt;span class="nx">sessionStr&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="s1">&amp;#39; [&amp;#39;&lt;/span>.&lt;span class="nx">sessionName&lt;/span>.&lt;span class="s1">&amp;#39;] &amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">endif&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">return&lt;/span> &lt;span class="s1">&amp;#39;VIM&amp;#39;&lt;/span>.&lt;span class="nx">sessionStr&lt;/span>.&lt;span class="s1">&amp;#39;: %-25.55F %a%r%m&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">endfun&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">au&lt;/span> &lt;span class="nx">BufEnter&lt;/span> * &lt;span class="k">let&lt;/span> &amp;amp;&lt;span class="nx">titlestring&lt;/span>&lt;span class="p">=&lt;/span>&lt;span class="nx">MyTitleString&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">set&lt;/span> &lt;span class="nx">titlelen&lt;/span>&lt;span class="p">=&lt;/span>&lt;span class="m">70&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>FastFold：Vim折叠功能的救赎</title><link>http://0x3f.org/posts/fastfold-for-vim/</link><pubDate>Wed, 24 Feb 2016 11:06:00 +0000</pubDate><guid>http://0x3f.org/posts/fastfold-for-vim/</guid><description>&lt;p>设置Vim的折叠规则为syntax存在两个问题。一是如果源码中有大量折叠区域，在插入模式中输入会变得很卡。二是刚输入一个折叠区域的起始符号，后面所有的折叠都会被打开。&lt;/p>
+&lt;p>第一个问题是因为Vim的syntax折叠规则处理过于低效。而后一个问题对于所有自动折叠规则都会存在，原因是Vim对折叠的更新过早。&lt;/p>
+&lt;p>传统的解决办法是将折叠规则置为manual，并在合适的时机重置为syntax或其它相应规则。但是工作繁复而且往往问题很多。&lt;/p>
+&lt;p>&lt;a href="https://github.com/Konfekt/FastFold">FastFold&lt;/a>是遵循上面所说的方法解决这些问题的插件，不过默认会在所有与折叠相关的时机更新折叠，会导致相关的操作变慢，例如zc和zo时都会有明显的卡顿。鉴于其它时机对折叠的更新已经足够及时，可以通过配置取消受在到明显影响的时机更新折叠：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-vim" data-lang="vim">&lt;span class="line">&lt;span class="cl">&lt;span class="c">&amp;#34; FastFold只在za/zA/zx/zX时更新折叠信息&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">let&lt;/span> &lt;span class="nx">g&lt;/span>:&lt;span class="nx">fastfold_fold_command_suffixes&lt;/span> &lt;span class="p">=&lt;/span> [&lt;span class="s1">&amp;#39;x&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="s1">&amp;#39;X&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="s1">&amp;#39;a&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="s1">&amp;#39;A&amp;#39;&lt;/span>]
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div></description></item><item><title>FZF: 又一个文件模糊查询工具</title><link>http://0x3f.org/posts/fzf-yet-another-fuzzy-finder/</link><pubDate>Mon, 01 Feb 2016 11:42:00 +0000</pubDate><guid>http://0x3f.org/posts/fzf-yet-another-fuzzy-finder/</guid><description>&lt;p>&lt;a href="https://github.com/junegunn/fzf">fzf&lt;/a>是个独立的命令行工具，索引速度很快，可以通过&lt;a href="https://github.com/junegunn/fzf.vim">fzf-vim&lt;/a>配合使用。&lt;/p>
+&lt;h2 id="特性">特性&lt;/h2>
+&lt;p>功能支持还是比较全的：&lt;/p>
+&lt;table>
+ &lt;thead>
+ &lt;tr>
+ &lt;th style="text-align: left">Command&lt;/th>
+ &lt;th style="text-align: left">List&lt;/th>
+ &lt;/tr>
+ &lt;/thead>
+ &lt;tbody>
+ &lt;tr>
+ &lt;td style="text-align: left">Files [PATH]&lt;/td>
+ &lt;td style="text-align: left">Files (similar to &lt;code>:FZF&lt;/code> )&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: left">GitFiles&lt;/td>
+ &lt;td style="text-align: left">Git files&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: left">Buffers&lt;/td>
+ &lt;td style="text-align: left">Open buffers&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: left">Colors&lt;/td>
+ &lt;td style="text-align: left">Color schemes&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: left">Ag [PATTERN]&lt;/td>
+ &lt;td style="text-align: left">{ag}{5} search result (ALT-A to select all, ALT-D to deselect all)&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: left">Lines&lt;/td>
+ &lt;td style="text-align: left">Lines in loaded buffers&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: left">BLines&lt;/td>
+ &lt;td style="text-align: left">Lines in the current buffer&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: left">Tags&lt;/td>
+ &lt;td style="text-align: left">Tags in the project ( &lt;code>ctags -R&lt;/code> )&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: left">BTags&lt;/td>
+ &lt;td style="text-align: left">Tags in the current buffer&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: left">Marks&lt;/td>
+ &lt;td style="text-align: left">Marks&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: left">Windows&lt;/td>
+ &lt;td style="text-align: left">Windows&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: left">Locate PATTERN&lt;/td>
+ &lt;td style="text-align: left">&lt;code>locate&lt;/code> command output&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: left">History&lt;/td>
+ &lt;td style="text-align: left">&lt;code>v:oldfiles&lt;/code> and open buffers&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: left">History:&lt;/td>
+ &lt;td style="text-align: left">Command history&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: left">History/&lt;/td>
+ &lt;td style="text-align: left">Search history&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: left">Snippets&lt;/td>
+ &lt;td style="text-align: left">Snippets ({UltiSnips}{6})&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: left">Commits&lt;/td>
+ &lt;td style="text-align: left">Git commits (requires {fugitive.vim}{7})&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: left">BCommits&lt;/td>
+ &lt;td style="text-align: left">Git commits for the current buffer&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: left">Commands&lt;/td>
+ &lt;td style="text-align: left">Commands&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: left">Maps&lt;/td>
+ &lt;td style="text-align: left">Normal mode mappings&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: left">Helptags&lt;/td>
+ &lt;td style="text-align: left">Help tags [1]&lt;/td>
+ &lt;/tr>
+ &lt;/tbody>
+&lt;/table>
+&lt;h2 id="结论">结论&lt;/h2>
+&lt;p>fzf需要在终端中执行，在vim中使用时需要另外启动一个xterm实例，UI的割裂感很强，而且xterm本身的操性你懂的。另外Tags模式需要两次回车。所以暂不会用它取代ctrlp和unite。&lt;/p></description></item><item><title>ctags vs gtags vs phpctags</title><link>http://0x3f.org/posts/ctags-vs-gtags-vs-phpctags/</link><pubDate>Fri, 29 Jan 2016 17:55:00 +0000</pubDate><guid>http://0x3f.org/posts/ctags-vs-gtags-vs-phpctags/</guid><description>&lt;p>这两天把源码分析工具从ctags向gtags迁移，另外尝试了一下phpctags。&lt;/p>
+&lt;p>之前用ctags有两个问题，一个是如果同一tag有多个定义，按Ctrl+]只能跳转到第一处。另一个是用cscope查询tag的调用记录时，有些tag查不到结果。&lt;/p>
+&lt;p>几年前接触过gtags，因为当时还不支持宇宙最好语言，所以没用。这次测试了一下，前面两个ctags的问题都可以解决。&lt;/p>
+&lt;p>安装后需要手工拷贝gtags.vim和gtags-cscope.vim到vim的plugin目录，然后配置如下：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-vim" data-lang="vim">&lt;span class="line">&lt;span class="cl">&lt;span class="k">let&lt;/span> &lt;span class="nx">Gtags_Close_When_Single&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="m">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">let&lt;/span> &lt;span class="nx">Gtags_Auto_Update&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="m">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">let&lt;/span> &lt;span class="nx">g&lt;/span>:&lt;span class="nx">cscope_silent&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="m">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">au&lt;/span> &lt;span class="nx">FileType&lt;/span> &lt;span class="nx">php&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="nx">python&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="nx">c&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="nx">cpp&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="nx">javascript&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="nx">go&lt;/span> &lt;span class="k">map&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">C&lt;/span>&lt;span class="p">-&lt;/span>]&lt;span class="p">&amp;gt;&lt;/span> :&lt;span class="nx">Gtags&lt;/span>&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">CR&lt;/span>&lt;span class="p">&amp;gt;&amp;lt;&lt;/span>&lt;span class="nx">CR&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">au&lt;/span> &lt;span class="nx">FileType&lt;/span> &lt;span class="nx">php&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="nx">python&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="nx">c&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="nx">cpp&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="nx">javascript&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="nx">go&lt;/span> &lt;span class="k">map&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">C&lt;/span>&lt;span class="p">-&lt;/span>[&lt;span class="p">&amp;gt;&lt;/span> :&lt;span class="nx">Gtags&lt;/span> &lt;span class="p">-&lt;/span>&lt;span class="nx">r&lt;/span>&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">CR&lt;/span>&lt;span class="p">&amp;gt;&amp;lt;&lt;/span>&lt;span class="nx">CR&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">nnoremap&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">leader&lt;/span>&lt;span class="p">&amp;gt;&amp;lt;&lt;/span>&lt;span class="nx">C&lt;/span>&lt;span class="p">-&lt;/span>]&lt;span class="p">&amp;gt;&lt;/span> :&lt;span class="k">execute&lt;/span> &lt;span class="s1">&amp;#39;Unite gtags/def:&amp;#39;&lt;/span>.&lt;span class="nx">expand&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;&amp;lt;cword&amp;gt;&amp;#39;&lt;/span>&lt;span class="p">)&amp;lt;&lt;/span>&lt;span class="nx">CR&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">nnoremap&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">leader&lt;/span>&lt;span class="p">&amp;gt;&amp;lt;&lt;/span>&lt;span class="nx">C&lt;/span>&lt;span class="p">-&lt;/span>[&lt;span class="p">&amp;gt;&lt;/span> :&lt;span class="k">execute&lt;/span> &lt;span class="s1">&amp;#39;Unite gtags/ref:&amp;#39;&lt;/span>.&lt;span class="nx">expand&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;&amp;lt;cword&amp;gt;&amp;#39;&lt;/span>&lt;span class="p">)&amp;lt;&lt;/span>&lt;span class="nx">CR&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>CtrlP vs Unite vs Command-T vs FuzzyFinder</title><link>http://0x3f.org/posts/ctrlp-vs-unite-vs-command-t-vs-fuzzyfinder/</link><pubDate>Wed, 27 Jan 2016 16:16:00 +0000</pubDate><guid>http://0x3f.org/posts/ctrlp-vs-unite-vs-command-t-vs-fuzzyfinder/</guid><description>&lt;h2 id="简述">简述&lt;/h2>
+&lt;p>Sublime在文件打开速度上的表现很惊艳，Vim有几个扩展可以实现类似功能，本文对这些扩展做个对比。&lt;/p>
+&lt;p>虽然每个扩展都或多或少地实现了一些功能，我个人用得最多的也就文件、Tag、Buffer Tag的模糊查找这三个，像MRU、buffer之类的查找不觉得有多大用处，所以提高工作效率的工具一定是在热度环节有很好表现，其余偏门功能可以交给插件实现，在这点上CtrlP和Unite做得很好。所以下面针对最常用的这三个功能做下对比，更多功能的对比见下表：&lt;/p>
+&lt;p>&lt;img src="http://pic.yupoo.com/leninlee/FhDLWLYr/medish.jpg" alt="">&lt;/p>
+&lt;h2 id="文件模糊查找">文件模糊查找&lt;/h2>
+&lt;p>Command-T的文件索引速度最快，各方面在这几个扩展中的表现都是最好的。&lt;/p>
+&lt;p>CtrlP默认使用VIM自建的globpath()，需要手工配置使用&lt;a href="https://github.com/ggreer/the_silver_searcher">ag&lt;/a>以获取更快的速度，据说使用find命令效率更高，实际感觉和ag差别不大。&lt;/p>
+&lt;p>Unite也需要手工设置使用ag，而且可以实现异步索引，在这一点的体验上好于前两个，但是在模糊匹配的排序上表现不好，比如输入“php”，当然希望“/etc/php.ini”这样的结果排在“/home/peter/host/tmp.txt”前面，实际往往不是这样，Unite的几个sorter里，数rank的排序结果最接近于这个要求，但是表现仍然不如前两个。&lt;/p>
+&lt;h2 id="tag模糊查找">Tag模糊查找&lt;/h2>
+&lt;p>三个扩展都是通过ctags实现，虽然Unite的排序问题仍然存在，对于Tag这么简短的东西，问题不大。&lt;/p>
+&lt;h2 id="buffer-tag模糊查找">Buffer Tag模糊查找&lt;/h2>
+&lt;p>CtrlP的表现是最好的。&lt;/p>
+&lt;p>Unite需要通过unite-outline这个source实现，但是只能列出类和方法，无法定制列举类型。而且默认选中排在第一位的类名，查询方法时很不方便。&lt;/p>
+&lt;p>Command-T不支持此功能。&lt;/p>
+&lt;h2 id="我的选择">我的选择&lt;/h2>
+&lt;p>FuzzyFinder是该类扩展里的老前辈，不过早已不维护，功能上不比其它几个出彩。Command-T虽然在文件索引速度上表现最好，但是优势并不很明显，而且支持功能最少。所以排除这两个。&lt;/p>
+&lt;p>在最常用的三个功能上，CtrlP的综合表现是最均衡的，所以留下它。Unite本身是一种统一的交互方式和界面，很多扩展（source）可以实现五花八门的功能，像unite-outline虽然在Buffer Tag上表现不佳，对于Markdown和Vim文档还是很有用的。&lt;/p>
+&lt;h2 id="update-2016-02-01">Update: 2016-02-01&lt;/h2>
+&lt;p>&lt;a href="http://0x3f.org/post/fzf-yet-another-fuzzy-finder/">FZF: 又一个文件模糊查询工具&lt;/a>&lt;/p></description></item><item><title>简化Vim Addons Manager安装扩展的操作</title><link>http://0x3f.org/posts/simplify-vim-addon-installation-issues/</link><pubDate>Wed, 20 Jan 2016 18:05:00 +0000</pubDate><guid>http://0x3f.org/posts/simplify-vim-addon-installation-issues/</guid><description>&lt;p>相对Sublime的Package Control，VAM安装和卸载扩展的操作很烦琐。以下脚本在安装完扩展后自动注册，无须手工添加到vimrc，另外增加命令:UninstallAddons，从注册表中删除扩展。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;span class="lnt">30
+&lt;/span>&lt;span class="lnt">31
+&lt;/span>&lt;span class="lnt">32
+&lt;/span>&lt;span class="lnt">33
+&lt;/span>&lt;span class="lnt">34
+&lt;/span>&lt;span class="lnt">35
+&lt;/span>&lt;span class="lnt">36
+&lt;/span>&lt;span class="lnt">37
+&lt;/span>&lt;span class="lnt">38
+&lt;/span>&lt;span class="lnt">39
+&lt;/span>&lt;span class="lnt">40
+&lt;/span>&lt;span class="lnt">41
+&lt;/span>&lt;span class="lnt">42
+&lt;/span>&lt;span class="lnt">43
+&lt;/span>&lt;span class="lnt">44
+&lt;/span>&lt;span class="lnt">45
+&lt;/span>&lt;span class="lnt">46
+&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>使用gn操作增强Vim的搜索</title><link>http://0x3f.org/posts/enhance-search-with-gn-in-vim/</link><pubDate>Sun, 14 Jun 2015 21:16:00 +0000</pubDate><guid>http://0x3f.org/posts/enhance-search-with-gn-in-vim/</guid><description>&lt;p>gn是Vim 7.4新增的一个操作（motion），作用是跳到并选中下一个搜索匹配项。&lt;/p>
+&lt;p>具体说，Vim里执行搜索后，执行n操作只会跳转到下一个匹配项，而不选中它。但是我们往往需要对匹配项执行一些修改操作，例如替换、删除或修改大小写等，如果先跳转再执行对应操作，会比较繁琐。gn可以和相应的操作结合，简化这些过程。&lt;/p>
+&lt;p>举个栗子。如果要把所有的win、linux替换成大写，可以先用正则搜索“&lt;strong>\(win|linux\)\C&lt;/strong>”，然后执行“&lt;strong>gUgn&lt;/strong>”，此时下一个匹配的结果就会被替换成大写，然后直接执行“&lt;strong>.&lt;/strong>”重复上次操作即可。&lt;/p>
+&lt;p>此外，常用的组合有：&lt;/p>
+&lt;ul>
+&lt;li>cgn: 删除下一个匹配项，并进入插入模式。&lt;/li>
+&lt;li>dgn: 删除下一个匹配项，并保持常规模式。&lt;/li>
+&lt;/ul>
+&lt;p>和操作“&lt;strong>N&lt;/strong>”相同，执行“&lt;strong>gN&lt;/strong>”是逆向操作。&lt;/p></description></item><item><title>开始用在线Markdown编辑器记笔记</title><link>http://0x3f.org/posts/start-taking-note-in-online-markdown-editor/</link><pubDate>Thu, 20 Nov 2014 22:35:00 +0000</pubDate><guid>http://0x3f.org/posts/start-taking-note-in-online-markdown-editor/</guid><description>&lt;p>开始用支持VIM模式的在线Markdown编辑器记笔记。既非鼠辈（&lt;em>鼠标依赖症不治者&lt;/em>），始终忍受不了其它WYSIWYG（所见即所得）的在线笔记。&lt;/p>
+&lt;p>大部分在线笔记最傻X的一点是，必须点一下编辑按钮才能开始写东西。支持VIM模式的笔记就不用说了，丝般顺滑，不是我大Vimer就不会懂个中骚柔。&lt;/p>
+&lt;p>组织上一向后知后觉。智能手机刚开始的时候，组织上很不感冒，理由是屏幕易碎、电池难支&lt;del>、冯唐易老、李广难封&lt;/del>。而今现在眼目下，一日不搞机，如隔三秋。在线Markdown编辑器出现也有段时间了，一直觉得这货无非就是给Markdown加了个可笑的准WYSIWYG，现在看来，真是做笔记的不二神器，罪过罪过。&lt;/p>
+&lt;p>说说组织上跟Markdown的故事。很久很久以前，博客刚开始流行的时候，组织上开始写博客，和大部分人一样，注册个账号写公开日记，很快就忍受不了WYSIWYG编辑器失控的格式，于是开始手写HTML代码，很快就发现这货真TM反人类，从此恨乌及乌至今最讨厌的数据交换格式还是XML，于是自定几种格式或标记，用Java写了个解析工具，把文章源码翻译成HTML。突然有天发现这个星球上居然有种叫轻量型标记语言的东西，干的就是这么个事，只不过我的那些标记和解析工具又丑又烂而已。试了几种之后，最终选了Markdown，从此举案齐眉云云。&lt;/p></description></item><item><title>Vim强制在PHP中使用HTML注释的方法</title><link>http://0x3f.org/posts/force-commenting-html-in-php-files-in-vim/</link><pubDate>Thu, 13 Nov 2014 21:45:00 +0000</pubDate><guid>http://0x3f.org/posts/force-commenting-html-in-php-files-in-vim/</guid><description>&lt;p>对PHP页面模板中的HTML做注释，NERDCommenter是根据文件类型处理的，所以必须临时转换文件类型：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-vim" data-lang="vim">&lt;span class="line">&lt;span class="cl">&lt;span class="c">&amp;#34; 强制使用HTML的注释&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">function&lt;/span>&lt;span class="p">!&lt;/span> &lt;span class="nx">ForceHTMLComment&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">mode&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">type&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="nx">range&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">set&lt;/span> &lt;span class="nx">ft&lt;/span>&lt;span class="p">=&lt;/span>&lt;span class="nx">html&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="nx">a&lt;/span>:&lt;span class="nx">mode&lt;/span> &lt;span class="p">==&lt;/span> &lt;span class="s2">&amp;#34;x&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">execute&lt;/span> &lt;span class="nx">a&lt;/span>:&lt;span class="nx">firstline&lt;/span>.&lt;span class="s2">&amp;#34;,&amp;#34;&lt;/span>.&lt;span class="nx">a&lt;/span>:&lt;span class="nx">lastline&lt;/span>.&lt;span class="s2">&amp;#34;call NERDComment(\&amp;#34;x\&amp;#34;, \&amp;#34;&amp;#34;&lt;/span>.&lt;span class="nx">a&lt;/span>:&lt;span class="nx">type&lt;/span>.&lt;span class="s2">&amp;#34;\&amp;#34;)&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">else&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="nx">a&lt;/span>:&lt;span class="nx">type&lt;/span> &lt;span class="p">==&lt;/span> &lt;span class="s2">&amp;#34;Sexy&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">normal&lt;/span> &lt;span class="p">,&lt;/span>&lt;span class="nx">cs&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">else&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">normal&lt;/span> &lt;span class="p">,&lt;/span>&lt;span class="nx">cc&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">endif&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">endif&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">set&lt;/span> &lt;span class="nx">ft&lt;/span>&lt;span class="p">=&lt;/span>&lt;span class="nx">php&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">endfunction&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">au&lt;/span> &lt;span class="nx">FileType&lt;/span> &lt;span class="nx">php&lt;/span> &lt;span class="nx">nmap&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">buffer&lt;/span>&lt;span class="p">&amp;gt;&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">leader&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="nx">fhcc&lt;/span> :&lt;span class="nx">call&lt;/span> &lt;span class="nx">ForceHTMLComment&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;n&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;Comment&amp;#34;&lt;/span>&lt;span class="p">)&amp;lt;&lt;/span>&lt;span class="nx">CR&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">au&lt;/span> &lt;span class="nx">FileType&lt;/span> &lt;span class="nx">php&lt;/span> &lt;span class="nx">vmap&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">buffer&lt;/span>&lt;span class="p">&amp;gt;&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">leader&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="nx">fhcc&lt;/span> :&lt;span class="nx">call&lt;/span> &lt;span class="nx">ForceHTMLComment&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;x&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;Comment&amp;#34;&lt;/span>&lt;span class="p">)&amp;lt;&lt;/span>&lt;span class="nx">CR&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">au&lt;/span> &lt;span class="nx">FileType&lt;/span> &lt;span class="nx">php&lt;/span> &lt;span class="nx">nmap&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">buffer&lt;/span>&lt;span class="p">&amp;gt;&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">leader&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="nx">fhcs&lt;/span> :&lt;span class="nx">call&lt;/span> &lt;span class="nx">ForceHTMLComment&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;n&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;Sexy&amp;#34;&lt;/span>&lt;span class="p">)&amp;lt;&lt;/span>&lt;span class="nx">CR&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">au&lt;/span> &lt;span class="nx">FileType&lt;/span> &lt;span class="nx">php&lt;/span> &lt;span class="nx">vmap&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">buffer&lt;/span>&lt;span class="p">&amp;gt;&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">leader&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="nx">fhcs&lt;/span> :&lt;span class="nx">call&lt;/span> &lt;span class="nx">ForceHTMLComment&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;x&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;Sexy&amp;#34;&lt;/span>&lt;span class="p">)&amp;lt;&lt;/span>&lt;span class="nx">CR&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">au&lt;/span> &lt;span class="nx">FileType&lt;/span> &lt;span class="nx">php&lt;/span> &lt;span class="nx">nmap&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">buffer&lt;/span>&lt;span class="p">&amp;gt;&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">leader&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="nx">fhcu&lt;/span> :&lt;span class="nx">call&lt;/span> &lt;span class="nx">ForceHTMLComment&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;n&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;Uncomment&amp;#34;&lt;/span>&lt;span class="p">)&amp;lt;&lt;/span>&lt;span class="nx">CR&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">au&lt;/span> &lt;span class="nx">FileType&lt;/span> &lt;span class="nx">php&lt;/span> &lt;span class="nx">vmap&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">buffer&lt;/span>&lt;span class="p">&amp;gt;&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">leader&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="nx">fhcu&lt;/span> :&lt;span class="nx">call&lt;/span> &lt;span class="nx">ForceHTMLComment&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;x&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;Uncomment&amp;#34;&lt;/span>&lt;span class="p">)&amp;lt;&lt;/span>&lt;span class="nx">CR&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>UltraBlog.vim v3.6.1: 文章分类自动补全</title><link>http://0x3f.org/posts/ultrablog-v361-released/</link><pubDate>Sun, 20 Apr 2014 22:50:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v361-released/</guid><description>&lt;p>春节期间收到两个issue，一直拖到今天才有时间完成。&lt;/p>
+&lt;p>增加了一个功能，在文章编辑视图的元数据中分类那行，使用热键&amp;lt;C-X&amp;gt;&amp;lt;C-U&amp;gt;自动完成文章的分类。在配置数组&lt;strong>ub_blog&lt;/strong>中增加键值对“categories”，默认使用这一项的值实现自动完成，如下：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-vim" data-lang="vim">&lt;span class="line">&lt;span class="cl">&lt;span class="k">let&lt;/span> &lt;span class="nx">ub_blog&lt;/span> &lt;span class="p">=&lt;/span> {&lt;span class="s1">&amp;#39;login_name&amp;#39;&lt;/span>:&lt;span class="s1">&amp;#39;admin&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> \&lt;span class="s1">&amp;#39;password&amp;#39;&lt;/span>:&lt;span class="s1">&amp;#39;pass2011&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> \&lt;span class="s1">&amp;#39;url&amp;#39;&lt;/span>:&lt;span class="s1">&amp;#39;http://www.sample.com/&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> \&lt;span class="s1">&amp;#39;xmlrpc_uri&amp;#39;&lt;/span>:&lt;span class="s1">&amp;#39;xmlrpc.php&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> \&lt;span class="s1">&amp;#39;db&amp;#39;&lt;/span>:&lt;span class="s1">&amp;#39;$VIM/UltraBlog.db&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> \&lt;span class="s1">&amp;#39;categories&amp;#39;&lt;/span>: &lt;span class="s1">&amp;#39;News|Computer|Image&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> \}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>How to Make YouCompleteMe Compatible with UltiSnips</title><link>http://0x3f.org/posts/make-youcompleteme-ultisnips-compatible/</link><pubDate>Thu, 23 May 2013 11:26:00 +0000</pubDate><guid>http://0x3f.org/posts/make-youcompleteme-ultisnips-compatible/</guid><description>&lt;p>I replaced &lt;a href="https://github.com/Shougo/neocomplcache">NeoComplCache&lt;/a> with &lt;a href="https://github.com/Valloric/YouCompleteMe">YouCompleteMe&lt;/a> today. The main reason is for the auto-complete feature and the fast speed. Besides, it seems that YCM provides more features than NCC.&lt;/p>
+&lt;p>Although NCC can also do auto-completions, it was so slow that I had to turn it off. For a long time, I have been doing completions by triggering the TAB key manually. YCM is much faster in most conditions, but I found it is also slow for C source files. Moreover, with the power of &lt;a href="https://github.com/davidhalter/jedi">jedi&lt;/a>, YCM makes completions of python sources much wiser, which is very convenient.&lt;/p></description></item><item><title>Vundle vs Pathogen</title><link>http://0x3f.org/posts/vundle-vs-pathogen/</link><pubDate>Wed, 22 May 2013 21:33:00 +0000</pubDate><guid>http://0x3f.org/posts/vundle-vs-pathogen/</guid><description>&lt;p>I have been using Pathogen for a long time and I am happy with it. But it seems that more and more Vim scripts are recommending to use Vundle in their install references. So I made a study today, the conclusion is, although almost all the articles I found from Google have a positive attitude on Vundle, I still prefer Pathogen.&lt;/p>
+&lt;p>Most supporters of Vundle praise it for one reason, that is, it can install and update scripts automatically, which is lacked by Pathogen. Yes, since Vundle leverages the vim-scripts repository on GitHub, it is really easier to do so than Pathogen. But the disadvantage is as good as the advantage. I found that the vim-scripts repo is not updated in time, the latest activity was carried out a month ago ! As an OCD patient of updating, I cannot tolerate old versions of vim scripts. Although that Vundle supports using scripts&amp;rsquo; git repos of their own (either on GitHub or other places), there is still a problem, what if authors commit broken code to the master brunch ?&lt;/p></description></item><item><title>UltraBlog.vim v3.5.0: 内建浏览器</title><link>http://0x3f.org/posts/ultrablog-v350-released/</link><pubDate>Mon, 30 Apr 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v350-released/</guid><description>&lt;p>此前预览文章是通过调用系统默认的网络浏览器实现的，缺点是这些功能完备的浏览器启动速度不甚理想，尤其是火狐，谁用谁知道。&lt;/p>
+&lt;p>前两天看了TuxRadar的一个Podcast，几分钟内就可以用pywebkitgtk拼装出一个五脏俱全的网络浏览器，pywebkitgtk这个东西实在是非常的好用。不过我实测后发现这东西加载页面的速度比较慢，而且貌似是单线程的，因为图片都是放在最后才加载，不知道是这个绑定本身的问题，还是有API可以实现的。于是突然想到拿这个东西实现一个简单的浏览器，很适合在UB里预览文章。&lt;/p>
+&lt;p>增加了一个选项&lt;strong>“ub_use_ubviewer”&lt;/strong>，默认值是1，即默认使用这个内建的浏览器预览文章。当这个选项的值被设为0时，仍然使用系统的默认浏览器，并且在Vim启动时不会加载内建的浏览器。这样做一是为了多一种选择，再一个也可以避开烦人的GTK警告：&lt;/p>
+&lt;blockquote>
+&lt;p>** (gvim:13629): WARNING **: Trying to register gtype 'GMountMountFlags' as enum when in fact it is of type 'GFlags'&lt;/p>
+&lt;p>** (gvim:13629): WARNING **: Trying to register gtype 'GDriveStartFlags' as enum when in fact it is of type 'GFlags'&lt;/p>
+&lt;p>** (gvim:13629): WARNING **: Trying to register gtype 'GSocketMsgFlags' as enum when in fact it is of type 'GFlags'&lt;/p>
+&lt;/blockquote>
+&lt;p>这些警告是GTK或其它一些程序库的Bug造成的，虽然只在虚拟终端中启动Vim时会显示并且不影响使用，但总会有警告恐惧症患者会觉得这种东西很闹心。如果这样，就把这个选项的值设成0，用回巨型浏览器好了。&lt;/p>
+&lt;p>本次更新的全部内容如下：&lt;/p></description></item><item><title>UltraBlog.vim v3.4.0: 正则表达式、批量替换和调试模式</title><link>http://0x3f.org/posts/ultrablog-v340-released/</link><pubDate>Sun, 29 Apr 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v340-released/</guid><description>&lt;p>这次的更新主要引入了支持正则表达式的全文检索、批量替换和调试模式。&lt;/p>
+&lt;h2>正则表达式&lt;/h2>
+&lt;p>我一直觉得原来的全文检索有一个遗憾，虽然可以通过多个关键词实现较为精确的查询，但还是不如正则表达式灵活和精确。&lt;/p>
+&lt;p>这是个蓄谋已久的需求，但直到真正做起来，才发现很多有意思的东西。虽然SQLite3提供支持正则表达式查询的&lt;strong>“REGEX”&lt;/strong>关键词，但并没有实际实现这个功能，而是需要写程序实现并在数据库接口中注册这个函数：&lt;/p>
+```python
+import sqlite3
+
+conn = sqlite3.connect('/tmp/your-database-file.db')
+
+# 使用正则表达式匹配给定内容的函数，返回布尔类型
+def regexp_search(expr, item):
+ """Check if the item has a sub-string which matches the expr"""
+ reg = re.compile(expr)
+ return reg.search(item) is not None
+
+# 在数据库中注册这个函数
+conn.create_function('REGEXP', 2, regexp_search)
+
+cur = conn.execute('select id,title from post where content REGEXP ?', '\babc\b')
+row = cur.fetchone()
+print row
+
+conn.close()
+```
+
+&lt;p>在SQLAlchemy中具体的实现方式是：&lt;/p></description></item><item><title>UltraBlog.vim v3.3.0：I18N、超时时间和其它</title><link>http://0x3f.org/posts/ultrablog-v330-released/</link><pubDate>Sun, 15 Apr 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v330-released/</guid><description>&lt;p>UB一岁了，这算是个周年纪念版吧。&lt;/p>
+
+&lt;p>在这一年里，因为各种原因，博客写得没有以前多了，但每篇都是用这个插件写的，我觉得很好用。断断续续地做了一些修改，因为一切都是一个人在做，所以大的变化不多。这次这个版本里有些改动还是要感谢&lt;a href="http://ihacklog.com/">荒野无灯&lt;/a>童鞋，他的&lt;a href="https://github.com/xbot/UltraBlog.vim/issues/3">建议&lt;/a>很大程度上催生了这个新版本：比如加入保存命令的热键映射选项，这样可以使用保存普通文件的热键保存UB中的内容，我自己以前也经常习惯性地用错热键；还有socket超时时间的选项，最近我这里也经常性地在UB操作博客时报超时的异常，荒童鞋关于自定义socket超时时间的建议一语惊醒了梦中人。&lt;/p>
+
+&lt;p>此外，似乎与近期Vim的一次升级&lt;a href="http://comments.gmane.org/gmane.editors.vim.devel/34092">有关&lt;/a>，在Vim中调用Python接口打印任何内容到标准IO都会导致Vim崩溃，所以这次把所有的输出都改成了调用Vim的输出命令来做。&lt;/p>
+
+&lt;p>本次修改的内容中，还有一项比较重要的内容就是实现了国际化，目前只提供英文和简体中文两种语言，由于Vimball不能处理二进制文件，所以从此以后UB改用zip格式压缩包打包。&lt;/p>
+
+&lt;p>以下是本次更新的详细内容：&lt;/p>
+
+&lt;ul>
+&lt;li>Feature: Add i18n support !&lt;/li>
+&lt;li>Feature: Add a new option &lt;strong>ub_hotkey_save_current_item&lt;/strong>, users can define their own hotkey for &lt;strong>:UBSave&lt;/strong>.&lt;/li>
+&lt;li>Feature: Add a new option &lt;strong>ub_socket_timeout&lt;/strong>, users can customize the timeout period in seconds, useful for slow networks.&lt;/li>
+&lt;li>Bugfix: Exception raised when one event is processed by more than one event handlers.&lt;/li>
+&lt;li>Change: Echoing messages now uses the command :echoerr instead of python's sys.stderr, because Vim crashes on this due to an upgrade recently.&lt;/li>
+&lt;li>Change: Change commands &lt;strong>:UBSave&lt;/strong>, &lt;strong>:UBSend&lt;/strong>, &lt;strong>:UBUpload&lt;/strong>, &lt;strong>:UBConv&lt;/strong>, &lt;strong>:UBPreview&lt;/strong> to be available only in their effective views.&lt;/li>
+&lt;li>Change: Lists are set nowrapped.&lt;/li>
+&lt;li>Bugfix: Stop complaining '&lt;strong>_pop from empty list_&lt;/strong>' while doing almost everything.&lt;/li>
+&lt;/ul>
+
+&lt;p>关于UB的详细信息在&lt;a href="http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/">这里&lt;/a>。&lt;/p></description></item><item><title>读完《Hacking Vim7.2》</title><link>http://0x3f.org/posts/after-reading-hacking-vim72/</link><pubDate>Mon, 28 Nov 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/after-reading-hacking-vim72/</guid><description>&lt;p>作者对Vim很有心得，分享了很多好的经验。这本书于新手可以用来入门，于老手也多有可取之处，是本学习Vim很不错的参考书。&lt;/p>
+
+&lt;p>&lt;a href="https://picasaweb.google.com/lh/photo/EDVN2_nwQ4XWPoqe83VGpNMTjNZETYmyPJy0liipFm0?feat=embedwebsite">&lt;img src="https://lh6.googleusercontent.com/-ezfYjiMqrrs/TtJnWRhKHzI/AAAAAAAAB14/hCidRx_DLj4/s400/cover.jpg" height="400" width="309" />&lt;/a>&lt;/p>
+
+&lt;p>Posted via &lt;a href="http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/">UltraBlog.vim&lt;/a>.&lt;/p></description></item><item><title>MatchTag.vim: 高亮配对的HTML标签</title><link>http://0x3f.org/posts/highlighting-paired-html-tags-using-matchtag-vim/</link><pubDate>Wed, 23 Nov 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/highlighting-paired-html-tags-using-matchtag-vim/</guid><description>&lt;p>两年前我曾在&lt;a href="http://vim.1045645.n5.nabble.com/How-can-Vim-highlight-the-matching-tag-when-I-put-the-cursor-on-the-other-one-in-a-pair-of-tags-td1177554.html">Vim邮件列表&lt;/a>里问怎样高亮配对的HTML标签，但没能解决。今天意外收到一封邮件，Linqq童鞋在&lt;a href="http://stackoverflow.com/questions/8168320/can-vim-highlight-matching-html-tags-like-notepad">StackOverflow&lt;/a>上问了同样的问题，有人就写了这个&lt;a href="http://www.vim.org/scripts/script.php?script_id=3818">插件&lt;/a>。&lt;/p>
+
+&lt;p>&lt;a href="https://picasaweb.google.com/lh/photo/wGB584-nLWrQRHCQ7qgADdMTjNZETYmyPJy0liipFm0?feat=embedwebsite">&lt;img src="https://lh3.googleusercontent.com/-ojoHK5ST944/Ts0QmwHOCXI/AAAAAAAAB1Q/ye0ko4Ob-gc/s800/2011-11-23.22%25253A40%25253A58.%2525E6%252593%2525B7%2525E5%25258F%252596%2525E9%252581%2525B8%2525E5%25258F%252596%2525E5%25258D%252580%2525E5%25259F%25259F.01.png" height="103" width="268" />&lt;/a>&lt;/p>
+
+&lt;p>Posted via &lt;a href="http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/">UltraBlog.vim&lt;/a>.&lt;/p></description></item><item><title>UltraBlog.vim v3.1释出：代码重构与MacVim支持</title><link>http://0x3f.org/posts/ultrablog-v310-released/</link><pubDate>Sat, 05 Nov 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v310-released/</guid><description>&lt;p>距离上一个版本的释出已经有三个月了，这次新版并没有增加多少功能性的内容，主要是代码的重构和对在MacVim下稳定性的改进。&lt;/p>
+
+&lt;p>对依赖关系检查的不细致导致了一些麻烦，抛出的错误信息有时与实际原因相距甚远。由于开始时是以实现功能为主，所以都是直接用函数实现的，之后修修补补，代码冗余而且维护麻烦。于是著手重构主要功能的源码，面向对象，把所有检查逻辑放到父类中去实现，子类只关注自身逻辑，最后新版减少了二百多行的代码量。&lt;/p>
+
+&lt;p>在重构的过程中偶然发现，在MacVim中，程序抛出任何异常，即便是有捕获逻辑，也会导致编辑器崩溃。在&lt;a href="http://stackoverflow.com/questions/5574702/how-to-print-to-stderr-in-python">这里&lt;/a>简略地提到：&lt;/p>
+
+&lt;blockquote>
+ &lt;p>the failure was actual a crash, through some strange combination of threading, matplotlib pyplot backend, and ssh X11 forwarding, sys.stderr had somehow been assigned to something which python complained wasn't a file-like object&lt;/p>
+&lt;/blockquote>
+
+&lt;p>于是将所有标准输出与标准错误输出语句换成另一种形式：&lt;/p>
+
+```python
+# 原形式
+sys.stdout.write('xxx')
+sys.stderr.write('xxx')
+
+# 新形式
+print >> sys.stdout, 'xxx'
+print >> sys.stderr, 'xxx'
+```
+
+&lt;p>以上是新版主要变更的内容，此外，也顺便解决了开发过程中发现的个别Bug和做了其它一些改动：&lt;/p></description></item><item><title>Enable Code Snippet Highlighting For UltraBlog.vim Templates</title><link>http://0x3f.org/posts/enable-code-snippet-highlighting-for-ultrablog-vim-templates/</link><pubDate>Sat, 27 Aug 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/enable-code-snippet-highlighting-for-ultrablog-vim-templates/</guid><description>&lt;p>Templates make it possible for users previewing posts in custom formats in &lt;a href="http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/">UltraBlog.vim&lt;/a>. However, there is more you can do with our highly customizable templates. This article discusses how to highlight code snippets in posts by the use of some third-party open-source tools.&lt;/p>
+
+&lt;p>Before setting out to work, let me introduce the tools we are about to use:&lt;/p>
+
+&lt;ul>
+&lt;li>&lt;a href="http://softwaremaniacs.org/soft/highlight/en/">highlight.js&lt;/a>: A javascript library which highlights code blocks in web pages automatically.&lt;/li>
+&lt;li>&lt;a href="http://jquery.com/">jquery&lt;/a>: The famous RIA development javascript library.&lt;/li>
+&lt;/ul>
+
+&lt;p>Download the upper two libraries and put them under any folder accessible to your webbrowser, in my case, it is &lt;strong>/home/lenin/.vim/bundle/ultrablog/vendor/&lt;/strong>.&lt;/p></description></item><item><title>UltraBlog.vim v3.0释出：全文检索与事件驱动</title><link>http://0x3f.org/posts/ultrablog-v300-released/</link><pubDate>Mon, 25 Jul 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v300-released/</guid><description>&lt;p>用了一周的业余时间，昨天我释出了&lt;a href="http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/">UltraBlog.vim&lt;/a>的3.0版。新版本主要加入了全文检索的功能，并引入事件驱动的模式。&lt;/p>
+
+&lt;p>全文检索是我蓄谋已久的功能，一个不能搜索的博客客户端的管理功能是大打折扣的。得益于SQLite数据库和SQLAlchemy框架，全文检索的实现是很简单的，新增加的&lt;code>:UBFind&lt;/code>命令将在所有文章和页面的标题与内容中查询，并将搜索结果显示在一个可分页的列表中。这个命令支持任意多个关键词，各关键词之间遵循与的关系。此外，检索结果中，所有的关键词将被自动标记为高亮。&lt;/p>
+
+&lt;p>事件驱动模式的引入是我悍然将版本号跳跃到3.x的主要原因。&lt;/p>
+
+&lt;p>在前几个版本中，我实现了对多窗口的支持，它使得用户可以在新窗口中打开列表中的文章。但UltraBlog.vim最初开发的时候并没有考虑到多窗口的问题，所有命令都只针对当前窗口进行操作。这就有了缓冲区内容同步的问题，假如在一个新的缓冲区中打开了和另一个缓冲区相同的文章，则一个缓冲区内容的改变不会同步到另外一个中，这多少是有些隐患的。&lt;/p>
+
+&lt;p>最直接的做法是在所有可能改变缓冲区内容的功能中加入对其它缓冲区的处理，但这样做有不少问题：&lt;/p>
+
+&lt;ul>
+&lt;li>代码耦合度太高，违反K.I.S.S原则，不利于今后的开发和维护&lt;/li>
+&lt;li>函数体过长，我讨厌难看的代码&lt;/li>
+&lt;li>代码冗余，重复劳动&lt;/li>
+&lt;/ul>
+
+&lt;p>事件驱动模式可以很好的解决以上问题，一个函数只干一件事，做完后一个事件抛出去，至于连带著要做什么，谁监听这个事件谁去处理，代码的耦合度很低，复用度很高，易于维护和阅读。&lt;/p>
+
+&lt;p>UltraBlog.vim引入事件驱动模式处理缓冲区同步的问题。不同的操作抛出不同的事件，所有的事件继承自父类&lt;strong>UBEvent&lt;/strong>：&lt;/p>
+
+```python
+class UBEvent:
+ def __init__(self, srcObj):
+ self.srcObj = srcObj
+
+class UBDebugEvent(UBEvent): pass
+class UBTmplDelEvent(UBEvent): pass
+class UBTmplSaveEvent(UBEvent): pass
+class UBLocalPostDelEvent(UBEvent): pass
+class UBRemotePostDelEvent(UBEvent): pass
+class UBPostSendEvent(UBEvent): pass
+class UBPostSaveEvent(UBEvent): pass
+```
+
+&lt;p>一个可能改变缓冲区内容的操作执行完后，创建一个特定的事件并将其加入到事件队列中。事件队列类中存放两个列表，一是事件队列，二是事件监听器列表；提供三个方法，分别用来注册事件监听器、对事件执行入队列操作和处理队列中所有事件：&lt;/p></description></item><item><title>UltraBlog.vim v2.3.0 Released With Templates</title><link>http://0x3f.org/posts/ultrablog-v230-released/</link><pubDate>Mon, 13 Jun 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-v230-released/</guid><description>&lt;p>I released the new version 2.3.0 of &lt;a href="http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/">UltraBlog.vim&lt;/a> last week. The main improvement in this version is that templates are introduced in.&lt;/p>
+
+&lt;p>Templates are simply HTML strings, they are used to preview posts/pages in the browser locally. This feature is a reparation for the remote previewing, due to the limit of the API, users cannot send a post to Wordpress as draft and preview it without affecting the post status if the post has been published. With templates, they do not have to send drafts to blogs to preview the final effect, but preview drafts directly in the browser in a pre-defined style. Templates can be created as many as users like and their looks can be customized with CSS, HTML and Javascript.&lt;/p></description></item><item><title>Vim自定义命令的参数自动补全</title><link>http://0x3f.org/posts/how-to-define-auto-completion-for-vim-commands/</link><pubDate>Sat, 11 Jun 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/how-to-define-auto-completion-for-vim-commands/</guid><description>&lt;p>&lt;a href="http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/">UltraBlog.vim&lt;/a>起初的几个版本采用增加命令个数的方式减少每个命令的参数个数，目的是降低命令格式记忆的难度。从2.3.0版本起，开始采用Vim自定义命令的一些高级特性，精简命令个数，虽然参数个数增加了，但由于实现了参数补全，反而更加直观。&lt;/p>
+
+&lt;p>Vim对自定义命令提供了多种补全参数的方式，详见&lt;code>:h command-complete&lt;/code>。其中，最常用的当属&lt;strong>custom&lt;/strong>：&lt;/p>
+
+```vim
+command! -nargs=? -complete=custom,StatusCmpl UBSend exec('py ub_send_item(&lt;f-args>)')
+```
+
+&lt;p>以上代码定义了一个自定义命令&lt;strong>UBSend&lt;/strong>，它可以获得一个或零个参数（&lt;em>-nargs=?&lt;/em>），如果指定参数，则补全方式采用&lt;strong>custom&lt;/strong>，该方式调用一个名为&lt;strong>StatusCmpl&lt;/strong>的函数并以其返回值作为补全的值域：&lt;/p>
+
+```vim
+function! StatusCmpl(ArgLead, CmdLine, CursorPos)
+ return "draft\npublish\nprivate\npending\n"
+endfunction
+```
+
+&lt;p>从以上代码可以看出，该函数需要接受三个参数，返回值应该是一个用换行符“\n”分割的字符串，在执行补全时，Vim自动使用正则表达式匹配备选项。对于只有一个参数的情况，这种实现方式简单高效。&lt;/p>
+
+&lt;p>对于参数较多的情况，&lt;strong>customlist&lt;/strong>补全方式最为适用：&lt;/p>
+
+```vim
+command! -nargs=* -complete=customlist,UBNewCmpl UBNew exec('py ub_new_item(&lt;f-args>)')
+```
+
+&lt;p>以上代码定义了命令&lt;strong>UBNew&lt;/strong>，&lt;strong>customlist&lt;/strong>补全方式调用函数&lt;strong>UBNewCmpl&lt;/strong>获取补全的值域：&lt;/p>
+
+```vim
+function! UBNewCmpl(ArgLead, CmdLine, CursorPos)
+ let lst = split(a:CmdLine)
+ if len(a:ArgLead)>0
+ let lst = lst[0:-2]
+ endif
+
+ let results = []
+ " For the first argument, complete the object type
+ if len(lst)==1
+ let objects = ['post','page','tmpl']
+ for obj in objects
+ if stridx(obj,a:ArgLead)==0
+ call add(results,obj)
+ endif
+ endfor
+ " For the second argument, complete the syntax for :UBNew post or :UBNew
+ " page
+ elseif len(lst)==2 &amp;&amp; count(['post', 'page'], lst[1])==1
+ let syntaxes = ['markdown','html','rst','textile','latex']
+ for synx in syntaxes
+ if stridx(synx,a:ArgLead)==0
+ call add(results,synx)
+ endif
+ endfor
+ endif
+ return results
+endfunction
+```
+
+&lt;p>这时侯，前面提到的三个参数就派上用场了。&lt;strong>ArgLead&lt;/strong>是进行补全时，已输入的参数部分，例如输入&lt;code>:UBNew p&lt;/code>，然后按Tab键，则ArgLead的值就是“p”；&lt;strong>CmdLine&lt;/strong>是已经输入的命令的全部，按上例，这个参数的值就是“UBNew p”；&lt;strong>CursorPost&lt;/strong>是当前光标距离命令行开头的字符数。利用这三个参数，就可以判断正在补全命令的第几个参数，进而利用ArgLead筛选该参数的值域。&lt;/p></description></item><item><title>人性化Vim的预览窗口</title><link>http://0x3f.org/posts/humanize-preview-window-in-vim/</link><pubDate>Sun, 29 May 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/humanize-preview-window-in-vim/</guid><description>&lt;p>Vim的预览窗口由 &lt;code>:ptag&lt;/code> 等命令触发，可用于预览函数定义。但在缺省情况下，预览窗口的高度是固定的，对于注释信息较多的函数，往往不能完全显示注释，而对于注释较少的函数，又会有多余的行浪费屏幕空间。&lt;/p>
+&lt;p>下面的函数用于解决这个问题：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;span class="lnt">27
+&lt;/span>&lt;span class="lnt">28
+&lt;/span>&lt;span class="lnt">29
+&lt;/span>&lt;span class="lnt">30
+&lt;/span>&lt;span class="lnt">31
+&lt;/span>&lt;span class="lnt">32
+&lt;/span>&lt;span class="lnt">33
+&lt;/span>&lt;span class="lnt">34
+&lt;/span>&lt;span class="lnt">35
+&lt;/span>&lt;span class="lnt">36
+&lt;/span>&lt;span class="lnt">37
+&lt;/span>&lt;span class="lnt">38
+&lt;/span>&lt;span class="lnt">39
+&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>UltraBlog.vim开发手记</title><link>http://0x3f.org/posts/ultrablog-development-note/</link><pubDate>Mon, 11 Apr 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-development-note/</guid><description>&lt;p>对于&lt;a href="http://blog.sina.com.cn/s/blog_694377f90100rmko.html">博客已死&lt;/a>的说法，我一点都不感到奇怪。早在几年前博客还比较火的时候我就表达过对博客泡沫的&lt;a href="http://0x3f.org/?p=209">看法&lt;/a>。&lt;/p>
+
+&lt;p>经历了短暂的&lt;a href="http://0x3f.org/?p=354">tumblog&lt;/a>的风头，微博成为现在最火的媒介。说博客已死，无非就是说微博将成为个人信息传播的主流。好吧，现在我知道那时候我所说的不懂什么是博客的人都去干什么了。&lt;/p>
+
+&lt;p>但是博客还是会继续发展，微博的兴起只会减少滥竽充数。因为微博突出的是时效性，最缺乏的是系统性和可重复更新的能力。微博的短处，正是博客的长处。这让我对博客有了一个新的、迟到了很久的认识──一个好的博客，它的文章不应该是写掉就忘的，而应该是不断地更新著的。&lt;/p>
+
+&lt;p>&lt;a href="http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/">UltraBlog.vim&lt;/a>就是出于这个需要而写的。&lt;/p>
+
+&lt;p>我对博客客户端的使用大概可以追溯到四五年前，那时候博客正火，在比较了几个&lt;a href="http://en.wikipedia.org/wiki/Blog_service_provider">BSP&lt;/a>后选择了&lt;a href="http://www.blogcn.com/">中国博客网&lt;/a>，就是因为他们提供桌面客户端。后来独博之后也试用过几个通用的客户端，但都没坚持多久，最根本的原因是它们几乎无一例外地都是&lt;a href="http://zh.wikipedia.org/wiki/%E6%89%80%E8%A6%8B%E5%8D%B3%E6%89%80%E5%BE%97">WYSIWYG&lt;/a>。而WYSIWYG的编辑器生成的HTML源码几乎都使用inline的样式，这就导致文章的排版布局很难控制，我对WYSIWYG其实是很抵触的，至今都不怎么用Office这类东西。&lt;/p>
+
+&lt;p>后来我意识到，我所需要的是样式与内容分离，于是准备自己写一个&lt;a href="http://0x3f.org/?p=331">客户端&lt;/a>，后来由于工作的原因不了了之。与此同时，我自定义了一套文章格式并用Java写了一个转换文章到HTML的&lt;a href="http://0x3f.org/?p=342">工具&lt;/a>，直到后来发现&lt;a href="http://0x3f.org/?p=383">Markdown&lt;/a>，我才知道我其实是需要一个轻量标记语言。&lt;/p>
+
+&lt;p>使用Markdown之后，写博客开始变得轻松愉快。我一度用过一段时间&lt;a href="http://www.scintilla.org/SciTE.html">SciTE&lt;/a>，还用&lt;a href="http://zh.wikipedia.org/wiki/Lua">Lua&lt;/a>写了个&lt;a href="http://0x3f.org/?p=499">辅助脚本&lt;/a>。但是我需要一个完整的客户端来管理文章，而这是一个编辑器所不能胜任的，所以就著手实现一个支持Markdown的&lt;a href="http://0x3f.org/?p=812">客户端&lt;/a>。这一次走得比较远，&lt;a href="http://0x3f.org/?p=812">ForeverFantasy&lt;/a>最终达到了可用的程度，我一度用它写过一段时间的博客。但是作为一个Vim重症患者，wxPython的编辑器部件是远远达不到我需要的水平的。虽然后来还&lt;a href="http://0x3f.org/?p=1409">实现&lt;/a>了调用外部程序处理文章内容（&lt;em>当然也可以调用Vim&lt;/em>），但总归觉得不舒服，至今已经一年没更新了。&lt;/p>
+
+&lt;p>直到前段时间试用了一下&lt;a href="http://0x3f.org/?p=1861">VimRepress&lt;/a>，在修改这个插件的时候突然受到启发，我这几年的需求原来是可以这么简单地解决的。&lt;/p>
+
+&lt;p>其实在几年前&lt;a href="http://www.vim.org/scripts/script.php?script_id=1953">vimpress&lt;/a>刚刚发布的时候我就了解过这个东西，包括此后接连发布的几个Vim写博客的插件，它们和我原来写的SciTE的那个辅助脚本没有本质的区别，都是博客编辑器。与完整的客户端相比，编辑器缺少对本地文章源码的管理，而且它们不记录文章源码和发布的文章的关联关系，简单地说是无状态的。这不符合博客文章持续更新的观点。&lt;/p>
+
+&lt;p>UltraBlog.vim使用&lt;a href="http://www.sqlalchemy.org/">SQLAlchemy&lt;/a>做数据库抽象层，将所有文章的源码及其状态保存在本地的一个SQLite数据库中，并且以此为基础，通过&lt;a href="http://en.wikipedia.org/wiki/XML-RPC">XMLRPC&lt;/a>接口实现对博客文章、页面的&lt;a href="http://en.wikipedia.org/wiki/Create,_read,_update_and_delete">CRUD&lt;/a>操作。同时利用Vim分模式的特点实现了可分页的文章列表和文章编辑视图。&lt;/p>
+
+&lt;p>UltraBlog.vim目前支持Markdown和HTML两种格式的文章，它最大的特点是在Markdown格式的源码和发布到博客中的文章之间建立联系，你可以随时修改本地数据库中的Markdown源码并更新博客中对应的文章。&lt;/p>
+
+&lt;p>新的功能还会不断地加入。&lt;/p>
+
+&lt;p>Posted via &lt;a href="http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/">UltraBlog.vim&lt;/a>.&lt;/p></description></item><item><title>UltraBlog.vim: Ultimate Vim Blogging Plugin</title><link>http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/</link><pubDate>Sat, 02 Apr 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/</guid><description>&lt;h2>Introduction&lt;/h2>
+&lt;p>UltraBlog.vim is yet another Vim blogging script for Wordpress.&lt;/p>
+&lt;p>The biggest difference between UB and other similar scripts is that UB is an ultimate client, which stores posts locally in an SQLite database, while others just operate remotely. In this way, many things can be done easily by the advantage of local storage and many other utilities, for example, you can search for posts stored in the database with a few keywords by typing a simple command, also you can preview drafts with any of your favorite templates as soon as you want to.&lt;/p></description></item><item><title>解决gVim白边问题的伪方法</title><link>http://0x3f.org/posts/the-fake-way-to-fix-white-gap-of-gvim/</link><pubDate>Mon, 21 Mar 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/the-fake-way-to-fix-white-gap-of-gvim/</guid><description>&lt;p>gVim的窗口大小与行数、列数、字体宽度等都有关系，并不像一般的图形界面一样可以完全地最大化或全屏，如果几个因素组合后与屏幕分辨率不符合，就会在屏幕的左边和底部出现灰色的白边。&lt;/p>
+
+&lt;p>这是gVim非常著名的一个问题，它使最大化的gVim窗口显得非常难看。目前仅有一种变通的解决方法，就是把白边部分的颜色设置成和gVim主题背景色一致的颜色：&lt;/p>
+
+&lt;p>
+```bash
+# 修改~/.gtkrc-2.0，加入如下内容：
+style "vimfix" {
+ bg[NORMAL] = "#DBDBD2" # this matches my gvim theme 'Normal' bg color.
+}
+widget "vim-main-window.*GtkForm" style "vimfix"
+```
+&lt;/p>
+
+&lt;p>由于并非真正地去掉白边，所以只能算是个伪方法。&lt;/p>
+
+&lt;p>Windows下的方法见&lt;a href="../fullscreen-for-gvim-on-windows/">这里&lt;/a>。&lt;/p></description></item><item><title>使用Vim写博客</title><link>http://0x3f.org/posts/blogging-with-vim/</link><pubDate>Sat, 19 Mar 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/blogging-with-vim/</guid><description>&lt;p>&lt;a href="http://www.vim.org/scripts/script.php?script_id=3510">VimRepress&lt;/a>是Vim写博客的插件中较新的一个，是久未更新的&lt;a href="http://www.vim.org/scripts/script.php?script_id=1953">Vimpress&lt;/a>的一个衍生版。&lt;/p>
+
+&lt;p>虽然不是所有此类插件中功能最多的一个，但VimRepress非常实用，除包含最常用的几个功能外，还支持&lt;a href="http://daringfireball.net/projects/markdown/">Markdown&lt;/a>。但是当前版本的VimRepress在转换Markdown格式的字符串到HTML时，是通过直接调用外部命令&lt;strong>markdown&lt;/strong>来实现的，这显然只是针对Linux（及其它类UNIX）系统设计的。&lt;/p>
+
+&lt;p>为了使VimRepress支持在Windows下使用Markdown写文章，可以对它做一些改进。&lt;/p>
+
+&lt;p>修改VimRepress的源文件&lt;strong>blog.vim&lt;/strong>，在&lt;code>if __name__ == "__main__":&lt;/code>这一行的上方加入如下两个函数：&lt;/p>
+
+&lt;p>
+```python
+def markdown_preview2():
+ import sys
+ reload(sys)
+ sys.setdefaultencoding('utf-8')
+ import markdown2 as mkd
+
+ global vimpress_temp_dir
+ if vimpress_temp_dir == '':
+ vimpress_temp_dir = tempfile.mkdtemp(suffix="vimpress")
+ temp_htm = os.path.join(vimpress_temp_dir, "vimpress_temp.htm")
+ html_heads = \
+"""&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+&lt;html>
+&lt;head>
+ &lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+&lt;/head>
+&lt;body>
+"""
+ tmp_file = open(temp_htm, 'w')
+ tmp_file.write(html_heads)
+ txt = "\n".join(vim.current.buffer[:])
+ #txt = unicode(txt,'cp936')
+ tmp_file.write(mkd.markdown(txt))
+ #tmp_file.write(mkd.markdown("\n".join(vim.current.buffer[:])))
+ tmp_file.close()
+
+ webbrowser.open("file://%s" % temp_htm)
+
+def markdown_newpost2():
+ import sys
+ reload(sys)
+ sys.setdefaultencoding('utf-8')
+ import markdown2 as mkd
+
+ global vimpress_temp_dir
+ if vimpress_temp_dir == '':
+ vimpress_temp_dir = tempfile.mkdtemp(suffix="vimpress")
+ temp_htm = os.path.join(vimpress_temp_dir, "vimpress_post.htm")
+
+ title = ""
+ title_s = 0
+ try:
+ while title_s &lt; 10:
+ if vim.current.buffer[title_s].startswith("#"):
+ title = vim.current.buffer[title_s].strip('#')
+ break
+ title_s += 1
+ except IndexError:
+ pass
+
+ cur_file = vim.eval('expand("%:p")')
+ if cur_file is None: 
+ cur_file = os.path.join(vimpress_temp_dir, "tmp_vimpress.mkd")
+ sys.stdout.write("\n\nCurrent buffer saved to %s\n\n" % cur_file)
+ vim.command(":w! %s" % cur_file)
+ tmp_file = open(temp_htm, 'w')
+ tmp_file.write(mkd.markdown("\n".join(vim.current.buffer[:])))
+ tmp_file.close()
+ sys.stdout.write("Press ENTER to continue.")
+ vim.command(":bdelete")
+ vim.command(":r %s" % temp_htm)
+ blog_new_post(title = title)
+```
+&lt;/p></description></item><item><title>修改Vimball默认安装路径</title><link>http://0x3f.org/posts/howto-set-the-default-vimball-install-path/</link><pubDate>Sat, 19 Mar 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-set-the-default-vimball-install-path/</guid><description>&lt;p>在Windows下，我希望把vba文件安装到$VIM/vimfiles目录下，而不是用户主目录中。&lt;/p>
+
+&lt;p>Vim在安装vba文件时默认从$VIMRUNTIME中取出第一个路径作为安装路径，使用如下命令查看当前设置：&lt;/p>
+
+&lt;p>
+```vim
+:echo &amp;rtp
+```
+&lt;/p>
+
+&lt;p>在Windows下，Vim默认将用户主目录放在了$VIMRUNTIME的第一个，因此才会将vba安装到用户主目录。&lt;/p>
+
+&lt;p>修改方法为在vimrc中加入如下设置：&lt;/p>
+
+&lt;p>
+```vim
+set rtp-=$HOME/vimfiles
+```
+&lt;/p></description></item><item><title>Vim中设置关键词识别规则的方法</title><link>http://0x3f.org/posts/howto-set-keyword-identification-in-vim/</link><pubDate>Wed, 22 Dec 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-set-keyword-identification-in-vim/</guid><description>&lt;p>在Vim中，关键词是一个至关重要的概念。合理地利用关键词，可以快速地对光标下有特殊含义的字符串进行一系列的操作，例如通过快捷键复制关键词、查询函数定义或文档、在项目中查询所有引用当前函数的地方等等。这对工作效率的提升有极大的帮助。&lt;/p>
+&lt;p>但我的Vim对PHP文件的关键词识别有问题，在选择函数名的时候总是将函数名后的小括弧一起选入。&lt;/p>
+&lt;p>Vim使用选项iskeyword设定关键词的匹配规则，使用如下命令查看当前文件类型的关键词规则：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-vim" data-lang="vim">&lt;span class="line">&lt;span class="cl">&lt;span class="k">set&lt;/span> &lt;span class="nx">iskeyword&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>我这里查看PHP文件的规则结果如下：&lt;/p>
+&lt;blockquote>
+iskeyword=@,48-57,_,192-255,$,(
+&lt;/blockquote>
+&lt;p>不明白为什么缺省设置中会有左括弧，在vimrc中加入如下配置取消之：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-vim" data-lang="vim">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">au&lt;/span> &lt;span class="nx">FileType&lt;/span> &lt;span class="nx">php&lt;/span> &lt;span class="k">set&lt;/span> &lt;span class="nx">iskeyword&lt;/span>&lt;span class="p">-=(&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>Vim保存文件时移除尾行换行符的方法</title><link>http://0x3f.org/posts/howto-remove-eof-in-vim/</link><pubDate>Sun, 05 Dec 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-remove-eof-in-vim/</guid><description>&lt;p>Vim认为一个文本文件的每一行都应该由一换行符结束，即使文件的最后一行也不例外。这就使得Vim保存过的文本文件在其它文本编辑器中查看时可能会在文件末尾多出一个空行。一般来说，这不是个问题，但对于程序员来说，有时候一些不规范的运行环境或其它组件就要求文件的最后一行不能有换行符，否则就会出莫名其妙的问题，尤其是在Windows环境下最常见。&lt;/p>
+&lt;p>要在保存文件时不在最后一行添加换行符，最常见、最简单的方法就是：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-vim" data-lang="vim">&lt;span class="line">&lt;span class="cl">&lt;span class="p">:&lt;/span>&lt;span class="k">set&lt;/span> &lt;span class="nx">binary&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">:&lt;/span>&lt;span class="k">set&lt;/span> &lt;span class="nx">noendofline&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>但是这样做有一个问题，就是会把DOS格式的文件自动转换成UNIX格式，WinSlave们肯定不希望这么做。&lt;/p>
+&lt;p>因此，可在vimrc中加入如下内容：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>使用热键切换Vim的QuickFix窗口打开状态</title><link>http://0x3f.org/posts/howto-toggle-quickfix-in-vim-using-hotkeys/</link><pubDate>Fri, 10 Sep 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-toggle-quickfix-in-vim-using-hotkeys/</guid><description>&lt;p>QuickFix窗口只有打开和关闭的命令，而使用一个热键来切换打开状态可以减少热键资源的浪费，使用也更方便。&lt;/p>
+&lt;p>从&lt;a href="http://vim.wikia.com/wiki/Toggle_to_open_or_close_the_quickfix_window">这里&lt;/a>找到使用自定义函数完成此功能的方法：使用一个全局变量记录QuickFix窗口的打开状态，从而判断是应该关闭还是打开。但其提供的函数存在状态同步的问题，假如在QuickFix窗口中使用“:q”退出窗口，此方法将不能正常工作。评论中给出了很好的解决方法，但其提供的代码有些小问题，修改之后如下：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-vim" data-lang="vim">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">nmap&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">leader&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="nx">co&lt;/span> :&lt;span class="nx">QFix&lt;/span>&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">CR&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">nmap&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">leader&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="nx">ct&lt;/span> :&lt;span class="nx">call&lt;/span> &lt;span class="nx">QFixToggle&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="m">1&lt;/span>&lt;span class="p">)&amp;lt;&lt;/span>&lt;span class="nx">CR&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">command&lt;/span>&lt;span class="p">!&lt;/span> &lt;span class="p">-&lt;/span>&lt;span class="nx">bang&lt;/span> &lt;span class="p">-&lt;/span>&lt;span class="nx">nargs&lt;/span>&lt;span class="p">=&lt;/span>? &lt;span class="nx">QFix&lt;/span> &lt;span class="nx">call&lt;/span> &lt;span class="nx">QFixToggle&lt;/span>&lt;span class="p">(&amp;lt;&lt;/span>&lt;span class="nx">bang&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="m">0&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">function&lt;/span>&lt;span class="p">!&lt;/span> &lt;span class="nx">QFixToggle&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">forced&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="nx">exists&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;g:qfix_win&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span> &amp;amp;&amp;amp; &lt;span class="nx">a&lt;/span>:&lt;span class="nx">forced&lt;/span> &lt;span class="p">!=&lt;/span> &lt;span class="m">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">cclose&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">else&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="nx">exists&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;g:my_quickfix_win_height&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">execute&lt;/span> &lt;span class="s2">&amp;#34;copen &amp;#34;&lt;/span>.&lt;span class="nx">g&lt;/span>:&lt;span class="nx">my_quickfix_win_height&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">else&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">copen&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">endif&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">endif&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">endfunction&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">augroup&lt;/span> &lt;span class="nx">QFixToggle&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">autocmd&lt;/span>&lt;span class="p">!&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">autocmd&lt;/span> &lt;span class="nx">BufWinEnter&lt;/span> &lt;span class="nx">quickfix&lt;/span> &lt;span class="k">let&lt;/span> &lt;span class="nx">g&lt;/span>:&lt;span class="nx">qfix_win&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="nx">bufnr&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;$&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">autocmd&lt;/span> &lt;span class="nx">BufWinLeave&lt;/span> * &lt;span class="k">if&lt;/span> &lt;span class="nx">exists&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;g:qfix_win&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span> &amp;amp;&amp;amp; &lt;span class="nx">expand&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;&amp;lt;abuf&amp;gt;&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">==&lt;/span> &lt;span class="nx">g&lt;/span>:&lt;span class="nx">qfix_win&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="nx">unlet&lt;/span>&lt;span class="p">!&lt;/span> &lt;span class="nx">g&lt;/span>:&lt;span class="nx">qfix_win&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="k">endif&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">augroup&lt;/span> &lt;span class="nx">END&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>启动GVim时自动最大化窗口的方法</title><link>http://0x3f.org/posts/howto-auto-maximize-gvim-at-startup/</link><pubDate>Wed, 25 Aug 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-auto-maximize-gvim-at-startup/</guid><description>&lt;p>根据帮助文档，gvim在windows下的最大化是通过模拟打开窗口菜单并点击最大化菜单项实现的，而在Linux下的方法较为灵活。&lt;/p>
+&lt;p>下面的方法是在vim中通过调用wmctrl实现最大化的方法：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;span class="lnt">9
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-vim" data-lang="vim">&lt;span class="line">&lt;span class="cl">&lt;span class="k">if&lt;/span> &lt;span class="nx">has&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;win32&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">au&lt;/span> &lt;span class="nx">GUIEnter&lt;/span> * &lt;span class="nx">simalt&lt;/span> &lt;span class="p">~&lt;/span>&lt;span class="nx">x&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">else&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">au&lt;/span> &lt;span class="nx">GUIEnter&lt;/span> * &lt;span class="nx">call&lt;/span> &lt;span class="nx">MaximizeWindow&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">endif&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">function&lt;/span>&lt;span class="p">!&lt;/span> &lt;span class="nx">MaximizeWindow&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">silent&lt;/span> &lt;span class="p">!&lt;/span>&lt;span class="nx">wmctrl&lt;/span> &lt;span class="p">-&lt;/span>&lt;span class="nx">r&lt;/span> :&lt;span class="nx">ACTIVE&lt;/span>: &lt;span class="p">-&lt;/span>&lt;span class="nx">b&lt;/span> &lt;span class="nx">add&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="nx">maximized_vert&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="nx">maximized_horz&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">endfunction&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>在Vim中检查语法和执行代码</title><link>http://0x3f.org/posts/syntax-checking-and-code-executing-in-vim/</link><pubDate>Sat, 17 Apr 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/syntax-checking-and-code-executing-in-vim/</guid><description>&lt;p>&lt;img src="http://lh3.ggpht.com/_ceUJ_lBTHzc/SaV494hGreI/AAAAAAAAAzY/xExf7CzGyv0/s800/the-mug-of-vi.jpg" alt="">&lt;/p>
+&lt;p>《&lt;a href="http://www.pragprog.com/the-pragmatic-programmer">The Pragmatic Programmer&lt;/a>》是本好书，虽然中文译名极为恶俗。为践行书中提到的&lt;a href="http://en.wikipedia.org/wiki/Don't_repeat_yourself">DRY原则&lt;/a>，我开始反思平时编码时总是重复出现的问题，其中之一就是很低级的语法错误，有时忘了语句最后的分号，有时忘了声明变量，凡此种种，不一而足。&lt;/p>
+&lt;p>相对于IDE，我更喜欢Vim，这也是语法错误没有检查出来的原因。因此就产生了给Vim添加语法检查功能的需求。下面是检查PHP代码的vimrc内容：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-vim" data-lang="vim">&lt;span class="line">&lt;span class="cl">&lt;span class="c">&amp;#34; Check the syntax of a PHP file&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">function&lt;/span>&lt;span class="p">!&lt;/span> &lt;span class="nx">CheckPHPSyntax&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &amp;amp;&lt;span class="k">filetype&lt;/span> &lt;span class="p">!=&lt;/span> &lt;span class="s1">&amp;#39;php&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">echohl&lt;/span> &lt;span class="nx">WarningMsg&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="nx">echo&lt;/span> &lt;span class="s1">&amp;#39;This is not a PHP file !&amp;#39;&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="nx">echohl&lt;/span> &lt;span class="nx">None&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">return&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">endif&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">setlocal&lt;/span> &lt;span class="nx">makeprg&lt;/span>&lt;span class="p">=&lt;/span>&lt;span class="nx">php&lt;/span>\ &lt;span class="p">-&lt;/span>&lt;span class="nx">l&lt;/span>\ &lt;span class="p">-&lt;/span>&lt;span class="nx">n&lt;/span>\ &lt;span class="p">-&lt;/span>&lt;span class="nx">d&lt;/span>\ &lt;span class="nx">html_errors&lt;/span>&lt;span class="p">=&lt;/span>&lt;span class="nx">off&lt;/span>\ %
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">setlocal&lt;/span> &lt;span class="nx">errorformat&lt;/span>&lt;span class="p">=&lt;/span>%&lt;span class="nx">m&lt;/span>\ &lt;span class="nx">in&lt;/span>\ %&lt;span class="nx">f&lt;/span>\ &lt;span class="nx">on&lt;/span>\ &lt;span class="nx">line&lt;/span>\ %&lt;span class="nx">l&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">echohl&lt;/span> &lt;span class="nx">WarningMsg&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="nx">echo&lt;/span> &lt;span class="s1">&amp;#39;Syntax checking output:&amp;#39;&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="nx">echohl&lt;/span> &lt;span class="nx">None&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &amp;amp;&lt;span class="nx">modified&lt;/span> &lt;span class="p">==&lt;/span> &lt;span class="m">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">silent&lt;/span> &lt;span class="nx">write&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">endif&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">silent&lt;/span> &lt;span class="nx">make&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">clist&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">endfunction&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">au&lt;/span> &lt;span class="k">filetype&lt;/span> &lt;span class="nx">php&lt;/span> &lt;span class="k">map&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">F5&lt;/span>&lt;span class="p">&amp;gt;&lt;/span> :&lt;span class="nx">call&lt;/span> &lt;span class="nx">CheckPHPSyntax&lt;/span>&lt;span class="p">()&amp;lt;&lt;/span>&lt;span class="nx">CR&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">au&lt;/span> &lt;span class="k">filetype&lt;/span> &lt;span class="nx">php&lt;/span> &lt;span class="nx">imap&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">F5&lt;/span>&lt;span class="p">&amp;gt;&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">ESC&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>:&lt;span class="nx">call&lt;/span> &lt;span class="nx">CheckPHPSyntax&lt;/span>&lt;span class="p">()&amp;lt;&lt;/span>&lt;span class="nx">CR&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>Python控制外部进程的灵异事件</title><link>http://0x3f.org/posts/supernatural-phenomenon-of-controlling-external-processes-in-python/</link><pubDate>Mon, 08 Mar 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/supernatural-phenomenon-of-controlling-external-processes-in-python/</guid><description>&lt;p>春节前的一段时间，重新拾起近一年没动过的&lt;a href="http://0x3f.org/?tag=foreverfantasy">ForeverFantasy&lt;/a>。&lt;/p>
+
+&lt;p>虽然一年内没什么更新，但是我却一直都在用，基本上只限于将用Vim写好的&lt;a href="http://en.wikipedia.org/wiki/Markdown">Markdown&lt;/a>格式的文档转换成HTML。&lt;/p>
+
+&lt;p>重写了相当一部分代码，较大程度地改变了界面布局，突然发现经过一年的沉淀，对&lt;a href="http://en.wikipedia.org/wiki/WxPython">wxPython&lt;/a>的理解增进了不少，开发起来比起去年这个时候清楚了很多。&lt;/p>
+
+&lt;p>&lt;a href="http://picasaweb.google.com/lh/photo/bNRGQr0g6aLuqDUm8EQ6mg?feat=embedwebsite">&lt;img src="http://lh6.ggpht.com/_ceUJ_lBTHzc/S5UYPQmTAzI/AAAAAAAABUc/znMRxXuE8dE/s400/2010-03-08.23%3A27%3A03.%E5%B7%A5%E4%BD%9C%E5%8C%BA%201.01.png" />&lt;/a>&lt;/p>
+
+&lt;p>这些天来一直坚持着每天或多或少的做一些，如果说有什么主要的进展的话，那就是界面的重构，以及昨天实现了调用Vim编辑文档并回收文档内容的功能。&lt;/p>
+
+&lt;p>ForeverFantasy和Vim协同的一个最大的问题就是如何判断Vim已经退出。Python调用外部程序的方法有很多，比如传统的&lt;a href="http://docs.python.org/library/commands.html">commands&lt;/a>模块、&lt;a href="http://docs.python.org/library/os.html">os&lt;/a>.system()等，&lt;a href="http://docs.python.org/library/subprocess.html">subprocess&lt;/a>是致力于替代这些旧有的方式的一个模块，它的一个特点是可以在启动一个外部程序作为子进程后还能监控这个进程的运行状态。这为ForeverFantasy在Vim退出后回收文档内容提供了更简捷的途径。&lt;/p>
+
+&lt;p>下面的代码可以说明如何使用subprocess运行外部程序并监控运行状态：&lt;/p>
+
+&lt;p>
+```python
+import subprocess
+process = subprocess.Popen('gvim', shell=True)
+status = process.poll()
+if 0 == status:
+ print 'The external program exited.'
+if status is None:
+ print 'The external program is still running.'
+```
+&lt;/p></description></item><item><title>Vim的终极自动补全插件：NeoComplCache</title><link>http://0x3f.org/posts/neocomplcache-vim/</link><pubDate>Sat, 27 Feb 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/neocomplcache-vim/</guid><description>&lt;p>&lt;img src="http://lh3.ggpht.com/_ceUJ_lBTHzc/SaV494hGreI/AAAAAAAAAzY/xExf7CzGyv0/s800/the-mug-of-vi.jpg" alt="">&lt;/p>
+&lt;p>关于自动补全，最初用的是&lt;a href="http://www.vim.org/scripts/script.php?script_id=1643">SuperTab&lt;/a>，那个时候Vim的自动补全插件寥寥无几，也就SuperTab比较有名。不过实际使用过程中这个插件给我的体验不是很好，原因是补全的准确度不高。&lt;/p>
+&lt;p>后来出了一个新插件，&lt;a href="http://www.vim.org/scripts/script.php?script_id=1879">AutoComplPop&lt;/a>，功能和使用都很简单。但是很快我就又用回SuperTab，原因是AutoComplPop在输入的同时实时地查询匹配的关键词，导致输入极不流畅，效率很低。&lt;/p>
+&lt;p>一直就这么凑合着用着SuperTab，随着这个插件版本的更新，旧功能不断地完善，新功能也接二连三地引入，SuperTab在匹配关键词的准确度上有了一些改善，但是新的问题又出现了。SuperTab后来加入一个新功能，对于程序源文件，可以在其引入的文件以及API文件中匹配关键词。比如假设我当前正在编辑a.php，在a.php中有&lt;strong>include 'b.php';&lt;/strong>这样的语句，当我输入&lt;strong>array&lt;/strong>并按下Tab键时，SuperTab不但会在当前文件中查询所有匹配项，还会到b.php中查询，如果配置过vim、指定一个包含了php的API的文件，则SuperTab还会自动从这个文件中查询匹配项。按理说这个功能的理念很好，但问题就在于SuperTab做的是实时查询，如果源文件中包含的文件较多，各个文件又较大，问题就显而易见了。我不得不在写程序时小心地使用Tab键，否则有时就会出现按一下Tab键然后等着Vim在那狂搜的情况。&lt;/p>
+&lt;p>前两天发现了&lt;a href="http://www.vim.org/scripts/script.php?script_id=2620">NeoComplCache&lt;/a>，光看名字就让我有点儿兴奋，一般使用缓存的速度都很快。这个插件会在Vim打开文件的时候对上下文作一个索引，并把索引结果保存到缓存中。同时，文件更改的内容会在保存的时候被索引。此外，NeoComplCache支持多种关键词索引模式，例如它会判断当前路径下的文件或目录的名字是否匹配补全条件，也可以从缓存的程序语言API中匹配补全条件。到此为止，它就解决了SuperTab和AutoComplPop共同的效率问题，并具备它们各自的长处。看了一遍文档，发现这个插件的功能比较细致，大概有以下一些特点：&lt;/p>
+&lt;p>1、使用缓存，自动补全时效率高；
+2、生成的关键词列表准确；
+3、支持下划线分割的关键词，如apple_boy_cat，就可以只输入a_b_c，然后补全；
+4、支持驼峰格式匹配关键词，如AppleBoyCat，就可以只输入ABC，然后补全；
+5、既可以像AutoComplPop那样在Vim中输入的同时自动弹出补全列表，又可以自定义快捷键手动触发；
+6、支持从文件名和目录名中匹配补全条件；
+7、对于程序源文件，支持从语言API中匹配补全条件；&lt;/p>
+&lt;p>NeoComplCache的缺点是文档不全，虽然从只言片语中发现它还支持Snippet，但从文档中没有找到足够的有用信息。加之一直用&lt;a href="http://www.vim.org/scripts/script.php?script_id=2540">SnipMate&lt;/a>感觉不错，所以目前还是用它来实现snippet功能。&lt;/p>
+&lt;p>这就有个搭配问题：虽然NeoComplCache不存在补全时的效率问题，但我仍然打算只在需要补全时才用快捷键触发此功能，最主要的原因是我既希望用Tab键触发SnipMate的代码块补全功能，又希望修SuperTab那样用Tab选择补全列表中的选项。也就是要达到只用Tab键就可以完成打开自动补全列表、补全列表选项选择和SnipMate代码块替换的效果。但是，如果将Tab映射到触发自动补全，则补全列表选择和SnipMate均无法使用Tab，反之亦然。&lt;/p>
+&lt;p>所以我想如果能让NeoComplCache、SuperTab、SnipMate和谐共存，那问题就解决了，几经摸索，终于找到了办法：&lt;/p>
+&lt;p>1、设置NeoComplCache不自动弹出补全列表，即在vimrc中加入：&lt;/p>
+&lt;blockquote>
+ &lt;p>let g:NeoComplCache_DisableAutoComplete = 1&lt;/p>
+&lt;/blockquote>
+&lt;p>2、由于NeoComplCache在手工模式下使用快捷键组合&lt;code>&amp;lt;C-X&amp;gt;&amp;lt;C-U&amp;gt;&lt;/code>打开补全列表，故设置SuperTab的默认补全操作为&lt;code>&amp;lt;C-X&amp;gt;&amp;lt;C-U&amp;gt;&lt;/code>，即在vimrc中加入：&lt;/p>
+&lt;blockquote>
+ &lt;p>let g:SuperTabDefaultCompletionType = '&lt;code>&amp;lt;C-X&amp;gt;&amp;lt;C-U&amp;gt;&lt;/code>'&lt;/p>
+&lt;/blockquote>
+&lt;p>这样，NeoComplCache只负责补全关键词缓存的生成，SuperTab控制Tab键的行为并在需要触发补全操作时打开补全列表、进而在列表中的选项间移动焦点，而当光标前的关键词是snippet时，SnipMate会被优先调用并完成代码块的替换。&lt;/p>
+&lt;p>就在写这篇文章的时候，我突然觉得NeoComplCache自动弹出补全列表+SnipMate的方式也挺好，只是这样就不能用Tab键选择列表中的选项了。&lt;/p>
+&lt;h3 id="相关阅读">相关阅读：&lt;/h3>
+&lt;ul>
+&lt;li>&lt;a href="http://0x3f.org/post/replace-youcompleteme-with-neocomplete/">用neocomplete换掉了YouCompleteMe&lt;/a>&lt;/li>
+&lt;li>&lt;a href="http://0x3f.org/post/make-youcompleteme-ultisnips-compatible/">How to Make YouCompleteMe Compatible with UltiSnips&lt;/a>&lt;/li>
+&lt;/ul></description></item><item><title>Windows下GVim的全屏</title><link>http://0x3f.org/posts/fullscreen-for-gvim-on-windows/</link><pubDate>Thu, 17 Sep 2009 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/fullscreen-for-gvim-on-windows/</guid><description>下载gvim的一个扩展“&lt;a href="https://github.com/derek/gvimfullscreen_win32">gvimfullscreen_win32&lt;/a>”，并解压缩。
+
+将&lt;strong>gvimfullscreen.dll&lt;/strong>复制到gvim安装目录下，与&lt;strong>gvim.exe&lt;/strong>同目录。
+
+修改gvim配置文件&lt;strong>_vimrc&lt;/strong>，在其中添加如下内容：
+
+```vim
+if has('win32')
+ map &lt;F11> &lt;Esc>:call libcallnr("gvimfullscreen.dll", "ToggleFullScreen", 0)&lt;CR>
+endif
+```
+
+此后，即可使用&lt;strong>F11&lt;/strong>键开关gvim的全屏状态。</description></item></channel></rss>
