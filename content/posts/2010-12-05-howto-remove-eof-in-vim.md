@@ -9,7 +9,6 @@ tags:
 - 计算机
 - 配置
 status: publish
-published: true
 comments: true
 meta:
   _edit_last: '1'

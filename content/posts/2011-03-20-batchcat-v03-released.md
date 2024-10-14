@@ -8,7 +8,6 @@ tags:
 - WordPress
 - 编程
 status: publish
-published: true
 comments: true
 meta:
   views: '383'

@@ -10,7 +10,6 @@ tags:
 - 脚本
 - 视频
 status: publish
-published: true
 comments: true
 meta:
   _edit_last: '1'

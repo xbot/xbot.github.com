@@ -10,7 +10,6 @@ tags:
 - 计算机
 - 输入法
 status: publish
-published: true
 comments: true
 meta:
   _edit_last: '1'

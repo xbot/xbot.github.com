@@ -9,7 +9,6 @@ tags:
 - Vim
 - 配置
 status: publish
-published: true
 comments: true
 ---
 

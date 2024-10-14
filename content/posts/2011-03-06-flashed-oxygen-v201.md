@@ -9,7 +9,6 @@ tags:
 - Android
 - 桌面日记
 status: publish
-published: true
 comments: true
 ---
 上周 Oxygen v2.0 发布之后，感觉还不稳定，忍住了。前两天终于刷上了刚发布的 Oxygen v2.0.1 。

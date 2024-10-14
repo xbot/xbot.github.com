@@ -8,7 +8,6 @@ tags:
 - 美化
 - 计算机
 status: publish
-published: true
 comments: true
 meta:
   _edit_last: '1'

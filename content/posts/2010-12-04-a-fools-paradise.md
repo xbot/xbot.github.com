@@ -9,7 +9,6 @@ tags:
 - 生活
 - 青梅煮酒
 status: publish
-published: true
 comments: true
 date: 2010-12-04 17:51:00
 ---

@@ -9,7 +9,6 @@ tags:
 - WordPress
 - 编程
 status: publish
-published: true
 comments: true
 meta:
   _edit_last: '1'

@@ -9,7 +9,6 @@ tags:
 - 软件
 - 开源
 status: publish
-published: true
 comments: true
 meta:
   _edit_last: '1'

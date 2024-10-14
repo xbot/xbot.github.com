@@ -10,7 +10,6 @@ tags:
 - 编程
 - 随笔
 status: publish
-published: true
 comments: true
 ---
 这是去年晚些时侯发现的一个问题。

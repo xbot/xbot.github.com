@@ -9,7 +9,6 @@ tags:
 - Android
 - 主题
 status: publish
-published: true
 comments: true
 ---
 五月末入手 Desire 后一直没有折腾，一是因为时间和精力不够，二也没有迫切的需要。

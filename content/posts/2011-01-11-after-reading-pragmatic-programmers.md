@@ -8,7 +8,6 @@ tags:
 - 读书
 - 青梅煮酒
 status: publish
-published: true
 comments: true
 meta:
   _edit_last: '1'
