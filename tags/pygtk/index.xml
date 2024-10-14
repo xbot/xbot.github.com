@@ -31,4 +31,34 @@ def onCellEdited(self, cell, path, newText, userData):
  self.treeView.set_cursor_on_cell(path, col, cell, True)
 ```
 
-&lt;p>关键的代码在最后一行，通过调用TreeView的set_cursor_on_cell方法聚焦Cell并选中其内容。但就是这一步出了问题，报如下警告：&lt;/p></description></item></channel></rss>
+&lt;p>关键的代码在最后一行，通过调用TreeView的set_cursor_on_cell方法聚焦Cell并选中其内容。但就是这一步出了问题，报如下警告：&lt;/p>
+
+&lt;blockquote>
+ &lt;p>GtkWarning: _gtk_tree_view_column_start_editing: assertion `tree_column->editable_widget == NULL' failed&lt;/p>
+&lt;/blockquote>
+
+&lt;p>此后整个TreeView的行为表现不正常，表现为可直接修改其它Cell的内容，且原Cell一直处于聚焦状态。&lt;/p>
+
+&lt;p>此问题的原因是：edited事件在Cell的输入控件被销毁前就发出了，这时在事件的回调方法中重新聚焦该Cell就导致了这个问题（&lt;em>详见&lt;a href="http://www.gtkforums.com/viewtopic.php?t=4619">这里&lt;/a>&lt;/em>）。&lt;/p>
+
+&lt;p>解决方法是借助glib.idle_add函数，在PyGTK空闲的时候再调用set_cursor_on_cell方法，由于此时原控件已被销毁，所以不会有问题。&lt;/p>
+
+&lt;p>修改后的代码如下：&lt;/p>
+
+```python
+def onCellEdited(self, cell, path, newText, userData):
+ store,colNum = userData
+ evt = ServerTypeChangedEvent(self, cell, usrData)
+
+ EventQueue.fireEvent(evt)
+ try:
+ EventQueue.processEvents()
+ except Exception,e:
+ self.alert(e.message)
+ col = self.treeView.get_column(colNum-1)
+ #self.treeView.set_cursor_on_cell(path, col, cell, True)
+ import glib
+ glib.idle_add(self.treeView.set_cursor_on_cell, path, col, cell, True)
+```
+
+&lt;p>Posted via &lt;a href="http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/">UltraBlog.vim&lt;/a>.&lt;/p></description></item></channel></rss>

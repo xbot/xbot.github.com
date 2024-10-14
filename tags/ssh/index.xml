@@ -45,7 +45,35 @@
 
 &lt;p>这条指令中，222.222.222.222是家庭电脑的公网IP地址。整条指令的意思是：我在公网IP地址为222.222.222.222的电脑上访问9999端口，就如同在本机（公司网关服务器）上访问IP地址为192.168.1.128的主机的80端口一样。当我回到家中，就可以和前面一样通过访问9999端口来打开办公系统了。&lt;/p>
 
-&lt;p>事实上，第一种情况是将本地端口映射为远程主机所能访问的资源，故称为本地端口转发；而第二种情况是将远程主机的端口映射为本机所能访问的资源，故称为远程端口转发。&lt;/p></description></item><item><title>Dokan SSHFS：Windows下通过SSH挂载Linux主机为本地分区</title><link>http://0x3f.org/posts/mount-linux-dirs-as-windows-local-partitions/</link><pubDate>Thu, 20 Jan 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/mount-linux-dirs-as-windows-local-partitions/</guid><description>&lt;p>Linux一般使用Samba向Windows共享资源。另一个办法就是使用SSH。&lt;/p>
+&lt;p>事实上，第一种情况是将本地端口映射为远程主机所能访问的资源，故称为本地端口转发；而第二种情况是将远程主机的端口映射为本机所能访问的资源，故称为远程端口转发。&lt;/p>
+
+&lt;p>但无论是本地端口转发还是远程端口转发，都只能将一个资源转发到一个端口上，假若我要访问很多资源，岂非要建立很多SSH隧道，不但操作麻烦，而且浪费本机资源。这时，我们就可以使用第三种端口转发方式--动态端口转发：&lt;/p>
+
+&lt;p>&lt;code>ssh -D 9999 111.111.111.111&lt;/code>&lt;/p>
+
+&lt;p>这条指令的意思是：我在本机访问9999端口，就像在IP地址为111.111.111.111的主机上访问它所能访问的某些资源一样。这个所谓的“某些资源”，需要由我在发起访问请求时通过SSH隧道告诉远程主机，事实上，SSH的动态端口转发就是创建了一个SOCKS代理服务器。&lt;/p>
+
+&lt;p>在PAC Manager中，我们可以在每个SSH连接的配置界面创建隧道。对于上面的例子，创建本地端口转发时，应点击“Local Port Forwarding”区域的“Add”按钮，并将本地端口、远程资源IP地址和端口分别填写到“Local Port”、“Remote Address”和“Remote Port”中：&lt;/p>
+
+&lt;p>&lt;a href="https://picasaweb.google.com/lh/photo/Gfzyo3h4hUrTUxA4YIlRuw?feat=embedwebsite">&lt;img src="https://lh3.googleusercontent.com/--l0NMNEs-Qs/Th70Q2lplvI/AAAAAAAABxo/EDBIPjRL0nY/s640/pac_manager_introduction-tunnel_01.png" height="166" width="640" />&lt;/a>&lt;/p>
+
+&lt;p>截至当前最新的版本（2.4.1.3），PAC Manager尚未为远程端口转发提供像本地端口转发功能一样单独的配置界面，但可以使用高级选项功能实现。在“Advanced Options”输入框中填写如下内容：&lt;/p>
+
+&lt;p>&lt;a href="https://picasaweb.google.com/lh/photo/fru1uaGuVQ57mXRBiFRMeA?feat=embedwebsite">&lt;img src="https://lh6.googleusercontent.com/-iFwTWK2ZL4M/Th70Q7NcE6I/AAAAAAAABxs/pTEh2LGkwV8/s640/pac_manager_introduction-tunnel_03.png" height="31" width="640" />&lt;/a>&lt;/p>
+
+&lt;p>如果需要建立多个远程端口转发，可以在“Advanced Options”中填写多个类似上面内容的选项，彼此之间使用空格分隔即可。&lt;/p>
+
+&lt;p>创建动态端口转发时，应选中“Dynamic Port Forwarding”区域前面的复选框，然后填写“Forwarded SOCKS Port”即可：&lt;/p>
+
+&lt;p>&lt;a href="https://picasaweb.google.com/lh/photo/hnRb67QlipzpHb_IaeyYiw?feat=embedwebsite">&lt;img src="https://lh3.googleusercontent.com/-JHN7-EI7pjc/Th70QhAOCUI/AAAAAAAABxk/4D2e1SpcS-U/s640/pac_manager_introduction-tunnel_02.png" height="55" width="640" />&lt;/a>&lt;/p>
+
+&lt;h3>连接前及断开后的自动指令&lt;/h3>
+
+&lt;p>通过在PAC Manager中定义连接前和断开后的自动指令，我们可以指定一些在相应的SSH连接建立之前及断开之后通常要在本机执行的指令。&lt;/p>
+
+&lt;p>例如假设我使用的是计时收费的网络服务，为了节省资费，我希望只在每次建立SSH连接时才激活网络服务，并且在完成工作后断开SSH连接时自动断开网络服务。那么就可以在“Pre Exec”中定义激活网络服务的指令，如下图所示：&lt;/p>
+
+&lt;p>&lt;a href="https://picasaweb.google.com/lh/photo/_P1JaaI5sF8gDTMulaljVA?feat=embedwebsite">&lt;img src="https://lh6.googleusercontent.com/-nPz5VHhK0vk/Th70MQLOVOI/AAAAAAAABxM/Q-mwNmyxzOo/s640/pac_manager_introduction-exec_01.png" height="136" width="640" />&lt;/a>&lt;/p></description></item><item><title>Dokan SSHFS：Windows下通过SSH挂载Linux主机为本地分区</title><link>http://0x3f.org/posts/mount-linux-dirs-as-windows-local-partitions/</link><pubDate>Thu, 20 Jan 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/mount-linux-dirs-as-windows-local-partitions/</guid><description>&lt;p>Linux一般使用Samba向Windows共享资源。另一个办法就是使用SSH。&lt;/p>
 
 &lt;p>&lt;a href="http://dokan-dev.net/en/">Dokan&lt;/a>是一个为Windows提供实现新文件系统的开发库，而&lt;a href="http://dokan-dev.net/en/download/#sshfs">Dokan SSHFS&lt;/a>是在此基础上实现的挂载SSH通道为本地分区的文件系统。必须先安装Dokan，然后再安装Dokan SSHFS。&lt;/p>
 

@@ -46,7 +46,23 @@ INTEL_HDA_DEVICE_TIMEOUT=30
 
 &lt;p>&lt;em>在此之前，系统空闲时CPU温度一般是50多度，普通使用时一般在60多度，如果开了kvm虚拟机会达到60至90度间。经过以上设置，系统空闲时CPU温度一度下降到39度，即使开了虚拟机，一般也可维持在50到80度间。&lt;/em>&lt;/p>
 
-&lt;p>另外，对于以上内容，我还有些没搞明白的地方和要补充说明的东西：&lt;/p></description></item><item><title>网通ADSL猫开启路由和自动拨号功能的方法之二</title><link>http://0x3f.org/posts/howto-enable-routing-and-auto-dialing-for-unicom-adsl-modem-2/</link><pubDate>Sun, 18 Jul 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-enable-routing-and-auto-dialing-for-unicom-adsl-modem-2/</guid><description>&lt;p>之前提到过对华为HG522、HG527的超级用户的&lt;a href="http://0x3f.org/?p=1528">破解方法&lt;/a>。网通附送的另一种猫，是&lt;strong>中兴ZXV10 H108B&lt;/strong>无线猫，体积更小，而且天线是内置的。&lt;/p>
+&lt;p>另外，对于以上内容，我还有些没搞明白的地方和要补充说明的东西：&lt;/p>
+
+&lt;ol>
+&lt;li>虽然将laptop-mode加入rc.conf且已随系统启动，但使用命令“&lt;strong>cat /proc/sys/vm/laptop_mode&lt;/strong>”查询得到的结果仍然是0，也就是说没有自动启用laptop-mode，必须使用命令“&lt;strong>sudo /etc/rc.d/laptop-mode restart&lt;/strong>”手动重启才行。目前没有找到解决办法。&lt;/li>
+&lt;li>虽然启用laptop-mode接管声卡电源管理，但没找到查看是否生效的方法，于是在/etc/rc.local中加入命令“&lt;strong>echo 1 &amp;gt; /sys/module/snd&lt;em>hda&lt;/em>intel/parameters/power_save&lt;/strong>”以强制声卡节电。&lt;/li>
+&lt;li>Intel的powertop是个好东西，用它可以查看哪些进程最影响CPU节能。我们优化的标准之一就是使powertop中显示的“Wakeups-from-idle per second”尽可能地减少。powertop的另一个特点就是通过自动检查当前系统中电源使用的配置情况给出优化的建议，这是个很贴心的功能。&lt;/li>
+&lt;/ol>
+
+&lt;p>鉴于目前存疑较多并将继续尝试，所以在标题中特别注明“不完全”三个字……&lt;/p>
+
+&lt;h3>参考&lt;/h3>
+
+&lt;ol>
+&lt;li>http://itgen.blogspot.com/2009/03/energy-management-in-linux.html&lt;/li>
+&lt;li>http://www.ibm.com/developerworks/cn/linux/l-cpufreq-1/index.html&lt;/li>
+&lt;li>http://www.lesswatts.org/&lt;/li>
+&lt;/ol></description></item><item><title>网通ADSL猫开启路由和自动拨号功能的方法之二</title><link>http://0x3f.org/posts/howto-enable-routing-and-auto-dialing-for-unicom-adsl-modem-2/</link><pubDate>Sun, 18 Jul 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-enable-routing-and-auto-dialing-for-unicom-adsl-modem-2/</guid><description>&lt;p>之前提到过对华为HG522、HG527的超级用户的&lt;a href="http://0x3f.org/?p=1528">破解方法&lt;/a>。网通附送的另一种猫，是&lt;strong>中兴ZXV10 H108B&lt;/strong>无线猫，体积更小，而且天线是内置的。&lt;/p>
 &lt;p>上次的方法不能用在这个型号的猫上，但可以用&lt;strong>ftp&lt;/strong>的方式破解。以下步骤基于Linux，并只在硬件版本为&lt;strong>V1.1.02&lt;/strong>、软件版本为&lt;strong>V1.1.02T18_N&lt;/strong>的H108B上测试通过：&lt;/p>
 &lt;ol>
 &lt;li>
@@ -80,7 +96,60 @@ cd ../
 cd etc
 get board.conf
 &lt;/blockquote>
-&lt;p>如下所示：&lt;/p></description></item><item><title>网通ADSL猫开启路由和自动拨号功能的方法之一</title><link>http://0x3f.org/posts/howto-enable-routing-and-auto-dialing-for-unicom-adsl-modem-1/</link><pubDate>Sun, 04 Jul 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-enable-routing-and-auto-dialing-for-unicom-adsl-modem-1/</guid><description>&lt;p>北京网通送的无线猫有的是华为HG522，有的是HG527，屏蔽了路由和PPPOE自动拨号功能，须使用超级用户登入才能使用这些功能。&lt;/p>
+&lt;p>如下所示：&lt;/p>
+&lt;blockquote>
+ftp> cd ../
+250 Directory successfully changed.
+ftp> cd etc
+250 Directory successfully changed.
+ftp> get board.conf
+200 PORT command successful. Consider using PASV.
+150 Opening BINARY mode data connection for board.conf (39516 bytes).
+226 File send OK.
+39516 bytes received in 0.0496 seconds (796003 bytes/s)
+ftp> 
+&lt;/blockquote>
+&lt;ol start="4">
+&lt;li>在下载到本地的board.conf中查找&lt;strong>right&lt;/strong>，后跟&lt;strong>0&lt;/strong>表示超级用户，若为&lt;strong>1&lt;/strong>则表示普通用户，如下所示：&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-xml" data-lang="xml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">&amp;lt;row&lt;/span> &lt;span class="na">id=&lt;/span>&lt;span class="s">&amp;#34;0&amp;#34;&lt;/span>&lt;span class="nt">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;lt;item&amp;gt;&lt;/span>&amp;#34;right&amp;#34;, &amp;#34;0&amp;#34;&lt;span class="nt">&amp;lt;/item&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;lt;item&amp;gt;&lt;/span>&amp;#34;username&amp;#34;, &amp;#34;bjcnchgw&amp;#34;&lt;span class="nt">&amp;lt;/item&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;lt;item&amp;gt;&lt;/span>&amp;#34;enable&amp;#34;, &amp;#34;1&amp;#34;&lt;span class="nt">&amp;lt;/item&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;lt;item&amp;gt;&lt;/span>&amp;#34;password&amp;#34;, &amp;#34;bjcnchgw72915767&amp;#34;&lt;span class="nt">&amp;lt;/item&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nt">&amp;lt;/row&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nt">&amp;lt;row&lt;/span> &lt;span class="na">id=&lt;/span>&lt;span class="s">&amp;#34;1&amp;#34;&lt;/span>&lt;span class="nt">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;lt;item&amp;gt;&lt;/span>&amp;#34;right&amp;#34;, &amp;#34;1&amp;#34;&lt;span class="nt">&amp;lt;/item&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;lt;item&amp;gt;&lt;/span>&amp;#34;username&amp;#34;, &amp;#34;user&amp;#34;&lt;span class="nt">&amp;lt;/item&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;lt;item&amp;gt;&lt;/span>&amp;#34;password&amp;#34;, &amp;#34;mypasswd&amp;#34;&lt;span class="nt">&amp;lt;/item&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nt">&amp;lt;/row&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ol start="5">
+&lt;li>在如下页面使用超级用户登录：&lt;/li>
+&lt;/ol>
+&lt;blockquote>
+http://192.168.1.1/cnc.html
+&lt;/blockquote>
+&lt;ol start="6">
+&lt;li>进入“&lt;strong>网络&lt;/strong>”→“&lt;strong>宽带设置&lt;/strong>”页面，删除所有“&lt;strong>连接名称&lt;/strong>”列出的连接（&lt;em>其中，TR069是网通远程控制猫并修改超级用户密码的连接；INTERNET被设置成了桥接，所以不能实现路由功能；另外两个应该是用来屏蔽第三、四个LAN口的。所以要全部删除。&lt;/em>），并创建新的连接：&lt;/li>
+&lt;/ol>
+&lt;p>&lt;a href="http://picasaweb.google.com/lh/photo/G5p8or5AvVumvFOr89XLqQ?feat=embedwebsite">&lt;img src="http://lh5.ggpht.com/_ceUJ_lBTHzc/TEHd0wXELFI/AAAAAAAABbs/gtxn0tKGyJM/s400/2010-07-17.19%3A48%3A30.%E6%88%AA%E5%8F%96%E9%80%89%E5%8C%BA.01.png" />&lt;/a>&lt;/p></description></item><item><title>网通ADSL猫开启路由和自动拨号功能的方法之一</title><link>http://0x3f.org/posts/howto-enable-routing-and-auto-dialing-for-unicom-adsl-modem-1/</link><pubDate>Sun, 04 Jul 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-enable-routing-and-auto-dialing-for-unicom-adsl-modem-1/</guid><description>&lt;p>北京网通送的无线猫有的是华为HG522，有的是HG527，屏蔽了路由和PPPOE自动拨号功能，须使用超级用户登入才能使用这些功能。&lt;/p>
 &lt;ol>
 &lt;li>假设网关为默认的192.168.1.1，先使用普通用户登录，然后访问地址：&lt;/li>
 &lt;/ol>

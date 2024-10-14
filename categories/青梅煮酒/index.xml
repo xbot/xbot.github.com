@@ -1,4 +1,12 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>青梅煮酒 on 晴耕雨讀</title><link>http://0x3f.org/categories/%E9%9D%92%E6%A2%85%E7%85%AE%E9%85%92/</link><description>Recent content in 青梅煮酒 on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Fri, 06 Sep 2024 16:27:57 +0800</lastBuildDate><atom:link href="http://0x3f.org/categories/%E9%9D%92%E6%A2%85%E7%85%AE%E9%85%92/index.xml" rel="self" type="application/rss+xml"/><item><title>用 n8n 优化 Homelab 通知流程：从邮件到 Telegram</title><link>http://0x3f.org/posts/optimize-homelab-notifications-with-n8n-from-email-to-telegram/</link><pubDate>Fri, 06 Sep 2024 16:27:57 +0800</pubDate><guid>http://0x3f.org/posts/optimize-homelab-notifications-with-n8n-from-email-to-telegram/</guid><description>&lt;p>最近，我对 Homelab 的通知系统进行了一次升级，将繁琐的邮件通知转变为简洁的 Telegram 消息。这个过程不仅提高了效率，还大大改善了我的使用体验。&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>青梅煮酒 on 晴耕雨讀</title><link>http://0x3f.org/categories/%E9%9D%92%E6%A2%85%E7%85%AE%E9%85%92/</link><description>Recent content in 青梅煮酒 on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 淘气 2022</copyright><lastBuildDate>Mon, 14 Oct 2024 23:11:33 +0800</lastBuildDate><atom:link href="http://0x3f.org/categories/%E9%9D%92%E6%A2%85%E7%85%AE%E9%85%92/index.xml" rel="self" type="application/rss+xml"/><item><title>记第一次补胎</title><link>http://0x3f.org/posts/my-first-tire-repair/</link><pubDate>Mon, 14 Oct 2024 23:11:33 +0800</pubDate><guid>http://0x3f.org/posts/my-first-tire-repair/</guid><description>&lt;p>要说还是正新的胎不好，其它几辆车都是世文，最少的骑了一千多公里，最多的三千公里，一次都没扎过，这辆 Dash Altena 到手一个月，才三百多公里，就扎了。&lt;/p>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-10-14-23-13-39-IMG_3147.jpeg" alt="2024-10-14-23-13-39-IMG_3147">&lt;/p>
+&lt;p>以前只是理论上会补胎，看过教学视频，正好想实践一下，这不机会就来了么。&lt;/p>
+&lt;p>买了补胎套装，补的还不错，骑了一圈长安街，降温后人少多了，均速第一次上了 26 。&lt;/p>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-10-14-23-14-10-IMG_3159.jpeg" alt="2024-10-14-23-14-10-IMG_3159">&lt;/p>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-10-14-23-14-33-IMG_3158.jpeg" alt="2024-10-14-23-14-33-IMG_3158">&lt;/p>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-10-14-23-14-59-IMG_3160.jpeg" alt="2024-10-14-23-14-59-IMG_3160">&lt;/p>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-10-14-23-15-16-IMG_3163.jpeg" alt="2024-10-14-23-15-16-IMG_3163">&lt;/p>
+&lt;p>实践出真知，再扎就换胎！&lt;/p></description></item><item><title>用 n8n 优化 Homelab 通知流程：从邮件到 Telegram</title><link>http://0x3f.org/posts/optimize-homelab-notifications-with-n8n-from-email-to-telegram/</link><pubDate>Fri, 06 Sep 2024 16:27:57 +0800</pubDate><guid>http://0x3f.org/posts/optimize-homelab-notifications-with-n8n-from-email-to-telegram/</guid><description>&lt;p>最近，我对 Homelab 的通知系统进行了一次升级，将繁琐的邮件通知转变为简洁的 Telegram 消息。这个过程不仅提高了效率，还大大改善了我的使用体验。&lt;/p>
 &lt;h2 id="背景">背景&lt;/h2>
 &lt;p>我的 Homelab 基础设施主要由 Proxmox Virtual Environment (PVE) 和 Proxmox Backup Server (PBS) 构成。这些系统每天都会发送各种通知，包括系统更新、虚拟机和容器备份、备份数据仓库垃圾回收等任务的执行结果。&lt;/p>
 &lt;p>长期以来，我一直通过邮件接收这些通知。然而，邮件作为一种信息接收方式，显得既重量级又低效。每天删除这些通知邮件成了一件烦人的琐事，我急需一种更轻量、更即时高效的通知方式。&lt;/p>
@@ -12,7 +20,16 @@
 &lt;li>不支持对消息内容进行处理，降低了通知的可读性。比如，PVE 在备份客户机后会发送冗长的备份过程信息，这些信息在 Telegram 中会被截断成多条消息展示，非常不便于阅读。&lt;/li>
 &lt;/ol>
 &lt;h2 id="最终方案n8n--gotify-webhook">最终方案：n8n + gotify-webhook&lt;/h2>
-&lt;p>为了解决上述问题，我找到了 &lt;a href="https://github.com/wuxs/gotify-webhook">gotify-webhook&lt;/a> 插件。我的想法是通过这个插件将消息转发给 n8n 处理，然后再发送到 Telegram。&lt;/p></description></item><item><title>在 Mac 上玩儿红警 2</title><link>http://0x3f.org/posts/play-ra2-on-mac/</link><pubDate>Thu, 22 Aug 2024 17:23:26 +0800</pubDate><guid>http://0x3f.org/posts/play-ra2-on-mac/</guid><description>&lt;p>最近在 YouTube 上看红警的视频，了解了一下主播用的对战平台，不仅仅是个当年浩方的翻版，而是进一步整合了红警游戏，等于是个带联网功能的红警，用着很方便。&lt;/p>
+&lt;p>为了解决上述问题，我找到了 &lt;a href="https://github.com/wuxs/gotify-webhook">gotify-webhook&lt;/a> 插件。我的想法是通过这个插件将消息转发给 n8n 处理，然后再发送到 Telegram。&lt;/p>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-09-06-16-33-19-mac_20240905114752.png" alt="2024-09-06-16-33-19-mac_20240905114752">&lt;/p>
+&lt;p>在提交了一个 PR 并被合并后，我终于实现了这个流程。现在，我的 Homelab 通知体验有了质的飞跃：&lt;/p>
+&lt;ol>
+&lt;li>消息经过 n8n 处理后更加简洁明了。例如，对于备份任务，如果成功了只会发送一条简短的成功通知，只有在失败时才会显示详细信息。&lt;/li>
+&lt;li>通过 n8n 的规则，我可以轻松过滤和分类不同类型的通知。&lt;/li>
+&lt;li>Telegram 的即时性让我能够更快地响应任何潜在的问题。&lt;/li>
+&lt;/ol>
+&lt;h2 id="总结">总结&lt;/h2>
+&lt;p>通过这次升级，我不仅简化了 Homelab 的日常维护工作，还提高了对系统状态的感知能力。如果你也在为繁琐的 Homelab 通知所困扰，不妨试试这个方案。&lt;/p></description></item><item><title>在 Mac 上玩儿红警 2</title><link>http://0x3f.org/posts/play-ra2-on-mac/</link><pubDate>Thu, 22 Aug 2024 17:23:26 +0800</pubDate><guid>http://0x3f.org/posts/play-ra2-on-mac/</guid><description>&lt;p>最近在 YouTube 上看红警的视频，了解了一下主播用的对战平台，不仅仅是个当年浩方的翻版，而是进一步整合了红警游戏，等于是个带联网功能的红警，用着很方便。&lt;/p>
 &lt;p>用 CrossOver 安装了红警 2 和鸿图对战平台，除了后者配置游戏的几个选项无法点击外，游戏运行效果堪称完美。&lt;/p>
 &lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-08-22-17-27-46-IMG_2777.jpeg" alt="2024-08-22-17-27-46-IMG_2777">&lt;/p>
 &lt;p>对战平台不能选择玩家、阵营，虽然游戏运行没问题，可玩性大打折扣。&lt;/p>
@@ -83,7 +100,9 @@
 &lt;h2 id="从-inoreader-到-miniflux-的转变">从 Inoreader 到 Miniflux 的转变&lt;/h2>
 &lt;p>后来，Inoreader 的价格涨了很多，我尝试自建 Miniflux ，效果意外地好，但它有一个明显的局限性：只支持打星标，不支持打标签。这意味着我无法像使用 Inoreader 那样，通过标签对文章进行筛选和分类。&lt;/p>
 &lt;h2 id="readwise-reader-的优势">Readwise Reader 的优势&lt;/h2>
-&lt;p>不过 Miniflux 支持集成 Readwise Reader 。它不仅支持标签功能，还提供了列表接口。这让我意识到，如果能够将 Readwise Reader 的文档输出为订阅源，那么我的稍后读工作流将更加完善。&lt;/p></description></item><item><title>体验精致与舒适：佰客城市版国产小布折叠车详评</title><link>http://0x3f.org/posts/hands-on-the-city-version-of-bikes-folding-bike/</link><pubDate>Wed, 12 Jun 2024 15:31:07 +0800</pubDate><guid>http://0x3f.org/posts/hands-on-the-city-version-of-bikes-folding-bike/</guid><description>&lt;p>分享一下佰客国布城市版 2024 新版的开箱和骑行感受。&lt;/p>
+&lt;p>不过 Miniflux 支持集成 Readwise Reader 。它不仅支持标签功能，还提供了列表接口。这让我意识到，如果能够将 Readwise Reader 的文档输出为订阅源，那么我的稍后读工作流将更加完善。&lt;/p>
+&lt;h2 id="rsshub-路由发布">RSSHub 路由发布&lt;/h2>
+&lt;p>为了实现这一目标，我为 RSSHub 添加了一个路由，它可以将 Readwise Reader 的文档转换成订阅源。这样一来，我就可以在 Calibre Content Server 中愉快地阅读那些稍后阅读的文章了。&lt;/p></description></item><item><title>体验精致与舒适：佰客城市版国产小布折叠车详评</title><link>http://0x3f.org/posts/hands-on-the-city-version-of-bikes-folding-bike/</link><pubDate>Wed, 12 Jun 2024 15:31:07 +0800</pubDate><guid>http://0x3f.org/posts/hands-on-the-city-version-of-bikes-folding-bike/</guid><description>&lt;p>分享一下佰客国布城市版 2024 新版的开箱和骑行感受。&lt;/p>
 &lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-06-12-16-52-48-DSC00243.jpeg" alt="2024-06-12-16-52-48-DSC00243">&lt;/p>
 &lt;h1 id="tldr">TL;DR&lt;/h1>
 &lt;ul>
@@ -177,7 +196,10 @@
 &lt;/li>
 &lt;/ul>
 &lt;p>最终，我选择了维格的尼龙脚踏 V984T 。&lt;/p>
-&lt;p>维格提供了多种尼龙脚踏，我选择的是体积较小、重量较轻、与车外观搭配较为协调的 V984T 。它满足了我对配件和脚踏的所有选择标准，而且价格仅为 15￥ 包邮。这款脚踏的踩踏体验极为舒适，脚掌与踏面的贴合度非常好，有人体工学的感觉，超过了以往用过的所有脚踏。&lt;/p></description></item><item><title>Jifo 前刹的改造之路：好事多磨</title><link>http://0x3f.org/posts/the-end-of-road-to-modifying-jifos-front-brake/</link><pubDate>Mon, 29 Apr 2024 21:33:01 +0800</pubDate><guid>http://0x3f.org/posts/the-end-of-road-to-modifying-jifos-front-brake/</guid><description>&lt;p>&lt;a href="http://0x3f.org/posts/the-road-to-modifying-jifos-front-brake/">上次&lt;/a>尝试过彰星夹器后，我用回了原装的单轴夹器。但是前刹手感差、刹车力弱、刹臂移动距离不对称的问题一直困扰着我。直到最近找到了价格合适的大行夹器。&lt;/p>
+&lt;p>维格提供了多种尼龙脚踏，我选择的是体积较小、重量较轻、与车外观搭配较为协调的 V984T 。它满足了我对配件和脚踏的所有选择标准，而且价格仅为 15￥ 包邮。这款脚踏的踩踏体验极为舒适，脚掌与踏面的贴合度非常好，有人体工学的感觉，超过了以往用过的所有脚踏。&lt;/p>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-05-23-11-15-13-IMG_1911.jpeg" alt="2024-05-23-11-15-13-IMG_1911">&lt;/p>
+&lt;h2 id="关于脚踏润度的题外话">关于脚踏润度的题外话&lt;/h2>
+&lt;p>理论上，润度更高的脚踏可以提高踩踏效率，但对于我们普通人在市区道路上的骑行场景来说，追求高润度并没有太大意义。DU 轴的脚踏已经完全够用，既满足了日常需求，又保持了合理的价格。&lt;/p></description></item><item><title>Jifo 前刹的改造之路：好事多磨</title><link>http://0x3f.org/posts/the-end-of-road-to-modifying-jifos-front-brake/</link><pubDate>Mon, 29 Apr 2024 21:33:01 +0800</pubDate><guid>http://0x3f.org/posts/the-end-of-road-to-modifying-jifos-front-brake/</guid><description>&lt;p>&lt;a href="http://0x3f.org/posts/the-road-to-modifying-jifos-front-brake/">上次&lt;/a>尝试过彰星夹器后，我用回了原装的单轴夹器。但是前刹手感差、刹车力弱、刹臂移动距离不对称的问题一直困扰着我。直到最近找到了价格合适的大行夹器。&lt;/p>
 &lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-04-29-21-40-24-IMG_1656.jpeg" alt="2024-04-29-21-40-24-IMG_1656">&lt;/p>
 &lt;p>这个夹器主体看起来和 eezz 的原装夹器一样，只是螺帽螺杆是公路车那种隐藏式的，而且是后刹。我没有 eezz ，不了解原装后刹是什么样的。&lt;/p>
 &lt;p>用上次改装彰星夹器的物料改装了一下：&lt;/p>
@@ -205,7 +227,13 @@
 &lt;h1 id="muqzi">MUQZI&lt;/h1>
 &lt;p>我随后尝试了 MUQZI 的张链器，它的调节范围较大，可以使用。然而，实际使用中，链条会蹭到导链轮两侧的挡板，这也不是理想的解决方案。&lt;/p>
 &lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-04-24-15-44-25-IMG_1674.jpeg" alt="2024-04-24-15-44-25-IMG_1674">&lt;/p>
-&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-04-24-15-44-35-IMG_1675.jpeg" alt="2024-04-24-15-44-35-IMG_1675">&lt;/p></description></item><item><title>我的 iGPSPORT iGS630S 体验：告别手机与手表，拥抱专业骑行伴侣</title><link>http://0x3f.org/posts/hands-on-igpsport-igs630s/</link><pubDate>Thu, 22 Feb 2024 20:51:59 +0800</pubDate><guid>http://0x3f.org/posts/hands-on-igpsport-igs630s/</guid><description>&lt;p>多年前，我曾使用过非智能的码表，那时的骑行记录简单而纯粹。随着时间的推移，我更换了折叠车，骑行更多是为了休闲和享受。在这个阶段，手机和智能手表已经足够满足我记录骑行数据的需求，而且我并不喜欢在车上挂太多东西，保持简洁是我的风格。&lt;/p>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-04-24-15-44-35-IMG_1675.jpeg" alt="2024-04-24-15-44-35-IMG_1675">&lt;/p>
+&lt;h1 id="回归原装">回归原装&lt;/h1>
+&lt;p>最终，我决定回归使用原装的张链器。尽管价格昂贵，且未来寻找替换件同样困难，但它体积小、重量轻，安装方便，且不需要截断链条。&lt;/p>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-04-24-15-48-37-IMG_1533.jpeg" alt="2024-04-24-15-48-37-IMG_1533">&lt;/p>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-04-24-16-19-54-IMG_1683.jpeg" alt="2024-04-24-16-19-54-IMG_1683">&lt;/p>
+&lt;h1 id="结语">结语&lt;/h1>
+&lt;p>在安装过程中，我发现这辆车之前进行过不太成功的改装。尾钩安装张链器的孔中有四分之三的螺纹已经滑丝。幸运的是，目前还能固定住。我计划稍后使用螺丝胶进行加固。如果螺纹完全滑丝，我将不得不考虑使用丝锥和丝套来挽救，这是一体尾钩设计的一个潜在弊端。&lt;/p></description></item><item><title>我的 iGPSPORT iGS630S 体验：告别手机与手表，拥抱专业骑行伴侣</title><link>http://0x3f.org/posts/hands-on-igpsport-igs630s/</link><pubDate>Thu, 22 Feb 2024 20:51:59 +0800</pubDate><guid>http://0x3f.org/posts/hands-on-igpsport-igs630s/</guid><description>&lt;p>多年前，我曾使用过非智能的码表，那时的骑行记录简单而纯粹。随着时间的推移，我更换了折叠车，骑行更多是为了休闲和享受。在这个阶段，手机和智能手表已经足够满足我记录骑行数据的需求，而且我并不喜欢在车上挂太多东西，保持简洁是我的风格。&lt;/p>
 &lt;p>然而，随着 Apple Watch S4 的续航能力逐渐下降，加之 iPhone 在极端气温下续航表现不佳，我开始考虑寻找一款能够替代这些设备的智能码表。在尝试了 iGPSPORT BSC200 后，我发现其路线导航功能很鸡肋，在路况复杂的地方非常难用，这促使我转向了 iGPSPORT iGS630S 。&lt;/p>
 &lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-22-21-13-03-IMG_1092.jpeg" alt="2024-02-22-21-13-03-IMG_1092">&lt;/p>
 &lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-22-21-20-02-IMG_1208.jpeg" alt="2024-02-22-21-20-02-IMG_1208">&lt;/p>
@@ -229,7 +257,11 @@
 &lt;h1 id="试用-freshrss-和-miniflux">试用 FreshRSS 和 Miniflux&lt;/h1>
 &lt;p>在尝试了 FreshRSS 和 Miniflux 之后，我发现 FreshRSS 存在过滤规则保存后为空的问题，另外全文抓取也需要更多更复杂的配置，不如 Miniflux 稳定和简单。最终，我决定保留 Miniflux。&lt;/p>
 &lt;h1 id="miniflux-的优势">Miniflux 的优势&lt;/h1>
-&lt;p>Miniflux 是用 Go 语言实现的，拥有极简的 WebUI，占用系统资源较少，抓取能力出色。它支持根据订阅源的更新频率定制抓取时间间隔，还支持多种 Web 服务的集成，如我在用的 Readwise Reader。我选择使用 Docker 将 Miniflux 部署到 NAS 中，经过几天的试用，稳定性令人满意。&lt;/p></description></item><item><title>Homelab 升级记：从 Unraid 到 Proxmox VE 的平滑过渡</title><link>http://0x3f.org/posts/a-smooth-transition-from-unraid-to-pve/</link><pubDate>Mon, 05 Feb 2024 22:22:57 +0800</pubDate><guid>http://0x3f.org/posts/a-smooth-transition-from-unraid-to-pve/</guid><description>&lt;p>最近，我对我的 Homelab 进行了一次重大调整，从 Unraid 迁移到了 Proxmox VE（PVE），并用它实现了对 Unraid 的虚拟化，这一转变不仅提高了系统的稳定性、灵活性，还带来了一系列令人惊喜的改进。在这篇文章中，我将分享这次调整的动机、硬件升级以及软件配置的详细过程。&lt;/p>
+&lt;p>Miniflux 是用 Go 语言实现的，拥有极简的 WebUI，占用系统资源较少，抓取能力出色。它支持根据订阅源的更新频率定制抓取时间间隔，还支持多种 Web 服务的集成，如我在用的 Readwise Reader。我选择使用 Docker 将 Miniflux 部署到 NAS 中，经过几天的试用，稳定性令人满意。&lt;/p>
+&lt;h1 id="miniflux-的不足">Miniflux 的不足&lt;/h1>
+&lt;p>尽管 Miniflux 在功能上满足了我的需求，但其 Web 界面过于简洁，不太适合我快速浏览大量订阅内容的工作流。为了解决这个问题，我在 macOS 上配合 NetNewsWire 使用 Miniflux，不过这个阅读器缺少多种视图等功能，只能算是差强人意。&lt;/p>
+&lt;h1 id="未来的选择">未来的选择&lt;/h1>
+&lt;p>如果没有意外，我计划在本月底 Inoreader 订阅到期后，正式放弃使用它，转而全面拥抱 Miniflux。虽然这个决定伴随着对 Inoreader 的不舍，但我相信 Miniflux 能够为我提供一个更加经济、灵活且高效的 RSS 阅读体验。&lt;/p></description></item><item><title>Homelab 升级记：从 Unraid 到 Proxmox VE 的平滑过渡</title><link>http://0x3f.org/posts/a-smooth-transition-from-unraid-to-pve/</link><pubDate>Mon, 05 Feb 2024 22:22:57 +0800</pubDate><guid>http://0x3f.org/posts/a-smooth-transition-from-unraid-to-pve/</guid><description>&lt;p>最近，我对我的 Homelab 进行了一次重大调整，从 Unraid 迁移到了 Proxmox VE（PVE），并用它实现了对 Unraid 的虚拟化，这一转变不仅提高了系统的稳定性、灵活性，还带来了一系列令人惊喜的改进。在这篇文章中，我将分享这次调整的动机、硬件升级以及软件配置的详细过程。&lt;/p>
 &lt;h1 id="动机解耦虚拟机与-unraid">动机：解耦虚拟机与 Unraid&lt;/h1>
 &lt;p>我决定将虚拟机从 Unraid 中分离出来，这样做的目的是为了减轻 Unraid 重启时对整个网络环境的影响，降低磁盘阵列卡住的风险，并加速 Unraid 的重启过程。&lt;/p>
 &lt;p>此外，这样的调整也使得使用 Proxmox Backup Server (PBS) 进行备份变得更加方便，减少了对 Unraid 缓存盘的占用，并优化了硬盘的休眠策略，减少了不必要的唤醒次数。&lt;/p>
@@ -243,7 +275,16 @@
 &lt;ol start="2">
 &lt;li>&lt;strong>主板与扩展卡：&lt;/strong> 主板只有一个 M.2 插槽，我选择在这里安装了 PVE。为了加装第二款 NVME 固态硬盘，我购买了 PCIe 转 M.2 扩展卡，将 Unraid 的缓存盘插到了这个扩展卡上。小火炉铠侠 RC10 在加装了扩展卡附带的散热片后降温效果显著，目测温度下降了大约 15℃，Unraid 系统再也没有出现过报警。&lt;/li>
 &lt;/ol>
-&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-20-21-15-19-IMG_1203.jpeg" alt="2024-02-20-21-15-19-IMG_1203">&lt;/p></description></item><item><title>我的家庭数据备份方案</title><link>http://0x3f.org/posts/my-homelab-backup-strategy/</link><pubDate>Wed, 31 Jan 2024 20:02:08 +0800</pubDate><guid>http://0x3f.org/posts/my-homelab-backup-strategy/</guid><description>&lt;p>在这个数字化时代，数据安全比以往任何时候都更加重要。无论是个人生活还是工作，我们都需要一个可靠的备份方案来确保数据的安全。今天，我想分享我的家庭数据备份方案，它不仅涵盖了我所有的虚拟机、容器和配置数据，还包括了 NAS 上的重要文件，如照片、密码、笔记和待办事项。这个方案遵循了著名的 3-2-1 备份策略，并且通过精心选择的备份工具，确保了数据的安全性和高效性。&lt;/p>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-20-21-15-19-IMG_1203.jpeg" alt="2024-02-20-21-15-19-IMG_1203">&lt;/p>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-20-21-17-07-1E419BB6-4057-41B4-B7A5-6F3033154257_4_5005_c.jpeg" alt="2024-02-20-21-17-07-1E419BB6-4057-41B4-B7A5-6F3033154257_4_5005_c">&lt;/p>
+&lt;ol start="3">
+&lt;li>&lt;strong>视频采集卡：&lt;/strong> 为了在没有额外显示器的情况下管理 Homelab ，我购买了视频采集卡，并配合 iPad 使用，作为临时显示器。&lt;/li>
+&lt;/ol>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-05-23-20-26-IMG_1079.jpeg" alt="2024-02-05-23-20-26-IMG_1079">&lt;/p>
+&lt;h1 id="软件配置">软件配置&lt;/h1>
+&lt;ol>
+&lt;li>
+&lt;p>&lt;strong>直通设备：&lt;/strong> 在 PVE 中，我将 Unraid 系统 U 盘、Sata 控制器、外置硬盘以及 NVME 缓存盘直通（passthrough）给了 Unraid 虚拟机。这样做的好处是，仍然使用 Unraid 作为 NAS 系统管理所有存储资源，并继续使用 Unraid 优秀的应用社区。同时把主板的第二块网卡做了直通，防止 NAS 吞吐量较大时影响访问宿主机及其它客户机的稳定性。&lt;/p></description></item><item><title>我的家庭数据备份方案</title><link>http://0x3f.org/posts/my-homelab-backup-strategy/</link><pubDate>Wed, 31 Jan 2024 20:02:08 +0800</pubDate><guid>http://0x3f.org/posts/my-homelab-backup-strategy/</guid><description>&lt;p>在这个数字化时代，数据安全比以往任何时候都更加重要。无论是个人生活还是工作，我们都需要一个可靠的备份方案来确保数据的安全。今天，我想分享我的家庭数据备份方案，它不仅涵盖了我所有的虚拟机、容器和配置数据，还包括了 NAS 上的重要文件，如照片、密码、笔记和待办事项。这个方案遵循了著名的 3-2-1 备份策略，并且通过精心选择的备份工具，确保了数据的安全性和高效性。&lt;/p>
 &lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-01-31-20-40-32-_d0c7d6aa-d312-4749-89ce-d3996aaaddf6.jpeg" alt="2024-01-31-20-40-32-_d0c7d6aa-d312-4749-89ce-d3996aaaddf6">&lt;/p>
 &lt;h3 id="数据种类">数据种类&lt;/h3>
 &lt;p>首先，让我们来了解我需要备份的数据种类。我有两个 PVE（Proxmox Virtual Environment）宿主机，上面运行着多个虚拟机和容器。这些虚拟机和容器包含了我所有的工作和个人项目。为了备份这些数据，我选择了 PBS（Proxmox Backup Server）作为备份存储。同时，我还使用 proxmox-backup-client 将 PVE 的配置数据也备份到 PBS 。&lt;/p>
@@ -268,7 +309,42 @@
 &lt;h5 id="duplicati">Duplicati&lt;/h5>
 &lt;ul>
 &lt;li>
-&lt;p>&lt;strong>优点&lt;/strong>：&lt;/p></description></item><item><title>猫眼铃铛，我的梦中情铃</title><link>http://0x3f.org/posts/highly-recommend-the-cat-eye-bell/</link><pubDate>Mon, 22 Jan 2024 22:34:37 +0800</pubDate><guid>http://0x3f.org/posts/highly-recommend-the-cat-eye-bell/</guid><description>&lt;p>蚂蚁腿走大路，装了个全银色杠杆撞击式的车铃也够用，一半也算是配合全银车把，起个装饰作用。Jifo 走街串巷，骑了两次胡同就感觉原装车铃用着难受了。&lt;/p>
+&lt;p>&lt;strong>优点&lt;/strong>：&lt;/p>
+&lt;ul>
+&lt;li>易于部署，通过 Docker 部署非常简单。&lt;/li>
+&lt;li>用户界面友好，易于操作。&lt;/li>
+&lt;li>支持同时连接多个仓库。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>缺点&lt;/strong>：&lt;/p>
+&lt;ul>
+&lt;li>使用 .Net 实现，可能会占用更多的系统资源。&lt;/li>
+&lt;li>有关于稳定性的传闻，尽管这可能因环境而异。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h5 id="kopia">Kopia&lt;/h5>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;strong>优点&lt;/strong>：&lt;/p>
+&lt;ul>
+&lt;li>稳定性的负面反馈较少，运行效率高。&lt;/li>
+&lt;li>占用资源相对较少，对系统的影响小。&lt;/li>
+&lt;li>用户界面简洁，易于理解。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>缺点&lt;/strong>：&lt;/p>
+&lt;ul>
+&lt;li>部署和上手难度较高，相关资料较少，官方文档不够详尽。&lt;/li>
+&lt;li>不支持同时连接多个仓库，这在某些情况下可能会造成不便。&lt;/li>
+&lt;li>高级功能通常需要通过命令行实现，对于不熟悉命令行的用户来说可能不够友好。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="结语">结语&lt;/h3>
+&lt;p>通过这样的备份方案，我可以确保我的数据在多种情况下都能得到保护。无论是硬件故障还是意外删除，我都有办法恢复我的数据。这给了我极大的安心，让我可以专注于我的工作和家庭生活，而不必担心数据安全问题。希望我的分享能为你的家庭数据备份提供一些启示。&lt;/p></description></item><item><title>猫眼铃铛，我的梦中情铃</title><link>http://0x3f.org/posts/highly-recommend-the-cat-eye-bell/</link><pubDate>Mon, 22 Jan 2024 22:34:37 +0800</pubDate><guid>http://0x3f.org/posts/highly-recommend-the-cat-eye-bell/</guid><description>&lt;p>蚂蚁腿走大路，装了个全银色杠杆撞击式的车铃也够用，一半也算是配合全银车把，起个装饰作用。Jifo 走街串巷，骑了两次胡同就感觉原装车铃用着难受了。&lt;/p>
 &lt;p>猫眼这款横拨铃铛（PB-1000P），拨一下响两声，声音清脆，音量不小，有二八大杠六厘米大铃的灵魂和大行原装车铃的风格身量，非常符合我对 Jifo 优化体验、尽量保留原车风格的改装思路。&lt;/p>
 &lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-01-22-22-36-38-IMG_1043.jpeg" alt="2024-01-22-22-36-38-IMG_1043">&lt;/p>
 &lt;p>到手后发现，作为一个左手铃，铃体中轴是靠后的，大拇指拨动铃柄，其它四指要脱离刹把，效率不高，也不安全。试了几种安装方位，最后感觉左手吊装是最优方案，只需要食指自然下移就能搭在铃柄上，其它手指握住车把、刹把不用动，既安全、效率又高，而且 Jifo 把横较窄，车铃正装的话左侧一半把横几乎就搭载不了任何东西了，吊装之后铃铛被刹把遮挡，反而既能节省空间又让视觉效果更简洁。&lt;/p>
@@ -316,7 +392,29 @@
 &lt;p>包的后盖也提供了挂载尾灯的位点。&lt;/p>
 &lt;p>在相似的材质、工艺下，这款包的价格比洛克兄弟那款便宜三分之一左右，而容量更大，使用更方便，确实是个很有性价比的选择。唯一让我不满意的地方是造型比较呆板，点缀有点俗气。&lt;/p>
 &lt;h1 id="迪卡侬尾包目标明确针对性很强">迪卡侬尾包，目标明确，针对性很强&lt;/h1>
-&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-11-14-22-39-18-DSC00119.JPG" alt="2023-11-14-22-39-18-DSC00119">&lt;/p></description></item><item><title>重新发售的翰林阅 Read6 Pro 使用体验</title><link>http://0x3f.org/posts/hands-on-the-new-hanlinyue-read6-pro/</link><pubDate>Mon, 02 Oct 2023 17:03:46 +0800</pubDate><guid>http://0x3f.org/posts/hands-on-the-new-hanlinyue-read6-pro/</guid><description>&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-10-02-17-08-57-DSC00101.jpg" alt="2023-10-02-17-08-57-DSC00101">&lt;/p>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-11-14-22-39-18-DSC00119.JPG" alt="2023-11-14-22-39-18-DSC00119">&lt;/p>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-11-14-22-39-21-DSC00120.JPG" alt="2023-11-14-22-39-21-DSC00120">&lt;/p>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-11-14-22-39-24-DSC00121.JPG" alt="2023-11-14-22-39-24-DSC00121">&lt;/p>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-11-14-22-39-26-DSC00122.JPG" alt="2023-11-14-22-39-26-DSC00122">&lt;/p>
+&lt;p>迪卡侬的这款尾包容量不大（0.6L），内部分割为上下两层，下层有三个夹层，适合带点修车工具和备胎，想带点别的随身物品就不够用了，所以目标很明确，针对性很强。&lt;/p>
+&lt;p>此外，造型好看，开口位于下方、且没有采用防水拉锁，很方便存取物品，外表覆盖大面积反光涂层，夜骑很亮。&lt;/p>
+&lt;p>总之，适合专业骑行，不适合日常使用。&lt;/p>
+&lt;h1 id="犀牛尾包轻且防水没了">犀牛尾包，轻且防水……没了&lt;/h1>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-11-14-22-41-10-DSC00123.JPG" alt="2023-11-14-22-41-10-DSC00123">&lt;/p>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-11-14-22-41-12-DSC00124.JPG" alt="2023-11-14-22-41-12-DSC00124">&lt;/p>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-11-14-22-41-15-DSC00125.JPG" alt="2023-11-14-22-41-15-DSC00125">&lt;/p>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-11-14-22-41-17-DSC00126.JPG" alt="2023-11-14-22-41-17-DSC00126">&lt;/p>
+&lt;p>犀牛的这款尾包为了追求极致的轻量，减掉了一切可以减掉的东西，没有分割内部收纳空间、没有尾灯挂载位点，把重量压缩到了 70g 附近。包体材料是 600D TPU ，使用防水拉锁，看起来防水效果应该很不错。&lt;/p>
+&lt;p>但它的内部什么夹层、分隔都没有，就是一整块收纳空间，稍大点的东西放不下，小东西堆在一起不好取用。&lt;/p>
+&lt;h1 id="8包邮的帆布包完美满足我骑行收纳需求">8￥包邮的帆布包，完美满足我骑行收纳需求&lt;/h1>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-11-14-22-42-54-DSC00115.JPG" alt="2023-11-14-22-42-54-DSC00115">&lt;/p>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-11-14-22-42-56-DSC00116.JPG" alt="2023-11-14-22-42-56-DSC00116">&lt;/p>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-11-14-22-42-58-DSC00117.JPG" alt="2023-11-14-22-42-58-DSC00117">&lt;/p>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-11-14-22-43-00-DSC00118.JPG" alt="2023-11-14-22-43-00-DSC00118">&lt;/p>
+&lt;p>此前试用的几款正经的尾包，要么使用不方便，要么收纳空间太小，而且它们都太正经了，和我这菜车的气质不搭嘎。我对尾包的所有想象在于容量大、使用方便、休闲风，直到偶然发现这个战术回收包，这不就是我的梦中情包么？&lt;/p>
+&lt;p>用了一段时间，效果非常理想。外侧三个夹层，加上包内超大收纳空间，平时带一些随身物品绰绰有余，偶尔买点干果零食甚至直接往里一塞就行。&lt;/p>
+&lt;p>重点是，只要8块包邮！同等容量的某网红车包价格是它的7倍，而收纳设计还更简陋。&lt;/p>
+&lt;p>鲁迅说过，要啥自行车！&lt;/p></description></item><item><title>重新发售的翰林阅 Read6 Pro 使用体验</title><link>http://0x3f.org/posts/hands-on-the-new-hanlinyue-read6-pro/</link><pubDate>Mon, 02 Oct 2023 17:03:46 +0800</pubDate><guid>http://0x3f.org/posts/hands-on-the-new-hanlinyue-read6-pro/</guid><description>&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-10-02-17-08-57-DSC00101.jpg" alt="2023-10-02-17-08-57-DSC00101">&lt;/p>
 &lt;p>之前&lt;a href="http://0x3f.org/posts/hands-on-hanlinyue-read6-pro/">试用过第一次发售的版本&lt;/a>，体验非常糟糕。前不久发现翰林阅又发了预售通知，原来经过上次哀鸿遍野的退货潮，他们迭代了产品重新上市了。&lt;/p>
 &lt;h1 id="新的工业设计比之前好看">新的工业设计比之前好看&lt;/h1>
 &lt;ul>
@@ -362,7 +460,18 @@
 &lt;li>做工一般，边缘有点割手。&lt;/li>
 &lt;li>前黑后蓝有条纹，外观一般。&lt;/li>
 &lt;/ul>
-&lt;p>今年 6 寸国产阅读器还是没有让我很满意的，考虑到影响阅读体验的核心指标还说得过去，另外背面有弧度、握持感不错，先就它了。&lt;/p></description></item><item><title>OmniFocus 插件 refine-task v1.0 小记</title><link>http://0x3f.org/posts/omnifocus-plugin-refine-task-v1-release-notes/</link><pubDate>Wed, 30 Aug 2023 22:05:59 +0800</pubDate><guid>http://0x3f.org/posts/omnifocus-plugin-refine-task-v1-release-notes/</guid><description>&lt;p>&lt;a href="https://github.com/xbot/omnifocus-plugin-refine-task">refine-task&lt;/a> 的功能非常简单，它为选中的任务打开一个输入框，将用户输入的内容作为新的任务内容保存，原来的任务内容会被挪到备注里：&lt;/p>
+&lt;p>今年 6 寸国产阅读器还是没有让我很满意的，考虑到影响阅读体验的核心指标还说得过去，另外背面有弧度、握持感不错，先就它了。&lt;/p>
+&lt;div class="footnotes" role="doc-endnotes">
+&lt;hr>
+&lt;ol>
+&lt;li id="fn:1">
+&lt;p>&lt;a href="http://0x3f.org/posts/hands-on-boox-poke5s/">文石 Poke5S 的使用感受&lt;/a>&amp;#160;&lt;a href="#fnref:1" class="footnote-backref" role="doc-backlink">&amp;#x21a9;&amp;#xfe0e;&lt;/a>&lt;/p>
+&lt;/li>
+&lt;li id="fn:2">
+&lt;p>&lt;a href="http://0x3f.org/posts/hands-on-hanlinyue-read6-pro/">翰林阅 Read6 Pro 的使用感受&lt;/a>&amp;#160;&lt;a href="#fnref:2" class="footnote-backref" role="doc-backlink">&amp;#x21a9;&amp;#xfe0e;&lt;/a>&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;/div></description></item><item><title>OmniFocus 插件 refine-task v1.0 小记</title><link>http://0x3f.org/posts/omnifocus-plugin-refine-task-v1-release-notes/</link><pubDate>Wed, 30 Aug 2023 22:05:59 +0800</pubDate><guid>http://0x3f.org/posts/omnifocus-plugin-refine-task-v1-release-notes/</guid><description>&lt;p>&lt;a href="https://github.com/xbot/omnifocus-plugin-refine-task">refine-task&lt;/a> 的功能非常简单，它为选中的任务打开一个输入框，将用户输入的内容作为新的任务内容保存，原来的任务内容会被挪到备注里：&lt;/p>
 &lt;video controls autoplay loop width="100%">
  &lt;source src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-08-30-22-04-08-Kapture 2023-08-30 at 19.33.05.mp4" type="video/mp4">
  Your browser does not support the video tag.
@@ -505,7 +614,34 @@
 &lt;/span>&lt;span class="lnt">13
 &lt;/span>&lt;span class="lnt">14
 &lt;/span>&lt;span class="lnt">15
-&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>希捷 Basic 简系列和东芝新小黑 A3 的简单对比</title><link>http://0x3f.org/posts/seagate-basic-vs-toshiba-a3/</link><pubDate>Mon, 10 Jan 2022 22:15:16 +0800</pubDate><guid>http://0x3f.org/posts/seagate-basic-vs-toshiba-a3/</guid><description>&lt;p>&lt;a href="http://0x3f.org/posts/my-first-nas/">把个人数据收集到 NAS&lt;/a> 之后，我开始着手实现 NAS 的异地备份，以补足数据安全的最后一环。&lt;/p>
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 把打完补丁的文件复制到电脑上&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb pull /sdcard/Download/magisk_patched-25101_MNbd5.img .
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 启动到 bootloader&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">adb reboot bootloader
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 查看设备连接正常&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">fastboot devices
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 刷 boot.img&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">fastboot flash boot_a magisk_patched-25101_MNbd5.img
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">fastboot flash boot_b magisk_patched-25101_MNbd5.img
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># 重启&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">fastboot reboot
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;/li>
+&lt;/ol>
+&lt;h3 id="参考">参考&lt;/h3>
+&lt;ul>
+&lt;li>&lt;a href="https://www.droidwin.com/patch-stock-boot-image-flash-magisk/">How to Patch Stock Boot Image via Magisk and Flash it using Fastboot&lt;/a>&lt;/li>
+&lt;li>&lt;a href="https://www.androidinfotech.com/33493-root-google-pixel-5-redfin-android-12/">Root Google Pixel 5 Android 12 using Magisk&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h1 id="附更新-pixel-5-的-magisk-缩小状态栏的模块的步骤">附：更新 Pixel 5 的 Magisk 缩小状态栏的模块的步骤&lt;/h1>
+&lt;p>直接覆盖原模块会导致功能不生效。&lt;/p></description></item><item><title>希捷 Basic 简系列和东芝新小黑 A3 的简单对比</title><link>http://0x3f.org/posts/seagate-basic-vs-toshiba-a3/</link><pubDate>Mon, 10 Jan 2022 22:15:16 +0800</pubDate><guid>http://0x3f.org/posts/seagate-basic-vs-toshiba-a3/</guid><description>&lt;p>&lt;a href="http://0x3f.org/posts/my-first-nas/">把个人数据收集到 NAS&lt;/a> 之后，我开始着手实现 NAS 的异地备份，以补足数据安全的最后一环。&lt;/p>
 &lt;p>综合考虑过多种方案之后，感觉还是通过移动硬盘冷备最合适我目前的状况。之前闲置的 Buffalo 3.5&amp;rsquo; 外置硬盘不方便携带，所以放在家里做冗余备份。新买一块 2.5&amp;rsquo; 移动硬盘，每隔一段时间拿回家更新一下备份。&lt;/p>
 &lt;p>正好希捷 Basic 简系列和东芝新小黑 A3 有优惠，分别以 380 ￥和 370 ￥的价格入手了 2T 容量款，对比结果如下：&lt;/p>
 &lt;p>写入速度方面，200G 大文件，东芝比希捷快大概一分钟，速度分别为 142 MB/s 和 137 MB/s 。另对一个总大小为 140G 的目录（内含多个大文件）做写入的结果也是前者比后者稍快一点。&lt;/p>
@@ -523,7 +659,8 @@
 &lt;p>用于每天下班前一键生成工作日志。&lt;/p>
 &lt;p>插件会收集名为 &lt;code>Work&lt;/code> 的目录下当天完成的 Tasks 并根据 Task 标题和 Note 的内容追加不同的状态描述。例如，标题包含“面试”的 Task 不追加状态描述；Note 为空的 Task 追加“完成”，否则追加 Note 的内容。目录目前是写死的，没有做通用性适配。&lt;/p>
 &lt;h1 id="打开-jira-ticket">打开 Jira Ticket&lt;/h1>
-&lt;p>&lt;a href="https://github.com/xbot/omnifocus-plugin-open-jira-ticket">xbot/omnifocus-plugin-open-jira-ticket&lt;/a>&lt;/p></description></item><item><title>自动追剧的工作流</title><link>http://0x3f.org/posts/auto-workflow-of-following-tv-series-and-movies/</link><pubDate>Sun, 21 Nov 2021 17:16:15 +0800</pubDate><guid>http://0x3f.org/posts/auto-workflow-of-following-tv-series-and-movies/</guid><description>&lt;p>在 NAS 上搭了个自动追剧、追影的工作流，体验非常好。&lt;/p>
+&lt;p>&lt;a href="https://github.com/xbot/omnifocus-plugin-open-jira-ticket">xbot/omnifocus-plugin-open-jira-ticket&lt;/a>&lt;/p>
+&lt;p>从被选中的 Project 标题中解析 Jira Ticket 序号，并根据配置的 Jira URL 打开对应的 Ticket 。如果选中的是 Task ，使用其所属的 Project 。&lt;/p></description></item><item><title>自动追剧的工作流</title><link>http://0x3f.org/posts/auto-workflow-of-following-tv-series-and-movies/</link><pubDate>Sun, 21 Nov 2021 17:16:15 +0800</pubDate><guid>http://0x3f.org/posts/auto-workflow-of-following-tv-series-and-movies/</guid><description>&lt;p>在 NAS 上搭了个自动追剧、追影的工作流，体验非常好。&lt;/p>
 &lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2021-11-21-17-24-06-%E8%87%AA%E5%8A%A8%E8%BF%BD%E5%89%A7%E6%B5%81%E7%A8%8B.svg" alt="自动追剧流程">&lt;/p>
 &lt;p>只需要把想看的美剧或者电影添加到监控列表里，就可以在资源出现之后自动下载并通知到手机或电脑，全程无值守，回家打开电视就能看。&lt;/p>
 &lt;p>用到这些工具：&lt;/p>
@@ -726,7 +863,15 @@
 &lt;li>录音效果不如 A1。&lt;/li>
 &lt;/ul>
 &lt;h3 id="总结-1">总结&lt;/h3>
-&lt;p>功能覆盖我的所有需求，但是体验总是离及格线差那么一点。&lt;/p></description></item><item><title>MacBook Pro 维修记</title><link>http://0x3f.org/posts/story-of-repairing-macbook-pro/</link><pubDate>Fri, 26 Jun 2020 23:29:24 +0800</pubDate><guid>http://0x3f.org/posts/story-of-repairing-macbook-pro/</guid><description>&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2020-06-26-23-36-49-%E4%B8%89%E9%87%8C%E5%B1%AF%E5%A4%AA%E5%8F%A4%E9%87%8C%E5%8D%97%E5%8C%BA.jpg" alt="img">&lt;/p>
+&lt;p>功能覆盖我的所有需求，但是体验总是离及格线差那么一点。&lt;/p>
+&lt;hr>
+&lt;p>讯飞在中文语音识别这个核心技术上的成就勿庸置疑，但是它的产品总是在体验上做得差一点。我用过的讯飞产品里，手机输入法是最接近满意分数线的，但是它的动图搜索功能真的是很反人类，交互很繁复。&lt;/p>
+&lt;p>这两款录音笔各自有独特的点、有吸引人的地方，但是最大的短板在软件的体验上，导致不太适合把它们当成效率工具。基于这个出发点，我云了几个设想：&lt;/p>
+&lt;ul>
+&lt;li>允许自动转写，目前只能逐条手工操作转写，如果录音较多，会不厌其烦。&lt;/li>
+&lt;li>做开放平台，和 IFTTT 之类的服务打通。&lt;/li>
+&lt;li>支持 iOS Shortcuts 之类的效率工具。&lt;/li>
+&lt;/ul></description></item><item><title>MacBook Pro 维修记</title><link>http://0x3f.org/posts/story-of-repairing-macbook-pro/</link><pubDate>Fri, 26 Jun 2020 23:29:24 +0800</pubDate><guid>http://0x3f.org/posts/story-of-repairing-macbook-pro/</guid><description>&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2020-06-26-23-36-49-%E4%B8%89%E9%87%8C%E5%B1%AF%E5%A4%AA%E5%8F%A4%E9%87%8C%E5%8D%97%E5%8C%BA.jpg" alt="img">&lt;/p>
 &lt;p>生平第一次修电脑。&lt;/p>
 &lt;p>17款的 MacBook Pro 13`，该有的问题全有——键盘随机连击或无反应、在桌面上放不平且触控板反馈很弱、疑似电池鼓包。&lt;/p>
 &lt;p>用过 ThinkPad X200 和 X220，虽然屏幕很渣，但从来没出过问题。上一台电脑是 15 款的 MacBook Air，用了三年，也没事儿。只能说这届苹果不行。&lt;/p>
@@ -771,7 +916,13 @@
 &lt;p>吹嘘自己慷慨的时候，两脚兽就指著这口袋说：「比我吃得都好。」其实就是618的打折货。
 &lt;img src="https://wx3.sinaimg.cn/large/006tNbRwly1fwvx61t9ogj31kw1kw1kz.jpg" alt="">&lt;/p>
 &lt;p>两脚兽就是个肥宅兼Nerd，且不说为了给我做饭专门买了台电动切碎机和保鲜盒。铲个屎都装绝命毒师：
-&lt;img src="https://wx2.sinaimg.cn/large/006tNbRwly1fwvx6f8zwzj31kw14fhdv.jpg" alt="">&lt;/p></description></item><item><title>少不读村上</title><link>http://0x3f.org/posts/after-reading-killing-commendatore/</link><pubDate>Sun, 22 Apr 2018 13:55:00 +0000</pubDate><guid>http://0x3f.org/posts/after-reading-killing-commendatore/</guid><description>&lt;p>读完了《刺杀骑士团长》。&lt;/p>
+&lt;img src="https://wx2.sinaimg.cn/large/006tNbRwly1fwvx6f8zwzj31kw14fhdv.jpg" alt="">&lt;/p>
+&lt;p>某天整了把稀奇古怪的东西在床上、沙发上各种吸，完事非要说是我干的：
+&lt;img src="https://wx2.sinaimg.cn/large/006tNbRwly1fwvx709q7qj31kw16o4qq.jpg" alt="">&lt;/p>
+&lt;p>我的天啊！不就掉个毛么，全宇宙只有你们两脚兽光著屁股满世界跑！
+&lt;img src="https://wx1.sinaimg.cn/large/006tNbRwly1fwvx75b1f9j31kw1kw7wi.jpg" alt="">&lt;/p>
+&lt;p>我来，我见，我征服。我是王战斗，一个普通的驯兽师。
+&lt;img src="https://wx3.sinaimg.cn/large/006tNbRwly1fwvx7kbr2hj30sg0sg0zr.jpg" alt="">&lt;/p></description></item><item><title>少不读村上</title><link>http://0x3f.org/posts/after-reading-killing-commendatore/</link><pubDate>Sun, 22 Apr 2018 13:55:00 +0000</pubDate><guid>http://0x3f.org/posts/after-reading-killing-commendatore/</guid><description>&lt;p>读完了《刺杀骑士团长》。&lt;/p>
 &lt;p>开始一直以为是类似《禁闭岛》那样的表达手法，觉得当个悬疑的故事看也不错，结果直到最后一页，才发现连装神弄鬼都不是，顿时觉得六十块钱花得有点冤。单从表达手法上说，不喜欢神神叨叨的东西。凭著炒魔幻现实主义的冷饭得诺奖怕是不大可能。&lt;/p>
 &lt;p>故事的大致情节是：生活平淡的画家，突遇婚变，逃避现实的过程中经历一系列魔幻和现实交错的事，最后解开心结，回到现实，找到救赎。&lt;/p>
 &lt;p>这本书要表达的东西很多，出现的每一个主体都存在于多条叙事线中，只粗略读过一遍，大概也就理解了个皮毛。最主要的，是两个概念和五幅画。&lt;/p>
@@ -1249,7 +1400,10 @@
 &lt;p>重新寻找丢掉的青春，撂下五年再拾起来容易么。这书是本不错的Spring初级教材。&lt;/p>
 &lt;h2 id="板桥杂记">板桥杂记&lt;/h2>
 &lt;p>&lt;img src="http://pic.yupoo.com/leninlee/DpDblJwq/medish.jpg" alt="">&lt;/p>
-&lt;p>明末清初大才子余怀的招嫖回忆录，从对江南名妓的记述中映射物是人非之慨，文笔绝佳。秋风团扇，一觉扬州，于字字雕琢中见山河离碎、愁绪盈怀。每个危楼听雨的暮年都有著软红十丈的青春。&lt;/p></description></item><item><title>读完《悟空传》</title><link>http://0x3f.org/posts/after-reading-wukongs-biography/</link><pubDate>Fri, 05 Jul 2013 23:12:00 +0000</pubDate><guid>http://0x3f.org/posts/after-reading-wukongs-biography/</guid><description>&lt;p>&lt;strong>我要这天，再遮不住我眼；要这地，再埋不了我心；要这众生，都明白我意；要那诸佛，都烟消云散！&lt;/strong>&lt;/p>
+&lt;p>明末清初大才子余怀的招嫖回忆录，从对江南名妓的记述中映射物是人非之慨，文笔绝佳。秋风团扇，一觉扬州，于字字雕琢中见山河离碎、愁绪盈怀。每个危楼听雨的暮年都有著软红十丈的青春。&lt;/p>
+&lt;h2 id="nosql精粹">NoSQL精粹&lt;/h2>
+&lt;p>&lt;img src="http://pic.yupoo.com/leninlee/DpDdM5l4/medish.jpg" alt="">&lt;/p>
+&lt;p>NoSQL绝佳的一本入门教材，对NoSQL的概念、应用场景、各类实现的优缺点等等都有适度的介绍。对于一直使用传统技术的人而言，这本书有醍醐灌顶使人捶胸顿足怒相见恨晚叹青春易逝之副作用。&lt;/p></description></item><item><title>读完《悟空传》</title><link>http://0x3f.org/posts/after-reading-wukongs-biography/</link><pubDate>Fri, 05 Jul 2013 23:12:00 +0000</pubDate><guid>http://0x3f.org/posts/after-reading-wukongs-biography/</guid><description>&lt;p>&lt;strong>我要这天，再遮不住我眼；要这地，再埋不了我心；要这众生，都明白我意；要那诸佛，都烟消云散！&lt;/strong>&lt;/p>
 &lt;p>这是本适合少年读、青年悟、中年回味的书，很遗憾没有在我最好的几年里读过它。到了没有激情和理想的年龄，已经不能耐著性子读这种需要花时间和动脑子的书，这次在Kindle PaperWhite上匆匆翻完，我知道可能需要很多年去慢慢的品。&lt;/p>
 &lt;p>&lt;img src="http://pic.yupoo.com/leninlee/CZj8ATdH/medish.jpg" alt="">&lt;/p></description></item><item><title>读完《背包十年》</title><link>http://0x3f.org/posts/after-reading-ten-years-of-traveling/</link><pubDate>Thu, 06 Jun 2013 22:12:00 +0000</pubDate><guid>http://0x3f.org/posts/after-reading-ten-years-of-traveling/</guid><description>&lt;p>年龄越大，越有种对失去自由的恐惧。“老牛自知夕阳晚，不用扬鞭自奋蹄”，于是越来越想走得远点儿，然后就看到了这本书。这是我第一次正经买电子书，花了3￥，用了五天的时间。&lt;/p>
 &lt;p>这是本游记，主要讲的是作者十年旅行的见闻和心路历程，从自然平实的词句中可以看出作者心态很平和，能体会这种心态，已经很好。&lt;/p>
@@ -1280,7 +1434,17 @@ SyntaxError: invalid syntax
 &lt;/span>&lt;span class="lnt">3
 &lt;/span>&lt;span class="lnt">4
 &lt;/span>&lt;span class="lnt">5
-&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>读过"ZK: AJAX without the JavaScript Framework"</title><link>http://0x3f.org/posts/after-reading-zk-ajax-without-the-javascript-framework/</link><pubDate>Tue, 19 Jun 2012 21:47:00 +0000</pubDate><guid>http://0x3f.org/posts/after-reading-zk-ajax-without-the-javascript-framework/</guid><description>&lt;p>前段时间，某天凌晨无故醒来，读完了这本书。&lt;/p>
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-ruby" data-lang="ruby">&lt;span class="line">&lt;span class="cl">&lt;span class="nb">require&lt;/span> &lt;span class="s1">&amp;#39;pygments&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">if&lt;/span> &lt;span class="o">!!&lt;/span>&lt;span class="no">RUBY_PLATFORM&lt;/span>&lt;span class="o">[&lt;/span>&lt;span class="s1">&amp;#39;linux&amp;#39;&lt;/span>&lt;span class="o">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="no">RubyPython&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">configure&lt;/span> &lt;span class="ss">:python_exe&lt;/span> &lt;span class="o">=&amp;gt;&lt;/span> &lt;span class="s1">&amp;#39;/usr/bin/python2&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">end&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="不足">不足&lt;/h3>
+&lt;p>用了这段时间octopress，感觉缺点也不小，每次修改后都要重新生成全站，占用系统资源不小，而且理论上以后会越来越慢。&lt;/p></description></item><item><title>读过"ZK: AJAX without the JavaScript Framework"</title><link>http://0x3f.org/posts/after-reading-zk-ajax-without-the-javascript-framework/</link><pubDate>Tue, 19 Jun 2012 21:47:00 +0000</pubDate><guid>http://0x3f.org/posts/after-reading-zk-ajax-without-the-javascript-framework/</guid><description>&lt;p>前段时间，某天凌晨无故醒来，读完了这本书。&lt;/p>
 &lt;p>虽然是ZK框架的开发者写的书，不过实在不敢恭维。开发环境搭建的一章已经过时，其余内容也显得蜻蜓点水，加上全书结构显得不是很合理，总之看完对ZK的感觉仍是朦朦胧胧的，更别说上手做东西了。&lt;/p>
 &lt;p>&lt;a href="http://www.yupoo.com/photos/leninlee/85850069/" title="ZK: AJAX without the JavaScript Framework">&lt;img src="http://pic.yupoo.com/leninlee/C3luCjSG/medium.jpg" alt="ZK: AJAX without the JavaScript Framework" width="405" height="500" border="0" />&lt;/a>&lt;/p></description></item><item><title>读完《三体——死神永生》</title><link>http://0x3f.org/posts/after-reading-three-body-long-live-the-king-of-terrors/</link><pubDate>Thu, 14 Jun 2012 22:20:00 +0000</pubDate><guid>http://0x3f.org/posts/after-reading-three-body-long-live-the-king-of-terrors/</guid><description>&lt;p>前天夜里读完了《三体》的第三部。&lt;/p>
 &lt;p>这三部一部比一部成熟。第一部只能算是整个故事的开端；第二部的亮点在最后揭示黑暗森林，前面的部分废话太多；第三部开始出现情节的跌宕，是三部中最像小说的一部。&lt;/p>

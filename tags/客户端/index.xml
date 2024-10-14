@@ -50,7 +50,60 @@ begin
  abort;
  endif;
 end;
-&lt;/code>&lt;/pr</description></item><item><title>Linux下使用freetds连接SQL Server</title><link>http://0x3f.org/posts/connect-to-sqlserver-using-freetds-on-linux/</link><pubDate>Sun, 20 Jun 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/connect-to-sqlserver-using-freetds-on-linux/</guid><description>&lt;p>&lt;a href="http://www.freetds.org">freetds&lt;/a>是第三方、开源的数据库客户端和连接库，支持Sybase和Microsoft SQL Server，它最大的好处是允许非Windows平台的程序连接SQL Server。&lt;/p>
+&lt;/code>&lt;/pre>&lt;h2>Oracle&lt;/h2>&lt;br>
+&lt;pre tabindex="0">&lt;code>function InstallOracleComponent(szComponent) 
+ NUMBER nResult,nvFileHandle,nIndex,nvCount;
+ STRING sMsg,szServer,szDB,szUser,szPassword,sCMD,sOPT,sInstance,sTmp,svLine;
+ LIST listStatus;
+begin
+ sMsg = &amp;#39;安装&amp;#39;+szComponent+&amp;#39; ...&amp;#39;;
+ SdShowMsg(sMsg, TRUE);
+ // Fetch database connection information
+ SQLRTGetConnectionInfo( &amp;#39;oracle&amp;#39;, szServer, szDB, szUser, szPassword );
+ nIndex = StrFind(szServer, &amp;#39;:&amp;#39;);
+ nIndex = StrFindEx(szServer, &amp;#39;/&amp;#39;, nIndex);
+ StrSub(sInstance, szServer, nIndex+1, 100);
+ sCMD = WINSYSDIR^&amp;#39;cmd.exe&amp;#39;;
+ sOPT = &amp;#39; /c &amp;#39;+&amp;#39;sqlplus.exe -L -S &amp;#39;+szUser+&amp;#39;/&amp;#39;+szPassword+&amp;#39;@&amp;#39;+sInstance;
+ sOPT = sOPT+&amp;#39; @&amp;#39;+SRCDIR^szComponent+&amp;#39;.sql &amp;gt; &amp;#39;+SRCDIR^&amp;#39;dbstatus.txt 2&amp;gt;&amp;amp;1&amp;#39;;
+ // Execute the script associated with the given component in database
+ nResult=LaunchAppAndWait(sCMD, sOPT, WAIT|LAAW_OPTION_HIDDEN);
+ if (nResult &amp;lt; 0) then
+ MessageBox(&amp;#39;Failed installing &amp;#39;+szComponent+&amp;#39; !&amp;#39;, SEVERE);
+ abort;
+ endif; 
+ // 关闭安装提示
+ SdShowMsg(&amp;#39;&amp;#39;, FALSE);
+ // 在dbstatus.txt中查询字符串holytail，如果存在，说明脚本已执行完
+ if (FileGrep(SRCDIR^&amp;#39;dbstatus.txt&amp;#39;, &amp;#39;holytail&amp;#39;, svLine, nIndex, RESTART) = 0) then
+ // 在dbstatus.txt中查询字符串ORA-，如果存在，说明脚本执行出现错误
+ if (FileGrep(SRCDIR^&amp;#39;dbstatus.txt&amp;#39;, &amp;#39;ORA-&amp;#39;, svLine, nIndex, RESTART) = 0) then
+ sMsg = &amp;#34;更新数据库出错，点“是”打开日志文件并退出安装，点“否”直接退出安装。\n&amp;#34;;
+ sMsg = sMsg+&amp;#34;若错误可忽略，可选择数据库类型“none”以跳过数据库更新并直接更新程序，\n&amp;#34;;
+ sMsg = sMsg+&amp;#34;然后在数据库中手工执行SQL脚本（安装后保存在script目录下）&amp;#34;;
+ nResult = AskYesNo(sMsg, YES);
+ if (nResult = YES) then
+ LaunchApp(WINSYSDIR^&amp;#39;notepad.exe&amp;#39;, SRCDIR^&amp;#39;dbstatus.txt&amp;#39;);
+ endif; 
+ abort;
+ endif;
+ else
+ sMsg = &amp;#34;更新数据库出错，点“是”打开日志文件并退出安装，点“否”直接退出安装。\n&amp;#34;;
+ sMsg = sMsg+&amp;#34;若错误可忽略，可选择数据库类型“none”以跳过数据库更新并直接更新程序，\n&amp;#34;;
+ sMsg = sMsg+&amp;#34;然后在数据库中手工执行SQL脚本（安装后保存在script目录下）&amp;#34;;
+ nResult = AskYesNo(sMsg, YES);
+ if (nResult = YES) then
+ LaunchApp(WINSYSDIR^&amp;#39;notepad.exe&amp;#39;, SRCDIR^&amp;#39;dbstatus.txt&amp;#39;);
+ endif; 
+ abort;
+ endif;
+end;
+&lt;/code>&lt;/pre>&lt;h2>总结&lt;/h2>
+&lt;ol>
+	&lt;li>为便于获取脚本在数据库中的执行结果，故通过官方客户端执行脚本时通过符号“&lt;strong>>&lt;/strong>”将客户端的输出信息重定向到&lt;strong>dbstatus.txt&lt;/strong>中；同时，使用“&lt;strong>2>&amp;1&lt;/strong>”将标准错误输出重定向到标准输出设备上，当然，会进一步重定向到dbstatus.txt文件中，否则，无法获取出错信息。&lt;/li>
+	&lt;li>sqlplus执行SQL脚本后不会自动退出，故应在Oracle的脚本后加上语句“&lt;strong>exit;&lt;/strong>”。&lt;/li>
+	&lt;li>重载&lt;strong>OnSQLComponentInstalled()&lt;/strong>函数，并在其中禁止MySQL和Oracle的SQL脚本对应的Component被执行安装，然后通过以上两个函数更新数据库。&lt;/li>
+&lt;/ol></description></item><item><title>Linux下使用freetds连接SQL Server</title><link>http://0x3f.org/posts/connect-to-sqlserver-using-freetds-on-linux/</link><pubDate>Sun, 20 Jun 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/connect-to-sqlserver-using-freetds-on-linux/</guid><description>&lt;p>&lt;a href="http://www.freetds.org">freetds&lt;/a>是第三方、开源的数据库客户端和连接库，支持Sybase和Microsoft SQL Server，它最大的好处是允许非Windows平台的程序连接SQL Server。&lt;/p>
 &lt;p>freetds的编译和安装命令如下：&lt;/p>
 &lt;div class="highlight">&lt;div class="chroma">
 &lt;table class="lntable">&lt;tr>&lt;td class="lntd">
@@ -73,7 +126,17 @@ end;
  tds version = 8.0
  client charset = utf-8
 &lt;/blockquote>
-&lt;p>上述参数应根据实际情况修改。&lt;/p></description></item><item><title>Inno Setup执行SQL脚本的方法</title><link>http://0x3f.org/posts/howto-execute-sql-scripts-in-inno-setup/</link><pubDate>Mon, 17 May 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-execute-sql-scripts-in-inno-setup/</guid><description>&lt;p>作为和&lt;a href="http://zh.wikipedia.org/zh-cn/Nullsoft%E8%85%B3%E6%9C%AC%E5%AE%89%E8%A3%9D%E7%B3%BB%E7%B5%B1">NSIS&lt;/a>并立的、两个最流行的免费Windows应用程序安装包制作工具之一，&lt;a href="http://en.wikipedia.org/wiki/Inno_Setup">Inno&lt;/a>在学习难度上相对要低一些，非常适合对一些简单的桌面程序打包。但对于较复杂的安装过程，或者Web应用程序来说，我个人觉得不是Inno的强项。当然，既然Inno内嵌了&lt;a href="http://zh.wikipedia.org/zh-cn/Pascal">Pascal&lt;/a>语言用以扩展功能，理论上不是不可以应付复杂的安装过程，但实现起来要复杂一些。&lt;/p>
+&lt;p>上述参数应根据实际情况修改。&lt;/p>
+&lt;p>最后使用如下命令测试连接：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">tsql -S mysvr -U sa -P &lt;span class="m">123456&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>给公司产品做Linux下的安装包，把开发环境放在了Cygwin中，非常享受在全屏、半透明的mintty下敲命令。今天发现在Cygwin下也是可以编译安装Linux下的程序的，只是效率非常低下。故上述内容对Cygwin环境同样成立。&lt;/p></description></item><item><title>Inno Setup执行SQL脚本的方法</title><link>http://0x3f.org/posts/howto-execute-sql-scripts-in-inno-setup/</link><pubDate>Mon, 17 May 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-execute-sql-scripts-in-inno-setup/</guid><description>&lt;p>作为和&lt;a href="http://zh.wikipedia.org/zh-cn/Nullsoft%E8%85%B3%E6%9C%AC%E5%AE%89%E8%A3%9D%E7%B3%BB%E7%B5%B1">NSIS&lt;/a>并立的、两个最流行的免费Windows应用程序安装包制作工具之一，&lt;a href="http://en.wikipedia.org/wiki/Inno_Setup">Inno&lt;/a>在学习难度上相对要低一些，非常适合对一些简单的桌面程序打包。但对于较复杂的安装过程，或者Web应用程序来说，我个人觉得不是Inno的强项。当然，既然Inno内嵌了&lt;a href="http://zh.wikipedia.org/zh-cn/Pascal">Pascal&lt;/a>语言用以扩展功能，理论上不是不可以应付复杂的安装过程，但实现起来要复杂一些。&lt;/p>
 
 &lt;p>比如对于在安装过程中连接数据库并执行SQL脚本这样的需求，使用&lt;a href="http://en.wikipedia.org/wiki/InstallShield">InstallShield&lt;/a>应该会简单地多，而Inno却不支持直接操作数据库，并且相关的资料说明少之又少，还不如NSIS丰富，以至于我踏破铁鞋无觅处，最终却在NSIS的资料中找到了思路。&lt;/p>
 

@@ -25,7 +25,24 @@
  &lt;/tr>
 &lt;/table>
 
-&lt;p>由此可见，apc_define_constants()不但在初次调用时效能就超过define()，而且由于APC自身的缓存功能，在后续调用时效率会有进一步的提高，而define()基本没有变化。&lt;/p></description></item><item><title>慎用PHP的fsockopen()连接localhost</title><link>http://0x3f.org/posts/fsockopen-fails-connecting-localhost/</link><pubDate>Tue, 24 Apr 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/fsockopen-fails-connecting-localhost/</guid><description>&lt;p>使用xdebug跟踪程序性能时发现fsockopen()函数耗时一秒，单步调试发现实际在这里超时了，而超时时间设置的就是一秒。&lt;/p>
+&lt;p>由此可见，apc_define_constants()不但在初次调用时效能就超过define()，而且由于APC自身的缓存功能，在后续调用时效率会有进一步的提高，而define()基本没有变化。&lt;/p>
+
+&lt;p>以下是apc_define_constants()的代码示例：&lt;/p>
+
+```php
+&lt;?php
+if(!apc_load_constants('my_constants')) {
+ $constants = array(
+ 'ONE' => 1,
+ 'TWO' => 2,
+ 'THREE' => 3,
+ );
+ apc_define_constants('my_constants', $constants);
+}
+?>
+```
+
+&lt;p>Posted via &lt;a href="http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/">UltraBlog.vim&lt;/a>.&lt;/p></description></item><item><title>慎用PHP的fsockopen()连接localhost</title><link>http://0x3f.org/posts/fsockopen-fails-connecting-localhost/</link><pubDate>Tue, 24 Apr 2012 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/fsockopen-fails-connecting-localhost/</guid><description>&lt;p>使用xdebug跟踪程序性能时发现fsockopen()函数耗时一秒，单步调试发现实际在这里超时了，而超时时间设置的就是一秒。&lt;/p>
 
 &lt;p>如果把目标地址由原来的“localhost”换成“127.0.0.1”，马上就可以连上。在PHP的Bug跟踪系统中找到这个问题：&lt;/p>
 

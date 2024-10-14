@@ -37,7 +37,43 @@
 &lt;/span>&lt;span class="lnt">30
 &lt;/span>&lt;span class="lnt">31
 &lt;/span>&lt;span class="lnt">32
-&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>用OpenResty自动转换silk到MP3</title><link>http://0x3f.org/posts/convert-silk-to-mp3-with-openresty/</link><pubDate>Wed, 25 Jan 2017 18:59:00 +0000</pubDate><guid>http://0x3f.org/posts/convert-silk-to-mp3-with-openresty/</guid><description>&lt;p>PHP没有原生的转换silk格式音频到mp3的方案，所以考虑用NGINX+Lua调用命令行工具实现。&lt;/p>
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-lua" data-lang="lua">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">local&lt;/span> &lt;span class="n">hotkey&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">require&lt;/span> &lt;span class="s2">&amp;#34;hs.hotkey&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">hotkey.bind&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">hyper&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;K&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kr">function&lt;/span>&lt;span class="p">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">local&lt;/span> &lt;span class="n">configFile&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">os.getenv&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;HOME&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">..&lt;/span> &lt;span class="s1">&amp;#39;/.config/karabiner/karabiner.json&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">if&lt;/span> &lt;span class="n">hs.json&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">read&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">configFile&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="kc">nil&lt;/span> &lt;span class="kr">then&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">hs.alert&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">show&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;Failed to read config file!&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">return&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">end&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">local&lt;/span> &lt;span class="n">configs&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">hs.json&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">read&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">configFile&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">local&lt;/span> &lt;span class="n">profiles&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">configs&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="s1">&amp;#39;profiles&amp;#39;&lt;/span>&lt;span class="p">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">local&lt;/span> &lt;span class="n">selectedIndex&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="kc">nil&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">for&lt;/span> &lt;span class="n">i&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">#&lt;/span>&lt;span class="n">profiles&lt;/span> &lt;span class="kr">do&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">if&lt;/span> &lt;span class="n">profiles&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="p">][&lt;/span>&lt;span class="s1">&amp;#39;selected&amp;#39;&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="kc">true&lt;/span> &lt;span class="kr">then&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">selectedIndex&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">i&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">break&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">end&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">end&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">local&lt;/span> &lt;span class="n">switchToIndex&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">selectedIndex&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="mi">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">if&lt;/span> &lt;span class="n">switchToIndex&lt;/span> &lt;span class="o">&amp;gt;&lt;/span> &lt;span class="o">#&lt;/span>&lt;span class="n">profiles&lt;/span> &lt;span class="kr">then&lt;/span> &lt;span class="n">switchToIndex&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">1&lt;/span> &lt;span class="kr">end&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">profiles&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">switchToIndex&lt;/span>&lt;span class="p">][&lt;/span>&lt;span class="s1">&amp;#39;selected&amp;#39;&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="kc">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">profiles&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">selectedIndex&lt;/span>&lt;span class="p">][&lt;/span>&lt;span class="s1">&amp;#39;selected&amp;#39;&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="kc">false&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">hs.json&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">write&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">configs&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">configFile&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kc">true&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kc">true&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">hs.alert&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">show&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">profiles&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">switchToIndex&lt;/span>&lt;span class="p">][&lt;/span>&lt;span class="s1">&amp;#39;name&amp;#39;&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">..&lt;/span> &lt;span class="s1">&amp;#39; activated!&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">end&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>源码见&lt;a href="https://github.com/xbot/hammerspoon/blob/master/modules/karabiner.lua">这里&lt;/a>。&lt;/p></description></item><item><title>用OpenResty自动转换silk到MP3</title><link>http://0x3f.org/posts/convert-silk-to-mp3-with-openresty/</link><pubDate>Wed, 25 Jan 2017 18:59:00 +0000</pubDate><guid>http://0x3f.org/posts/convert-silk-to-mp3-with-openresty/</guid><description>&lt;p>PHP没有原生的转换silk格式音频到mp3的方案，所以考虑用NGINX+Lua调用命令行工具实现。&lt;/p>
 &lt;h2 id="思路">思路&lt;/h2>
 &lt;p>当访问以「.silk.mp3」为后缀的文件时，查找对应的mp3文件，存在则返回，否则，如果对应的silk文件存在，调用命令行工具转换文件格式，然后内部重定向到新生成的mp3。&lt;/p>
 &lt;h2 id="安装">安装&lt;/h2>
@@ -88,7 +124,39 @@
 &lt;/span>&lt;span class="lnt">24
 &lt;/span>&lt;span class="lnt">25
 &lt;/span>&lt;span class="lnt">26
-&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>欧拉工程第十解</title><link>http://0x3f.org/posts/project-euler-10/</link><pubDate>Tue, 18 Nov 2008 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/project-euler-10/</guid><description>&lt;blockquote>&lt;p>The sum of the primes below 10 is 2 + 3 + 5 + 7 = 17.&lt;/p>
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-lua" data-lang="lua">&lt;span class="line">&lt;span class="cl">&lt;span class="kr">function&lt;/span> &lt;span class="nf">file_exists&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">name&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">local&lt;/span> &lt;span class="n">f&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">io.open&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">name&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="s2">&amp;#34;r&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">if&lt;/span> &lt;span class="n">f&lt;/span>&lt;span class="o">~=&lt;/span>&lt;span class="kc">nil&lt;/span> &lt;span class="kr">then&lt;/span> &lt;span class="n">io.close&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">f&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="kr">return&lt;/span> &lt;span class="kc">true&lt;/span> &lt;span class="kr">else&lt;/span> &lt;span class="kr">return&lt;/span> &lt;span class="kc">false&lt;/span> &lt;span class="kr">end&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">end&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">local&lt;/span> &lt;span class="n">resource&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">ngx.var&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">request_filename&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">local&lt;/span> &lt;span class="n">realResource&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">resource&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="n">sub&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">#&lt;/span>&lt;span class="n">resource&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="mi">9&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">..&lt;/span>&lt;span class="s2">&amp;#34;.mp3&amp;#34;&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">local&lt;/span> &lt;span class="n">realURI&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">ngx.var&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">uri&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="n">sub&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">#&lt;/span>&lt;span class="n">ngx.var&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">uri&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="mi">9&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">..&lt;/span>&lt;span class="s2">&amp;#34;.mp3&amp;#34;&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">if&lt;/span> &lt;span class="n">file_exists&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">realResource&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="kr">then&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">return&lt;/span> &lt;span class="n">ngx.exec&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">realURI&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">end&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">local&lt;/span> &lt;span class="n">silk&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">resource&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="n">sub&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">#&lt;/span>&lt;span class="n">resource&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="mi">4&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">if&lt;/span> &lt;span class="ow">not&lt;/span> &lt;span class="n">file_exists&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">silk&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="kr">then&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">return&lt;/span> &lt;span class="n">ngx.exit&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">404&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">end&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">os.execute&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;/bin/sh /opt/silk-v3-decoder/converter.sh &lt;/span>&lt;span class="se">\&amp;#34;&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span>&lt;span class="o">..&lt;/span>&lt;span class="n">silk&lt;/span>&lt;span class="o">..&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span>&lt;span class="se">\&amp;#34;&lt;/span>&lt;span class="s2"> mp3 &amp;gt; /dev/null 2&amp;gt;&amp;amp;1&amp;#34;&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">if&lt;/span> &lt;span class="n">file_exists&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">realResource&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="kr">then&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">return&lt;/span> &lt;span class="n">ngx.exec&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">realURI&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">else&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">return&lt;/span> &lt;span class="n">ngx.exit&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">404&lt;/span>&lt;span class="p">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">end&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="遇到的问题">遇到的问题&lt;/h2>
+&lt;h3 id="openresty调用命令转换失败而手工可以">OpenResty调用命令转换失败，而手工可以&lt;/h3>
+&lt;p>silk-v3-decoder的converter.sh把所有错误信息都屏蔽了，需要修改脚本查看。&lt;/p></description></item><item><title>欧拉工程第十解</title><link>http://0x3f.org/posts/project-euler-10/</link><pubDate>Tue, 18 Nov 2008 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/project-euler-10/</guid><description>&lt;blockquote>&lt;p>The sum of the primes below 10 is 2 + 3 + 5 + 7 = 17.&lt;/p>
 
 &lt;p>Find the sum of all the primes below two million.&lt;/p>&lt;/blockquote>
 

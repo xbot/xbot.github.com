@@ -20,7 +20,8 @@
 &lt;/ul>
 &lt;/li>
 &lt;li>
-&lt;p>&lt;strong>创建 PBS 备份用户&lt;/strong>&lt;/p></description></item><item><title>榨干 Intel 核显潜能，让更多虚拟机用上显卡</title><link>http://0x3f.org/posts/guide-to-increasing-intel-graphics-aperture-size/</link><pubDate>Tue, 06 Feb 2024 12:30:40 +0800</pubDate><guid>http://0x3f.org/posts/guide-to-increasing-intel-graphics-aperture-size/</guid><description>&lt;p>在虚拟化环境中，尤其是使用 Proxmox VE 或其他虚拟化平台时，有时我们需要增加 Intel 核显的显存孔径（Aperture Size），以便让更多虚拟机用上显卡的硬件加速。例如，我的 i5-8600t CPU 的核显是 UHD630 ，它的显存孔径被限制为 256M ，这只能提供一个 1200p 或两个 768p 的虚拟 GPU ，显然太少了。而当我们把这个值上调到 1024M ，就能获得更多或性能更高的虚拟 GPU 。&lt;/p>
+&lt;p>&lt;strong>创建 PBS 备份用户&lt;/strong>&lt;/p>
+&lt;p>在 PBS 中，进入 Configuration → Access Control → User Management 创建一个新用户，例如 &lt;code>dataguard&lt;/code>。&lt;/p></description></item><item><title>榨干 Intel 核显潜能，让更多虚拟机用上显卡</title><link>http://0x3f.org/posts/guide-to-increasing-intel-graphics-aperture-size/</link><pubDate>Tue, 06 Feb 2024 12:30:40 +0800</pubDate><guid>http://0x3f.org/posts/guide-to-increasing-intel-graphics-aperture-size/</guid><description>&lt;p>在虚拟化环境中，尤其是使用 Proxmox VE 或其他虚拟化平台时，有时我们需要增加 Intel 核显的显存孔径（Aperture Size），以便让更多虚拟机用上显卡的硬件加速。例如，我的 i5-8600t CPU 的核显是 UHD630 ，它的显存孔径被限制为 256M ，这只能提供一个 1200p 或两个 768p 的虚拟 GPU ，显然太少了。而当我们把这个值上调到 1024M ，就能获得更多或性能更高的虚拟 GPU 。&lt;/p>
 &lt;p>这可以通过修改 BIOS 设置来实现，但通常主板 BIOS 不提供直接的选项来调整这个值。幸运的是，我们可以通过一些工具来间接修改这个设置。以下是详细的步骤：&lt;/p>
 &lt;h3 id="步骤-1-下载和主板上同版本的-bios">步骤 1: 下载和主板上同版本的 BIOS&lt;/h3>
 &lt;p>首先，你需要从主板制造商的官方网站下载与你的主板型号相匹配的 BIOS 文件。确保下载的是与你的主板上安装的 BIOS 版本相同的文件，以便后续操作不会引发兼容性问题。&lt;/p>
@@ -46,7 +47,34 @@
 &lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">GRUB_CMDLINE_LINUX_DEFAULT&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s2">&amp;#34;quiet intel_iommu=on iommu=pt i915.enable_gvt=1&amp;#34;&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
 &lt;/div>
-&lt;/div>&lt;p>这将启用 Intel IOMMU（Input/Output Memory Management Unit）和 GVT-g 。保存文件后，运行以下命令来更新 GRUB 配置：&lt;/p></description></item><item><title>virtio可能导致windows蓝屏</title><link>http://0x3f.org/posts/virto-may-breakdown-windows/</link><pubDate>Sat, 04 Dec 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/virto-may-breakdown-windows/</guid><description>&lt;p>前段时间突然发现kvm中的windows在启动时蓝屏，开始以为是kvm新版本的bug，后来发现如果不启用虚拟机硬盘的virtio就不会出现蓝屏。&lt;/p>
+&lt;/div>&lt;p>这将启用 Intel IOMMU（Input/Output Memory Management Unit）和 GVT-g 。保存文件后，运行以下命令来更新 GRUB 配置：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">sudo update-grub
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="步骤-2-添加内核模块">步骤 2 ：添加内核模块&lt;/h3>
+&lt;p>接下来，我们需要确保 PVE 在启动时加载必要的内核模块。编辑&lt;code>/etc/modules&lt;/code>文件，添加以下模块：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">vfio
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">vfio_iommu_type1
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">vfio_pci
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">vfio_virqfd
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">kvmgt
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>如果你之前因为配置直通核显而在&lt;code>/etc/modprobe.d/pve-blacklist.conf&lt;/code>中屏蔽了显卡驱动，现在需要解除屏蔽。这可以通过注释掉或删除相关行来实现。&lt;/p></description></item><item><title>virtio可能导致windows蓝屏</title><link>http://0x3f.org/posts/virto-may-breakdown-windows/</link><pubDate>Sat, 04 Dec 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/virto-may-breakdown-windows/</guid><description>&lt;p>前段时间突然发现kvm中的windows在启动时蓝屏，开始以为是kvm新版本的bug，后来发现如果不启用虚拟机硬盘的virtio就不会出现蓝屏。&lt;/p>
 &lt;p>于是下载了最新版的virtio，然而更新后，蓝屏的问题并没有解决，所以目前只能暂时不使用virtio。不过网卡的virtio是没有问题的。&lt;/p></description></item><item><title>VirtualBox的Host Interface网络接入方式的配置</title><link>http://0x3f.org/posts/virtualbox-host-interface/</link><pubDate>Sun, 31 Jan 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/virtualbox-host-interface/</guid><description>&lt;p>&lt;a href="http://zh.wikipedia.org/wiki/VirtualBox">VirtualBox&lt;/a>安装后默认的网络接入方式是&lt;a href="http://zh.wikipedia.org/wiki/%E7%BD%91%E7%BB%9C%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2">NAT&lt;/a>，也是最简单的一种。但NAT网络中的虚拟机系统不具有和主机同一网段的IP地址，不能和主机直接通信。这对于开发者来说是不适用的。&lt;/p>
 
 &lt;p>Host Interface网络接入方式可以使虚拟机系统获得与主机同一网段的IP地址，因此也使得虚拟机系统像主机所在的局域网中的一台真实的计算机一样，可以和其它计算机通信。&lt;/p>

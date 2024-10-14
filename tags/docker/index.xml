@@ -20,7 +20,97 @@
 &lt;td class="lntd">
 &lt;pre tabindex="0" class="chroma">&lt;code class="language-ini" data-lang="ini">&lt;span class="line">&lt;span class="cl">&lt;span class="na">DOCKER_MODS&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">lscr.io/linuxserver/mods:universal-stdout-logs&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">LOGS_TO_STDOUT&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">/config/databases/mariadb.err&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>什么是docker</title><link>http://0x3f.org/posts/what-is-docker/</link><pubDate>Thu, 07 Sep 2017 15:31:11 +0000</pubDate><guid>http://0x3f.org/posts/what-is-docker/</guid><description>&lt;h2 id="什么是docker">什么是docker&lt;/h2>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h1 id="设置-mariadb-的-rootlocalhost-用户的鉴权方式">设置 MariaDB 的 root@localhost 用户的鉴权方式&lt;/h1>
+&lt;p>创建 root@localhost 用户：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-sql" data-lang="sql">&lt;span class="line">&lt;span class="cl">&lt;span class="k">CREATE&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">USER&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s1">&amp;#39;root&amp;#39;&lt;/span>&lt;span class="o">@&lt;/span>&lt;span class="s1">&amp;#39;localhost&amp;#39;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">IDENTIFIED&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">VIA&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s1">&amp;#39;unix_socket&amp;#39;&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>或更改已存在的 root@localhost 用户的鉴权方式：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-sql" data-lang="sql">&lt;span class="line">&lt;span class="cl">&lt;span class="k">ALTER&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">USER&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s1">&amp;#39;root&amp;#39;&lt;/span>&lt;span class="o">@&lt;/span>&lt;span class="s1">&amp;#39;localhost&amp;#39;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">IDENTIFIED&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">VIA&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s1">&amp;#39;unix_socket&amp;#39;&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h1 id="受权-reload-给-rootlocalhost-用户">受权 RELOAD 给 root@localhost 用户&lt;/h1>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-sql" data-lang="sql">&lt;span class="line">&lt;span class="cl">&lt;span class="k">GRANT&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">RELOAD&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">ON&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">TO&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s1">&amp;#39;root&amp;#39;&lt;/span>&lt;span class="o">@&lt;/span>&lt;span class="s1">&amp;#39;localhost&amp;#39;&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="o">`&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h1 id="配置-logrotate">配置 logrotate&lt;/h1>
+&lt;p>在宿主机创建 &lt;code>/etc/logrotate.d/mariadb&lt;/code>：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;span class="lnt">13
+&lt;/span>&lt;span class="lnt">14
+&lt;/span>&lt;span class="lnt">15
+&lt;/span>&lt;span class="lnt">16
+&lt;/span>&lt;span class="lnt">17
+&lt;/span>&lt;span class="lnt">18
+&lt;/span>&lt;span class="lnt">19
+&lt;/span>&lt;span class="lnt">20
+&lt;/span>&lt;span class="lnt">21
+&lt;/span>&lt;span class="lnt">22
+&lt;/span>&lt;span class="lnt">23
+&lt;/span>&lt;span class="lnt">24
+&lt;/span>&lt;span class="lnt">25
+&lt;/span>&lt;span class="lnt">26
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">/mnt/user/appdata/mariadb/databases/mariadb.err &lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> su nobody users
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> missingok
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> create &lt;span class="m">660&lt;/span> nobody users
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> notifempty
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> daily
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> minsize 1M
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> maxsize 100M
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> rotate &lt;span class="m">30&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> dateext
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> dateformat .%Y-%m-%d-%H-%M-%S
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> compress
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> delaycompress
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> sharedscripts 
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> olddir ../archive/
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> createolddir &lt;span class="m">770&lt;/span> nobody users
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> postrotate
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># just if mysqld is really running&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> docker &lt;span class="nb">exec&lt;/span> mariadb &lt;span class="nb">test&lt;/span> -x /usr/bin/mysqladmin &lt;span class="o">&amp;amp;&amp;amp;&lt;/span> &lt;span class="se">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span> docker &lt;span class="nb">exec&lt;/span> mariadb /usr/bin/mysqladmin ping &lt;span class="p">&amp;amp;&lt;/span>&amp;gt;/dev/null
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">then&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> docker &lt;span class="nb">exec&lt;/span> mariadb /usr/bin/mysqladmin --local flush-error-log &lt;span class="se">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span> flush-engine-log flush-general-log flush-slow-log
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">fi&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> endscript
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>可通过以下命令测试效果：&lt;/p></description></item><item><title>什么是docker</title><link>http://0x3f.org/posts/what-is-docker/</link><pubDate>Thu, 07 Sep 2017 15:31:11 +0000</pubDate><guid>http://0x3f.org/posts/what-is-docker/</guid><description>&lt;h2 id="什么是docker">什么是docker&lt;/h2>
 &lt;p>docker是一种容器，&lt;a href="http://www.infoq.com/cn/articles/container-landscape-2016">这篇文章&lt;/a>对容器的定义是：&lt;/p>
 &lt;blockquote>
 &lt;p>容器是一组运行在Linux操作系统上并使用命名空间进程进行分隔的进程，有了容器就无需再启动和维护虚拟机。与虚拟机技术相比，容器的最大不同之处在于打包格式和可移植性。构建容器的目的在于为现代基础设施降低占用空间和启动时间、提供重用性、更好地利用服务器资源，并更好地集成到整个开发生态系统中（例如持续集成和交付生命周期）。&lt;/p>
@@ -59,4 +149,54 @@
 &lt;/blockquote>
 &lt;p>解决方法是到BIOS里打开VT特性，有说法说黑苹果不支持VT，我这里是可以的。&lt;/p>
 &lt;h3 id="镜像加速器">镜像加速器&lt;/h3>
-&lt;p>一般用阿里云的镜像服务。&lt;/p></description></item></channel></rss>
+&lt;p>一般用阿里云的镜像服务。&lt;/p>
+&lt;h2 id="docker的使用">docker的使用&lt;/h2>
+&lt;h3 id="拉取镜像">拉取镜像&lt;/h3>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">docker pull base/archlinux
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="列出镜像">列出镜像&lt;/h3>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">docker images
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="创建容器">创建容器&lt;/h3>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">docker run --name arch --it base/archlinux bash
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="终止容器">终止容器&lt;/h3>
+&lt;p>&lt;code>exit&lt;/code>或&lt;code>ctrl-d&lt;/code>&lt;/p>
+&lt;h3 id="启动已终止容器">启动已终止容器&lt;/h3>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">docker start arch
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="attach运行中的容器">attach运行中的容器&lt;/h3>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">docker attach arch
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="detach运行中的容器">detach运行中的容器&lt;/h3>
+&lt;p>&lt;code>ctrl+p ctrl+q&lt;/code>或者：&lt;/p></description></item></channel></rss>

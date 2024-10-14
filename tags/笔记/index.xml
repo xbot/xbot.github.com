@@ -21,7 +21,24 @@
 &lt;table class="lntable">&lt;tr>&lt;td class="lntd">
 &lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
 &lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>读完《谈美》</title><link>http://0x3f.org/posts/after-reading-tan-mei/</link><pubDate>Sun, 29 Oct 2017 09:21:58 +0000</pubDate><guid>http://0x3f.org/posts/after-reading-tan-mei/</guid><description>&lt;p>&lt;img src="https://wx1.sinaimg.cn/large/006tNbRwly1fwvwx0p3twj31kw1kwhdu.jpg" alt="fullsizeoutput_301">&lt;/p>
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">docker cp ttrss.sql f6d92ad8efba:/tmp/ttrss.sql
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">docker &lt;span class="nb">exec&lt;/span> f6d92ad8efba /usr/bin/psql -d ttrss -f /tmp/ttrss.sql postgres
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>以root身份登录容器并删除备份文件：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">docker &lt;span class="nb">exec&lt;/span> -it --user root f6d92ad8efba /bin/sh
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">rm /tmp/ttrss.sql
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div></description></item><item><title>读完《谈美》</title><link>http://0x3f.org/posts/after-reading-tan-mei/</link><pubDate>Sun, 29 Oct 2017 09:21:58 +0000</pubDate><guid>http://0x3f.org/posts/after-reading-tan-mei/</guid><description>&lt;p>&lt;img src="https://wx1.sinaimg.cn/large/006tNbRwly1fwvwx0p3twj31kw1kwhdu.jpg" alt="fullsizeoutput_301">&lt;/p>
 &lt;p>这本书讲的是「什么是美」。读完后对美有了一些基本的概念，才知道我的审美水平还停留在「以快感为美」的阶段。&lt;/p>
 &lt;p>朱自清的序里的一些话说得很好：「新文化是「外国的影响」，自然不错；但说一般青年不留余地地鄙弃旧的文学艺术，却非真理。」、「许多青年腻味了，索性一切不管，只抱著一条道理，「有文艺的嗜好就可以谈文艺」。这是「以不了了之」，究竟「谈」不出什么来。」&lt;/p></description></item><item><title>用Tiny Tiny RSS搭建私人阅读器的步骤</title><link>http://0x3f.org/posts/ttrss/</link><pubDate>Fri, 27 Oct 2017 14:12:16 +0000</pubDate><guid>http://0x3f.org/posts/ttrss/</guid><description>&lt;h2 id="优势">优势&lt;/h2>
 &lt;ol>
@@ -49,7 +66,52 @@
 &lt;div class="highlight">&lt;div class="chroma">
 &lt;table class="lntable">&lt;tr>&lt;td class="lntd">
 &lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>什么是docker</title><link>http://0x3f.org/posts/what-is-docker/</link><pubDate>Thu, 07 Sep 2017 15:31:11 +0000</pubDate><guid>http://0x3f.org/posts/what-is-docker/</guid><description>&lt;h2 id="什么是docker">什么是docker&lt;/h2>
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">docker run -d --name ttrssdb nornagon/postgres
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="安装tiny-tiny-rss">安装tiny tiny rss&lt;/h3>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">docker run -d --link ttrssdb:db -p 80:80 -e &lt;span class="nv">SELF_URL_PATH&lt;/span>&lt;span class="o">=&lt;/span>http://example.org/ttrss fischerman/docker-ttrss
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>&lt;code>example.org&lt;/code>替换成VPS的IP或者对应的域名。&lt;/p>
+&lt;h2 id="配置">配置&lt;/h2>
+&lt;h3 id="配置主程序">配置主程序&lt;/h3>
+&lt;p>访问&lt;code>http://example.org/ttrss&lt;/code>，用户名&lt;code>admin&lt;/code>，密码&lt;code>password&lt;/code>。&lt;/p>
+&lt;h3 id="伪装成fever">伪装成fever&lt;/h3>
+&lt;p>如果RSS阅读器不支持ttrss，但支持fever，例如reeder，可以通过安装插件伪装成fever：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">git clone https://github.com/rannen/tinytinyrss-fever-plugin.git
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">docker cp fever &lt;span class="o">[[&lt;/span>CONTAINER ID&lt;span class="o">]]&lt;/span>:/var/www/plugins
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>然后去设置见面启用fever插件，并在fever插件的配置栏设置单独的密码，该栏目中会显示在RSS阅读器中使用的接口地址，用户名就是&lt;code>admin&lt;/code>。&lt;/p>
+&lt;h2 id="备份">备份&lt;/h2>
+&lt;p>每天凌晨3点备份数据库到dropbox。&lt;/p>
+&lt;h3 id="下载dropbox上传脚本">下载dropbox上传脚本&lt;/h3>
+&lt;p>在VPS的&lt;code>/root&lt;/code>下执行：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">wget https://raw.github.com/andreafabrizi/Dropbox-Uploader/master/dropbox_uploader.sh
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>执行命令并按提示操作：&lt;/p></description></item><item><title>什么是docker</title><link>http://0x3f.org/posts/what-is-docker/</link><pubDate>Thu, 07 Sep 2017 15:31:11 +0000</pubDate><guid>http://0x3f.org/posts/what-is-docker/</guid><description>&lt;h2 id="什么是docker">什么是docker&lt;/h2>
 &lt;p>docker是一种容器，&lt;a href="http://www.infoq.com/cn/articles/container-landscape-2016">这篇文章&lt;/a>对容器的定义是：&lt;/p>
 &lt;blockquote>
 &lt;p>容器是一组运行在Linux操作系统上并使用命名空间进程进行分隔的进程，有了容器就无需再启动和维护虚拟机。与虚拟机技术相比，容器的最大不同之处在于打包格式和可移植性。构建容器的目的在于为现代基础设施降低占用空间和启动时间、提供重用性、更好地利用服务器资源，并更好地集成到整个开发生态系统中（例如持续集成和交付生命周期）。&lt;/p>
@@ -88,7 +150,57 @@
 &lt;/blockquote>
 &lt;p>解决方法是到BIOS里打开VT特性，有说法说黑苹果不支持VT，我这里是可以的。&lt;/p>
 &lt;h3 id="镜像加速器">镜像加速器&lt;/h3>
-&lt;p>一般用阿里云的镜像服务。&lt;/p></description></item><item><title>把博客字体改成了方正北魏楷书</title><link>http://0x3f.org/posts/set-blog-webfont-to-fzbeiweikaishu/</link><pubDate>Mon, 14 Aug 2017 16:05:30 +0000</pubDate><guid>http://0x3f.org/posts/set-blog-webfont-to-fzbeiweikaishu/</guid><description>&lt;p>我曾说过&lt;a href="http://0x3f.org/post/best-practices-of-calibre-on-formatting/">方正北魏楷书是最佳的阅读字体&lt;/a>，不过后来感觉长时间阅读的体验还是普通的楷体更好。但这并不妨碍在Reeder、博客这种短时阅读场合突出页面的设计感。&lt;/p>
+&lt;p>一般用阿里云的镜像服务。&lt;/p>
+&lt;h2 id="docker的使用">docker的使用&lt;/h2>
+&lt;h3 id="拉取镜像">拉取镜像&lt;/h3>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">docker pull base/archlinux
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="列出镜像">列出镜像&lt;/h3>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">docker images
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="创建容器">创建容器&lt;/h3>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">docker run --name arch --it base/archlinux bash
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="终止容器">终止容器&lt;/h3>
+&lt;p>&lt;code>exit&lt;/code>或&lt;code>ctrl-d&lt;/code>&lt;/p>
+&lt;h3 id="启动已终止容器">启动已终止容器&lt;/h3>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">docker start arch
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="attach运行中的容器">attach运行中的容器&lt;/h3>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">docker attach arch
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="detach运行中的容器">detach运行中的容器&lt;/h3>
+&lt;p>&lt;code>ctrl+p ctrl+q&lt;/code>或者：&lt;/p></description></item><item><title>把博客字体改成了方正北魏楷书</title><link>http://0x3f.org/posts/set-blog-webfont-to-fzbeiweikaishu/</link><pubDate>Mon, 14 Aug 2017 16:05:30 +0000</pubDate><guid>http://0x3f.org/posts/set-blog-webfont-to-fzbeiweikaishu/</guid><description>&lt;p>我曾说过&lt;a href="http://0x3f.org/post/best-practices-of-calibre-on-formatting/">方正北魏楷书是最佳的阅读字体&lt;/a>，不过后来感觉长时间阅读的体验还是普通的楷体更好。但这并不妨碍在Reeder、博客这种短时阅读场合突出页面的设计感。&lt;/p>
 &lt;p>今天把博客（hexo）的webfont改成了方正北魏楷书，用font-spider压缩后，从13M缩减到1.4M。方法是这样的：&lt;/p>
 &lt;p>首先把完整的字体复制到主题的字体目录中（themes/crisp/source/fonts），文件名为&lt;code>FZBeiWeiKaiShu-full.ttf&lt;/code>。&lt;/p>
 &lt;p>在CSS中加入webfont配置：&lt;/p>
@@ -106,7 +218,43 @@
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">src&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="nt">url&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s1">&amp;#39;../fonts/FZBeiWeiKaiShu.ttf&amp;#39;&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="nt">format&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s1">&amp;#39;truetype&amp;#39;&lt;/span>&lt;span class="o">),&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">url&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s1">&amp;#39;../fonts/FZBeiWeiKaiShu-full.ttf&amp;#39;&lt;/span>&lt;span class="o">)&lt;/span> &lt;span class="nt">format&lt;/span>&lt;span class="o">(&lt;/span>&lt;span class="s1">&amp;#39;truetype&amp;#39;&lt;/span>&lt;span class="o">);&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>Cross-site Request Forgery简介</title><link>http://0x3f.org/posts/introduction-of-cross-site-request-forgery/</link><pubDate>Sun, 23 Apr 2017 20:55:58 +0000</pubDate><guid>http://0x3f.org/posts/introduction-of-cross-site-request-forgery/</guid><description>&lt;h2 id="什么是csrf">什么是CSRF&lt;/h2>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>&lt;code>FZBeiWeiKaiShu.ttf&lt;/code>是压缩后的字体文件名，这样访问时浏览器会优先下载压缩后的字体。&lt;/p>
+&lt;p>然后把CSS中使用字体的地方都指定为&lt;code>FZBeiWeiKaiShu&lt;/code>。&lt;/p>
+&lt;p>在博客根目录下创建脚本&lt;code>update_fonts.sh&lt;/code>：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
+&lt;/span>&lt;span class="lnt"> 2
+&lt;/span>&lt;span class="lnt"> 3
+&lt;/span>&lt;span class="lnt"> 4
+&lt;/span>&lt;span class="lnt"> 5
+&lt;/span>&lt;span class="lnt"> 6
+&lt;/span>&lt;span class="lnt"> 7
+&lt;/span>&lt;span class="lnt"> 8
+&lt;/span>&lt;span class="lnt"> 9
+&lt;/span>&lt;span class="lnt">10
+&lt;/span>&lt;span class="lnt">11
+&lt;/span>&lt;span class="lnt">12
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="cp">#!/bin/sh
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cp">&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">hexo clean
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">hexo g
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">find public -name &lt;span class="s2">&amp;#34;*.html&amp;#34;&lt;/span> &lt;span class="p">|&lt;/span>xargs sed -i &lt;span class="s1">&amp;#39;&amp;#39;&lt;/span> &lt;span class="s2">&amp;#34;s#/styles/crisp.css#&lt;/span>&lt;span class="nv">$HOME&lt;/span>&lt;span class="s2">/Projects/blog/public/styles/crisp.css#g&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">find public -name &lt;span class="s2">&amp;#34;*.html&amp;#34;&lt;/span>&lt;span class="p">|&lt;/span>xargs font-spider
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">cp -f public/fonts/FZBeiWeiKaiShu.ttf themes/crisp/source/fonts/FZBeiWeiKaiShu.ttf
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">hexo clean
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">hexo s -g
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>除非用到新的字符，否则不需要经常更新字体。&lt;/p>
+&lt;p>font-spider会提示一共使用了多少种字符，我这么多年也只用到三千多种，真是太没文化了。🤥&lt;/p></description></item><item><title>Cross-site Request Forgery简介</title><link>http://0x3f.org/posts/introduction-of-cross-site-request-forgery/</link><pubDate>Sun, 23 Apr 2017 20:55:58 +0000</pubDate><guid>http://0x3f.org/posts/introduction-of-cross-site-request-forgery/</guid><description>&lt;h2 id="什么是csrf">什么是CSRF&lt;/h2>
 &lt;p>Cross-site Request Forgery（简称CSRF），意思是跨站请求伪造。原理是利用网站服务器对浏览器的信任，通过一些技术手段欺骗用户的浏览器访问自己曾经认证过的网站，并执行一些危害用户利益的操作。&lt;/p>
 &lt;p>例如，假设网站的会话信息保存在cookie中，提现的请求是&lt;code>GET http://www.sample.com/withdraw?toCard=123456&amp;amp;amount=10000&lt;/code>，攻击者在自己的网页中通过img标签、iframe或者AJAX访问这个链接，并诱使用户访问这个网页，如果用户刚刚登录过sample.com，余额就会被转走。&lt;/p>
 &lt;h2 id="防止csrf的方法">防止CSRF的方法&lt;/h2>
@@ -142,7 +290,31 @@
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="err">&amp;#39;typ&amp;#39;:&lt;/span> &lt;span class="err">&amp;#39;JWT&amp;#39;,&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="err">&amp;#39;alg&amp;#39;:&lt;/span> &lt;span class="err">&amp;#39;HS256&amp;#39;&lt;/span>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>一次对Workflow不完全成功的抓包过程</title><link>http://0x3f.org/posts/a-failed-attempt-to-capture-workflow-requests/</link><pubDate>Tue, 04 Apr 2017 20:19:52 +0000</pubDate><guid>http://0x3f.org/posts/a-failed-attempt-to-capture-workflow-requests/</guid><description>&lt;p>一个workflow对https链接的请求总是失败，而同样的接口在postman里是成功的。所以想对比一下两个请求的差异。&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>「typ」是格式，「alg」是加密方法。&lt;/p>
+&lt;h3 id="payload">payload&lt;/h3>
+&lt;p>payload也是个base64字符串，解密后也是个JSON对象，一般包含两种数据：JWT标准数据和自定义数据。&lt;/p>
+&lt;p>JWT标准数据常见的有：&lt;/p>
+&lt;ul>
+&lt;li>iss：提供方。&lt;/li>
+&lt;li>sub：主题，一般是用户ID。&lt;/li>
+&lt;li>exp：过期时间。&lt;/li>
+&lt;li>iat：创建时间。&lt;/li>
+&lt;li>jti：token的唯一标识。&lt;/li>
+&lt;/ul>
+&lt;p>此外，和session一样，可以把一些自定义的数据存储在payload里。但由于token存储在客户端，所以不应该在这里存储敏感数据。&lt;/p>
+&lt;h3 id="signature">signature&lt;/h3>
+&lt;p>signature也是个base64字符串，解密后是个使用header里描述的加密方法针对header和payload加密的字符串。目的是防止这两部分的数据被篡改。&lt;/p>
+&lt;h2 id="jwt的使用原则">JWT的使用原则&lt;/h2>
+&lt;ul>
+&lt;li>不存放敏感信息&lt;/li>
+&lt;li>保护好私钥&lt;/li>
+&lt;li>结合https使用&lt;/li>
+&lt;/ul>
+&lt;p>都是出于安全角度考虑。token存储在客户端，而且base64可以被解密，所以不能存储敏感数据。如果私钥泄漏，意味著签名可以被随意伪造。使用https可以更好的保护数据，防止中间人攻击。&lt;/p>
+&lt;h2 id="jwt相关开发资源">JWT相关开发资源&lt;/h2>
+&lt;p>&lt;a href="https://jwt.io/">jwt.io&lt;/a>有各种语言的JWT开发资源。&lt;/p></description></item><item><title>一次对Workflow不完全成功的抓包过程</title><link>http://0x3f.org/posts/a-failed-attempt-to-capture-workflow-requests/</link><pubDate>Tue, 04 Apr 2017 20:19:52 +0000</pubDate><guid>http://0x3f.org/posts/a-failed-attempt-to-capture-workflow-requests/</guid><description>&lt;p>一个workflow对https链接的请求总是失败，而同样的接口在postman里是成功的。所以想对比一下两个请求的差异。&lt;/p>
 &lt;p>尝试了两种抓包方式，都不成功。一种是用中间人攻击的原理，用的是mitmproxy，类似的还有charles、fiddler等。另一种是从网卡直接抓取，用的是wireshark。&lt;/p>
 &lt;p>第一种情况，虽然在iOS里安装并信任了mitmproxy的伪证书、safari里也是可以正常访问https链接的，但在workflow里仍然不认。&lt;/p>
 &lt;p>第二种情况，wireshark支持两种解密TLS包的方式：一是使用https服务的私钥，二是用浏览器输出的「SSLKEYLOGFILE」。这里需要用第二种。但是这种方式只对本机发送的请求有效，而且在实际操作中还发现有时候本机也解密不了。&lt;/p>
@@ -186,7 +358,9 @@
 &lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">git rebase --onto master unstable feature
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">git checkout master
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">git merge feature
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>Git Reset、Revert和Checkout的区别</title><link>http://0x3f.org/posts/differences-among-reset-checkout-revert-of-git/</link><pubDate>Thu, 09 Feb 2017 19:27:47 +0000</pubDate><guid>http://0x3f.org/posts/differences-among-reset-checkout-revert-of-git/</guid><description>&lt;p>reset在提交层面，是将HEAD设定到指定的提交，通常用来舍弃最新的几个提交。在文件层面，是将指定的提交中的该文件保存到暂存区，工作区中的文件不变。&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>rebase过程中如果存在冲突，合并后用&lt;code>git add&lt;/code>标记已解决，再用&lt;code>git rebase --continue&lt;/code>继续。如果解决冲突后仍然不能继续，可能是当前补丁的内容在下游分支已存在，可以用&lt;code>git rebase --skip&lt;/code>跳过。&lt;/p></description></item><item><title>Git Reset、Revert和Checkout的区别</title><link>http://0x3f.org/posts/differences-among-reset-checkout-revert-of-git/</link><pubDate>Thu, 09 Feb 2017 19:27:47 +0000</pubDate><guid>http://0x3f.org/posts/differences-among-reset-checkout-revert-of-git/</guid><description>&lt;p>reset在提交层面，是将HEAD设定到指定的提交，通常用来舍弃最新的几个提交。在文件层面，是将指定的提交中的该文件保存到暂存区，工作区中的文件不变。&lt;/p>
 &lt;p>reset有三个常用的参数：--mixed、--soft和--hard。&lt;/p>
 &lt;p>在提交层面，--mixed是默认值，影响暂存区，不影响工作区；--soft将HEAD版本保存到暂存区，并将HEAD设定到指定的提交，用来合并提交历史；--hard既影响暂存区，也影响工作区。&lt;/p>
 &lt;p>在文件层面，--soft和--hard均会报错，不支持这两个选项。&lt;/p>
@@ -245,7 +419,22 @@
 &lt;/span>&lt;span class="lnt">4
 &lt;/span>&lt;span class="lnt">5
 &lt;/span>&lt;span class="lnt">6
-&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>用JavaScript实现分页打印</title><link>http://0x3f.org/posts/howto-do-paged-printing-using-javascript/</link><pubDate>Sat, 19 Jun 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-do-paged-printing-using-javascript/</guid><description>&lt;p>最近客户提的一个需求，要实现分页打印功能。公司产品对打印功能实现得不够好，排版全由程序生成，耦合度高，且不支持分页，需要用笨拙的方法变通。&lt;/p>
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-php" data-lang="php">&lt;span class="line">&lt;span class="cl">&lt;span class="k">use&lt;/span> &lt;span class="nx">Workerman\Worker&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">$worker&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="k">new&lt;/span> &lt;span class="nx">Worker&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;websocket://0.0.0.0:4759&amp;#39;&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">$worker&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="na">onMessage&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="k">function&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$connection&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">$data&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">var_dump&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$data&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">Worker&lt;/span>&lt;span class="o">::&lt;/span>&lt;span class="na">runAll&lt;/span>&lt;span class="p">();&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>得到的结果是：&lt;/p>
+&lt;blockquote>
+&lt;p>[object Object]&lt;/p>
+&lt;/blockquote>
+&lt;p>所以，一种语言的对象的实例以二进制形式直接传递给另一种语言是无法识别的，因此需要把对象数据用文本描述之后再行传递。&lt;/p>
+&lt;p>此外，相对于XML等其它格式，JSON有可读性上的优势，如果是对象，二进制的数据哪来的可读性？&lt;/p></description></item><item><title>用JavaScript实现分页打印</title><link>http://0x3f.org/posts/howto-do-paged-printing-using-javascript/</link><pubDate>Sat, 19 Jun 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-do-paged-printing-using-javascript/</guid><description>&lt;p>最近客户提的一个需求，要实现分页打印功能。公司产品对打印功能实现得不够好，排版全由程序生成，耦合度高，且不支持分页，需要用笨拙的方法变通。&lt;/p>
 &lt;p>于是我对如何更好地实现分页打印产生了兴趣，Google了一下，整理了一个Demo：&lt;/p>
 &lt;div class="highlight">&lt;div class="chroma">
 &lt;table class="lntable">&lt;tr>&lt;td class="lntd">
@@ -282,7 +471,44 @@
 &lt;/span>&lt;span class="lnt">31
 &lt;/span>&lt;span class="lnt">32
 &lt;/span>&lt;span class="lnt">33
-&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>Python控制外部进程的灵异事件</title><link>http://0x3f.org/posts/supernatural-phenomenon-of-controlling-external-processes-in-python/</link><pubDate>Mon, 08 Mar 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/supernatural-phenomenon-of-controlling-external-processes-in-python/</guid><description>&lt;p>春节前的一段时间，重新拾起近一年没动过的&lt;a href="http://0x3f.org/?tag=foreverfantasy">ForeverFantasy&lt;/a>。&lt;/p>
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-html" data-lang="html">&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">html&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">head&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">meta&lt;/span> &lt;span class="na">http-equiv&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;Content-Type&amp;#34;&lt;/span> &lt;span class="na">content&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;text/html;charset=utf-8&amp;#34;&lt;/span>&lt;span class="p">/&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">style&lt;/span> &lt;span class="na">media&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">print&lt;/span>&lt;span class="p">&amp;gt;&lt;/span> 
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">.&lt;/span>&lt;span class="nc">Noprint&lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="k">display&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="kc">none&lt;/span>&lt;span class="p">;}&lt;/span> 
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">.&lt;/span>&lt;span class="nc">PageNext&lt;/span>&lt;span class="p">{&lt;/span>&lt;span class="k">page-break-after&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="kc">always&lt;/span>&lt;span class="p">;}&lt;/span> 
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">style&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">head&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">body&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">OBJECT&lt;/span> &lt;span class="na">id&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">WebBrowser&lt;/span> &lt;span class="na">classid&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">CLSID:8856F961-340A-11D0-A96B-00C04FD705A2&lt;/span> &lt;span class="na">height&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">0&lt;/span> &lt;span class="na">width&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">0&lt;/span> &lt;span class="na">VIEWASTEXT&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">OBJECT&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">div&lt;/span> &lt;span class="na">class&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;Noprint&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">input&lt;/span> &lt;span class="na">onclick&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">document.all.WebBrowser.ExecWB(6,1)&lt;/span> &lt;span class="na">type&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">button&lt;/span> &lt;span class="na">value&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">打印&lt;/span> &lt;span class="na">name&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">Button&lt;/span>&lt;span class="p">&amp;gt;&lt;/span> 
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">input&lt;/span> &lt;span class="na">onclick&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">document.all.WebBrowser.ExecWB(7,1)&lt;/span> &lt;span class="na">type&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">button&lt;/span> &lt;span class="na">value&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">打印预览&lt;/span> &lt;span class="na">name&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">Button&lt;/span>&lt;span class="p">&amp;gt;&lt;/span> 
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">input&lt;/span> &lt;span class="na">onclick&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">document.all.WebBrowser.ExecWB(8,1)&lt;/span> &lt;span class="na">type&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">button&lt;/span> &lt;span class="na">value&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">页面设置&lt;/span> &lt;span class="na">name&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">Button4&lt;/span>&lt;span class="p">&amp;gt;&lt;/span> 
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">div&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">div&lt;/span> &lt;span class="na">class&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;PageNext&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">center&lt;/span>&lt;span class="p">&amp;gt;&amp;lt;&lt;/span>&lt;span class="nt">h1&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>雅游&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">h1&lt;/span>&lt;span class="p">&amp;gt;&amp;lt;/&lt;/span>&lt;span class="nt">center&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">p&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>旧院人称曲中，前门对武定桥，后门在钞库街。妓家鳞次，比屋而居。屋宇精洁，花木萧疏，迥非尘境。&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">p&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">p&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>到门则铜环半启，珠箔低垂;升阶则猧儿吠客，鹦哥唤茶；登堂则假母肃迎，分宾抗礼；&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">p&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">p&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>进轩则丫鬟毕妆，捧艳而出；坐久则水陆备至，丝肉竞陈；定情则目眺心挑，绸缪宛转。&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">p&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">p&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>纨绔少年，绣肠才子，无不魂迷色阵，气尽雌风矣。&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">p&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">p&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>妓家，仆婢称之曰娘，外人呼之曰小娘，假母称之曰娘儿。&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">p&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">p&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>有客称客曰姐夫，客称假母曰外婆。&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">p&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">div&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">div&lt;/span> &lt;span class="na">class&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">&amp;#34;PageNext&amp;#34;&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">center&lt;/span>&lt;span class="p">&amp;gt;&amp;lt;&lt;/span>&lt;span class="nt">h1&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>木兰花令·拟古决绝词&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">h1&lt;/span>&lt;span class="p">&amp;gt;&amp;lt;/&lt;/span>&lt;span class="nt">center&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">center&lt;/span>&lt;span class="p">&amp;gt;&amp;lt;&lt;/span>&lt;span class="nt">h3&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>清·纳兰容若&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">h3&lt;/span>&lt;span class="p">&amp;gt;&amp;lt;/&lt;/span>&lt;span class="nt">center&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">p&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>人生若只如初见，何事秋风悲画扇。等闲变却故人心，却道故人心易变!&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">p&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nt">p&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>骊山语罢清宵半，泪雨零铃终不怨。何如薄幸锦衣郎，比翼连枝当日愿!&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">p&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">div&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">body&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">&amp;lt;/&lt;/span>&lt;span class="nt">html&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>这个方法的好处是支持以低耦合的方式分页打印，同时支持只打印页面上指定的部分内容；缺点是由于使用了ActiveX，故只支持IE浏览器。&lt;/p></description></item><item><title>Python控制外部进程的灵异事件</title><link>http://0x3f.org/posts/supernatural-phenomenon-of-controlling-external-processes-in-python/</link><pubDate>Mon, 08 Mar 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/supernatural-phenomenon-of-controlling-external-processes-in-python/</guid><description>&lt;p>春节前的一段时间，重新拾起近一年没动过的&lt;a href="http://0x3f.org/?tag=foreverfantasy">ForeverFantasy&lt;/a>。&lt;/p>
 
 &lt;p>虽然一年内没什么更新，但是我却一直都在用，基本上只限于将用Vim写好的&lt;a href="http://en.wikipedia.org/wiki/Markdown">Markdown&lt;/a>格式的文档转换成HTML。&lt;/p>
 
@@ -306,7 +532,41 @@ if 0 == status:
 if status is None:
  print 'The external program is still running.'
 ```
-&lt;/p></description></item><item><title>PHP后台echo过多会导致进程崩溃</title><link>http://0x3f.org/posts/too-many-echoes-may-crash-php/</link><pubDate>Sun, 31 Jan 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/too-many-echoes-may-crash-php/</guid><description>&lt;p>这是去年晚些时侯发现的一个问题。&lt;/p>
+&lt;/p>
+
+&lt;p>理论上，可以拿实例process的poll()方法监视进程的运行状态，而且这一点在Windows上也确实可以做到，但是到了Linux下，诡异的事出现了，即使刚刚打开gvim，poll()方法也会马上返回一个0，同时process.pid的值总是和实际在运行的那个gvim进程的pid的值差3，而且在虚拟终端中输入gvim命令也不会阻塞终端，就像别的命令加上“&lt;strong>&amp;amp;&lt;/strong>”符号的效果一样。尝试用&lt;a href="http://en.wikipedia.org/wiki/Strace">strace&lt;/a>跟踪gvim的运行，试图找到问题原因，无果。我猜想可能/usr/bin/gvim是一个跳板，它启动后会启动一个新的gvim进程。总之，这个方法在Linux下是行不通的。&lt;/p>
+
+&lt;p>因此我觉得只能另寻出路了，既然不能监控gvim进程，那就监控gvim进程所编辑的文件，只要这个文件不被任何进程占用，就可以判定gvim已退出。这一点，在Linux下易如反掌，不用说，&lt;a href="http://en.wikipedia.org/wiki/Lsof">lsof&lt;/a>当仁不让。&lt;/p>
+
+&lt;p>用&lt;strong>commands.getstatusoutput('lsof file.txt')&lt;/strong>测试发现，如果文件file.txt被某进程占用，则返回的状态值为0，反之，返回256。&lt;/p>
+
+&lt;p>最终，我在程序中使用了两种判断方式，在Windows平台使用subprocess跟踪gvim.exe进程，而在Linux及Unix平台使用lsof检查文档占用情况。&lt;/p>
+
+&lt;p>剩下的就是进行这个判断的时间问题了。&lt;/p>
+
+&lt;p>很显然，如果在子进程被启动后马上使用while循环不停的检查，一来必须使用多线程，二来系统资源占用也会很高。这时就需要利用wxPython的事件机制了，当ForeverFantasy启动Gvim时，主窗口失去焦点，而当Gvim退出时，ForeverFantasy又会获得焦点，只要能在ForeverFantasy窗口获得焦点时做一次检查即可。不过，在选择最合适的事件的问题上，又是一波三折。&lt;/p>
+
+&lt;p>在wxPython的&lt;a href="http://www.wxpython.org/docs/api/frames.html">API&lt;/a>文档中没有找到&lt;a href="http://wiki.wxpython.org/ListOfEvents">事件列表&lt;/a>，倒是在&lt;a href="http://wiki.wxpython.org">Wiki&lt;/a>中找到了。顾名思义，觉得wx.EVT_SET_FOCUS比较靠谱，但试用失败，看API中关于FocusEvent的说明，这个事件适用于窗口控件；然后又试了wx.EVT_CHILD_FOCUS，只有在窗口包含的控件中有获得焦点的情况才会触发；最后才发现&lt;strong>wx.EVT_ACTIVATE&lt;/strong>，这个事件会在窗口失去焦点和获得焦点时各触发一次，使用GetActive()方法可以判断是获得焦点还是失去焦点。&lt;/p>
+
+&lt;p>完成与Vim的协同使ForeverFantasy在我手上由原来单纯的格式转换工具进化为基本可用的文档编辑器，就算是&lt;strong>Milestone 2&lt;/strong>吧。&lt;/p>
+
+&lt;p>此外，还有一些小的经验：&lt;/p>
+
+&lt;p>1. 调用非环境变量下的程序，即命令中必须带程序所在的路径时，应当将程序所在目录的完整路径以自然字符串的形式传递给subprocess.Popen类的构造方法的cwd参数，即如下所示：&lt;/p>
+
+&lt;p>
+```python
+process = subprocess.Popen('gvim.exe', cwd=r'C:\program files\vim\vim72', shell=True)
+```
+&lt;/p>
+
+&lt;p>这样可以有效避免路径中的空格和特殊字符对命令执行的影响。&lt;/p>
+
+&lt;p>2. Vim编辑一个文档时，实际操作的是一个临时文件，而不是原文件，这个临时文件与原文件同路径，名称为在原文件名的基础上，前面加一个句点，后面加后缀“.swp”。应该用lsof监控这个临时文件，才可以判断出编辑该文档的Vim进程的运行状态。由于对于不存在的文件使用lsof命令的返回值也是256，故可以同时判断临时文件和原文件的占用情况，这样就为对其它编辑器的支持奠定了基础。&lt;/p>
+
+&lt;p>&lt;strong>2010-03-10 Wednesday 22:52:13 更新&lt;/strong>&lt;/p>
+
+&lt;p>感谢KL童鞋和依云童鞋指教，果然加上&lt;strong>-f&lt;/strong>参数就可以了。&lt;/p></description></item><item><title>PHP后台echo过多会导致进程崩溃</title><link>http://0x3f.org/posts/too-many-echoes-may-crash-php/</link><pubDate>Sun, 31 Jan 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/too-many-echoes-may-crash-php/</guid><description>&lt;p>这是去年晚些时侯发现的一个问题。&lt;/p>
 &lt;p>公司产品的后台定时任务应该是用独立的PHP进程驱动的。在做一个项目的时候，为了便于手工调试，我在定时任务中使用了大量的echo输出信息并在浏览器中手工执行此任务的脚本。&lt;/p>
 &lt;p>手工执行通过，输出信息完全没有问题。但在实际运行的过程中，一个很诡异的事情发生了：即使我将实际处理数据的代码全部注释掉，只对原始数据做简单的查询，此定时任务仍然极其健壮地中途退出。最要命的是无论程序日志还是PHP的错误日志，都没有任何相关信息。直到后来我把所有echo输出都取消，问题才解决。&lt;/p>
 &lt;p>事后模糊地记得很久以前似乎在哪本书上看到过在无输出设备的情况下echo过多数据会导致PHP进程崩溃的内容，但原因已想不起来了。&lt;/p></description></item></channel></rss>

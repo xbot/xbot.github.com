@@ -21,7 +21,34 @@
 &lt;/span>&lt;/code>&lt;/pre>&lt;/td>
 &lt;td class="lntd">
 &lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">getfacl ~
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>phpsh：PHP的交互式解释器</title><link>http://0x3f.org/posts/phpsh/</link><pubDate>Mon, 29 Mar 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/phpsh/</guid><description>&lt;p>时常需要测试一些简短的代码是否能得到需要的结果，如果去写测试脚本再执行，显然太麻烦。虽然PHP自身也支持通过&lt;strong>&lt;em>-a&lt;/em>&lt;/strong>参数启动交互模式，但功能较为局限。如果PHP有像&lt;a href="http://bpython-interpreter.org/">bpython&lt;/a>那样的交互式解释器，就太好了。&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>显示结果如下：&lt;/p>
+&lt;blockquote>
+&lt;p>getfacl: Removing leading &amp;lsquo;/&amp;rsquo; from absolute path names&lt;br>
+# file: home/taoqi&lt;br>
+# owner: taoqi&lt;br>
+# group: users&lt;br>
+user::rwx&lt;br>
+user:root:&amp;ndash;x&lt;br>
+group::&amp;mdash;&lt;br>
+mask::&amp;ndash;x&lt;br>
+other::&amp;mdash;&lt;/p>
+&lt;/blockquote>
+&lt;p>显然，要给http用户访问该目录的权限：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">setfacl -m u:http:x ~
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>再查看ACL，发现增加了一条：&lt;/p>
+&lt;blockquote>
+&lt;p>user:http:&amp;ndash;x&lt;/p>
+&lt;/blockquote>
+&lt;p>同理，给Dropbox目录也加上这一条规则之后，Web Server就可以访问维基数据目录了。&lt;/p></description></item><item><title>phpsh：PHP的交互式解释器</title><link>http://0x3f.org/posts/phpsh/</link><pubDate>Mon, 29 Mar 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/phpsh/</guid><description>&lt;p>时常需要测试一些简短的代码是否能得到需要的结果，如果去写测试脚本再执行，显然太麻烦。虽然PHP自身也支持通过&lt;strong>&lt;em>-a&lt;/em>&lt;/strong>参数启动交互模式，但功能较为局限。如果PHP有像&lt;a href="http://bpython-interpreter.org/">bpython&lt;/a>那样的交互式解释器，就太好了。&lt;/p>
 
 &lt;p>&lt;a href="http://www.phpsh.org/">phpsh&lt;/a>就是这样一个工具，它是由&lt;a href="http://zh.wikipedia.org/wiki/Facebook">facebook&lt;/a>的开发者用Python实现的PHP的交互式解释器，并具备以下特性：&lt;/p>
 

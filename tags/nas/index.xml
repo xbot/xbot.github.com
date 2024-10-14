@@ -36,7 +36,8 @@
 &lt;/ul>
 &lt;/li>
 &lt;li>
-&lt;p>&lt;strong>创建 PBS 备份用户&lt;/strong>&lt;/p></description></item><item><title>榨干 Intel 核显潜能，让更多虚拟机用上显卡</title><link>http://0x3f.org/posts/guide-to-increasing-intel-graphics-aperture-size/</link><pubDate>Tue, 06 Feb 2024 12:30:40 +0800</pubDate><guid>http://0x3f.org/posts/guide-to-increasing-intel-graphics-aperture-size/</guid><description>&lt;p>在虚拟化环境中，尤其是使用 Proxmox VE 或其他虚拟化平台时，有时我们需要增加 Intel 核显的显存孔径（Aperture Size），以便让更多虚拟机用上显卡的硬件加速。例如，我的 i5-8600t CPU 的核显是 UHD630 ，它的显存孔径被限制为 256M ，这只能提供一个 1200p 或两个 768p 的虚拟 GPU ，显然太少了。而当我们把这个值上调到 1024M ，就能获得更多或性能更高的虚拟 GPU 。&lt;/p>
+&lt;p>&lt;strong>创建 PBS 备份用户&lt;/strong>&lt;/p>
+&lt;p>在 PBS 中，进入 Configuration → Access Control → User Management 创建一个新用户，例如 &lt;code>dataguard&lt;/code>。&lt;/p></description></item><item><title>榨干 Intel 核显潜能，让更多虚拟机用上显卡</title><link>http://0x3f.org/posts/guide-to-increasing-intel-graphics-aperture-size/</link><pubDate>Tue, 06 Feb 2024 12:30:40 +0800</pubDate><guid>http://0x3f.org/posts/guide-to-increasing-intel-graphics-aperture-size/</guid><description>&lt;p>在虚拟化环境中，尤其是使用 Proxmox VE 或其他虚拟化平台时，有时我们需要增加 Intel 核显的显存孔径（Aperture Size），以便让更多虚拟机用上显卡的硬件加速。例如，我的 i5-8600t CPU 的核显是 UHD630 ，它的显存孔径被限制为 256M ，这只能提供一个 1200p 或两个 768p 的虚拟 GPU ，显然太少了。而当我们把这个值上调到 1024M ，就能获得更多或性能更高的虚拟 GPU 。&lt;/p>
 &lt;p>这可以通过修改 BIOS 设置来实现，但通常主板 BIOS 不提供直接的选项来调整这个值。幸运的是，我们可以通过一些工具来间接修改这个设置。以下是详细的步骤：&lt;/p>
 &lt;h3 id="步骤-1-下载和主板上同版本的-bios">步骤 1: 下载和主板上同版本的 BIOS&lt;/h3>
 &lt;p>首先，你需要从主板制造商的官方网站下载与你的主板型号相匹配的 BIOS 文件。确保下载的是与你的主板上安装的 BIOS 版本相同的文件，以便后续操作不会引发兼容性问题。&lt;/p>
@@ -62,7 +63,34 @@
 &lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">GRUB_CMDLINE_LINUX_DEFAULT&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s2">&amp;#34;quiet intel_iommu=on iommu=pt i915.enable_gvt=1&amp;#34;&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
 &lt;/div>
-&lt;/div>&lt;p>这将启用 Intel IOMMU（Input/Output Memory Management Unit）和 GVT-g 。保存文件后，运行以下命令来更新 GRUB 配置：&lt;/p></description></item><item><title>Homelab 升级记：从 Unraid 到 Proxmox VE 的平滑过渡</title><link>http://0x3f.org/posts/a-smooth-transition-from-unraid-to-pve/</link><pubDate>Mon, 05 Feb 2024 22:22:57 +0800</pubDate><guid>http://0x3f.org/posts/a-smooth-transition-from-unraid-to-pve/</guid><description>&lt;p>最近，我对我的 Homelab 进行了一次重大调整，从 Unraid 迁移到了 Proxmox VE（PVE），并用它实现了对 Unraid 的虚拟化，这一转变不仅提高了系统的稳定性、灵活性，还带来了一系列令人惊喜的改进。在这篇文章中，我将分享这次调整的动机、硬件升级以及软件配置的详细过程。&lt;/p>
+&lt;/div>&lt;p>这将启用 Intel IOMMU（Input/Output Memory Management Unit）和 GVT-g 。保存文件后，运行以下命令来更新 GRUB 配置：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">sudo update-grub
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="步骤-2-添加内核模块">步骤 2 ：添加内核模块&lt;/h3>
+&lt;p>接下来，我们需要确保 PVE 在启动时加载必要的内核模块。编辑&lt;code>/etc/modules&lt;/code>文件，添加以下模块：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">vfio
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">vfio_iommu_type1
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">vfio_pci
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">vfio_virqfd
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">kvmgt
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>如果你之前因为配置直通核显而在&lt;code>/etc/modprobe.d/pve-blacklist.conf&lt;/code>中屏蔽了显卡驱动，现在需要解除屏蔽。这可以通过注释掉或删除相关行来实现。&lt;/p></description></item><item><title>Homelab 升级记：从 Unraid 到 Proxmox VE 的平滑过渡</title><link>http://0x3f.org/posts/a-smooth-transition-from-unraid-to-pve/</link><pubDate>Mon, 05 Feb 2024 22:22:57 +0800</pubDate><guid>http://0x3f.org/posts/a-smooth-transition-from-unraid-to-pve/</guid><description>&lt;p>最近，我对我的 Homelab 进行了一次重大调整，从 Unraid 迁移到了 Proxmox VE（PVE），并用它实现了对 Unraid 的虚拟化，这一转变不仅提高了系统的稳定性、灵活性，还带来了一系列令人惊喜的改进。在这篇文章中，我将分享这次调整的动机、硬件升级以及软件配置的详细过程。&lt;/p>
 &lt;h1 id="动机解耦虚拟机与-unraid">动机：解耦虚拟机与 Unraid&lt;/h1>
 &lt;p>我决定将虚拟机从 Unraid 中分离出来，这样做的目的是为了减轻 Unraid 重启时对整个网络环境的影响，降低磁盘阵列卡住的风险，并加速 Unraid 的重启过程。&lt;/p>
 &lt;p>此外，这样的调整也使得使用 Proxmox Backup Server (PBS) 进行备份变得更加方便，减少了对 Unraid 缓存盘的占用，并优化了硬盘的休眠策略，减少了不必要的唤醒次数。&lt;/p>
@@ -76,7 +104,16 @@
 &lt;ol start="2">
 &lt;li>&lt;strong>主板与扩展卡：&lt;/strong> 主板只有一个 M.2 插槽，我选择在这里安装了 PVE。为了加装第二款 NVME 固态硬盘，我购买了 PCIe 转 M.2 扩展卡，将 Unraid 的缓存盘插到了这个扩展卡上。小火炉铠侠 RC10 在加装了扩展卡附带的散热片后降温效果显著，目测温度下降了大约 15℃，Unraid 系统再也没有出现过报警。&lt;/li>
 &lt;/ol>
-&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-20-21-15-19-IMG_1203.jpeg" alt="2024-02-20-21-15-19-IMG_1203">&lt;/p></description></item><item><title>我的家庭数据备份方案</title><link>http://0x3f.org/posts/my-homelab-backup-strategy/</link><pubDate>Wed, 31 Jan 2024 20:02:08 +0800</pubDate><guid>http://0x3f.org/posts/my-homelab-backup-strategy/</guid><description>&lt;p>在这个数字化时代，数据安全比以往任何时候都更加重要。无论是个人生活还是工作，我们都需要一个可靠的备份方案来确保数据的安全。今天，我想分享我的家庭数据备份方案，它不仅涵盖了我所有的虚拟机、容器和配置数据，还包括了 NAS 上的重要文件，如照片、密码、笔记和待办事项。这个方案遵循了著名的 3-2-1 备份策略，并且通过精心选择的备份工具，确保了数据的安全性和高效性。&lt;/p>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-20-21-15-19-IMG_1203.jpeg" alt="2024-02-20-21-15-19-IMG_1203">&lt;/p>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-20-21-17-07-1E419BB6-4057-41B4-B7A5-6F3033154257_4_5005_c.jpeg" alt="2024-02-20-21-17-07-1E419BB6-4057-41B4-B7A5-6F3033154257_4_5005_c">&lt;/p>
+&lt;ol start="3">
+&lt;li>&lt;strong>视频采集卡：&lt;/strong> 为了在没有额外显示器的情况下管理 Homelab ，我购买了视频采集卡，并配合 iPad 使用，作为临时显示器。&lt;/li>
+&lt;/ol>
+&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-05-23-20-26-IMG_1079.jpeg" alt="2024-02-05-23-20-26-IMG_1079">&lt;/p>
+&lt;h1 id="软件配置">软件配置&lt;/h1>
+&lt;ol>
+&lt;li>
+&lt;p>&lt;strong>直通设备：&lt;/strong> 在 PVE 中，我将 Unraid 系统 U 盘、Sata 控制器、外置硬盘以及 NVME 缓存盘直通（passthrough）给了 Unraid 虚拟机。这样做的好处是，仍然使用 Unraid 作为 NAS 系统管理所有存储资源，并继续使用 Unraid 优秀的应用社区。同时把主板的第二块网卡做了直通，防止 NAS 吞吐量较大时影响访问宿主机及其它客户机的稳定性。&lt;/p></description></item><item><title>我的家庭数据备份方案</title><link>http://0x3f.org/posts/my-homelab-backup-strategy/</link><pubDate>Wed, 31 Jan 2024 20:02:08 +0800</pubDate><guid>http://0x3f.org/posts/my-homelab-backup-strategy/</guid><description>&lt;p>在这个数字化时代，数据安全比以往任何时候都更加重要。无论是个人生活还是工作，我们都需要一个可靠的备份方案来确保数据的安全。今天，我想分享我的家庭数据备份方案，它不仅涵盖了我所有的虚拟机、容器和配置数据，还包括了 NAS 上的重要文件，如照片、密码、笔记和待办事项。这个方案遵循了著名的 3-2-1 备份策略，并且通过精心选择的备份工具，确保了数据的安全性和高效性。&lt;/p>
 &lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-01-31-20-40-32-_d0c7d6aa-d312-4749-89ce-d3996aaaddf6.jpeg" alt="2024-01-31-20-40-32-_d0c7d6aa-d312-4749-89ce-d3996aaaddf6">&lt;/p>
 &lt;h3 id="数据种类">数据种类&lt;/h3>
 &lt;p>首先，让我们来了解我需要备份的数据种类。我有两个 PVE（Proxmox Virtual Environment）宿主机，上面运行着多个虚拟机和容器。这些虚拟机和容器包含了我所有的工作和个人项目。为了备份这些数据，我选择了 PBS（Proxmox Backup Server）作为备份存储。同时，我还使用 proxmox-backup-client 将 PVE 的配置数据也备份到 PBS 。&lt;/p>
@@ -101,7 +138,42 @@
 &lt;h5 id="duplicati">Duplicati&lt;/h5>
 &lt;ul>
 &lt;li>
-&lt;p>&lt;strong>优点&lt;/strong>：&lt;/p></description></item><item><title>Unraid 6.11 弃用 NerdPack 的解决办法</title><link>http://0x3f.org/posts/how-to-install-packages-after-nerdpack-is-deprecated-in-unraid-6.11/</link><pubDate>Sun, 25 Sep 2022 21:29:41 +0800</pubDate><guid>http://0x3f.org/posts/how-to-install-packages-after-nerdpack-is-deprecated-in-unraid-6.11/</guid><description>&lt;p>Unraid 6.11 的 release note 没提弃用 NerdPack ，浪费了我很多时间。😞&lt;/p>
+&lt;p>&lt;strong>优点&lt;/strong>：&lt;/p>
+&lt;ul>
+&lt;li>易于部署，通过 Docker 部署非常简单。&lt;/li>
+&lt;li>用户界面友好，易于操作。&lt;/li>
+&lt;li>支持同时连接多个仓库。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>缺点&lt;/strong>：&lt;/p>
+&lt;ul>
+&lt;li>使用 .Net 实现，可能会占用更多的系统资源。&lt;/li>
+&lt;li>有关于稳定性的传闻，尽管这可能因环境而异。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h5 id="kopia">Kopia&lt;/h5>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;strong>优点&lt;/strong>：&lt;/p>
+&lt;ul>
+&lt;li>稳定性的负面反馈较少，运行效率高。&lt;/li>
+&lt;li>占用资源相对较少，对系统的影响小。&lt;/li>
+&lt;li>用户界面简洁，易于理解。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>缺点&lt;/strong>：&lt;/p>
+&lt;ul>
+&lt;li>部署和上手难度较高，相关资料较少，官方文档不够详尽。&lt;/li>
+&lt;li>不支持同时连接多个仓库，这在某些情况下可能会造成不便。&lt;/li>
+&lt;li>高级功能通常需要通过命令行实现，对于不熟悉命令行的用户来说可能不够友好。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="结语">结语&lt;/h3>
+&lt;p>通过这样的备份方案，我可以确保我的数据在多种情况下都能得到保护。无论是硬件故障还是意外删除，我都有办法恢复我的数据。这给了我极大的安心，让我可以专注于我的工作和家庭生活，而不必担心数据安全问题。希望我的分享能为你的家庭数据备份提供一些启示。&lt;/p></description></item><item><title>Unraid 6.11 弃用 NerdPack 的解决办法</title><link>http://0x3f.org/posts/how-to-install-packages-after-nerdpack-is-deprecated-in-unraid-6.11/</link><pubDate>Sun, 25 Sep 2022 21:29:41 +0800</pubDate><guid>http://0x3f.org/posts/how-to-install-packages-after-nerdpack-is-deprecated-in-unraid-6.11/</guid><description>&lt;p>Unraid 6.11 的 release note 没提弃用 NerdPack ，浪费了我很多时间。😞&lt;/p>
 &lt;p>当前版本的 Unraid 是基于 Slackware 15.0 的，可以手动从以下站点下载软件包手动安装：&lt;/p>
 &lt;ul>
 &lt;li>&lt;a href="https://slackware.pkgs.org/15.0/slackware-x86_64/">https://slackware.pkgs.org/15.0/slackware-x86_64/&lt;/a>&lt;/li>
@@ -125,7 +197,21 @@
 &lt;/span>&lt;span class="lnt">4
 &lt;/span>&lt;span class="lnt">5
 &lt;/span>&lt;span class="lnt">6
-&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>为 Seafile 配置反向代理的问题</title><link>http://0x3f.org/posts/setup-reverse-proxy-for-seafile/</link><pubDate>Mon, 10 Jan 2022 23:27:08 +0800</pubDate><guid>http://0x3f.org/posts/setup-reverse-proxy-for-seafile/</guid><description>&lt;p>我目前用 SWAG 做 Homelab 的反向代理，在和其它服务一样为 Seafile 配置好后，访问时却报如下错误：&lt;/p>
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">un-get search vim
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">un-get install python3 python-pip python-setuptools
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">un-get remove vim
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">un-get update
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">un-get cleanup
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">un-get upgrade
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>这个命令目前不解决依赖关系，而且存在部分包无法下载或找不到的现象，还是需要手动干预。&lt;/p>
+&lt;p>作者没有在项目主页写安装说明，而是写在 &lt;a href="https://www.reddit.com/r/unRAID/comments/wy9nft/unget_a_simple_command_line_tool_to_install/">Reddit 帖子&lt;/a>里了。&lt;/p>
+&lt;hr>
+&lt;h3 id="2022-10-07-更新">2022-10-07 更新&lt;/h3>
+&lt;p>出了个新的 NerdTools ，界面和 NerdPack 一样难用，包的数量现在还很少，但版本较新，还有一些 un-get 目前搜不到的包（比如: fzf）。可以作为补充。&lt;/p></description></item><item><title>为 Seafile 配置反向代理的问题</title><link>http://0x3f.org/posts/setup-reverse-proxy-for-seafile/</link><pubDate>Mon, 10 Jan 2022 23:27:08 +0800</pubDate><guid>http://0x3f.org/posts/setup-reverse-proxy-for-seafile/</guid><description>&lt;p>我目前用 SWAG 做 Homelab 的反向代理，在和其它服务一样为 Seafile 配置好后，访问时却报如下错误：&lt;/p>
 &lt;blockquote>
 &lt;p>Contradictory scheme headers&lt;/p>
 &lt;/blockquote>
@@ -138,7 +224,17 @@
 &lt;pre tabindex="0" class="chroma">&lt;code class="language-NGINX" data-lang="NGINX">&lt;span class="line">&lt;span class="cl">&lt;span class="k">proxy_set_header&lt;/span> &lt;span class="s">X-Forwarded-Proto&lt;/span> &lt;span class="nv">$scheme；&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
 &lt;/div>
-&lt;/div>&lt;p>此时，通过 HTTPS 访问的 SWAG 反代传递的 HEADER 里 &lt;code>X-Forwarded-Proto&lt;/code> 是 &lt;code>https&lt;/code> ，而通过 HTTP 访问的 Seafile 传递的是 &lt;code>http&lt;/code> ，就会报以上错误。&lt;/p></description></item><item><title>自动追剧的工作流</title><link>http://0x3f.org/posts/auto-workflow-of-following-tv-series-and-movies/</link><pubDate>Sun, 21 Nov 2021 17:16:15 +0800</pubDate><guid>http://0x3f.org/posts/auto-workflow-of-following-tv-series-and-movies/</guid><description>&lt;p>在 NAS 上搭了个自动追剧、追影的工作流，体验非常好。&lt;/p>
+&lt;/div>&lt;p>此时，通过 HTTPS 访问的 SWAG 反代传递的 HEADER 里 &lt;code>X-Forwarded-Proto&lt;/code> 是 &lt;code>https&lt;/code> ，而通过 HTTP 访问的 Seafile 传递的是 &lt;code>http&lt;/code> ，就会报以上错误。&lt;/p>
+&lt;p>一种解决方法是，把 Seafile 的 &lt;code>/etc/nginx/conf.d/seafile.nginx.conf&lt;/code> 复制到宿主机，把文件中 &lt;code>X-Forwarded-Proto&lt;/code> 这一行注释掉，然后映射到 Docker 容器的上述路径上：&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">-v &lt;span class="s1">&amp;#39;/mnt/user/appdata/seafile/seafile.nginx.conf&amp;#39;&lt;/span>:&lt;span class="s1">&amp;#39;/etc/nginx/conf.d/seafile.nginx.conf&amp;#39;&lt;/span>:&lt;span class="s1">&amp;#39;ro&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>需要注意的是，不同版本的 Seafile 镜像里该文件的路径可能不同。&lt;/p></description></item><item><title>自动追剧的工作流</title><link>http://0x3f.org/posts/auto-workflow-of-following-tv-series-and-movies/</link><pubDate>Sun, 21 Nov 2021 17:16:15 +0800</pubDate><guid>http://0x3f.org/posts/auto-workflow-of-following-tv-series-and-movies/</guid><description>&lt;p>在 NAS 上搭了个自动追剧、追影的工作流，体验非常好。&lt;/p>
 &lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2021-11-21-17-24-06-%E8%87%AA%E5%8A%A8%E8%BF%BD%E5%89%A7%E6%B5%81%E7%A8%8B.svg" alt="自动追剧流程">&lt;/p>
 &lt;p>只需要把想看的美剧或者电影添加到监控列表里，就可以在资源出现之后自动下载并通知到手机或电脑，全程无值守，回家打开电视就能看。&lt;/p>
 &lt;p>用到这些工具：&lt;/p>

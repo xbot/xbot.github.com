@@ -75,4 +75,38 @@ if 0 == status:
 if status is None:
  print 'The external program is still running.'
 ```
-&lt;/p></description></item></channel></rss>
+&lt;/p>
+
+&lt;p>理论上，可以拿实例process的poll()方法监视进程的运行状态，而且这一点在Windows上也确实可以做到，但是到了Linux下，诡异的事出现了，即使刚刚打开gvim，poll()方法也会马上返回一个0，同时process.pid的值总是和实际在运行的那个gvim进程的pid的值差3，而且在虚拟终端中输入gvim命令也不会阻塞终端，就像别的命令加上“&lt;strong>&amp;amp;&lt;/strong>”符号的效果一样。尝试用&lt;a href="http://en.wikipedia.org/wiki/Strace">strace&lt;/a>跟踪gvim的运行，试图找到问题原因，无果。我猜想可能/usr/bin/gvim是一个跳板，它启动后会启动一个新的gvim进程。总之，这个方法在Linux下是行不通的。&lt;/p>
+
+&lt;p>因此我觉得只能另寻出路了，既然不能监控gvim进程，那就监控gvim进程所编辑的文件，只要这个文件不被任何进程占用，就可以判定gvim已退出。这一点，在Linux下易如反掌，不用说，&lt;a href="http://en.wikipedia.org/wiki/Lsof">lsof&lt;/a>当仁不让。&lt;/p>
+
+&lt;p>用&lt;strong>commands.getstatusoutput('lsof file.txt')&lt;/strong>测试发现，如果文件file.txt被某进程占用，则返回的状态值为0，反之，返回256。&lt;/p>
+
+&lt;p>最终，我在程序中使用了两种判断方式，在Windows平台使用subprocess跟踪gvim.exe进程，而在Linux及Unix平台使用lsof检查文档占用情况。&lt;/p>
+
+&lt;p>剩下的就是进行这个判断的时间问题了。&lt;/p>
+
+&lt;p>很显然，如果在子进程被启动后马上使用while循环不停的检查，一来必须使用多线程，二来系统资源占用也会很高。这时就需要利用wxPython的事件机制了，当ForeverFantasy启动Gvim时，主窗口失去焦点，而当Gvim退出时，ForeverFantasy又会获得焦点，只要能在ForeverFantasy窗口获得焦点时做一次检查即可。不过，在选择最合适的事件的问题上，又是一波三折。&lt;/p>
+
+&lt;p>在wxPython的&lt;a href="http://www.wxpython.org/docs/api/frames.html">API&lt;/a>文档中没有找到&lt;a href="http://wiki.wxpython.org/ListOfEvents">事件列表&lt;/a>，倒是在&lt;a href="http://wiki.wxpython.org">Wiki&lt;/a>中找到了。顾名思义，觉得wx.EVT_SET_FOCUS比较靠谱，但试用失败，看API中关于FocusEvent的说明，这个事件适用于窗口控件；然后又试了wx.EVT_CHILD_FOCUS，只有在窗口包含的控件中有获得焦点的情况才会触发；最后才发现&lt;strong>wx.EVT_ACTIVATE&lt;/strong>，这个事件会在窗口失去焦点和获得焦点时各触发一次，使用GetActive()方法可以判断是获得焦点还是失去焦点。&lt;/p>
+
+&lt;p>完成与Vim的协同使ForeverFantasy在我手上由原来单纯的格式转换工具进化为基本可用的文档编辑器，就算是&lt;strong>Milestone 2&lt;/strong>吧。&lt;/p>
+
+&lt;p>此外，还有一些小的经验：&lt;/p>
+
+&lt;p>1. 调用非环境变量下的程序，即命令中必须带程序所在的路径时，应当将程序所在目录的完整路径以自然字符串的形式传递给subprocess.Popen类的构造方法的cwd参数，即如下所示：&lt;/p>
+
+&lt;p>
+```python
+process = subprocess.Popen('gvim.exe', cwd=r'C:\program files\vim\vim72', shell=True)
+```
+&lt;/p>
+
+&lt;p>这样可以有效避免路径中的空格和特殊字符对命令执行的影响。&lt;/p>
+
+&lt;p>2. Vim编辑一个文档时，实际操作的是一个临时文件，而不是原文件，这个临时文件与原文件同路径，名称为在原文件名的基础上，前面加一个句点，后面加后缀“.swp”。应该用lsof监控这个临时文件，才可以判断出编辑该文档的Vim进程的运行状态。由于对于不存在的文件使用lsof命令的返回值也是256，故可以同时判断临时文件和原文件的占用情况，这样就为对其它编辑器的支持奠定了基础。&lt;/p>
+
+&lt;p>&lt;strong>2010-03-10 Wednesday 22:52:13 更新&lt;/strong>&lt;/p>
+
+&lt;p>感谢KL童鞋和依云童鞋指教，果然加上&lt;strong>-f&lt;/strong>参数就可以了。&lt;/p></description></item></channel></rss>

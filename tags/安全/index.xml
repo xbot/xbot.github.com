@@ -27,7 +27,21 @@
 &lt;/span>&lt;/code>&lt;/pre>&lt;/td>
 &lt;td class="lntd">
 &lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">sudo darkstat -i eth0 -p &lt;span class="m">8080&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pr</description></item><item><title>SSL证书生成方法</title><link>http://0x3f.org/posts/howto-create-ssl-certificates/</link><pubDate>Mon, 03 May 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-create-ssl-certificates/</guid><description>&lt;p>一般情况下，如果能找到可用的证书，就可以直接使用，只不过会因证书的某些信息不正确或与部署证书的主机不匹配而导致浏览器提示证书无效，但这并不影响使用。&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>darkstat的Web用户界面分为Graph、Hosts和Host三部分。Graph是缺省主页，用于显示最近一分钟、一小时、一天和一个月的流量统计直方图，将光标置于任何一个直方条上可查看对应时刻的流量指标：&lt;/p>
+&lt;p>&lt;a href="http://picasaweb.google.com/lh/photo/NAB3_2TtnezdM45HoNd5pQ?feat=embedwebsite">&lt;img src="http://lh4.ggpht.com/_ceUJ_lBTHzc/TRcCUWqnF0I/AAAAAAAABhs/wLRQb3rvHW8/s400/darkstat-graphs.png" height="400" width="395" />&lt;/a>&lt;/p>
+&lt;p>Hosts界面按主机显示各自的流量统计指标的值：&lt;/p>
+&lt;p>&lt;a href="http://picasaweb.google.com/lh/photo/kG1J2j2eecaLUnhDL-fArA?feat=embedwebsite">&lt;img src="http://lh4.ggpht.com/_ceUJ_lBTHzc/TRcCUXxnsMI/AAAAAAAABhw/ri5OsbqPdmc/s400/darkstat-hosts.png" height="322" width="400" />&lt;/a>&lt;/p>
+&lt;p>单击Hosts界面上的IP进入对应主机的Host界面，此界面按TCP/UDP类型显示对应的主机的各端口的网络流量指标的值：&lt;/p>
+&lt;p>&lt;a href="http://picasaweb.google.com/lh/photo/XBNQWty4lp63OWwyAFm_BA?feat=embedwebsite">&lt;img src="http://lh3.ggpht.com/_ceUJ_lBTHzc/TRcCUn6lg_I/AAAAAAAABh0/6Aj0hArzIYk/s800/darkstat-host.png" height="800" width="190" />&lt;/a>&lt;/p>
+&lt;p>可通过如下命令查看占用指定端口的进程：&lt;/p>
+&lt;blockquote>
+[lenin@archer ~]$ lsof -i tcp:58062 -n
+COMMAND PID USER FD TYPE DEVICE SIZE/OFF NODE NAME
+mlnet 18660 lenin 74u IPv4 251788 0t0 TCP 192.168.1.3:58062->122.116.212.89:http (ESTABLISHED)
+&lt;/blockquote>
+&lt;p>darkstat区别于其它流量监测工具的最大的优点就是简单易用，非常适合对流量监测应用不复杂的场景。前段时间公司的一台RHEL服务器因为流量过大多次被网管拔线，后来用darkstat监测到大部分流量被几个UDP端口占去，进而发现原来是服务器被入侵并被安装了一个扫描器&lt;a href="http://code.google.com/p/sipvicious/">SIPVicious&lt;/a>。&lt;/p></description></item><item><title>SSL证书生成方法</title><link>http://0x3f.org/posts/howto-create-ssl-certificates/</link><pubDate>Mon, 03 May 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-create-ssl-certificates/</guid><description>&lt;p>一般情况下，如果能找到可用的证书，就可以直接使用，只不过会因证书的某些信息不正确或与部署证书的主机不匹配而导致浏览器提示证书无效，但这并不影响使用。&lt;/p>
 
 &lt;p>需要手工生成证书的情况有：&lt;/p>
 
@@ -57,4 +71,28 @@ Enter pass phrase for root.key: ← 输入一个新密码
 Verifying - Enter pass phrase for root.key: ← 重新输入一遍密码
 ```
 
-&lt;p>2. 创建根证书的申请文件&lt;strong>root.req&lt;/strong>：&lt;/p></description></item></channel></rss>
+&lt;p>2. 创建根证书的申请文件&lt;strong>root.req&lt;/strong>：&lt;/p>
+
+```
+openssl req -new -key root.key -out root.req
+```
+
+&lt;p>输出内容为：&lt;/p>
+
+```
+[lenin@archer ~]$ openssl req -new -key root.key -out root.req
+Enter pass phrase for root.key: ← 输入前面创建的密码
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [AU]:CN ← 国家代号，中国输入CN
+State or Province Name (full name) [Some-State]:BeiJing ← 省的全名，拼音
+Locality Name (eg, city) []:BeiJing ← 市的全名，拼音
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:MyCompany Corp. ← 公司英文名
+Organizational Unit Name (eg, section) []: ← 可以不输入
+Common Name (eg, YOUR name) []: ← 此时不输入
+Email Address []:admin@mycompany.com ← 电子邮箱，可随意填&lt;/p></description></item></channel></rss>

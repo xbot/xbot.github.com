@@ -46,4 +46,20 @@ INTEL_HDA_DEVICE_TIMEOUT=30
 
 &lt;p>&lt;em>在此之前，系统空闲时CPU温度一般是50多度，普通使用时一般在60多度，如果开了kvm虚拟机会达到60至90度间。经过以上设置，系统空闲时CPU温度一度下降到39度，即使开了虚拟机，一般也可维持在50到80度间。&lt;/em>&lt;/p>
 
-&lt;p>另外，对于以上内容，我还有些没搞明白的地方和要补充说明的东西：&lt;/p></description></item></channel></rss>
+&lt;p>另外，对于以上内容，我还有些没搞明白的地方和要补充说明的东西：&lt;/p>
+
+&lt;ol>
+&lt;li>虽然将laptop-mode加入rc.conf且已随系统启动，但使用命令“&lt;strong>cat /proc/sys/vm/laptop_mode&lt;/strong>”查询得到的结果仍然是0，也就是说没有自动启用laptop-mode，必须使用命令“&lt;strong>sudo /etc/rc.d/laptop-mode restart&lt;/strong>”手动重启才行。目前没有找到解决办法。&lt;/li>
+&lt;li>虽然启用laptop-mode接管声卡电源管理，但没找到查看是否生效的方法，于是在/etc/rc.local中加入命令“&lt;strong>echo 1 &amp;gt; /sys/module/snd&lt;em>hda&lt;/em>intel/parameters/power_save&lt;/strong>”以强制声卡节电。&lt;/li>
+&lt;li>Intel的powertop是个好东西，用它可以查看哪些进程最影响CPU节能。我们优化的标准之一就是使powertop中显示的“Wakeups-from-idle per second”尽可能地减少。powertop的另一个特点就是通过自动检查当前系统中电源使用的配置情况给出优化的建议，这是个很贴心的功能。&lt;/li>
+&lt;/ol>
+
+&lt;p>鉴于目前存疑较多并将继续尝试，所以在标题中特别注明“不完全”三个字……&lt;/p>
+
+&lt;h3>参考&lt;/h3>
+
+&lt;ol>
+&lt;li>http://itgen.blogspot.com/2009/03/energy-management-in-linux.html&lt;/li>
+&lt;li>http://www.ibm.com/developerworks/cn/linux/l-cpufreq-1/index.html&lt;/li>
+&lt;li>http://www.lesswatts.org/&lt;/li>
+&lt;/ol></description></item></channel></rss>

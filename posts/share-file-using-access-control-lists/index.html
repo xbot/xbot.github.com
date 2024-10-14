@@ -4,14 +4,40 @@
 ACL包含两个命令：getfacl和setfacl，前者用来查看目录或文件的存取控制表，后者用来操作它。
 首先，把维基目录的所有者改成http，并设置目录权限为770：
 1 2 chown -R http:http ~/Dropbox/wiki chmod -R 770 ~/Dropbox/wiki 这时Web Server还是不能访问维基目录，使用getfacl查看用户主目录的ACL：
-1 getfacl ~ "><meta property="og:locale" content="zh_cn"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2014-03-19T22:38:00+00:00"><meta property="article:modified_time" content="2014-03-19T22:38:00+00:00"><meta property="article:tag" content="Linux"><meta property="article:tag" content="Cli"><meta name=twitter:card content="summary"><meta name=twitter:title content="使用存取控制表在Linux用户间共享文件"><meta name=twitter:description content="我用Dropbox在两台电脑间同步个人维基数据，将数据目录从Web Server下软连接到Dropbox里，而对Dropbox目录的备份实际上只包含那个软连接，没有内容，结果当把备份拷贝到另一台电脑上并打开Dropbox后，维基数据被清空了！我积累多年的笔记差一点儿完蛋，幸亏单独备份过维基。然后改将维基数据放到Dropbox里，然后软连接到Web Server下，新问题出现了，Web Server是以http身份运行的，对用户主目录没有权限，当然也不能访问主目录下的Dropbox目录。
+1 getfacl ~ 显示结果如下：
+getfacl: Removing leading ‘/’ from absolute path names
+# file: home/taoqi
+# owner: taoqi
+# group: users
+user::rwx
+user:root:–x
+group::—
+mask::–x
+other::—
+显然，要给http用户访问该目录的权限：
+1 setfacl -m u:http:x ~ 再查看ACL，发现增加了一条：
+user:http:–x
+同理，给Dropbox目录也加上这一条规则之后，Web Server就可以访问维基数据目录了。"><meta property="og:locale" content="zh_cn"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2014-03-19T22:38:00+00:00"><meta property="article:modified_time" content="2014-03-19T22:38:00+00:00"><meta property="article:tag" content="Linux"><meta property="article:tag" content="Cli"><meta name=twitter:card content="summary"><meta name=twitter:title content="使用存取控制表在Linux用户间共享文件"><meta name=twitter:description content="我用Dropbox在两台电脑间同步个人维基数据，将数据目录从Web Server下软连接到Dropbox里，而对Dropbox目录的备份实际上只包含那个软连接，没有内容，结果当把备份拷贝到另一台电脑上并打开Dropbox后，维基数据被清空了！我积累多年的笔记差一点儿完蛋，幸亏单独备份过维基。然后改将维基数据放到Dropbox里，然后软连接到Web Server下，新问题出现了，Web Server是以http身份运行的，对用户主目录没有权限，当然也不能访问主目录下的Dropbox目录。
 最简单的办法是将主目录、Dropbox、维基目录的权限全部设成777，显然，这样做太不安全。另一种方法是把Dropbox用NFS输出，然后挂载到Web Server下，这么做太蛋疼。最合适的解决方案是Access Control List（存取控制表），它可以为文件和目录设置具体到单个用户或用户组的存取权限，实现像Windows下的文件（目录）共享权限设置那样的效果，而且比后者更强大、灵活。
 使用ACL首先需要目录的挂载选项中包含acl，不过一般缺省都包含这一项。
 ACL包含两个命令：getfacl和setfacl，前者用来查看目录或文件的存取控制表，后者用来操作它。
 首先，把维基目录的所有者改成http，并设置目录权限为770：
 1 2 chown -R http:http ~/Dropbox/wiki chmod -R 770 ~/Dropbox/wiki 这时Web Server还是不能访问维基目录，使用getfacl查看用户主目录的ACL：
-1 getfacl ~ "><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#262d33"><title>晴耕雨讀 - 使用存取控制表在Linux用户间共享文件
-</title><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=preconnect href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel=stylesheet><link rel=stylesheet href=/minima.1725611646.css><script defer type=text/javascript src=/minima.1725611646.js></script></head><script>let theme_2b_used=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";try{if(!("theme"in localStorage)){const e="";(e==="dark"||e==="light")&&(theme_2b_used=e),localStorage.theme=theme_2b_used}document.querySelector("html").classList.add(localStorage.theme)}catch(e){console.error(e)}</script><body class="sm:mx-5 sm:my-0"><header class="flex justify-between items-center mb-6 sm:my-3"><div class="flex items-center"><div id=theme-switcher class="text-4xl cursor-pointer">🌚</div></div><nav class="flex items-center
+1 getfacl ~ 显示结果如下：
+getfacl: Removing leading ‘/’ from absolute path names
+# file: home/taoqi
+# owner: taoqi
+# group: users
+user::rwx
+user:root:–x
+group::—
+mask::–x
+other::—
+显然，要给http用户访问该目录的权限：
+1 setfacl -m u:http:x ~ 再查看ACL，发现增加了一条：
+user:http:–x
+同理，给Dropbox目录也加上这一条规则之后，Web Server就可以访问维基数据目录了。"><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#262d33"><title>晴耕雨讀 - 使用存取控制表在Linux用户间共享文件
+</title><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=preconnect href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel=stylesheet><link rel=stylesheet href=/minima.1728921041.css><script defer type=text/javascript src=/minima.1728921041.js></script></head><script>let theme_2b_used=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";try{if(!("theme"in localStorage)){const e="";(e==="dark"||e==="light")&&(theme_2b_used=e),localStorage.theme=theme_2b_used}document.querySelector("html").classList.add(localStorage.theme)}catch(e){console.error(e)}</script><body class="sm:mx-5 sm:my-0"><header class="flex justify-between items-center mb-6 sm:my-3"><div class="flex items-center"><div id=theme-switcher class="text-4xl cursor-pointer">🌚</div></div><nav class="flex items-center
 whitespace-nowrap overflow-x-auto overflow-y-hidden"><a class=ml-5 href=/>主頁</a>
 <a class=ml-5 href=/posts>文章</a>
 <a class=ml-5 href=/tags>標籤</a>
