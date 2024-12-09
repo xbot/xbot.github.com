@@ -36,7 +36,7 @@ Raycast 是一个 macOS 上的应用启动器和效率工具，类似 Spotlight 
 
 ![2024-12-09-22-37-55-Image1500x948(2)](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-12-09-22-37-55-Image%201500x948%20(2).jpeg)
 
-在原作者合并 PR 之前，可以 fork 这个 [repo](https://github.com/xbot/raycast-linkding) ，并执行：
+在原作者合并 PR 之前，可以下载这个 [repo](https://github.com/xbot/raycast-linkding) 的源码，并执行：
 
 ```shell
 npm install && npm run dev
