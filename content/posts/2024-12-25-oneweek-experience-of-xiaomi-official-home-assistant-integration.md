@@ -10,6 +10,7 @@ tags:
   - homekit
 toc: false
 draft: false
+description: 小米官方的 Home Assistant 集成的优势和有待改进的地方。
 ---
 
 ## 消息订阅机制 —— 最大亮点
