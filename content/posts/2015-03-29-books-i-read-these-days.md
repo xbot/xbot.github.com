@@ -1,13 +1,12 @@
 ---
 layout: post
-title: "这段时间读的几本书"
+title: 这段时间读的几本书
 slug: books i read these days
 date: 2015-03-29 16:00:00
 comments: true
-categories:
-- 青梅煮酒
 tags:
 - 读书
+- 青梅煮酒
 ---
 
 ![](http://pic.yupoo.com/leninlee/ExoJe1q2/medish.jpg)

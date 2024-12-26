@@ -1,11 +1,10 @@
 ---
 title: 这款 MKS 塑料脚踏是我国布折叠车的最优解
 slug: mks ux-d pedal
-date: 2024-07-23T15:27:41+08:00
-categories:
-  - 青梅煮酒
+date: 2024-07-23 15:27:41+08:00
 tags:
-  - 折叠车
+- 折叠车
+- 青梅煮酒
 toc: false
 draft: false
 ---

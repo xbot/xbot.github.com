@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "Swoole与PHP-FPM性能对比"
+title: Swoole与PHP-FPM性能对比
 slug: swoole vs php fpm
 date: 2015-07-14 16:40:00
 comments: true
-categories:
-- 计算机
 tags:
 - php
 - swoole
 - 编程
+- 计算机
 ---
 
 测试环境：

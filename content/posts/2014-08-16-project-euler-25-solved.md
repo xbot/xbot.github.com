@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "Project Euler Problem 25 Solved"
+title: Project Euler Problem 25 Solved
 slug: project euler 25 solved
 date: 2014-08-16 17:32:00
 comments: true
-categories:
-- 计算机
 tags:
 - 编程
 - 欧拉工程
+- 计算机
 ---
 
 1000-digit Fibonacci number

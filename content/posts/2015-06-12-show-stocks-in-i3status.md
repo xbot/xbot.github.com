@@ -1,16 +1,15 @@
 ---
 layout: post
-title: "在i3wm状态栏显示股票信息"
+title: 在i3wm状态栏显示股票信息
 slug: show stocks in i3status
 date: 2015-06-12 17:39:00
 comments: true
-categories:
-- 计算机
 tags:
 - Linux
 - i3wm
 - 股票
 - 编程
+- 计算机
 ---
 
 效果如图：

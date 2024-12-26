@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "Project Euler Problem 13 Solved"
+title: Project Euler Problem 13 Solved
 slug: project euler 13
 date: 2014-03-30 09:50:00
 comments: true
-categories:
-- 计算机
 tags:
 - golang
 - 欧拉工程
 - 编程
+- 计算机
 ---
 
 Large sum

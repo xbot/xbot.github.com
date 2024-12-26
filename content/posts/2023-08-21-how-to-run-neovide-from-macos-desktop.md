@@ -1,12 +1,12 @@
 ---
-title: "从 macOS 桌面运行 Neovide 的方法"
-slug: "How to Run Neovide from macOS Desktop"
-date: 2023-08-21T17:07:48+08:00
-categories: ["计算机"]
+title: 从 macOS 桌面运行 Neovide 的方法
+slug: How to Run Neovide from macOS Desktop
+date: 2023-08-21 17:07:48+08:00
 tags:
 - vim
 - neovim
 - mac
+- 计算机
 toc: false
 ---
 

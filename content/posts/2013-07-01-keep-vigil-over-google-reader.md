@@ -1,16 +1,15 @@
 ---
 layout: post
-title: "为Google Reader守夜"
+title: 为Google Reader守夜
 slug: keep vigil over google reader
 draft: true
 date: 2013-07-02 01:00:00
 comments: true
-categories:
-- 青梅煮酒
 tags:
 - Google
 - Internet
 - 随笔
+- 青梅煮酒
 ---
 大雨如注，帝都都在为你哭泣……
 

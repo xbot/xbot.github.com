@@ -1,11 +1,9 @@
 ---
 layout: post
-title: ! 'UltraBlog.vim: Ultimate Vim Blogging Plugin'
+title: 'UltraBlog.vim: Ultimate Vim Blogging Plugin'
 slug: ultrablog as an ultimate vim blogging plugin
 date: 2011-04-02 00:00:00
 comments: true
-categories:
-- 计算机
 tags:
 - Markdown
 - Plugin
@@ -16,6 +14,7 @@ tags:
 - Vim
 - 博客
 - 编程
+- 计算机
 ---
 
 <h2>Introduction</h2>

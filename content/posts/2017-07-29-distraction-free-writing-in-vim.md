@@ -2,11 +2,10 @@
 title: 利用goyo.vim专注写作
 slug: distraction free writing in vim
 date: 2017-07-29 16:48:45
-categories:
-- 计算机
 tags:
 - vim
 - 最佳实践
+- 计算机
 ---
 
 goyo.vim是给vim提供专注写作模式的插件，配合markdown效果不错：

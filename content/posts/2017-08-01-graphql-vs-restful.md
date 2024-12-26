@@ -2,11 +2,10 @@
 title: GraphQL：RESTful之外的接口实现方案
 slug: graphql vs restful
 date: 2017-08-01 17:36:27
-categories:
-- 计算机
 tags:
 - php
 - 编程
+- 计算机
 ---
 
 和RESTfull一样，GraphQL也是一种基于HTTP的接口实现方式。它区别于前者的主要有两点：数据格式的自定义和请求的合并。

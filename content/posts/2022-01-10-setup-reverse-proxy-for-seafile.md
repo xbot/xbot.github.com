@@ -1,11 +1,10 @@
 ---
-title: "为 Seafile 配置反向代理的问题"
-slug: "Setup Reverse Proxy for Seafile"
-date: 2022-01-10T23:27:08+08:00
-categories:
-- 计算机
+title: 为 Seafile 配置反向代理的问题
+slug: Setup Reverse Proxy for Seafile
+date: 2022-01-10 23:27:08+08:00
 tags:
 - NAS
+- 计算机
 ---
 
 我目前用 SWAG 做 Homelab 的反向代理，在和其它服务一样为 Seafile 配置好后，访问时却报如下错误：

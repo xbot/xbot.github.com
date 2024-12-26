@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "ctags vs gtags vs phpctags"
+title: ctags vs gtags vs phpctags
 slug: ctags vs gtags vs phpctags
 date: 2016-01-29 17:55:00
 comments: true
-categories:
-- 计算机
 tags:
 - vim
 - 插件
+- 计算机
 ---
 
 这两天把源码分析工具从ctags向gtags迁移，另外尝试了一下phpctags。

@@ -2,11 +2,10 @@
 title: 怎样在Vim中删除引号文本对象
 slug: how to delete quoted text object in vim
 date: 2017-02-25 19:33:18
-categories:
-- 计算机
 tags:
 - vim
 - 笔记
+- 计算机
 ---
 
 假设有这样一段代码（光标在「|」位置）：

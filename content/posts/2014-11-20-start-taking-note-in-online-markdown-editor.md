@@ -1,16 +1,15 @@
 ---
 layout: post
-title: "开始用在线Markdown编辑器记笔记"
+title: 开始用在线Markdown编辑器记笔记
 slug: start taking note in online markdown editor
 date: 2014-11-20 22:35:00
 comments: true
-categories:
-- 计算机
 tags:
 - markdown
 - 编辑器
 - vim
 - 随笔
+- 计算机
 ---
 
 开始用支持VIM模式的在线Markdown编辑器记笔记。既非鼠辈（_鼠标依赖症不治者_），始终忍受不了其它WYSIWYG（所见即所得）的在线笔记。

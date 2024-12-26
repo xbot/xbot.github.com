@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "用树苺派实现远程下载"
+title: 用树苺派实现远程下载
 slug: remote downloading with raspberry pi
 date: 2015-03-28 19:14:00
 comments: true
-categories:
-- 计算机
 tags:
 - 树苺派
 - Geek
 - 智能家居
+- 计算机
 ---
 
 远程用树苺派利用空闲时间下载大文件，需要百度云、aria2和VPS。因为网络运营商给的IP不是真的公网IP，而且免费的动态域名服务不稳定，所以用VPS把树苺派上的端口转发到外网。

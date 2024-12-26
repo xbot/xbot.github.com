@@ -1,13 +1,12 @@
 ---
 title: Unraid 启动 U 盘损坏：症状、解决方案与备份恢复
 slug: how to recover from a crash of the unraid flash drive
-date: 2024-02-23T16:23:33+08:00
-categories:
-  - 计算机
+date: 2024-02-23 16:23:33+08:00
 tags:
-  - Unraid
-  - NAS
-  - homelab
+- Unraid
+- NAS
+- homelab
+- 计算机
 toc: false
 draft: false
 ---

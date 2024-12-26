@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "读完《三体——死神永生》"
+title: 读完《三体——死神永生》
 slug: after reading three body long live the king of terrors
 date: 2012-06-14 22:20:00
 comments: true
-categories:
-- 青梅煮酒
 tags:
 - 小说
 - 科幻
 - 读书
+- 青梅煮酒
 ---
 前天夜里读完了《三体》的第三部。
 

@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "骑行卢沟桥"
+title: 骑行卢沟桥
 slug: a ride to lugou bridge
 date: 2014-04-13 19:55:00
 comments: true
-categories:
-- 行见
 tags:
 - 骑行
 - 历史
 - 卢沟桥
+- 行见
 ---
 
 更始元年三月癸丑，孤亲提铁骑南下卢沟，为甲午一百二十年祭。

@@ -1,16 +1,15 @@
 ---
 layout: post
-title: "在Archlinux ARM上使用DS18B20温度传感器"
+title: 在Archlinux ARM上使用DS18B20温度传感器
 slug: setup ds18b20 on archlinux
 date: 2015-05-25 15:30:00
 comments: true
-categories:
-- 计算机
 tags:
 - Archlinux
 - 树苺派
 - 传感器
 - geek
+- 计算机
 ---
 
 线路图：

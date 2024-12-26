@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "李陵是作死的"
+title: 李陵是作死的
 slug: no zuo no die
 date: 2016-12-01 20:47:00
 comments: true
-categories:
-- 青梅煮酒
 tags:
 - 随笔
 - 历史
 - 读书
+- 青梅煮酒
 ---
 
 ![2020-06-19-16-16-10-20161021001](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2020-06-19-16-16-10-20161021001.png)

@@ -2,11 +2,10 @@
 title: 电影《极寒之城》
 slug: movie atomic blonde
 date: 2017-10-29 10:14:56
-categories:
-- 青梅煮酒
 tags:
 - 电影
 - 随笔
+- 青梅煮酒
 ---
 这是最近看的电影里让我印象最深的一部。
 

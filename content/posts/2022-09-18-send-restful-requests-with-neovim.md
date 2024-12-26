@@ -1,11 +1,11 @@
 ---
-title: "用 Neovim 调试 RESTful 接口"
-slug: "Send RESTful requests with Neovim"
-date: 2022-09-18T11:31:16+08:00
-categories: ["计算机"]
+title: 用 Neovim 调试 RESTful 接口
+slug: Send RESTful requests with Neovim
+date: 2022-09-18 11:31:16+08:00
 tags:
 - Neovim
 - Vim
+- 计算机
 toc: false
 ---
 

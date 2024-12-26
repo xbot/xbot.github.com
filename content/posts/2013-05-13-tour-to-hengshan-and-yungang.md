@@ -1,16 +1,15 @@
 ---
 layout: post
-title: "五一徒步恒山、云冈石窟"
+title: 五一徒步恒山、云冈石窟
 slug: tour to hengshan and yungang
 date: 2013-05-13 22:48:00
 comments: true
-categories:
-- 行见
 tags:
 - 旅行
 - 徒步
 - 山
 - 佛
+- 行见
 ---
 
 绿野的活动。

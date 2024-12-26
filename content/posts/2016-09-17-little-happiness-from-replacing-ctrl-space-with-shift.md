@@ -1,13 +1,12 @@
 ---
 layout: post
-title: "小确幸，用shift切换输入法"
+title: 小确幸，用shift切换输入法
 slug: little happiness from replacing ctrl space with shift
 date: 2016-09-17 15:36:00
 comments: true
-categories:
-- 计算机
 tags:
 - mac
+- 计算机
 ---
 
 把Alfred升级到3，就想著把切换中英输入状态的问题一块解决掉。

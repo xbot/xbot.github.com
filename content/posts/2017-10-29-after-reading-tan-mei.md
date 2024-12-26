@@ -2,13 +2,12 @@
 title: 读完《谈美》
 slug: after reading tan mei
 date: 2017-10-29 09:21:58
-categories:
-- 青梅煮酒
 tags:
 - 读书
 - 笔记
 - 随笔
 - 美
+- 青梅煮酒
 ---
 ![fullsizeoutput_301](https://wx1.sinaimg.cn/large/006tNbRwly1fwvwx0p3twj31kw1kwhdu.jpg)
 

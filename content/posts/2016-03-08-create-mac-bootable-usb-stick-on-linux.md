@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "Linux下做Mac OSX安装U盘的步骤"
+title: Linux下做Mac OSX安装U盘的步骤
 slug: create mac bootable usb stick on linux
 date: 2016-03-08 12:22:00
 comments: true
-categories:
-- 计算机
 tags:
 - archlinux
 - mac
+- 计算机
 ---
 
 假设U盘对应/dev/sdb1、OSX安装包是osx.dmg。整个过程就是提取出一系列文件，然后复制到U盘里。

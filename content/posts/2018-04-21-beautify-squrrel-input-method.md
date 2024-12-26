@@ -2,12 +2,11 @@
 title: 鼠须管的美化
 slug: beautify squrrel input method
 date: 2018-04-21 20:52:42
-categories:
-- 计算机
 tags:
 - 最佳实践
 - 工具
 - 软件
+- 计算机
 ---
 效果如下：
 ![Ulysses_2018-04-21 20-43-42@2x](https://wx2.sinaimg.cn/large/006tNbRwly1fwvx9h8tgtj30n20bqaah.jpg)

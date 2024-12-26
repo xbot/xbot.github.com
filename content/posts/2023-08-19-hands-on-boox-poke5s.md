@@ -1,12 +1,11 @@
 ---
 title: 文石 Poke5S 的使用感受
 slug: Hands on BOOX Poke5S
-date: 2023-08-19T18:25:50+08:00
-categories:
-  - 青梅煮酒
+date: 2023-08-19 18:25:50+08:00
 tags:
-  - 电子书阅读器
-  - 微信读书
+- 电子书阅读器
+- 微信读书
+- 青梅煮酒
 toc: false
 ---
 

@@ -1,13 +1,12 @@
 ---
 title: 在 Mac 上玩儿红警 2
 slug: play ra2 on mac
-date: 2024-08-22T17:23:26+08:00
-categories:
-  - 青梅煮酒
+date: 2024-08-22 17:23:26+08:00
 tags:
-  - 游戏
-  - mac
-  - 红警
+- 游戏
+- mac
+- 红警
+- 青梅煮酒
 toc: false
 draft: false
 ---

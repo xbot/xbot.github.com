@@ -1,17 +1,16 @@
 ---
 title: 打通稍后读工作流：Readwise Reader 的 RSSHub 路由发布
 slug: rsshub route for readwise reader is published
-date: 2024-07-11T17:33:26+08:00
-categories:
-  - 青梅煮酒
+date: 2024-07-11 17:33:26+08:00
 tags:
-  - RSS
-  - 最佳实践
-  - RSSHub
-  - Miniflux
-  - Inoreader
-  - Calibre
-  - 阅读
+- RSS
+- 最佳实践
+- RSSHub
+- Miniflux
+- Inoreader
+- Calibre
+- 阅读
+- 青梅煮酒
 toc: false
 draft: false
 ---

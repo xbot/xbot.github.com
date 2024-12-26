@@ -2,10 +2,9 @@
 title: 网站签到的最佳实践
 slug: the best practice of checking in
 date: 2017-05-24 11:42:52
-categories:
-- 计算机
 tags:
 - 最佳实践
+- 计算机
 ---
 
 v2ex、优酷、什么值得买用[qiandao.today](https://qiandao.today)实现。优点是依赖少，速度快，支持的范围广，可扩展。缺点是对京东和京东金融无效。

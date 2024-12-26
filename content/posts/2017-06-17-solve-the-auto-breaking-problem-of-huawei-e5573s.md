@@ -2,9 +2,8 @@
 title: 手机锁屏后自动断开WiFi的解决办法
 slug: solve the auto breaking problem of huawei e5573s
 date: 2017-06-17 23:13:33
-categories:
-- 计算机
 tags:
+- 计算机
 ---
 
 我的iPhone 6总是在锁屏后不久就从华为E5573S断开，但是连接家里的WiFi不会有这个问题，iOS同版本的iPad mini 4连接E5573S也正常。

@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "时人食狗亦与羊豕同"
+title: 时人食狗亦与羊豕同
 slug: thinkings about eating dogs
 date: 2016-10-21 13:21:00
 comments: true
-categories:
-- 青梅煮酒
 tags:
 - 随笔
 - 历史
 - 读书
+- 青梅煮酒
 ---
 
 ![2020-06-19-16-16-10-20161021001](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2020-06-19-16-16-10-20161021001.png)

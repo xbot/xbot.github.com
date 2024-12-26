@@ -1,13 +1,12 @@
 ---
 title: 小米官方的 Home Assistant 集成一周体验
 slug: one-week experience of xiaomi official home assistant integration
-date: 2024-12-25T14:58:27+08:00
-categories:
-  - 青梅煮酒
+date: 2024-12-25 14:58:27+08:00
 tags:
-  - home-automation
-  - home-assistant
-  - homekit
+- home-automation
+- home-assistant
+- homekit
+- 青梅煮酒
 toc: false
 draft: false
 description: 小米官方的 Home Assistant 集成的优势和有待改进的地方。

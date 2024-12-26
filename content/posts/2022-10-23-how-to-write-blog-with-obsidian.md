@@ -1,11 +1,11 @@
 ---
-title: "用 Obsidian 写博客的方法"
-slug: "How to write blog with Obsidian"
-date: 2022-10-23T17:09:28+08:00
-categories: ["计算机"]
+title: 用 Obsidian 写博客的方法
+slug: How to write blog with Obsidian
+date: 2022-10-23 17:09:28+08:00
 tags:
 - Obsidian
 - 最佳实践
+- 计算机
 toc: false
 ---
 

@@ -1,11 +1,11 @@
 ---
-title: "变形金刚 MPM-13 眩晕玩评"
-slug: "Hands on Transformer MPM-13 Blackout"
-date: 2023-01-07T22:20:32+08:00
-categories: ["青梅煮酒"]
+title: 变形金刚 MPM-13 眩晕玩评
+slug: Hands on Transformer MPM-13 Blackout
+date: 2023-01-07 22:20:32+08:00
 tags:
 - 变形金刚
 - 玩具
+- 青梅煮酒
 toc: false
 ---
 

@@ -1,13 +1,12 @@
 ---
-title: "Hammerspoon 快速入门"
+title: Hammerspoon 快速入门
 slug: Hammerspoon Quick Start
-date: 2021-12-13T00:38:06+08:00
-categories:
-- 计算机
+date: 2021-12-13 00:38:06+08:00
 tags:
 - lua
 - hammerspoon
 - 编程
+- 计算机
 ---
 
 Hammerspoon（*以下简称 HS*）是个很好用的效率工具脚手架，我一直用它实现 APP 启动器、窗口控制、桌面常亮等功能。

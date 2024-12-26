@@ -2,11 +2,10 @@
 title: 玉渊潭的樱花
 slug: sakura in yuyuantan park
 date: 2017-04-04 10:23:43
-categories:
-- 行见
 tags:
 - 旅行
 - 北京
+- 行见
 ---
 
 有一小片樱花集中的地方还是不错的，风来，落英缤纷。

@@ -1,15 +1,15 @@
 ---
 title: 轻松管理 Docker 下的 MariaDB 错误日志：重定向到日志控制台和日志轮转
-slug: steps to implement redirection and rotation for error logs of docker deployed mariadb
-date: 2024-01-15T16:48:09+08:00
-categories:
-  - 计算机
+slug: steps to implement redirection and rotation for error logs of docker deployed
+  mariadb
+date: 2024-01-15 16:48:09+08:00
 tags:
-  - mariadb
-  - mysql
-  - docker
-  - logrotate
-  - 日志轮转
+- mariadb
+- mysql
+- docker
+- logrotate
+- 日志轮转
+- 计算机
 toc: false
 draft: false
 ---

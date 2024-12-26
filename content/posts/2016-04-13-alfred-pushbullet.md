@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "Alfred-pushbullet: Push a text to your phone"
+title: 'Alfred-pushbullet: Push a text to your phone'
 slug: alfred pushbullet
 date: 2016-04-13 17:30:00
 comments: true
-categories:
-- 计算机
 tags:
 - 编程
 - Mac
 - alfred
+- 计算机
 ---
 
 Pushbullet workflow for Alfred.

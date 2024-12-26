@@ -1,13 +1,12 @@
 ---
 layout: post
-title: "微软识花和形色"
+title: 微软识花和形色
 slug: two plant identification apps
 date: 2016-12-28 12:12:00
 comments: true
-categories:
-- 青梅煮酒
 tags:
 - app
+- 青梅煮酒
 ---
 
 由于微软的名气，「微软识花」刚推出的时候就众所周知。很好用的App，我成功地用它识别出了母上的长春花：

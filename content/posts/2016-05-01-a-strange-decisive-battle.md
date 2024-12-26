@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "奇怪的决战"
+title: 奇怪的决战
 slug: a strange decisive battle
 date: 2016-05-01 10:59:00
 comments: true
-categories:
-- 青梅煮酒
 tags:
 - 史记
 - 读书
 - 随笔
+- 青梅煮酒
 ---
 
 前两天读史记王翦列传，觉得秦楚的决战很奇怪。

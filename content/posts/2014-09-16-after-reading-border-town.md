@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "读完《边城》"
+title: 读完《边城》
 slug: after reading border town
 date: 2014-10-26 09:32:00
 comments: true
-categories:
-- 青梅煮酒
 tags:
 - 读书
 - 小说
+- 青梅煮酒
 ---
 
 ![](http://pic.yupoo.com/leninlee/E9VMRoII/medish.jpg)

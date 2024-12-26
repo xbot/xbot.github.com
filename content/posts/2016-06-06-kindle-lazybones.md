@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "Kindle Lazybones: Control Kindle From Your Phone"
+title: 'Kindle Lazybones: Control Kindle From Your Phone'
 slug: kindle lazybones
 date: 2016-06-06 10:33:00
 comments: true
-categories:
-- 计算机
 tags:
 - 编程
 - Kindle
+- 计算机
 ---
 
 # Kindle Lazybones

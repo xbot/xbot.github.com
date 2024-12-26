@@ -1,16 +1,15 @@
 ---
 layout: post
-title: "PHP框架实战（五）：ORM与ActiveRecord"
+title: PHP框架实战（五）：ORM与ActiveRecord
 slug: flamework active record
 date: 2014-01-01 20:45:00
 comments: true
-categories:
-- 计算机
 tags:
 - PHP
 - Flamework
 - 框架
 - 编程
+- 计算机
 ---
 
 简述

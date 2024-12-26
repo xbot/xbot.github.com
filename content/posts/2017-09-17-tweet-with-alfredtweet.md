@@ -2,12 +2,11 @@
 title: 用AlfredTweet发推
 slug: tweet with alfredtweet
 date: 2017-09-17 09:26:41
-categories:
-- 计算机
 tags:
 - 最佳实践
 - 工具
 - mac
+- 计算机
 ---
 AlfredTweet是用来解决“最后一公里”问题的东西，有了它就可以随时发推了。
 

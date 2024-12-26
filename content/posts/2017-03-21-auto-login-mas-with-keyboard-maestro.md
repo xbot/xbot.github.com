@@ -2,11 +2,10 @@
 title: 用 Keyboard Maestro 自动登录 Mac App Store
 slug: auto login mas with keyboard maestro
 date: 2017-03-21 22:51:32
-categories:
-- 计算机
 tags:
 - mac
 - Keyboard Maestro
+- 计算机
 ---
 
 按以下步骤配置：

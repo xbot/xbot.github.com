@@ -1,11 +1,10 @@
 ---
 title: 两只猫的肠胃炎历险记
 slug: how-i-cured-my-cats-gastroenteritis
-date: 2024-10-30T22:43:19+08:00
-categories:
-  - 青梅煮酒
+date: 2024-10-30 22:43:19+08:00
 tags:
-  - 猫
+- 猫
+- 青梅煮酒
 toc: false
 draft: false
 ---

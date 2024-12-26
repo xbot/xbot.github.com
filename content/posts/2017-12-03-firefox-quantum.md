@@ -2,11 +2,10 @@
 title: Firefox Quantum：狐狸的反击
 slug: firefox quantum
 date: 2017-12-03 21:53:18
-categories:
-- 计算机
 tags:
 - 浏览器
 - app
+- 计算机
 ---
 不知不觉已经很多年没有用过Firefox了。在Chrome发布之前，这只狐狸以一己之力扛著互联网承前启后的大旗。后来被Chrome在网页加载速度上吊打，逐渐式微。之后还在用Firefox的人一般也只是因为受不了Chrome的内存占用。
 

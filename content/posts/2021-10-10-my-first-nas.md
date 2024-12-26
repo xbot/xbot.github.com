@@ -1,11 +1,10 @@
 ---
 title: 我的第一台 NAS
 slug: My First NAS
-date: 2021-10-10T21:50:12+08:00
-categories:
-  - 青梅煮酒
+date: 2021-10-10 21:50:12+08:00
 tags:
-  - NAS
+- NAS
+- 青梅煮酒
 ---
 
 ![2021-11-09-00-57-46-my-first-nas](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2021-11-09-00-57-46-my-first-nas.jpg)

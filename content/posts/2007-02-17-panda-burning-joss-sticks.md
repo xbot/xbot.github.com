@@ -1,11 +1,10 @@
 ---
 title: 「熊猫烧香」
 slug: panda burning joss sticks
-categories:
-- 青梅煮酒
 tags:
 - 新闻
 - 随笔
+- 青梅煮酒
 date: 2007-02-17 18:28:00
 ---
 前一段的维金，现在的熊猫烧香，windows上总是不消停。

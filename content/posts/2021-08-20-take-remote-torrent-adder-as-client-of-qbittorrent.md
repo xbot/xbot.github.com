@@ -1,14 +1,13 @@
 ---
-title: "使用 Remote Torrent Adder 做 qBittorrent 的客户端"
-slug: "Take Remote Torrent Adder as Client of Qbittorrent"
-date: 2021-08-20T00:03:28+08:00
-categories:
-- 计算机
+title: 使用 Remote Torrent Adder 做 qBittorrent 的客户端
+slug: Take Remote Torrent Adder as Client of Qbittorrent
+date: 2021-08-20 00:03:28+08:00
 tags:
 - 浏览器
 - 工具
 - 下载
 - 软件
+- 计算机
 ---
 
 我使用部署在 NAS 中的 qBittorrent 下载资源，每次手动复制磁力链链接到 qBittorrent 的 WebUI 很麻烦。

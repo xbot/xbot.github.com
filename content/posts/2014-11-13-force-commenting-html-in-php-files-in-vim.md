@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "Vim强制在PHP中使用HTML注释的方法"
+title: Vim强制在PHP中使用HTML注释的方法
 slug: force commenting html in php files in vim
 date: 2014-11-13 21:45:00
 comments: true
-categories:
-- 计算机
 tags:
 - vim
 - php
 - html
+- 计算机
 ---
 
 对PHP页面模板中的HTML做注释，NERDCommenter是根据文件类型处理的，所以必须临时转换文件类型：

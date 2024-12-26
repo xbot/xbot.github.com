@@ -2,12 +2,11 @@
 title: 利用依赖注入Mock PHP的内建函数
 slug: mock php built in functions using dependency injection
 date: 2017-04-30 09:57:50
-categories:
-- 计算机
 tags:
 - php
 - 编程
 - 测试
+- 计算机
 ---
 
 ## 简述

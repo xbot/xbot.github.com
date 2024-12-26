@@ -2,11 +2,10 @@
 title: 干锅菜花
 slug: dry pot cauliflower
 date: 2017-03-08 20:55:54
-categories:
-- 行见
 tags:
 - 私房菜
 - 生活
+- 行见
 ---
 
 ![](https://ww1.sinaimg.cn/large/006tNbRwly1fdfq6e4b0qj30sg0sg11s.jpg)

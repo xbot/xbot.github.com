@@ -1,14 +1,14 @@
 ---
-title: "解决 PHPUnit 生成代码覆盖报告时抛出重复定义类的错误的办法"
-slug: "The Solution of Class Redeclaration Error Raised While Generating Php Code Coverage Report"
-date: 2022-06-23T14:42:34+08:00
-categories:
-- 计算机
+title: 解决 PHPUnit 生成代码覆盖报告时抛出重复定义类的错误的办法
+slug: The Solution of Class Redeclaration Error Raised While Generating Php Code Coverage
+  Report
+date: 2022-06-23 14:42:34+08:00
 tags:
 - PHP
 - phpunit
 - 单元测试
 - 编程
+- 计算机
 ---
 
 在生成 Cobertura 格式的代码覆盖报告时程序报了如下错误：

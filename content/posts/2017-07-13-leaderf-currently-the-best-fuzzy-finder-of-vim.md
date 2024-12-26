@@ -2,11 +2,10 @@
 title: LeaderF，也许是Vim最好的模糊查询插件
 slug: leaderf currently the best fuzzy finder of vim
 date: 2017-07-13 16:45:15
-categories:
-- 计算机
 tags:
 - vim
 - 最佳实践
+- 计算机
 ---
 
 之前[对比过几个模糊查询插件](/post/ctrlp-vs-unite-vs-command-t-vs-fuzzyfinder/)（Fuzzy Finder），最后选定了ctrlp。

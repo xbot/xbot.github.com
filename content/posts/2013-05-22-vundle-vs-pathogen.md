@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "Vundle vs Pathogen"
+title: Vundle vs Pathogen
 slug: vundle vs pathogen
 date: 2013-05-22 21:33:00
 comments: true
-categories:
-- 计算机
 tags:
 - Vim
 - 插件
+- 计算机
 ---
 I have been using Pathogen for a long time and I am happy with it. But it seems that more and more Vim scripts are recommending to use Vundle in their install references. So I made a study today, the conclusion is, although almost all the articles I found from Google have a positive attitude on Vundle, I still prefer Pathogen.
 

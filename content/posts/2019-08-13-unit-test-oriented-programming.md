@@ -2,13 +2,12 @@
 title: 面向单元测试编程
 slug: unit test oriented programming
 date: 2019-08-13 16:35:15
-categories:
-- 计算机
 tags:
 - 编程
 - 单元测试
 - php
 - Laravel/Lumen
+- 计算机
 ---
 
 同一逻辑可以有多种实现方式，选择对单元测试友好的方式可以提高写测试代码的效率。

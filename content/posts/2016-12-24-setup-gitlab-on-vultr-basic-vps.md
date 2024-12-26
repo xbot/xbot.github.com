@@ -1,16 +1,15 @@
 ---
 layout: post
-title: "Vultr基配可以部署Gitlab"
+title: Vultr基配可以部署Gitlab
 slug: setup gitlab on vultr basic vps
 date: 2016-12-24 17:18:00
 comments: true
-categories:
-- 计算机
 tags:
 - VPS
 - Gitlab
 - Git
 - Vultr
+- 计算机
 ---
 
 想在Vultr上部署Gitlab，但是官方文档上说最低要求1GB RAM + 3GB swap，而我的VPS是基础配置：768MB RAM。

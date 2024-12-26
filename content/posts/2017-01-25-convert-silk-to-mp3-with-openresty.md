@@ -1,16 +1,15 @@
 ---
 layout: post
-title: "用OpenResty自动转换silk到MP3"
+title: 用OpenResty自动转换silk到MP3
 slug: convert silk to mp3 with openresty
 date: 2017-01-25 18:59:00
 comments: true
-categories:
-- 计算机
 tags:
 - openresty
 - nginx
 - 编程
 - lua
+- 计算机
 ---
 
 PHP没有原生的转换silk格式音频到mp3的方案，所以考虑用NGINX+Lua调用命令行工具实现。

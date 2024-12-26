@@ -2,11 +2,10 @@
 title: 用vim-plug换掉了vim-addon-manager
 slug: replaced vam with vim plug
 date: 2017-07-31 22:44:16
-categories:
-- 计算机
 tags:
 - vim
 - 最佳实践
+- 计算机
 ---
 
 四年零两个月前，我在Vim的邮件组中[征询pathogen和vundle的优劣](https://groups.google.com/forum/#!topic/vim_use/P3xpaHr8-do)。一个人建议我试试VAM，语气幽怨——他是它的作者。

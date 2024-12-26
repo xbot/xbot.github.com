@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "两司马门下走狗创刊号"
+title: 两司马门下走狗创刊号
 slug: the first post of running dog
 date: 2016-06-06 16:22:00
 comments: true
-categories:
-- 青梅煮酒
 tags:
 - 读书
 - 历史
 - 公众号
+- 青梅煮酒
 ---
 
 算是开始玩自媒体了么？

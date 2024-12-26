@@ -2,13 +2,11 @@
 title: 改变 Vim 模式时自动切换输入法的方法
 slug: auto switch input method while changing vim mode
 date: 2020-02-19 21:48:15
-categories:
-- 计算机
 tags:
 - 最佳实践
 - vim
 - vscode
-
+- 计算机
 ---
 
 VS Code的Vim插件有个很贴心的功能，可以在切换到普通模式时自动切换到英文输入法，而当切换回插入模式时再换到此前的输入法。

@@ -2,12 +2,10 @@
 title: 用C4-PlantUML画软件架构图
 slug: design software architecture with c4 plantuml
 date: 2020-01-17 17:29:24
-categories:
-- 计算机
 tags:
 - 编程
 - 最佳实践
-
+- 计算机
 ---
 
 [C4 Model](https://c4model.com)是一种简洁有序的架构模型，四个“C”分别表示“Context”、“Container”、“Component”和“Code”，是由上而下逐步细化的四个层级。

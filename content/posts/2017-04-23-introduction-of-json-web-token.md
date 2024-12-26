@@ -2,11 +2,10 @@
 title: JSON Web Token简介
 slug: introduction of json web token
 date: 2017-04-23 18:29:06
-categories:
-- 计算机
 tags:
 - 笔记
 - 编程
+- 计算机
 ---
 
 ## 什么是JWT？

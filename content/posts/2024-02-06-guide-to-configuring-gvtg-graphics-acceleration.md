@@ -1,14 +1,13 @@
 ---
 title: GVT-g 配置指南：实现多虚拟机共享 Intel 核显硬件加速
 slug: Guide to Configuring GVT-g Graphics Acceleration
-date: 2024-02-06T11:25:58+08:00
-categories:
-  - 计算机
+date: 2024-02-06 11:25:58+08:00
 tags:
-  - NAS
-  - PVE
-  - homelab
-  - 虚拟技术
+- NAS
+- PVE
+- homelab
+- 虚拟技术
+- 计算机
 toc: false
 draft: false
 ---

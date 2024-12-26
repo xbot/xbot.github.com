@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "读完《春秋左传注》"
+title: 读完《春秋左传注》
 slug: after reading zuo zhuan
 date: 2015-11-15 18:24:00
 comments: true
-categories:
-- 青梅煮酒
 tags:
 - 读书
 - 春秋
 - 历史
+- 青梅煮酒
 ---
 
 ![](http://pic.yupoo.com/leninlee/F6y8YsUg/medish.jpg)

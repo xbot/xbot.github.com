@@ -2,11 +2,10 @@
 title: 关于Lumen的Facade不支持引用传递的看法
 slug: lumen facade doesnot support pass by reference param
 date: 2020-02-04 17:40:34
-categories:
-- 计算机
 tags:
 - 编程
 - Laravel/Lumen
+- 计算机
 ---
 
 今天遇到一个奇怪的问题，一次调用带引用传递形参的方法后，该形参对应的变量值没有按预期改变。

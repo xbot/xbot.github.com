@@ -2,11 +2,10 @@
 title: 用Raspberry Pi实现音频Airplay
 slug: implement airplay with raspberry pi
 date: 2017-04-17 10:19:51
-categories:
-- 计算机
 tags:
 - 树莓派
 - 最佳实践
+- 计算机
 ---
 
 ![](http://ww1.sinaimg.cn/large/006tKfTcly1fepi05fa8ej31kw1kwx6q.jpg)

@@ -2,12 +2,11 @@
 title: 升级到wordpress3.0
 slug: after upgrading to wordpress30
 date: 2010-06-19 00:00:00
-categories:
-- 青梅煮酒
 tags:
 - wiki
 - WordPress
 - 博客
+- 青梅煮酒
 ---
 昨天发现wordpress3.0已经发布，就顺手升级了。
 

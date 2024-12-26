@@ -1,11 +1,10 @@
 ---
 title: 优化 BT 下载速度的方法
 slug: How to Optimize BT Download Speed
-date: 2023-11-15T22:30:47+08:00
-categories:
-  - 计算机
+date: 2023-11-15 22:30:47+08:00
 tags:
-  - BT
+- BT
+- 计算机
 toc: false
 draft: false
 ---

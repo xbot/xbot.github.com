@@ -1,12 +1,11 @@
 ---
-title: "使用 lemonade 和 autossh 辅助 Neovim 远程开发"
-slug: "Assisting Neovim With Remote Development Using Lemonade and Autossh"
-date: 2022-05-19T16:02:34+08:00
-categories:
-- 计算机
+title: 使用 lemonade 和 autossh 辅助 Neovim 远程开发
+slug: Assisting Neovim With Remote Development Using Lemonade and Autossh
+date: 2022-05-19 16:02:34+08:00
 tags:
 - vim
 - 编程
+- 计算机
 ---
 
 我的开发环境部署在 Linux VM 里，普通的远程复制用 [vim-oscyank](https://github.com/ojroques/vim-oscyank) 插件是可以实现的。但是当我想用 [fugitive](https://github.com/tpope/vim-fugitive) 的 `:GBrowse` 命令打开 Gitlab 链接的时候遇到了困难，甚至我想退而求其次、通过 `:GBrowse!` 复制链接都不可得，因为 fugitive 的代码里通过 `has('clipboard')` 判断 Vim 是否可以使用系统剪贴板，且我的 Linux VM 不满足该特性的条件（见 `:help clipboard`）。所以用 [lemonade](https://github.com/lemonade-command/lemonade) 解决这个问题。

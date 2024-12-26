@@ -2,12 +2,11 @@
 title: Python 2还是3是个纠结的问题
 slug: bothered by python 2 vs 3
 date: 2017-07-30 08:40:11
-categories:
-- 计算机
 tags:
 - vim
 - python
 - 随笔
+- 计算机
 ---
 
 前些天用denite取代unite，用`--with-python3`重装了vim，结果发现vdebug只支持python 2。

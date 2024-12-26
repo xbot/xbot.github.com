@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "用树苺派做家庭监控"
+title: 用树苺派做家庭监控
 slug: monitor home with raspberry pi
 date: 2015-04-07 10:56:00
 comments: true
-categories:
-- 计算机
 tags:
 - 树苺派
 - 智能家居
 - Geek
+- 计算机
 ---
 
 用树苺派做视频监控，当视野内有物体移动时，自动拍照、录视频、同步到远程主机，并提醒到远程电脑和手机。

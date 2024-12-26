@@ -1,16 +1,15 @@
 ---
 layout: post
-title: "用锐速加速Shadowsocks"
+title: 用锐速加速Shadowsocks
 slug: accelerate shadowsocks with serverspeeder
 date: 2016-12-25 15:39:00
 comments: true
-categories:
-- 计算机
 tags:
 - vps
 - vultr
 - bandwagon
 - shadowsocks
+- 计算机
 ---
 
 各种VPS加速方案一般都是重复发包的原理，也就是用流量换速度。

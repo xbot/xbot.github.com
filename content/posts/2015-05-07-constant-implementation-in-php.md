@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "PHP常量的实现和操作"
+title: PHP常量的实现和操作
 slug: constant implementation in php
 date: 2015-05-07 16:29:00
 comments: true
-categories:
-- 计算机
 tags:
 - PHP
 - 源码
+- 计算机
 ---
 
 ## 存储结构

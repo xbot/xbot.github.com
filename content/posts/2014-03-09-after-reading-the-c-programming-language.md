@@ -4,13 +4,12 @@ title: 读完《The C Programming Language》
 slug: after reading the c programming language
 date: 2014-03-09 22:47:00
 comments: true
-categories:
-  - 青梅煮酒
 tags:
-  - 读书
-  - 计算机
-  - 编程
-  - C
+- 读书
+- 计算机
+- 编程
+- C
+- 青梅煮酒
 ---
 
 ![](http://pic.yupoo.com/leninlee/DASqD5IQ/medish.jpg)

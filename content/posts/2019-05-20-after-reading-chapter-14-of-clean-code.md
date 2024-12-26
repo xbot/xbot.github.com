@@ -2,10 +2,9 @@
 title: 《Clean Code》第十四章读后
 slug: after reading chapter 14 of clean code
 date: 2019-05-20 23:48:41
-categories:
-- 青梅煮酒
 tags:
-  - 读书
+- 读书
+- 青梅煮酒
 ---
 
 蹩脚的译文看着实在费解，干脆去看《Clean Code》的原版。第14章“Successive Refinement（逐步改进）”讲的是对一个用Java实现的解析命令行参数的类Args重构的过程。

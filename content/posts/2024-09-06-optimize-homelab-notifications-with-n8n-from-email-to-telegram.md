@@ -1,13 +1,12 @@
 ---
 title: 用 n8n 优化 Homelab 通知流程：从邮件到 Telegram
 slug: optimize homelab notifications with n8n from email to telegram
-date: 2024-09-06T16:27:57+08:00
-categories:
-  - 青梅煮酒
+date: 2024-09-06 16:27:57+08:00
 tags:
-  - homelab
-  - n8n
-  - telegram
+- homelab
+- n8n
+- telegram
+- 青梅煮酒
 toc: false
 draft: false
 ---

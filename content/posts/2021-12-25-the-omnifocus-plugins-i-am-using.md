@@ -1,13 +1,12 @@
 ---
-title: "我在用的 OmniFocus 插件"
-slug: "the Omnifocus Plugins I Am Using"
-date: 2021-12-25T22:05:40+08:00
-categories:
-- 青梅煮酒
+title: 我在用的 OmniFocus 插件
+slug: the Omnifocus Plugins I Am Using
+date: 2021-12-25 22:05:40+08:00
 tags:
 - omnifocus
 - GTD
 - 效率工具
+- 青梅煮酒
 ---
 # 检查列表
 

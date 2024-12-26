@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "两条分组的SQL语句"
+title: 两条分组的SQL语句
 slug: two grouping sql statements
 date: 2017-01-27 17:51:00
 comments: true
-categories:
-- 计算机
 tags:
 - sql
 - 编程
+- 计算机
 ---
 
 最近做访问统计解决的两个问题：

@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "变形金刚：俺钢锁才是老大"
+title: 变形金刚：俺钢锁才是老大
 slug: transformers grim lock
 date: 2015-04-26 20:55:00
 comments: true
-categories:
-- 青梅煮酒
 tags:
 - 变形金刚
 - 玩具
+- 青梅煮酒
 ---
 
 变形金刚是工业艺术的巅峰之作。不仅仅是怀旧和补童年。**理工宅两大图腾，恐龙和机器人。从没有一个东西像汽车人恐龙部队一样，把这两样完美地融为一体。**

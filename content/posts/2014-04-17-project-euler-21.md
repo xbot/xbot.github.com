@@ -1,16 +1,15 @@
 ---
 layout: post
-title: "Project Euler Problem 21 Solved"
+title: Project Euler Problem 21 Solved
 slug: project euler 21
 date: 2014-04-17 22:18:00
 comments: true
-categories:
-- 计算机
 tags:
 - golang
 - python
 - 欧拉工程
 - 编程
+- 计算机
 ---
 
 Amicable numbers

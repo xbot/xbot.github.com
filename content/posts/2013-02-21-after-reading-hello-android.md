@@ -1,10 +1,10 @@
 ---
 layout: post
-title: "读过Hello Android"
+title: 读过Hello Android
 slug: after reading hello android
 date: 2013-02-21 21:01:00
 comments: true
-categories:
+tags:
 - 青梅煮酒
 ---
 春节前花了一周时间读完了这本书。

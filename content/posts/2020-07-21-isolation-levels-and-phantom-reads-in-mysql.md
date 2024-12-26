@@ -1,14 +1,12 @@
 ---
-title: "MySQL 事务的一致性、隔离级别与幻读问题"
+title: MySQL 事务的一致性、隔离级别与幻读问题
 slug: Isolation Levels And Phantom Reads In MySQL
-date: 2020-07-21T16:25:09+08:00
-categories:
-- 计算机
+date: 2020-07-21 16:25:09+08:00
 tags:
 - mysql
 - 数据库
 - 编程
-
+- 计算机
 ---
 
 ## 数据库事务的一致性

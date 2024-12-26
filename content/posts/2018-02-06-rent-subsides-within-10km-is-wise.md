@@ -2,10 +2,9 @@
 title: 十公里租房补贴是个天才的福利制度
 slug: rent subsides within 10km is wise
 date: 2018-02-06 11:12:23
-categories:
-- 青梅煮酒
 tags:
 - 随笔
+- 青梅煮酒
 draft: true
 ---
 十公里以内是个很适合通勤的距离，以任何一种公共交通方式都可以把时间控制在半小时左右。

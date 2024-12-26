@@ -2,13 +2,11 @@
 title: 用 SSH 命令调试 Git 的连接问题
 slug: debug git connection with ssh
 date: 2020-03-28 23:17:45
-categories:
-- 计算机
 tags:
 - Git
 - Gitlab
 - Mac
-
+- 计算机
 ---
 
 昨天执行`git pull`的时候发现会一直卡在那儿，排除了各种可能，而且 Github 上的项目也是可以正常拉取的，说明跟网络、代理等关系应该不大，git 命令本身也工作正常。

@@ -1,11 +1,9 @@
 ---
 layout: post
-title: "UltraBlog.vim v3.6.1: 文章分类自动补全"
+title: 'UltraBlog.vim v3.6.1: 文章分类自动补全'
 slug: ultrablog v361 released
 date: 2014-04-20 22:50:00
 comments: true
-categories:
-- 计算机
 tags:
 - Plugin
 - Python
@@ -13,6 +11,7 @@ tags:
 - Vim
 - 博客
 - 编程
+- 计算机
 ---
 
 春节期间收到两个issue，一直拖到今天才有时间完成。

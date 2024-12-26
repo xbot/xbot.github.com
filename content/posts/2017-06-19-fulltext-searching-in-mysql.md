@@ -2,13 +2,12 @@
 title: 用MySQL的全文检索实现相关性排序
 slug: fulltext searching in mysql
 date: 2017-06-19 23:10:41
-categories:
-- 计算机
 tags:
 - mysql
 - 全文检索
 - 数据库
 - 编程
+- 计算机
 ---
 
 实现根据文章的关键词搜索出相关的文章，并按相关性排序。

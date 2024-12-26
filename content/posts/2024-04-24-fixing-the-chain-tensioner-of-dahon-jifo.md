@@ -1,12 +1,11 @@
 ---
 title: 修复绝版老车 Jifo 的张链器：一次艰难的维修之旅
 slug: Fixing The Chain Tensioner of Dahon Jifo
-date: 2024-04-24T15:38:37+08:00
-categories:
-  - 青梅煮酒
+date: 2024-04-24 15:38:37+08:00
 tags:
-  - 折叠车
-  - 大行Jifo
+- 折叠车
+- 大行Jifo
+- 青梅煮酒
 toc: false
 draft: false
 ---

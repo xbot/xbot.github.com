@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "骑行京西古道"
+title: 骑行京西古道
 slug: riding to ancient west peking path
 date: 2013-05-18 22:09:00
 comments: true
-categories:
-- 行见
 tags:
 - 骑行
 - 京西古道
+- 行见
 ---
 13年5月，骑行京西古道。
 

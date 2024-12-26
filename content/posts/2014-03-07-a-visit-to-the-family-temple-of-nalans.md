@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "探访纳兰家庙"
+title: 探访纳兰家庙
 slug: a visit to the family temple of nalans
 date: 2014-03-07 18:25:00
 comments: true
-categories:
-- 行见
 tags:
 - 历史
 - 骑行
+- 行见
 ---
 
 客居多年，不久前才知道附近有如此底蕴的一个去处，于是赶在开始一段新行程前探访了这里。

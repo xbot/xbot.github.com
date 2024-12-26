@@ -2,12 +2,11 @@
 title: 用Github当图床
 slug: take github as image hosting service
 date: 2020-02-06 22:00:00
-categories:
-- 青梅煮酒
 tags:
 - 最佳实践
 - 博客
 - github
+- 青梅煮酒
 ---
 
 微博图床的域名不知道什么时候改了，Google找不到相关信息，经过排查发现原域名中的“ws”改成了“wx”，浪费了不少时间。

@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "读完《冰与火之歌》卷一"
+title: 读完《冰与火之歌》卷一
 slug: after reading a song of ice and fire v1
 date: 2014-10-26 09:56:00
 comments: true
-categories:
-- 青梅煮酒
 tags:
 - 读书
 - 小说
+- 青梅煮酒
 ---
 
 ![](http://pic.yupoo.com/leninlee/E9VUK2P1/medish.jpg)

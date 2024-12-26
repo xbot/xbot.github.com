@@ -2,11 +2,10 @@
 title: Postman的Pre-request Script和Tests
 slug: pre request script and tests in postman
 date: 2017-04-19 17:05:55
-categories:
-- 计算机
 tags:
 - 测试
 - 编程
+- 计算机
 ---
 Pre-request Script和Tests都是Javascript代码块。前者在请求发起前执行，通常用来生成请求数据，例如对用户注册接口随机生成用户名。后者在请求结束后执行，通常用来测试和处理返回值。
 

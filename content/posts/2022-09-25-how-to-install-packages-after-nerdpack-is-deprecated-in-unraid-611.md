@@ -1,12 +1,12 @@
 ---
-title: "Unraid 6.11 弃用 NerdPack 的解决办法"
-slug: "How to install packages after NerdPack is deprecated in Unraid 6.11"
-date: 2022-09-25T21:29:41+08:00
-categories: ["计算机"]
+title: Unraid 6.11 弃用 NerdPack 的解决办法
+slug: How to install packages after NerdPack is deprecated in Unraid 6.11
+date: 2022-09-25 21:29:41+08:00
 tags:
 - NAS
 - homelab
 - Unraid
+- 计算机
 toc: false
 ---
 

@@ -2,11 +2,10 @@
 title: 对XSS的防御更适合放在前端
 slug: better to do defenses against xss in front end
 date: 2018-02-06 15:13:17
-categories:
-- 计算机
 tags:
 - 编程
 - 架构
+- 计算机
 ---
 很多项目会把转义操作放在后端接口获取参数的地方，从而忽略了这样一个问题——为什么主流框架都不在获取参数的方法里实现这一点？
 

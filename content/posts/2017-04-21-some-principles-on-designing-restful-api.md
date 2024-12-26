@@ -2,10 +2,9 @@
 title: 设计RESTful API的几个原则
 slug: some principles on designing restful api
 date: 2017-04-21 10:07:29
-categories:
-- 计算机
 tags:
 - 编程
+- 计算机
 ---
 
 REST不是一项技术，而是一种设计风格。它的核心思想是实现一种清晰明确的语义，用来描述Web操作。包含两个主要因素：HTTP动词和资源地址。

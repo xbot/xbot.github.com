@@ -2,11 +2,10 @@
 title: 配置鼠须管的特殊符号输入
 slug: input punctuations with rime
 date: 2018-10-13 11:59:50
-categories:
-- 计算机
 tags:
 - Mac
 - 最佳实践
+- 计算机
 ---
 *开源工具最常见的问题就是文档不全，实现一个需求的时候只能苦苦Google，甚至连蒙带猜。这也是我逐渐倾向买用户体验更好的收费软件的原因。*
 

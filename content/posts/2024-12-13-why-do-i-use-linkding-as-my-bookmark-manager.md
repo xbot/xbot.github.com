@@ -1,16 +1,15 @@
 ---
 title: 我为什么用 linkding 自建书签管理服务
 slug: why do I use linkding as my bookmark manager
-date: 2024-12-13T00:55:08+08:00
-categories:
-  - 青梅煮酒
+date: 2024-12-13 00:55:08+08:00
 tags:
-  - linkding
-  - Hoarder
-  - Readeck
-  - 书签管理
-  - Raycast
-  - homelab
+- linkding
+- Hoarder
+- Readeck
+- 书签管理
+- Raycast
+- homelab
+- 青梅煮酒
 toc: false
 draft: false
 ---

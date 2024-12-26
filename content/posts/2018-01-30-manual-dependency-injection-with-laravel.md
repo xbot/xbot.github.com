@@ -2,13 +2,12 @@
 title: 解决Laravel的Facade在被Mock时不自动注入依赖的一种方法
 slug: manual dependency injection with laravel
 date: 2018-01-30 15:41:16
-categories:
-- 计算机
 tags:
 - 编程
 - 单元测试
 - php
 - Laravel/Lumen
+- 计算机
 ---
 由于集成了Mockery，Laravel的Facade对单元测试非常友好，只需要一行代码就能实现mocking。
 

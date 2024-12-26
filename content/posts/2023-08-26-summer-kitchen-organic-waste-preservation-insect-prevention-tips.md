@@ -1,11 +1,11 @@
 ---
-title: "夏季厨余垃圾防腐防虫绝招"
-slug: "Summer Kitchen Organic Waste Preservation Insect Prevention Tips"
-date: 2023-08-26T19:01:49+08:00
-categories: ["青梅煮酒"]
+title: 夏季厨余垃圾防腐防虫绝招
+slug: Summer Kitchen Organic Waste Preservation Insect Prevention Tips
+date: 2023-08-26 19:01:49+08:00
 tags:
 - 最佳实践
 - 生活
+- 青梅煮酒
 toc: false
 ---
 

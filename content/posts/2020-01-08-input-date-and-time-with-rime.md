@@ -2,12 +2,10 @@
 title: 用鼠须管输入日期时间的方法
 slug: input date and time with rime
 date: 2020-01-08 13:52:49
-categories:
-- 计算机
 tags:
 - Mac
 - 最佳实践
-
+- 计算机
 ---
 
 原来在Linux下用小小输入法，输入日期时间很方便。换到Mac后，很早就在关注这个问题，直到后来鼠须管实现了嵌入Lua脚本的功能才得以解决。

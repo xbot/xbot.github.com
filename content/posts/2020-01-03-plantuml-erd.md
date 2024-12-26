@@ -2,11 +2,9 @@
 title: 用 PlantUML 实现 ERD
 slug: plantuml erd
 date: 2020-01-03 17:01:41
-categories:
-- 计算机
 tags:
 - 编程
-
+- 计算机
 ---
 
 很长一段时间，我们都在用 MySQLWorkbench 画 ER 图。但是这个东西有一些缺陷，导致体验很不好。

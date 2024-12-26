@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "Calibre排版的最佳实践"
+title: Calibre排版的最佳实践
 slug: best practices of calibre on formatting
 date: 2017-01-27 18:15:00
 comments: true
-categories:
-- 青梅煮酒
 tags:
 - 随笔
 - 读书
+- 青梅煮酒
 ---
 
 **虽然如今左Kindle、右iPad，但是再也没有在课堂上用文曲星看《此间的少年》的感觉。**

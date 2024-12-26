@@ -2,12 +2,11 @@
 title: 编写接口文档的最佳实践
 slug: the best practice of writing api documents
 date: 2017-04-10 16:36:27
-categories:
-- 计算机
 tags:
 - 最佳实践
 - markdown
 - wiki
+- 计算机
 ---
 
 ![](https://wx1.sinaimg.cn/large/006tNbRwly1fwvx9m0n7jj30rr0m8gpa.jpg)

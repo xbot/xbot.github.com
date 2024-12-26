@@ -1,9 +1,7 @@
 ---
-title: "让 AdGuard Home 和 OpenClash 协同工作"
-slug: "Make Adguard Home and Openclash Work Together"
-date: 2022-03-06T12:12:10+08:00
-categories:
-- 计算机
+title: 让 AdGuard Home 和 OpenClash 协同工作
+slug: Make Adguard Home and Openclash Work Together
+date: 2022-03-06 12:12:10+08:00
 tags:
 - OpenWrt
 - WireGuard
@@ -11,6 +9,7 @@ tags:
 - 翻墙
 - HomeLab
 - AdGuard
+- 计算机
 ---
 
 # 家庭网络环境

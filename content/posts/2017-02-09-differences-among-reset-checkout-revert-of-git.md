@@ -5,7 +5,6 @@ date: 2017-02-09 19:27:47
 tags:
 - git
 - 笔记
-categories:
 - 计算机
 ---
 

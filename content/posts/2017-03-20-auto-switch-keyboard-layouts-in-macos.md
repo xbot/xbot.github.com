@@ -2,10 +2,9 @@
 title: MacOS下自动切换Karabiner Elements配置
 slug: auto switch keyboard layouts in macos
 date: 2017-03-20 13:14:18
-categories:
-- 计算机
 tags:
 - mac
+- 计算机
 ---
 
 Karabiner Elements不支持对不同的键盘自动使用不同的配置，所以本文通过监听USB键盘插拔事件实现自动切换。

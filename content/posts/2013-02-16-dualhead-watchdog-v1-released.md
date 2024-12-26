@@ -1,10 +1,10 @@
 ---
 layout: post
-title: "DualHead Watchdog v1.0 Released"
+title: DualHead Watchdog v1.0 Released
 slug: dualhead watchdog v1 released
 date: 2013-02-16 08:56:00
 comments: true
-categories:
+tags:
 - 青梅煮酒
 ---
 **DualHead Watchdog** is a Linux desktop app which runs commands or scripts after display settings are changed.

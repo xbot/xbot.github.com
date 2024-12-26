@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "自动重映射键盘"
+title: 自动重映射键盘
 slug: auto remap keyboard
 date: 2015-04-17 18:02:00
 comments: true
-categories:
-- 计算机
 tags:
 - Linux
 - udev
 - 键盘
+- 计算机
 ---
 
 每次键盘拔出再插入时，键盘映射都会失效，要重新执行映射，而且要对不同的键盘应用不同的映射方案。试过直接添加udev规则，即使指定X Display和Xauthority也不成功。所以用pyudev写个脚本（[最新版本](https://github.com/xbot/shell/blob/master/udev.py)）：

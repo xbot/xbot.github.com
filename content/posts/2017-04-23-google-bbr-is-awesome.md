@@ -2,10 +2,9 @@
 title: Google BBR和锐速在Vultr上的对比
 slug: google bbr is awesome
 date: 2017-04-23 23:48:21
-categories:
-- 计算机
 tags:
 - 翻墙
+- 计算机
 ---
 
 BBR比锐速略快，看YouTube的1080p效果差别不大，SSH操作反应改善明显。

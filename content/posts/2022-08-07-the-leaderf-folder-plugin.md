@@ -1,14 +1,13 @@
 ---
-title: "Leaderf-folder: Quickly open a subfolder"
-slug: "The Leaderf Folder Plugin"
-date: 2022-08-07T17:31:50+08:00
-categories:
-- 计算机
+title: 'Leaderf-folder: Quickly open a subfolder'
+slug: The Leaderf Folder Plugin
+date: 2022-08-07 17:31:50+08:00
 tags:
 - 编程
 - Vim
 - LeaderF
 - plugin
+- 计算机
 ---
 
 [LeaderF-folder](https://github.com/xbot/LeaderF-folder) is a plugin for [LeaderF](https://github.com/Yggdroot/LeaderF) that aims to open a subfolder quickly.

@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "PHP扩展框架的创建"
+title: PHP扩展框架的创建
 slug: create php extension skeleton
 date: 2015-06-18 14:15:00
 comments: true
-categories:
-- 计算机
 tags:
 - PHP
 - 源码
+- 计算机
 ---
 
 ## 创建项目

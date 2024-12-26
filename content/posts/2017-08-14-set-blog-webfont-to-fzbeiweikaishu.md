@@ -2,11 +2,10 @@
 title: 把博客字体改成了方正北魏楷书
 slug: set blog webfont to fzbeiweikaishu
 date: 2017-08-14 16:05:30
-categories:
-- 计算机
 tags:
 - 博客
 - 笔记
+- 计算机
 ---
 我曾说过[方正北魏楷书是最佳的阅读字体](/post/best-practices-of-calibre-on-formatting/)，不过后来感觉长时间阅读的体验还是普通的楷体更好。但这并不妨碍在Reeder、博客这种短时阅读场合突出页面的设计感。
 

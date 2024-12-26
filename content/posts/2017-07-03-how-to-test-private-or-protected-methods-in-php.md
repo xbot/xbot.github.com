@@ -2,12 +2,11 @@
 title: 怎样测试PHP的Private或Protected方法
 slug: how to test private or protected methods in php
 date: 2017-07-03 13:17:30
-categories:
-- 计算机
 tags:
 - 编程
 - 测试
 - PHP
+- 计算机
 ---
 
 利用闭包绑定：

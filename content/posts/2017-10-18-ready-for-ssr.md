@@ -2,10 +2,9 @@
 title: 搭好了SSR
 slug: ready for ssr
 date: 2017-10-18 15:34:33
-categories:
-- 计算机
 tags:
 - 翻墙
+- 计算机
 ---
 搭在vultr东京节点的SS在家里的网络上已经不能用了，lantern和大杀器也不稳定到基本没有可用性的程度。短短几天时间，三把梯子挂了仨。
 

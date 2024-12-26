@@ -2,13 +2,12 @@
 title: 迄今最好的发送网页到 Kindle 的快捷指令
 slug: send to kindle with shortcut
 date: 2017-03-30 11:12:02
-categories:
-- 计算机
 tags:
 - 效率
 - 快捷指令
 - iPhone
 - Kindle
+- 计算机
 ---
 
 转换成 PDF 和 FiveFilters 都不完美， `send.reabble.cn` 是迄今最好的解决方案，所以写了这个快捷指令：

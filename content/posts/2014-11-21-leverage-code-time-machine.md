@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "用好代码时光机"
+title: 用好代码时光机
 slug: leverage code time machine
 date: 2014-11-21 23:19:00
 comments: true
-categories:
-- 计算机
 tags:
 - git
 - svn
 - 编程
+- 计算机
 ---
 
 今天看了篇文章，讲几种常见的、糟糕的注释用法。其中之一是把废弃的代码注释起来，而不是直接删掉，原因是担心以后可能会用。

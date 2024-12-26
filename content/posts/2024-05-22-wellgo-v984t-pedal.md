@@ -1,12 +1,11 @@
 ---
 title: 15￥ 包邮的尼龙脚踏，实现了我对休闲骑行脚踏的所有想象
 slug: wellgo v984t pedal
-date: 2024-05-22T18:57:03+08:00
-categories:
-  - 青梅煮酒
+date: 2024-05-22 18:57:03+08:00
 tags:
-  - 折叠车
-  - 最佳实践
+- 折叠车
+- 最佳实践
+- 青梅煮酒
 toc: false
 draft: false
 ---

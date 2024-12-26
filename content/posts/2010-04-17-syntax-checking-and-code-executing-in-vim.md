@@ -2,7 +2,6 @@
 title: 在Vim中检查语法和执行代码
 slug: syntax checking and code executing in vim
 date: 2010-04-17 00:00:00
-categories: 计算机
 tags:
 - IDE
 - PHP

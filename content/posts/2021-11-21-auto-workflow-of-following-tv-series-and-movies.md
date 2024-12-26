@@ -1,12 +1,11 @@
 ---
 title: 自动追剧的工作流
 slug: Auto Workflow of Following Tv Series and Movies
-date: 2021-11-21T17:16:15+08:00
-categories:
-- 青梅煮酒
+date: 2021-11-21 17:16:15+08:00
 tags:
 - NAS
 - 最佳实践
+- 青梅煮酒
 ---
 
 在 NAS 上搭了个自动追剧、追影的工作流，体验非常好。

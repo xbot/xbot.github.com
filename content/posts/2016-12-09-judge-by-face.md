@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "哪个时代都看脸"
+title: 哪个时代都看脸
 slug: judge by face
 date: 2016-12-09 21:39:00
 comments: true
-categories:
-- 青梅煮酒
 tags:
 - 随笔
 - 历史
 - 读书
+- 青梅煮酒
 ---
 
 ![2020-06-19-16-16-10-20161021001](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2020-06-19-16-16-10-20161021001.png)

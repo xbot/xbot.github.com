@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "简化Vim Addons Manager安装扩展的操作"
+title: 简化Vim Addons Manager安装扩展的操作
 slug: simplify vim addon installation issues
 date: 2016-01-20 18:05:00
 comments: true
-categories:
-- 计算机
 tags:
 - vim
 - 编程
+- 计算机
 ---
 
 相对Sublime的Package Control，VAM安装和卸载扩展的操作很烦琐。以下脚本在安装完扩展后自动注册，无须手工添加到vimrc，另外增加命令:UninstallAddons，从注册表中删除扩展。

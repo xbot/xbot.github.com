@@ -1,16 +1,15 @@
 ---
 layout: post
-title: "Project Euler Problem 16 Solved"
+title: Project Euler Problem 16 Solved
 slug: project euler 16
 date: 2014-04-08 21:57:00
 comments: true
-categories:
-- 计算机
 tags:
 - golang
 - python
 - 欧拉工程
 - 编程
+- 计算机
 ---
 
 Power digit sum

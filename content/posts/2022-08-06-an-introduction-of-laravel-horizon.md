@@ -1,13 +1,12 @@
 ---
-title: "Laravel Horizon 简介"
-slug: "an Introduction of Laravel Horizon"
-date: 2022-08-06T20:22:36+08:00
-categories:
-- 计算机
+title: Laravel Horizon 简介
+slug: an Introduction of Laravel Horizon
+date: 2022-08-06 20:22:36+08:00
 tags:
 - 编程
 - Laravel
 - PHP
+- 计算机
 ---
 
 ## 简介

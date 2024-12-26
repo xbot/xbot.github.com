@@ -1,13 +1,12 @@
 ---
-title: "用 zsh-autoenv 实现目录级别的 zshrc"
-slug: "Implement Directory Specific Zshrc With Zsh Autoenv"
-date: 2021-08-19T23:34:25+08:00
-categories:
-- 计算机
+title: 用 zsh-autoenv 实现目录级别的 zshrc
+slug: Implement Directory Specific Zshrc With Zsh Autoenv
+date: 2021-08-19 23:34:25+08:00
 tags:
 - zsh
 - 工具
 - 软件
+- 计算机
 ---
 
 [zsh-autoenv](https://github.com/Tarrasch/zsh-autoenv) 可以实现当进入特定的目录时加载特定的 zshrc 文件，并当切换到其它目录时取消其中的变更。后者在当前的版本下，对环境变量、命令别名和函数有效。

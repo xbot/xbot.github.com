@@ -1,11 +1,11 @@
 ---
-title: "通过 Karabiner-Elements 实现用 Esc 键关闭 Twitter App 的窗口"
-slug: "Using Karabiner Elements to Close Twitter App Windows with the Esc Key"
-date: 2023-08-25T16:27:15+08:00
-categories: ["计算机"]
+title: 通过 Karabiner-Elements 实现用 Esc 键关闭 Twitter App 的窗口
+slug: Using Karabiner Elements to Close Twitter App Windows with the Esc Key
+date: 2023-08-25 16:27:15+08:00
 tags:
 - karabiner-elements
 - mac
+- 计算机
 toc: false
 ---
 

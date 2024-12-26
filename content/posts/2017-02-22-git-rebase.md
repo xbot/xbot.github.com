@@ -2,11 +2,10 @@
 title: Git的衍合
 slug: git rebase
 date: 2017-02-22 18:44:37
-categories:
-- 计算机
 tags:
 - git
 - 笔记
+- 计算机
 ---
 
 合并分支有两种方式，merge和rebase。merge是根据三方合并的差异，创建一个新的提交。rebase是将上游分支的各个提交在比较差异后在下游分支上重演一遍。

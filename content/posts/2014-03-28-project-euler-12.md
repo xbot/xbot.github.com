@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "Project Euler Problem 12 Solved"
+title: Project Euler Problem 12 Solved
 slug: project euler 12
 date: 2014-03-28 22:51:00
 comments: true
-categories:
-- 计算机
 tags:
 - golang
 - 欧拉工程
 - 编程
+- 计算机
 ---
 
 Highly divisible triangular number

@@ -2,13 +2,12 @@
 title: PHPUnit代码覆盖率的统计方法
 slug: how to count code coverage of phpunit
 date: 2017-04-30 14:20:41
-categories:
-- 计算机
 tags:
 - 编程
 - 单元测试
 - php
 - phpunit
+- 计算机
 ---
 
 关于PHPUnit代码覆盖率的很多概念，官方文档中讲的十分清楚，本文仅就部分语焉不详的细节做些补充。

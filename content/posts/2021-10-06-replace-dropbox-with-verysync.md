@@ -1,14 +1,13 @@
 ---
-title: "用微力同步换掉了 Dropbox"
+title: 用微力同步换掉了 Dropbox
 slug: Replace Dropbox with VerySync
-date: 2021-10-06T01:24:41+08:00
-categories:
-- 计算机
+date: 2021-10-06 01:24:41+08:00
 tags:
 - Dropbox
 - 微力同步
 - NAS
 - 最佳实践
+- 计算机
 ---
 
 我希望找到一种体验较好的方式，把两部手机和索尼黑卡上的照片集中同步到 NAS 上交由 PhotoPrism 托管。

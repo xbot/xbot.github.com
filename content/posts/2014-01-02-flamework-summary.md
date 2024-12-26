@@ -1,16 +1,15 @@
 ---
 layout: post
-title: "PHP框架实战（∝）：烈焰之终章"
+title: PHP框架实战（∝）：烈焰之终章
 slug: flamework summary
 date: 2014-01-02 15:15:00
 comments: true
-categories:
-- 计算机
 tags:
 - PHP
 - Flamework
 - 框架
 - 编程
+- 计算机
 ---
 
 写“烈焰”（Flame）用了一周的业余时间，主要是对平时一些想法的总结和验证。实现了比较完整的控制器层和视图层，对模型层的ActiveRecord实现思路做了一下梳理。

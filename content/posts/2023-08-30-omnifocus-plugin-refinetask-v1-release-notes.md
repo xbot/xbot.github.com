@@ -1,11 +1,11 @@
 ---
-title: "OmniFocus 插件 refine-task v1.0 小记"
-slug: "OmniFocus Plugin refine-task v1 release notes"
-date: 2023-08-30T22:05:59+08:00
-categories: ["青梅煮酒"]
+title: OmniFocus 插件 refine-task v1.0 小记
+slug: OmniFocus Plugin refine-task v1 release notes
+date: 2023-08-30 22:05:59+08:00
 tags:
 - omnifocus
 - 效率工具
+- 青梅煮酒
 toc: false
 ---
 

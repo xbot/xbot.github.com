@@ -2,13 +2,12 @@
 title: 解决Laravel中makeWith()无法取到被mock的实例的问题
 slug: mocking objects made by laravel container with parameters
 date: 2019-08-16 10:55:40
-categories:
-- 计算机
 tags:
 - 编程
 - 单元测试
 - php
 - Laravel/Lumen
+- 计算机
 ---
 
 被测单元有一行实例化一个类的代码，而且该类的构造方法需要参数。基于面向单元测试编程的原则，通过容器的makeWith()方法实现：

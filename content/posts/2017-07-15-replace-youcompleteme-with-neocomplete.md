@@ -2,11 +2,10 @@
 title: 用neocomplete换掉了YouCompleteMe
 slug: replace youcompleteme with neocomplete
 date: 2017-07-15 10:29:48
-categories:
-- 计算机
 tags:
 - vim
 - 最佳实践
+- 计算机
 ---
 
 在尝试了多种方案后，我又一次换掉了自动补全插件。

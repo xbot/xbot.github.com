@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "接管PHP致命错误的方法"
+title: 接管PHP致命错误的方法
 slug: how to take over php fatal error handling
 date: 2014-11-12 00:47:00
 comments: true
-categories:
-- 计算机
 tags:
 - 编程
 - PHP
+- 计算机
 ---
 
 Yii 2.0引入了一项新特性，可以接管PHP的致命错误。在此之前，如果PHP源码有语法错误，框架本身是不会处理的。

@@ -2,11 +2,10 @@
 title: 用SwitchHosts!切换主机映射方案
 slug: switch hosts with switchhosts
 date: 2017-06-11 09:57:54
-categories:
-- 计算机
 tags:
 - 最佳实践
 - 工具
+- 计算机
 ---
 
 最近在Archlinux上开始用SwitchHosts!管理主机映射方案，它可能是Linux下做这件事的最好的工具了。

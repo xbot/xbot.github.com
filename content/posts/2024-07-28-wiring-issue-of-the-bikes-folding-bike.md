@@ -1,11 +1,10 @@
 ---
 title: 佰客城市版国布的走线问题
 slug: wiring issue of the bike's folding bike
-date: 2024-07-28T19:42:29+08:00
-categories:
-  - 青梅煮酒
+date: 2024-07-28 19:42:29+08:00
 tags:
-  - 折叠车
+- 折叠车
+- 青梅煮酒
 toc: false
 draft: false
 ---

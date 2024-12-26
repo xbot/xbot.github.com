@@ -7,7 +7,6 @@ tags:
 - Hexo
 - 博客
 - 随笔
-categories:
 - 青梅煮酒
 ---
 

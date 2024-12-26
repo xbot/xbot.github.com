@@ -3,11 +3,10 @@ layout: post
 title: Root了Desire并刷了Oxygen
 slug: rooted desire and flashed oxygen
 date: 2010-12-19 00:00:00
-categories:
-- 青梅煮酒
 tags:
 - Android
 - 主题
+- 青梅煮酒
 status: publish
 comments: true
 ---

@@ -1,12 +1,11 @@
 ---
 title: 我的 iGPSPORT iGS630S 体验：告别手机与手表，拥抱专业骑行伴侣
 slug: Hands on iGPSPORT iGS630S
-date: 2024-02-22T20:51:59+08:00
-categories:
-  - 青梅煮酒
+date: 2024-02-22 20:51:59+08:00
 tags:
-  - 骑行
-  - 码表
+- 骑行
+- 码表
+- 青梅煮酒
 toc: false
 draft: false
 ---

@@ -1,11 +1,10 @@
 ---
 title: 希捷 Basic 简系列和东芝新小黑 A3 的简单对比
 slug: Seagate Basic vs Toshiba A3
-date: 2022-01-10T22:15:16+08:00
-categories:
-  - 青梅煮酒
+date: 2022-01-10 22:15:16+08:00
 tags:
-  - 移动硬盘
+- 移动硬盘
+- 青梅煮酒
 ---
 
 [把个人数据收集到 NAS](/posts/my-first-nas/) 之后，我开始着手实现 NAS 的异地备份，以补足数据安全的最后一环。

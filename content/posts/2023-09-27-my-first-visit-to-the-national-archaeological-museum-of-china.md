@@ -1,11 +1,10 @@
 ---
 title: 首刷中国考古博物馆
 slug: My First Visit to the National Archaeological Museum of China
-date: 2023-09-27T23:26:55+08:00
-categories:
-  - 行见
+date: 2023-09-27 23:26:55+08:00
 tags:
-  - 博物馆
+- 博物馆
+- 行见
 toc: false
 draft: false
 ---

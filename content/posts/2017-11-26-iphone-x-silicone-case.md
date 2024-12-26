@@ -2,11 +2,10 @@
 title: iPhone X官方硅胶保护壳使用感受
 slug: iphone x silicone case
 date: 2017-11-26 12:50:13
-categories:
-  - 青梅煮酒
 tags:
-  - iphone
-  - 手机
+- iphone
+- 手机
+- 青梅煮酒
 ---
 我相信所有注重体验的人都不愿意用保护壳，我也一样，所以用iPhone 6的两年多里绝大部分时间也都是裸奔。
 

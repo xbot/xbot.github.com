@@ -1,13 +1,12 @@
 ---
 layout: post
-title: "二骑白羊沟"
+title: 二骑白羊沟
 slug: 2nd ride to white goat valley
 date: 2014-03-29 20:16:00
 comments: true
-categories:
-- 行见
 tags:
 - 骑行
+- 行见
 ---
 
 桃花、迎春花开得很好，但没有秋天长满路边的花有气氛。早上去得晚了，阳坊镇的小笼包收摊了……

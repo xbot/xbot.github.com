@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "使用存取控制表在Linux用户间共享文件"
+title: 使用存取控制表在Linux用户间共享文件
 slug: share file using access control lists
 date: 2014-03-19 22:38:00
 comments: true
-categories:
-- 计算机
 tags:
 - Linux
 - CLI
+- 计算机
 ---
 
 我用Dropbox在两台电脑间同步个人维基数据，将数据目录从Web Server下软连接到Dropbox里，而对Dropbox目录的备份实际上只包含那个软连接，没有内容，结果当把备份拷贝到另一台电脑上并打开Dropbox后，维基数据被清空了！我积累多年的笔记差一点儿完蛋，幸亏单独备份过维基。然后改将维基数据放到Dropbox里，然后软连接到Web Server下，新问题出现了，Web Server是以http身份运行的，对用户主目录没有权限，当然也不能访问主目录下的Dropbox目录。

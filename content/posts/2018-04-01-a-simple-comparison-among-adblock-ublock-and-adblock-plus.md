@@ -2,11 +2,10 @@
 title: 广告过滤工具AdBlock、Adblock Plus和uBlock的简单对比
 slug: a simple comparison among adblock ublock and adblock plus
 date: 2018-04-01 22:47:47
-categories:
-- 计算机
 tags:
 - 最佳实践
 - 软件
+- 计算机
 ---
 Adblock Plus作者的那篇博客可能会影响很多人。我并不关心那些情怀的东西，只看疗效。
 

@@ -1,13 +1,13 @@
 ---
-title: "Leaderf-phpnamespace: Yet another PHP namespace resolver"
-slug: "Leaderf-phpnamespace: Yet another PHP namespace resolver"
-date: 2022-09-25T22:33:13+08:00
-categories: ["计算机"]
+title: 'Leaderf-phpnamespace: Yet another PHP namespace resolver'
+slug: 'Leaderf-phpnamespace: Yet another PHP namespace resolver'
+date: 2022-09-25 22:33:13+08:00
 tags:
 - Vim
 - LeaderF
 - plugin
 - 编程
+- 计算机
 toc: false
 ---
 

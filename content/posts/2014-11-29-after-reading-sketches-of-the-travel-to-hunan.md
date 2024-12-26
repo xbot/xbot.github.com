@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "读完《湘行散记》"
+title: 读完《湘行散记》
 slug: after reading sketches of the travel to hunan
 date: 2014-11-29 20:17:00
 comments: true
-categories:
-- 青梅煮酒
 tags:
 - 读书
 - 散文
+- 青梅煮酒
 ---
 
 ![](http://pic.yupoo.com/leninlee/EfaDoeOo/medium.jpg)

@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "夜爬百望山"
+title: 夜爬百望山
 slug: nightly climbing baiwang mountain
 date: 2013-05-15 22:51:00
 comments: true
-categories:
-- 行见
 tags:
 - 旅行
 - 山
+- 行见
 ---
 今晚参加了绿野夜爬百望山的活动。主要为了认一下路，以前逃票都是从公路旁栅栏的缺口钻进去的，后来封了就没再去。
 

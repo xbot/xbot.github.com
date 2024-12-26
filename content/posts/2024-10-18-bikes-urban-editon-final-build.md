@@ -1,13 +1,12 @@
 ---
 title: 做完这些事，佰客思城市版国布就可以毕业了
 slug: bikes urban editon final build
-date: 2024-10-18T00:08:40+08:00
-categories:
-  - 青梅煮酒
+date: 2024-10-18 00:08:40+08:00
 tags:
-  - 折叠车
-  - 骑行
-  - 骑行装备
+- 折叠车
+- 骑行
+- 骑行装备
+- 青梅煮酒
 toc: false
 draft: false
 ---

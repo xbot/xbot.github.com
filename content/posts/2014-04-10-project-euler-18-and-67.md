@@ -1,16 +1,15 @@
 ---
 layout: post
-title: "Project Euler Problem 18&67 Solved"
+title: Project Euler Problem 18&67 Solved
 slug: project euler 18 and 67
 date: 2014-04-10 21:28:00
 comments: true
-categories:
-- 计算机
 tags:
 - golang
 - python
 - 欧拉工程
 - 编程
+- 计算机
 ---
 
 Maximum path sum I

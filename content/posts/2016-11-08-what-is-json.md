@@ -1,13 +1,12 @@
 ---
 layout: post
-title: "JSON是对象还是字符串？"
+title: JSON是对象还是字符串？
 slug: what is json
 date: 2016-11-08 10:46:00
 comments: true
-categories:
-- 计算机
 tags:
 - 笔记
+- 计算机
 ---
 
 前两天，一个前端跟我争论说JSON是对象。我在接口文档里的数据格式写的是JSON，结果对方真就传了个对象过来。

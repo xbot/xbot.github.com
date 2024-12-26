@@ -1,16 +1,15 @@
 ---
 layout: post
-title: "PHP框架实战：Flamework"
+title: PHP框架实战：Flamework
 slug: flamework
 date: 2013-12-26 20:24:00
 comments: true
-categories:
-- 计算机
 tags:
 - PHP
 - Flamework
 - 框架
 - 编程
+- 计算机
 ---
 
 从今天开始，逐步实现一个PHP的MVC框架，以践行平时对这方面的一些想法。

@@ -1,11 +1,11 @@
 ---
-title: "PictureView: 极简而好用的 macOS 看图 App"
-slug: "pictureview simple easy-to-use macos image viewer app"
-date: 2023-08-25T11:01:42+08:00
-categories: ["青梅煮酒"]
+title: 'PictureView: 极简而好用的 macOS 看图 App'
+slug: pictureview simple easy-to-use macos image viewer app
+date: 2023-08-25 11:01:42+08:00
 tags:
 - mac
 - 看图工具
+- 青梅煮酒
 toc: false
 ---
 

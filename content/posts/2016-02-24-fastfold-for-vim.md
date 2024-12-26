@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "FastFold：Vim折叠功能的救赎"
+title: FastFold：Vim折叠功能的救赎
 slug: fastfold for vim
 date: 2016-02-24 11:06:00
 comments: true
-categories:
-- 计算机
 tags:
 - vim
 - 插件
+- 计算机
 ---
 
 设置Vim的折叠规则为syntax存在两个问题。一是如果源码中有大量折叠区域，在插入模式中输入会变得很卡。二是刚输入一个折叠区域的起始符号，后面所有的折叠都会被打开。

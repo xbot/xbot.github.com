@@ -1,13 +1,12 @@
 ---
 title: 从 Inoreader 到 Miniflux：寻找理想的 RSS 阅读器之旅
 slug: replacing inoreader with miniflux
-date: 2024-02-13T21:51:59+08:00
-categories:
-  - 青梅煮酒
+date: 2024-02-13 21:51:59+08:00
 tags:
-  - RSS
-  - Inoreader
-  - Miniflux
+- RSS
+- Inoreader
+- Miniflux
+- 青梅煮酒
 toc: false
 draft: false
 ---

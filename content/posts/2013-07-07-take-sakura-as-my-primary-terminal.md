@@ -1,11 +1,9 @@
 ---
 layout: post
-title: "Take Sakura as My Primary Terminal"
+title: Take Sakura as My Primary Terminal
 slug: take sakura as my primary terminal
 date: 2013-07-07 12:07:00
 comments: true
-categories:
-- 计算机
 tags:
 - Linux
 - 终端
@@ -13,6 +11,7 @@ tags:
 - rxvt
 - powerline
 - zsh
+- 计算机
 ---
 It's a long time since I came across rxvt-unicode. 
 

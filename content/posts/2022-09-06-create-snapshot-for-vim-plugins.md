@@ -1,10 +1,10 @@
 ---
-title: "给 Vim 插件做快照"
-slug: "Create snapshot for vim plugins"
-date: 2022-09-06T23:28:26+08:00
-categories: ["计算机"]
+title: 给 Vim 插件做快照
+slug: Create snapshot for vim plugins
+date: 2022-09-06 23:28:26+08:00
 tags:
 - Vim
+- 计算机
 toc: false
 ---
 

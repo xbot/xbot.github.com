@@ -1,12 +1,11 @@
 ---
-title: '用ALE替换了Syntastic'
+title: 用ALE替换了Syntastic
 slug: replace syntastic with ale
 date: 2018-12-12 20:42:10
-categories:
-- 计算机
 tags:
 - vim
 - 最佳实践
+- 计算机
 ---
 习惯频繁地保存源码，但是每次保存都有明显的卡顿，于是用Vim自己的调优功能跟踪了一下。
 

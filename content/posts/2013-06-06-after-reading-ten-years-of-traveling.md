@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "读完《背包十年》"
+title: 读完《背包十年》
 slug: after reading ten years of traveling
 date: 2013-06-06 22:12:00
 comments: true
-categories:
-- 青梅煮酒
 tags:
 - 读书
 - 旅行
+- 青梅煮酒
 ---
 年龄越大，越有种对失去自由的恐惧。“老牛自知夕阳晚，不用扬鞭自奋蹄”，于是越来越想走得远点儿，然后就看到了这本书。这是我第一次正经买电子书，花了3￥，用了五天的时间。
 

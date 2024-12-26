@@ -1,12 +1,11 @@
 ---
 title: 墨案 Air 的使用感受
 slug: Hands on Moaan Air
-date: 2023-09-12T22:59:11+08:00
-categories:
-  - 青梅煮酒
+date: 2023-09-12 22:59:11+08:00
 tags:
-  - 电子书阅读器
-  - 微信读书
+- 电子书阅读器
+- 微信读书
+- 青梅煮酒
 toc: false
 draft: false
 ---

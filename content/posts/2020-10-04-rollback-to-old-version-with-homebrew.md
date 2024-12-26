@@ -1,12 +1,10 @@
 ---
-title: "使用 Homebrew 安装旧版程序"
+title: 使用 Homebrew 安装旧版程序
 slug: Rollback To Old Version With Homebrew
-date: 2020-10-04T18:21:04+08:00
-categories:
-- 计算机
+date: 2020-10-04 18:21:04+08:00
 tags:
 - Mac
-
+- 计算机
 ---
 
 前几天发现因为 Hugo 的不兼容更新导致我在用的主题在部署时报错，所以打算装回旧版。但是网上找到的 Homebrew 回滚方法已过时，新的方法更简单，但找到具体说明也费了点功夫。

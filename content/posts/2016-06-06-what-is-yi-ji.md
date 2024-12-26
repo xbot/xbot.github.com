@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "「食其」是什么？"
+title: 「食其」是什么？
 slug: what is yi ji
 date: 2016-06-06 16:48:00
 comments: true
-categories:
-- 青梅煮酒
 tags:
 - 读书
 - 历史
 - 公众号
+- 青梅煮酒
 ---
 
 ![2020-06-19-16-07-23-20160606001](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2020-06-19-16-07-23-20160606001.jpg)

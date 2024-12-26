@@ -2,11 +2,10 @@
 title: 给Thinkpad X220装了黑苹果
 slug: installed hackintosh in thinkpad x220
 date: 2017-07-29 17:44:16
-categories:
-- 计算机
 tags:
 - mac
 - apple
+- 计算机
 ---
 
 闲鱼上突然收到询价消息，于是突发奇想，在闲置很久的X220上装个黑苹果玩玩。

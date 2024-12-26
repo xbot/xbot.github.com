@@ -2,11 +2,10 @@
 title: Cross-site Request Forgery简介
 slug: introduction of cross site request forgery
 date: 2017-04-23 20:55:58
-categories:
-- 计算机
 tags:
 - 笔记
 - 编程
+- 计算机
 ---
 
 ## 什么是CSRF

@@ -1,10 +1,9 @@
 ---
 title: Git工作流调研报告
 slug: investigation report of git flows
-categories:
-- 计算机
 tags:
-  - git
+- git
+- 计算机
 date: 2019-05-15 16:14:17
 ---
 

@@ -3,11 +3,10 @@ layout: post
 title: Vim的终极自动补全插件：NeoComplCache
 slug: neocomplcache vim
 date: 2010-02-27 00:00:00
-categories:
-- 计算机
 tags:
 - Vim
 - 配置
+- 计算机
 status: publish
 comments: true
 ---

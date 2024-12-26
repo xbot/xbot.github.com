@@ -2,10 +2,9 @@
 title: 过度优化和过度设计
 slug: talk about excessive design
 date: 2017-10-22 21:38:08
-categories:
-- 青梅煮酒
 tags:
 - 随笔
+- 青梅煮酒
 ---
 我见过两种程序员，一种是想做事的，一种是混饭吃的。
 

@@ -1,17 +1,16 @@
 ---
 layout: post
-title: "自驾鸡鸣驿、草沿天路（201507）"
+title: 自驾鸡鸣驿、草沿天路（201507）
 slug: a drive to jimingyi and caoyantianlu
 date: 2015-08-12 21:05:00
 comments: true
-categories:
-- 行见
 tags:
 - 旅行
 - 自驾
 - 古墓
 - 草原
 - 古城
+- 行见
 ---
 
 ## 行程

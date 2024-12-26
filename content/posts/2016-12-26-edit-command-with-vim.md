@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "小确幸，用Vim编辑当前命令行"
+title: 小确幸，用Vim编辑当前命令行
 slug: edit command with vim
 date: 2016-12-26 11:58:00
 comments: true
-categories:
-- 计算机
 tags:
 - linux
 - cli
 - mac
+- 计算机
 ---
 
 修改很长的命令是件痛苦的事，在Linux下，可以通过快捷键`Ctrl+X Ctrl+E`调用`$EDITOR`快速编辑当前命令行的内容，保存退出后，结果会呈现在光标下。

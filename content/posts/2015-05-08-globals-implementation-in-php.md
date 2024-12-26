@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "PHP全局变量的实现和操作"
+title: PHP全局变量的实现和操作
 slug: globals implementation in php
 date: 2015-05-08 17:23:00
 comments: true
-categories:
-- 计算机
 tags:
 - PHP
 - 源码
+- 计算机
 ---
 
 ## 扩展内部的全局变量

@@ -2,10 +2,6 @@
 title: "博主本紀"
 date: 2013-05-12 20:46:00
 ---
-<span style="display:none">
-http://pic.yupoo.com/leninlee/CRoI5EyI/small.jpg
-</span>
-
 博主者，故陳國人也，起於閭左，姓名不可考。
 
 少有痴名，喜讀書，涉獵頗雜，不求甚解。弱冠之年，游學淮左，無所成。及長，愈癲痴無知、憊懶無賴。時有西域番國進貢算籌之機，以雷公電母之力驅使，天朝善之，百業咸用，遂渾跡帝都，以操機佐餌。幸天資未泯，頗悉C、PHP、Java、Javascript、Python、Lua、Bash等西域奇技淫巧，尤善Linux、Vim等奇門遁甲之術。以文明之興，皆由主義，遂奉李查德·斯托曼及李納斯·托瓦茲為二聖，厲行KISS、DRY諸原則。

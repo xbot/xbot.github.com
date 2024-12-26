@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "FZF: 又一个文件模糊查询工具"
+title: 'FZF: 又一个文件模糊查询工具'
 slug: fzf yet another fuzzy finder
 date: 2016-02-01 11:42:00
 comments: true
-categories:
-- 计算机
 tags:
 - vim
 - 插件
+- 计算机
 ---
 
 [fzf](https://github.com/junegunn/fzf)是个独立的命令行工具，索引速度很快，可以通过[fzf-vim](https://github.com/junegunn/fzf.vim)配合使用。

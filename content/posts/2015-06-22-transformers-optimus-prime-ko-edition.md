@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "变形金刚：KO电镀嘴炮OP"
+title: 变形金刚：KO电镀嘴炮OP
 slug: transformers optimus prime ko edition
 date: 2015-06-22 20:35:00
 comments: true
-categories:
-- 青梅煮酒
 tags:
 - 变形金刚
 - 玩具
+- 青梅煮酒
 ---
 
 嘴炮OP这个模具应该是电影系列十年来最好的模具，经典到一再复刻和改模，和原色双刀、DA28一起都属同模或改模版本。相比之下，这款模具在涂装上胜过同模其它版本，电镀件和银柒使人形、车形在色彩上对比鲜明，和银色飞翼搭配很自然。

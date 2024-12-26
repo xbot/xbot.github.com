@@ -2,11 +2,10 @@
 title: 一碗酸汤面
 slug: noodles in acid soup
 date: 2017-03-19 18:12:36
-categories:
-- 行见
 tags:
 - 私房菜
 - 生活
+- 行见
 ---
 
 ![](https://ww4.sinaimg.cn/large/006tNc79ly1fdsballmi5j30sg0sgdnh.jpg)

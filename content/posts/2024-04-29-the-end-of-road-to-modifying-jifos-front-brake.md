@@ -1,12 +1,11 @@
 ---
 title: Jifo 前刹的改造之路：好事多磨
 slug: the end of road to modifying jifo's front brake
-date: 2024-04-29T21:33:01+08:00
-categories:
-  - 青梅煮酒
+date: 2024-04-29 21:33:01+08:00
 tags:
-  - 折叠车
-  - 大行Jifo
+- 折叠车
+- 大行Jifo
+- 青梅煮酒
 toc: false
 draft: false
 ---

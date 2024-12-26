@@ -2,13 +2,12 @@
 title: 用vim-test简化单元测试的编写
 slug: make writing unit tests easier with vim test
 date: 2017-08-14 16:43:59
-categories:
-- 计算机
 tags:
 - 最佳实践
 - 编程
 - 单元测试
 - vim
+- 计算机
 ---
 vim-test允许在Vim中直接执行一个或多个单元测试，并使用预设的或自定义的执行策略。
 

@@ -1,13 +1,12 @@
 ---
 title: 记第一次补胎
 slug: my first tire repair
-date: 2024-10-14T23:11:33+08:00
-categories:
-  - 青梅煮酒
+date: 2024-10-14 23:11:33+08:00
 tags:
-  - 折叠车
-  - 骑行
-  - 随笔
+- 折叠车
+- 骑行
+- 随笔
+- 青梅煮酒
 toc: false
 draft: false
 ---

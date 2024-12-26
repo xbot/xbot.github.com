@@ -2,10 +2,9 @@
 title: 为每个GTK3应用指定单独的主题
 slug: specify a theme for each gtk 3 app
 date: 2017-06-27 15:37:43
-categories:
-- 计算机
 tags:
 - 桌面环境
+- 计算机
 ---
 
 指定GVim 8使用Numix主题并最小程度影响既有的脚本、快捷键。

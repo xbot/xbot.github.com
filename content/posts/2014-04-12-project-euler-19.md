@@ -1,16 +1,15 @@
 ---
 layout: post
-title: "Project Euler Problem 19 Solved"
+title: Project Euler Problem 19 Solved
 slug: project euler 19
 date: 2014-04-12 21:21:00
 comments: true
-categories:
-- 计算机
 tags:
 - golang
 - python
 - 欧拉工程
 - 编程
+- 计算机
 ---
 
 Counting Sundays

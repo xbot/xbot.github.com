@@ -1,12 +1,11 @@
 ---
 title: 翰林阅 Read6 Pro 的使用感受
 slug: Hands on HanLinYue Read6 Pro
-date: 2023-08-12T15:29:09+08:00
-categories:
-  - 青梅煮酒
+date: 2023-08-12 15:29:09+08:00
 tags:
-  - 电子书阅读器
-  - 微信读书
+- 电子书阅读器
+- 微信读书
+- 青梅煮酒
 toc: false
 ---
 

@@ -1,12 +1,11 @@
 ---
 title: 突然成了 Up 主
 slug: Suddenly Became a Youtuber
-date: 2024-08-15T15:46:29+08:00
-categories:
-  - 青梅煮酒
+date: 2024-08-15 15:46:29+08:00
 tags:
-  - Calibre
-  - YouTuber
+- Calibre
+- YouTuber
+- 青梅煮酒
 toc: false
 draft: false
 ---

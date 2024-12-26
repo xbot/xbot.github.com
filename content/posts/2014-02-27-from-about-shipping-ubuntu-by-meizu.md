@@ -5,13 +5,12 @@ title: 为什么魅族押宝Ubuntu Touch
 slug: from about shipping ubuntu by meizu
 date: 2014-02-27 20:59:00
 comments: true
-categories:
-  - 青梅煮酒
 tags:
-  - 魅族
-  - Ubuntu
-  - 移动互联网
-  - 手机
+- 魅族
+- Ubuntu
+- 移动互联网
+- 手机
+- 青梅煮酒
 ---
 
 虽然和MIUI相比，在功能的丰富细致程度上远逊，Flyme在很多人性化方面还是有自己的独到之处，而且在UI上，Flyme 3的扁平化设计比MIUI V5更有国际范儿。大体上说，Flyme和MIUI同属国内一流的安卓衍生版，各有千秋。既然安卓已经做得这么好了，为什么还要红杏出墙？何况不管是安卓还是Ubuntu Touch，都不是魅族自己的东西。

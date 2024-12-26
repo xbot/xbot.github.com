@@ -1,13 +1,12 @@
 ---
 title: 基于Laravel的项目的单元测试规范
 slug: unit testing standard for laravel based projects
-categories:
-- 计算机
 tags:
-  - 编程
-  - 单元测试
-  - php
-  - Laravel/Lumen
+- 编程
+- 单元测试
+- php
+- Laravel/Lumen
+- 计算机
 date: 2019-03-24 22:42:08
 ---
 

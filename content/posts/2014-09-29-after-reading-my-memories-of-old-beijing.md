@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "读完《城南旧事》"
+title: 读完《城南旧事》
 slug: after reading my memories of old beijing
 date: 2014-10-26 09:40:00
 comments: true
-categories:
-- 青梅煮酒
 tags:
 - 读书
 - 小说
+- 青梅煮酒
 ---
 
 ![](http://pic.yupoo.com/leninlee/E9VO58ag/medish.jpg)

@@ -1,16 +1,15 @@
 ---
 layout: post
-title: "PHP框架实战（三）：实现Controller和Filter"
+title: PHP框架实战（三）：实现Controller和Filter
 slug: flamework controller and filter
 date: 2013-12-29 20:40:00
 comments: true
-categories:
-- 计算机
 tags:
 - PHP
 - Flamework
 - 框架
 - 编程
+- 计算机
 ---
 
 目标

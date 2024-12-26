@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "变形金刚：原大祖国合金版平头OP"
+title: 变形金刚：原大祖国合金版平头OP
 slug: transformers optimus prime
 date: 2015-05-09 21:26:00
 comments: true
-categories:
-- 青梅煮酒
 tags:
 - 变形金刚
 - 玩具
+- 青梅煮酒
 ---
 
 一开始我不太喜欢电影版变形金刚，因为太像人就缺少科技感，我至今都认为G1是不可逾越的经典。不过变4的这款V级平头OP确实是个经典的模具，一个好的变形金刚玩具应有标准几乎都符合。

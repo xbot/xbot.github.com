@@ -1,12 +1,11 @@
 ---
 title: Jifo 前刹的改造之路：彰星夹器的优缺点
 slug: The road to modifying Jifo’s front brake
-date: 2024-01-15T19:13:10+08:00
-categories:
-  - 青梅煮酒
+date: 2024-01-15 19:13:10+08:00
 tags:
-  - 大行Jifo
-  - 折叠车
+- 大行Jifo
+- 折叠车
+- 青梅煮酒
 toc: false
 draft: false
 ---

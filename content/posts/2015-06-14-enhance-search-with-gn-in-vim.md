@@ -1,13 +1,12 @@
 ---
 layout: post
-title: "使用gn操作增强Vim的搜索"
+title: 使用gn操作增强Vim的搜索
 slug: enhance search with gn in vim
 date: 2015-06-14 21:16:00
 comments: true
-categories:
-- 计算机
 tags:
 - Vim
+- 计算机
 ---
 
 gn是Vim 7.4新增的一个操作（motion），作用是跳到并选中下一个搜索匹配项。

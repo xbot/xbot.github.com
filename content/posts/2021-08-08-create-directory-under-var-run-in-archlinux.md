@@ -1,12 +1,10 @@
 ---
-title: "Archlinux 下在 /var/run 下创建目录的方法"
-date: 2021-08-08T23:30:18+08:00
-
+title: Archlinux 下在 /var/run 下创建目录的方法
+date: 2021-08-08 23:30:18+08:00
 slug: Create Directory Under /var/run In Archlinux
-categories:
-- 计算机
 tags:
 - Archlinux
+- 计算机
 ---
 
 Archlinux 使用 [systemd-tmpfiles](https://wiki.archlinux.org/title/systemd#systemd-tmpfiles_-_temporary_files) 管理 `/var/run` 下的临时目录。这意味着如果我手动创建 `/var/run/php` 目录，在系统重启后将不复存在。

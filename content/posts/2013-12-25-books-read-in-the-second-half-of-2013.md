@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "这半年读过的几本书"
+title: 这半年读过的几本书
 slug: books read in the second half of 2013
 date: 2013-12-25 23:10:00
 comments: true
-categories:
-- 青梅煮酒
 tags:
 - 读书
 - 随笔
+- 青梅煮酒
 ---
 微博一度使我更新博客的频率一降再降，现在我决定回归。已经写了七年，依然乐此不疲。
 

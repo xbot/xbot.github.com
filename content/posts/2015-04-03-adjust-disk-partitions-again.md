@@ -1,13 +1,12 @@
 ---
 layout: post
-title: "再次调整磁盘分区"
+title: 再次调整磁盘分区
 slug: adjust disk partitions again
 date: 2015-04-03 14:44:00
 comments: true
-categories:
-- 计算机
 tags:
 - linux
+- 计算机
 ---
 
 自从[上次](/post/adjust-disk-partitions-in-archlinux/)调整磁盘分区，一直把根目录和主目录分别挂在一个物理分区下，即使系统挂了或者换发行版也不影响主目录。最近根分区很紧张，干脆把两个分区合并了。

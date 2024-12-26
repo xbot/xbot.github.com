@@ -1,16 +1,15 @@
 ---
 layout: post
-title: "PHP框架实战（零）：代码规范"
+title: PHP框架实战（零）：代码规范
 slug: flamework code spec
 date: 2013-12-26 22:07:00
 comments: true
-categories:
-- 计算机
 tags:
 - PHP
 - Flamework
 - 框架
 - 编程
+- 计算机
 ---
 
 类C语言语法风格最大的问题就是用花括号区分代码块，这导致源码排版容易混乱，对于我这种有代码洁癖的人来说非常痛苦，所以我最喜欢的语法风格是Python的，用缩进区分代码块，排版不规范直接判处语法错误。

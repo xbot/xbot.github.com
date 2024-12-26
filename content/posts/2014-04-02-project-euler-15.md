@@ -1,16 +1,15 @@
 ---
 layout: post
-title: "Project Euler Problem 15 Solved"
+title: Project Euler Problem 15 Solved
 slug: project euler 15
 date: 2014-04-02 21:44:00
 comments: true
-categories:
-- 计算机
 tags:
 - golang
 - python
 - 欧拉工程
 - 编程
+- 计算机
 ---
 
 Lattice paths

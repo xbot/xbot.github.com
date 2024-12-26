@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "Dojo DnD: Cannot read property 'type' of undefined"
+title: 'Dojo DnD: Cannot read property ''type'' of undefined'
 slug: dojo dnd cannot read property type of undefined
 date: 2013-07-11 22:44:00
 comments: true
-categories:
-- 计算机
 tags:
 - Dojo
 - Javascript
 - 编程
+- 计算机
 ---
 场景如下：
 

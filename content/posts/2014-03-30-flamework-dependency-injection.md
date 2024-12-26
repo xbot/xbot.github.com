@@ -1,16 +1,15 @@
 ---
 layout: post
-title: "PHP框架实战（六）：依赖注入"
+title: PHP框架实战（六）：依赖注入
 slug: flamework dependency injection
 date: 2014-03-30 10:00:00
 comments: true
-categories:
-- 计算机
 tags:
 - PHP
 - Flamework
 - 框架
 - 编程
+- 计算机
 ---
 
 简述

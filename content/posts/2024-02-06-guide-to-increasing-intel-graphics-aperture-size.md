@@ -1,14 +1,13 @@
 ---
 title: 榨干 Intel 核显潜能，让更多虚拟机用上显卡
 slug: Guide to Increasing Intel Graphics Aperture Size
-date: 2024-02-06T12:30:40+08:00
-categories:
-  - 计算机
+date: 2024-02-06 12:30:40+08:00
 tags:
-  - PVE
-  - 虚拟技术
-  - homelab
-  - NAS
+- PVE
+- 虚拟技术
+- homelab
+- NAS
+- 计算机
 toc: false
 draft: false
 ---

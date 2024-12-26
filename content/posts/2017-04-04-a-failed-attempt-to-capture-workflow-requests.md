@@ -2,11 +2,10 @@
 title: 一次对Workflow不完全成功的抓包过程
 slug: a failed attempt to capture workflow requests
 date: 2017-04-04 20:19:52
-categories:
-- 计算机
 tags:
 - 网络
 - 笔记
+- 计算机
 ---
 
 一个workflow对https链接的请求总是失败，而同样的接口在postman里是成功的。所以想对比一下两个请求的差异。

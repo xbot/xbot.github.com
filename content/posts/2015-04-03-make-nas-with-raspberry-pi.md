@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "用树苺派搭NAS"
+title: 用树苺派搭NAS
 slug: make nas with raspberry pi
 date: 2015-04-03 15:13:00
 comments: true
-categories:
-- 计算机
 tags:
 - 树苺派
 - Geek
 - 智能家居
+- 计算机
 ---
 
 为了让盒子能直接播放[远程下载](/post/remote-downloading-with-raspberry-pi/)的电影，继续在树苺派上搭NAS。

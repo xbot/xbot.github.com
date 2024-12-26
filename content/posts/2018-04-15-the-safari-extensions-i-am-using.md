@@ -2,13 +2,12 @@
 title: 我在用的Safari扩展
 slug: the safari extensions i am using
 date: 2018-04-15 22:29:10
-categories:
-- 计算机
 tags:
 - 最佳实践
 - 工具
 - 软件
 - 浏览器
+- 计算机
 ---
 和Chrome相比，Safari更省电、需要更少的系统资源，而且Chrome还有一些莫名其妙的问题，比如在没有运行的时候，从Alfred执行搜索会启动两个窗口，一个是之前的会话，另一个是当前的搜索页面。并且，启用了一些扩展之后Safari的体验可以改进很多。所以平时用Safari更多一些。
 

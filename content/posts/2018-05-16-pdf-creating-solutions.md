@@ -2,11 +2,10 @@
 title: 生成PDF的方案调研
 slug: pdf creating solutions
 date: 2018-05-16 15:41:36
-categories:
-- 计算机
 tags:
 - 编程
 - PHP
+- 计算机
 ---
 ## 结论
 倾向于通过wkhtmltopdf+消息队列实现。

@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "寻找失落的匈奴（201409）"
+title: 寻找失落的匈奴（201409）
 slug: a trip to tongwan city
 date: 2015-08-20 23:07:00
 comments: true
-categories:
-- 行见
 tags:
 - 旅行
 - 古城
+- 行见
 ---
 
 ## 行程

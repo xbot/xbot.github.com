@@ -2,11 +2,10 @@
 title: 通过比较截图检查网页变化
 slug: check changes of webpage by comparing screenshots
 date: 2017-04-30 17:21:52
-categories:
-- 计算机
 tags:
 - 编程
 - 测试
+- 计算机
 ---
 
 有时候我们希望检查代码或数据的更新对网页产生的影响，如果能把这个过程集成到git等版本控制系统中，在提交成果的同时自动批量执行，将会极大地提高生产力。

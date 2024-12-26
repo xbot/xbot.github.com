@@ -2,11 +2,10 @@
 title: 自定义GVIM 8标签栏样式的方法
 slug: how to customize gvim8 tab style
 date: 2017-06-04 12:42:12
-categories:
-- 计算机
 tags:
 - vim
 - linux
+- 计算机
 ---
 
 GVim 8用的是GTK 3，原来在`~/.gtkrc-2.0`里加样式的方法不能用了。

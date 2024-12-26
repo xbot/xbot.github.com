@@ -1,11 +1,11 @@
 ---
-title: "OmniFocus 插件 checklist v2.0 小记"
-slug: "omnifocus plugin checklist v2.0 release notes"
-date: 2022-12-11T18:20:34+08:00
-categories: ["青梅煮酒"]
+title: OmniFocus 插件 checklist v2.0 小记
+slug: omnifocus plugin checklist v2.0 release notes
+date: 2022-12-11 18:20:34+08:00
 tags:
 - omnifocus
 - 效率工具
+- 青梅煮酒
 toc: false
 ---
 OmniFocus 是个非常强大的待办列表 App ，最大的特点之一是支持开发插件。如果你跟我一样有各种稀奇古怪的需求且其它待办 App 不能满足时，可以试试它，尽管很贵，但是很值。

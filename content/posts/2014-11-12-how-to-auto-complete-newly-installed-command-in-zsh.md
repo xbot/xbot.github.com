@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "ZSH下新安装的程序无法自动补全的解决方法"
+title: ZSH下新安装的程序无法自动补全的解决方法
 slug: how to auto complete newly installed command in zsh
 date: 2014-11-12 22:15:00
 comments: true
-categories:
-- 计算机
 tags:
 - zsh
 - linux
+- 计算机
 ---
 
 Zsh默认开启了对PATH变量的缓存，这是导致新安装的程序无法立即使用自动补全的原因。

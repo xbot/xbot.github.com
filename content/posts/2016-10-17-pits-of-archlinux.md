@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "Archlinux安装过程中的几个坑"
+title: Archlinux安装过程中的几个坑
 slug: pits of archlinux
 date: 2016-10-17 13:14:00
 comments: true
-categories:
-- 计算机
 tags:
 - Archlinux
 - Linux
 - 操作系统
+- 计算机
 ---
 
 ## 安装方案 ##

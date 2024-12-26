@@ -1,16 +1,15 @@
 ---
 layout: post
-title: "读过\"ZK: AJAX without the JavaScript Framework\""
+title: '读过"ZK: AJAX without the JavaScript Framework"'
 slug: after reading zk ajax without the javascript framework
 date: 2012-06-19 21:47:00
 comments: true
-categories:
-- 青梅煮酒
 tags:
 - 读书
 - Javascript
 - AJAX
 - 框架
+- 青梅煮酒
 ---
 前段时间，某天凌晨无故醒来，读完了这本书。
 

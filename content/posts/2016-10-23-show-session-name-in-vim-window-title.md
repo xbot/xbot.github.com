@@ -1,13 +1,12 @@
 ---
 layout: post
-title: "在Vim窗口标题中显示会话名"
+title: 在Vim窗口标题中显示会话名
 slug: show session name in vim window title
 date: 2016-10-23 11:52:00
 comments: true
-categories:
-- 计算机
 tags:
 - Vim
+- 计算机
 ---
 
 同时处理多个项目时，在窗口标题中显示会话名，方便区分，需用[session][1]管理会话。

@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "用 Dojo 实现拖放操作的最佳实践"
+title: 用 Dojo 实现拖放操作的最佳实践
 slug: practical drag and drop implementation with dojo
 date: 2013-11-05 16:58:00
 comments: true
-categories:
-- 计算机
 tags:
 - Dojo
 - Javascript
 - 编程
+- 计算机
 ---
 在研究 Dojo 实现拖放操作时，我花了很多时间处理一些细节问题，比如创建自定义样式的拖拽物件以及将光标放置在拖拽开始位置等。这些细节在实现个性化的拖放操作时非常重要，但是我几乎没有找到直接相关的资料可供参考。
 

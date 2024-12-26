@@ -1,11 +1,10 @@
 ---
 title: 给佰客城市版国布更换青春版货架
 slug: replacing the rack of bike's folding bike with the se version
-date: 2024-07-29T00:00:00+08:00
-categories:
-  - 青梅煮酒
+date: 2024-07-29 00:00:00+08:00
 tags:
-  - 折叠车
+- 折叠车
+- 青梅煮酒
 toc: false
 draft: false
 ---

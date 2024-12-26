@@ -3,10 +3,9 @@ layout: post
 title: 搭建自己的Twitter API
 slug: howto setup twitter api of your own
 date: 2010-10-01 00:00:00
-categories:
-- 计算机
 tags:
 - Twitter
+- 计算机
 ---
 <h2> 创建Twitter应用程序 </h2>
 

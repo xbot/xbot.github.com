@@ -1,11 +1,10 @@
 ---
 title: 8￥包邮的帆布包，实现了我对骑行收纳的所有想象
 slug: Experience on Several Bicycle Saddle Bags
-date: 2023-11-14T22:18:16+08:00
-categories:
-  - 青梅煮酒
+date: 2023-11-14 22:18:16+08:00
 tags:
-  - 骑行
+- 骑行
+- 青梅煮酒
 toc: false
 draft: false
 ---

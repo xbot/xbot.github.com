@@ -1,13 +1,12 @@
 ---
 title: Pixel 5 每月更新后重刷 Magisk 的步骤
 slug: Steps to Reflash Magisk After Pixel 5 Monthly Update
-date: 2022-06-25T17:22:57+08:00
-categories:
-  - 青梅煮酒
+date: 2022-06-25 17:22:57+08:00
 tags:
-  - Pixel
-  - Magisk
-  - Android
+- Pixel
+- Magisk
+- Android
+- 青梅煮酒
 ---
 
 1. 下载最新的 [Factory Image](https://developers.google.com/android/images#redfin) 。

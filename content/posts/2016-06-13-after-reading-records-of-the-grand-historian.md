@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "读完《史记》"
+title: 读完《史记》
 slug: after reading records of the grand historian
 date: 2016-06-13 15:52:00
 comments: true
-categories:
-- 青梅煮酒
 tags:
 - 读书
 - 历史
+- 青梅煮酒
 ---
 
 ![2020-06-19-16-14-59-20160613001](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2020-06-19-16-14-59-20160613001.jpg)

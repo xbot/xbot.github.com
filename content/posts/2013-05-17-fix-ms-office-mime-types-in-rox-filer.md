@@ -1,16 +1,15 @@
 ---
 layout: post
-title: "解决ROX-Filer文件类型识别问题"
+title: 解决ROX-Filer文件类型识别问题
 slug: fix ms office mime types in rox filer
 date: 2013-05-17 12:52:00
 comments: true
-categories:
-- 计算机
 tags:
 - Linux
 - ROX-Filer
 - Office
 - MIME
+- 计算机
 ---
 默认情况下，ROX-Filer会将“\*.docx”、“\*.xlsx”、“\*.pptx”文档识别为zip压缩包。由于ROX中与文件关联的行为实际上都是和文档类型挂钩的，所以对这些文档的操作会遇到很大麻烦，而且没有变通方法。
 

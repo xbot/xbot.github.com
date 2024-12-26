@@ -1,14 +1,13 @@
 ---
 title: Homelab 升级记：从 Unraid 到 Proxmox VE 的平滑过渡
 slug: A Smooth Transition From Unraid to PVE
-date: 2024-02-05T22:22:57+08:00
-categories:
-  - 青梅煮酒
+date: 2024-02-05 22:22:57+08:00
 tags:
-  - Unraid
-  - PVE
-  - homelab
-  - NAS
+- Unraid
+- PVE
+- homelab
+- NAS
+- 青梅煮酒
 toc: false
 draft: false
 ---

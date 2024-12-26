@@ -2,13 +2,12 @@
 title: 利用单元测试为开发提效
 slug: use unit test as an efficiency tool
 date: 2019-08-13 16:38:02
-categories:
-- 计算机
 tags:
 - 编程
 - 单元测试
 - php
 - Laravel/Lumen
+- 计算机
 ---
 
 单元测试可以方便地伪造和回滚测试数据，这个特性决定了它其实是一个效率工具。

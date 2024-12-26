@@ -1,17 +1,16 @@
 ---
 layout: post
-title: "Phalcon项目中PHPUnit的初始化"
+title: Phalcon项目中PHPUnit的初始化
 slug: testing with phpunit in phalcon
 date: 2014-11-29 09:58:00
 comments: true
-categories:
-- 计算机
 tags:
 - php
 - phalcon
 - phpunit
 - 编程
 - 单元测试
+- 计算机
 ---
 
 参考[官方文档](http://docs.phalconphp.com/zh/latest/reference/unit-testing.html)，稍作修改。

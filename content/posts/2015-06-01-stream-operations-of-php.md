@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "PHP流的操作"
+title: PHP流的操作
 slug: stream operations of php
 date: 2015-06-01 15:33:00
 comments: true
-categories:
-- 计算机
 tags:
 - PHP
 - 源码
+- 计算机
 ---
 
 ## 实现

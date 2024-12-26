@@ -1,14 +1,13 @@
 ---
 title: 给 Raycast 的 linkding 扩展加了点功能
 slug: Added some features to the linkding extension of Raycast
-date: 2024-12-09T22:11:03+08:00
-categories:
-  - 计算机
+date: 2024-12-09 22:11:03+08:00
 tags:
-  - Raycast
-  - linkding
-  - 书签管理
-  - 生产力工具
+- Raycast
+- linkding
+- 书签管理
+- 生产力工具
+- 计算机
 toc: false
 draft: false
 ---

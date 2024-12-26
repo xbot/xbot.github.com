@@ -1,14 +1,14 @@
 ---
-title: "保存 tweet 到 OmniFocus 的快捷指令"
-slug: "A shortcuts that saves tweets to OmniFocus"
-date: 2022-11-22T21:34:25+08:00
-categories: ["计算机"]
+title: 保存 tweet 到 OmniFocus 的快捷指令
+slug: A shortcuts that saves tweets to OmniFocus
+date: 2022-11-22 21:34:25+08:00
 tags:
 - 快捷指令
 - iPhone
 - 最佳实践
 - 效率工具
 - omnifocus
+- 计算机
 toc: false
 ---
 

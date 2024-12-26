@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "乐山大佛与十面普贤"
+title: 乐山大佛与十面普贤
 slug: tour to leshan and emei
 date: 2013-05-16 22:04:00
 comments: true
-categories:
-- 行见
 tags:
 - 旅行
 - 山
 - 佛
+- 行见
 ---
 12年8月，去乐山、峨嵋玩儿了两天。
 

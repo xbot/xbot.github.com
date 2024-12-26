@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "PHP数组的实现与操作"
+title: PHP数组的实现与操作
 slug: array implementation in php
 date: 2015-04-24 12:09:00
 comments: true
-categories:
-- 计算机
 tags:
 - PHP
 - 源码
+- 计算机
 ---
 
 ## 存储结构

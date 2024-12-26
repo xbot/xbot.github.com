@@ -1,12 +1,11 @@
 ---
-title: "PHPUnit 9.x 性能分析的方法"
+title: PHPUnit 9.x 性能分析的方法
 slug: Method for Phpunit 9.x Performance Analysis
-date: 2021-08-17T14:48:12+08:00
-categories:
-- 计算机
+date: 2021-08-17 14:48:12+08:00
 tags:
 - PHPUnit
 - 编程
+- 计算机
 ---
 
 利用 PHPUnit 9.x 的 extension 特性，可以记录每个测试用例的耗时并存储到 CSV 文件中。

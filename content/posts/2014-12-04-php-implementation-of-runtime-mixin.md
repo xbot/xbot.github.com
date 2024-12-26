@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "运行时可装卸的Mixin的PHP实现"
+title: 运行时可装卸的Mixin的PHP实现
 slug: php implementation of runtime mixin
 date: 2014-12-04 11:52:00
 comments: true
-categories:
-- 计算机
 tags:
 - 编程
 - php
+- 计算机
 ---
 
 PHP的Trait可以实现加载时（load time）的混入（mixin）。作为元编程的一部分，运行时（run time）的混入拥有更大的灵活性。下面利用PHP的魔术方法实现运行时的混入。

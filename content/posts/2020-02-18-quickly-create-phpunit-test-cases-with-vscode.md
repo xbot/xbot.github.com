@@ -2,14 +2,13 @@
 title: 在 VS Code 中快速创建 PHPUnit 测试类的方法
 slug: quickly create phpunit test cases with vscode
 date: 2020-02-18 22:49:45
-categories:
-- 计算机
 tags:
 - 最佳实践
 - 编程
 - 单元测试
 - phpunit
 - vscode
+- 计算机
 ---
 
 通过单元测试解决问题或者调试代码，可以避开错综复杂的依赖关系、直击问题的核心，从而极大地节约时间、提高效率。

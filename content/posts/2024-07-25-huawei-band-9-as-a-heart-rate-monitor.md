@@ -1,15 +1,14 @@
 ---
 title: 心率带的平替：用华为手环 9 在自行车码表上显示心率
 slug: huawei band 9 as a heart rate monitor
-date: 2024-07-25T00:42:45+08:00
-categories:
-  - 青梅煮酒
+date: 2024-07-25 00:42:45+08:00
 tags:
-  - 数码
-  - 智能手环
-  - 骑行装备
-  - 自行车码表
-  - 心率带
+- 数码
+- 智能手环
+- 骑行装备
+- 自行车码表
+- 心率带
+- 青梅煮酒
 toc: false
 draft: false
 ---

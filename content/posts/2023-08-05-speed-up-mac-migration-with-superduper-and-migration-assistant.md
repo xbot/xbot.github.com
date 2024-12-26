@@ -1,12 +1,12 @@
 ---
-title: "用 SuperDuper! 配合迁移助理加速 Mac 的迁移"
-slug: "speed up mac migration with superduper and migration assistant"
-date: 2023-08-05T22:29:54+08:00
-categories: ["计算机"]
+title: 用 SuperDuper! 配合迁移助理加速 Mac 的迁移
+slug: speed up mac migration with superduper and migration assistant
+date: 2023-08-05 22:29:54+08:00
 tags:
 - mac
 - 数据迁移
 - 数据备份
+- 计算机
 toc: false
 ---
 

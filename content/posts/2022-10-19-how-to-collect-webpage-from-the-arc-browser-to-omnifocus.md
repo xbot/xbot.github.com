@@ -1,13 +1,13 @@
 ---
-title: "用 Hammerspoon 收集 Arc 浏览器网页到 OmniFocus 的方法"
-slug: "How to collect webpage from the Arc browser to OmniFocus"
-date: 2022-10-19T23:02:50+08:00
-categories: ["计算机"]
+title: 用 Hammerspoon 收集 Arc 浏览器网页到 OmniFocus 的方法
+slug: How to collect webpage from the Arc browser to OmniFocus
+date: 2022-10-19 23:02:50+08:00
 tags:
 - hammerspoon
 - ArcBrowser
 - omnifocus
 - 最佳实践
+- 计算机
 toc: false
 ---
 

@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "读完《中国史纲》"
+title: 读完《中国史纲》
 slug: after reading brief history of china
 date: 2014-08-20 22:30:00
 comments: true
-categories:
-- 青梅煮酒
 tags:
 - 读书
 - 历史
 - 国史
+- 青梅煮酒
 ---
 
 ![](http://pic.yupoo.com/leninlee/DZOYRqbR/medish.jpg)

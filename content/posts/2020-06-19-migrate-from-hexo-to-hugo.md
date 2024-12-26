@@ -1,14 +1,12 @@
 ---
-title: "从 Hexo 到 Hugo"
+title: 从 Hexo 到 Hugo
 slug: migrate from hexo to hugo
-date: 2020-06-19T17:41:52+08:00
-categories:
-- 青梅煮酒
+date: 2020-06-19 17:41:52+08:00
 tags:
 - Hexo
 - Hugo
 - 博客
-
+- 青梅煮酒
 ---
 
 一切源于我这个颜党的喜新厌旧。

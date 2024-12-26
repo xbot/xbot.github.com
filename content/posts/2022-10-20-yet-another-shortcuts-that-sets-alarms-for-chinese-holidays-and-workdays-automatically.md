@@ -1,13 +1,13 @@
 ---
-title: "自动设置节假日和工作日闹钟的快捷指令"
-slug: "Yet another shortcuts that sets alarms for chinese holidays and workdays automatically"
-date: 2022-10-20T22:23:04+08:00
-categories: ["计算机"]
+title: 自动设置节假日和工作日闹钟的快捷指令
+slug: Yet another shortcuts that sets alarms for chinese holidays and workdays automatically
+date: 2022-10-20 22:23:04+08:00
 tags:
 - 快捷指令
 - iPhone
 - 最佳实践
 - 效率工具
+- 计算机
 toc: false
 ---
 

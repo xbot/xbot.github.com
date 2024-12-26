@@ -1,12 +1,12 @@
 ---
-title: "用 Caddy 做 Home Lab 的反向代理"
-slug: "Reverse proxying home lab with Caddy"
-date: 2022-10-16T22:37:08+08:00
-categories: ["计算机"]
+title: 用 Caddy 做 Home Lab 的反向代理
+slug: Reverse proxying home lab with Caddy
+date: 2022-10-16 22:37:08+08:00
 tags:
 - homelab
 - 反向代理
 - Caddy
+- 计算机
 toc: false
 ---
 

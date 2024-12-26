@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "读完《国史大纲》"
+title: 读完《国史大纲》
 slug: after reading outline history
 date: 2014-07-16 21:27:00
 comments: true
-categories:
-- 青梅煮酒
 tags:
 - 读书
 - 历史
+- 青梅煮酒
 ---
 
 ![](http://pic.yupoo.com/leninlee/DYBkUo68/medish.jpg)

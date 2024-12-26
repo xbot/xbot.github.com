@@ -2,12 +2,11 @@
 title: 自动探测RSS地址的workflow
 slug: find rss with workflow
 date: 2017-03-24 21:09:13
-categories:
-- 计算机
 tags:
 - 效率
 - workflow
 - iPhone
+- 计算机
 ---
 
 RSS真是没落了，很多网站都没有明确输出Feed地址，每次想订阅都要浪费不少时间，所以写了这个[Workflow](https://workflow.is/workflows/7f02a38a6c21414a96a4f96600c94662)。

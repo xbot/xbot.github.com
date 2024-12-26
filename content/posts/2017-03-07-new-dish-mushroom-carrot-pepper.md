@@ -2,11 +2,10 @@
 title: 胡萝卜炒杏鲍菇
 slug: new dish mushroom carrot pepper
 date: 2017-03-07 21:10:05
-categories:
-- 行见
 tags:
 - 私房菜
 - 生活
+- 行见
 ---
 
 ![](https://ww2.sinaimg.cn/large/006tNbRwly1fdekxg6n3nj30sg0sgn60.jpg)

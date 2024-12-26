@@ -2,12 +2,11 @@
 title: 利用命名空间Mock PHP的内建函数
 slug: mock php built in functions using namespace
 date: 2017-04-30 09:06:17
-categories:
-- 计算机
 tags:
 - php
 - 编程
 - 测试
+- 计算机
 ---
 
 ## 简述

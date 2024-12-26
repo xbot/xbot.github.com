@@ -2,11 +2,10 @@
 title: 使neocomplete和ultisnips共用tab键的方法
 slug: reconcile neocomplete with ultisnips
 date: 2017-08-11 14:43:14
-categories:
-- 计算机
 tags:
 - vim
 - 最佳实践
+- 计算机
 ---
 
 昨天用vim-clevertab换掉了supertab，但是实际使用中总是出莫名其妙的问题。看了一下插件源码，使用全局变量判断状态，这是个很不靠谱的方案，所以还是卸掉了。

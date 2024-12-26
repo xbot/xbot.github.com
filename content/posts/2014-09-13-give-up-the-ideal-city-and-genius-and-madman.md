@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "放弃《一座城池》和《天才在左疯子在右》"
+title: 放弃《一座城池》和《天才在左疯子在右》
 slug: give up the ideal city and genius and madman
 date: 2014-10-26 09:30:00
 comments: true
-categories:
-- 青梅煮酒
 tags:
 - 读书
 - 小说
+- 青梅煮酒
 ---
 
 ![](http://pic.yupoo.com/leninlee/E9VPP5J0/medish.jpg)

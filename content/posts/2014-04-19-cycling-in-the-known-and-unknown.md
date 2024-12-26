@@ -1,13 +1,12 @@
 ---
 layout: post
-title: "骑行的已知和未知"
+title: 骑行的已知和未知
 slug: cycling in the known and unknown
 date: 2014-04-19 21:44:00
 comments: true
-categories:
-- 行见
 tags:
 - 骑行
+- 行见
 ---
 
 暂时没有好路线，所以今天是保持性练习。上周发现顺时针绕道G109从军庄路放坡下来会很轻松，所以依旧从香岩寺出发，经黑山扈路、香山路、香山南路、八大处路、模式口大街、G109、军庄路、北清路，最后回到出发点。

@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "关于李陵的更多细节"
+title: 关于李陵的更多细节
 slug: more about li ling
 date: 2016-12-22 19:41:00
 comments: true
-categories:
-- 青梅煮酒
 tags:
 - 随笔
 - 历史
 - 读书
+- 青梅煮酒
 ---
 
 ![2020-06-19-16-16-10-20161021001](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2020-06-19-16-16-10-20161021001.png)

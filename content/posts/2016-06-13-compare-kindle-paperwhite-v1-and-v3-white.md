@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "Kindle Paperwhite 1代与3代白色版对比"
+title: Kindle Paperwhite 1代与3代白色版对比
 slug: compare kindle paperwhite v1 and v3 white
 date: 2016-06-13 16:01:00
 comments: true
-categories:
-- 青梅煮酒
 tags:
 - Kindle
 - 读书
+- 青梅煮酒
 ---
 
 ![2020-06-19-16-19-55-20160613002](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2020-06-19-16-19-55-20160613002.jpg)

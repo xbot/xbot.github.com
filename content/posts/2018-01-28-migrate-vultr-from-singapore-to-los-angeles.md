@@ -2,10 +2,9 @@
 title: 从Vultr新加坡迁移到洛杉矶
 slug: migrate vultr from singapore to los angeles
 date: 2018-01-28 14:15:57
-categories:
-- 计算机
 tags:
 - 笔记
+- 计算机
 ---
 Vultr新加坡节点挂了两天了，不能翻墙简直什么都干不了。早上用CloudSpeed看了下，洛杉矶机房的响应速度还不错，就迁移了过去。
 

@@ -1,16 +1,15 @@
 ---
 title: Proxmox VE 备份指南
 slug: Proxmox VE Backup Guide
-date: 2024-02-06T18:48:31+08:00
-categories:
-  - 计算机
+date: 2024-02-06 18:48:31+08:00
 tags:
-  - PVE
-  - PBS
-  - 数据备份
-  - NAS
-  - homelab
-  - 虚拟技术
+- PVE
+- PBS
+- 数据备份
+- NAS
+- homelab
+- 虚拟技术
+- 计算机
 toc: false
 draft: false
 ---

@@ -1,14 +1,13 @@
 ---
 layout: post
-title: "变形金刚：电影4领袖级大黄蜂"
+title: 变形金刚：电影4领袖级大黄蜂
 slug: tf m4 leader class bumble bee
 date: 2015-08-01 18:30:00
 comments: true
-categories:
-- 青梅煮酒
 tags:
 - 变形金刚
 - 玩具
+- 青梅煮酒
 ---
 
 当电影2那堆玩具已经成为神物，入个4的L级大黄蜂也未尝不是一种自我安慰。

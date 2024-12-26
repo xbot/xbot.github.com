@@ -2,11 +2,10 @@
 title: 变形金刚真人电影系列被重置
 slug: transformers live action movie series reset
 date: 2018-02-18 11:51:13
-categories:
-- 青梅煮酒
 tags:
 - 变形金刚
 - 随笔
+- 青梅煮酒
 ---
 根据这条[消息](http://news.tfw2005.com/2018/02/16/transformers-cinematic-universe-current-movie-series-rebooted-358641)，变形金刚真人电影系列将会被新团队重置，原定在明年的第6部被取消。也就是说，看完今年大黄蜂的电影后，2021年前都不会有变形金刚主题的新片了。
 

@@ -1,13 +1,12 @@
 ---
 title: 我的家庭数据备份方案
 slug: my homelab backup strategy
-date: 2024-01-31T20:02:08+08:00
-categories:
-  - 青梅煮酒
+date: 2024-01-31 20:02:08+08:00
 tags:
-  - 数据备份
-  - homelab
-  - NAS
+- 数据备份
+- homelab
+- NAS
+- 青梅煮酒
 toc: false
 draft: false
 ---

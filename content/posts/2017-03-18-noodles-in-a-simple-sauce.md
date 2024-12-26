@@ -2,11 +2,10 @@
 title: 一碗阳春面
 slug: noodles in a simple sauce
 date: 2017-03-18 20:49:07
-categories:
-- 行见
 tags:
 - 私房菜
 - 生活
+- 行见
 ---
 
 ![](https://ww2.sinaimg.cn/large/006tNbRwly1fdra76g0i1j30sg0sgjy4.jpg)
