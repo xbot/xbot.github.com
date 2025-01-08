@@ -4,10 +4,11 @@ slug: "mapping xiaomi sensors from home assistant to apple home app "
 date: 2024-12-27T22:20:44+08:00
 categories: 
 tags:
-  - 计算机
   - 智能家居
   - home-assistant
   - home-automation
+  - homekit
+  - 青梅煮酒
 toc: false
 draft: false
 description: 怎样把小米官方 Home Assistant 集成的传感器映射到 Apple 的家庭 App
