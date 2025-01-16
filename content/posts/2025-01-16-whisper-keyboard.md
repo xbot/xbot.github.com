@@ -1,0 +1,21 @@
+---
+title: "Whisper Keyboard: 非常好用的语音输入法"
+slug: whisper keyboard
+date: 2025-01-16T23:29:46+08:00
+tags:
+  - 青梅煮酒
+  - 输入法
+  - AI
+  - LLM
+  - app
+toc: false
+draft: false
+---
+
+![2025-01-16-23-34-56-WhisperKeyboard](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-01-16-23-34-56-Whisper%20Keyboard.jpeg)
+
+终于有好用的基于 Whisper 的语音输入法了，完成度很高，体验很好。目前阶段还是免费的。
+
+https://whisperkeyboard.app/
+
+罗老师的梦快要实现了，当年还是太超前了。
