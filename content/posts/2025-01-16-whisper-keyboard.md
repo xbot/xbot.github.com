@@ -20,4 +20,4 @@ draft: false
 
 https://whisperkeyboard.app/
 
-罗老师的梦快要实现了，当年还是太超前了。
+罗老师的梦快要实现了。
