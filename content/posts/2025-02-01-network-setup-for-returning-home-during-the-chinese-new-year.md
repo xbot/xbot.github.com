@@ -1,5 +1,5 @@
 ---
-title: 网络设置的“春节返乡限定版”
+title: 网络设置的“春节限定版”
 slug: network setup for returning home during the chinese new year
 date: 2025-02-01T16:03:23+08:00
 tags:
