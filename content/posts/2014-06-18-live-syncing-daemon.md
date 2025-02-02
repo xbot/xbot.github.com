@@ -1,13 +1,13 @@
 ---
 layout: post
-title: 使用lsyncd同步文件
+title: 使用 lsyncd 同步文件
 slug: live syncing daemon
 date: 2014-06-18 14:03:00
 comments: true
 tags:
-- Linux
-- 应用
-- 计算机
+  - Linux
+  - 计算机
+  - 数据同步
 ---
 
 lsyncd全称“Live Syncing Daemon”，是Linux下的文件自动同步工具，同时支持SSH、rsync的实现方式。相对于rsync+inotify，它速度更快，也更稳定。
