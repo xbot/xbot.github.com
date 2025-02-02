@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>单元测试 on 晴耕雨讀</title><link>http://0x3f.org/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/</link><description>Recent content in 单元测试 on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Thu, 23 Jun 2022 14:42:34 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/index.xml" rel="self" type="application/rss+xml"/><item><title>解决 PHPUnit 生成代码覆盖报告时抛出重复定义类的错误的办法</title><link>http://0x3f.org/posts/the-solution-of-class-redeclaration-error-raised-while-generating-php-code-coverage-report/</link><pubDate>Thu, 23 Jun 2022 14:42:34 +0800</pubDate><guid>http://0x3f.org/posts/the-solution-of-class-redeclaration-error-raised-while-generating-php-code-coverage-report/</guid><description>&lt;p>在生成 Cobertura 格式的代码覆盖报告时程序报了如下错误：&lt;/p>
 &lt;blockquote>
-&lt;p>Generating code coverage report in Cobertura XML format &amp;hellip; PHP Fatal error: Cannot declare class App\FakeNamespace\GenericProvider, because the name is already in use in /builds/fake_project/app/FakeNamespace/GenericProvider.php on line 17&lt;/p>
-&lt;/blockquote>
+&lt;p>Generating code coverage report in Cobertura XML format &amp;hellip; PHP Fatal error: Cannot declare class App\FakeNamespace\GenericProvider, because the name is already in use in /builds/fake_project/app/FakeNamespace/GenericProvider.php on line 17&lt;/p>&lt;/blockquote>
 &lt;p>对应的代码和单元测试执行均无问题。&lt;/p>
 &lt;p>经排查，直接原因是使用了 Mockery 的 &lt;a href="http://docs.mockery.io/en/latest/reference/instance_mocking.html">Instance Mocking&lt;/a> &lt;sup id="fnref:1">&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref">1&lt;/a>&lt;/sup>特性 mock 代码中的硬依赖关系（&lt;a href="https://robertbasic.com/blog/mocking-hard-dependencies-with-mockery/">Hard Dependency&lt;/a>）。&lt;/p>
 &lt;p>该特性的实现利用了类的自动加载机制和依赖注入技术。对依赖关系 mock 的实例保存在 Mockery 的容器中，同时生成一个 stub 文件：&lt;/p>
@@ -142,8 +141,7 @@
 &lt;/div>
 &lt;/div>&lt;p>然后就可以这样处理：&lt;/p></description></item><item><title>Laravel单元测试错误：1205 Lock wait timeout exceeded</title><link>http://0x3f.org/posts/1205-lock-wait-timeout-exceeded/</link><pubDate>Fri, 22 Dec 2017 15:47:32 +0000</pubDate><guid>http://0x3f.org/posts/1205-lock-wait-timeout-exceeded/</guid><description>&lt;p>错误信息：&lt;/p>
 &lt;blockquote>
-&lt;p>1205 Lock wait timeout exceeded; try restarting transaction&lt;/p>
-&lt;/blockquote>
+&lt;p>1205 Lock wait timeout exceeded; try restarting transaction&lt;/p>&lt;/blockquote>
 &lt;p>原因之一是测试用例里重写的tearDown()方法中没有调用父类的该方法。因为DatabaseTransaction这个trait自动开启了事务，对应的回滚方法在测试用例基类的tearDown()中执行。&lt;/p></description></item><item><title>测试驱动开发的实际收益</title><link>http://0x3f.org/posts/the-real-income-of-tdd/</link><pubDate>Sun, 17 Dec 2017 14:20:02 +0000</pubDate><guid>http://0x3f.org/posts/the-real-income-of-tdd/</guid><description>&lt;p>我并不试图系统地谈TDD，因为我在这方面的经验还不足以做到这一点。但是TDD的一些方法论和工具确实解决了我在实际开发过程中遇到的一些问题。&lt;/p>
 &lt;p>第一个问题是健壮性。尤其是对于我这样思维发散、容易迷失又喜欢重构的人，TDD给了我一个明确的目标，在一切刚开始的时候，我要做的只是满足测试用例，让它们由红变绿。到了重构阶段，我就可以把精力放到优化代码上面，且不必对健壮性有过多的担心。在此之前，由于手动测试比较麻烦，很多时候惰性会说服潜意识告诉自己这部分逻辑很简单、不会有什么bug，结果提交测试后却一再地发生问题。&lt;/p>
 &lt;p>第二个问题是效率。曾经只有不忙的时候才会写测试用例，但是现在一般都会写，因为确实可以提高开发效率，而不只是保证重构的健壮性。可能对于所有对单元测试不熟悉的人来说，这都是匪夷所思的，我也曾认为单元测试只是用来保证健壮性的，必然和开发效率是一对矛盾，因为要花很多时间写测试代码。这种想法首先是因为对单元测试不熟悉，所以才需要花很多时间在上面。其次是没有看到它所带来的好处。&lt;/p>
@@ -188,8 +186,7 @@
 &lt;ol>
 &lt;li>Ox3f\LaravelUtils\Log\LogTest::testAll
 This test does not have a @covers annotation but is expected to have one&lt;/li>
-&lt;/ol>
-&lt;/blockquote>
+&lt;/ol>&lt;/blockquote>
 &lt;p>如果希望单元测试覆盖全部代码、且不用一一显式声明，可以将此选项的值改成
 &lt;code>false&lt;/code>。&lt;/p></description></item><item><title>Phalcon项目中PHPUnit的初始化</title><link>http://0x3f.org/posts/testing-with-phpunit-in-phalcon/</link><pubDate>Sat, 29 Nov 2014 09:58:00 +0000</pubDate><guid>http://0x3f.org/posts/testing-with-phpunit-in-phalcon/</guid><description>&lt;p>参考&lt;a href="http://docs.phalconphp.com/zh/latest/reference/unit-testing.html">官方文档&lt;/a>，稍作修改。&lt;/p>
 &lt;p>在项目下创建目录 unittests ，进入目录执行：&lt;/p>

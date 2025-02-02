@@ -27,8 +27,7 @@
 &lt;h3 id="吞吐量和平均耗时统计">吞吐量和平均耗时统计&lt;/h3>
 &lt;p>需要通过定时任务周期性执行 &lt;code>artisan horizon:snapshot&lt;/code> 命令生成统计数据并存储到 Redis 中。&lt;/p></description></item><item><title>解决 PHPUnit 生成代码覆盖报告时抛出重复定义类的错误的办法</title><link>http://0x3f.org/posts/the-solution-of-class-redeclaration-error-raised-while-generating-php-code-coverage-report/</link><pubDate>Thu, 23 Jun 2022 14:42:34 +0800</pubDate><guid>http://0x3f.org/posts/the-solution-of-class-redeclaration-error-raised-while-generating-php-code-coverage-report/</guid><description>&lt;p>在生成 Cobertura 格式的代码覆盖报告时程序报了如下错误：&lt;/p>
 &lt;blockquote>
-&lt;p>Generating code coverage report in Cobertura XML format &amp;hellip; PHP Fatal error: Cannot declare class App\FakeNamespace\GenericProvider, because the name is already in use in /builds/fake_project/app/FakeNamespace/GenericProvider.php on line 17&lt;/p>
-&lt;/blockquote>
+&lt;p>Generating code coverage report in Cobertura XML format &amp;hellip; PHP Fatal error: Cannot declare class App\FakeNamespace\GenericProvider, because the name is already in use in /builds/fake_project/app/FakeNamespace/GenericProvider.php on line 17&lt;/p>&lt;/blockquote>
 &lt;p>对应的代码和单元测试执行均无问题。&lt;/p>
 &lt;p>经排查，直接原因是使用了 Mockery 的 &lt;a href="http://docs.mockery.io/en/latest/reference/instance_mocking.html">Instance Mocking&lt;/a> &lt;sup id="fnref:1">&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref">1&lt;/a>&lt;/sup>特性 mock 代码中的硬依赖关系（&lt;a href="https://robertbasic.com/blog/mocking-hard-dependencies-with-mockery/">Hard Dependency&lt;/a>）。&lt;/p>
 &lt;p>该特性的实现利用了类的自动加载机制和依赖注入技术。对依赖关系 mock 的实例保存在 Mockery 的容器中，同时生成一个 stub 文件：&lt;/p>
@@ -70,8 +69,7 @@
 &lt;/div>
 &lt;/div>&lt;p>当代码中实例化这个类的时候，Mockery 自动加载该文件，从而代替了对原类文件的加载。&lt;/p></description></item><item><title>Archlinux 下 PHP 不能读取 /tmp 下文件的问题</title><link>http://0x3f.org/posts/php-failed-to-open-stream-under-tmp-in-archlinux/</link><pubDate>Mon, 09 Aug 2021 15:27:58 +0800</pubDate><guid>http://0x3f.org/posts/php-failed-to-open-stream-under-tmp-in-archlinux/</guid><description>&lt;p>问题的场景是，以 http 用户运行的 FPM 进程访问 &lt;code>/tmp&lt;/code> 下由普通用户运行的 CLI 进程创建的文件时，报如下错误：&lt;/p>
 &lt;blockquote>
-&lt;p>Failed to open stream.&lt;/p>
-&lt;/blockquote>
+&lt;p>Failed to open stream.&lt;/p>&lt;/blockquote>
 &lt;p>原因是 PHP-FPM 的 systemd 配置中默认对 FPM 进程单独挂载 &lt;code>/tmp&lt;/code> 目录。&lt;/p>
 &lt;p>具体对应：&lt;/p>
 &lt;p>&lt;code>/usr/lib/systemd/system/php-fpm.service&lt;/code>&lt;/p>
@@ -294,8 +292,7 @@
 &lt;/div>
 &lt;/div>&lt;p>然后就可以这样处理：&lt;/p></description></item><item><title>Laravel单元测试错误：1205 Lock wait timeout exceeded</title><link>http://0x3f.org/posts/1205-lock-wait-timeout-exceeded/</link><pubDate>Fri, 22 Dec 2017 15:47:32 +0000</pubDate><guid>http://0x3f.org/posts/1205-lock-wait-timeout-exceeded/</guid><description>&lt;p>错误信息：&lt;/p>
 &lt;blockquote>
-&lt;p>1205 Lock wait timeout exceeded; try restarting transaction&lt;/p>
-&lt;/blockquote>
+&lt;p>1205 Lock wait timeout exceeded; try restarting transaction&lt;/p>&lt;/blockquote>
 &lt;p>原因之一是测试用例里重写的tearDown()方法中没有调用父类的该方法。因为DatabaseTransaction这个trait自动开启了事务，对应的回滚方法在测试用例基类的tearDown()中执行。&lt;/p></description></item><item><title>Mock Laravel的DB Facade的方法</title><link>http://0x3f.org/posts/how-to-mock-the-db-facade-of-laravel/</link><pubDate>Mon, 14 Aug 2017 15:51:41 +0000</pubDate><guid>http://0x3f.org/posts/how-to-mock-the-db-facade-of-laravel/</guid><description>&lt;p>关于数据库操作是否应该mock的问题，我认为查询一般不应该mock，可以避免一些问题，但如果查询的结果可能影响到断言，就应该mock了。&lt;/p>
 &lt;p>Laravel的DB facade完整的mock实例是这样的：&lt;/p>
 &lt;script src="https://gist.github.com/xbot/d0ace9c1ebdb161adf229c9a9c62f2bf.js">&lt;/script></description></item><item><title>GraphQL：RESTful之外的接口实现方案</title><link>http://0x3f.org/posts/graphql-vs-restful/</link><pubDate>Tue, 01 Aug 2017 17:36:27 +0000</pubDate><guid>http://0x3f.org/posts/graphql-vs-restful/</guid><description>&lt;p>和RESTfull一样，GraphQL也是一种基于HTTP的接口实现方式。它区别于前者的主要有两点：数据格式的自定义和请求的合并。&lt;/p>
@@ -421,8 +418,7 @@
 &lt;ol>
 &lt;li>Ox3f\LaravelUtils\Log\LogTest::testAll
 This test does not have a @covers annotation but is expected to have one&lt;/li>
-&lt;/ol>
-&lt;/blockquote>
+&lt;/ol>&lt;/blockquote>
 &lt;p>如果希望单元测试覆盖全部代码、且不用一一显式声明，可以将此选项的值改成
 &lt;code>false&lt;/code>。&lt;/p></description></item><item><title>利用依赖注入Mock PHP的内建函数</title><link>http://0x3f.org/posts/mock-php-built-in-functions-using-dependency-injection/</link><pubDate>Sun, 30 Apr 2017 09:57:50 +0000</pubDate><guid>http://0x3f.org/posts/mock-php-built-in-functions-using-dependency-injection/</guid><description>&lt;h2 id="简述">简述&lt;/h2>
 &lt;p>&lt;a href="http://0x3f.org/post/mock-php-built-in-functions-using-namespace/">上篇文章&lt;/a>讨论了如何利用命名空间实现对PHP内建函数的mocking，本文介绍另一种实现方法——依赖注入。&lt;/p>
@@ -759,8 +755,7 @@ Time per request: 2.001 [ms] (mean)&lt;/p>
 &lt;blockquote>
 &lt;p>dnl PHP_ARG_WITH(foobar, for foobar support,&lt;br>
 dnl Make sure that the comment is aligned:&lt;br>
-dnl [ &amp;ndash;with-foobar Include foobar support])&lt;/p>
-&lt;/blockquote>
+dnl [ &amp;ndash;with-foobar Include foobar support])&lt;/p>&lt;/blockquote>
 &lt;h2 id="编译与安装">编译与安装&lt;/h2>
 &lt;p>在foobar目录下执行以下命令，生成configure脚本：&lt;/p>
 &lt;div class="highlight">&lt;div class="chroma">
@@ -1354,8 +1349,7 @@ REGISTER_BOOL_CONSTANT(name, bval, flags)
 REGISTER_LONG_CONSTANT(name, lval, flags)
 REGISTER_DOUBLE_CONSTANT(name, dval, flags)
 REGISTER_STRING_CONSTANT(name, str, flags)
-REGISTER_STRINGL_CONSTANT(name, str, len, flags)&lt;/p>
-&lt;/blockquote>
+REGISTER_STRINGL_CONSTANT(name, str, len, flags)&lt;/p>&lt;/blockquote>
 &lt;p>由于不需指定常量名长度，所以name参数应直接使用字符串，而不是char*。&lt;/p>
 &lt;p>如需使用变量作为name参数，使用zend_register_*_constant()函数族，并指定变量名长度（sizeof(name)）。上面的宏函数其实是对这族函数的封装。&lt;/p>
 &lt;blockquote>
@@ -2696,8 +2690,7 @@ ZEND_ACC_ABSTRACT&lt;/p></description></item><item><title>PHP数组的实现与�
 &lt;blockquote>
 &lt;p>                &lt;strong>U&lt;/strong>(out) * &lt;strong>Z&lt;/strong>(in)&lt;br>
 &lt;strong>U&lt;/strong>(in) = &amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;ndash;&lt;br>
-                &lt;strong>Z&lt;/strong>(in) + &lt;strong>Z&lt;/strong>(out)&lt;/p>
-&lt;/blockquote>
+                &lt;strong>Z&lt;/strong>(in) + &lt;strong>Z&lt;/strong>(out)&lt;/p>&lt;/blockquote>
 &lt;p>即输入电压等于输出电压与输入阻抗的积除以输入阻抗与输出阻抗的和。&lt;/p>
 &lt;p>理想情况肯定是输入电压等于输出电压，这时信号是没有失真的，也就是要求Z(in)与Z(in)+Z(out)之商无限逼近1，这个过程就叫阻抗匹配。关系型数据库是建立在数学模型的基础上，而编程语言中的对象是建立在人对客观世界认知的具象模型上。说白了，阻抗不匹配问题就是说因这两种模型不一致而导致的问题。&lt;/p>
 &lt;p>ORM通过建立表与对象、列与属性（&lt;em>这只是一般情况&lt;/em>）之间的映射关系而解决问题，这可以实现像操作对象一样对数据库中的数据进行增删改查，简化了开发过程。不过ORM的缺点是不能很好地处理复杂数据关系，会出现效率低下的问题，因此必要时仍然需要直接使用SQL。&lt;/p>
@@ -3076,8 +3069,7 @@ ZEND_ACC_ABSTRACT&lt;/p></description></item><item><title>PHP数组的实现与�
 &lt;p>&lt;strong>Controller的实现&lt;/strong>&lt;/p>
 &lt;p>要求请求URL的格式如下：&lt;/p>
 &lt;blockquote>
-&lt;p>&lt;a href="http://www.mydomain.com/index.php?r=post/save">http://www.mydomain.com/index.php?r=post/save&lt;/a>&lt;/p>
-&lt;/blockquote>
+&lt;p>&lt;a href="http://www.mydomain.com/index.php?r=post/save">http://www.mydomain.com/index.php?r=post/save&lt;/a>&lt;/p>&lt;/blockquote>
 &lt;p>&lt;strong>r&lt;/strong>表示Route，斜杠前面的&lt;strong>post&lt;/strong>表示Controller的名称，后面的&lt;strong>save&lt;/strong>表示Action的名称。对HTTP请求的各种处理逻辑封装在新对象HttpRequest中：&lt;/p>
 &lt;div class="highlight">&lt;div class="chroma">
 &lt;table class="lntable">&lt;tr>&lt;td class="lntd">
