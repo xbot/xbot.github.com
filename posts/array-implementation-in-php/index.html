@@ -8,7 +8,115 @@
 1 2 3 4 5 6 static inline int zend_symtable_find( HashTable *ht, const char *arKey, uint nKeyLength, void **pData ) { ZEND_HANDLE_NUMERIC(arKey, nKeyLength, zend_hash_index_find(ht, idx, pData)); return zend_hash_find(ht, arKey, nKeyLength, pData); } 其它符号表操作函数：
 1 2 3 4 5 6 7 8 static inline int zend_symtable_exists(HashTable *ht, const char *arKey, uint nKeyLength); static inline int zend_symtable_del(HashTable *ht, const char *arKey, uint nKeyLength); static inline int zend_symtable_update( HashTable *ht, const char *arKey, uint nKeyLength, void *pData, uint nDataSize, void **pDest ); static inline int zend_symtable_update_current_key_ex( HashTable *ht, const char *arKey, uint nKeyLength, int mode, HashPosition *pos ); 数组操作 初始化 1 2 3 4 5 6 7 8 9 // 初始化数组 zval *zv1; array_init(zv1); // 初始化数组并指定哈希表nTableSize的值 array_init_size(zv1, 100); // 在函数中返回数组：把返回值初始化为数组 array_init(return_value); 插入和更新 1 2 3 4 5 6 7 8 /* Insert at next index */ int add_next_index_*(zval *arg, ...); /* Insert at specific index */ int add_index_*(zval *arg, ulong idx, ...); /* Insert at specific key */ int add_assoc_*(zval *arg, const char *key, ...); /* Insert at specific key of length key_len (for binary safety) */ int add_assoc_*_ex(zval *arg, const char *key, uint key_len, ...); 星号表示类型名，可用类型名如下："><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#181818"><title>晴耕雨讀 - PHP数组的实现与操作
 </title><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=stylesheet href=/minima.91848781a7679600f0ad1ad577e7da4fbb28b9f3fdc9a82126197659405bb483.css integrity="sha256-kYSHgadnlgDwrRrVd+faT7soufP9yaghJhl2WUBbtIM="><script defer type=text/javascript src=/minima.5f772103e807a34ef8ab63c3c53905fbf70689fa70d121085c7d0e84087effea.js integrity="sha256-X3chA+gHo074q2PDxTkF+/cGifpw0SEIXH0OhAh+/+o="></script></head><script>const theme_config="system",theme_light=theme_config==="system"?"light":theme_config;let theme=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":theme_light;console.debug(theme);try{localStorage.setItem("theme",theme),window.minima_theme=theme,document.querySelector("html").classList.add(theme)}catch(e){console.error(e)}</script><body><header class="mt-3 mb-8"><div class="container mx-auto"><nav class="flex justify-between items-center"><div class="flex items-center"><div id=theme-switch class="text-2xl cursor-pointer">🌝</div></div><ul class="flex items-center text-base font-semibold
-whitespace-nowrap overflow-x-auto overflow-y-hidden"><li class="ml-2 mr-2"><a href=/>首页</a></li><li class="ml-2 mr-2"><a href=/posts>文章</a></li><li class="ml-2 mr-2"><a href=/tags>标签</a></li><li class="ml-2 mr-2"><a href=/about>关于</a></li><li class="ml-2 mr-2"><a href=/search>🔍</a></li></ul></nav></div></header><main class="container mx-auto"><h2 class="text-3xl font-bold mb-3">PHP数组的实现与操作</h2><ul class=list-disc></ul></nav></main><footer class="mt-8 mb-8"><div class="container mx-auto"><div class="mt-8 flex flex-col-reverse sm:flex-row sm:justify-between items-center"><div class="text-center sm:text-left"><p class="mt-0 text-sm">© 2007-2024 鬼马妖刀</p><p class="mt-0 text-xs">Built with <a href=https://gohugo.io target=_blank rel="noopener noreferrer">Hugo</a> v0.146.3
+whitespace-nowrap overflow-x-auto overflow-y-hidden"><li class="ml-2 mr-2"><a href=/>首页</a></li><li class="ml-2 mr-2"><a href=/posts>文章</a></li><li class="ml-2 mr-2"><a href=/tags>标签</a></li><li class="ml-2 mr-2"><a href=/about>关于</a></li><li class="ml-2 mr-2"><a href=/search>🔍</a></li></ul></nav></div></header><div class="container mx-auto"><h1 class="text-4xl font-extrabold mt-6 mb-6">PHP数组的实现与操作</h1><div class="mb-3 text-sm flex justify-between"><div>发布于 &mdash; 2015 年 04 月 24 日</div><div><a class=ml-1 href=/tags/PHP>#PHP</a>
+<a class=ml-1 href=/tags/%e6%ba%90%e7%a0%81>#源码</a>
+<a class=ml-1 href=/tags/%e8%ae%a1%e7%ae%97%e6%9c%ba>#计算机</a></div></div><main class=mb-8><p></p><article class=md><h2 id=存储结构>存储结构</h2><p>和其它变量一样，PHP的数组也是一个zval。存储数据的哈希表存放在zval->value->ht中。</p><h2 id=符号表操作>符号表操作</h2><p>为实现可转换成整数的字符串键与整数键指向同一个元素，在哈希表操作的基础上封装了一层，对可转换成整数的字符串键转换成整数，然后调用zend_hash_index_*操作，否则调用zend_hash_*操作。这就是符号表操作。</p><p>用ZEND_HANDLE_NUMERIC处理整数字符串键：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=k>static</span> <span class=kr>inline</span> <span class=kt>int</span> <span class=nf>zend_symtable_find</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>HashTable</span> <span class=o>*</span><span class=n>ht</span><span class=p>,</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>arKey</span><span class=p>,</span> <span class=n>uint</span> <span class=n>nKeyLength</span><span class=p>,</span> <span class=kt>void</span> <span class=o>**</span><span class=n>pData</span>
+</span></span><span class=line><span class=cl><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nf>ZEND_HANDLE_NUMERIC</span><span class=p>(</span><span class=n>arKey</span><span class=p>,</span> <span class=n>nKeyLength</span><span class=p>,</span> <span class=nf>zend_hash_index_find</span><span class=p>(</span><span class=n>ht</span><span class=p>,</span> <span class=n>idx</span><span class=p>,</span> <span class=n>pData</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=nf>zend_hash_find</span><span class=p>(</span><span class=n>ht</span><span class=p>,</span> <span class=n>arKey</span><span class=p>,</span> <span class=n>nKeyLength</span><span class=p>,</span> <span class=n>pData</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>其它符号表操作函数：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=k>static</span> <span class=kr>inline</span> <span class=kt>int</span> <span class=nf>zend_symtable_exists</span><span class=p>(</span><span class=n>HashTable</span> <span class=o>*</span><span class=n>ht</span><span class=p>,</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>arKey</span><span class=p>,</span> <span class=n>uint</span> <span class=n>nKeyLength</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=k>static</span> <span class=kr>inline</span> <span class=kt>int</span> <span class=nf>zend_symtable_del</span><span class=p>(</span><span class=n>HashTable</span> <span class=o>*</span><span class=n>ht</span><span class=p>,</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>arKey</span><span class=p>,</span> <span class=n>uint</span> <span class=n>nKeyLength</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=k>static</span> <span class=kr>inline</span> <span class=kt>int</span> <span class=nf>zend_symtable_update</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>HashTable</span> <span class=o>*</span><span class=n>ht</span><span class=p>,</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>arKey</span><span class=p>,</span> <span class=n>uint</span> <span class=n>nKeyLength</span><span class=p>,</span> <span class=kt>void</span> <span class=o>*</span><span class=n>pData</span><span class=p>,</span> <span class=n>uint</span> <span class=n>nDataSize</span><span class=p>,</span> <span class=kt>void</span> <span class=o>**</span><span class=n>pDest</span>
+</span></span><span class=line><span class=cl><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=k>static</span> <span class=kr>inline</span> <span class=kt>int</span> <span class=nf>zend_symtable_update_current_key_ex</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>HashTable</span> <span class=o>*</span><span class=n>ht</span><span class=p>,</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>arKey</span><span class=p>,</span> <span class=n>uint</span> <span class=n>nKeyLength</span><span class=p>,</span> <span class=kt>int</span> <span class=n>mode</span><span class=p>,</span> <span class=n>HashPosition</span> <span class=o>*</span><span class=n>pos</span>
+</span></span><span class=line><span class=cl><span class=p>);</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=数组操作>数组操作</h2><h3 id=初始化>初始化</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=c1>// 初始化数组
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>zval</span> <span class=o>*</span><span class=n>zv1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=nf>array_init</span><span class=p>(</span><span class=n>zv1</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 初始化数组并指定哈希表nTableSize的值
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nf>array_init_size</span><span class=p>(</span><span class=n>zv1</span><span class=p>,</span> <span class=mi>100</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 在函数中返回数组：把返回值初始化为数组
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nf>array_init</span><span class=p>(</span><span class=n>return_value</span><span class=p>);</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=插入和更新>插入和更新</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=cm>/* Insert at next index */</span>
+</span></span><span class=line><span class=cl><span class=kt>int</span> <span class=n>add_next_index_</span><span class=o>*</span><span class=p>(</span><span class=n>zval</span> <span class=o>*</span><span class=n>arg</span><span class=p>,</span> <span class=p>...);</span>
+</span></span><span class=line><span class=cl><span class=cm>/* Insert at specific index */</span>
+</span></span><span class=line><span class=cl><span class=kt>int</span> <span class=n>add_index_</span><span class=o>*</span><span class=p>(</span><span class=n>zval</span> <span class=o>*</span><span class=n>arg</span><span class=p>,</span> <span class=n>ulong</span> <span class=n>idx</span><span class=p>,</span> <span class=p>...);</span>
+</span></span><span class=line><span class=cl><span class=cm>/* Insert at specific key */</span>
+</span></span><span class=line><span class=cl><span class=kt>int</span> <span class=n>add_assoc_</span><span class=o>*</span><span class=p>(</span><span class=n>zval</span> <span class=o>*</span><span class=n>arg</span><span class=p>,</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>key</span><span class=p>,</span> <span class=p>...);</span>
+</span></span><span class=line><span class=cl><span class=cm>/* Insert at specific key of length key_len (for binary safety) */</span>
+</span></span><span class=line><span class=cl><span class=kt>int</span> <span class=n>add_assoc_</span><span class=o>*</span><span class=nf>_ex</span><span class=p>(</span><span class=n>zval</span> <span class=o>*</span><span class=n>arg</span><span class=p>,</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>key</span><span class=p>,</span> <span class=n>uint</span> <span class=n>key_len</span><span class=p>,</span> <span class=p>...);</span>
+</span></span></code></pre></td></tr></table></div></div><p>星号表示类型名，可用类型名如下：</p><table><thead><tr><th>Type</th><th>Additional arguments</th></tr></thead><tbody><tr><td>null</td><td>none</td></tr><tr><td>bool</td><td>int b</td></tr><tr><td>long</td><td>long n</td></tr><tr><td>double</td><td>double d</td></tr><tr><td>string</td><td>const char *str, int duplicate</td></tr><tr><td>stringl</td><td>const char *str, uint length, int duplicate</td></tr><tr><td>resource</td><td>int r</td></tr><tr><td>zval</td><td>zval *value</td></tr></tbody></table><h4 id=字符串长度的处理>字符串长度的处理</h4><p>上述操作对字符串键和字符串值的长度的要求不同。_ex函数要求传入字符串键的长度，此长度包含NUL字节。_stringl函数要求传入字符串值的长度，此长度不包含NUL字节。</p><h3 id=栗子>栗子</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=nf>PHP_FUNCTION</span><span class=p>(</span><span class=n>donie_get_arr</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nf>array_init</span><span class=p>(</span><span class=n>return_value</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>// add an integer to the given position
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nf>add_index_long</span><span class=p>(</span><span class=n>return_value</span><span class=p>,</span> <span class=mi>1</span><span class=p>,</span> <span class=mi>2015</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>// append a string to the array
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nf>add_next_index_string</span><span class=p>(</span><span class=n>return_value</span><span class=p>,</span> <span class=s>&#34;dummy string&#34;</span><span class=p>,</span> <span class=mi>1</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>// add a boolean value to the given key
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nf>add_assoc_bool</span><span class=p>(</span><span class=n>return_value</span><span class=p>,</span> <span class=s>&#34;rightOrWrong&#34;</span><span class=p>,</span> <span class=mi>0</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>// take care of string lengths
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nf>add_assoc_stringl_ex</span><span class=p>(</span><span class=n>return_value</span><span class=p>,</span> <span class=s>&#34;keyStringL</span><span class=se>\0</span><span class=s>&#34;</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=s>&#34;keyStringL</span><span class=se>\0</span><span class=s>&#34;</span><span class=p>)</span><span class=o>-</span><span class=mi>1</span><span class=p>,</span> <span class=s>&#34;valueEx</span><span class=se>\0</span><span class=s>&#34;</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=s>&#34;valueEx</span><span class=se>\0</span><span class=s>&#34;</span><span class=p>),</span> <span class=mi>1</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>// store an object in the array
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=n>zval</span> <span class=o>*</span><span class=n>obj</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>	<span class=nf>MAKE_STD_ZVAL</span><span class=p>(</span><span class=n>obj</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>	<span class=nf>object_init</span><span class=p>(</span><span class=n>obj</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>	<span class=nf>add_next_index_zval</span><span class=p>(</span><span class=n>return_value</span><span class=p>,</span> <span class=n>obj</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div></article></main><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css integrity=sha384-Um5gpz1odJg5Z4HAmzPtgZKdTBHZdw8S29IecapCSB31ligYPhHQZMIlWLYQGVoc crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js integrity=sha384-YNHdsYkH6gMx9y3mRkmcJ2mFUjTd0qNQQvY9VYZgQd7DcN7env35GzlmFaZ23JGp crossorigin=anonymous></script><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/contrib/auto-render.min.js integrity=sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl crossorigin=anonymous></script><script>document.addEventListener("DOMContentLoaded",function(){renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}],throwOnError:!1})})</script><script src=https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js crossorigin=anonymous></script><script>mermaid.init(void 0,"code.language-mermaid")</script><div id=comment></div><script>const s=document.createElement("script");s.src="https://utteranc.es/client.js",s.crossOrigin="anonymous",s.async=!0,s.setAttribute("repo","xbot/blog-comments"),s.setAttribute("issue-term","pathname"),s.setAttribute("label","comment"),s.setAttribute("theme","github-"+window.minima_theme),document.getElementById("comment").appendChild(s)</script></div><footer class="mt-8 mb-8"><div class="container mx-auto"><div class="mt-8 flex flex-col-reverse sm:flex-row sm:justify-between items-center"><div class="text-center sm:text-left"><p class="mt-0 text-sm">© 2007-2024 鬼马妖刀</p><p class="mt-0 text-xs">Built with <a href=https://gohugo.io target=_blank rel="noopener noreferrer">Hugo</a> v0.146.7
 and <a href=https://github.com/mivinci/hugo-theme-minima target=_blank rel="noopener noreferrer">Minima</a></p></div><p class="flex items-center mt-0"><a class="icon ml-1 mr-1" href=mailto:donie.leigh@gmail.com title=email><svg width="18" height="18" viewBox="0 0 24 21" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1.0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1.0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>
 </a><a class="icon ml-1 mr-1" href=https://github.com/xbot title=github><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg>
 </a><a class="icon ml-1 mr-1" href=/index.xml title=rss><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 019 9M4 4a16 16 0 0116 16"/><circle cx="5" cy="19" r="1"/></svg></a></p></div></div></footer></body></html>

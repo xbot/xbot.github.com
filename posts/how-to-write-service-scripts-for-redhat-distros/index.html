@@ -10,7 +10,110 @@
 ###常用命令
 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 # 启动MySQL service mysqld start # 关闭MySQL service mysqld stop # 重启MySQL service mysqld restart # 查看MySQL服务运行状态 service mysqld status # 查看MySQL服务是否开机自动运行 chkconfig --list mysqld # 设置MySQL服务开机自动运行 chkconfig --level 345 mysqld on # 取消MySQL服务开机自动运行 chkconfig --level 345 mysqld off ###运行级别"><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#181818"><title>晴耕雨讀 - 怎样为红帽系Linux发行版写系统服务脚本
 </title><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=stylesheet href=/minima.91848781a7679600f0ad1ad577e7da4fbb28b9f3fdc9a82126197659405bb483.css integrity="sha256-kYSHgadnlgDwrRrVd+faT7soufP9yaghJhl2WUBbtIM="><script defer type=text/javascript src=/minima.5f772103e807a34ef8ab63c3c53905fbf70689fa70d121085c7d0e84087effea.js integrity="sha256-X3chA+gHo074q2PDxTkF+/cGifpw0SEIXH0OhAh+/+o="></script></head><script>const theme_config="system",theme_light=theme_config==="system"?"light":theme_config;let theme=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":theme_light;console.debug(theme);try{localStorage.setItem("theme",theme),window.minima_theme=theme,document.querySelector("html").classList.add(theme)}catch(e){console.error(e)}</script><body><header class="mt-3 mb-8"><div class="container mx-auto"><nav class="flex justify-between items-center"><div class="flex items-center"><div id=theme-switch class="text-2xl cursor-pointer">🌝</div></div><ul class="flex items-center text-base font-semibold
-whitespace-nowrap overflow-x-auto overflow-y-hidden"><li class="ml-2 mr-2"><a href=/>首页</a></li><li class="ml-2 mr-2"><a href=/posts>文章</a></li><li class="ml-2 mr-2"><a href=/tags>标签</a></li><li class="ml-2 mr-2"><a href=/about>关于</a></li><li class="ml-2 mr-2"><a href=/search>🔍</a></li></ul></nav></div></header><main class="container mx-auto"><h1 class="text-4xl font-extrabold mt-6">搜索</h1><p class="text-sm mb-6">Powered by <a href=https://fusejs.io target=_blank>fuse.js</a>.</p><div class=search><input class=mb-4 autofocus autocomplete=off id=search-input type=search placeholder="输入关键词 ↵"><ul id=search-result></ul></div></main><footer class="mt-8 mb-8"><div class="container mx-auto"><div class="mt-8 flex flex-col-reverse sm:flex-row sm:justify-between items-center"><div class="text-center sm:text-left"><p class="mt-0 text-sm">© 2007-2024 鬼马妖刀</p><p class="mt-0 text-xs">Built with <a href=https://gohugo.io target=_blank rel="noopener noreferrer">Hugo</a> v0.146.3
+whitespace-nowrap overflow-x-auto overflow-y-hidden"><li class="ml-2 mr-2"><a href=/>首页</a></li><li class="ml-2 mr-2"><a href=/posts>文章</a></li><li class="ml-2 mr-2"><a href=/tags>标签</a></li><li class="ml-2 mr-2"><a href=/about>关于</a></li><li class="ml-2 mr-2"><a href=/search>🔍</a></li></ul></nav></div></header><div class="container mx-auto"><h1 class="text-4xl font-extrabold mt-6 mb-6">怎样为红帽系Linux发行版写系统服务脚本</h1><div class="mb-3 text-sm flex justify-between"><div>发布于 &mdash; 2012 年 06 月 19 日</div><div><a class=ml-1 href=/tags/Linux>#Linux</a>
+<a class=ml-1 href=/tags/Redhat>#Redhat</a>
+<a class=ml-1 href=/tags/CentOS>#CentOS</a>
+<a class=ml-1 href=/tags/Bash>#Bash</a>
+<a class=ml-1 href=/tags/%e7%bc%96%e7%a8%8b>#编程</a>
+<a class=ml-1 href=/tags/%e8%ae%a1%e7%ae%97%e6%9c%ba>#计算机</a></div></div><main class=mb-8><p></p><article class=md><p>##阅读说明</p><p>阅读本文要求有基本的Linux系统使用经验和Bash脚本编程能力。</p><p>本文所述的内容适用于RHEL、CentOS等红帽系Linux发行版。</p><p>##系统服务简介</p><p>###常用命令</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1># 启动MySQL</span>
+</span></span><span class=line><span class=cl>service mysqld start
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 关闭MySQL</span>
+</span></span><span class=line><span class=cl>service mysqld stop
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 重启MySQL</span>
+</span></span><span class=line><span class=cl>service mysqld restart
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 查看MySQL服务运行状态</span>
+</span></span><span class=line><span class=cl>service mysqld status
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 查看MySQL服务是否开机自动运行</span>
+</span></span><span class=line><span class=cl>chkconfig --list mysqld
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 设置MySQL服务开机自动运行</span>
+</span></span><span class=line><span class=cl>chkconfig --level <span class=m>345</span> mysqld on
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 取消MySQL服务开机自动运行</span>
+</span></span><span class=line><span class=cl>chkconfig --level <span class=m>345</span> mysqld off
+</span></span></code></pre></td></tr></table></div></div><p>###运行级别</p><p>泛UNIX派系操作系统使用运行级别标识使用何种模式初始化。理论上，不同的发行版各级别代表的意义不同。红帽系发行版使用以下七个运行级别：</p><ul><li>0：关机</li><li>1：单用户模式</li><li>2：多用户模式，无网络服务</li><li>3：多用户模式，有网络服务</li><li>4：未使用/用户自定义</li><li>5：带图形界面的多用户模式</li><li>6：重启</li></ul><p>最常用的是0、3、5、6四种模式。其中，0和6表示关闭和重启操作系统，所以，执行命令<strong>init 0</strong>和<strong>shutdown</strong>是一个效果，同样，执行命令<strong>init 6</strong>和<strong>reboot</strong>是一个效果。模式3即普通的命令行用户界面，模式5即普通的图形界面用户界面。</p><p>模式1在个别情景下会用到，例如忘记root用户的密码时，需要进入模式1修改密码。</p><p>##系统服务脚本格式</p><p>###示例</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=cp>#!/bin/bash
+</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=cl><span class=c1># chkconfig: 345 99 12</span>
+</span></span><span class=line><span class=cl><span class=c1># description: This is a sample service script</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>case</span> <span class=s2>&#34;</span><span class=nv>$1</span><span class=s2>&#34;</span> in
+</span></span><span class=line><span class=cl>    start<span class=o>)</span>
+</span></span><span class=line><span class=cl>        <span class=c1># Start something.</span>
+</span></span><span class=line><span class=cl>        touch /var/lock/subsys/sample
+</span></span><span class=line><span class=cl>        <span class=p>;;</span>
+</span></span><span class=line><span class=cl>    stop<span class=o>)</span>
+</span></span><span class=line><span class=cl>        <span class=c1># Stop something.</span>
+</span></span><span class=line><span class=cl>        /bin/rm -f /var/lock/subsys/sample
+</span></span><span class=line><span class=cl>        <span class=p>;;</span>
+</span></span><span class=line><span class=cl>    restart<span class=p>|</span>reload<span class=o>)</span>
+</span></span><span class=line><span class=cl>        <span class=c1># Restart something.</span>
+</span></span><span class=line><span class=cl>        <span class=p>;;</span>
+</span></span><span class=line><span class=cl>    status<span class=o>)</span>
+</span></span><span class=line><span class=cl>        <span class=c1># Report the running status of something.</span>
+</span></span><span class=line><span class=cl>        <span class=p>;;</span>
+</span></span><span class=line><span class=cl>    *<span class=o>)</span>
+</span></span><span class=line><span class=cl>        <span class=c1># Invalid command, complain an error.</span>
+</span></span><span class=line><span class=cl>        <span class=p>;;</span>
+</span></span><span class=line><span class=cl><span class=k>esac</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nb>exit</span> <span class=m>0</span>
+</span></span></code></pre></td></tr></table></div></div><p>###解释</p><p>假设本服务脚本文件的文件名为<strong>sample</strong>。</p><p>整个服务脚本是一个普通的Bash脚本。主体是一个case语句，定义了四个命令start、stop、restart或reload、status，顾名思义，四个命令分别用来启动、停止、重启该服务，以及获取服务的运行状态。</p><p>红帽系发行版使用chkconfig命令设置服务自动在哪个运行级别被自动执行。要使服务脚本支持chkconfig命令，需要加入注释行：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1># chkconfig: 345 99 12</span>
+</span></span></code></pre></td></tr></table></div></div><p>其中，<strong>345</strong>表示缺省的运行级别，使用如下命令添加服务时：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>chkconfig --add sample
+</span></span></code></pre></td></tr></table></div></div><p>将和使用如下命令一个效果：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>chkconfig --level <span class=m>345</span> sample on
+</span></span></code></pre></td></tr></table></div></div><p><strong>99</strong>表示启动序号，例如若希望服务B在服务A启动后启动，且服务A的启动序号是98，则服务B的启动序号应设为大于98的一个整数。</p><p><strong>12</strong>表示停止序号，作用与启动序号相同。</p><p>此外，若希望在操作系统关闭前先自动执行服务的关闭命令，需要在**/var/lock/subsys/<strong>目录中存在与服务名同名的空文件，因此，应在</strong>start<strong>命令中创建一个这样的文件，并在</strong>stop**命令中删除之。</p></article></main><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css integrity=sha384-Um5gpz1odJg5Z4HAmzPtgZKdTBHZdw8S29IecapCSB31ligYPhHQZMIlWLYQGVoc crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js integrity=sha384-YNHdsYkH6gMx9y3mRkmcJ2mFUjTd0qNQQvY9VYZgQd7DcN7env35GzlmFaZ23JGp crossorigin=anonymous></script><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/contrib/auto-render.min.js integrity=sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl crossorigin=anonymous></script><script>document.addEventListener("DOMContentLoaded",function(){renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}],throwOnError:!1})})</script><script src=https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js crossorigin=anonymous></script><script>mermaid.init(void 0,"code.language-mermaid")</script><div id=comment></div><script>const s=document.createElement("script");s.src="https://utteranc.es/client.js",s.crossOrigin="anonymous",s.async=!0,s.setAttribute("repo","xbot/blog-comments"),s.setAttribute("issue-term","pathname"),s.setAttribute("label","comment"),s.setAttribute("theme","github-"+window.minima_theme),document.getElementById("comment").appendChild(s)</script></div><footer class="mt-8 mb-8"><div class="container mx-auto"><div class="mt-8 flex flex-col-reverse sm:flex-row sm:justify-between items-center"><div class="text-center sm:text-left"><p class="mt-0 text-sm">© 2007-2024 鬼马妖刀</p><p class="mt-0 text-xs">Built with <a href=https://gohugo.io target=_blank rel="noopener noreferrer">Hugo</a> v0.146.7
 and <a href=https://github.com/mivinci/hugo-theme-minima target=_blank rel="noopener noreferrer">Minima</a></p></div><p class="flex items-center mt-0"><a class="icon ml-1 mr-1" href=mailto:donie.leigh@gmail.com title=email><svg width="18" height="18" viewBox="0 0 24 21" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1.0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1.0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>
 </a><a class="icon ml-1 mr-1" href=https://github.com/xbot title=github><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg>
 </a><a class="icon ml-1 mr-1" href=/index.xml title=rss><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 019 9M4 4a16 16 0 0116 16"/><circle cx="5" cy="19" r="1"/></svg></a></p></div></div></footer></body></html>

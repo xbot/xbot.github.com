@@ -6,7 +6,351 @@
 1 2 3 4 5 6 7 8 9 10 11 <?php class Component { public function doSth() { // ... $db = new DatabaseConnection($schema, $host, $port, $login, $password); // ... } } ?> 这样做的缺点是代码一旦执行，Component行为将不可更改，有时我们需要在程序执行的过程中决定其行为。很直接地，可以想到给Component添加一个Setter方法：
 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 <?php class Component { private $__db; public function doSth() { // ... if ($this->__db !== null) { // do something ... } // ... } public function setConnection($db) { $this->__db = $db; } } ?> 这样就把Component和数据库连接解耦了。这时又有一个问题，怎样管理数据库连接？最简单粗暴的办法是在每次使用前创建，如果在程序中多处需要改变数据库连接，这就把代码写死了。"><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#181818"><title>晴耕雨讀 - PHP框架实战（六）：依赖注入
 </title><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=stylesheet href=/minima.91848781a7679600f0ad1ad577e7da4fbb28b9f3fdc9a82126197659405bb483.css integrity="sha256-kYSHgadnlgDwrRrVd+faT7soufP9yaghJhl2WUBbtIM="><script defer type=text/javascript src=/minima.5f772103e807a34ef8ab63c3c53905fbf70689fa70d121085c7d0e84087effea.js integrity="sha256-X3chA+gHo074q2PDxTkF+/cGifpw0SEIXH0OhAh+/+o="></script></head><script>const theme_config="system",theme_light=theme_config==="system"?"light":theme_config;let theme=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":theme_light;console.debug(theme);try{localStorage.setItem("theme",theme),window.minima_theme=theme,document.querySelector("html").classList.add(theme)}catch(e){console.error(e)}</script><body><header class="mt-3 mb-8"><div class="container mx-auto"><nav class="flex justify-between items-center"><div class="flex items-center"><div id=theme-switch class="text-2xl cursor-pointer">🌝</div></div><ul class="flex items-center text-base font-semibold
-whitespace-nowrap overflow-x-auto overflow-y-hidden"><li class="ml-2 mr-2"><a href=/>首页</a></li><li class="ml-2 mr-2"><a href=/posts>文章</a></li><li class="ml-2 mr-2"><a href=/tags>标签</a></li><li class="ml-2 mr-2"><a href=/about>关于</a></li><li class="ml-2 mr-2"><a href=/search>🔍</a></li></ul></nav></div></header><main class="container mx-auto"><h1 class="text-4xl font-extrabold mt-6">搜索</h1><p class="text-sm mb-6">Powered by <a href=https://fusejs.io target=_blank>fuse.js</a>.</p><div class=search><input class=mb-4 autofocus autocomplete=off id=search-input type=search placeholder="输入关键词 ↵"><ul id=search-result></ul></div></main><footer class="mt-8 mb-8"><div class="container mx-auto"><div class="mt-8 flex flex-col-reverse sm:flex-row sm:justify-between items-center"><div class="text-center sm:text-left"><p class="mt-0 text-sm">© 2007-2024 鬼马妖刀</p><p class="mt-0 text-xs">Built with <a href=https://gohugo.io target=_blank rel="noopener noreferrer">Hugo</a> v0.146.3
+whitespace-nowrap overflow-x-auto overflow-y-hidden"><li class="ml-2 mr-2"><a href=/>首页</a></li><li class="ml-2 mr-2"><a href=/posts>文章</a></li><li class="ml-2 mr-2"><a href=/tags>标签</a></li><li class="ml-2 mr-2"><a href=/about>关于</a></li><li class="ml-2 mr-2"><a href=/search>🔍</a></li></ul></nav></div></header><div class="container mx-auto"><h1 class="text-4xl font-extrabold mt-6 mb-6">PHP框架实战（六）：依赖注入</h1><div class="mb-3 text-sm flex justify-between"><div>发布于 &mdash; 2014 年 03 月 30 日</div><div><a class=ml-1 href=/tags/PHP>#PHP</a>
+<a class=ml-1 href=/tags/Flamework>#Flamework</a>
+<a class=ml-1 href=/tags/%e6%a1%86%e6%9e%b6>#框架</a>
+<a class=ml-1 href=/tags/%e7%bc%96%e7%a8%8b>#编程</a>
+<a class=ml-1 href=/tags/%e8%ae%a1%e7%ae%97%e6%9c%ba>#计算机</a></div></div><main class=mb-8><p></p><article class=md><h2 id=简述>简述</h2><p>依赖注入是个很好的解耦方法，也可以优雅的实现懒加载。</p><p>以数据库连接为例，当一个组件用到数据库时，最简单粗暴的办法是在使用前创建连接：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-php data-lang=php><span class=line><span class=cl><span class=o>&lt;?</span><span class=nx>php</span>
+</span></span><span class=line><span class=cl><span class=k>class</span> <span class=nc>Component</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>public</span> <span class=k>function</span> <span class=nf>doSth</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=c1>// ...
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl>        <span class=nv>$db</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>DatabaseConnection</span><span class=p>(</span><span class=nv>$schema</span><span class=p>,</span> <span class=nv>$host</span><span class=p>,</span> <span class=nv>$port</span><span class=p>,</span> <span class=nv>$login</span><span class=p>,</span> <span class=nv>$password</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=c1>// ...
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=cp>?&gt;</span><span class=err>
+</span></span></span></code></pre></td></tr></table></div></div><p>这样做的缺点是代码一旦执行，Component行为将不可更改，有时我们需要在程序执行的过程中决定其行为。很直接地，可以想到给Component添加一个Setter方法：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-php data-lang=php><span class=line><span class=cl><span class=o>&lt;?</span><span class=nx>php</span>
+</span></span><span class=line><span class=cl><span class=k>class</span> <span class=nc>Component</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>private</span> <span class=nv>$__db</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>public</span> <span class=k>function</span> <span class=nf>doSth</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=c1>// ...
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=nv>$this</span><span class=o>-&gt;</span><span class=na>__db</span> <span class=o>!==</span> <span class=k>null</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=c1>// do something ...
+</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=c1>// ...
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>public</span> <span class=k>function</span> <span class=nf>setConnection</span><span class=p>(</span><span class=nv>$db</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>__db</span> <span class=o>=</span> <span class=nv>$db</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=cp>?&gt;</span><span class=err>
+</span></span></span></code></pre></td></tr></table></div></div><p>这样就把Component和数据库连接解耦了。这时又有一个问题，怎样管理数据库连接？最简单粗暴的办法是在每次使用前创建，如果在程序中多处需要改变数据库连接，这就把代码写死了。</p><p>一种解决问题的方法是使用一个全局变量保存连接，对于简单场景，这没问题，但是这种做法会污染全局命名空间，尤其是在依赖较多的情况下，这种做法就不可取了。另一种方法就是用一个注册表持有所有依赖，这就是依赖注入要做的事。</p><p>我曾经处理过一个问题，生产环境中即使在无请求的情况下也会在短时间内生成大量会话文件，直接原因是使用了keepalived检查系统可用性。由于程序在一开始就打开了会话，并且keepalived不能保持会话，导致每次访问都会生成一个新的会话文件。这就是没有使用懒加载导致的错误。</p><p>懒加载可以让每个组件只有在需要的情况下才被初始化，一方面简化了代码、提高了可读性，另一方面也能提高程序效率、降低资源消耗。如果组件很多，而每次请求实际用到的很少，初始化所有组件产生的资源消耗将会很可观。</p><h2 id=实现>实现</h2><p>用单例模式实现，以键值对的形式注册依赖。同时支持以变量和callable的形式注入，前者用以注册简单类型或已实例化的依赖，后者可以用匿名函数的方式更灵活地管理依赖。同时，注入依赖时可以指定该依赖是否为单例模式，如果是，callable类型的依赖将会在第一次被调用后保持下来。此外，使用__call()魔术方法实现直接以getter方法的方式获取依赖。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>  1
+</span><span class=lnt>  2
+</span><span class=lnt>  3
+</span><span class=lnt>  4
+</span><span class=lnt>  5
+</span><span class=lnt>  6
+</span><span class=lnt>  7
+</span><span class=lnt>  8
+</span><span class=lnt>  9
+</span><span class=lnt> 10
+</span><span class=lnt> 11
+</span><span class=lnt> 12
+</span><span class=lnt> 13
+</span><span class=lnt> 14
+</span><span class=lnt> 15
+</span><span class=lnt> 16
+</span><span class=lnt> 17
+</span><span class=lnt> 18
+</span><span class=lnt> 19
+</span><span class=lnt> 20
+</span><span class=lnt> 21
+</span><span class=lnt> 22
+</span><span class=lnt> 23
+</span><span class=lnt> 24
+</span><span class=lnt> 25
+</span><span class=lnt> 26
+</span><span class=lnt> 27
+</span><span class=lnt> 28
+</span><span class=lnt> 29
+</span><span class=lnt> 30
+</span><span class=lnt> 31
+</span><span class=lnt> 32
+</span><span class=lnt> 33
+</span><span class=lnt> 34
+</span><span class=lnt> 35
+</span><span class=lnt> 36
+</span><span class=lnt> 37
+</span><span class=lnt> 38
+</span><span class=lnt> 39
+</span><span class=lnt> 40
+</span><span class=lnt> 41
+</span><span class=lnt> 42
+</span><span class=lnt> 43
+</span><span class=lnt> 44
+</span><span class=lnt> 45
+</span><span class=lnt> 46
+</span><span class=lnt> 47
+</span><span class=lnt> 48
+</span><span class=lnt> 49
+</span><span class=lnt> 50
+</span><span class=lnt> 51
+</span><span class=lnt> 52
+</span><span class=lnt> 53
+</span><span class=lnt> 54
+</span><span class=lnt> 55
+</span><span class=lnt> 56
+</span><span class=lnt> 57
+</span><span class=lnt> 58
+</span><span class=lnt> 59
+</span><span class=lnt> 60
+</span><span class=lnt> 61
+</span><span class=lnt> 62
+</span><span class=lnt> 63
+</span><span class=lnt> 64
+</span><span class=lnt> 65
+</span><span class=lnt> 66
+</span><span class=lnt> 67
+</span><span class=lnt> 68
+</span><span class=lnt> 69
+</span><span class=lnt> 70
+</span><span class=lnt> 71
+</span><span class=lnt> 72
+</span><span class=lnt> 73
+</span><span class=lnt> 74
+</span><span class=lnt> 75
+</span><span class=lnt> 76
+</span><span class=lnt> 77
+</span><span class=lnt> 78
+</span><span class=lnt> 79
+</span><span class=lnt> 80
+</span><span class=lnt> 81
+</span><span class=lnt> 82
+</span><span class=lnt> 83
+</span><span class=lnt> 84
+</span><span class=lnt> 85
+</span><span class=lnt> 86
+</span><span class=lnt> 87
+</span><span class=lnt> 88
+</span><span class=lnt> 89
+</span><span class=lnt> 90
+</span><span class=lnt> 91
+</span><span class=lnt> 92
+</span><span class=lnt> 93
+</span><span class=lnt> 94
+</span><span class=lnt> 95
+</span><span class=lnt> 96
+</span><span class=lnt> 97
+</span><span class=lnt> 98
+</span><span class=lnt> 99
+</span><span class=lnt>100
+</span><span class=lnt>101
+</span><span class=lnt>102
+</span><span class=lnt>103
+</span><span class=lnt>104
+</span><span class=lnt>105
+</span><span class=lnt>106
+</span><span class=lnt>107
+</span><span class=lnt>108
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-php data-lang=php><span class=line><span class=cl><span class=o>&lt;?</span><span class=nx>php</span>
+</span></span><span class=line><span class=cl><span class=k>namespace</span> <span class=nx>org\x3f\flamework\base</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>use</span> <span class=nx>org\x3f\flamework\exceptions\FlameException</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=sd>/**
+</span></span></span><span class=line><span class=cl><span class=sd> * Dependency Injection Class
+</span></span></span><span class=line><span class=cl><span class=sd> *
+</span></span></span><span class=line><span class=cl><span class=sd> * @author Donie Leigh &lt;donie.leigh@gmail.com&gt;
+</span></span></span><span class=line><span class=cl><span class=sd> * @link http://0x3f.org
+</span></span></span><span class=line><span class=cl><span class=sd> * @copyright Copyright &amp;copy; 2013-2014 Donie Leigh
+</span></span></span><span class=line><span class=cl><span class=sd> * @license BSD (3-terms)
+</span></span></span><span class=line><span class=cl><span class=sd> * @since 1.0
+</span></span></span><span class=line><span class=cl><span class=sd> */</span>
+</span></span><span class=line><span class=cl><span class=k>class</span> <span class=nc>DI</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=sd>/**
+</span></span></span><span class=line><span class=cl><span class=sd>     * @var object Singleton instance
+</span></span></span><span class=line><span class=cl><span class=sd>     * @since 1.0
+</span></span></span><span class=line><span class=cl><span class=sd>     */</span>
+</span></span><span class=line><span class=cl>    <span class=k>public</span> <span class=k>static</span> <span class=nv>$_instance</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=sd>/**
+</span></span></span><span class=line><span class=cl><span class=sd>     * @var array Services
+</span></span></span><span class=line><span class=cl><span class=sd>     * @since 1.0
+</span></span></span><span class=line><span class=cl><span class=sd>     */</span>
+</span></span><span class=line><span class=cl>    <span class=k>private</span> <span class=nv>$_services</span> <span class=o>=</span> <span class=k>array</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=sd>/**
+</span></span></span><span class=line><span class=cl><span class=sd>     * Singleton constructor
+</span></span></span><span class=line><span class=cl><span class=sd>     * @return void
+</span></span></span><span class=line><span class=cl><span class=sd>     * @author Donie Leigh &lt;donie.leigh@gmail.com&gt;
+</span></span></span><span class=line><span class=cl><span class=sd>     * @since 1.0
+</span></span></span><span class=line><span class=cl><span class=sd>     */</span>
+</span></span><span class=line><span class=cl>    <span class=k>private</span> <span class=k>function</span> <span class=fm>__construct</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=sd>/**
+</span></span></span><span class=line><span class=cl><span class=sd>     * Return the singleton instance
+</span></span></span><span class=line><span class=cl><span class=sd>     * @return object Singleton instance
+</span></span></span><span class=line><span class=cl><span class=sd>     * @since 1.0
+</span></span></span><span class=line><span class=cl><span class=sd>     **/</span>
+</span></span><span class=line><span class=cl>    <span class=k>public</span> <span class=k>static</span> <span class=k>function</span> <span class=nf>getInstance</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=o>!</span> <span class=nx>self</span><span class=o>::</span><span class=nv>$_instance</span> <span class=nx>instanceof</span> <span class=nx>self</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nx>self</span><span class=o>::</span><span class=nv>$_instance</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>self</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=nx>self</span><span class=o>::</span><span class=nv>$_instance</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    
+</span></span><span class=line><span class=cl>    <span class=sd>/**
+</span></span></span><span class=line><span class=cl><span class=sd>     * Add a service to the register
+</span></span></span><span class=line><span class=cl><span class=sd>     * @param string $key Service name
+</span></span></span><span class=line><span class=cl><span class=sd>     * @param mixed $service Callable to create a service instance or exactly an instance
+</span></span></span><span class=line><span class=cl><span class=sd>     * @param bool $isSingleton Set true to treat this service as singleton
+</span></span></span><span class=line><span class=cl><span class=sd>     * @return void
+</span></span></span><span class=line><span class=cl><span class=sd>     * @since 1.0
+</span></span></span><span class=line><span class=cl><span class=sd>     **/</span>
+</span></span><span class=line><span class=cl>    <span class=k>public</span> <span class=k>function</span> <span class=nf>set</span><span class=p>(</span><span class=nv>$key</span><span class=p>,</span> <span class=nv>$service</span><span class=p>,</span> <span class=nv>$isSingleton</span><span class=o>=</span><span class=k>false</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_services</span><span class=p>[</span><span class=nx>strtolower</span><span class=p>(</span><span class=nv>$key</span><span class=p>)]</span> <span class=o>=</span> <span class=k>array</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>            <span class=s1>&#39;service&#39;</span> <span class=o>=&gt;</span> <span class=nv>$service</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=s1>&#39;isSingleton&#39;</span> <span class=o>=&gt;</span> <span class=nv>$isSingleton</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=s1>&#39;instance&#39;</span> <span class=o>=&gt;</span> <span class=k>null</span>
+</span></span><span class=line><span class=cl>        <span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    
+</span></span><span class=line><span class=cl>    <span class=sd>/**
+</span></span></span><span class=line><span class=cl><span class=sd>     * Get a service instance
+</span></span></span><span class=line><span class=cl><span class=sd>     * @return mixed Service instance
+</span></span></span><span class=line><span class=cl><span class=sd>     * @since 1.0
+</span></span></span><span class=line><span class=cl><span class=sd>     */</span>
+</span></span><span class=line><span class=cl>    <span class=k>public</span> <span class=k>function</span> <span class=nf>get</span><span class=p>(</span><span class=nv>$key</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nv>$key</span> <span class=o>=</span> <span class=nx>strtolower</span><span class=p>(</span><span class=nv>$key</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=nx>isset</span><span class=p>(</span><span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_services</span><span class=p>[</span><span class=nv>$key</span><span class=p>]))</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nv>$info</span> <span class=o>=</span> <span class=o>&amp;</span><span class=nv>$this</span><span class=o>-&gt;</span><span class=na>_services</span><span class=p>[</span><span class=nv>$key</span><span class=p>];</span>
+</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=p>(</span><span class=nv>$info</span><span class=p>[</span><span class=s1>&#39;instance&#39;</span><span class=p>]</span> <span class=o>!==</span> <span class=k>null</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                <span class=k>return</span> <span class=nv>$info</span><span class=p>[</span><span class=s1>&#39;instance&#39;</span><span class=p>];</span>
+</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=p>(</span><span class=nx>is_callable</span><span class=p>(</span><span class=nv>$info</span><span class=p>[</span><span class=s1>&#39;service&#39;</span><span class=p>]))</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=nv>$instance</span> <span class=o>=</span> <span class=nx>call_user_func</span><span class=p>(</span><span class=nv>$info</span><span class=p>[</span><span class=s1>&#39;service&#39;</span><span class=p>]);</span>
+</span></span><span class=line><span class=cl>                <span class=k>if</span> <span class=p>(</span><span class=nv>$info</span><span class=p>[</span><span class=s1>&#39;isSingleton&#39;</span><span class=p>]</span> <span class=o>===</span> <span class=k>true</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                    <span class=nv>$info</span><span class=p>[</span><span class=s1>&#39;instance&#39;</span><span class=p>]</span> <span class=o>=</span> <span class=nv>$instance</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>                <span class=k>return</span> <span class=nv>$instance</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=k>return</span> <span class=nv>$info</span><span class=p>[</span><span class=s1>&#39;service&#39;</span><span class=p>];</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=k>null</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    
+</span></span><span class=line><span class=cl>    <span class=sd>/**
+</span></span></span><span class=line><span class=cl><span class=sd>     * Get service with magic method
+</span></span></span><span class=line><span class=cl><span class=sd>     * @param string $method get{ServiceName}
+</span></span></span><span class=line><span class=cl><span class=sd>     * @param array $parameters Parameters, currently useless
+</span></span></span><span class=line><span class=cl><span class=sd>     * @return mixed Service instance
+</span></span></span><span class=line><span class=cl><span class=sd>     * @since 1.0
+</span></span></span><span class=line><span class=cl><span class=sd>     */</span>
+</span></span><span class=line><span class=cl>    <span class=k>public</span> <span class=k>function</span> <span class=fm>__call</span><span class=p>(</span><span class=nv>$method</span><span class=p>,</span> <span class=nv>$parameters</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=nx>strpos</span><span class=p>(</span><span class=nx>strtolower</span><span class=p>(</span><span class=nv>$method</span><span class=p>),</span> <span class=s1>&#39;get&#39;</span><span class=p>)</span> <span class=o>===</span> <span class=mi>0</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nv>$serviceName</span> <span class=o>=</span> <span class=nx>substr</span><span class=p>(</span><span class=nv>$method</span><span class=p>,</span> <span class=mi>3</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=nv>$this</span><span class=o>-&gt;</span><span class=na>get</span><span class=p>(</span><span class=nv>$serviceName</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=k>throw</span> <span class=k>new</span> <span class=nx>FlameException</span><span class=p>(</span><span class=s1>&#39;Call to undefined method: &#39;</span><span class=o>.</span><span class=nv>$method</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    
+</span></span><span class=line><span class=cl><span class=p>}</span> <span class=c1>// END class DI
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=cp>?&gt;</span><span class=err>
+</span></span></span></code></pre></td></tr></table></div></div><h2 id=使用>使用</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-php data-lang=php><span class=line><span class=cl><span class=o>&lt;?</span><span class=nx>php</span>
+</span></span><span class=line><span class=cl><span class=nv>$di</span> <span class=o>=</span> <span class=nx>DI</span><span class=o>::</span><span class=na>getInstance</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 简单类型
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nv>$di</span><span class=o>-&gt;</span><span class=na>set</span><span class=p>(</span><span class=s1>&#39;foo&#39;</span><span class=p>,</span> <span class=s1>&#39;bar&#39;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 每次调用生成不同的依赖
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nv>$di</span><span class=o>-&gt;</span><span class=na>set</span><span class=p>(</span><span class=s1>&#39;newPassword&#39;</span><span class=p>,</span> <span class=k>function</span><span class=p>(){</span>
+</span></span><span class=line><span class=cl>    <span class=nv>$pwd</span> <span class=o>=</span> <span class=nx>”</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=nv>$pwdLen</span> <span class=o>=</span> <span class=mi>10</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=nv>$i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=nv>$i</span> <span class=o>&lt;</span> <span class=nv>$pwdLen</span><span class=p>;</span> <span class=nv>$i</span><span class=o>++</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nv>$pwd</span> <span class=o>.=</span> <span class=nx>chr</span><span class=p>(</span><span class=nx>mt_rand</span><span class=p>(</span><span class=mi>33</span><span class=p>,</span> <span class=mi>126</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=nv>$pwd</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>});</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 注入对象实例
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nv>$di</span><span class=o>-&gt;</span><span class=na>set</span><span class=p>(</span><span class=s1>&#39;simpleSession&#39;</span><span class=p>,</span> <span class=k>new</span> <span class=nx>SimpleSession</span><span class=p>());</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 依赖在第一次被获取时动态创建，然后保持为单例
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nv>$di</span><span class=o>-&gt;</span><span class=na>set</span><span class=p>(</span><span class=s1>&#39;complicatedSession&#39;</span><span class=p>,</span> <span class=k>function</span><span class=p>(){</span>
+</span></span><span class=line><span class=cl>    <span class=nv>$session</span> <span class=o>=</span> <span class=k>new</span> <span class=nx>ComplicatedSession</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=nv>$session</span><span class=o>-&gt;</span><span class=na>setFirstVisitTime</span><span class=p>(</span><span class=nx>time</span><span class=p>());</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=nv>$session</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>},</span> <span class=k>true</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 获取依赖
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>echo</span> <span class=nv>$di</span><span class=o>-&gt;</span><span class=na>get</span><span class=p>(</span><span class=s1>&#39;foo&#39;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 以getter的形式获取依赖
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>echo</span> <span class=nv>$di</span><span class=o>-&gt;</span><span class=na>getFoo</span><span class=p>();</span>
+</span></span><span class=line><span class=cl><span class=cp>?&gt;</span><span class=err>
+</span></span></span></code></pre></td></tr></table></div></div><h2 id=总结>总结</h2><p>之前的版本中，org\x3f\flamework\base\WebApplication中保存了数据库连接和日志级别，现在就可以把它们从这个类中解耦了。使用依赖注入，可以使框架核心保持尽可能的精简，最大程度地保证任何一个组件都是可拆卸和更换的，也是防止过度设计的一个很好的机制。</p></article></main><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css integrity=sha384-Um5gpz1odJg5Z4HAmzPtgZKdTBHZdw8S29IecapCSB31ligYPhHQZMIlWLYQGVoc crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js integrity=sha384-YNHdsYkH6gMx9y3mRkmcJ2mFUjTd0qNQQvY9VYZgQd7DcN7env35GzlmFaZ23JGp crossorigin=anonymous></script><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/contrib/auto-render.min.js integrity=sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl crossorigin=anonymous></script><script>document.addEventListener("DOMContentLoaded",function(){renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}],throwOnError:!1})})</script><script src=https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js crossorigin=anonymous></script><script>mermaid.init(void 0,"code.language-mermaid")</script><div id=comment></div><script>const s=document.createElement("script");s.src="https://utteranc.es/client.js",s.crossOrigin="anonymous",s.async=!0,s.setAttribute("repo","xbot/blog-comments"),s.setAttribute("issue-term","pathname"),s.setAttribute("label","comment"),s.setAttribute("theme","github-"+window.minima_theme),document.getElementById("comment").appendChild(s)</script></div><footer class="mt-8 mb-8"><div class="container mx-auto"><div class="mt-8 flex flex-col-reverse sm:flex-row sm:justify-between items-center"><div class="text-center sm:text-left"><p class="mt-0 text-sm">© 2007-2024 鬼马妖刀</p><p class="mt-0 text-xs">Built with <a href=https://gohugo.io target=_blank rel="noopener noreferrer">Hugo</a> v0.146.7
 and <a href=https://github.com/mivinci/hugo-theme-minima target=_blank rel="noopener noreferrer">Minima</a></p></div><p class="flex items-center mt-0"><a class="icon ml-1 mr-1" href=mailto:donie.leigh@gmail.com title=email><svg width="18" height="18" viewBox="0 0 24 21" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1.0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1.0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>
 </a><a class="icon ml-1 mr-1" href=https://github.com/xbot title=github><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg>
 </a><a class="icon ml-1 mr-1" href=/index.xml title=rss><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 019 9M4 4a16 16 0 0116 16"/><circle cx="5" cy="19" r="1"/></svg></a></p></div></div></footer></body></html>

@@ -1,6 +1,504 @@
 <!doctype html><html lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta property="og:url" content="http://0x3f.org/posts/hashtable-implementation-of-php/"><meta property="og:site_name" content="晴耕雨讀"><meta property="og:title" content="PHP哈希表的实现与操作"><meta property="og:description" content="结构 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 // 哈希表结构 typedef struct _hashtable { uint nTableSize; uint nTableMask; uint nNumOfElements; // 全部元素数 ulong nNextFreeElement; // 下一个可用的整数键 Bucket *pInternalPointer; // 枚举操作时使用，指向当前Bucket Bucket *pListHead; Bucket *pListTail; Bucket **arBuckets; dtor_func_t pDestructor; // 元素的析构函数 zend_bool persistent; // 是否在本次请求结束后保留哈希表 unsigned char nApplyCount; // 循环级别，防止循环引用导致遍历哈希表时死循环 zend_bool bApplyProtection; // 是否防止死循环 #if ZEND_DEBUG int inconsistent; #endif } HashTable; // Bucket结构 typedef struct bucket { ulong h; uint nKeyLength; void *pData; void *pDataPtr; struct bucket *pListNext; struct bucket *pListLast; struct bucket *pNext; struct bucket *pLast; char *arKey; } Bucket; 哈希冲突处理 哈希表通过计算键值的哈希值，将对应的数据映射到对应的槽上。理论上会存在不同的键的哈希值相同的情况。"><meta property="og:locale" content="zh_cn"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2015-04-23T15:56:00+00:00"><meta property="article:modified_time" content="2015-04-23T15:56:00+00:00"><meta property="article:tag" content="PHP"><meta property="article:tag" content="源码"><meta property="article:tag" content="计算机"><meta name=twitter:card content="summary"><meta name=twitter:title content="PHP哈希表的实现与操作"><meta name=twitter:description content="结构 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 // 哈希表结构 typedef struct _hashtable { uint nTableSize; uint nTableMask; uint nNumOfElements; // 全部元素数 ulong nNextFreeElement; // 下一个可用的整数键 Bucket *pInternalPointer; // 枚举操作时使用，指向当前Bucket Bucket *pListHead; Bucket *pListTail; Bucket **arBuckets; dtor_func_t pDestructor; // 元素的析构函数 zend_bool persistent; // 是否在本次请求结束后保留哈希表 unsigned char nApplyCount; // 循环级别，防止循环引用导致遍历哈希表时死循环 zend_bool bApplyProtection; // 是否防止死循环 #if ZEND_DEBUG int inconsistent; #endif } HashTable; // Bucket结构 typedef struct bucket { ulong h; uint nKeyLength; void *pData; void *pDataPtr; struct bucket *pListNext; struct bucket *pListLast; struct bucket *pNext; struct bucket *pLast; char *arKey; } Bucket; 哈希冲突处理 哈希表通过计算键值的哈希值，将对应的数据映射到对应的槽上。理论上会存在不同的键的哈希值相同的情况。"><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#181818"><title>晴耕雨讀 - PHP哈希表的实现与操作
 </title><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=stylesheet href=/minima.91848781a7679600f0ad1ad577e7da4fbb28b9f3fdc9a82126197659405bb483.css integrity="sha256-kYSHgadnlgDwrRrVd+faT7soufP9yaghJhl2WUBbtIM="><script defer type=text/javascript src=/minima.5f772103e807a34ef8ab63c3c53905fbf70689fa70d121085c7d0e84087effea.js integrity="sha256-X3chA+gHo074q2PDxTkF+/cGifpw0SEIXH0OhAh+/+o="></script></head><script>const theme_config="system",theme_light=theme_config==="system"?"light":theme_config;let theme=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":theme_light;console.debug(theme);try{localStorage.setItem("theme",theme),window.minima_theme=theme,document.querySelector("html").classList.add(theme)}catch(e){console.error(e)}</script><body><header class="mt-3 mb-8"><div class="container mx-auto"><nav class="flex justify-between items-center"><div class="flex items-center"><div id=theme-switch class="text-2xl cursor-pointer">🌝</div></div><ul class="flex items-center text-base font-semibold
-whitespace-nowrap overflow-x-auto overflow-y-hidden"><li class="ml-2 mr-2"><a href=/>首页</a></li><li class="ml-2 mr-2"><a href=/posts>文章</a></li><li class="ml-2 mr-2"><a href=/tags>标签</a></li><li class="ml-2 mr-2"><a href=/about>关于</a></li><li class="ml-2 mr-2"><a href=/search>🔍</a></li></ul></nav></div></header><main class="container mx-auto"><h2 class="text-3xl font-bold mb-3">PHP哈希表的实现与操作</h2><ul class=list-disc></ul></nav></main><footer class="mt-8 mb-8"><div class="container mx-auto"><div class="mt-8 flex flex-col-reverse sm:flex-row sm:justify-between items-center"><div class="text-center sm:text-left"><p class="mt-0 text-sm">© 2007-2024 鬼马妖刀</p><p class="mt-0 text-xs">Built with <a href=https://gohugo.io target=_blank rel="noopener noreferrer">Hugo</a> v0.146.3
+whitespace-nowrap overflow-x-auto overflow-y-hidden"><li class="ml-2 mr-2"><a href=/>首页</a></li><li class="ml-2 mr-2"><a href=/posts>文章</a></li><li class="ml-2 mr-2"><a href=/tags>标签</a></li><li class="ml-2 mr-2"><a href=/about>关于</a></li><li class="ml-2 mr-2"><a href=/search>🔍</a></li></ul></nav></div></header><div class="container mx-auto"><h1 class="text-4xl font-extrabold mt-6 mb-6">PHP哈希表的实现与操作</h1><div class="mb-3 text-sm flex justify-between"><div>发布于 &mdash; 2015 年 04 月 23 日</div><div><a class=ml-1 href=/tags/PHP>#PHP</a>
+<a class=ml-1 href=/tags/%e6%ba%90%e7%a0%81>#源码</a>
+<a class=ml-1 href=/tags/%e8%ae%a1%e7%ae%97%e6%9c%ba>#计算机</a></div></div><main class=mb-8><p></p><article class=md><h2 id=结构>结构</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=c1>// 哈希表结构
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>typedef</span> <span class=k>struct</span> <span class=n>_hashtable</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>uint</span> <span class=n>nTableSize</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=n>uint</span> <span class=n>nTableMask</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=n>uint</span> <span class=n>nNumOfElements</span><span class=p>;</span>           <span class=c1>// 全部元素数
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=n>ulong</span> <span class=n>nNextFreeElement</span><span class=p>;</span>        <span class=c1>// 下一个可用的整数键
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=n>Bucket</span> <span class=o>*</span><span class=n>pInternalPointer</span><span class=p>;</span>      <span class=c1>// 枚举操作时使用，指向当前Bucket
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=n>Bucket</span> <span class=o>*</span><span class=n>pListHead</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=n>Bucket</span> <span class=o>*</span><span class=n>pListTail</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=n>Bucket</span> <span class=o>**</span><span class=n>arBuckets</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=kt>dtor_func_t</span> <span class=n>pDestructor</span><span class=p>;</span>       <span class=c1>// 元素的析构函数
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=n>zend_bool</span> <span class=n>persistent</span><span class=p>;</span>          <span class=c1>// 是否在本次请求结束后保留哈希表
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>unsigned</span> <span class=kt>char</span> <span class=n>nApplyCount</span><span class=p>;</span>     <span class=c1>// 循环级别，防止循环引用导致遍历哈希表时死循环
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=n>zend_bool</span> <span class=n>bApplyProtection</span><span class=p>;</span>    <span class=c1>// 是否防止死循环
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=cp>#if ZEND_DEBUG
+</span></span></span><span class=line><span class=cl><span class=cp></span>    <span class=kt>int</span> <span class=n>inconsistent</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=cp>#endif
+</span></span></span><span class=line><span class=cl><span class=cp></span><span class=p>}</span> <span class=n>HashTable</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// Bucket结构
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>typedef</span> <span class=k>struct</span> <span class=n>bucket</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>ulong</span> <span class=n>h</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=n>uint</span> <span class=n>nKeyLength</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=kt>void</span> <span class=o>*</span><span class=n>pData</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=kt>void</span> <span class=o>*</span><span class=n>pDataPtr</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=k>struct</span> <span class=n>bucket</span> <span class=o>*</span><span class=n>pListNext</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=k>struct</span> <span class=n>bucket</span> <span class=o>*</span><span class=n>pListLast</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=k>struct</span> <span class=n>bucket</span> <span class=o>*</span><span class=n>pNext</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=k>struct</span> <span class=n>bucket</span> <span class=o>*</span><span class=n>pLast</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=kt>char</span> <span class=o>*</span><span class=n>arKey</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span> <span class=n>Bucket</span><span class=p>;</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=哈希冲突处理>哈希冲突处理</h3><p>哈希表通过计算键值的哈希值，将对应的数据映射到对应的槽上。理论上会存在不同的键的哈希值相同的情况。</p><p>处理哈希冲突的方法一般有两种：开放寻址和链表。开放寻址法是将冲突的元素顺序放到下一个空槽，理论上会导致冲突越来越多，性能快速下降。链表法是将冲突的元素插入对应的槽，与前一个元素组成一个链表。PHP使用链表法。</p><p>PHP的哈希表中的Buckets组成两种双向链表。一种由每个槽中的所有Bucket分别组成，一种是整个哈希表中的Bucket组成一个。Bucket结构里，pNext指向该槽的链表中的下一个Bucket，pLast指向上一个；pListNext指向整个哈希表链表的下一个Bucket，pListLast指向上一个。</p><h3 id=pdata与pdataptr>pData与pDataPtr</h3><p>赋值到Bucket时，数据会被复制一份，pData中保存指向该数据拷贝的指针。特别地，如果保存一个指针到Bucket，会先将该指针保存到pDataPtr，然后将pData指向pDataPtr，即pData中保存的是指向pDataPtr中保存的指针的指针。这样可以避免一次拷贝数据时分配内存的操作，提高效率。</p><h3 id=ntablesize与ntablemask>nTableSize与nTableMask</h3><p>nTableSize保存的是arBuckets的Bucket个数。它的值永远是个大于等于8的、2的n次方的整数。当现有容量不满足需要时，arBuckets会重新分配一个大小是原来两倍的空间，nTableSize相应地被更新为新的数值。</p><p>nTableMask = nTableSize - 1</p><p>哈希值h一般比nTableSize大，所以要用哈希值对nTableSize取模，以确定对应的Bucket。由于取模操作运算量大，且nTableSize永远是2的n次幂，所以用“<strong>h & (nTableSize - 1)</strong>”替代。</p><h2 id=初始化与销毁>初始化与销毁</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=c1>// init hashtable
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>HashTable</span> <span class=o>*</span><span class=n>myht</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=nf>ALLOC_HASHTABLE</span><span class=p>(</span><span class=n>myht</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=k>if</span> <span class=p>(</span><span class=nf>zend_hash_init</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=mi>100</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=mi>0</span><span class=p>)</span> <span class=o>==</span> <span class=n>FAILURE</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nf>FREE_HASHTABLE</span><span class=p>(</span><span class=n>myht</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>FAILURE</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// destroy hashtable
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nf>zend_hash_destroy</span><span class=p>(</span><span class=n>myht</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=nf>FREE_HASHTABLE</span><span class=p>(</span><span class=n>myht</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=k>return</span> <span class=n>SUCCESS</span><span class=p>;</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=初始化哈希表>初始化哈希表</h3><p>ALLOC_HASHTABLE就是用emalloc()分配内存。</p><h4 id=zend_hash_init>zend_hash_init()</h4><blockquote><p>zend_hash_init(HashTable *ht, uint nSize, dtor_func_t pDestructor, zend_bool persistent ZEND_FILE_LINE_DC)</p></blockquote><p>nSize是哈希表的初始长度，实际分配为最接近指定值的2的n次方，最小为8。</p><p>pDestructor是被存储数据的析构函数，默认为ZVAL_PTR_DTOR，对于一般情况（Bucket中存储的是zval）适用。</p><p>persistent，1表示本次请求结束后保留哈希表，0反之。</p><h3 id=销毁哈希表>销毁哈希表</h3><p>zend_hash_clean()对HT所有Bucket调用析构函数，并重置HT的所有指针。</p><p>zend_hash_destroy()除了销毁所有Bucket存储的数据，连arBuckets的空间也释放掉。</p><p>FREE_HASHTABLE宏其实就是efree()。</p><h2 id=操作数字键>操作数字键</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=c1>// add a string with an integer key 2 to myht
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>zval</span> <span class=o>*</span><span class=n>zv1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=nf>MAKE_STD_ZVAL</span><span class=p>(</span><span class=n>zv1</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=nf>ZVAL_STRING</span><span class=p>(</span><span class=n>zv1</span><span class=p>,</span> <span class=s>&#34;Hello HT !&#34;</span><span class=p>,</span> <span class=mi>1</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=nf>zend_hash_index_update</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=mi>2</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>zv1</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=n>zval</span> <span class=o>*</span><span class=p>),</span> <span class=nb>NULL</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// get the next free key
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;The next free key will be %ld.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=nf>zend_hash_next_free_element</span><span class=p>(</span><span class=n>myht</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// append an integer to myht
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>zval</span> <span class=o>*</span><span class=n>zv2</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=nf>MAKE_STD_ZVAL</span><span class=p>(</span><span class=n>zv2</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=nf>ZVAL_LONG</span><span class=p>(</span><span class=n>zv2</span><span class=p>,</span> <span class=mi>2015</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=k>if</span> <span class=p>(</span><span class=nf>zend_hash_next_index_insert</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>zv2</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=n>zval</span> <span class=o>*</span><span class=p>),</span> <span class=nb>NULL</span><span class=p>)</span> <span class=o>==</span> <span class=n>FAILURE</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;HashTable appendation failed.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=k>else</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;HashTable appendation succeeded.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// get the size
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;HashTable has a size of %d.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=nf>zend_hash_num_elements</span><span class=p>(</span><span class=n>myht</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// check if an integer key exists
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kt>int</span> <span class=n>idx</span> <span class=o>=</span> <span class=mi>3</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>if</span> <span class=p>(</span><span class=nf>zend_hash_index_exists</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=n>idx</span><span class=p>))</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;HashTable has an index of the value %ld.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>idx</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=k>else</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;HashTable does not have an index of the value %ld.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>idx</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// get a value by its key
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>zval</span> <span class=o>**</span><span class=n>zval_dest</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>if</span> <span class=p>(</span><span class=nf>zend_hash_index_find</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=n>idx</span><span class=p>,</span> <span class=p>(</span><span class=kt>void</span> <span class=o>**</span><span class=p>)</span> <span class=o>&amp;</span><span class=n>zval_dest</span><span class=p>)</span> <span class=o>==</span> <span class=n>SUCCESS</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;The value indexed by %ld is %Z.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>idx</span><span class=p>,</span> <span class=o>*</span><span class=n>zval_dest</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=k>else</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;The value indexed by %ld does not exist.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>idx</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// delete the specified value from myht
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>if</span> <span class=p>(</span><span class=nf>zend_hash_index_del</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=n>idx</span><span class=p>)</span> <span class=o>==</span> <span class=n>FAILURE</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;The value indexed by %ld failed to be deleted.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>idx</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=k>else</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;The value indexed by %ld is deleted.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>idx</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=操作字符串键>操作字符串键</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=c1>// add an integer indexed by a string key, using zend_hash_update()
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>zval</span> <span class=o>*</span><span class=n>zv3</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=nf>MAKE_STD_ZVAL</span><span class=p>(</span><span class=n>zv3</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=nf>ZVAL_LONG</span><span class=p>(</span><span class=n>zv3</span><span class=p>,</span> <span class=mi>1985</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=nf>zend_hash_update</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=s>&#34;year&#34;</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=s>&#34;year&#34;</span><span class=p>),</span> <span class=o>&amp;</span><span class=n>zv3</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=n>zval</span> <span class=o>*</span><span class=p>),</span> <span class=nb>NULL</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;An integer is updated to the hash-table indexed by a string key.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// add a string indexed by a string key, using zend_hash_add()
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>zval</span> <span class=o>*</span><span class=n>zv4</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=nf>MAKE_STD_ZVAL</span><span class=p>(</span><span class=n>zv4</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=nf>ZVAL_STRING</span><span class=p>(</span><span class=n>zv4</span><span class=p>,</span> <span class=s>&#34;Great Donie !&#34;</span><span class=p>,</span> <span class=mi>1</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=k>if</span> <span class=p>(</span><span class=nf>zend_hash_add</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=s>&#34;motto&#34;</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=s>&#34;motto&#34;</span><span class=p>),</span> <span class=o>&amp;</span><span class=n>zv4</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=n>zval</span> <span class=o>*</span><span class=p>),</span> <span class=nb>NULL</span><span class=p>)</span> <span class=o>==</span> <span class=n>FAILURE</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;Cannot add a string indexed by a string key to the hash-table, may be the index already exists.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=k>else</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;A string is added to the hash-table indexed by a string key.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// get the next free key
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;The next free key will be %ld.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=nf>zend_hash_next_free_element</span><span class=p>(</span><span class=n>myht</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// check if a string key exists
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kt>char</span> <span class=o>*</span><span class=n>key1</span> <span class=o>=</span> <span class=s>&#34;year&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>if</span> <span class=p>(</span><span class=nf>zend_hash_exists</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=n>key1</span><span class=p>,</span> <span class=nf>strlen</span><span class=p>(</span><span class=n>key1</span><span class=p>)</span><span class=o>+</span><span class=mi>1</span><span class=p>))</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;The key %s exists.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>key1</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=k>else</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;The key %s does not exist.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>key1</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// get the value indexed by a string key
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>zval</span> <span class=o>**</span><span class=n>zv_dest2</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>if</span> <span class=p>(</span><span class=nf>zend_hash_find</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=n>key1</span><span class=p>,</span> <span class=nf>strlen</span><span class=p>(</span><span class=n>key1</span><span class=p>)</span><span class=o>+</span><span class=mi>1</span><span class=p>,</span> <span class=p>(</span><span class=kt>void</span> <span class=o>**</span><span class=p>)</span> <span class=o>&amp;</span><span class=n>zv_dest2</span><span class=p>)</span> <span class=o>==</span> <span class=n>SUCCESS</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;The value indexed by %s is %Z.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>key1</span><span class=p>,</span> <span class=o>*</span><span class=n>zv_dest2</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=k>else</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;Failed fetching the value indexed by %s.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>key1</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// delete the value indexed by a string key
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>if</span> <span class=p>(</span><span class=nf>zend_hash_del</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=n>key1</span><span class=p>,</span> <span class=nf>strlen</span><span class=p>(</span><span class=n>key1</span><span class=p>)</span><span class=o>+</span><span class=mi>1</span><span class=p>)</span> <span class=o>==</span> <span class=n>SUCCESS</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;The value indexed by %s is deleted.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>key1</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=k>else</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;The value indexed by %s failed to be deleted.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>key1</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=键的长度>键的长度</h3><p>键长包括键字符串末尾的NUL字节。如果直接指定，应是<strong>sizeof(&ldquo;key1&rdquo;)</strong>；如果是char*类型变量，应是<strong>strlen(key1)+1</strong>。</p><h3 id=快速操作>快速操作</h3><p>适用于频繁操作特定键的场景，只计算一次哈希值，加速操作。</p><p>对应的，有一组名带“quick”的函数。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=c1>// quick operations leveraging a one-time hashed value
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>zval</span> <span class=o>*</span><span class=n>zv5</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=nf>MAKE_STD_ZVAL</span><span class=p>(</span><span class=n>zv5</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=nf>ZVAL_STRING</span><span class=p>(</span><span class=n>zv5</span><span class=p>,</span> <span class=s>&#34;Great Donie Leigh !&#34;</span><span class=p>,</span> <span class=mi>1</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>ulong</span> <span class=n>h</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=n>h</span> <span class=o>=</span> <span class=nf>zend_get_hash_value</span><span class=p>(</span><span class=s>&#34;motto&#34;</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=s>&#34;motto&#34;</span><span class=p>));</span>
+</span></span><span class=line><span class=cl><span class=nf>zend_hash_quick_update</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=s>&#34;motto&#34;</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=s>&#34;motto&#34;</span><span class=p>),</span> <span class=n>h</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>zv5</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=n>zval</span> <span class=o>*</span><span class=p>),</span> <span class=nb>NULL</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;The value indexed by motto is updated with the quick operation.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>);</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=遍历>遍历</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=k>static</span> <span class=kt>int</span> <span class=nf>hashtable_traverse_callback</span><span class=p>(</span><span class=kt>void</span> <span class=o>*</span><span class=n>pDest</span> <span class=n>TSRMLS_DC</span><span class=p>,</span> <span class=kt>int</span> <span class=n>num_args</span><span class=p>,</span> <span class=n>va_list</span> <span class=n>args</span><span class=p>,</span> <span class=n>zend_hash_key</span> <span class=o>*</span><span class=n>hash_key</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=n>zval</span> <span class=o>**</span><span class=n>zv</span> <span class=o>=</span> <span class=p>(</span><span class=n>zval</span> <span class=o>**</span><span class=p>)</span> <span class=n>pDest</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>	<span class=kt>char</span> <span class=o>*</span><span class=n>arg1</span> <span class=o>=</span> <span class=nf>va_arg</span><span class=p>(</span><span class=n>args</span><span class=p>,</span> <span class=kt>char</span><span class=o>*</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;The first argument is %s.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>arg1</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=p>(</span><span class=n>hash_key</span><span class=o>-&gt;</span><span class=n>nKeyLength</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;K-V: %d=&gt;%Z</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>hash_key</span><span class=o>-&gt;</span><span class=n>h</span><span class=p>,</span> <span class=o>*</span><span class=n>zv</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=k>else</span>
+</span></span><span class=line><span class=cl>	<span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;K-V: %s=&gt;%Z</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>hash_key</span><span class=o>-&gt;</span><span class=n>arKey</span><span class=p>,</span> <span class=o>*</span><span class=n>zv</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=k>return</span> <span class=n>ZEND_HASH_APPLY_KEEP</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// traverse the hash table.
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nf>zend_hash_apply_with_arguments</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=n>hashtable_traverse_callback</span><span class=p>,</span> <span class=mi>1</span><span class=p>,</span> <span class=s>&#34;nonsense&#34;</span><span class=p>);</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=三个函数>三个函数</h3><p>遍历哈希表的三个函数：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=kt>void</span> <span class=nf>zend_hash_apply</span><span class=p>(</span><span class=n>HashTable</span> <span class=o>*</span><span class=n>ht</span><span class=p>,</span> <span class=kt>apply_func_t</span> <span class=n>apply_func</span> <span class=n>TSRMLS_DC</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=kt>void</span> <span class=nf>zend_hash_apply_with_argument</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>HashTable</span> <span class=o>*</span><span class=n>ht</span><span class=p>,</span> <span class=kt>apply_func_arg_t</span> <span class=n>apply_func</span><span class=p>,</span> <span class=kt>void</span> <span class=o>*</span><span class=n>argument</span> <span class=n>TSRMLS_DC</span>
+</span></span><span class=line><span class=cl><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=kt>void</span> <span class=nf>zend_hash_apply_with_arguments</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>HashTable</span> <span class=o>*</span><span class=n>ht</span> <span class=n>TSRMLS_DC</span><span class=p>,</span> <span class=kt>apply_func_args_t</span> <span class=n>apply_func</span><span class=p>,</span> <span class=kt>int</span> <span class=n>num_args</span><span class=p>,</span> <span class=p>...</span>
+</span></span><span class=line><span class=cl><span class=p>);</span>
+</span></span></code></pre></td></tr></table></div></div><p>三个函数接受的回调函数的类型：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=k>typedef</span> <span class=nf>int</span> <span class=p>(</span><span class=o>*</span><span class=kt>apply_func_t</span><span class=p>)(</span><span class=kt>void</span> <span class=o>*</span><span class=n>pDest</span> <span class=n>TSRMLS_DC</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=k>typedef</span> <span class=nf>int</span> <span class=p>(</span><span class=o>*</span><span class=kt>apply_func_arg_t</span><span class=p>)(</span><span class=kt>void</span> <span class=o>*</span><span class=n>pDest</span><span class=p>,</span> <span class=kt>void</span> <span class=o>*</span><span class=n>argument</span> <span class=n>TSRMLS_DC</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=k>typedef</span> <span class=nf>int</span> <span class=p>(</span><span class=o>*</span><span class=kt>apply_func_args_t</span><span class=p>)(</span>
+</span></span><span class=line><span class=cl>    <span class=kt>void</span> <span class=o>*</span><span class=n>pDest</span> <span class=n>TSRMLS_DC</span><span class=p>,</span> <span class=kt>int</span> <span class=n>num_args</span><span class=p>,</span> <span class=n>va_list</span> <span class=n>args</span><span class=p>,</span> <span class=n>zend_hash_key</span> <span class=o>*</span><span class=n>hash_key</span>
+</span></span><span class=line><span class=cl><span class=p>);</span>
+</span></span></code></pre></td></tr></table></div></div><p>zend_hash_key的定义为：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=k>typedef</span> <span class=k>struct</span> <span class=n>_zend_hash_key</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>arKey</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=n>uint</span> <span class=n>nKeyLength</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=n>ulong</span> <span class=n>h</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span> <span class=n>zend_hash_key</span><span class=p>;</span>
+</span></span></code></pre></td></tr></table></div></div><p>nKeyLength为0表示索引是整数，值为h；否则是字符串，值为arKey。</p><p>回调函数的返回值：</p><ul><li>ZEND_HASH_APPLY_KEEP：继续遍历。</li><li>ZEND_HASH_APPLY_REMOVE：遍历后删除遍历过的元素。</li><li>ZEND_HASH_APPLY_STOP：遍历当前元素后停止。</li><li>ZEND_HASH_APPLY_REMOVE | ZEND_HASH_APPLY_STOP：遍历当前元素后，删除该元素并停止。</li></ul><h2 id=枚举>枚举</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=c1>// iterating the hash table
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;Begin iterating the hash table:</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=n>HashPosition</span> <span class=n>pos</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=n>zval</span> <span class=o>**</span><span class=n>data</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=kt>char</span> <span class=o>*</span><span class=n>str_idx</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=n>uint</span> <span class=n>str_len</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=n>ulong</span> <span class=n>num_idx</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=k>for</span> <span class=p>(</span><span class=nf>zend_hash_internal_pointer_reset_ex</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>pos</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>	<span class=nf>zend_hash_get_current_data_ex</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=p>(</span><span class=kt>void</span> <span class=o>**</span><span class=p>)</span> <span class=o>&amp;</span><span class=n>data</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>pos</span><span class=p>)</span> <span class=o>==</span> <span class=n>SUCCESS</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>	<span class=nf>zend_hash_move_forward_ex</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>pos</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=k>switch</span> <span class=p>(</span><span class=nf>zend_hash_get_current_key_ex</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>str_idx</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>str_len</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>num_idx</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>pos</span><span class=p>))</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=k>case</span> <span class=nl>HASH_KEY_IS_LONG</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>			<span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;K-V: %d=&gt;%Z</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>num_idx</span><span class=p>,</span> <span class=o>*</span><span class=n>data</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>			<span class=k>break</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>		<span class=k>case</span> <span class=nl>HASH_KEY_IS_STRING</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>			<span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;K-V: %s=&gt;%Z</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>str_idx</span><span class=p>,</span> <span class=o>*</span><span class=n>data</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>			<span class=k>break</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=三个函数-1>三个函数</h3><p>三个函数均带“_ex”后缀，使用外部指针。不带此后缀的函数使用哈希表内部指针，此时嵌套地遍历哈希表可能导致指针修改错误。</p><h3 id=取键的新方式>取键的新方式</h3><p>PHP 5.5以上版本新增函数，直接取键值到zval：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=n>zval</span> <span class=o>*</span><span class=n>key</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=nf>MAKE_STD_ZVAL</span><span class=p>(</span><span class=n>key</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=nf>zend_hash_get_current_key_zval_ex</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=n>key</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>pos</span><span class=p>);</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=复制与合并>复制与合并</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=nf>zend_hash_copy</span><span class=p>(</span><span class=n>ht_target</span><span class=p>,</span> <span class=n>ht_source</span><span class=p>,</span> <span class=p>(</span><span class=kt>copy_ctor_func_t</span><span class=p>)</span> <span class=n>zval_add_ref</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=n>zval</span> <span class=o>*</span><span class=p>));</span>
+</span></span></code></pre></td></tr></table></div></div><p>zval_add_ref是适用于zval的回调函数，直接引用原数据。</p><p>当目标哈希表已存在对应键值的数据时，目标元素会被源元素覆盖。使用zend_hash_merge()可通过最后一个参数指定是否用源数据覆盖目标数据。</p><p>函数zend_hash_merge_ex()可指定一个回调函数，用于过滤要合并的元素：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=nf>zend_hash_merge_ex</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=nf>Z_ARRVAL_P</span><span class=p>(</span><span class=n>return_value</span><span class=p>),</span> <span class=nf>Z_ARRVAL_P</span><span class=p>(</span><span class=n>array2</span><span class=p>),</span> <span class=p>(</span><span class=kt>copy_ctor_func_t</span><span class=p>)</span> <span class=n>zval_add_ref</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=k>sizeof</span><span class=p>(</span><span class=n>zval</span> <span class=o>*</span><span class=p>),</span> <span class=p>(</span><span class=kt>merge_checker_func_t</span><span class=p>)</span> <span class=n>merge_greater</span><span class=p>,</span> <span class=nb>NULL</span>
+</span></span><span class=line><span class=cl><span class=p>);</span>
+</span></span></code></pre></td></tr></table></div></div><p>回调函数的格式为：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=k>typedef</span> <span class=nf>zend_bool</span> <span class=p>(</span><span class=o>*</span><span class=kt>merge_checker_func_t</span><span class=p>)(</span>
+</span></span><span class=line><span class=cl>    <span class=n>HashTable</span> <span class=o>*</span><span class=n>target_ht</span><span class=p>,</span> <span class=kt>void</span> <span class=o>*</span><span class=n>source_data</span><span class=p>,</span> <span class=n>zend_hash_key</span> <span class=o>*</span><span class=n>hash_key</span><span class=p>,</span> <span class=kt>void</span> <span class=o>*</span><span class=n>pParam</span>
+</span></span><span class=line><span class=cl><span class=p>);</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=比较排序和极值>比较、排序和极值</h2><p>比较函数：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=kt>int</span> <span class=nf>zend_hash_compare</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>HashTable</span> <span class=o>*</span><span class=n>ht1</span><span class=p>,</span> <span class=n>HashTable</span> <span class=o>*</span><span class=n>ht2</span><span class=p>,</span> <span class=kt>compare_func_t</span> <span class=n>compar</span><span class=p>,</span> <span class=n>zend_bool</span> <span class=n>ordered</span> <span class=n>TSRMLS_DC</span>
+</span></span><span class=line><span class=cl><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 回调函数：
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>typedef</span> <span class=nf>int</span> <span class=p>(</span><span class=o>*</span><span class=kt>compare_func_t</span><span class=p>)(</span><span class=k>const</span> <span class=kt>void</span> <span class=o>*</span><span class=n>left</span><span class=p>,</span> <span class=k>const</span> <span class=kt>void</span> <span class=o>*</span><span class=n>right</span> <span class=n>TSRMLS_DC</span><span class=p>);</span>
+</span></span></code></pre></td></tr></table></div></div><p>排序函数：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=kt>int</span> <span class=nf>zend_hash_sort</span><span class=p>(</span><span class=n>HashTable</span> <span class=o>*</span><span class=n>ht</span><span class=p>,</span> <span class=kt>sort_func_t</span> <span class=n>sort_func</span><span class=p>,</span> <span class=kt>compare_func_t</span> <span class=n>compar</span><span class=p>,</span> <span class=kt>int</span> <span class=n>renumber</span> <span class=n>TSRMLS_DC</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 回调函数
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>typedef</span> <span class=nf>void</span> <span class=p>(</span><span class=o>*</span><span class=kt>sort_func_t</span><span class=p>)(</span>
+</span></span><span class=line><span class=cl>    <span class=kt>void</span> <span class=o>*</span><span class=n>buckets</span><span class=p>,</span> <span class=kt>size_t</span> <span class=n>num_of_buckets</span><span class=p>,</span> <span class=k>register</span> <span class=kt>size_t</span> <span class=n>size_of_bucket</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=kt>compare_func_t</span> <span class=n>compare_func</span> <span class=n>TSRMLS_DC</span>
+</span></span><span class=line><span class=cl><span class=p>);</span>
+</span></span></code></pre></td></tr></table></div></div><p>极值函数：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=kt>int</span> <span class=nf>zend_hash_minmax</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=k>const</span> <span class=n>HashTable</span> <span class=o>*</span><span class=n>ht</span><span class=p>,</span> <span class=kt>compare_func_t</span> <span class=n>compar</span><span class=p>,</span> <span class=kt>int</span> <span class=n>flag</span><span class=p>,</span> <span class=kt>void</span> <span class=o>**</span><span class=n>pData</span> <span class=n>TSRMLS_DC</span>
+</span></span><span class=line><span class=cl><span class=p>);</span>
+</span></span></code></pre></td></tr></table></div></div><p>flag=0，极小值写入pData；flag=1，极大值写入pData。</p></article></main><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css integrity=sha384-Um5gpz1odJg5Z4HAmzPtgZKdTBHZdw8S29IecapCSB31ligYPhHQZMIlWLYQGVoc crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js integrity=sha384-YNHdsYkH6gMx9y3mRkmcJ2mFUjTd0qNQQvY9VYZgQd7DcN7env35GzlmFaZ23JGp crossorigin=anonymous></script><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/contrib/auto-render.min.js integrity=sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl crossorigin=anonymous></script><script>document.addEventListener("DOMContentLoaded",function(){renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}],throwOnError:!1})})</script><script src=https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js crossorigin=anonymous></script><script>mermaid.init(void 0,"code.language-mermaid")</script><div id=comment></div><script>const s=document.createElement("script");s.src="https://utteranc.es/client.js",s.crossOrigin="anonymous",s.async=!0,s.setAttribute("repo","xbot/blog-comments"),s.setAttribute("issue-term","pathname"),s.setAttribute("label","comment"),s.setAttribute("theme","github-"+window.minima_theme),document.getElementById("comment").appendChild(s)</script></div><footer class="mt-8 mb-8"><div class="container mx-auto"><div class="mt-8 flex flex-col-reverse sm:flex-row sm:justify-between items-center"><div class="text-center sm:text-left"><p class="mt-0 text-sm">© 2007-2024 鬼马妖刀</p><p class="mt-0 text-xs">Built with <a href=https://gohugo.io target=_blank rel="noopener noreferrer">Hugo</a> v0.146.7
 and <a href=https://github.com/mivinci/hugo-theme-minima target=_blank rel="noopener noreferrer">Minima</a></p></div><p class="flex items-center mt-0"><a class="icon ml-1 mr-1" href=mailto:donie.leigh@gmail.com title=email><svg width="18" height="18" viewBox="0 0 24 21" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1.0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1.0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>
 </a><a class="icon ml-1 mr-1" href=https://github.com/xbot title=github><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg>
 </a><a class="icon ml-1 mr-1" href=/index.xml title=rss><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 019 9M4 4a16 16 0 0116 16"/><circle cx="5" cy="19" r="1"/></svg></a></p></div></div></footer></body></html>
