@@ -21,9 +21,9 @@ draft: false
 
 ![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-04-13-21-29-38-49515F26-960B-4E76-BA1B-F5BB030236A2.jpeg)
 
-# 刹把和夹器
+# 刹把、夹器、线管和线芯
 
-换了英布的原装件，对刹车手感、刹车力和外观有明显的提升。
+刹把和夹器换了英布的原装件，线管换了 BC-9000， 线芯换的佳威高精研磨，对刹车手感、刹车力和外观有明显的提升。
 
 ![刹把和夹器](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-03-30-23-53-14-IMG_4160.jpeg)
 

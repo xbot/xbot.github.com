@@ -1,5 +1,5 @@
 ---
-title: 含布量被迫上升
+title: 给国布换了英布的座管夹头
 slug: upgrade the pentaclip of my domestic brompton-like folding bike
 date: 2025-04-24T20:01:59+08:00
 tags:
