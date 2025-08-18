@@ -5,7 +5,7 @@ slug: after reading zuo zhuan
 date: 2015-11-15 18:24:00
 comments: true
 tags:
-- 读书
+- 阅读
 - 春秋
 - 历史
 - 青梅煮酒

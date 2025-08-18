@@ -5,7 +5,7 @@ slug: after reading hackers and painters
 date: 2014-10-26 10:06:00
 comments: true
 tags:
-- 读书
+- 阅读
 - 计算机
 - 黑客
 - 创业

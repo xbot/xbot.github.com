@@ -7,7 +7,7 @@ tags:
 - Plugin
 - WordPress
 - 日志
-- 读书
+- 阅读
 - 青梅煮酒
 status: publish
 comments: true

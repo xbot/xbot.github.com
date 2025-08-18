@@ -3,8 +3,9 @@ title: 少不读村上
 slug: after reading killing commendatore
 date: 2018-04-22 13:55:00
 tags:
-- 读书
+- 阅读
 - 青梅煮酒
+draft: true
 ---
 读完了《刺杀骑士团长》。
 

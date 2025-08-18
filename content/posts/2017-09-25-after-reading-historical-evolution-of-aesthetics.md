@@ -3,7 +3,7 @@ title: 读完《美的历程》
 slug: after reading historical evolution of aesthetics
 date: 2017-09-25 16:43:08
 tags:
-- 读书
+- 阅读
 - 美学
 - 青梅煮酒
 ---

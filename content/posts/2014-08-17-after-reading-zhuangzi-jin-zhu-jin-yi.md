@@ -5,7 +5,7 @@ slug: after reading zhuangzi jin zhu jin yi
 date: 2014-08-17 18:36:00
 comments: true
 tags:
-- 读书
+- 阅读
 - 哲学
 - 庄子
 - 道家

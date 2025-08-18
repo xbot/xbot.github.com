@@ -5,9 +5,8 @@ slug: after reading political gain and loss of china
 date: 2014-08-31 23:19:00
 comments: true
 tags:
-- 读书
+- 阅读
 - 历史
-- 国史
 - 青梅煮酒
 ---
 

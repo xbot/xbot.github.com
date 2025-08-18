@@ -1,18 +1,12 @@
 ---
-layout: post
 title: 读完《程序员修炼之道》
 slug: after reading pragmatic programmers
 date: 2011-01-11 00:00:00
 tags:
-- 日志
-- 读书
+- 阅读
 - 青梅煮酒
 status: publish
 comments: true
-meta:
-  _edit_last: '1'
-  views: '898'
-  _wp_old_slug: ''
 ---
 上周日读完了这本<strong><em>The Pragmatic Programmer</em></strong>的中译本，都是经验之谈，有些东西读后受益匪浅，更多的需要时间去体会。
 

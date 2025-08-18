@@ -3,7 +3,7 @@ title: 读《叫魂》小记
 slug: A short review of Soulstealers
 date: 2022-12-22 22:29:41+08:00
 tags:
-- 读书
+- 阅读
 - 历史
 - 青梅煮酒
 toc: false

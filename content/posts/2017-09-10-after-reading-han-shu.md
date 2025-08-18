@@ -1,11 +1,11 @@
 ---
-title: 读完《汉书》
+title: 看完《汉书》
 slug: after reading han shu
 date: 2017-09-10 23:34:19
 tags:
-- 读书
-- 历史
 - 青梅煮酒
+- 历史
+- 阅读
 ---
 
 一周前读完了《汉书》。

@@ -5,7 +5,7 @@ slug: after reading ten years of traveling
 date: 2013-06-06 22:12:00
 comments: true
 tags:
-- 读书
+- 阅读
 - 旅行
 - 青梅煮酒
 ---

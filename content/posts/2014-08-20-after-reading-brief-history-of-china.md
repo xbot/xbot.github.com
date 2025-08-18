@@ -5,9 +5,8 @@ slug: after reading brief history of china
 date: 2014-08-20 22:30:00
 comments: true
 tags:
-- 读书
+- 阅读
 - 历史
-- 国史
 - 青梅煮酒
 ---
 

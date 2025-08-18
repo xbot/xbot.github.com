@@ -5,7 +5,7 @@ slug: after reading ming chao na xie shi
 date: 2014-01-29 12:14:00
 comments: true
 tags:
-- 读书
+- 阅读
 - 历史
 - 青梅煮酒
 ---

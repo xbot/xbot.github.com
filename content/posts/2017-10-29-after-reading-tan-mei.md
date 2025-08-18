@@ -3,7 +3,7 @@ title: 读完《谈美》
 slug: after reading tan mei
 date: 2017-10-29 09:21:58
 tags:
-- 读书
+- 阅读
 - 笔记
 - 随笔
 - 美

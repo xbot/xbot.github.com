@@ -5,7 +5,7 @@ slug: books read in the second half of 2013
 date: 2013-12-25 23:10:00
 comments: true
 tags:
-- 读书
+- 阅读
 - 随笔
 - 青梅煮酒
 ---

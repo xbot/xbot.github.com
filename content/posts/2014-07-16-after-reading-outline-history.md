@@ -5,7 +5,7 @@ slug: after reading outline history
 date: 2014-07-16 21:27:00
 comments: true
 tags:
-- 读书
+- 阅读
 - 历史
 - 青梅煮酒
 ---

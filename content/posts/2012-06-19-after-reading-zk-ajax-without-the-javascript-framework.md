@@ -5,7 +5,7 @@ slug: after reading zk ajax without the javascript framework
 date: 2012-06-19 21:47:00
 comments: true
 tags:
-- 读书
+- 阅读
 - Javascript
 - AJAX
 - 框架

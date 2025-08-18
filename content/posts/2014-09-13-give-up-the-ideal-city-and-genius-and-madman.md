@@ -5,7 +5,7 @@ slug: give up the ideal city and genius and madman
 date: 2014-10-26 09:30:00
 comments: true
 tags:
-- 读书
+- 阅读
 - 小说
 - 青梅煮酒
 ---

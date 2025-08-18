@@ -5,7 +5,7 @@ slug: after reading build web application with golang
 date: 2014-02-02 15:52:00
 comments: true
 tags:
-- 读书
+- 阅读
 - golang
 - 青梅煮酒
 ---

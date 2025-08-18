@@ -5,7 +5,7 @@ slug: after reading big history of china
 date: 2014-09-12 23:07:00
 comments: true
 tags:
-- 读书
+- 阅读
 - 历史
 - 青梅煮酒
 ---

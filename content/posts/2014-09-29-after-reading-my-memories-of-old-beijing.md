@@ -5,7 +5,7 @@ slug: after reading my memories of old beijing
 date: 2014-10-26 09:40:00
 comments: true
 tags:
-- 读书
+- 阅读
 - 小说
 - 青梅煮酒
 ---

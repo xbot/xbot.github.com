@@ -5,7 +5,7 @@ slug: after reading big data era
 date: 2014-02-08 10:11:00
 comments: true
 tags:
-- 读书
+- 阅读
 - 互联网
 - 大数据
 - 青梅煮酒

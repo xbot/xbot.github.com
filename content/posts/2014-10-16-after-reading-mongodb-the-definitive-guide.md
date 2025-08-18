@@ -5,7 +5,7 @@ slug: after reading mongodb the definitive guide
 date: 2014-10-26 10:01:00
 comments: true
 tags:
-- 读书
+- 阅读
 - 计算机
 - 数据库
 - NoSQL

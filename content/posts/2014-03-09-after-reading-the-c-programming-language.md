@@ -5,7 +5,7 @@ slug: after reading the c programming language
 date: 2014-03-09 22:47:00
 comments: true
 tags:
-- 读书
+- 阅读
 - 计算机
 - 编程
 - C

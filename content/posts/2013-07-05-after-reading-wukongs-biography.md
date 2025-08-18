@@ -5,7 +5,7 @@ slug: after reading wukongs biography
 date: 2013-07-05 23:12:00
 comments: true
 tags:
-- 读书
+- 阅读
 - 小说
 - 青梅煮酒
 ---

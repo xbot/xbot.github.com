@@ -5,7 +5,6 @@ slug: the first post of running dog
 date: 2016-06-06 16:22:00
 comments: true
 tags:
-- 读书
 - 历史
 - 公众号
 - 青梅煮酒
