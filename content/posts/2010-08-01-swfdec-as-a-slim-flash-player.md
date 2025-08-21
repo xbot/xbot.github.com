@@ -1,5 +1,4 @@
 ---
-layout: post
 title: swfdec：简单好用的Flash播放器
 slug: swfdec as a slim flash player
 date: 2010-08-01 00:00:00
@@ -8,12 +7,6 @@ tags:
 - GNOME
 - 多媒体
 - 计算机
-status: publish
-comments: true
-meta:
-  _edit_last: '1'
-  views: '858'
-  _wp_old_slug: ''
 ---
 早在keke童鞋的<a href="http://www.imkeke.net/linux/flash-player-swfdec.html">博客</a>上见过，直到今天下载了个flash视频教程要看时才想起来，毕竟已经不是几年前Flash很火的时候了，为了降低CPU占用，我连Chromium的Flash插件都禁用了。
 
