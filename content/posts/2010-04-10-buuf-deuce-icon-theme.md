@@ -1,5 +1,4 @@
 ---
-layout: post
 title: Buuf-Deuce：搞怪的图标主题
 slug: buuf deuce icon theme
 date: 2010-04-10 00:00:00
@@ -7,11 +6,6 @@ tags:
 - GNOME
 - 美化
 - 计算机
-status: publish
-comments: true
-meta:
-  _edit_last: '1'
-  views: '1204'
 ---
 发现这个<a href="http://djany.deviantart.com/art/Gnome-Buuf-Deuce-1-1-R8-73339997">图标主题</a>有段时间了，但直到今天偶然重新启用它，才突然觉得这套色调灰暗、风格搞怪的图标其实整体效果很好，很有个性，且极为闷骚，实为标榜非主流人士居家旅行必备。
 

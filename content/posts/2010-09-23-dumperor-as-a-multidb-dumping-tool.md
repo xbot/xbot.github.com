@@ -1,5 +1,4 @@
 ---
-layout: post
 title: ! 'Dumperor: Multi-Database Dumping Toolkit'
 slug: dumperor as a multidb dumping tool
 date: 2010-09-23 00:00:00
@@ -9,14 +8,6 @@ tags:
 - PHP
 - SQL
 - 编程
-status: publish
-comments: true
-meta:
-  _edit_last: '1'
-  views: '904'
-  _wp_old_slug: ''
-  _oembed_bfc07f6d9591d4b2c40694374c1b7af3: ! '{{unknown}}'
-  aktt_notify_twitter: 'no'
 ---
 <div class="illustration_left">
     <a href="http://picasaweb.google.com/lh/photo/lR2jgtHibgYwfhCy3fJyMQ?feat=embedwebsite"><img src="http://lh3.ggpht.com/_ceUJ_lBTHzc/TI44ZufyOhI/AAAAAAAABeM/6ElHu0gdYzY/s800/dumperor.png" /></a>
