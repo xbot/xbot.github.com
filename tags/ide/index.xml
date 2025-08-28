@@ -1,44 +1,44 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>IDE on 晴耕雨讀</title><link>http://0x3f.org/tags/ide/</link><description>Recent content in IDE on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Sat, 17 Apr 2010 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/ide/index.xml" rel="self" type="application/rss+xml"/><item><title>在Vim中检查语法和执行代码</title><link>http://0x3f.org/posts/syntax-checking-and-code-executing-in-vim/</link><pubDate>Sat, 17 Apr 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/syntax-checking-and-code-executing-in-vim/</guid><description>&lt;p>&lt;img src="http://lh3.ggpht.com/_ceUJ_lBTHzc/SaV494hGreI/AAAAAAAAAzY/xExf7CzGyv0/s800/the-mug-of-vi.jpg" alt="">&lt;/p>
-&lt;p>《&lt;a href="http://www.pragprog.com/the-pragmatic-programmer">The Pragmatic Programmer&lt;/a>》是本好书，虽然中文译名极为恶俗。为践行书中提到的&lt;a href="http://en.wikipedia.org/wiki/Don't_repeat_yourself">DRY原则&lt;/a>，我开始反思平时编码时总是重复出现的问题，其中之一就是很低级的语法错误，有时忘了语句最后的分号，有时忘了声明变量，凡此种种，不一而足。&lt;/p>
-&lt;p>相对于IDE，我更喜欢Vim，这也是语法错误没有检查出来的原因。因此就产生了给Vim添加语法检查功能的需求。下面是检查PHP代码的vimrc内容：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
-&lt;/span>&lt;span class="lnt"> 2
-&lt;/span>&lt;span class="lnt"> 3
-&lt;/span>&lt;span class="lnt"> 4
-&lt;/span>&lt;span class="lnt"> 5
-&lt;/span>&lt;span class="lnt"> 6
-&lt;/span>&lt;span class="lnt"> 7
-&lt;/span>&lt;span class="lnt"> 8
-&lt;/span>&lt;span class="lnt"> 9
-&lt;/span>&lt;span class="lnt">10
-&lt;/span>&lt;span class="lnt">11
-&lt;/span>&lt;span class="lnt">12
-&lt;/span>&lt;span class="lnt">13
-&lt;/span>&lt;span class="lnt">14
-&lt;/span>&lt;span class="lnt">15
-&lt;/span>&lt;span class="lnt">16
-&lt;/span>&lt;span class="lnt">17
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-vim" data-lang="vim">&lt;span class="line">&lt;span class="cl">&lt;span class="c">&amp;#34; Check the syntax of a PHP file&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">function&lt;/span>&lt;span class="p">!&lt;/span> &lt;span class="nx">CheckPHPSyntax&lt;/span>&lt;span class="p">()&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &amp;amp;&lt;span class="k">filetype&lt;/span> &lt;span class="p">!=&lt;/span> &lt;span class="s1">&amp;#39;php&amp;#39;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">echohl&lt;/span> &lt;span class="nx">WarningMsg&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="nx">echo&lt;/span> &lt;span class="s1">&amp;#39;This is not a PHP file !&amp;#39;&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="nx">echohl&lt;/span> &lt;span class="nx">None&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">return&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">endif&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">setlocal&lt;/span> &lt;span class="nx">makeprg&lt;/span>&lt;span class="p">=&lt;/span>&lt;span class="nx">php&lt;/span>\ &lt;span class="p">-&lt;/span>&lt;span class="nx">l&lt;/span>\ &lt;span class="p">-&lt;/span>&lt;span class="nx">n&lt;/span>\ &lt;span class="p">-&lt;/span>&lt;span class="nx">d&lt;/span>\ &lt;span class="nx">html_errors&lt;/span>&lt;span class="p">=&lt;/span>&lt;span class="nx">off&lt;/span>\ %
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">setlocal&lt;/span> &lt;span class="nx">errorformat&lt;/span>&lt;span class="p">=&lt;/span>%&lt;span class="nx">m&lt;/span>\ &lt;span class="nx">in&lt;/span>\ %&lt;span class="nx">f&lt;/span>\ &lt;span class="nx">on&lt;/span>\ &lt;span class="nx">line&lt;/span>\ %&lt;span class="nx">l&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">echohl&lt;/span> &lt;span class="nx">WarningMsg&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="nx">echo&lt;/span> &lt;span class="s1">&amp;#39;Syntax checking output:&amp;#39;&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="nx">echohl&lt;/span> &lt;span class="nx">None&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &amp;amp;&lt;span class="nx">modified&lt;/span> &lt;span class="p">==&lt;/span> &lt;span class="m">1&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">silent&lt;/span> &lt;span class="nx">write&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">endif&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">silent&lt;/span> &lt;span class="nx">make&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">clist&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">endfunction&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">au&lt;/span> &lt;span class="k">filetype&lt;/span> &lt;span class="nx">php&lt;/span> &lt;span class="k">map&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">F5&lt;/span>&lt;span class="p">&amp;gt;&lt;/span> :&lt;span class="nx">call&lt;/span> &lt;span class="nx">CheckPHPSyntax&lt;/span>&lt;span class="p">()&amp;lt;&lt;/span>&lt;span class="nx">CR&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">au&lt;/span> &lt;span class="k">filetype&lt;/span> &lt;span class="nx">php&lt;/span> &lt;span class="nx">imap&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">F5&lt;/span>&lt;span class="p">&amp;gt;&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">ESC&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>:&lt;span class="nx">call&lt;/span> &lt;span class="nx">CheckPHPSyntax&lt;/span>&lt;span class="p">()&amp;lt;&lt;/span>&lt;span class="nx">CR&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>以上脚本为Vim添加了一个检查PHP语法错误的函数和两个快捷键映射，此后可按F5键即时检查当前Buffer中的PHP当面的语法。和网上其它同类的函数相比，这个函数的优点在于改进了检查结果的显示，使用silent命令隐藏了所有不必要的输出。&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>IDE on 晴耕雨讀</title><link>http://0x3f.org/tags/ide/</link><description>Recent content in IDE on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Sat, 17 Apr 2010 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/ide/index.xml" rel="self" type="application/rss+xml"/><item><title>在Vim中检查语法和执行代码</title><link>http://0x3f.org/posts/syntax-checking-and-code-executing-in-vim/</link><pubDate>Sat, 17 Apr 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/syntax-checking-and-code-executing-in-vim/</guid><description>&lt;p&gt;&lt;img src="http://lh3.ggpht.com/_ceUJ_lBTHzc/SaV494hGreI/AAAAAAAAAzY/xExf7CzGyv0/s800/the-mug-of-vi.jpg" alt=""&gt;&lt;/p&gt;
+&lt;p&gt;《&lt;a href="http://www.pragprog.com/the-pragmatic-programmer"&gt;The Pragmatic Programmer&lt;/a&gt;》是本好书，虽然中文译名极为恶俗。为践行书中提到的&lt;a href="http://en.wikipedia.org/wiki/Don't_repeat_yourself"&gt;DRY原则&lt;/a&gt;，我开始反思平时编码时总是重复出现的问题，其中之一就是很低级的语法错误，有时忘了语句最后的分号，有时忘了声明变量，凡此种种，不一而足。&lt;/p&gt;
+&lt;p&gt;相对于IDE，我更喜欢Vim，这也是语法错误没有检查出来的原因。因此就产生了给Vim添加语法检查功能的需求。下面是检查PHP代码的vimrc内容：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-vim" data-lang="vim"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;&amp;#34; Check the syntax of a PHP file&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;function&lt;/span&gt;&lt;span class="p"&gt;!&lt;/span&gt; &lt;span class="nx"&gt;CheckPHPSyntax&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &amp;amp;&lt;span class="k"&gt;filetype&lt;/span&gt; &lt;span class="p"&gt;!=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;php&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;echohl&lt;/span&gt; &lt;span class="nx"&gt;WarningMsg&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nx"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;This is not a PHP file !&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nx"&gt;echohl&lt;/span&gt; &lt;span class="nx"&gt;None&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;return&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;endif&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;setlocal&lt;/span&gt; &lt;span class="nx"&gt;makeprg&lt;/span&gt;&lt;span class="p"&gt;=&lt;/span&gt;&lt;span class="nx"&gt;php&lt;/span&gt;\ &lt;span class="p"&gt;-&lt;/span&gt;&lt;span class="nx"&gt;l&lt;/span&gt;\ &lt;span class="p"&gt;-&lt;/span&gt;&lt;span class="nx"&gt;n&lt;/span&gt;\ &lt;span class="p"&gt;-&lt;/span&gt;&lt;span class="nx"&gt;d&lt;/span&gt;\ &lt;span class="nx"&gt;html_errors&lt;/span&gt;&lt;span class="p"&gt;=&lt;/span&gt;&lt;span class="nx"&gt;off&lt;/span&gt;\ %
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;setlocal&lt;/span&gt; &lt;span class="nx"&gt;errorformat&lt;/span&gt;&lt;span class="p"&gt;=&lt;/span&gt;%&lt;span class="nx"&gt;m&lt;/span&gt;\ &lt;span class="nx"&gt;in&lt;/span&gt;\ %&lt;span class="nx"&gt;f&lt;/span&gt;\ &lt;span class="nx"&gt;on&lt;/span&gt;\ &lt;span class="nx"&gt;line&lt;/span&gt;\ %&lt;span class="nx"&gt;l&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;echohl&lt;/span&gt; &lt;span class="nx"&gt;WarningMsg&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nx"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Syntax checking output:&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="nx"&gt;echohl&lt;/span&gt; &lt;span class="nx"&gt;None&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &amp;amp;&lt;span class="nx"&gt;modified&lt;/span&gt; &lt;span class="p"&gt;==&lt;/span&gt; &lt;span class="m"&gt;1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;silent&lt;/span&gt; &lt;span class="nx"&gt;write&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;endif&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;silent&lt;/span&gt; &lt;span class="nx"&gt;make&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;clist&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;endfunction&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;au&lt;/span&gt; &lt;span class="k"&gt;filetype&lt;/span&gt; &lt;span class="nx"&gt;php&lt;/span&gt; &lt;span class="k"&gt;map&lt;/span&gt; &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;F5&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt; :&lt;span class="nx"&gt;call&lt;/span&gt; &lt;span class="nx"&gt;CheckPHPSyntax&lt;/span&gt;&lt;span class="p"&gt;()&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;CR&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;au&lt;/span&gt; &lt;span class="k"&gt;filetype&lt;/span&gt; &lt;span class="nx"&gt;php&lt;/span&gt; &lt;span class="nx"&gt;imap&lt;/span&gt; &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;F5&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;ESC&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;:&lt;span class="nx"&gt;call&lt;/span&gt; &lt;span class="nx"&gt;CheckPHPSyntax&lt;/span&gt;&lt;span class="p"&gt;()&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;CR&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;以上脚本为Vim添加了一个检查PHP语法错误的函数和两个快捷键映射，此后可按F5键即时检查当前Buffer中的PHP当面的语法。和网上其它同类的函数相比，这个函数的优点在于改进了检查结果的显示，使用silent命令隐藏了所有不必要的输出。&lt;/p&gt;</description></item></channel></rss>

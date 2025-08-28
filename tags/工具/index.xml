@@ -1,121 +1,121 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>工具 on 晴耕雨讀</title><link>http://0x3f.org/tags/%E5%B7%A5%E5%85%B7/</link><description>Recent content in 工具 on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Fri, 20 Aug 2021 00:03:28 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/%E5%B7%A5%E5%85%B7/index.xml" rel="self" type="application/rss+xml"/><item><title>使用 Remote Torrent Adder 做 qBittorrent 的客户端</title><link>http://0x3f.org/posts/take-remote-torrent-adder-as-client-of-qbittorrent/</link><pubDate>Fri, 20 Aug 2021 00:03:28 +0800</pubDate><guid>http://0x3f.org/posts/take-remote-torrent-adder-as-client-of-qbittorrent/</guid><description>&lt;p>我使用部署在 NAS 中的 qBittorrent 下载资源，每次手动复制磁力链链接到 qBittorrent 的 WebUI 很麻烦。&lt;/p>
-&lt;p>&lt;a href="https://chrome.google.com/webstore/detail/remote-torrent-adder/oabphaconndgibllomdcjbfdghcmenci?hl=zh-CN">Remote Torrent Adder&lt;/a> 是 Chrome 的扩展，可以通过右键菜单把 magnet 等协议的链接发送到多种下载工具，其中就包括 qBittorrent 。&lt;/p>
-&lt;p>安装过程不是那么顺利，这个开源小工具并没有对用户体验做更多的优化。&lt;/p>
-&lt;p>首先初次安装后，配置界面会有一个初始的、针对 Vuze SwingUI 的配置，需要把它删掉，再添加针对 qBittorrent v4.1+ WebUI 的配置，填好各项配置后选中 &lt;strong>Label/Directory
-interactivity&lt;/strong> 复选框。因为我把电影和剧集分目录存放，开始下载前需要指定存储目录。&lt;/p>
-&lt;p>第一次点菜单的时候没有反应，后来刷新页面后就好了。但是弹出来的指定下载目录的对话框没有选项，经测试发现第一次需要手工填写，之后有了缓存就可以选了。&lt;/p></description></item><item><title>用 zsh-autoenv 实现目录级别的 zshrc</title><link>http://0x3f.org/posts/implement-directory-specific-zshrc-with-zsh-autoenv/</link><pubDate>Thu, 19 Aug 2021 23:34:25 +0800</pubDate><guid>http://0x3f.org/posts/implement-directory-specific-zshrc-with-zsh-autoenv/</guid><description>&lt;p>&lt;a href="https://github.com/Tarrasch/zsh-autoenv">zsh-autoenv&lt;/a> 可以实现当进入特定的目录时加载特定的 zshrc 文件，并当切换到其它目录时取消其中的变更。后者在当前的版本下，对环境变量、命令别名和函数有效。&lt;/p>
-&lt;p>使用方法为：&lt;/p>
-&lt;p>在目录（如 &lt;code>~/project&lt;/code> ）下创建文件 &lt;code>.autoenv.zsh&lt;/code> :&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;span class="lnt">3
-&lt;/span>&lt;span class="lnt">4
-&lt;/span>&lt;span class="lnt">5
-&lt;/span>&lt;span class="lnt">6
-&lt;/span>&lt;span class="lnt">7
-&lt;/span>&lt;span class="lnt">8
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-zsh" data-lang="zsh">&lt;span class="line">&lt;span class="cl">autostash &lt;span class="nv">TEST_VAR&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s1">&amp;#39;This is a test variable.&amp;#39;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">autostash &lt;span class="nb">alias&lt;/span> &lt;span class="nv">test_cmd&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s1">&amp;#39;echo &amp;#34;This is a test alias.&amp;#34;&amp;#39;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">autostash test_func
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">test_func&lt;span class="o">()&lt;/span> &lt;span class="o">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">echo&lt;/span> &lt;span class="s2">&amp;#34;This is a test function.&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>出于安全考虑， zsh-autoenv 会对 &lt;code>.autoenv.zsh&lt;/code> 做哈希校验，所以第一次或者做变动后进入该目录时，都会要求确认是否接受此文件最新的内容。&lt;/p>
-&lt;p>此外，如果进入的目录不存在 &lt;code>.autoenv.zsh&lt;/code>， zsh-autoenv 会自动向上查找最近的同名文件并加载，上溯的层级可以通过配置项定义。&lt;/p>
-&lt;p>最后，它提供了一个命令 &lt;code>autoenv-edit&lt;/code> 用来快速打开和编辑 &lt;code>.autoenv.zsh&lt;/code> 文件。&lt;/p></description></item><item><title>鼠须管的美化</title><link>http://0x3f.org/posts/beautify-squrrel-input-method/</link><pubDate>Sat, 21 Apr 2018 20:52:42 +0000</pubDate><guid>http://0x3f.org/posts/beautify-squrrel-input-method/</guid><description>&lt;p>效果如下：
-&lt;img src="https://wx2.sinaimg.cn/large/006tNbRwly1fwvx9h8tgtj30n20bqaah.jpg" alt="Ulysses_2018-04-21 20-43-42@2x">&lt;/p>
-&lt;p>尽管鼠须管的Github仓库一直在更新，但释出版已经很久没有更新了，所以下面的美化基于网络上个人编译的版本。&lt;a href="https://scomper.me/gtd/-shu-xu-guan-de-diao-jiao-bi-ji">这篇文章&lt;/a>里有该版本和「花园明朝」字体的下载链接，按照文中的说明替换鼠须管的程序。（&lt;em>注意：官方当前释出版本鼠须管不支持下文通过patch自定义配置的方式，会造成原配置信息丢失。也不支持图示的样式。&lt;/em>）&lt;/p>
-&lt;p>然后参考&lt;a href="https://scomper.me/gtd/shu-xu-guan-shu-ru-fa-de-xin-pei-se">这篇文章&lt;/a>，把新的颜色方案移植到用户配置中。&lt;/p>
-&lt;p>图示样式使用「dust」方案。原色彩方案的字体设置的有点小，需要把font_point和label_font_point分别从14和10修改成18和14。原方案的第一顺序字体是「HYQiHei-55S Book」，要使用图示的花园明朝字体，可以不安装或者从配置信息中去掉该字体。由于原方案中已存在的配置项不能通过patch的方式覆盖，所以只能直接修改squirrel.yaml文件。&lt;/p></description></item><item><title>我在用的Safari扩展</title><link>http://0x3f.org/posts/the-safari-extensions-i-am-using/</link><pubDate>Sun, 15 Apr 2018 22:29:10 +0000</pubDate><guid>http://0x3f.org/posts/the-safari-extensions-i-am-using/</guid><description>&lt;p>和Chrome相比，Safari更省电、需要更少的系统资源，而且Chrome还有一些莫名其妙的问题，比如在没有运行的时候，从Alfred执行搜索会启动两个窗口，一个是之前的会话，另一个是当前的搜索页面。并且，启用了一些扩展之后Safari的体验可以改进很多。所以平时用Safari更多一些。&lt;/p>
-&lt;h2 id="svim">sVim&lt;/h2>
-&lt;p>作为注重效率的Vim党和键盘党，这种扩展是使用任何浏览器必备的东西。最常用的就是用标记打开链接的功能。&lt;/p>
-&lt;h2 id="tampermonkey">Tampermonkey&lt;/h2>
-&lt;p>油猴脚本管理器，应该是任何浏览器必备的东西。&lt;/p>
-&lt;h2 id="autopagerize">AutoPagerize&lt;/h2>
-&lt;p>用Google搜索时自动滚动到下一页。&lt;/p>
-&lt;h2 id="rss-menu">RSS Menu&lt;/h2>
-&lt;p>当发现当前页面有可订阅的RSS链接时，在工具栏图标上显示提示。&lt;/p>
-&lt;h2 id="instapaper">Instapaper&lt;/h2>
-&lt;p>稍后读工具。&lt;/p>
-&lt;h2 id="turn-off-the-lights">Turn Off the Lights&lt;/h2>
-&lt;p>看视频时降低网页其余部分亮度。&lt;/p>
-&lt;h2 id="scroll-to-top-button">Scroll To Top Button&lt;/h2>
-&lt;p>在页面右下角显示一个浮动的跳转到页首按钮。&lt;/p>
-&lt;h2 id="push-for-kindle">Push for Kindle&lt;/h2>
-&lt;p>FiveFilters.org的发送到Kindle按钮。&lt;/p>
-&lt;h2 id="octotree">octotree&lt;/h2>
-&lt;p>GitHub侧边栏。&lt;/p>
-&lt;h2 id="translate">Translate&lt;/h2>
-&lt;p>翻译当前页。&lt;/p>
-&lt;h2 id="wikiwand">WikiWand&lt;/h2>
-&lt;p>优化维基百科阅读体验。&lt;/p>
-&lt;h2 id="xdebug-helper">Xdebug Helper&lt;/h2>
-&lt;p>PHP单步调试辅助工具。&lt;/p>
-&lt;h2 id="adblock">AdBlock&lt;/h2>
-&lt;p>广告过滤器。&lt;/p>
-&lt;h2 id="sessions">Sessions&lt;/h2>
-&lt;p>网页会话管理器。如果打开的页面太多，又可能在将来再用到，可以保存会话后清理掉，用到的时候再打开保存过的会话。虽然没有Chrome下的Session Buddy和Tab Snooze好用，但是解决关键问题也够了。&lt;/p></description></item><item><title>用AlfredTweet发推</title><link>http://0x3f.org/posts/tweet-with-alfredtweet/</link><pubDate>Sun, 17 Sep 2017 09:26:41 +0000</pubDate><guid>http://0x3f.org/posts/tweet-with-alfredtweet/</guid><description>&lt;p>AlfredTweet是用来解决“最后一公里”问题的东西，有了它就可以随时发推了。&lt;/p>
-&lt;p>需要修改源码指定代理：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;span class="lnt">3
-&lt;/span>&lt;span class="lnt">4
-&lt;/span>&lt;span class="lnt">5
-&lt;/span>&lt;span class="lnt">6
-&lt;/span>&lt;span class="lnt">7
-&lt;/span>&lt;span class="lnt">8
-&lt;/span>&lt;span class="lnt">9
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-php" data-lang="php">&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// twitteroauth.php
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">function&lt;/span> &lt;span class="nf">http&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$url&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">$method&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">$postfields&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="k">NULL&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// ...
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">curl_setopt&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$ci&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">CURLOPT_HTTPPROXYTUNNEL&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="k">TRUE&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">curl_setopt&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$ci&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">CURLOPT_PROXY&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;127.0.0.1:1086&amp;#39;&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">curl_setopt&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$ci&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">CURLOPT_PROXYTYPE&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">CURLPROXY_SOCKS5&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// ...
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="p">}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div></description></item><item><title>调校mycli</title><link>http://0x3f.org/posts/fine-tune-mycli/</link><pubDate>Mon, 26 Jun 2017 18:05:31 +0000</pubDate><guid>http://0x3f.org/posts/fine-tune-mycli/</guid><description>&lt;p>做以下配置，使mycli按需使用pager，并在数据过多时不破坏表格格式：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;span class="lnt">3
-&lt;/span>&lt;span class="lnt">4
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-ini" data-lang="ini">&lt;span class="line">&lt;span class="cl">&lt;span class="c1"># ~/.my.cnf&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">[client]&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">pager&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="s">less -FSXR&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div></description></item><item><title>CopyQ，也许是Linux最好的剪贴板管理工具</title><link>http://0x3f.org/posts/copyq/</link><pubDate>Mon, 19 Jun 2017 21:49:14 +0000</pubDate><guid>http://0x3f.org/posts/copyq/</guid><description>&lt;p>我对剪贴板管理工具的核心需求有四个：&lt;/p>
-&lt;ul>
-&lt;li>记录文本&lt;/li>
-&lt;li>记录图片&lt;/li>
-&lt;li>快速搜索&lt;/li>
-&lt;li>独立软件包&lt;/li>
-&lt;/ul>
-&lt;p>CopyQ是Linux上唯一满足这些需求的实现，虽然体验上跟Mac下的竞品还有差距。&lt;/p>
-&lt;p>用法：&lt;/p>
-&lt;ul>
-&lt;li>&lt;code>copyq&lt;/code>：运行&lt;/li>
-&lt;li>&lt;code>copyq menu&lt;/code>：显示剪贴板历史管理菜单&lt;/li>
-&lt;li>&lt;code>copyq show&lt;/code>：显示剪贴板历史管理窗口&lt;/li>
-&lt;/ul></description></item><item><title>用Tmux的控制模式提高生产力</title><link>http://0x3f.org/posts/improve-productivity-with-tmux-control-mode/</link><pubDate>Sun, 11 Jun 2017 10:40:06 +0000</pubDate><guid>http://0x3f.org/posts/improve-productivity-with-tmux-control-mode/</guid><description>&lt;p>Tmux的控制模式（Control Mode）可以把tmux的窗口映射为本地虚拟终端的窗口，也就是说，用户可以像操作本地虚拟终端一样操作tmux。这对备受tmux的emacs风格的热键绑定折磨或需要嵌套tmux的人来说非常有用。&lt;/p>
-&lt;p>在支持这个特性的虚拟终端（例如「iTerm」）里，执行&lt;code>tmux -CC&lt;/code>即可。当然也可以&lt;code>tmux -CC a&lt;/code>恢复会话。&lt;/p></description></item><item><title>用SwitchHosts!切换主机映射方案</title><link>http://0x3f.org/posts/switch-hosts-with-switchhosts/</link><pubDate>Sun, 11 Jun 2017 09:57:54 +0000</pubDate><guid>http://0x3f.org/posts/switch-hosts-with-switchhosts/</guid><description>&lt;p>最近在Archlinux上开始用SwitchHosts!管理主机映射方案，它可能是Linux下做这件事的最好的工具了。&lt;/p>
-&lt;p>在Mac下也用它替换掉了Gas Mask，因为支持Alfred Workflow。相对的缺点是不支持在状态栏图标上显示当前方案名称，不过Alfred里可以，一定程度上缓解了这个问题。&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>工具 on 晴耕雨讀</title><link>http://0x3f.org/tags/%E5%B7%A5%E5%85%B7/</link><description>Recent content in 工具 on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Fri, 20 Aug 2021 00:03:28 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/%E5%B7%A5%E5%85%B7/index.xml" rel="self" type="application/rss+xml"/><item><title>使用 Remote Torrent Adder 做 qBittorrent 的客户端</title><link>http://0x3f.org/posts/take-remote-torrent-adder-as-client-of-qbittorrent/</link><pubDate>Fri, 20 Aug 2021 00:03:28 +0800</pubDate><guid>http://0x3f.org/posts/take-remote-torrent-adder-as-client-of-qbittorrent/</guid><description>&lt;p&gt;我使用部署在 NAS 中的 qBittorrent 下载资源，每次手动复制磁力链链接到 qBittorrent 的 WebUI 很麻烦。&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://chrome.google.com/webstore/detail/remote-torrent-adder/oabphaconndgibllomdcjbfdghcmenci?hl=zh-CN"&gt;Remote Torrent Adder&lt;/a&gt; 是 Chrome 的扩展，可以通过右键菜单把 magnet 等协议的链接发送到多种下载工具，其中就包括 qBittorrent 。&lt;/p&gt;
+&lt;p&gt;安装过程不是那么顺利，这个开源小工具并没有对用户体验做更多的优化。&lt;/p&gt;
+&lt;p&gt;首先初次安装后，配置界面会有一个初始的、针对 Vuze SwingUI 的配置，需要把它删掉，再添加针对 qBittorrent v4.1+ WebUI 的配置，填好各项配置后选中 &lt;strong&gt;Label/Directory
+interactivity&lt;/strong&gt; 复选框。因为我把电影和剧集分目录存放，开始下载前需要指定存储目录。&lt;/p&gt;
+&lt;p&gt;第一次点菜单的时候没有反应，后来刷新页面后就好了。但是弹出来的指定下载目录的对话框没有选项，经测试发现第一次需要手工填写，之后有了缓存就可以选了。&lt;/p&gt;</description></item><item><title>用 zsh-autoenv 实现目录级别的 zshrc</title><link>http://0x3f.org/posts/implement-directory-specific-zshrc-with-zsh-autoenv/</link><pubDate>Thu, 19 Aug 2021 23:34:25 +0800</pubDate><guid>http://0x3f.org/posts/implement-directory-specific-zshrc-with-zsh-autoenv/</guid><description>&lt;p&gt;&lt;a href="https://github.com/Tarrasch/zsh-autoenv"&gt;zsh-autoenv&lt;/a&gt; 可以实现当进入特定的目录时加载特定的 zshrc 文件，并当切换到其它目录时取消其中的变更。后者在当前的版本下，对环境变量、命令别名和函数有效。&lt;/p&gt;
+&lt;p&gt;使用方法为：&lt;/p&gt;
+&lt;p&gt;在目录（如 &lt;code&gt;~/project&lt;/code&gt; ）下创建文件 &lt;code&gt;.autoenv.zsh&lt;/code&gt; :&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-zsh" data-lang="zsh"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;autostash &lt;span class="nv"&gt;TEST_VAR&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;This is a test variable.&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;autostash &lt;span class="nb"&gt;alias&lt;/span&gt; &lt;span class="nv"&gt;test_cmd&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;echo &amp;#34;This is a test alias.&amp;#34;&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;autostash test_func
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;test_func&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;This is a test function.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;出于安全考虑， zsh-autoenv 会对 &lt;code&gt;.autoenv.zsh&lt;/code&gt; 做哈希校验，所以第一次或者做变动后进入该目录时，都会要求确认是否接受此文件最新的内容。&lt;/p&gt;
+&lt;p&gt;此外，如果进入的目录不存在 &lt;code&gt;.autoenv.zsh&lt;/code&gt;， zsh-autoenv 会自动向上查找最近的同名文件并加载，上溯的层级可以通过配置项定义。&lt;/p&gt;
+&lt;p&gt;最后，它提供了一个命令 &lt;code&gt;autoenv-edit&lt;/code&gt; 用来快速打开和编辑 &lt;code&gt;.autoenv.zsh&lt;/code&gt; 文件。&lt;/p&gt;</description></item><item><title>鼠须管的美化</title><link>http://0x3f.org/posts/beautify-squrrel-input-method/</link><pubDate>Sat, 21 Apr 2018 20:52:42 +0000</pubDate><guid>http://0x3f.org/posts/beautify-squrrel-input-method/</guid><description>&lt;p&gt;效果如下：
+&lt;img src="https://wx2.sinaimg.cn/large/006tNbRwly1fwvx9h8tgtj30n20bqaah.jpg" alt="Ulysses_2018-04-21 20-43-42@2x"&gt;&lt;/p&gt;
+&lt;p&gt;尽管鼠须管的Github仓库一直在更新，但释出版已经很久没有更新了，所以下面的美化基于网络上个人编译的版本。&lt;a href="https://scomper.me/gtd/-shu-xu-guan-de-diao-jiao-bi-ji"&gt;这篇文章&lt;/a&gt;里有该版本和「花园明朝」字体的下载链接，按照文中的说明替换鼠须管的程序。（&lt;em&gt;注意：官方当前释出版本鼠须管不支持下文通过patch自定义配置的方式，会造成原配置信息丢失。也不支持图示的样式。&lt;/em&gt;）&lt;/p&gt;
+&lt;p&gt;然后参考&lt;a href="https://scomper.me/gtd/shu-xu-guan-shu-ru-fa-de-xin-pei-se"&gt;这篇文章&lt;/a&gt;，把新的颜色方案移植到用户配置中。&lt;/p&gt;
+&lt;p&gt;图示样式使用「dust」方案。原色彩方案的字体设置的有点小，需要把font_point和label_font_point分别从14和10修改成18和14。原方案的第一顺序字体是「HYQiHei-55S Book」，要使用图示的花园明朝字体，可以不安装或者从配置信息中去掉该字体。由于原方案中已存在的配置项不能通过patch的方式覆盖，所以只能直接修改squirrel.yaml文件。&lt;/p&gt;</description></item><item><title>我在用的Safari扩展</title><link>http://0x3f.org/posts/the-safari-extensions-i-am-using/</link><pubDate>Sun, 15 Apr 2018 22:29:10 +0000</pubDate><guid>http://0x3f.org/posts/the-safari-extensions-i-am-using/</guid><description>&lt;p&gt;和Chrome相比，Safari更省电、需要更少的系统资源，而且Chrome还有一些莫名其妙的问题，比如在没有运行的时候，从Alfred执行搜索会启动两个窗口，一个是之前的会话，另一个是当前的搜索页面。并且，启用了一些扩展之后Safari的体验可以改进很多。所以平时用Safari更多一些。&lt;/p&gt;
+&lt;h2 id="svim"&gt;sVim&lt;/h2&gt;
+&lt;p&gt;作为注重效率的Vim党和键盘党，这种扩展是使用任何浏览器必备的东西。最常用的就是用标记打开链接的功能。&lt;/p&gt;
+&lt;h2 id="tampermonkey"&gt;Tampermonkey&lt;/h2&gt;
+&lt;p&gt;油猴脚本管理器，应该是任何浏览器必备的东西。&lt;/p&gt;
+&lt;h2 id="autopagerize"&gt;AutoPagerize&lt;/h2&gt;
+&lt;p&gt;用Google搜索时自动滚动到下一页。&lt;/p&gt;
+&lt;h2 id="rss-menu"&gt;RSS Menu&lt;/h2&gt;
+&lt;p&gt;当发现当前页面有可订阅的RSS链接时，在工具栏图标上显示提示。&lt;/p&gt;
+&lt;h2 id="instapaper"&gt;Instapaper&lt;/h2&gt;
+&lt;p&gt;稍后读工具。&lt;/p&gt;
+&lt;h2 id="turn-off-the-lights"&gt;Turn Off the Lights&lt;/h2&gt;
+&lt;p&gt;看视频时降低网页其余部分亮度。&lt;/p&gt;
+&lt;h2 id="scroll-to-top-button"&gt;Scroll To Top Button&lt;/h2&gt;
+&lt;p&gt;在页面右下角显示一个浮动的跳转到页首按钮。&lt;/p&gt;
+&lt;h2 id="push-for-kindle"&gt;Push for Kindle&lt;/h2&gt;
+&lt;p&gt;FiveFilters.org的发送到Kindle按钮。&lt;/p&gt;
+&lt;h2 id="octotree"&gt;octotree&lt;/h2&gt;
+&lt;p&gt;GitHub侧边栏。&lt;/p&gt;
+&lt;h2 id="translate"&gt;Translate&lt;/h2&gt;
+&lt;p&gt;翻译当前页。&lt;/p&gt;
+&lt;h2 id="wikiwand"&gt;WikiWand&lt;/h2&gt;
+&lt;p&gt;优化维基百科阅读体验。&lt;/p&gt;
+&lt;h2 id="xdebug-helper"&gt;Xdebug Helper&lt;/h2&gt;
+&lt;p&gt;PHP单步调试辅助工具。&lt;/p&gt;
+&lt;h2 id="adblock"&gt;AdBlock&lt;/h2&gt;
+&lt;p&gt;广告过滤器。&lt;/p&gt;
+&lt;h2 id="sessions"&gt;Sessions&lt;/h2&gt;
+&lt;p&gt;网页会话管理器。如果打开的页面太多，又可能在将来再用到，可以保存会话后清理掉，用到的时候再打开保存过的会话。虽然没有Chrome下的Session Buddy和Tab Snooze好用，但是解决关键问题也够了。&lt;/p&gt;</description></item><item><title>用AlfredTweet发推</title><link>http://0x3f.org/posts/tweet-with-alfredtweet/</link><pubDate>Sun, 17 Sep 2017 09:26:41 +0000</pubDate><guid>http://0x3f.org/posts/tweet-with-alfredtweet/</guid><description>&lt;p&gt;AlfredTweet是用来解决“最后一公里”问题的东西，有了它就可以随时发推了。&lt;/p&gt;
+&lt;p&gt;需要修改源码指定代理：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;span class="lnt"&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-php" data-lang="php"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// twitteroauth.php
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;function&lt;/span&gt; &lt;span class="nf"&gt;http&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;$url&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;$method&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;$postfields&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;NULL&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// ...
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt; &lt;span class="nx"&gt;curl_setopt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;$ci&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;CURLOPT_HTTPPROXYTUNNEL&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;TRUE&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;curl_setopt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;$ci&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;CURLOPT_PROXY&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;127.0.0.1:1086&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;curl_setopt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;$ci&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;CURLOPT_PROXYTYPE&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;CURLPROXY_SOCKS5&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// ...
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description></item><item><title>调校mycli</title><link>http://0x3f.org/posts/fine-tune-mycli/</link><pubDate>Mon, 26 Jun 2017 18:05:31 +0000</pubDate><guid>http://0x3f.org/posts/fine-tune-mycli/</guid><description>&lt;p&gt;做以下配置，使mycli按需使用pager，并在数据过多时不破坏表格格式：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ini" data-lang="ini"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# ~/.my.cnf&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;[client]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="na"&gt;pager&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;less -FSXR&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description></item><item><title>CopyQ，也许是Linux最好的剪贴板管理工具</title><link>http://0x3f.org/posts/copyq/</link><pubDate>Mon, 19 Jun 2017 21:49:14 +0000</pubDate><guid>http://0x3f.org/posts/copyq/</guid><description>&lt;p&gt;我对剪贴板管理工具的核心需求有四个：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;记录文本&lt;/li&gt;
+&lt;li&gt;记录图片&lt;/li&gt;
+&lt;li&gt;快速搜索&lt;/li&gt;
+&lt;li&gt;独立软件包&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;CopyQ是Linux上唯一满足这些需求的实现，虽然体验上跟Mac下的竞品还有差距。&lt;/p&gt;
+&lt;p&gt;用法：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;copyq&lt;/code&gt;：运行&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;copyq menu&lt;/code&gt;：显示剪贴板历史管理菜单&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;copyq show&lt;/code&gt;：显示剪贴板历史管理窗口&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>用Tmux的控制模式提高生产力</title><link>http://0x3f.org/posts/improve-productivity-with-tmux-control-mode/</link><pubDate>Sun, 11 Jun 2017 10:40:06 +0000</pubDate><guid>http://0x3f.org/posts/improve-productivity-with-tmux-control-mode/</guid><description>&lt;p&gt;Tmux的控制模式（Control Mode）可以把tmux的窗口映射为本地虚拟终端的窗口，也就是说，用户可以像操作本地虚拟终端一样操作tmux。这对备受tmux的emacs风格的热键绑定折磨或需要嵌套tmux的人来说非常有用。&lt;/p&gt;
+&lt;p&gt;在支持这个特性的虚拟终端（例如「iTerm」）里，执行&lt;code&gt;tmux -CC&lt;/code&gt;即可。当然也可以&lt;code&gt;tmux -CC a&lt;/code&gt;恢复会话。&lt;/p&gt;</description></item><item><title>用SwitchHosts!切换主机映射方案</title><link>http://0x3f.org/posts/switch-hosts-with-switchhosts/</link><pubDate>Sun, 11 Jun 2017 09:57:54 +0000</pubDate><guid>http://0x3f.org/posts/switch-hosts-with-switchhosts/</guid><description>&lt;p&gt;最近在Archlinux上开始用SwitchHosts!管理主机映射方案，它可能是Linux下做这件事的最好的工具了。&lt;/p&gt;
+&lt;p&gt;在Mac下也用它替换掉了Gas Mask，因为支持Alfred Workflow。相对的缺点是不支持在状态栏图标上显示当前方案名称，不过Alfred里可以，一定程度上缓解了这个问题。&lt;/p&gt;</description></item></channel></rss>

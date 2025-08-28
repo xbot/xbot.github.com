@@ -1,54 +1,54 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Homekit on 晴耕雨讀</title><link>http://0x3f.org/tags/homekit/</link><description>Recent content in Homekit on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Wed, 08 Jan 2025 18:00:33 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/homekit/index.xml" rel="self" type="application/rss+xml"/><item><title>小米安防轻松入苹果“家门”，教你一招搞定！</title><link>http://0x3f.org/posts/control-xiaomi-alarm-system-using-homekit/</link><pubDate>Wed, 08 Jan 2025 18:00:33 +0800</pubDate><guid>http://0x3f.org/posts/control-xiaomi-alarm-system-using-homekit/</guid><description>&lt;h2 id="为什么这么做">为什么这么做？&lt;/h2>
-&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-12-25-15-52-54-Image%20Dec%2025%202024.jpeg" alt="2024-12-25-15-52-54-ImageDec252024">&lt;/p>
-&lt;p>小米官方 Home Assistant 集成的事件订阅机制可是一大亮点，它极大地解放了小米智能组件在 Apple 的 HomeKit 生态中的应用。以往三方集成采用轮询机制，这就导致小米多数的组件响应延迟很大，体验感极差。比如之前安防系统模式变化后几秒钟仪表盘上的组件才改变状态，实在是逼死强迫症。但现在不同了，有了事件订阅机制，组件响应十分及时，我们终于可以在家庭 App 中流畅地调用这些组件实现自动化操作了。&lt;/p>
-&lt;p>不过，对于安防系统，小米官方 Home Assistant 集成目前只提供了一个下拉框组件。这在日常使用中可就有些不便了，当你想要快速查看安防状态或者切换模式时，还得费劲地去点开下拉框，既不美观，操作也麻烦。要是能在 Home Assistant 的仪表盘和 Apple 的家庭 App 中，显示专为安防系统设计的组件，那使用起来就顺手多了。所以，就需要把这个下拉框组件对应的 select 实体转换成 alarm_control_panel 实体，接下来就看看具体怎么做吧。&lt;/p>
-&lt;h2 id="实操">实操&lt;/h2>
-&lt;p>首先，我们要创建一个 alarm_control_panel 实体，位置在：Settings → Devices &amp;amp; services → Helpers → Create helper → Template helper → Template an alarm control panel。&lt;/p>
-&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-01-08-18-04-03-alarm_01.png" alt="2025-01-08-18-04-03-alarm_01">&lt;/p>
-&lt;p>在这里，我们需要用模板来进行配置，以下是关键的代码部分：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;span class="lnt">3
-&lt;/span>&lt;span class="lnt">4
-&lt;/span>&lt;span class="lnt">5
-&lt;/span>&lt;span class="lnt">6
-&lt;/span>&lt;span class="lnt">7
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">{&lt;span class="l">% set state_map = {&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">&amp;#39;basic_arming&amp;#39;&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s1">&amp;#39;disarmed&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">&amp;#39;home_arming&amp;#39;&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s1">&amp;#39;armed_home&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">&amp;#39;away_arming&amp;#39;&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s1">&amp;#39;armed_away&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">&amp;#39;sleep_arming&amp;#39;&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s1">&amp;#39;armed_night&amp;#39;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>}&lt;span class="w"> &lt;/span>&lt;span class="l">%}&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>{{&lt;span class="w"> &lt;/span>&lt;span class="l">state_map.get(states(&amp;#39;select.lumi_cn_463684587_mgl03_arming_mode_p_3_1&amp;#39;), &amp;#39;unknown&amp;#39;) }}&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>这段代码的含义是，我们先定义了一个名为 &lt;code>state_map&lt;/code> 的字典，它将小米安防下拉框组件中的不同状态值（如 &lt;code>basic_arming&lt;/code> 等）对应翻译成苹果 HomeKit 能识别的 alarm_control_panel 实体状态值（如 &lt;code>disarmed&lt;/code> 等）。最后的 &lt;code>{{ state_map.get(states('select.lumi_cn_463684587_mgl03_arming_mode_p_3_1'), 'unknown') }}&lt;/code> 这部分，则是获取当前小米安防组件的状态，并通过前面的 &lt;code>state_map&lt;/code> 进行转换，如果获取状态失败，就返回 &lt;code>unknown&lt;/code>。&lt;/p></description></item><item><title>小米传感器“入驻”苹果家庭App，智能生活轻松拿捏</title><link>http://0x3f.org/posts/mapping-xiaomi-sensors-from-home-assistant-to-apple-home-app/</link><pubDate>Fri, 27 Dec 2024 22:20:44 +0800</pubDate><guid>http://0x3f.org/posts/mapping-xiaomi-sensors-from-home-assistant-to-apple-home-app/</guid><description>&lt;h2 id="一为什么要进行映射">一、为什么要进行映射？&lt;/h2>
-&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-12-25-15-49-31-mac_20241225154742.jpeg" alt="2024-12-25-15-49-31-mac_20241225154742">&lt;/p>
-&lt;p>小米官方 Home Assistant 集成的事件订阅机制，极大的解放了小米智能组件在 Apple 的 HomeKit 生态中的应用！以往三方集成用的是轮询机制，这就导致小米多数组件响应特别慢，体验感超差。例如起夜时，我希望进入洗手间的同时夜灯就点亮，结果等了几秒它才有反应，是不是很让人抓狂？但现在不一样了，有了事件订阅机制，在家庭 App 里调用小米组件实现自动化变得轻松多了，大大提升了使用的流畅度。&lt;/p>
-&lt;p>再说说小米的传感器，可能凡是电池供电的都是无状态的。就是只有被触发的时候，才会产生一个事件，而不是像有些传感器那样一直有个持续性的实时状态。所以在小米官方集成里，大多就只提供了一个 event 实体。&lt;/p>
-&lt;p>反观家庭 App，里面的传感器是以 sensor 和 binary sensor 的形式存在的。它们都是有状态的实体，不同之处在于，sensor 的状态可以多种多样，能反映不同的数值或情况；而 binary sensor 呢，简单直接，只有两种状态，非此即彼。&lt;/p>
-&lt;p>这么一看，问题就来了，要想在家庭 App 里用好小米传感器，就必须把 Home Assistant 里的那个 event 实体，转换成 sensor 或者 binary sensor，这样两边才能对上号，实现更智能的联动。&lt;/p>
-&lt;h2 id="二详细操作步骤">二、详细操作步骤&lt;/h2>
-&lt;h3 id="一创建存放触发时间的实体">（一）创建存放触发时间的实体&lt;/h3>
-&lt;p>接下来，以小米夜灯的人体传感器为例，介绍实现这一转换的方法。&lt;/p>
-&lt;p>首先，要创建一个 input_datetime 类型的实体，用来存放最近一次人体移动事件触发时间。在 Home Assistant 里，路径如下：Settings → Devices &amp;amp; services → Helpers → Create helper → Date and/or time。&lt;/p>
-&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-12-27-22-54-11-sensor_02.png" alt="2024-12-27-22-54-11-sensor_02">&lt;/p>
-&lt;h3 id="二创建更新实体的自动化">（二）创建更新实体的自动化&lt;/h3>
-&lt;p>紧接着，创建一个 Automation，用于在传感器的 event 触发时保存当前时间到前面那个实体。同样在 Home Assistant 里，找到 Settings → Automations &amp;amp; scenes → Create automation 这个路径。&lt;/p></description></item><item><title>小米官方的 Home Assistant 集成一周体验</title><link>http://0x3f.org/posts/one-week-experience-of-xiaomi-official-home-assistant-integration/</link><pubDate>Wed, 25 Dec 2024 14:58:27 +0800</pubDate><guid>http://0x3f.org/posts/one-week-experience-of-xiaomi-official-home-assistant-integration/</guid><description>&lt;h2 id="消息订阅机制--最大亮点">消息订阅机制 —— 最大亮点&lt;/h2>
-&lt;p>小米官方 Home Assistant 集成最大的优势，就是其基于消息订阅机制的通信方式。这相较于第三方集成常用的轮询方式，有着质的飞跃。在以往的第三方集成中，设备状态的获取往往依赖于轮询，每隔一段时间才去检查设备状态是否有变化，这就导致了信息的延迟，用户操作后不能及时得到设备的反馈，体验大打折扣。&lt;/p>
-&lt;p>而小米官方集成的消息订阅机制则像是给设备安装了一个实时传声筒。当设备属性发生改变或者有事件产生时，设备会迅速向小米云或小米中枢网关发送上行消息，米家集成就能在第一时间接收到这些消息并更新设备状态，无需频繁地刷新查询。这就使得小米的智能家居配件在 Home Assistant 和 HomeKit 生态中的响应变得极其及时，真正实现了设备状态的实时掌控。比如灯的开关、窗帘的开合、空调的温度调节等操作，都能瞬间得到执行和反馈，让用户感受到智能家居的便捷与高效，极大地提升了用户的智能家居体验。&lt;/p>
-&lt;h2 id="oauth2-登录方式--可能每周都要重新登录">OAuth2 登录方式 —— 可能每周都要重新登录&lt;/h2>
-&lt;p>小米官方 Home Assistant 集成采用的 OAuth2 登录方式，其实有着诸多安全性方面的优势。它允许客户端不接触用户密码，服务器端能够更集中地保护用户信息，所有认证和授权信息都汇聚在服务器端，而非分散于各个客户端，大大减少了用户凭据泄露的风险。而且 OAuth2 还是一个应用广泛的认证标准，很多公司和组织都采用了它，这也让小米的智能家居配件在集成应用时更容易与其他平台或服务进行交互、整合。&lt;/p>
-&lt;p>然而，在实际使用一周的体验中，也发现了不太方便的地方，那就是登录有效期的问题。使用一周之后，系统就会提示登录过期，需要重新登录。这在日常使用中，尤其是频繁操作智能家居设备时，还是挺影响体验的。每隔一段时间都要重新登录，操作步骤变得繁琐，打断了原本便捷的智能家居操控流程。&lt;/p>
-&lt;p>据说这个 bug 会在未来的版本中解决。&lt;/p>
-&lt;h2 id="额外配置">额外配置&lt;/h2>
-&lt;h3 id="安防控制面板显示">安防控制面板显示&lt;/h3>
-&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-12-25-15-52-54-Image%20Dec%2025%202024.jpeg" alt="2024-12-25-15-52-54-ImageDec252024">&lt;/p>
-&lt;p>对于我在用的小米智能多模网关，小米官方 Home Assistant 集成并没有提供 HA 的安防控制面板实体，而是提供了一个基本的 select 实体。如果要在 HA 的仪表板和家庭 App 中显示安防控制面板，就需要把安防系统的 select 实体转换成 alarm_control_panel 实体。&lt;/p>
-&lt;h3 id="传感器实体转换">传感器实体转换&lt;/h3>
-&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-12-25-15-49-31-mac_20241225154742.jpeg" alt="2024-12-25-15-49-31-mac_20241225154742">&lt;/p>
-&lt;p>对于移动检测传感器和烟雾传感器这样的配件，小米官方 Home Assistant 集成没有提供对应的 binary_sensor 实体，而是 event 实体，这当然很符合小米配件的行为模式，但如果需要把它们输出到 Apple 的家庭 App ，就需要将其转换成 binary_sensor 实体。这是因为家庭 App 无法处理 HA 中的 event 实体，而转换成binary_sensor 实体才能被识别为对应的传感器，也更便于与其他智能设备进行联动。&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Homekit on 晴耕雨讀</title><link>http://0x3f.org/tags/homekit/</link><description>Recent content in Homekit on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Wed, 08 Jan 2025 18:00:33 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/homekit/index.xml" rel="self" type="application/rss+xml"/><item><title>小米安防轻松入苹果“家门”，教你一招搞定！</title><link>http://0x3f.org/posts/control-xiaomi-alarm-system-using-homekit/</link><pubDate>Wed, 08 Jan 2025 18:00:33 +0800</pubDate><guid>http://0x3f.org/posts/control-xiaomi-alarm-system-using-homekit/</guid><description>&lt;h2 id="为什么这么做"&gt;为什么这么做？&lt;/h2&gt;
+&lt;p&gt;&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-12-25-15-52-54-Image%20Dec%2025%202024.jpeg" alt="2024-12-25-15-52-54-ImageDec252024"&gt;&lt;/p&gt;
+&lt;p&gt;小米官方 Home Assistant 集成的事件订阅机制可是一大亮点，它极大地解放了小米智能组件在 Apple 的 HomeKit 生态中的应用。以往三方集成采用轮询机制，这就导致小米多数的组件响应延迟很大，体验感极差。比如之前安防系统模式变化后几秒钟仪表盘上的组件才改变状态，实在是逼死强迫症。但现在不同了，有了事件订阅机制，组件响应十分及时，我们终于可以在家庭 App 中流畅地调用这些组件实现自动化操作了。&lt;/p&gt;
+&lt;p&gt;不过，对于安防系统，小米官方 Home Assistant 集成目前只提供了一个下拉框组件。这在日常使用中可就有些不便了，当你想要快速查看安防状态或者切换模式时，还得费劲地去点开下拉框，既不美观，操作也麻烦。要是能在 Home Assistant 的仪表盘和 Apple 的家庭 App 中，显示专为安防系统设计的组件，那使用起来就顺手多了。所以，就需要把这个下拉框组件对应的 select 实体转换成 alarm_control_panel 实体，接下来就看看具体怎么做吧。&lt;/p&gt;
+&lt;h2 id="实操"&gt;实操&lt;/h2&gt;
+&lt;p&gt;首先，我们要创建一个 alarm_control_panel 实体，位置在：Settings → Devices &amp;amp; services → Helpers → Create helper → Template helper → Template an alarm control panel。&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-01-08-18-04-03-alarm_01.png" alt="2025-01-08-18-04-03-alarm_01"&gt;&lt;/p&gt;
+&lt;p&gt;在这里，我们需要用模板来进行配置，以下是关键的代码部分：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;{&lt;span class="l"&gt;% set state_map = {&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;&amp;#39;basic_arming&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;disarmed&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;&amp;#39;home_arming&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;armed_home&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;&amp;#39;away_arming&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;armed_away&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;&amp;#39;sleep_arming&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;armed_night&amp;#39;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;}&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;%}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;{{&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;state_map.get(states(&amp;#39;select.lumi_cn_463684587_mgl03_arming_mode_p_3_1&amp;#39;), &amp;#39;unknown&amp;#39;) }}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这段代码的含义是，我们先定义了一个名为 &lt;code&gt;state_map&lt;/code&gt; 的字典，它将小米安防下拉框组件中的不同状态值（如 &lt;code&gt;basic_arming&lt;/code&gt; 等）对应翻译成苹果 HomeKit 能识别的 alarm_control_panel 实体状态值（如 &lt;code&gt;disarmed&lt;/code&gt; 等）。最后的 &lt;code&gt;{{ state_map.get(states('select.lumi_cn_463684587_mgl03_arming_mode_p_3_1'), 'unknown') }}&lt;/code&gt; 这部分，则是获取当前小米安防组件的状态，并通过前面的 &lt;code&gt;state_map&lt;/code&gt; 进行转换，如果获取状态失败，就返回 &lt;code&gt;unknown&lt;/code&gt;。&lt;/p&gt;</description></item><item><title>小米传感器“入驻”苹果家庭App，智能生活轻松拿捏</title><link>http://0x3f.org/posts/mapping-xiaomi-sensors-from-home-assistant-to-apple-home-app/</link><pubDate>Fri, 27 Dec 2024 22:20:44 +0800</pubDate><guid>http://0x3f.org/posts/mapping-xiaomi-sensors-from-home-assistant-to-apple-home-app/</guid><description>&lt;h2 id="一为什么要进行映射"&gt;一、为什么要进行映射？&lt;/h2&gt;
+&lt;p&gt;&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-12-25-15-49-31-mac_20241225154742.jpeg" alt="2024-12-25-15-49-31-mac_20241225154742"&gt;&lt;/p&gt;
+&lt;p&gt;小米官方 Home Assistant 集成的事件订阅机制，极大的解放了小米智能组件在 Apple 的 HomeKit 生态中的应用！以往三方集成用的是轮询机制，这就导致小米多数组件响应特别慢，体验感超差。例如起夜时，我希望进入洗手间的同时夜灯就点亮，结果等了几秒它才有反应，是不是很让人抓狂？但现在不一样了，有了事件订阅机制，在家庭 App 里调用小米组件实现自动化变得轻松多了，大大提升了使用的流畅度。&lt;/p&gt;
+&lt;p&gt;再说说小米的传感器，可能凡是电池供电的都是无状态的。就是只有被触发的时候，才会产生一个事件，而不是像有些传感器那样一直有个持续性的实时状态。所以在小米官方集成里，大多就只提供了一个 event 实体。&lt;/p&gt;
+&lt;p&gt;反观家庭 App，里面的传感器是以 sensor 和 binary sensor 的形式存在的。它们都是有状态的实体，不同之处在于，sensor 的状态可以多种多样，能反映不同的数值或情况；而 binary sensor 呢，简单直接，只有两种状态，非此即彼。&lt;/p&gt;
+&lt;p&gt;这么一看，问题就来了，要想在家庭 App 里用好小米传感器，就必须把 Home Assistant 里的那个 event 实体，转换成 sensor 或者 binary sensor，这样两边才能对上号，实现更智能的联动。&lt;/p&gt;
+&lt;h2 id="二详细操作步骤"&gt;二、详细操作步骤&lt;/h2&gt;
+&lt;h3 id="一创建存放触发时间的实体"&gt;（一）创建存放触发时间的实体&lt;/h3&gt;
+&lt;p&gt;接下来，以小米夜灯的人体传感器为例，介绍实现这一转换的方法。&lt;/p&gt;
+&lt;p&gt;首先，要创建一个 input_datetime 类型的实体，用来存放最近一次人体移动事件触发时间。在 Home Assistant 里，路径如下：Settings → Devices &amp;amp; services → Helpers → Create helper → Date and/or time。&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-12-27-22-54-11-sensor_02.png" alt="2024-12-27-22-54-11-sensor_02"&gt;&lt;/p&gt;
+&lt;h3 id="二创建更新实体的自动化"&gt;（二）创建更新实体的自动化&lt;/h3&gt;
+&lt;p&gt;紧接着，创建一个 Automation，用于在传感器的 event 触发时保存当前时间到前面那个实体。同样在 Home Assistant 里，找到 Settings → Automations &amp;amp; scenes → Create automation 这个路径。&lt;/p&gt;</description></item><item><title>小米官方的 Home Assistant 集成一周体验</title><link>http://0x3f.org/posts/one-week-experience-of-xiaomi-official-home-assistant-integration/</link><pubDate>Wed, 25 Dec 2024 14:58:27 +0800</pubDate><guid>http://0x3f.org/posts/one-week-experience-of-xiaomi-official-home-assistant-integration/</guid><description>&lt;h2 id="消息订阅机制--最大亮点"&gt;消息订阅机制 —— 最大亮点&lt;/h2&gt;
+&lt;p&gt;小米官方 Home Assistant 集成最大的优势，就是其基于消息订阅机制的通信方式。这相较于第三方集成常用的轮询方式，有着质的飞跃。在以往的第三方集成中，设备状态的获取往往依赖于轮询，每隔一段时间才去检查设备状态是否有变化，这就导致了信息的延迟，用户操作后不能及时得到设备的反馈，体验大打折扣。&lt;/p&gt;
+&lt;p&gt;而小米官方集成的消息订阅机制则像是给设备安装了一个实时传声筒。当设备属性发生改变或者有事件产生时，设备会迅速向小米云或小米中枢网关发送上行消息，米家集成就能在第一时间接收到这些消息并更新设备状态，无需频繁地刷新查询。这就使得小米的智能家居配件在 Home Assistant 和 HomeKit 生态中的响应变得极其及时，真正实现了设备状态的实时掌控。比如灯的开关、窗帘的开合、空调的温度调节等操作，都能瞬间得到执行和反馈，让用户感受到智能家居的便捷与高效，极大地提升了用户的智能家居体验。&lt;/p&gt;
+&lt;h2 id="oauth2-登录方式--可能每周都要重新登录"&gt;OAuth2 登录方式 —— 可能每周都要重新登录&lt;/h2&gt;
+&lt;p&gt;小米官方 Home Assistant 集成采用的 OAuth2 登录方式，其实有着诸多安全性方面的优势。它允许客户端不接触用户密码，服务器端能够更集中地保护用户信息，所有认证和授权信息都汇聚在服务器端，而非分散于各个客户端，大大减少了用户凭据泄露的风险。而且 OAuth2 还是一个应用广泛的认证标准，很多公司和组织都采用了它，这也让小米的智能家居配件在集成应用时更容易与其他平台或服务进行交互、整合。&lt;/p&gt;
+&lt;p&gt;然而，在实际使用一周的体验中，也发现了不太方便的地方，那就是登录有效期的问题。使用一周之后，系统就会提示登录过期，需要重新登录。这在日常使用中，尤其是频繁操作智能家居设备时，还是挺影响体验的。每隔一段时间都要重新登录，操作步骤变得繁琐，打断了原本便捷的智能家居操控流程。&lt;/p&gt;
+&lt;p&gt;据说这个 bug 会在未来的版本中解决。&lt;/p&gt;
+&lt;h2 id="额外配置"&gt;额外配置&lt;/h2&gt;
+&lt;h3 id="安防控制面板显示"&gt;安防控制面板显示&lt;/h3&gt;
+&lt;p&gt;&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-12-25-15-52-54-Image%20Dec%2025%202024.jpeg" alt="2024-12-25-15-52-54-ImageDec252024"&gt;&lt;/p&gt;
+&lt;p&gt;对于我在用的小米智能多模网关，小米官方 Home Assistant 集成并没有提供 HA 的安防控制面板实体，而是提供了一个基本的 select 实体。如果要在 HA 的仪表板和家庭 App 中显示安防控制面板，就需要把安防系统的 select 实体转换成 alarm_control_panel 实体。&lt;/p&gt;
+&lt;h3 id="传感器实体转换"&gt;传感器实体转换&lt;/h3&gt;
+&lt;p&gt;&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-12-25-15-49-31-mac_20241225154742.jpeg" alt="2024-12-25-15-49-31-mac_20241225154742"&gt;&lt;/p&gt;
+&lt;p&gt;对于移动检测传感器和烟雾传感器这样的配件，小米官方 Home Assistant 集成没有提供对应的 binary_sensor 实体，而是 event 实体，这当然很符合小米配件的行为模式，但如果需要把它们输出到 Apple 的家庭 App ，就需要将其转换成 binary_sensor 实体。这是因为家庭 App 无法处理 HA 中的 event 实体，而转换成binary_sensor 实体才能被识别为对应的传感器，也更便于与其他智能设备进行联动。&lt;/p&gt;</description></item></channel></rss>

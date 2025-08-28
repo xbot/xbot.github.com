@@ -1,51 +1,51 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Calibre on 晴耕雨讀</title><link>http://0x3f.org/tags/calibre/</link><description>Recent content in Calibre on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Thu, 21 Aug 2025 19:04:33 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/calibre/index.xml" rel="self" type="application/rss+xml"/><item><title>LinuxServer 的新版 Calibre 镜像很好，但是……</title><link>http://0x3f.org/posts/kudos-to-the-new-linuxserver-calibre-docker-container/</link><pubDate>Thu, 21 Aug 2025 19:04:33 +0800</pubDate><guid>http://0x3f.org/posts/kudos-to-the-new-linuxserver-calibre-docker-container/</guid><description>&lt;p>最近，LinuxServer 发布了新版的 Calibre Docker 镜像，用 Selkies 替代原来的 Kasm VNC 作为浏览器访问界面。&lt;/p>
-&lt;p>新版本好用多了，支持直接输入中文了，进一步降低了对桌面版 Calibre 的依赖。&lt;/p>
-&lt;p>不过有个问题，在 macOS 上默认会打开 HiDPI ，导致在高分辨率屏幕上有可能无法显示界面。此时拖动浏览器窗口，缩小窗口大小，直到界面显示正常，然后把 Selkies 的 HiDPI 选项关了就行了。&lt;/p></description></item><item><title>突然成了 Up 主</title><link>http://0x3f.org/posts/suddenly-became-a-youtuber/</link><pubDate>Thu, 15 Aug 2024 15:46:29 +0800</pubDate><guid>http://0x3f.org/posts/suddenly-became-a-youtuber/</guid><description>&lt;p>早在一年前还在用 Inoreader 的时候就发现 Calibre 抓取某些订阅源之后图片不显示了，后来迁移到 Miniflux ，由于 Calibre 抓取的是它缓存的网页内容，所以这个问题暂时被规避了。现在改用 Readwise Reader 挑拣稍后读的内容，图片的问题又出现了，甚至增加了文章内容为空的情况。&lt;/p>
-&lt;p>抽时间调试了一下，发现图片不显示是因为 Calibre 在抓取时没有发送 Referer 的 HTTP 报文头，内容为空是因为文章格式较为特殊（比如链接相对正文的比重较大）、导致 Calibre 当成非正文内容过滤掉了。&lt;/p>
-&lt;p>然后了解了一下 Calibre Recipe 。官方文档比较简单，需要看源码辅助理解，有些问题还需要通过调试找到切入点。终于解决了所有问题，又可以用 Calibre Content Server 的网页端快乐地阅读了。&lt;/p>
-&lt;p>突然觉得这种比较小的点很适合用短视频的形式表达，所以买了一个月剪映会员，用截图和录屏做了一个 30 秒的视频，旁白用 AI 语音，效果还不错。平时看过一些类似形式做的长视频，TTS 波澜不惊的颜色听多了挺难受，不过短视频就不存在这个问题，观众还没有疲劳就结束了。&lt;/p>
-&lt;iframe width="560" height="315" src="https://www.youtube.com/embed/uzQpO_G_vPg?si=8FBqc40NyFSyvlXZ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>&lt;/iframe></description></item><item><title>打通稍后读工作流：Readwise Reader 的 RSSHub 路由发布</title><link>http://0x3f.org/posts/rsshub-route-for-readwise-reader-is-published/</link><pubDate>Thu, 11 Jul 2024 17:33:26 +0800</pubDate><guid>http://0x3f.org/posts/rsshub-route-for-readwise-reader-is-published/</guid><description>&lt;p>本文聊聊在从 Inoreader 迁移到 Miniflux 后，我是怎样重建我的阅读工作流的。&lt;/p>
-&lt;h2 id="原来的阅读工作流">原来的阅读工作流&lt;/h2>
-&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-07-11-17-49-10-SoWkIImgAStDuL8ioKZDJLKepaujISwerCqlBSd9p4lb0ijpSLczR9ZrOd-xWcTUVb5gOafgaSABTOjUpcXL20eEjkQoUZfd1PBKo_QUf-jtlfpJy69Pu_CLlKydzBrOl_lvh9PdqzgVhrxmh7Foindpdorenz07L0AHWIXysZ7znS8L4CFWMe6opzVkiuOxo3an9pEfA5NXMTVaf_tJa0o3A0GQ2N7eirqJ8FR1TJZdvvMa.png" alt="2024-07-11-17-49-10-SoWkIImgAStDuL8ioKZDJLKepaujISwerCqlBSd9p4lb0ijpSLczR9ZrOd-xWcTUVb5gOafgaSABTOjUpcXL20eEjkQoUZfd1PBKo_QUf-jtlfpJy69Pu_CLlKydzBrOl_lvh9PdqzgVhrxmh7Foindpdorenz07L0AHWIXysZ7znS8L4CFWMe6opzVkiuOxo3an9pEfA5NXMTVaf_tJa0o3A0GQ2N7eirqJ8FR1TJZdvvMa">&lt;/p>
-&lt;p>在用过的 RSS 阅读器里，Inoreader 最符合我的阅读习惯。它有以下优点：&lt;/p>
-&lt;ul>
-&lt;li>&lt;strong>文章去重和过滤&lt;/strong>：由于订阅的资讯较多，这个功能能帮我节省很多时间。&lt;/li>
-&lt;li>&lt;strong>接近 Vim 风格的快捷键&lt;/strong>：Vim 用户表示极度舒适。&lt;/li>
-&lt;li>&lt;strong>多种布局&lt;/strong>：为不同的订阅源指定最合适的布局能极大提高阅读效率。&lt;/li>
-&lt;li>&lt;strong>支持把标签输出为订阅源&lt;/strong>：方便通过 Calibre 订阅和抓取。&lt;/li>
-&lt;/ul>
-&lt;p>我在 Inoreader 里只做快速浏览，对需要阅读的文章打星标，随后集中对星标文章打标签。然后在 Calibre 里抓取指定标签的文章并生成电子书，既可以在 Calibre Content Server 的网页端阅读，也可以发送到 Kindle 离线阅读。&lt;/p>
-&lt;h2 id="电脑上的阅读体验">电脑上的阅读体验&lt;/h2>
-&lt;p>在电脑上，我一直钟爱使用 Calibre Content Server 的网页端进行阅读。它具备以下特点：&lt;/p>
-&lt;ul>
-&lt;li>&lt;strong>自适应多栏布局&lt;/strong>：针对高分屏的优化，使得阅读体验更加舒适。&lt;/li>
-&lt;li>&lt;strong>卡片式翻页&lt;/strong>：与传统的滚动式翻页相比，卡片式翻页在提高阅读效率的同时，也更加护眼。&lt;/li>
-&lt;li>&lt;strong>自定义排版样式&lt;/strong>：可以根据自己的喜好调整阅读界面，打造个性化的阅读环境。&lt;/li>
-&lt;/ul>
-&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-07-11-18-06-02-IMG_2332.jpeg" alt="2024-07-11-18-06-02-IMG_2332">&lt;/p>
-&lt;h2 id="从-inoreader-到-miniflux-的转变">从 Inoreader 到 Miniflux 的转变&lt;/h2>
-&lt;p>后来，Inoreader 的价格涨了很多，我尝试自建 Miniflux ，效果意外地好，但它有一个明显的局限性：只支持打星标，不支持打标签。这意味着我无法像使用 Inoreader 那样，通过标签对文章进行筛选和分类。&lt;/p>
-&lt;h2 id="readwise-reader-的优势">Readwise Reader 的优势&lt;/h2>
-&lt;p>不过 Miniflux 支持集成 Readwise Reader 。它不仅支持标签功能，还提供了列表接口。这让我意识到，如果能够将 Readwise Reader 的文档输出为订阅源，那么我的稍后读工作流将更加完善。&lt;/p>
-&lt;h2 id="rsshub-路由发布">RSSHub 路由发布&lt;/h2>
-&lt;p>为了实现这一目标，我为 RSSHub 添加了一个路由，它可以将 Readwise Reader 的文档转换成订阅源。这样一来，我就可以在 Calibre Content Server 中愉快地阅读那些稍后阅读的文章了。&lt;/p></description></item><item><title>Calibre排版的最佳实践</title><link>http://0x3f.org/posts/best-practices-of-calibre-on-formatting/</link><pubDate>Fri, 27 Jan 2017 18:15:00 +0000</pubDate><guid>http://0x3f.org/posts/best-practices-of-calibre-on-formatting/</guid><description>&lt;p>&lt;strong>虽然如今左Kindle、右iPad，但是再也没有在课堂上用文曲星看《此间的少年》的感觉。&lt;/strong>&lt;/p>
-&lt;p>忘了前段时间看池建强还是和菜头的文章，说很讨厌中文排版中段落首行缩进的风格，深有同感。我一般在读前会先用Calibre修改一下书的格式，段落首行不缩进、用空白行分割段落、嵌入好看的字体，否则强迫症表示根本看不下去。&lt;/p>
-&lt;p>本文分享几则平时积累的Calibre排版的最佳实践，顺带吐槽一下亚马逊电子书的排版质量，早已经被微信读书、多看这些APP吊打了。&lt;/p>
-&lt;h2 id="一最佳排版">一、最佳排版&lt;/h2>
-&lt;p>最小行高：140%。&lt;/p>
-&lt;p>&lt;img src="https://wx1.sinaimg.cn/large/006tNbRwly1fwvx83ybpbj30az0a5t9f.jpg" alt="">&lt;/p>
-&lt;p>使用空白行分段，段落首行不缩进。&lt;/p>
-&lt;p>&lt;img src="https://wx2.sinaimg.cn/large/006tNbRwly1fwvx8hwq08j30gc03lmxh.jpg" alt="">&lt;/p>
-&lt;p>要嵌入字体，必须转换成KF8格式的类型，例如azw3或者both类型的mobi：&lt;/p>
-&lt;p>&lt;img src="https://wx3.sinaimg.cn/large/006tNbRwly1fwvx8znehdj30av06dmxo.jpg" alt="">&lt;/p>
-&lt;p>注意：KF8格式在点选文字时，默认选中一句，而不是单字，不方便查字典。要默认选中单字，须转换成old类型的mobi。&lt;/p>
-&lt;h2 id="二最佳字体">二、最佳字体&lt;/h2>
-&lt;p>索尼楷书&lt;/p>
-&lt;p>&lt;img src="https://wx4.sinaimg.cn/large/006tNbRwly1fwvx92ktu8j30ts148jys.jpg" alt="">&lt;/p>
-&lt;p>方正北魏楷书&lt;/p>
-&lt;p>&lt;img src="https://wx3.sinaimg.cn/large/006tNbRwly1fwvx9fm9nlj30ts148dn4.jpg" alt="">&lt;/p>
-&lt;p>方正宋三&lt;/p>
-&lt;p>在微信读书iOS上显示效果很好，但是在Kindle里比较一般。&lt;/p>
-&lt;hr>
-&lt;p>&lt;em>本文最早发布在公众号：&lt;strong>两司马门下走狗&lt;/strong>&lt;/em>&lt;/p>
-&lt;p>&lt;img src="http://0x3f.org/images/qrcode_zougou.jpg" alt="">&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Calibre on 晴耕雨讀</title><link>http://0x3f.org/tags/calibre/</link><description>Recent content in Calibre on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Thu, 21 Aug 2025 19:04:33 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/calibre/index.xml" rel="self" type="application/rss+xml"/><item><title>LinuxServer 的新版 Calibre 镜像很好，但是……</title><link>http://0x3f.org/posts/kudos-to-the-new-linuxserver-calibre-docker-container/</link><pubDate>Thu, 21 Aug 2025 19:04:33 +0800</pubDate><guid>http://0x3f.org/posts/kudos-to-the-new-linuxserver-calibre-docker-container/</guid><description>&lt;p&gt;最近，LinuxServer 发布了新版的 Calibre Docker 镜像，用 Selkies 替代原来的 Kasm VNC 作为浏览器访问界面。&lt;/p&gt;
+&lt;p&gt;新版本好用多了，支持直接输入中文了，进一步降低了对桌面版 Calibre 的依赖。&lt;/p&gt;
+&lt;p&gt;不过有个问题，在 macOS 上默认会打开 HiDPI ，导致在高分辨率屏幕上有可能无法显示界面。此时拖动浏览器窗口，缩小窗口大小，直到界面显示正常，然后把 Selkies 的 HiDPI 选项关了就行了。&lt;/p&gt;</description></item><item><title>突然成了 Up 主</title><link>http://0x3f.org/posts/suddenly-became-a-youtuber/</link><pubDate>Thu, 15 Aug 2024 15:46:29 +0800</pubDate><guid>http://0x3f.org/posts/suddenly-became-a-youtuber/</guid><description>&lt;p&gt;早在一年前还在用 Inoreader 的时候就发现 Calibre 抓取某些订阅源之后图片不显示了，后来迁移到 Miniflux ，由于 Calibre 抓取的是它缓存的网页内容，所以这个问题暂时被规避了。现在改用 Readwise Reader 挑拣稍后读的内容，图片的问题又出现了，甚至增加了文章内容为空的情况。&lt;/p&gt;
+&lt;p&gt;抽时间调试了一下，发现图片不显示是因为 Calibre 在抓取时没有发送 Referer 的 HTTP 报文头，内容为空是因为文章格式较为特殊（比如链接相对正文的比重较大）、导致 Calibre 当成非正文内容过滤掉了。&lt;/p&gt;
+&lt;p&gt;然后了解了一下 Calibre Recipe 。官方文档比较简单，需要看源码辅助理解，有些问题还需要通过调试找到切入点。终于解决了所有问题，又可以用 Calibre Content Server 的网页端快乐地阅读了。&lt;/p&gt;
+&lt;p&gt;突然觉得这种比较小的点很适合用短视频的形式表达，所以买了一个月剪映会员，用截图和录屏做了一个 30 秒的视频，旁白用 AI 语音，效果还不错。平时看过一些类似形式做的长视频，TTS 波澜不惊的颜色听多了挺难受，不过短视频就不存在这个问题，观众还没有疲劳就结束了。&lt;/p&gt;
+&lt;iframe width="560" height="315" src="https://www.youtube.com/embed/uzQpO_G_vPg?si=8FBqc40NyFSyvlXZ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen&gt;&lt;/iframe&gt;</description></item><item><title>打通稍后读工作流：Readwise Reader 的 RSSHub 路由发布</title><link>http://0x3f.org/posts/rsshub-route-for-readwise-reader-is-published/</link><pubDate>Thu, 11 Jul 2024 17:33:26 +0800</pubDate><guid>http://0x3f.org/posts/rsshub-route-for-readwise-reader-is-published/</guid><description>&lt;p&gt;本文聊聊在从 Inoreader 迁移到 Miniflux 后，我是怎样重建我的阅读工作流的。&lt;/p&gt;
+&lt;h2 id="原来的阅读工作流"&gt;原来的阅读工作流&lt;/h2&gt;
+&lt;p&gt;&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-07-11-17-49-10-the-previous-reading-workflow.png" alt="The previous reading workflow"&gt;&lt;/p&gt;
+&lt;p&gt;在用过的 RSS 阅读器里，Inoreader 最符合我的阅读习惯。它有以下优点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;文章去重和过滤&lt;/strong&gt;：由于订阅的资讯较多，这个功能能帮我节省很多时间。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;接近 Vim 风格的快捷键&lt;/strong&gt;：Vim 用户表示极度舒适。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;多种布局&lt;/strong&gt;：为不同的订阅源指定最合适的布局能极大提高阅读效率。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;支持把标签输出为订阅源&lt;/strong&gt;：方便通过 Calibre 订阅和抓取。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;我在 Inoreader 里只做快速浏览，对需要阅读的文章打星标，随后集中对星标文章打标签。然后在 Calibre 里抓取指定标签的文章并生成电子书，既可以在 Calibre Content Server 的网页端阅读，也可以发送到 Kindle 离线阅读。&lt;/p&gt;
+&lt;h2 id="电脑上的阅读体验"&gt;电脑上的阅读体验&lt;/h2&gt;
+&lt;p&gt;在电脑上，我一直钟爱使用 Calibre Content Server 的网页端进行阅读。它具备以下特点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;自适应多栏布局&lt;/strong&gt;：针对高分屏的优化，使得阅读体验更加舒适。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;卡片式翻页&lt;/strong&gt;：与传统的滚动式翻页相比，卡片式翻页在提高阅读效率的同时，也更加护眼。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;自定义排版样式&lt;/strong&gt;：可以根据自己的喜好调整阅读界面，打造个性化的阅读环境。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-07-11-18-06-02-IMG_2332.jpeg" alt="2024-07-11-18-06-02-IMG_2332"&gt;&lt;/p&gt;
+&lt;h2 id="从-inoreader-到-miniflux-的转变"&gt;从 Inoreader 到 Miniflux 的转变&lt;/h2&gt;
+&lt;p&gt;后来，Inoreader 的价格涨了很多，我尝试自建 Miniflux ，效果意外地好，但它有一个明显的局限性：只支持打星标，不支持打标签。这意味着我无法像使用 Inoreader 那样，通过标签对文章进行筛选和分类。&lt;/p&gt;
+&lt;h2 id="readwise-reader-的优势"&gt;Readwise Reader 的优势&lt;/h2&gt;
+&lt;p&gt;不过 Miniflux 支持集成 Readwise Reader 。它不仅支持标签功能，还提供了列表接口。这让我意识到，如果能够将 Readwise Reader 的文档输出为订阅源，那么我的稍后读工作流将更加完善。&lt;/p&gt;
+&lt;h2 id="rsshub-路由发布"&gt;RSSHub 路由发布&lt;/h2&gt;
+&lt;p&gt;为了实现这一目标，我为 RSSHub 添加了一个路由，它可以将 Readwise Reader 的文档转换成订阅源。这样一来，我就可以在 Calibre Content Server 中愉快地阅读那些稍后阅读的文章了。&lt;/p&gt;</description></item><item><title>Calibre排版的最佳实践</title><link>http://0x3f.org/posts/best-practices-of-calibre-on-formatting/</link><pubDate>Fri, 27 Jan 2017 18:15:00 +0000</pubDate><guid>http://0x3f.org/posts/best-practices-of-calibre-on-formatting/</guid><description>&lt;p&gt;&lt;strong&gt;虽然如今左Kindle、右iPad，但是再也没有在课堂上用文曲星看《此间的少年》的感觉。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;忘了前段时间看池建强还是和菜头的文章，说很讨厌中文排版中段落首行缩进的风格，深有同感。我一般在读前会先用Calibre修改一下书的格式，段落首行不缩进、用空白行分割段落、嵌入好看的字体，否则强迫症表示根本看不下去。&lt;/p&gt;
+&lt;p&gt;本文分享几则平时积累的Calibre排版的最佳实践，顺带吐槽一下亚马逊电子书的排版质量，早已经被微信读书、多看这些APP吊打了。&lt;/p&gt;
+&lt;h2 id="一最佳排版"&gt;一、最佳排版&lt;/h2&gt;
+&lt;p&gt;最小行高：140%。&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://wx1.sinaimg.cn/large/006tNbRwly1fwvx83ybpbj30az0a5t9f.jpg" alt=""&gt;&lt;/p&gt;
+&lt;p&gt;使用空白行分段，段落首行不缩进。&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://wx2.sinaimg.cn/large/006tNbRwly1fwvx8hwq08j30gc03lmxh.jpg" alt=""&gt;&lt;/p&gt;
+&lt;p&gt;要嵌入字体，必须转换成KF8格式的类型，例如azw3或者both类型的mobi：&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://wx3.sinaimg.cn/large/006tNbRwly1fwvx8znehdj30av06dmxo.jpg" alt=""&gt;&lt;/p&gt;
+&lt;p&gt;注意：KF8格式在点选文字时，默认选中一句，而不是单字，不方便查字典。要默认选中单字，须转换成old类型的mobi。&lt;/p&gt;
+&lt;h2 id="二最佳字体"&gt;二、最佳字体&lt;/h2&gt;
+&lt;p&gt;索尼楷书&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://wx4.sinaimg.cn/large/006tNbRwly1fwvx92ktu8j30ts148jys.jpg" alt=""&gt;&lt;/p&gt;
+&lt;p&gt;方正北魏楷书&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://wx3.sinaimg.cn/large/006tNbRwly1fwvx9fm9nlj30ts148dn4.jpg" alt=""&gt;&lt;/p&gt;
+&lt;p&gt;方正宋三&lt;/p&gt;
+&lt;p&gt;在微信读书iOS上显示效果很好，但是在Kindle里比较一般。&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;em&gt;本文最早发布在公众号：&lt;strong&gt;两司马门下走狗&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="http://0x3f.org/images/qrcode_zougou.jpg" alt=""&gt;&lt;/p&gt;</description></item></channel></rss>

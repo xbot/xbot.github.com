@@ -1,118 +1,118 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Dojo on 晴耕雨讀</title><link>http://0x3f.org/tags/dojo/</link><description>Recent content in Dojo on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Tue, 05 Nov 2013 16:58:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/dojo/index.xml" rel="self" type="application/rss+xml"/><item><title>用 Dojo 实现拖放操作的最佳实践</title><link>http://0x3f.org/posts/practical-drag-and-drop-implementation-with-dojo/</link><pubDate>Tue, 05 Nov 2013 16:58:00 +0000</pubDate><guid>http://0x3f.org/posts/practical-drag-and-drop-implementation-with-dojo/</guid><description>&lt;p>在研究 Dojo 实现拖放操作时，我花了很多时间处理一些细节问题，比如创建自定义样式的拖拽物件以及将光标放置在拖拽开始位置等。这些细节在实现个性化的拖放操作时非常重要，但是我几乎没有找到直接相关的资料可供参考。&lt;/p>
-&lt;h2 id="创建自定义样式的拖拽物件">创建自定义样式的拖拽物件&lt;/h2>
-&lt;p>Dojo 缺省的拖拽物件样式很丑，通过覆盖官方文档里列出的几个 CSS 的 class 可以有限地调整部分样式，如果需要更多个性化，就需要使用自定义的物件模板。&lt;/p>
-&lt;p>通过重载 Source 对象的 creator 方法可以实现这一点。这个方法会在创建拖拽物件的时候被调用，如果 hint 参数的值为“avatar”就表示将被创建的是被拖拽物件，此时可以使用预先定义好的模板 avatarTmpl 创建物件的 node 。&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
-&lt;/span>&lt;span class="lnt"> 2
-&lt;/span>&lt;span class="lnt"> 3
-&lt;/span>&lt;span class="lnt"> 4
-&lt;/span>&lt;span class="lnt"> 5
-&lt;/span>&lt;span class="lnt"> 6
-&lt;/span>&lt;span class="lnt"> 7
-&lt;/span>&lt;span class="lnt"> 8
-&lt;/span>&lt;span class="lnt"> 9
-&lt;/span>&lt;span class="lnt">10
-&lt;/span>&lt;span class="lnt">11
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-javascript" data-lang="javascript">&lt;span class="line">&lt;span class="cl">&lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">dndSrc&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="k">new&lt;/span> &lt;span class="nx">Source&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">itemList&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">domNode&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="p">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">copyOnly&lt;/span>&lt;span class="o">:&lt;/span>&lt;span class="kc">true&lt;/span>&lt;span class="p">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">selfAccept&lt;/span>&lt;span class="o">:&lt;/span>&lt;span class="kc">true&lt;/span>&lt;span class="p">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">creator&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="kd">function&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">item&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">hint&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">var&lt;/span> &lt;span class="nx">n&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nx">hint&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="s1">&amp;#39;avatar&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">n&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">domConstruct&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">toDom&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">lang&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">replace&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">avatarTmpl&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">item&lt;/span>&lt;span class="p">));&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="p">{&lt;/span>&lt;span class="nx">node&lt;/span>&lt;span class="o">:&lt;/span>&lt;span class="nx">n&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">data&lt;/span>&lt;span class="o">:&lt;/span>&lt;span class="nx">item&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">type&lt;/span>&lt;span class="o">:&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="s1">&amp;#39;text&amp;#39;&lt;/span>&lt;span class="p">]};&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">});&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;h2 id="置光标位置于拖拽起始处">置光标位置于拖拽起始处&lt;/h2>
-&lt;p>在拖拽开始后，Dojo 默认将光标置于被拖拽物件的左上角，而一般把光标置于拖拽开始时相对于物件的位置处显得比较自然。&lt;/p>
-&lt;p>实现方式是先记录拖拽开始时光标的位置，然后设置 dojo.dnd.Manager 的两个位移属性。&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
-&lt;/span>&lt;span class="lnt"> 2
-&lt;/span>&lt;span class="lnt"> 3
-&lt;/span>&lt;span class="lnt"> 4
-&lt;/span>&lt;span class="lnt"> 5
-&lt;/span>&lt;span class="lnt"> 6
-&lt;/span>&lt;span class="lnt"> 7
-&lt;/span>&lt;span class="lnt"> 8
-&lt;/span>&lt;span class="lnt"> 9
-&lt;/span>&lt;span class="lnt">10
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-javascript" data-lang="javascript">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">on&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">domNode&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;mousedown&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">lang&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">hitch&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">_setDndOffset&lt;/span>&lt;span class="p">))&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">_setDndOffset&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="kd">function&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">evt&lt;/span>&lt;span class="p">){&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// summary: 鼠标按下时将光标相对于组件的位移设置为dojo.dnd.Manager的位移
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="c1">// 即使光标在拖动开始后位于拖动开始时的位置
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="kd">var&lt;/span> &lt;span class="nx">cPos&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">Functions&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">getCursorPosition&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">evt&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">var&lt;/span> &lt;span class="nx">nPos&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">domGeometry&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">position&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">domNode&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">Manager&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">manager&lt;/span>&lt;span class="p">().&lt;/span>&lt;span class="nx">OFFSET_X&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">nPos&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">x&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="nx">cPos&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">x&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">Manager&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">manager&lt;/span>&lt;span class="p">().&lt;/span>&lt;span class="nx">OFFSET_Y&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">nPos&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">y&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="nx">cPos&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">y&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">},&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;h2 id="使鼠标事件穿透被拖拽物件">使鼠标事件穿透被拖拽物件&lt;/h2>
-&lt;p>将光标置于物件开始被拖拽时的位置后，物件本身会挡住 mouseover 事件，导致 Target 不能获知物件被拖拽到自己上方，以致能拖不能放。&lt;/p></description></item><item><title>IE中使用IFrame上传文件报错——TypeError:拒绝访问</title><link>http://0x3f.org/posts/typeerror-access-denied/</link><pubDate>Sat, 03 Aug 2013 01:03:00 +0000</pubDate><guid>http://0x3f.org/posts/typeerror-access-denied/</guid><description>&lt;p>场景为：&lt;/p>
-&lt;p>点击一个图标，打开文件选择对话框，选择好文件后即时上传。&lt;/p>
-&lt;p>之前的实现方式是在一个隐藏表单中放一个file类型的input元素，通过调用input.click()打开对话框，同时监听input.onchange，最后通过dojo/request/iframe上传文件。&lt;/p>
-&lt;p>这个实现方式在Chrome和Firefox里都没问题，但是在IE里报错：“&lt;strong>TypeError:拒绝访问&lt;/strong>”。原因是IE要求必须通过点击file类型的input的按钮打开选择对话框，否则就报这个错误。&lt;/p>
-&lt;p>解决办法是修改input元素的样式，或者直接用dojox.form.Uploader替代。&lt;/p>
-&lt;p>&lt;em>因为这个破问题又血战到半夜，只支持IE9+的世界你们好吗，还支持IE7+的屌丝伤不起……不起……起……啊。&lt;strong>IE不死，吾难未已！！！&lt;/strong>&lt;/em>&lt;/p></description></item><item><title>Dojo DnD: Cannot read property 'type' of undefined</title><link>http://0x3f.org/posts/dojo-dnd-cannot-read-property-type-of-undefined/</link><pubDate>Thu, 11 Jul 2013 22:44:00 +0000</pubDate><guid>http://0x3f.org/posts/dojo-dnd-cannot-read-property-type-of-undefined/</guid><description>&lt;p>场景如下：&lt;/p>
-&lt;p>假设有两个Widget：ItemListWidget和ItemWidget，后者要被创建多份并追加到前者内部，同时ItemListWidget要作为dojo/dnd/Source，每个ItemWidget作为一个单元可被拖拽到另外一个dojo/dnd/Target容器中。&lt;/p>
-&lt;p>问题是，当Source被创建后，再添加到ItemListWidget的ItemWidget实例在被拖拽时会报如下错误：&lt;/p>
-&lt;blockquote>
-&lt;p>Uncaught TypeError: Cannot read property &amp;rsquo;type&amp;rsquo; of undefined&lt;/p>&lt;/blockquote>
-&lt;p>在Chrome开发工具中点开这个错误，显示以下内容：&lt;/p>
-&lt;p>&lt;img src="http://pic.yupoo.com/leninlee/D0dD4euT/cULuA.png" alt="">&lt;/p>
-&lt;p>从方法的注释或API中可以看到，checkAcceptance()是用来判断当前拖拽对象是否在这个target接受的范围之内，接受规则用Source和Target的构造参数中的“accept”定义。在这个方法里通过Source.getItem()方法拿到的对象是null，上述错误就是从这儿报出来的。&lt;/p>
-&lt;p>接合API和Reference Guide发现，每个Source中的可拖拽项目在Source中都要有一个对应的对象，这个对象至少包括两个属性：“data”和“type”。在&lt;a href="http://dojotoolkit.org/reference-guide/1.9/dojo/dnd.html">Reference Guide&lt;/a>中，对这两个属性有详细说明，简言之，data是向Target传递的数据，type是被Target用来判断拖拽个体是否属于接受范围的依据。&lt;/p>
-&lt;p>当Source实例被创建时，已经存在于ItemListWidget中的ItemWidget实例会被自动创建对应的上述对象，但之后加入的不会。解决的办法是调用Source.setItem()方法为每一个新加入的ItemWidget关联相应的对象，或在ItemWidget中添加一个构造参数，用于指定Source，并在postCreate()方法中为当前ItemWidget实例关联相应的对象:&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
-&lt;/span>&lt;span class="lnt"> 2
-&lt;/span>&lt;span class="lnt"> 3
-&lt;/span>&lt;span class="lnt"> 4
-&lt;/span>&lt;span class="lnt"> 5
-&lt;/span>&lt;span class="lnt"> 6
-&lt;/span>&lt;span class="lnt"> 7
-&lt;/span>&lt;span class="lnt"> 8
-&lt;/span>&lt;span class="lnt"> 9
-&lt;/span>&lt;span class="lnt">10
-&lt;/span>&lt;span class="lnt">11
-&lt;/span>&lt;span class="lnt">12
-&lt;/span>&lt;span class="lnt">13
-&lt;/span>&lt;span class="lnt">14
-&lt;/span>&lt;span class="lnt">15
-&lt;/span>&lt;span class="lnt">16
-&lt;/span>&lt;span class="lnt">17
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-javascript" data-lang="javascript">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">define&lt;/span>&lt;span class="p">([&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;dojo/_base/declare&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="s2">&amp;#34;dijit/_WidgetBase&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">],&lt;/span> &lt;span class="kd">function&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">declare&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">_WidgetBase&lt;/span>&lt;span class="p">){&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="nx">declare&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;ItemWidget&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="nx">_WidgetBase&lt;/span>&lt;span class="p">],&lt;/span> &lt;span class="p">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// 本Widget实例所属的Source实例
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="nx">dndSrc&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="kc">null&lt;/span>&lt;span class="p">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> 
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">postCreate&lt;/span>&lt;span class="o">:&lt;/span> &lt;span class="kd">function&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="p">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">inherited&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">arguments&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// 不需要传递数据时，可忽略data参数
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="k">if&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">dndSrc&lt;/span> &lt;span class="o">!==&lt;/span> &lt;span class="kc">null&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">dndSrc&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">setItem&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="k">this&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="nx">id&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="p">{&lt;/span>&lt;span class="nx">type&lt;/span>&lt;span class="o">:&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="s2">&amp;#34;text&amp;#34;&lt;/span>&lt;span class="p">]});&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">});&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">});&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Dojo on 晴耕雨讀</title><link>http://0x3f.org/tags/dojo/</link><description>Recent content in Dojo on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Tue, 05 Nov 2013 16:58:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/dojo/index.xml" rel="self" type="application/rss+xml"/><item><title>用 Dojo 实现拖放操作的最佳实践</title><link>http://0x3f.org/posts/practical-drag-and-drop-implementation-with-dojo/</link><pubDate>Tue, 05 Nov 2013 16:58:00 +0000</pubDate><guid>http://0x3f.org/posts/practical-drag-and-drop-implementation-with-dojo/</guid><description>&lt;p&gt;在研究 Dojo 实现拖放操作时，我花了很多时间处理一些细节问题，比如创建自定义样式的拖拽物件以及将光标放置在拖拽开始位置等。这些细节在实现个性化的拖放操作时非常重要，但是我几乎没有找到直接相关的资料可供参考。&lt;/p&gt;
+&lt;h2 id="创建自定义样式的拖拽物件"&gt;创建自定义样式的拖拽物件&lt;/h2&gt;
+&lt;p&gt;Dojo 缺省的拖拽物件样式很丑，通过覆盖官方文档里列出的几个 CSS 的 class 可以有限地调整部分样式，如果需要更多个性化，就需要使用自定义的物件模板。&lt;/p&gt;
+&lt;p&gt;通过重载 Source 对象的 creator 方法可以实现这一点。这个方法会在创建拖拽物件的时候被调用，如果 hint 参数的值为“avatar”就表示将被创建的是被拖拽物件，此时可以使用预先定义好的模板 avatarTmpl 创建物件的 node 。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-javascript" data-lang="javascript"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;dndSrc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;Source&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;itemList&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;domNode&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;copyOnly&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;selfAccept&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;creator&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;item&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;hint&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;n&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;hint&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;avatar&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;n&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;domConstruct&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;toDom&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;lang&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;replace&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;avatarTmpl&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;item&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;node&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="nx"&gt;n&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;data&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="nx"&gt;item&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;type&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;text&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]};&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="置光标位置于拖拽起始处"&gt;置光标位置于拖拽起始处&lt;/h2&gt;
+&lt;p&gt;在拖拽开始后，Dojo 默认将光标置于被拖拽物件的左上角，而一般把光标置于拖拽开始时相对于物件的位置处显得比较自然。&lt;/p&gt;
+&lt;p&gt;实现方式是先记录拖拽开始时光标的位置，然后设置 dojo.dnd.Manager 的两个位移属性。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-javascript" data-lang="javascript"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;on&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;domNode&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;mousedown&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;lang&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;hitch&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;_setDndOffset&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;_setDndOffset&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;evt&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// summary: 鼠标按下时将光标相对于组件的位移设置为dojo.dnd.Manager的位移
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt; &lt;span class="c1"&gt;// 即使光标在拖动开始后位于拖动开始时的位置
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt; &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;cPos&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;Functions&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;getCursorPosition&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;evt&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;nPos&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;domGeometry&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;position&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;domNode&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;Manager&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;manager&lt;/span&gt;&lt;span class="p"&gt;().&lt;/span&gt;&lt;span class="nx"&gt;OFFSET_X&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;nPos&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;x&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="nx"&gt;cPos&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;x&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;Manager&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;manager&lt;/span&gt;&lt;span class="p"&gt;().&lt;/span&gt;&lt;span class="nx"&gt;OFFSET_Y&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;nPos&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;y&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="nx"&gt;cPos&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;y&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="使鼠标事件穿透被拖拽物件"&gt;使鼠标事件穿透被拖拽物件&lt;/h2&gt;
+&lt;p&gt;将光标置于物件开始被拖拽时的位置后，物件本身会挡住 mouseover 事件，导致 Target 不能获知物件被拖拽到自己上方，以致能拖不能放。&lt;/p&gt;</description></item><item><title>IE中使用IFrame上传文件报错——TypeError:拒绝访问</title><link>http://0x3f.org/posts/typeerror-access-denied/</link><pubDate>Sat, 03 Aug 2013 01:03:00 +0000</pubDate><guid>http://0x3f.org/posts/typeerror-access-denied/</guid><description>&lt;p&gt;场景为：&lt;/p&gt;
+&lt;p&gt;点击一个图标，打开文件选择对话框，选择好文件后即时上传。&lt;/p&gt;
+&lt;p&gt;之前的实现方式是在一个隐藏表单中放一个file类型的input元素，通过调用input.click()打开对话框，同时监听input.onchange，最后通过dojo/request/iframe上传文件。&lt;/p&gt;
+&lt;p&gt;这个实现方式在Chrome和Firefox里都没问题，但是在IE里报错：“&lt;strong&gt;TypeError:拒绝访问&lt;/strong&gt;”。原因是IE要求必须通过点击file类型的input的按钮打开选择对话框，否则就报这个错误。&lt;/p&gt;
+&lt;p&gt;解决办法是修改input元素的样式，或者直接用dojox.form.Uploader替代。&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;因为这个破问题又血战到半夜，只支持IE9+的世界你们好吗，还支持IE7+的屌丝伤不起……不起……起……啊。&lt;strong&gt;IE不死，吾难未已！！！&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;</description></item><item><title>Dojo DnD: Cannot read property 'type' of undefined</title><link>http://0x3f.org/posts/dojo-dnd-cannot-read-property-type-of-undefined/</link><pubDate>Thu, 11 Jul 2013 22:44:00 +0000</pubDate><guid>http://0x3f.org/posts/dojo-dnd-cannot-read-property-type-of-undefined/</guid><description>&lt;p&gt;场景如下：&lt;/p&gt;
+&lt;p&gt;假设有两个Widget：ItemListWidget和ItemWidget，后者要被创建多份并追加到前者内部，同时ItemListWidget要作为dojo/dnd/Source，每个ItemWidget作为一个单元可被拖拽到另外一个dojo/dnd/Target容器中。&lt;/p&gt;
+&lt;p&gt;问题是，当Source被创建后，再添加到ItemListWidget的ItemWidget实例在被拖拽时会报如下错误：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Uncaught TypeError: Cannot read property &amp;rsquo;type&amp;rsquo; of undefined&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;在Chrome开发工具中点开这个错误，显示以下内容：&lt;/p&gt;
+&lt;p&gt;&lt;img src="http://pic.yupoo.com/leninlee/D0dD4euT/cULuA.png" alt=""&gt;&lt;/p&gt;
+&lt;p&gt;从方法的注释或API中可以看到，checkAcceptance()是用来判断当前拖拽对象是否在这个target接受的范围之内，接受规则用Source和Target的构造参数中的“accept”定义。在这个方法里通过Source.getItem()方法拿到的对象是null，上述错误就是从这儿报出来的。&lt;/p&gt;
+&lt;p&gt;接合API和Reference Guide发现，每个Source中的可拖拽项目在Source中都要有一个对应的对象，这个对象至少包括两个属性：“data”和“type”。在&lt;a href="http://dojotoolkit.org/reference-guide/1.9/dojo/dnd.html"&gt;Reference Guide&lt;/a&gt;中，对这两个属性有详细说明，简言之，data是向Target传递的数据，type是被Target用来判断拖拽个体是否属于接受范围的依据。&lt;/p&gt;
+&lt;p&gt;当Source实例被创建时，已经存在于ItemListWidget中的ItemWidget实例会被自动创建对应的上述对象，但之后加入的不会。解决的办法是调用Source.setItem()方法为每一个新加入的ItemWidget关联相应的对象，或在ItemWidget中添加一个构造参数，用于指定Source，并在postCreate()方法中为当前ItemWidget实例关联相应的对象:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-javascript" data-lang="javascript"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;define&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;dojo/_base/declare&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s2"&gt;&amp;#34;dijit/_WidgetBase&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;declare&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;_WidgetBase&lt;/span&gt;&lt;span class="p"&gt;){&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;declare&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;ItemWidget&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;_WidgetBase&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// 本Widget实例所属的Source实例
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt; &lt;span class="nx"&gt;dndSrc&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;null&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;postCreate&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;inherited&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;arguments&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// 不需要传递数据时，可忽略data参数
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;dndSrc&lt;/span&gt; &lt;span class="o"&gt;!==&lt;/span&gt; &lt;span class="kc"&gt;null&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;dndSrc&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setItem&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;type&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;text&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;]});&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description></item></channel></rss>

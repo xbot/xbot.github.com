@@ -1,29 +1,29 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>翻墙 on 晴耕雨讀</title><link>http://0x3f.org/tags/%E7%BF%BB%E5%A2%99/</link><description>Recent content in 翻墙 on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Wed, 22 Jun 2022 22:15:12 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/%E7%BF%BB%E5%A2%99/index.xml" rel="self" type="application/rss+xml"/><item><title>ClashX 在使用订阅链接的同时添加自定义规则的方法</title><link>http://0x3f.org/posts/customize-rules-for-clashx-while-using-a-subscribed-link/</link><pubDate>Wed, 22 Jun 2022 22:15:12 +0800</pubDate><guid>http://0x3f.org/posts/customize-rules-for-clashx-while-using-a-subscribed-link/</guid><description>&lt;p>在 ClashX 中使用机场的订阅链接时，如果需要添加自定义的规则，且在定时更新订阅的链接时不会被覆盖，解决的方法是创建一个新的配置文件，使用 Clash 的 &lt;a href="https://github.com/Dreamacro/clash/wiki/configuration#proxy-providers">proxy-providers&lt;/a> 和 &lt;a href="https://github.com/Dreamacro/clash/wiki/premium-core-features#rule-providers">rule-providers&lt;/a> 分别引用订阅的链接和开源的规则集：&lt;/p>
-&lt;script src="https://gist.github.com/xbot/26f540ae8fad51cf27152f2385caccee.js">&lt;/script>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>翻墙 on 晴耕雨讀</title><link>http://0x3f.org/tags/%E7%BF%BB%E5%A2%99/</link><description>Recent content in 翻墙 on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Wed, 22 Jun 2022 22:15:12 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/%E7%BF%BB%E5%A2%99/index.xml" rel="self" type="application/rss+xml"/><item><title>ClashX 在使用订阅链接的同时添加自定义规则的方法</title><link>http://0x3f.org/posts/customize-rules-for-clashx-while-using-a-subscribed-link/</link><pubDate>Wed, 22 Jun 2022 22:15:12 +0800</pubDate><guid>http://0x3f.org/posts/customize-rules-for-clashx-while-using-a-subscribed-link/</guid><description>&lt;p&gt;在 ClashX 中使用机场的订阅链接时，如果需要添加自定义的规则，且在定时更新订阅的链接时不会被覆盖，解决的方法是创建一个新的配置文件，使用 Clash 的 &lt;a href="https://github.com/Dreamacro/clash/wiki/configuration#proxy-providers"&gt;proxy-providers&lt;/a&gt; 和 &lt;a href="https://github.com/Dreamacro/clash/wiki/premium-core-features#rule-providers"&gt;rule-providers&lt;/a&gt; 分别引用订阅的链接和开源的规则集：&lt;/p&gt;
+&lt;script src="https://gist.github.com/xbot/26f540ae8fad51cf27152f2385caccee.js"&gt;&lt;/script&gt;
 
-&lt;p>然后就可以在 &lt;code>rules&lt;/code> 区块里添加自定义规则了。&lt;/p></description></item><item><title>让 AdGuard Home 和 OpenClash 协同工作</title><link>http://0x3f.org/posts/make-adguard-home-and-openclash-work-together/</link><pubDate>Sun, 06 Mar 2022 12:12:10 +0800</pubDate><guid>http://0x3f.org/posts/make-adguard-home-and-openclash-work-together/</guid><description>&lt;h1 id="家庭网络环境">家庭网络环境&lt;/h1>
-&lt;ul>
-&lt;li>使用 OpenWrt （&lt;em>以下简称 OP&lt;/em> ）做旁路网关&lt;/li>
-&lt;li>OP 内建 OpenClash （&lt;em>以下简称 OC&lt;/em> ）访问不存在的网站&lt;/li>
-&lt;li>OP 内建 WireGuard （&lt;em>以下简称 WG&lt;/em> ）做内网穿透&lt;/li>
-&lt;li>使用 AdGuard Home （&lt;em>以下简称 AH&lt;/em> ）做内网 DNS 和广告过滤&lt;/li>
-&lt;/ul>
-&lt;h1 id="之前遇到的问题">之前遇到的问题&lt;/h1>
-&lt;p>不管怎样配置，内网和 WG 下的内网主机名解析和科学上网这 4 种场景总有至少一个不工作。&lt;/p>
-&lt;p>期间创建过一个虚拟机做独立的 WG Server ，内建 SmartDNS （&lt;em>以下简称 SD&lt;/em> ）做 AH 的上游，其它场景工作得很好，只是无法通过旁路网关访问不存在的网站。&lt;/p>
-&lt;h1 id="解决方法">解决方法&lt;/h1>
-&lt;p>首先如果要正常使用 OC ，就必须使用它的 DNS 解析。&lt;/p>
-&lt;p>同时，又要达到使用 AH 做内网主机名解析和广告过滤的目的，所以要把 OC 设成 AH 的唯一上游。&lt;/p>
-&lt;p>然后最棘手的问题来了。如果把 AH 设成 dnsmasq 的上游， WG 下不能解析内网主机名。如果把 AH 设成监听 53 端口，则内网无法解析主机名。&lt;/p>
-&lt;p>想到之前在独立的 WG Server 上用 SD 在两种场景下都可以正常解析，就试着用它代替 dnsmasq ，结果柳暗花明，所以场景都跑通了。&lt;/p></description></item><item><title>搭好了SSR</title><link>http://0x3f.org/posts/ready-for-ssr/</link><pubDate>Wed, 18 Oct 2017 15:34:33 +0000</pubDate><guid>http://0x3f.org/posts/ready-for-ssr/</guid><description>&lt;p>搭在vultr东京节点的SS在家里的网络上已经不能用了，lantern和大杀器也不稳定到基本没有可用性的程度。短短几天时间，三把梯子挂了仨。&lt;/p>
-&lt;p>搭好了SSR，等着晚上回去测试。&lt;/p>
-&lt;ul>
-&lt;li>SSR一键部署脚本：https://github.com/91yun/shadowsocks_install&lt;/li>
-&lt;li>Mac的SSR客户端：https://github.com/qinyuhang/ShadowsocksX-NG-R/releases&lt;/li>
-&lt;li>iOS的SSR客户端：ShadowRocket&lt;/li>
-&lt;/ul></description></item><item><title>Google BBR和锐速在Vultr上的对比</title><link>http://0x3f.org/posts/google-bbr-is-awesome/</link><pubDate>Sun, 23 Apr 2017 23:48:21 +0000</pubDate><guid>http://0x3f.org/posts/google-bbr-is-awesome/</guid><description>&lt;p>BBR比锐速略快，看YouTube的1080p效果差别不大，SSH操作反应改善明显。&lt;/p>
-&lt;p>两个都不用的情况：&lt;/p>
-&lt;pre tabindex="0">&lt;code>$ speedtest 
+&lt;p&gt;然后就可以在 &lt;code&gt;rules&lt;/code&gt; 区块里添加自定义规则了。&lt;/p&gt;</description></item><item><title>让 AdGuard Home 和 OpenClash 协同工作</title><link>http://0x3f.org/posts/make-adguard-home-and-openclash-work-together/</link><pubDate>Sun, 06 Mar 2022 12:12:10 +0800</pubDate><guid>http://0x3f.org/posts/make-adguard-home-and-openclash-work-together/</guid><description>&lt;h1 id="家庭网络环境"&gt;家庭网络环境&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;使用 OpenWrt （&lt;em&gt;以下简称 OP&lt;/em&gt; ）做旁路网关&lt;/li&gt;
+&lt;li&gt;OP 内建 OpenClash （&lt;em&gt;以下简称 OC&lt;/em&gt; ）访问不存在的网站&lt;/li&gt;
+&lt;li&gt;OP 内建 WireGuard （&lt;em&gt;以下简称 WG&lt;/em&gt; ）做内网穿透&lt;/li&gt;
+&lt;li&gt;使用 AdGuard Home （&lt;em&gt;以下简称 AH&lt;/em&gt; ）做内网 DNS 和广告过滤&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id="之前遇到的问题"&gt;之前遇到的问题&lt;/h1&gt;
+&lt;p&gt;不管怎样配置，内网和 WG 下的内网主机名解析和科学上网这 4 种场景总有至少一个不工作。&lt;/p&gt;
+&lt;p&gt;期间创建过一个虚拟机做独立的 WG Server ，内建 SmartDNS （&lt;em&gt;以下简称 SD&lt;/em&gt; ）做 AH 的上游，其它场景工作得很好，只是无法通过旁路网关访问不存在的网站。&lt;/p&gt;
+&lt;h1 id="解决方法"&gt;解决方法&lt;/h1&gt;
+&lt;p&gt;首先如果要正常使用 OC ，就必须使用它的 DNS 解析。&lt;/p&gt;
+&lt;p&gt;同时，又要达到使用 AH 做内网主机名解析和广告过滤的目的，所以要把 OC 设成 AH 的唯一上游。&lt;/p&gt;
+&lt;p&gt;然后最棘手的问题来了。如果把 AH 设成 dnsmasq 的上游， WG 下不能解析内网主机名。如果把 AH 设成监听 53 端口，则内网无法解析主机名。&lt;/p&gt;
+&lt;p&gt;想到之前在独立的 WG Server 上用 SD 在两种场景下都可以正常解析，就试着用它代替 dnsmasq ，结果柳暗花明，所以场景都跑通了。&lt;/p&gt;</description></item><item><title>搭好了SSR</title><link>http://0x3f.org/posts/ready-for-ssr/</link><pubDate>Wed, 18 Oct 2017 15:34:33 +0000</pubDate><guid>http://0x3f.org/posts/ready-for-ssr/</guid><description>&lt;p&gt;搭在vultr东京节点的SS在家里的网络上已经不能用了，lantern和大杀器也不稳定到基本没有可用性的程度。短短几天时间，三把梯子挂了仨。&lt;/p&gt;
+&lt;p&gt;搭好了SSR，等着晚上回去测试。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;SSR一键部署脚本：https://github.com/91yun/shadowsocks_install&lt;/li&gt;
+&lt;li&gt;Mac的SSR客户端：https://github.com/qinyuhang/ShadowsocksX-NG-R/releases&lt;/li&gt;
+&lt;li&gt;iOS的SSR客户端：ShadowRocket&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>Google BBR和锐速在Vultr上的对比</title><link>http://0x3f.org/posts/google-bbr-is-awesome/</link><pubDate>Sun, 23 Apr 2017 23:48:21 +0000</pubDate><guid>http://0x3f.org/posts/google-bbr-is-awesome/</guid><description>&lt;p&gt;BBR比锐速略快，看YouTube的1080p效果差别不大，SSH操作反应改善明显。&lt;/p&gt;
+&lt;p&gt;两个都不用的情况：&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;$ speedtest 
 Retrieving speedtest.net configuration...
 Testing from Choopa (xx.xx.xx.xx)...
 Retrieving speedtest.net server list...
@@ -33,8 +33,8 @@ Testing download speed..........................................................
 Download: 1.81 Mbit/s
 Testing upload speed....................................................................................................
 Upload: 7.48 Mbit/s
-&lt;/code>&lt;/pre>&lt;p>使用锐速的情况：&lt;/p>
-&lt;pre tabindex="0">&lt;code>$ speedtest
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;使用锐速的情况：&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;$ speedtest
 Retrieving speedtest.net configuration...
 Testing from Choopa (xx.xx.xx.xx)...
 Retrieving speedtest.net server list...
@@ -44,4 +44,4 @@ Testing download speed..........................................................
 Download: 3.45 Mbit/s
 Testing upload speed....................................................................................................
 Upload: 4.56 Mbit/s
-&lt;/code>&lt;/pre>&lt;p>用BBR的情况：&lt;/p></description></item><item><title>Shadowrocket下优酷无法播放的解决办法</title><link>http://0x3f.org/posts/how-to-play-youku-under-shadowrocket/</link><pubDate>Sun, 26 Mar 2017 00:03:10 +0000</pubDate><guid>http://0x3f.org/posts/how-to-play-youku-under-shadowrocket/</guid><description>&lt;p>导入&lt;a href="http://www.abclite.cn/1995.html">这里&lt;/a>提供的配置文件。&lt;/p></description></item></channel></rss>
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;用BBR的情况：&lt;/p&gt;</description></item><item><title>Shadowrocket下优酷无法播放的解决办法</title><link>http://0x3f.org/posts/how-to-play-youku-under-shadowrocket/</link><pubDate>Sun, 26 Mar 2017 00:03:10 +0000</pubDate><guid>http://0x3f.org/posts/how-to-play-youku-under-shadowrocket/</guid><description>&lt;p&gt;导入&lt;a href="http://www.abclite.cn/1995.html"&gt;这里&lt;/a&gt;提供的配置文件。&lt;/p&gt;</description></item></channel></rss>

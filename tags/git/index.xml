@@ -1,208 +1,208 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Git on 晴耕雨讀</title><link>http://0x3f.org/tags/git/</link><description>Recent content in Git on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Sat, 28 Mar 2020 23:17:45 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/git/index.xml" rel="self" type="application/rss+xml"/><item><title>用 SSH 命令调试 Git 的连接问题</title><link>http://0x3f.org/posts/debug-git-connection-with-ssh/</link><pubDate>Sat, 28 Mar 2020 23:17:45 +0000</pubDate><guid>http://0x3f.org/posts/debug-git-connection-with-ssh/</guid><description>&lt;p>昨天执行&lt;code>git pull&lt;/code>的时候发现会一直卡在那儿，排除了各种可能，而且 Github 上的项目也是可以正常拉取的，说明跟网络、代理等关系应该不大，git 命令本身也工作正常。&lt;/p>
-&lt;p>问题集中在公司的项目上，所有项目都无法拉取代码。起先怀疑是公司自建的 Gitlab 出了问题，但是其他人那里又是正常的，甚至跟我同一局域网的电脑上也是正常的。&lt;/p>
-&lt;p>也就是说问题应该出在我自己的电脑上。考虑到前两天还能正常使用，之后唯一一件相关的事就是升级 macOS 到 10.15.4 了。&lt;/p>
-&lt;p>然而用 Homebrew 重新安装 git 等相关的几个包也没能解决问题，于是用&lt;code>ssh -T -v git@gitlab.xxx.com -p 8848&lt;/code>调试，输出如下：&lt;/p>
-&lt;pre tabindex="0">&lt;code>donie@Donies  ~  ssh -T -v git@gitlab.xxx.com -p 8848
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Git on 晴耕雨讀</title><link>http://0x3f.org/tags/git/</link><description>Recent content in Git on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Sat, 28 Mar 2020 23:17:45 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/git/index.xml" rel="self" type="application/rss+xml"/><item><title>用 SSH 命令调试 Git 的连接问题</title><link>http://0x3f.org/posts/debug-git-connection-with-ssh/</link><pubDate>Sat, 28 Mar 2020 23:17:45 +0000</pubDate><guid>http://0x3f.org/posts/debug-git-connection-with-ssh/</guid><description>&lt;p&gt;昨天执行&lt;code&gt;git pull&lt;/code&gt;的时候发现会一直卡在那儿，排除了各种可能，而且 Github 上的项目也是可以正常拉取的，说明跟网络、代理等关系应该不大，git 命令本身也工作正常。&lt;/p&gt;
+&lt;p&gt;问题集中在公司的项目上，所有项目都无法拉取代码。起先怀疑是公司自建的 Gitlab 出了问题，但是其他人那里又是正常的，甚至跟我同一局域网的电脑上也是正常的。&lt;/p&gt;
+&lt;p&gt;也就是说问题应该出在我自己的电脑上。考虑到前两天还能正常使用，之后唯一一件相关的事就是升级 macOS 到 10.15.4 了。&lt;/p&gt;
+&lt;p&gt;然而用 Homebrew 重新安装 git 等相关的几个包也没能解决问题，于是用&lt;code&gt;ssh -T -v git@gitlab.xxx.com -p 8848&lt;/code&gt;调试，输出如下：&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;donie@Donies  ~  ssh -T -v git@gitlab.xxx.com -p 8848
 OpenSSH_8.1p1, LibreSSL 2.7.3
 debug1: Reading configuration data /Users/donie/.ssh/config
 debug1: /Users/donie/.ssh/config line 9: Applying options for gitlab.xxx.com
 debug1: Reading configuration data /etc/ssh/ssh_config
 debug1: /etc/ssh/ssh_config line 47: Applying options for *
 debug1: Connecting to gitlab.xxx.com port 8848.
-&lt;/code>&lt;/pre>&lt;p>卡在了“Connecting to gitlab.xxx.com port 8848”这一步，但是&lt;code>telnet gitlab.xxx.com 8848&lt;/code>却是通的。&lt;/p></description></item><item><title>Git工作流调研报告</title><link>http://0x3f.org/posts/investigation-report-of-git-flows/</link><pubDate>Wed, 15 May 2019 16:14:17 +0000</pubDate><guid>http://0x3f.org/posts/investigation-report-of-git-flows/</guid><description>&lt;h2 id="面临的问题">面临的问题&lt;/h2>
-&lt;ol>
-&lt;li>
-&lt;p>测试环境杂乱导致的问题&lt;/p>
-&lt;p>每个任务都要搭建测试环境，或者把闲置的测试环境切换到待测试分支。麻烦，而且容易出问题。&lt;/p>
-&lt;/li>
-&lt;li>
-&lt;p>抢占beta环境的问题&lt;/p>
-&lt;p>每个任务部署到beta环境时都要和别人确认，同时其它任务都要等待。&lt;/p>
-&lt;/li>
-&lt;li>
-&lt;p>上线任务A把尚在测试中的任务B的部分代码部署上线的问题&lt;/p>
-&lt;p>先把feature分支合并到master分支，再部署到beta环境。&lt;/p>
-&lt;/li>
-&lt;li>
-&lt;p>任务A和B在逻辑上互斥或者代码有冲突，导致问题在上线后才发现&lt;/p>
-&lt;p>测试阶段是针对每个feature分支测试，而不是针对一个集成的分支。&lt;/p>
-&lt;/li>
-&lt;li>
-&lt;p>不能保证所有上线的代码都经过测试&lt;/p>
-&lt;p>直接把feature分支合并到master分支，不能保证所有代码都经过测试。&lt;/p>
-&lt;/li>
-&lt;/ol></description></item><item><title>用gv.vim查看git提交历史</title><link>http://0x3f.org/posts/gv-vim/</link><pubDate>Wed, 18 Oct 2017 13:28:16 +0000</pubDate><guid>http://0x3f.org/posts/gv-vim/</guid><description>&lt;p>&lt;a href="https://github.com/junegunn/gv.vim">gv.vim&lt;/a>是fugitive的插件，用于查看git提交历史，特点是速度快、好用。我现在用它做code review。&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;span class="lnt">3
-&lt;/span>&lt;span class="lnt">4
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-vim" data-lang="vim">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">nnoremap&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">leader&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="nx">gll&lt;/span> :&lt;span class="nx">GV&lt;/span> &lt;span class="p">--&lt;/span>&lt;span class="nx">no&lt;/span>&lt;span class="p">-&lt;/span>&lt;span class="nx">merges&lt;/span>&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">CR&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">nnoremap&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">leader&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="nx">glc&lt;/span> :&lt;span class="nx">GV&lt;/span>&lt;span class="p">!&amp;lt;&lt;/span>&lt;span class="nx">CR&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">nnoremap&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">leader&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="nx">gla&lt;/span> :&lt;span class="nx">GV&lt;/span> &lt;span class="p">--&lt;/span>&lt;span class="nx">no&lt;/span>&lt;span class="p">-&lt;/span>&lt;span class="nx">merges&lt;/span> &lt;span class="p">--&lt;/span>&lt;span class="nx">author&lt;/span>&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">space&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">nnoremap&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">leader&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="nx">glg&lt;/span> :&lt;span class="nx">GV&lt;/span> &lt;span class="p">--&lt;/span>&lt;span class="nx">no&lt;/span>&lt;span class="p">-&lt;/span>&lt;span class="nx">merges&lt;/span> &lt;span class="p">--&lt;/span>&lt;span class="nx">grep&lt;/span>&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">space&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div></description></item><item><title>Git的衍合</title><link>http://0x3f.org/posts/git-rebase/</link><pubDate>Wed, 22 Feb 2017 18:44:37 +0000</pubDate><guid>http://0x3f.org/posts/git-rebase/</guid><description>&lt;p>合并分支有两种方式，merge和rebase。merge是根据三方合并的差异，创建一个新的提交。rebase是将上游分支的各个提交在比较差异后在下游分支上重演一遍。&lt;/p>
-&lt;p>rebase适合对没有推送到远程的提交对象做合并，这样可以保持一个整洁的提交历史。若对已推送的提交对象使用rebase，可能导致其它已经拉取并创建了新的提交的人不得不重新合并，进而导致提交历史变得很混乱。&lt;/p>
-&lt;p>基本的rebase：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;span class="lnt">3
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">git rebase master unstable
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">git checkout master
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">git merge unstable
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>复杂的情况：存在三个分支，unstable基于master的某个提交创建，feature基于unstable的某个提交创建，要把feature合并到master而不合并unstable。更多分支时方法也一样。&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;span class="lnt">3
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">git rebase --onto master unstable feature
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">git checkout master
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">git merge feature
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>rebase过程中如果存在冲突，合并后用&lt;code>git add&lt;/code>标记已解决，再用&lt;code>git rebase --continue&lt;/code>继续。如果解决冲突后仍然不能继续，可能是当前补丁的内容在下游分支已存在，可以用&lt;code>git rebase --skip&lt;/code>跳过。&lt;/p></description></item><item><title>Git Reset、Revert和Checkout的区别</title><link>http://0x3f.org/posts/differences-among-reset-checkout-revert-of-git/</link><pubDate>Thu, 09 Feb 2017 19:27:47 +0000</pubDate><guid>http://0x3f.org/posts/differences-among-reset-checkout-revert-of-git/</guid><description>&lt;p>reset在提交层面，是将HEAD设定到指定的提交，通常用来舍弃最新的几个提交。在文件层面，是将指定的提交中的该文件保存到暂存区，工作区中的文件不变。&lt;/p>
-&lt;p>reset有三个常用的参数：--mixed、--soft和--hard。&lt;/p>
-&lt;p>在提交层面，--mixed是默认值，影响暂存区，不影响工作区；--soft将HEAD版本保存到暂存区，并将HEAD设定到指定的提交，用来合并提交历史；--hard既影响暂存区，也影响工作区。&lt;/p>
-&lt;p>在文件层面，--soft和--hard均会报错，不支持这两个选项。&lt;/p>
-&lt;p>在提交层面，执行过reset后如果需要撤销，使用reflog命令查看之前HEAD的hash，通过reset --hard恢复到该版本。&lt;/p>
-&lt;p>checkout在提交层面，用来切换分支或检出到指定的提交。对于后者，如果增加了新的提交，在切换到其它分支后，再切换回来时，这些提交将会丢失，如果希望保存这些提交，在切换到其它分支前，创建一个新的分支。&lt;/p>
-&lt;p>revert用来通过创建一个新的提交来回滚一个提交，因此，和reset不同，并不会改变提交的历史。&lt;/p>
-&lt;p>对于回滚一次提交的场景，revert比reset安全，所以revert适用于公共分支，reset适用于私有分支。&lt;/p></description></item><item><title>Vultr基配可以部署Gitlab</title><link>http://0x3f.org/posts/setup-gitlab-on-vultr-basic-vps/</link><pubDate>Sat, 24 Dec 2016 17:18:00 +0000</pubDate><guid>http://0x3f.org/posts/setup-gitlab-on-vultr-basic-vps/</guid><description>&lt;p>想在Vultr上部署Gitlab，但是官方文档上说最低要求1GB RAM + 3GB swap，而我的VPS是基础配置：768MB RAM。&lt;/p>
-&lt;p>忐忑地试了一下，居然可以用，只是重启防火墙的时候CPU一直100%，最后reboot了事。&lt;/p>
-&lt;h2 id="环境">环境&lt;/h2>
-&lt;ul>
-&lt;li>CentOS 7 x64&lt;/li>
-&lt;li>Gitlab CE 8.15&lt;/li>
-&lt;/ul>
-&lt;h2 id="参考">参考&lt;/h2>
-&lt;ul>
-&lt;li>&lt;a href="https://www.vultr.com/docs/setup-swap-file-on-linux">Setup Swap File on Linux - Vultr.com&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://about.gitlab.com/downloads/#centos7">Installation Guide of GitLab Community Edition | GitLab&lt;/a>&lt;/li>
-&lt;/ul></description></item><item><title>用好代码时光机</title><link>http://0x3f.org/posts/leverage-code-time-machine/</link><pubDate>Fri, 21 Nov 2014 23:19:00 +0000</pubDate><guid>http://0x3f.org/posts/leverage-code-time-machine/</guid><description>&lt;p>今天看了篇文章，讲几种常见的、糟糕的注释用法。其中之一是把废弃的代码注释起来，而不是直接删掉，原因是担心以后可能会用。&lt;/p>
-&lt;p>这个其实就是版本控制系统（VCS）要解决的问题之一。包括对于团队协作的项目，经常需要看某段代码是谁改的、什么时间、什么原因。都是可以用VCS很方便地解决的问题。&lt;/p>
-&lt;p>我以前是用二分法在提交列表里找的。其实有更好的解决方法，思路是列出源码在历次提交中修改的内容，然后在其中查找要找的东西就行了。&lt;/p>
-&lt;p>git的解决方法：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">git log -p abc.php
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>svn的解决方法：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">svn log --diff --internal-diff abc.php
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>vim的辅助函数：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
-&lt;/span>&lt;span class="lnt"> 2
-&lt;/span>&lt;span class="lnt"> 3
-&lt;/span>&lt;span class="lnt"> 4
-&lt;/span>&lt;span class="lnt"> 5
-&lt;/span>&lt;span class="lnt"> 6
-&lt;/span>&lt;span class="lnt"> 7
-&lt;/span>&lt;span class="lnt"> 8
-&lt;/span>&lt;span class="lnt"> 9
-&lt;/span>&lt;span class="lnt">10
-&lt;/span>&lt;span class="lnt">11
-&lt;/span>&lt;span class="lnt">12
-&lt;/span>&lt;span class="lnt">13
-&lt;/span>&lt;span class="lnt">14
-&lt;/span>&lt;span class="lnt">15
-&lt;/span>&lt;span class="lnt">16
-&lt;/span>&lt;span class="lnt">17
-&lt;/span>&lt;span class="lnt">18
-&lt;/span>&lt;span class="lnt">19
-&lt;/span>&lt;span class="lnt">20
-&lt;/span>&lt;span class="lnt">21
-&lt;/span>&lt;span class="lnt">22
-&lt;/span>&lt;span class="lnt">23
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-vim" data-lang="vim">&lt;span class="line">&lt;span class="cl">&lt;span class="c">&amp;#34; Show commit history of the current file under the given VCS in a new window&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">function&lt;/span>&lt;span class="p">!&lt;/span> &lt;span class="nx">ShowCommitHistory&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">vcs&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c"> &amp;#34; Check parameter&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="nx">a&lt;/span>:&lt;span class="nx">vcs&lt;/span> &lt;span class="p">!=&lt;/span> &lt;span class="s1">&amp;#39;svn&amp;#39;&lt;/span> &amp;amp;&amp;amp; &lt;span class="nx">a&lt;/span>:&lt;span class="nx">vcs&lt;/span> &lt;span class="p">!=&lt;/span> &lt;span class="s1">&amp;#39;git&amp;#39;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">echoerr&lt;/span> &lt;span class="s1">&amp;#39;Unknow VCS: &amp;#39;&lt;/span>.&lt;span class="nx">a&lt;/span>:&lt;span class="nx">vcs&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">return&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">endif&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c"> &amp;#34; Do the dirty work&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">let&lt;/span> &lt;span class="nx">fileName&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="nx">expand&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;%&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="p">!&lt;/span>&lt;span class="nx">empty&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">fileName&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">exe&lt;/span> &lt;span class="s1">&amp;#39;new&amp;#39;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="nx">a&lt;/span>:&lt;span class="nx">vcs&lt;/span> &lt;span class="p">==&lt;/span> &lt;span class="s1">&amp;#39;svn&amp;#39;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">exe&lt;/span> &lt;span class="s1">&amp;#39;r !svn log --diff --internal-diff &amp;#39;&lt;/span>.&lt;span class="nx">fileName&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">elseif&lt;/span> &lt;span class="nx">a&lt;/span>:&lt;span class="nx">vcs&lt;/span> &lt;span class="p">==&lt;/span> &lt;span class="s1">&amp;#39;git&amp;#39;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">exe&lt;/span> &lt;span class="s1">&amp;#39;r !git log -p &amp;#39;&lt;/span>.&lt;span class="nx">fileName&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">endif&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">else&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">echo&lt;/span> &lt;span class="s1">&amp;#39;File not found.&amp;#39;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">endif&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">endfunction&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">nnoremap&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">leader&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="nx">ssch&lt;/span> :&lt;span class="nx">call&lt;/span> &lt;span class="nx">ShowCommitHistory&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;svn&amp;#39;&lt;/span>&lt;span class="p">)&amp;lt;&lt;/span>&lt;span class="nx">CR&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">nnoremap&lt;/span> &lt;span class="p">&amp;lt;&lt;/span>&lt;span class="nx">leader&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>&lt;span class="nx">gsch&lt;/span> :&lt;span class="nx">call&lt;/span> &lt;span class="nx">ShowCommitHistory&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;git&amp;#39;&lt;/span>&lt;span class="p">)&amp;lt;&lt;/span>&lt;span class="nx">CR&lt;/span>&lt;span class="p">&amp;gt;&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div></description></item><item><title>迁移到 Octopress</title><link>http://0x3f.org/posts/migrate-blog-to-octopress/</link><pubDate>Sat, 23 Jun 2012 23:13:00 +0000</pubDate><guid>http://0x3f.org/posts/migrate-blog-to-octopress/</guid><description>&lt;h2 id="关于迁移">关于迁移&lt;/h2>
-&lt;p>前段时间，用了五年的虚拟主机突然限制了PHP内存上限，导致Wordpress只能启用有限的几个插件，根本不能满足需要。&lt;/p>
-&lt;p>所以毅然决定迁移到JeckyII+GitHub，在摸索的过程中发现octopress比JeckyII易用，于是导出所有文章，开始迁移。因为我这几年博客写得比较乱，无论是内容上，还是发表方式上，结果用了几个导出脚本，效果都不甚理想，还是有很多地方需要手工修改。六百篇文章，正好趁这个机会挑拣一下，较早的文章质量低的比较多。断断续续地迁移了一些，剩下的工作量还是很大的，留著以后慢慢来吧。另外这次把URL也改成永久格式了，这一来真的伤筋动骨了，连永久重定向都没的做。&lt;/p>
-&lt;p>至于Feed输出，以前订阅Feedburner烧录的两个地址的读者不受影响，直接订阅Wordpress输出的地址的就丢了，这里再公布一下：&lt;/p>
-&lt;ul>
-&lt;li>本博客聚合输出：http://feeds.feedburner.com/sinolog&lt;/li>
-&lt;li>我的全部资讯聚合：http://feeds.feedburner.com/leninlee&lt;/li>
-&lt;/ul>
-&lt;h2 id="迁移那点事">迁移那点事&lt;/h2>
-&lt;h3 id="python-版本的问题">Python 版本的问题&lt;/h3>
-&lt;p>Archlinux很激进，早已把Python的缺省版本进化到了3.x，octopress会用到2.x，结果在生成全站的时候，会报如下错误：&lt;/p>
-&lt;pre tabindex="0">&lt;code> File &amp;#34;&amp;lt;string&amp;gt;&amp;#34;, line 1
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;卡在了“Connecting to gitlab.xxx.com port 8848”这一步，但是&lt;code&gt;telnet gitlab.xxx.com 8848&lt;/code&gt;却是通的。&lt;/p&gt;</description></item><item><title>Git工作流调研报告</title><link>http://0x3f.org/posts/investigation-report-of-git-flows/</link><pubDate>Wed, 15 May 2019 16:14:17 +0000</pubDate><guid>http://0x3f.org/posts/investigation-report-of-git-flows/</guid><description>&lt;h2 id="面临的问题"&gt;面临的问题&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;测试环境杂乱导致的问题&lt;/p&gt;
+&lt;p&gt;每个任务都要搭建测试环境，或者把闲置的测试环境切换到待测试分支。麻烦，而且容易出问题。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;抢占beta环境的问题&lt;/p&gt;
+&lt;p&gt;每个任务部署到beta环境时都要和别人确认，同时其它任务都要等待。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;上线任务A把尚在测试中的任务B的部分代码部署上线的问题&lt;/p&gt;
+&lt;p&gt;先把feature分支合并到master分支，再部署到beta环境。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;任务A和B在逻辑上互斥或者代码有冲突，导致问题在上线后才发现&lt;/p&gt;
+&lt;p&gt;测试阶段是针对每个feature分支测试，而不是针对一个集成的分支。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;不能保证所有上线的代码都经过测试&lt;/p&gt;
+&lt;p&gt;直接把feature分支合并到master分支，不能保证所有代码都经过测试。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;</description></item><item><title>用gv.vim查看git提交历史</title><link>http://0x3f.org/posts/gv-vim/</link><pubDate>Wed, 18 Oct 2017 13:28:16 +0000</pubDate><guid>http://0x3f.org/posts/gv-vim/</guid><description>&lt;p&gt;&lt;a href="https://github.com/junegunn/gv.vim"&gt;gv.vim&lt;/a&gt;是fugitive的插件，用于查看git提交历史，特点是速度快、好用。我现在用它做code review。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-vim" data-lang="vim"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;nnoremap&lt;/span&gt; &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;leader&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;&lt;span class="nx"&gt;gll&lt;/span&gt; :&lt;span class="nx"&gt;GV&lt;/span&gt; &lt;span class="p"&gt;--&lt;/span&gt;&lt;span class="nx"&gt;no&lt;/span&gt;&lt;span class="p"&gt;-&lt;/span&gt;&lt;span class="nx"&gt;merges&lt;/span&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;CR&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;nnoremap&lt;/span&gt; &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;leader&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;&lt;span class="nx"&gt;glc&lt;/span&gt; :&lt;span class="nx"&gt;GV&lt;/span&gt;&lt;span class="p"&gt;!&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;CR&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;nnoremap&lt;/span&gt; &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;leader&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;&lt;span class="nx"&gt;gla&lt;/span&gt; :&lt;span class="nx"&gt;GV&lt;/span&gt; &lt;span class="p"&gt;--&lt;/span&gt;&lt;span class="nx"&gt;no&lt;/span&gt;&lt;span class="p"&gt;-&lt;/span&gt;&lt;span class="nx"&gt;merges&lt;/span&gt; &lt;span class="p"&gt;--&lt;/span&gt;&lt;span class="nx"&gt;author&lt;/span&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;space&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;nnoremap&lt;/span&gt; &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;leader&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;&lt;span class="nx"&gt;glg&lt;/span&gt; :&lt;span class="nx"&gt;GV&lt;/span&gt; &lt;span class="p"&gt;--&lt;/span&gt;&lt;span class="nx"&gt;no&lt;/span&gt;&lt;span class="p"&gt;-&lt;/span&gt;&lt;span class="nx"&gt;merges&lt;/span&gt; &lt;span class="p"&gt;--&lt;/span&gt;&lt;span class="nx"&gt;grep&lt;/span&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;space&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description></item><item><title>Git的衍合</title><link>http://0x3f.org/posts/git-rebase/</link><pubDate>Wed, 22 Feb 2017 18:44:37 +0000</pubDate><guid>http://0x3f.org/posts/git-rebase/</guid><description>&lt;p&gt;合并分支有两种方式，merge和rebase。merge是根据三方合并的差异，创建一个新的提交。rebase是将上游分支的各个提交在比较差异后在下游分支上重演一遍。&lt;/p&gt;
+&lt;p&gt;rebase适合对没有推送到远程的提交对象做合并，这样可以保持一个整洁的提交历史。若对已推送的提交对象使用rebase，可能导致其它已经拉取并创建了新的提交的人不得不重新合并，进而导致提交历史变得很混乱。&lt;/p&gt;
+&lt;p&gt;基本的rebase：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git rebase master unstable
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git checkout master
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git merge unstable
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;复杂的情况：存在三个分支，unstable基于master的某个提交创建，feature基于unstable的某个提交创建，要把feature合并到master而不合并unstable。更多分支时方法也一样。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git rebase --onto master unstable feature
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git checkout master
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git merge feature
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;rebase过程中如果存在冲突，合并后用&lt;code&gt;git add&lt;/code&gt;标记已解决，再用&lt;code&gt;git rebase --continue&lt;/code&gt;继续。如果解决冲突后仍然不能继续，可能是当前补丁的内容在下游分支已存在，可以用&lt;code&gt;git rebase --skip&lt;/code&gt;跳过。&lt;/p&gt;</description></item><item><title>Git Reset、Revert和Checkout的区别</title><link>http://0x3f.org/posts/differences-among-reset-checkout-revert-of-git/</link><pubDate>Thu, 09 Feb 2017 19:27:47 +0000</pubDate><guid>http://0x3f.org/posts/differences-among-reset-checkout-revert-of-git/</guid><description>&lt;p&gt;reset在提交层面，是将HEAD设定到指定的提交，通常用来舍弃最新的几个提交。在文件层面，是将指定的提交中的该文件保存到暂存区，工作区中的文件不变。&lt;/p&gt;
+&lt;p&gt;reset有三个常用的参数：--mixed、--soft和--hard。&lt;/p&gt;
+&lt;p&gt;在提交层面，--mixed是默认值，影响暂存区，不影响工作区；--soft将HEAD版本保存到暂存区，并将HEAD设定到指定的提交，用来合并提交历史；--hard既影响暂存区，也影响工作区。&lt;/p&gt;
+&lt;p&gt;在文件层面，--soft和--hard均会报错，不支持这两个选项。&lt;/p&gt;
+&lt;p&gt;在提交层面，执行过reset后如果需要撤销，使用reflog命令查看之前HEAD的hash，通过reset --hard恢复到该版本。&lt;/p&gt;
+&lt;p&gt;checkout在提交层面，用来切换分支或检出到指定的提交。对于后者，如果增加了新的提交，在切换到其它分支后，再切换回来时，这些提交将会丢失，如果希望保存这些提交，在切换到其它分支前，创建一个新的分支。&lt;/p&gt;
+&lt;p&gt;revert用来通过创建一个新的提交来回滚一个提交，因此，和reset不同，并不会改变提交的历史。&lt;/p&gt;
+&lt;p&gt;对于回滚一次提交的场景，revert比reset安全，所以revert适用于公共分支，reset适用于私有分支。&lt;/p&gt;</description></item><item><title>Vultr基配可以部署Gitlab</title><link>http://0x3f.org/posts/setup-gitlab-on-vultr-basic-vps/</link><pubDate>Sat, 24 Dec 2016 17:18:00 +0000</pubDate><guid>http://0x3f.org/posts/setup-gitlab-on-vultr-basic-vps/</guid><description>&lt;p&gt;想在Vultr上部署Gitlab，但是官方文档上说最低要求1GB RAM + 3GB swap，而我的VPS是基础配置：768MB RAM。&lt;/p&gt;
+&lt;p&gt;忐忑地试了一下，居然可以用，只是重启防火墙的时候CPU一直100%，最后reboot了事。&lt;/p&gt;
+&lt;h2 id="环境"&gt;环境&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;CentOS 7 x64&lt;/li&gt;
+&lt;li&gt;Gitlab CE 8.15&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="参考"&gt;参考&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://www.vultr.com/docs/setup-swap-file-on-linux"&gt;Setup Swap File on Linux - Vultr.com&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://about.gitlab.com/downloads/#centos7"&gt;Installation Guide of GitLab Community Edition | GitLab&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item><item><title>用好代码时光机</title><link>http://0x3f.org/posts/leverage-code-time-machine/</link><pubDate>Fri, 21 Nov 2014 23:19:00 +0000</pubDate><guid>http://0x3f.org/posts/leverage-code-time-machine/</guid><description>&lt;p&gt;今天看了篇文章，讲几种常见的、糟糕的注释用法。其中之一是把废弃的代码注释起来，而不是直接删掉，原因是担心以后可能会用。&lt;/p&gt;
+&lt;p&gt;这个其实就是版本控制系统（VCS）要解决的问题之一。包括对于团队协作的项目，经常需要看某段代码是谁改的、什么时间、什么原因。都是可以用VCS很方便地解决的问题。&lt;/p&gt;
+&lt;p&gt;我以前是用二分法在提交列表里找的。其实有更好的解决方法，思路是列出源码在历次提交中修改的内容，然后在其中查找要找的东西就行了。&lt;/p&gt;
+&lt;p&gt;git的解决方法：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;git log -p abc.php
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;svn的解决方法：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;svn log --diff --internal-diff abc.php
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;vim的辅助函数：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;span class="lnt"&gt;22
+&lt;/span&gt;&lt;span class="lnt"&gt;23
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-vim" data-lang="vim"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;&amp;#34; Show commit history of the current file under the given VCS in a new window&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;function&lt;/span&gt;&lt;span class="p"&gt;!&lt;/span&gt; &lt;span class="nx"&gt;ShowCommitHistory&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;vcs&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt; &amp;#34; Check parameter&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nx"&gt;a&lt;/span&gt;:&lt;span class="nx"&gt;vcs&lt;/span&gt; &lt;span class="p"&gt;!=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;svn&amp;#39;&lt;/span&gt; &amp;amp;&amp;amp; &lt;span class="nx"&gt;a&lt;/span&gt;:&lt;span class="nx"&gt;vcs&lt;/span&gt; &lt;span class="p"&gt;!=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;git&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;echoerr&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Unknow VCS: &amp;#39;&lt;/span&gt;.&lt;span class="nx"&gt;a&lt;/span&gt;:&lt;span class="nx"&gt;vcs&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;return&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;endif&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c"&gt; &amp;#34; Do the dirty work&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;fileName&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;expand&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;%&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;!&lt;/span&gt;&lt;span class="nx"&gt;empty&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;fileName&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;exe&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;new&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nx"&gt;a&lt;/span&gt;:&lt;span class="nx"&gt;vcs&lt;/span&gt; &lt;span class="p"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;svn&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;exe&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;r !svn log --diff --internal-diff &amp;#39;&lt;/span&gt;.&lt;span class="nx"&gt;fileName&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;elseif&lt;/span&gt; &lt;span class="nx"&gt;a&lt;/span&gt;:&lt;span class="nx"&gt;vcs&lt;/span&gt; &lt;span class="p"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;git&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;exe&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;r !git log -p &amp;#39;&lt;/span&gt;.&lt;span class="nx"&gt;fileName&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;endif&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;else&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;echo&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;File not found.&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;endif&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;endfunction&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;nnoremap&lt;/span&gt; &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;leader&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;&lt;span class="nx"&gt;ssch&lt;/span&gt; :&lt;span class="nx"&gt;call&lt;/span&gt; &lt;span class="nx"&gt;ShowCommitHistory&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;svn&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;CR&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;nnoremap&lt;/span&gt; &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;leader&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;&lt;span class="nx"&gt;gsch&lt;/span&gt; :&lt;span class="nx"&gt;call&lt;/span&gt; &lt;span class="nx"&gt;ShowCommitHistory&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;git&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&amp;lt;&lt;/span&gt;&lt;span class="nx"&gt;CR&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description></item><item><title>迁移到 Octopress</title><link>http://0x3f.org/posts/migrate-blog-to-octopress/</link><pubDate>Sat, 23 Jun 2012 23:13:00 +0000</pubDate><guid>http://0x3f.org/posts/migrate-blog-to-octopress/</guid><description>&lt;h2 id="关于迁移"&gt;关于迁移&lt;/h2&gt;
+&lt;p&gt;前段时间，用了五年的虚拟主机突然限制了PHP内存上限，导致Wordpress只能启用有限的几个插件，根本不能满足需要。&lt;/p&gt;
+&lt;p&gt;所以毅然决定迁移到JeckyII+GitHub，在摸索的过程中发现octopress比JeckyII易用，于是导出所有文章，开始迁移。因为我这几年博客写得比较乱，无论是内容上，还是发表方式上，结果用了几个导出脚本，效果都不甚理想，还是有很多地方需要手工修改。六百篇文章，正好趁这个机会挑拣一下，较早的文章质量低的比较多。断断续续地迁移了一些，剩下的工作量还是很大的，留著以后慢慢来吧。另外这次把URL也改成永久格式了，这一来真的伤筋动骨了，连永久重定向都没的做。&lt;/p&gt;
+&lt;p&gt;至于Feed输出，以前订阅Feedburner烧录的两个地址的读者不受影响，直接订阅Wordpress输出的地址的就丢了，这里再公布一下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;本博客聚合输出：http://feeds.feedburner.com/sinolog&lt;/li&gt;
+&lt;li&gt;我的全部资讯聚合：http://feeds.feedburner.com/leninlee&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="迁移那点事"&gt;迁移那点事&lt;/h2&gt;
+&lt;h3 id="python-版本的问题"&gt;Python 版本的问题&lt;/h3&gt;
+&lt;p&gt;Archlinux很激进，早已把Python的缺省版本进化到了3.x，octopress会用到2.x，结果在生成全站的时候，会报如下错误：&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt; File &amp;#34;&amp;lt;string&amp;gt;&amp;#34;, line 1
  import sys; print sys.executable
  ^
 SyntaxError: invalid syntax
-&lt;/code>&lt;/pre>&lt;p>在&lt;a href="http://blog.dayanjia.com/2012/04/fix-rubypython-bug-in-arch-linux/">这里&lt;/a>找到解决方法。在octopress的plugins目录里创建文件：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;span class="lnt">3
-&lt;/span>&lt;span class="lnt">4
-&lt;/span>&lt;span class="lnt">5
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-ruby" data-lang="ruby">&lt;span class="line">&lt;span class="cl">&lt;span class="nb">require&lt;/span> &lt;span class="s1">&amp;#39;pygments&amp;#39;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">if&lt;/span> &lt;span class="o">!!&lt;/span>&lt;span class="no">RUBY_PLATFORM&lt;/span>&lt;span class="o">[&lt;/span>&lt;span class="s1">&amp;#39;linux&amp;#39;&lt;/span>&lt;span class="o">]&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="no">RubyPython&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="n">configure&lt;/span> &lt;span class="ss">:python_exe&lt;/span> &lt;span class="o">=&amp;gt;&lt;/span> &lt;span class="s1">&amp;#39;/usr/bin/python2&amp;#39;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">end&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;h3 id="不足">不足&lt;/h3>
-&lt;p>用了这段时间octopress，感觉缺点也不小，每次修改后都要重新生成全站，占用系统资源不小，而且理论上以后会越来越慢。&lt;/p></description></item><item><title>读完《Pro Git》</title><link>http://0x3f.org/posts/after-reading-pro-git/</link><pubDate>Mon, 14 Nov 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/after-reading-pro-git/</guid><description>&lt;p>花了大约一周的时间，周日晚上读完&lt;a href="http://progit.org">《Pro Git》&lt;/a>的最后几页。&lt;/p>
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;在&lt;a href="http://blog.dayanjia.com/2012/04/fix-rubypython-bug-in-arch-linux/"&gt;这里&lt;/a&gt;找到解决方法。在octopress的plugins目录里创建文件：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ruby" data-lang="ruby"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nb"&gt;require&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;pygments&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;!!&lt;/span&gt;&lt;span class="no"&gt;RUBY_PLATFORM&lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;linux&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="no"&gt;RubyPython&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;configure&lt;/span&gt; &lt;span class="ss"&gt;:python_exe&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;/usr/bin/python2&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="不足"&gt;不足&lt;/h3&gt;
+&lt;p&gt;用了这段时间octopress，感觉缺点也不小，每次修改后都要重新生成全站，占用系统资源不小，而且理论上以后会越来越慢。&lt;/p&gt;</description></item><item><title>读完《Pro Git》</title><link>http://0x3f.org/posts/after-reading-pro-git/</link><pubDate>Mon, 14 Nov 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/after-reading-pro-git/</guid><description>&lt;p&gt;花了大约一周的时间，周日晚上读完&lt;a href="http://progit.org"&gt;《Pro Git》&lt;/a&gt;的最后几页。&lt;/p&gt;
 
-&lt;p>高效、安全的分布式和强大的分枝合并是Git的杀手级特性，这本书在语言上浅显易懂、简明扼要，在章节安排上循序渐进，在内容讲解上有较深入的挖掘，当属眼下Git方面最好的教材。此外，这本书的中译水平也很高，必要的地方还有译注，能看出译者不是外行。&lt;/p>
+&lt;p&gt;高效、安全的分布式和强大的分枝合并是Git的杀手级特性，这本书在语言上浅显易懂、简明扼要，在章节安排上循序渐进，在内容讲解上有较深入的挖掘，当属眼下Git方面最好的教材。此外，这本书的中译水平也很高，必要的地方还有译注，能看出译者不是外行。&lt;/p&gt;
 
-&lt;p>&lt;a href="https://picasaweb.google.com/lh/photo/RuILnzirn3HwuJzk5Wp2Zw?feat=embedwebsite">&lt;img src="https://lh4.googleusercontent.com/-JaRvkCJzpFE/Tr_4ifkfXMI/AAAAAAAAB0w/K_4h24C2fis/s800/A9781430218333-3d_6.png" height="350" width="277" />&lt;/a>&lt;/p>
+&lt;p&gt;&lt;a href="https://picasaweb.google.com/lh/photo/RuILnzirn3HwuJzk5Wp2Zw?feat=embedwebsite"&gt;&lt;img src="https://lh4.googleusercontent.com/-JaRvkCJzpFE/Tr_4ifkfXMI/AAAAAAAAB0w/K_4h24C2fis/s800/A9781430218333-3d_6.png" height="350" width="277" /&gt;&lt;/a&gt;&lt;/p&gt;
 
-&lt;p>Posted via &lt;a href="http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/">UltraBlog.vim&lt;/a>.&lt;/p></description></item></channel></rss>
+&lt;p&gt;Posted via &lt;a href="http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/"&gt;UltraBlog.vim&lt;/a&gt;.&lt;/p&gt;</description></item></channel></rss>

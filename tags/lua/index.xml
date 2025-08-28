@@ -1,172 +1,172 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Lua on 晴耕雨讀</title><link>http://0x3f.org/tags/lua/</link><description>Recent content in Lua on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Mon, 13 Dec 2021 00:38:06 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/lua/index.xml" rel="self" type="application/rss+xml"/><item><title>Hammerspoon 快速入门</title><link>http://0x3f.org/posts/hammerspoon-quick-start/</link><pubDate>Mon, 13 Dec 2021 00:38:06 +0800</pubDate><guid>http://0x3f.org/posts/hammerspoon-quick-start/</guid><description>&lt;p>Hammerspoon（&lt;em>以下简称 HS&lt;/em>）是个很好用的效率工具脚手架，我一直用它实现 APP 启动器、窗口控制、桌面常亮等功能。&lt;/p>
-&lt;p>HS 可以通过写脚本可以实现很多个性化的需求。最快的上手方式是直接安装别人写好的&lt;a href="https://github.com/sugood/hammerspoon">脚本&lt;/a>，然后根据自己的需要稍加修改即可。如果需要深度定制，可以自行实现新的模块。&lt;/p>
-&lt;p>HS 使用 Lua 语言。我在 08 年左右用过一年的 &lt;a href="https://www.scintilla.org/SciTE.html">SciTE&lt;/a> 编辑器，它也通过内嵌的 Lua 配置和扩展功能，所以学了这个语言。当时 NGINX 也才刚起步， Lua 主要还是被用在游戏脚本的开发，并没有现在使用得如此广泛。当时对这个语言的印象是两个极端，一是速度非常快，远远超过 PHP 和 Python ，比 C 也只慢一点点；二是开发库非常简陋，其它脚本语言一行就能实现的常见功能，它往往要从头开始写。&lt;/p>
-&lt;p>总之 Lua 是个很精简的语言，可以通过 &lt;a href="https://learnxinyminutes.com/docs/zh-cn/lua-cn/">Y 分钟速成 X&lt;/a> 的教程快速熟悉它的语法，然后浏览一遍&lt;a href="https://www.hammerspoon.org/go/">官方入门指南&lt;/a>。HS 提供了很多方便的模块，通过 &lt;a href="https://www.hammerspoon.org/docs/index.html">API 文档&lt;/a>查看。&lt;/p>
-&lt;p>由于经常需要切换键盘映射方案，所以我写了一个简单的模块来实现这个功能：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
-&lt;/span>&lt;span class="lnt"> 2
-&lt;/span>&lt;span class="lnt"> 3
-&lt;/span>&lt;span class="lnt"> 4
-&lt;/span>&lt;span class="lnt"> 5
-&lt;/span>&lt;span class="lnt"> 6
-&lt;/span>&lt;span class="lnt"> 7
-&lt;/span>&lt;span class="lnt"> 8
-&lt;/span>&lt;span class="lnt"> 9
-&lt;/span>&lt;span class="lnt">10
-&lt;/span>&lt;span class="lnt">11
-&lt;/span>&lt;span class="lnt">12
-&lt;/span>&lt;span class="lnt">13
-&lt;/span>&lt;span class="lnt">14
-&lt;/span>&lt;span class="lnt">15
-&lt;/span>&lt;span class="lnt">16
-&lt;/span>&lt;span class="lnt">17
-&lt;/span>&lt;span class="lnt">18
-&lt;/span>&lt;span class="lnt">19
-&lt;/span>&lt;span class="lnt">20
-&lt;/span>&lt;span class="lnt">21
-&lt;/span>&lt;span class="lnt">22
-&lt;/span>&lt;span class="lnt">23
-&lt;/span>&lt;span class="lnt">24
-&lt;/span>&lt;span class="lnt">25
-&lt;/span>&lt;span class="lnt">26
-&lt;/span>&lt;span class="lnt">27
-&lt;/span>&lt;span class="lnt">28
-&lt;/span>&lt;span class="lnt">29
-&lt;/span>&lt;span class="lnt">30
-&lt;/span>&lt;span class="lnt">31
-&lt;/span>&lt;span class="lnt">32
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-lua" data-lang="lua">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">local&lt;/span> &lt;span class="n">hotkey&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">require&lt;/span> &lt;span class="s2">&amp;#34;hs.hotkey&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">hotkey.bind&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">hyper&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s2">&amp;#34;K&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kr">function&lt;/span>&lt;span class="p">()&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">local&lt;/span> &lt;span class="n">configFile&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">os.getenv&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;HOME&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">..&lt;/span> &lt;span class="s1">&amp;#39;/.config/karabiner/karabiner.json&amp;#39;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">if&lt;/span> &lt;span class="n">hs.json&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">read&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">configFile&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="kc">nil&lt;/span> &lt;span class="kr">then&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">hs.alert&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">show&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;Failed to read config file!&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">return&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">end&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">local&lt;/span> &lt;span class="n">configs&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">hs.json&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">read&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">configFile&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">local&lt;/span> &lt;span class="n">profiles&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">configs&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="s1">&amp;#39;profiles&amp;#39;&lt;/span>&lt;span class="p">]&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">local&lt;/span> &lt;span class="n">selectedIndex&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="kc">nil&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">for&lt;/span> &lt;span class="n">i&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">#&lt;/span>&lt;span class="n">profiles&lt;/span> &lt;span class="kr">do&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">if&lt;/span> &lt;span class="n">profiles&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">i&lt;/span>&lt;span class="p">][&lt;/span>&lt;span class="s1">&amp;#39;selected&amp;#39;&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="kc">true&lt;/span> &lt;span class="kr">then&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">selectedIndex&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">i&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">break&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">end&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">end&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">local&lt;/span> &lt;span class="n">switchToIndex&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">selectedIndex&lt;/span> &lt;span class="o">+&lt;/span> &lt;span class="mi">1&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">if&lt;/span> &lt;span class="n">switchToIndex&lt;/span> &lt;span class="o">&amp;gt;&lt;/span> &lt;span class="o">#&lt;/span>&lt;span class="n">profiles&lt;/span> &lt;span class="kr">then&lt;/span> &lt;span class="n">switchToIndex&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="mi">1&lt;/span> &lt;span class="kr">end&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">profiles&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">switchToIndex&lt;/span>&lt;span class="p">][&lt;/span>&lt;span class="s1">&amp;#39;selected&amp;#39;&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="kc">true&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">profiles&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">selectedIndex&lt;/span>&lt;span class="p">][&lt;/span>&lt;span class="s1">&amp;#39;selected&amp;#39;&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="kc">false&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">hs.json&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">write&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">configs&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">configFile&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kc">true&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kc">true&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">hs.alert&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">show&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">profiles&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">switchToIndex&lt;/span>&lt;span class="p">][&lt;/span>&lt;span class="s1">&amp;#39;name&amp;#39;&lt;/span>&lt;span class="p">]&lt;/span> &lt;span class="o">..&lt;/span> &lt;span class="s1">&amp;#39; activated!&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">end&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>源码见&lt;a href="https://github.com/xbot/hammerspoon/blob/master/modules/karabiner.lua">这里&lt;/a>。&lt;/p></description></item><item><title>用OpenResty自动转换silk到MP3</title><link>http://0x3f.org/posts/convert-silk-to-mp3-with-openresty/</link><pubDate>Wed, 25 Jan 2017 18:59:00 +0000</pubDate><guid>http://0x3f.org/posts/convert-silk-to-mp3-with-openresty/</guid><description>&lt;p>PHP没有原生的转换silk格式音频到mp3的方案，所以考虑用NGINX+Lua调用命令行工具实现。&lt;/p>
-&lt;h2 id="思路">思路&lt;/h2>
-&lt;p>当访问以「.silk.mp3」为后缀的文件时，查找对应的mp3文件，存在则返回，否则，如果对应的silk文件存在，调用命令行工具转换文件格式，然后内部重定向到新生成的mp3。&lt;/p>
-&lt;h2 id="安装">安装&lt;/h2>
-&lt;ul>
-&lt;li>&lt;a href="https://openresty.org/cn/download.html">OpenResty&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://github.com/kn007/silk-v3-decoder">silk-v3-decoder&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://ffmpeg.org">ffmpeg&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;h2 id="nginx配置">NGINX配置&lt;/h2>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;span class="lnt">3
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-nginx" data-lang="nginx">&lt;span class="line">&lt;span class="cl">&lt;span class="k">location&lt;/span> &lt;span class="p">~&lt;/span>&lt;span class="sr">*&lt;/span> &lt;span class="s">/.*\.silk\.mp3&lt;/span>$ &lt;span class="p">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kn">content_by_lua_file&lt;/span> &lt;span class="s">&amp;#34;/opt/script/silk2mp3.lua&amp;#34;&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;h2 id="lua脚本">Lua脚本&lt;/h2>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
-&lt;/span>&lt;span class="lnt"> 2
-&lt;/span>&lt;span class="lnt"> 3
-&lt;/span>&lt;span class="lnt"> 4
-&lt;/span>&lt;span class="lnt"> 5
-&lt;/span>&lt;span class="lnt"> 6
-&lt;/span>&lt;span class="lnt"> 7
-&lt;/span>&lt;span class="lnt"> 8
-&lt;/span>&lt;span class="lnt"> 9
-&lt;/span>&lt;span class="lnt">10
-&lt;/span>&lt;span class="lnt">11
-&lt;/span>&lt;span class="lnt">12
-&lt;/span>&lt;span class="lnt">13
-&lt;/span>&lt;span class="lnt">14
-&lt;/span>&lt;span class="lnt">15
-&lt;/span>&lt;span class="lnt">16
-&lt;/span>&lt;span class="lnt">17
-&lt;/span>&lt;span class="lnt">18
-&lt;/span>&lt;span class="lnt">19
-&lt;/span>&lt;span class="lnt">20
-&lt;/span>&lt;span class="lnt">21
-&lt;/span>&lt;span class="lnt">22
-&lt;/span>&lt;span class="lnt">23
-&lt;/span>&lt;span class="lnt">24
-&lt;/span>&lt;span class="lnt">25
-&lt;/span>&lt;span class="lnt">26
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-lua" data-lang="lua">&lt;span class="line">&lt;span class="cl">&lt;span class="kr">function&lt;/span> &lt;span class="nf">file_exists&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">name&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kd">local&lt;/span> &lt;span class="n">f&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">io.open&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">name&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="s2">&amp;#34;r&amp;#34;&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">if&lt;/span> &lt;span class="n">f&lt;/span>&lt;span class="o">~=&lt;/span>&lt;span class="kc">nil&lt;/span> &lt;span class="kr">then&lt;/span> &lt;span class="n">io.close&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">f&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="kr">return&lt;/span> &lt;span class="kc">true&lt;/span> &lt;span class="kr">else&lt;/span> &lt;span class="kr">return&lt;/span> &lt;span class="kc">false&lt;/span> &lt;span class="kr">end&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">end&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">local&lt;/span> &lt;span class="n">resource&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">ngx.var&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">request_filename&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">local&lt;/span> &lt;span class="n">realResource&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">resource&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="n">sub&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">#&lt;/span>&lt;span class="n">resource&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="mi">9&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">..&lt;/span>&lt;span class="s2">&amp;#34;.mp3&amp;#34;&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">local&lt;/span> &lt;span class="n">realURI&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">ngx.var&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">uri&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="n">sub&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">#&lt;/span>&lt;span class="n">ngx.var&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">uri&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="mi">9&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">..&lt;/span>&lt;span class="s2">&amp;#34;.mp3&amp;#34;&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">if&lt;/span> &lt;span class="n">file_exists&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">realResource&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="kr">then&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">return&lt;/span> &lt;span class="n">ngx.exec&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">realURI&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">end&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kd">local&lt;/span> &lt;span class="n">silk&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">resource&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="n">sub&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">#&lt;/span>&lt;span class="n">resource&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="mi">4&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">if&lt;/span> &lt;span class="ow">not&lt;/span> &lt;span class="n">file_exists&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">silk&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="kr">then&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">return&lt;/span> &lt;span class="n">ngx.exit&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">404&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">end&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">os.execute&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s2">&amp;#34;/bin/sh /opt/silk-v3-decoder/converter.sh &lt;/span>&lt;span class="se">\&amp;#34;&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span>&lt;span class="o">..&lt;/span>&lt;span class="n">silk&lt;/span>&lt;span class="o">..&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span>&lt;span class="se">\&amp;#34;&lt;/span>&lt;span class="s2"> mp3 &amp;gt; /dev/null 2&amp;gt;&amp;amp;1&amp;#34;&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">if&lt;/span> &lt;span class="n">file_exists&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">realResource&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="kr">then&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">return&lt;/span> &lt;span class="n">ngx.exec&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">realURI&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">else&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="kr">return&lt;/span> &lt;span class="n">ngx.exit&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">404&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kr">end&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;h2 id="遇到的问题">遇到的问题&lt;/h2>
-&lt;h3 id="openresty调用命令转换失败而手工可以">OpenResty调用命令转换失败，而手工可以&lt;/h3>
-&lt;p>silk-v3-decoder的converter.sh把所有错误信息都屏蔽了，需要修改脚本查看。&lt;/p></description></item><item><title>欧拉工程第十解</title><link>http://0x3f.org/posts/project-euler-10/</link><pubDate>Tue, 18 Nov 2008 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/project-euler-10/</guid><description>&lt;blockquote>&lt;p>The sum of the primes below 10 is 2 + 3 + 5 + 7 = 17.&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Lua on 晴耕雨讀</title><link>http://0x3f.org/tags/lua/</link><description>Recent content in Lua on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Mon, 13 Dec 2021 00:38:06 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/lua/index.xml" rel="self" type="application/rss+xml"/><item><title>Hammerspoon 快速入门</title><link>http://0x3f.org/posts/hammerspoon-quick-start/</link><pubDate>Mon, 13 Dec 2021 00:38:06 +0800</pubDate><guid>http://0x3f.org/posts/hammerspoon-quick-start/</guid><description>&lt;p&gt;Hammerspoon（&lt;em&gt;以下简称 HS&lt;/em&gt;）是个很好用的效率工具脚手架，我一直用它实现 APP 启动器、窗口控制、桌面常亮等功能。&lt;/p&gt;
+&lt;p&gt;HS 可以通过写脚本可以实现很多个性化的需求。最快的上手方式是直接安装别人写好的&lt;a href="https://github.com/sugood/hammerspoon"&gt;脚本&lt;/a&gt;，然后根据自己的需要稍加修改即可。如果需要深度定制，可以自行实现新的模块。&lt;/p&gt;
+&lt;p&gt;HS 使用 Lua 语言。我在 08 年左右用过一年的 &lt;a href="https://www.scintilla.org/SciTE.html"&gt;SciTE&lt;/a&gt; 编辑器，它也通过内嵌的 Lua 配置和扩展功能，所以学了这个语言。当时 NGINX 也才刚起步， Lua 主要还是被用在游戏脚本的开发，并没有现在使用得如此广泛。当时对这个语言的印象是两个极端，一是速度非常快，远远超过 PHP 和 Python ，比 C 也只慢一点点；二是开发库非常简陋，其它脚本语言一行就能实现的常见功能，它往往要从头开始写。&lt;/p&gt;
+&lt;p&gt;总之 Lua 是个很精简的语言，可以通过 &lt;a href="https://learnxinyminutes.com/docs/zh-cn/lua-cn/"&gt;Y 分钟速成 X&lt;/a&gt; 的教程快速熟悉它的语法，然后浏览一遍&lt;a href="https://www.hammerspoon.org/go/"&gt;官方入门指南&lt;/a&gt;。HS 提供了很多方便的模块，通过 &lt;a href="https://www.hammerspoon.org/docs/index.html"&gt;API 文档&lt;/a&gt;查看。&lt;/p&gt;
+&lt;p&gt;由于经常需要切换键盘映射方案，所以我写了一个简单的模块来实现这个功能：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;span class="lnt"&gt;22
+&lt;/span&gt;&lt;span class="lnt"&gt;23
+&lt;/span&gt;&lt;span class="lnt"&gt;24
+&lt;/span&gt;&lt;span class="lnt"&gt;25
+&lt;/span&gt;&lt;span class="lnt"&gt;26
+&lt;/span&gt;&lt;span class="lnt"&gt;27
+&lt;/span&gt;&lt;span class="lnt"&gt;28
+&lt;/span&gt;&lt;span class="lnt"&gt;29
+&lt;/span&gt;&lt;span class="lnt"&gt;30
+&lt;/span&gt;&lt;span class="lnt"&gt;31
+&lt;/span&gt;&lt;span class="lnt"&gt;32
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-lua" data-lang="lua"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;local&lt;/span&gt; &lt;span class="n"&gt;hotkey&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;require&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;hs.hotkey&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;hotkey.bind&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;hyper&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;K&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kr"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kd"&gt;local&lt;/span&gt; &lt;span class="n"&gt;configFile&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;os.getenv&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;HOME&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;..&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;/.config/karabiner/karabiner.json&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;if&lt;/span&gt; &lt;span class="n"&gt;hs.json&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;read&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;configFile&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="kc"&gt;nil&lt;/span&gt; &lt;span class="kr"&gt;then&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;hs.alert&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;show&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Failed to read config file!&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;return&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;end&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kd"&gt;local&lt;/span&gt; &lt;span class="n"&gt;configs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;hs.json&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;read&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;configFile&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kd"&gt;local&lt;/span&gt; &lt;span class="n"&gt;profiles&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;configs&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;profiles&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kd"&gt;local&lt;/span&gt; &lt;span class="n"&gt;selectedIndex&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;nil&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="n"&gt;profiles&lt;/span&gt; &lt;span class="kr"&gt;do&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;if&lt;/span&gt; &lt;span class="n"&gt;profiles&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;][&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;selected&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt; &lt;span class="kr"&gt;then&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;selectedIndex&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;break&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;end&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;end&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kd"&gt;local&lt;/span&gt; &lt;span class="n"&gt;switchToIndex&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;selectedIndex&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;if&lt;/span&gt; &lt;span class="n"&gt;switchToIndex&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="n"&gt;profiles&lt;/span&gt; &lt;span class="kr"&gt;then&lt;/span&gt; &lt;span class="n"&gt;switchToIndex&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="kr"&gt;end&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;profiles&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;switchToIndex&lt;/span&gt;&lt;span class="p"&gt;][&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;selected&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;profiles&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;selectedIndex&lt;/span&gt;&lt;span class="p"&gt;][&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;selected&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;false&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;hs.json&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;write&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;configs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;configFile&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;hs.alert&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;show&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;profiles&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;switchToIndex&lt;/span&gt;&lt;span class="p"&gt;][&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;name&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;..&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39; activated!&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;end&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;源码见&lt;a href="https://github.com/xbot/hammerspoon/blob/master/modules/karabiner.lua"&gt;这里&lt;/a&gt;。&lt;/p&gt;</description></item><item><title>用OpenResty自动转换silk到MP3</title><link>http://0x3f.org/posts/convert-silk-to-mp3-with-openresty/</link><pubDate>Wed, 25 Jan 2017 18:59:00 +0000</pubDate><guid>http://0x3f.org/posts/convert-silk-to-mp3-with-openresty/</guid><description>&lt;p&gt;PHP没有原生的转换silk格式音频到mp3的方案，所以考虑用NGINX+Lua调用命令行工具实现。&lt;/p&gt;
+&lt;h2 id="思路"&gt;思路&lt;/h2&gt;
+&lt;p&gt;当访问以「.silk.mp3」为后缀的文件时，查找对应的mp3文件，存在则返回，否则，如果对应的silk文件存在，调用命令行工具转换文件格式，然后内部重定向到新生成的mp3。&lt;/p&gt;
+&lt;h2 id="安装"&gt;安装&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://openresty.org/cn/download.html"&gt;OpenResty&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/kn007/silk-v3-decoder"&gt;silk-v3-decoder&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://ffmpeg.org"&gt;ffmpeg&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="nginx配置"&gt;NGINX配置&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-nginx" data-lang="nginx"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;location&lt;/span&gt; &lt;span class="p"&gt;~&lt;/span&gt;&lt;span class="sr"&gt;*&lt;/span&gt; &lt;span class="s"&gt;/.*\.silk\.mp3&lt;/span&gt;$ &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kn"&gt;content_by_lua_file&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;/opt/script/silk2mp3.lua&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="lua脚本"&gt;Lua脚本&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;span class="lnt"&gt;22
+&lt;/span&gt;&lt;span class="lnt"&gt;23
+&lt;/span&gt;&lt;span class="lnt"&gt;24
+&lt;/span&gt;&lt;span class="lnt"&gt;25
+&lt;/span&gt;&lt;span class="lnt"&gt;26
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-lua" data-lang="lua"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;function&lt;/span&gt; &lt;span class="nf"&gt;file_exists&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kd"&gt;local&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;io.open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;r&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;if&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="o"&gt;~=&lt;/span&gt;&lt;span class="kc"&gt;nil&lt;/span&gt; &lt;span class="kr"&gt;then&lt;/span&gt; &lt;span class="n"&gt;io.close&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="kr"&gt;return&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt; &lt;span class="kr"&gt;else&lt;/span&gt; &lt;span class="kr"&gt;return&lt;/span&gt; &lt;span class="kc"&gt;false&lt;/span&gt; &lt;span class="kr"&gt;end&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;end&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;local&lt;/span&gt; &lt;span class="n"&gt;resource&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ngx.var&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;request_filename&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;local&lt;/span&gt; &lt;span class="n"&gt;realResource&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;resource&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;sub&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="n"&gt;resource&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;9&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;..&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;.mp3&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;local&lt;/span&gt; &lt;span class="n"&gt;realURI&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ngx.var&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;uri&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;sub&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="n"&gt;ngx.var&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;uri&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;9&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;..&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;.mp3&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;if&lt;/span&gt; &lt;span class="n"&gt;file_exists&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;realResource&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="kr"&gt;then&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;return&lt;/span&gt; &lt;span class="n"&gt;ngx.exec&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;realURI&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;end&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kd"&gt;local&lt;/span&gt; &lt;span class="n"&gt;silk&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;resource&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="n"&gt;sub&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;#&lt;/span&gt;&lt;span class="n"&gt;resource&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;if&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;file_exists&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;silk&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="kr"&gt;then&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;return&lt;/span&gt; &lt;span class="n"&gt;ngx.exit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;404&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;end&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;os.execute&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;/bin/sh /opt/silk-v3-decoder/converter.sh &lt;/span&gt;&lt;span class="se"&gt;\&amp;#34;&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="o"&gt;..&lt;/span&gt;&lt;span class="n"&gt;silk&lt;/span&gt;&lt;span class="o"&gt;..&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;&lt;/span&gt;&lt;span class="se"&gt;\&amp;#34;&lt;/span&gt;&lt;span class="s2"&gt; mp3 &amp;gt; /dev/null 2&amp;gt;&amp;amp;1&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;if&lt;/span&gt; &lt;span class="n"&gt;file_exists&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;realResource&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="kr"&gt;then&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;return&lt;/span&gt; &lt;span class="n"&gt;ngx.exec&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;realURI&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;else&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kr"&gt;return&lt;/span&gt; &lt;span class="n"&gt;ngx.exit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;404&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kr"&gt;end&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="遇到的问题"&gt;遇到的问题&lt;/h2&gt;
+&lt;h3 id="openresty调用命令转换失败而手工可以"&gt;OpenResty调用命令转换失败，而手工可以&lt;/h3&gt;
+&lt;p&gt;silk-v3-decoder的converter.sh把所有错误信息都屏蔽了，需要修改脚本查看。&lt;/p&gt;</description></item><item><title>欧拉工程第十解</title><link>http://0x3f.org/posts/project-euler-10/</link><pubDate>Tue, 18 Nov 2008 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/project-euler-10/</guid><description>&lt;blockquote&gt;&lt;p&gt;The sum of the primes below 10 is 2 + 3 + 5 + 7 = 17.&lt;/p&gt;
 
-&lt;p>Find the sum of all the primes below two million.&lt;/p>&lt;/blockquote>
+&lt;p&gt;Find the sum of all the primes below two million.&lt;/p&gt;&lt;/blockquote&gt;
 
-&lt;p>题目越来越变态，开始好玩儿了。&lt;/p>
+&lt;p&gt;题目越来越变态，开始好玩儿了。&lt;/p&gt;
 
-&lt;p>&lt;a href="http://0x3f.org/?p=753">第七解&lt;/a>里的算法在这里算是废了，一万个素数都算得那么费劲，两百万以下的素数有十几万个，不得不用筛选法了。&lt;/p>
+&lt;p&gt;&lt;a href="http://0x3f.org/?p=753"&gt;第七解&lt;/a&gt;里的算法在这里算是废了，一万个素数都算得那么费劲，两百万以下的素数有十几万个，不得不用筛选法了。&lt;/p&gt;
 
-&lt;p>普通的筛选效率也不行，当初就是因为这个原因才没用它。不过优化过的筛选法就很奇妙了，下面是Lua的实现：&lt;/p>
+&lt;p&gt;普通的筛选效率也不行，当初就是因为这个原因才没用它。不过优化过的筛选法就很奇妙了，下面是Lua的实现：&lt;/p&gt;
 
-&lt;p>
+&lt;p&gt;
 ```lua
 require('math')
 
@@ -196,20 +196,20 @@ end
 
 print(sumVal)
 ```
-&lt;/p></description></item><item><title>欧拉工程第七解</title><link>http://0x3f.org/posts/project-euler-7/</link><pubDate>Fri, 31 Oct 2008 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/project-euler-7/</guid><description>&lt;p>第七解：&lt;/p>
+&lt;/p&gt;</description></item><item><title>欧拉工程第七解</title><link>http://0x3f.org/posts/project-euler-7/</link><pubDate>Fri, 31 Oct 2008 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/project-euler-7/</guid><description>&lt;p&gt;第七解：&lt;/p&gt;
 
-&lt;blockquote>&lt;p>By listing the first six prime numbers: 2, 3, 5, 7, 11, and 13, we can see that the 6th prime is 13.&lt;/p>
+&lt;blockquote&gt;&lt;p&gt;By listing the first six prime numbers: 2, 3, 5, 7, 11, and 13, we can see that the 6th prime is 13.&lt;/p&gt;
 
-&lt;p>What is the 10001st prime number?&lt;/p>&lt;/blockquote>
+&lt;p&gt;What is the 10001st prime number?&lt;/p&gt;&lt;/blockquote&gt;
 
-&lt;p>穷举，并加以最大程度的优化：对大于2的素数，只判断奇数；判断一个奇数是否素数时，只拿已经找到的素数中小于第这个数平方根的数来相除，如果均不能整除，就是素数。Python的实现：&lt;/p>
+&lt;p&gt;穷举，并加以最大程度的优化：对大于2的素数，只判断奇数；判断一个奇数是否素数时，只拿已经找到的素数中小于第这个数平方根的数来相除，如果均不能整除，就是素数。Python的实现：&lt;/p&gt;
 
-&lt;p>
+&lt;p&gt;
 ```python
 def IsPrimeNum(num,feed):
  from math import sqrt
  tmp = feed[:]
- while tmp[-1] > int(sqrt(num)):
+ while tmp[-1] &gt; int(sqrt(num)):
  tmp.pop()
  for i in tmp:
  if num % i == 0:
@@ -227,4 +227,4 @@ while counter &lt; limit :
  counter += 1
 print temp
 ```
-&lt;/p></description></item></channel></rss>
+&lt;/p&gt;</description></item></channel></rss>

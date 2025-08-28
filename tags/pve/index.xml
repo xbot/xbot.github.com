@@ -1,100 +1,100 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PVE on 晴耕雨讀</title><link>http://0x3f.org/tags/pve/</link><description>Recent content in PVE on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Tue, 06 Feb 2024 18:48:31 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/pve/index.xml" rel="self" type="application/rss+xml"/><item><title>Proxmox VE 备份指南</title><link>http://0x3f.org/posts/proxmox-ve-backup-guide/</link><pubDate>Tue, 06 Feb 2024 18:48:31 +0800</pubDate><guid>http://0x3f.org/posts/proxmox-ve-backup-guide/</guid><description>&lt;p>在当今数据中心管理中，数据备份是确保业务连续性和灾难恢复的关键环节。即使是 Home Lab ，也需要保证重要数据的安全。Proxmox Virtual Environment (PVE) 提供了一个强大的平台来管理虚拟化基础设施，而 Proxmox Backup Server (PBS) 则是其官方推荐的备份解决方案。本文将详细介绍如何使用 PBS 对 Proxmox VE 的虚拟机或容器（Guest）和宿主机（Host）进行备份，以及如何设置自动化备份流程。&lt;/p>
-&lt;h1 id="guest-的备份">Guest 的备份&lt;/h1>
-&lt;h2 id="使用-pbs">使用 PBS&lt;/h2>
-&lt;p>Proxmox Backup Server (PBS) 是一个功能强大的备份工具，它提供了多种备份选项，包括增量备份、加密备份、自动备份以及自动修剪等功能。这些功能使得 PBS 成为与 PVE 结合紧密的理想选择。&lt;/p>
-&lt;h3 id="优势">优势&lt;/h3>
-&lt;ul>
-&lt;li>&lt;strong>增量备份&lt;/strong>：只备份自上次备份以来发生变化的数据，节省存储空间和时间。&lt;/li>
-&lt;li>&lt;strong>加密备份&lt;/strong>：确保备份数据的安全性。&lt;/li>
-&lt;li>&lt;strong>自动备份&lt;/strong>：设置定时任务，无需手动干预。&lt;/li>
-&lt;li>&lt;strong>自动修剪&lt;/strong>：自动清理旧的备份，保持存储空间的合理使用。&lt;/li>
-&lt;li>&lt;strong>与 PVE 结合紧密&lt;/strong>：PBS 专为 PVE 设计，备份和恢复过程无缝对接。&lt;/li>
-&lt;/ul>
-&lt;h3 id="步骤">步骤&lt;/h3>
-&lt;ol>
-&lt;li>
-&lt;p>&lt;strong>安装 PBS&lt;/strong>&lt;/p>
-&lt;ul>
-&lt;li>&lt;strong>LXC 方式&lt;/strong>：创建一个 Debian 容器，然后添加 PBS 的源。这种方式轻量级，但 LXC 容器只能使用 RAW 格式的镜像。&lt;/li>
-&lt;li>&lt;strong>ISO 方式&lt;/strong>：通过 PBS 官方 ISO 镜像创建虚拟机。这种方式限制较少，能适应更多硬件环境。&lt;/li>
-&lt;/ul>
-&lt;/li>
-&lt;li>
-&lt;p>&lt;strong>创建 PBS 备份用户&lt;/strong>&lt;/p>
-&lt;p>在 PBS 中，进入 Configuration → Access Control → User Management 创建一个新用户，例如 &lt;code>dataguard&lt;/code>。&lt;/p></description></item><item><title>榨干 Intel 核显潜能，让更多虚拟机用上显卡</title><link>http://0x3f.org/posts/guide-to-increasing-intel-graphics-aperture-size/</link><pubDate>Tue, 06 Feb 2024 12:30:40 +0800</pubDate><guid>http://0x3f.org/posts/guide-to-increasing-intel-graphics-aperture-size/</guid><description>&lt;p>在虚拟化环境中，尤其是使用 Proxmox VE 或其他虚拟化平台时，有时我们需要增加 Intel 核显的显存孔径（Aperture Size），以便让更多虚拟机用上显卡的硬件加速。例如，我的 i5-8600t CPU 的核显是 UHD630 ，它的显存孔径被限制为 256M ，这只能提供一个 1200p 或两个 768p 的虚拟 GPU ，显然太少了。而当我们把这个值上调到 1024M ，就能获得更多或性能更高的虚拟 GPU 。&lt;/p>
-&lt;p>这可以通过修改 BIOS 设置来实现，但通常主板 BIOS 不提供直接的选项来调整这个值。幸运的是，我们可以通过一些工具来间接修改这个设置。以下是详细的步骤：&lt;/p>
-&lt;h3 id="步骤-1-下载和主板上同版本的-bios">步骤 1: 下载和主板上同版本的 BIOS&lt;/h3>
-&lt;p>首先，你需要从主板制造商的官方网站下载与你的主板型号相匹配的 BIOS 文件。确保下载的是与你的主板上安装的 BIOS 版本相同的文件，以便后续操作不会引发兼容性问题。&lt;/p>
-&lt;h3 id="步骤-2-使用-uefitool-打开-bios">步骤 2: 使用 UEFITool 打开 BIOS&lt;/h3>
-&lt;p>接下来，你需要使用 &lt;a href="https://github.com/LongSoft/UEFITool">UEFITool&lt;/a>，这是一个 UEFI 固件图像查看器和编辑器。下载并安装 UEFITool，然后使用它打开你下载的 BIOS 文件。&lt;/p>
-&lt;h3 id="步骤-3-搜索aperture-size">步骤 3: 搜索“aperture size”&lt;/h3>
-&lt;p>在 UEFITool 中，打开搜索对话框并选择“Text”类型，然后输入“aperture size”进行搜索。搜索结果中可能会有多个匹配项。&lt;/p>
-&lt;h3 id="步骤-4-导出-body-并转换">步骤 4: 导出 Body 并转换&lt;/h3>
-&lt;p>选择一个搜索结果，导出其 Body。然后，使用 &lt;a href="https://github.com/LongSoft/IFRExtractor-RS">IFRExtractor-RS&lt;/a>，这是一个 Rust 实用程序，可以将 UEFI IFR 数据提取成人类可读的文本。运行 IFRExtractor-RS 并指定你刚刚导出的文件，它会生成一个文本文件。&lt;/p></description></item><item><title>GVT-g 配置指南：实现多虚拟机共享 Intel 核显硬件加速</title><link>http://0x3f.org/posts/guide-to-configuring-gvt-g-graphics-acceleration/</link><pubDate>Tue, 06 Feb 2024 11:25:58 +0800</pubDate><guid>http://0x3f.org/posts/guide-to-configuring-gvt-g-graphics-acceleration/</guid><description>&lt;p>Proxmox Virtual Environment（PVE）是一个功能强大的开源虚拟化管理平台。它允许用户在单个主机上运行多个虚拟机，每个虚拟机都可以拥有自己的操作系统。为了进一步提升虚拟机的性能，特别是对于那些需要图形处理能力的应用，我们可以通过配置 Intel® Graphics Virtualization Technology –g (GVT-g) 来实现。GVT-g 是一种硬件辅助的虚拟化技术，它允许虚拟机直接访问宿主机的图形处理单元（GPU），从而提高图形性能。本文将详细介绍如何在 PVE 中为 Intel 核显开启 GVT-g 。&lt;/p>
-&lt;p>本文环境：&lt;/p>
-&lt;ul>
-&lt;li>操作系统：PVE 8.0&lt;/li>
-&lt;li>CPU： Intel Core i5-8600t&lt;/li>
-&lt;li>核显：UHD630&lt;/li>
-&lt;/ul>
-&lt;h3 id="步骤-1-修改-grub-配置">步骤 1 ：修改 GRUB 配置&lt;/h3>
-&lt;p>首先，我们需要确保 GRUB 引导加载器在启动时启用了必要的参数。打开&lt;code>/etc/default/grub&lt;/code>文件，并找到&lt;code>GRUB_CMDLINE_LINUX_DEFAULT&lt;/code>行。添加以下参数：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">GRUB_CMDLINE_LINUX_DEFAULT&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s2">&amp;#34;quiet intel_iommu=on iommu=pt i915.enable_gvt=1&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>这将启用 Intel IOMMU（Input/Output Memory Management Unit）和 GVT-g 。保存文件后，运行以下命令来更新 GRUB 配置：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">sudo update-grub
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;h3 id="步骤-2-添加内核模块">步骤 2 ：添加内核模块&lt;/h3>
-&lt;p>接下来，我们需要确保 PVE 在启动时加载必要的内核模块。编辑&lt;code>/etc/modules&lt;/code>文件，添加以下模块：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;span class="lnt">3
-&lt;/span>&lt;span class="lnt">4
-&lt;/span>&lt;span class="lnt">5
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">vfio
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">vfio_iommu_type1
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">vfio_pci
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">vfio_virqfd
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">kvmgt
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>如果你之前因为配置直通核显而在&lt;code>/etc/modprobe.d/pve-blacklist.conf&lt;/code>中屏蔽了显卡驱动，现在需要解除屏蔽。这可以通过注释掉或删除相关行来实现。&lt;/p></description></item><item><title>Homelab 升级记：从 Unraid 到 Proxmox VE 的平滑过渡</title><link>http://0x3f.org/posts/a-smooth-transition-from-unraid-to-pve/</link><pubDate>Mon, 05 Feb 2024 22:22:57 +0800</pubDate><guid>http://0x3f.org/posts/a-smooth-transition-from-unraid-to-pve/</guid><description>&lt;p>最近，我对我的 Homelab 进行了一次重大调整，从 Unraid 迁移到了 Proxmox VE（PVE），并用它实现了对 Unraid 的虚拟化，这一转变不仅提高了系统的稳定性、灵活性，还带来了一系列令人惊喜的改进。在这篇文章中，我将分享这次调整的动机、硬件升级以及软件配置的详细过程。&lt;/p>
-&lt;h1 id="动机解耦虚拟机与-unraid">动机：解耦虚拟机与 Unraid&lt;/h1>
-&lt;p>我决定将虚拟机从 Unraid 中分离出来，这样做的目的是为了减轻 Unraid 重启时对整个网络环境的影响，降低磁盘阵列卡住的风险，并加速 Unraid 的重启过程。&lt;/p>
-&lt;p>此外，这样的调整也使得使用 Proxmox Backup Server (PBS) 进行备份变得更加方便，减少了对 Unraid 缓存盘的占用，并优化了硬盘的休眠策略，减少了不必要的唤醒次数。&lt;/p>
-&lt;p>最后，减少虚拟化嵌套层数，简化了架构，提高了整体效率。&lt;/p>
-&lt;h1 id="硬件升级">硬件升级&lt;/h1>
-&lt;ol>
-&lt;li>&lt;strong>机箱改造：&lt;/strong> 为了适应新的硬件配置，我用角磨机切掉了蜗牛星际机箱 B 款的横梁，因为它挡住了 PCIe 插槽。这一小小的改动为后续的硬件安装提供了空间。&lt;/li>
-&lt;/ol>
-&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-05-22-40-47-IMG_1058.jpeg" alt="2024-02-05-22-40-47-IMG_1058">&lt;/p>
-&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-05-22-42-35-DSC00141.jpg" alt="2024-02-05-22-42-35-DSC00141">&lt;/p>
-&lt;ol start="2">
-&lt;li>&lt;strong>主板与扩展卡：&lt;/strong> 主板只有一个 M.2 插槽，我选择在这里安装了 PVE。为了加装第二款 NVME 固态硬盘，我购买了 PCIe 转 M.2 扩展卡，将 Unraid 的缓存盘插到了这个扩展卡上。小火炉铠侠 RC10 在加装了扩展卡附带的散热片后降温效果显著，目测温度下降了大约 15℃，Unraid 系统再也没有出现过报警。&lt;/li>
-&lt;/ol>
-&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-20-21-15-19-IMG_1203.jpeg" alt="2024-02-20-21-15-19-IMG_1203">&lt;/p>
-&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-20-21-17-07-1E419BB6-4057-41B4-B7A5-6F3033154257_4_5005_c.jpeg" alt="2024-02-20-21-17-07-1E419BB6-4057-41B4-B7A5-6F3033154257_4_5005_c">&lt;/p>
-&lt;ol start="3">
-&lt;li>&lt;strong>视频采集卡：&lt;/strong> 为了在没有额外显示器的情况下管理 Homelab ，我购买了视频采集卡，并配合 iPad 使用，作为临时显示器。&lt;/li>
-&lt;/ol>
-&lt;p>&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-05-23-20-26-IMG_1079.jpeg" alt="2024-02-05-23-20-26-IMG_1079">&lt;/p>
-&lt;h1 id="软件配置">软件配置&lt;/h1>
-&lt;ol>
-&lt;li>
-&lt;p>&lt;strong>直通设备：&lt;/strong> 在 PVE 中，我将 Unraid 系统 U 盘、Sata 控制器、外置硬盘以及 NVME 缓存盘直通（passthrough）给了 Unraid 虚拟机。这样做的好处是，仍然使用 Unraid 作为 NAS 系统管理所有存储资源，并继续使用 Unraid 优秀的应用社区。同时把主板的第二块网卡做了直通，防止 NAS 吞吐量较大时影响访问宿主机及其它客户机的稳定性。&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PVE on 晴耕雨讀</title><link>http://0x3f.org/tags/pve/</link><description>Recent content in PVE on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Tue, 06 Feb 2024 18:48:31 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/pve/index.xml" rel="self" type="application/rss+xml"/><item><title>Proxmox VE 备份指南</title><link>http://0x3f.org/posts/proxmox-ve-backup-guide/</link><pubDate>Tue, 06 Feb 2024 18:48:31 +0800</pubDate><guid>http://0x3f.org/posts/proxmox-ve-backup-guide/</guid><description>&lt;p&gt;在当今数据中心管理中，数据备份是确保业务连续性和灾难恢复的关键环节。即使是 Home Lab ，也需要保证重要数据的安全。Proxmox Virtual Environment (PVE) 提供了一个强大的平台来管理虚拟化基础设施，而 Proxmox Backup Server (PBS) 则是其官方推荐的备份解决方案。本文将详细介绍如何使用 PBS 对 Proxmox VE 的虚拟机或容器（Guest）和宿主机（Host）进行备份，以及如何设置自动化备份流程。&lt;/p&gt;
+&lt;h1 id="guest-的备份"&gt;Guest 的备份&lt;/h1&gt;
+&lt;h2 id="使用-pbs"&gt;使用 PBS&lt;/h2&gt;
+&lt;p&gt;Proxmox Backup Server (PBS) 是一个功能强大的备份工具，它提供了多种备份选项，包括增量备份、加密备份、自动备份以及自动修剪等功能。这些功能使得 PBS 成为与 PVE 结合紧密的理想选择。&lt;/p&gt;
+&lt;h3 id="优势"&gt;优势&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;增量备份&lt;/strong&gt;：只备份自上次备份以来发生变化的数据，节省存储空间和时间。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;加密备份&lt;/strong&gt;：确保备份数据的安全性。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;自动备份&lt;/strong&gt;：设置定时任务，无需手动干预。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;自动修剪&lt;/strong&gt;：自动清理旧的备份，保持存储空间的合理使用。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;与 PVE 结合紧密&lt;/strong&gt;：PBS 专为 PVE 设计，备份和恢复过程无缝对接。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="步骤"&gt;步骤&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;安装 PBS&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;LXC 方式&lt;/strong&gt;：创建一个 Debian 容器，然后添加 PBS 的源。这种方式轻量级，但 LXC 容器只能使用 RAW 格式的镜像。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ISO 方式&lt;/strong&gt;：通过 PBS 官方 ISO 镜像创建虚拟机。这种方式限制较少，能适应更多硬件环境。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;创建 PBS 备份用户&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;在 PBS 中，进入 Configuration → Access Control → User Management 创建一个新用户，例如 &lt;code&gt;dataguard&lt;/code&gt;。&lt;/p&gt;</description></item><item><title>榨干 Intel 核显潜能，让更多虚拟机用上显卡</title><link>http://0x3f.org/posts/guide-to-increasing-intel-graphics-aperture-size/</link><pubDate>Tue, 06 Feb 2024 12:30:40 +0800</pubDate><guid>http://0x3f.org/posts/guide-to-increasing-intel-graphics-aperture-size/</guid><description>&lt;p&gt;在虚拟化环境中，尤其是使用 Proxmox VE 或其他虚拟化平台时，有时我们需要增加 Intel 核显的显存孔径（Aperture Size），以便让更多虚拟机用上显卡的硬件加速。例如，我的 i5-8600t CPU 的核显是 UHD630 ，它的显存孔径被限制为 256M ，这只能提供一个 1200p 或两个 768p 的虚拟 GPU ，显然太少了。而当我们把这个值上调到 1024M ，就能获得更多或性能更高的虚拟 GPU 。&lt;/p&gt;
+&lt;p&gt;这可以通过修改 BIOS 设置来实现，但通常主板 BIOS 不提供直接的选项来调整这个值。幸运的是，我们可以通过一些工具来间接修改这个设置。以下是详细的步骤：&lt;/p&gt;
+&lt;h3 id="步骤-1-下载和主板上同版本的-bios"&gt;步骤 1: 下载和主板上同版本的 BIOS&lt;/h3&gt;
+&lt;p&gt;首先，你需要从主板制造商的官方网站下载与你的主板型号相匹配的 BIOS 文件。确保下载的是与你的主板上安装的 BIOS 版本相同的文件，以便后续操作不会引发兼容性问题。&lt;/p&gt;
+&lt;h3 id="步骤-2-使用-uefitool-打开-bios"&gt;步骤 2: 使用 UEFITool 打开 BIOS&lt;/h3&gt;
+&lt;p&gt;接下来，你需要使用 &lt;a href="https://github.com/LongSoft/UEFITool"&gt;UEFITool&lt;/a&gt;，这是一个 UEFI 固件图像查看器和编辑器。下载并安装 UEFITool，然后使用它打开你下载的 BIOS 文件。&lt;/p&gt;
+&lt;h3 id="步骤-3-搜索aperture-size"&gt;步骤 3: 搜索“aperture size”&lt;/h3&gt;
+&lt;p&gt;在 UEFITool 中，打开搜索对话框并选择“Text”类型，然后输入“aperture size”进行搜索。搜索结果中可能会有多个匹配项。&lt;/p&gt;
+&lt;h3 id="步骤-4-导出-body-并转换"&gt;步骤 4: 导出 Body 并转换&lt;/h3&gt;
+&lt;p&gt;选择一个搜索结果，导出其 Body。然后，使用 &lt;a href="https://github.com/LongSoft/IFRExtractor-RS"&gt;IFRExtractor-RS&lt;/a&gt;，这是一个 Rust 实用程序，可以将 UEFI IFR 数据提取成人类可读的文本。运行 IFRExtractor-RS 并指定你刚刚导出的文件，它会生成一个文本文件。&lt;/p&gt;</description></item><item><title>GVT-g 配置指南：实现多虚拟机共享 Intel 核显硬件加速</title><link>http://0x3f.org/posts/guide-to-configuring-gvt-g-graphics-acceleration/</link><pubDate>Tue, 06 Feb 2024 11:25:58 +0800</pubDate><guid>http://0x3f.org/posts/guide-to-configuring-gvt-g-graphics-acceleration/</guid><description>&lt;p&gt;Proxmox Virtual Environment（PVE）是一个功能强大的开源虚拟化管理平台。它允许用户在单个主机上运行多个虚拟机，每个虚拟机都可以拥有自己的操作系统。为了进一步提升虚拟机的性能，特别是对于那些需要图形处理能力的应用，我们可以通过配置 Intel® Graphics Virtualization Technology –g (GVT-g) 来实现。GVT-g 是一种硬件辅助的虚拟化技术，它允许虚拟机直接访问宿主机的图形处理单元（GPU），从而提高图形性能。本文将详细介绍如何在 PVE 中为 Intel 核显开启 GVT-g 。&lt;/p&gt;
+&lt;p&gt;本文环境：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;操作系统：PVE 8.0&lt;/li&gt;
+&lt;li&gt;CPU： Intel Core i5-8600t&lt;/li&gt;
+&lt;li&gt;核显：UHD630&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id="步骤-1-修改-grub-配置"&gt;步骤 1 ：修改 GRUB 配置&lt;/h3&gt;
+&lt;p&gt;首先，我们需要确保 GRUB 引导加载器在启动时启用了必要的参数。打开&lt;code&gt;/etc/default/grub&lt;/code&gt;文件，并找到&lt;code&gt;GRUB_CMDLINE_LINUX_DEFAULT&lt;/code&gt;行。添加以下参数：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-shell" data-lang="shell"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;GRUB_CMDLINE_LINUX_DEFAULT&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;quiet intel_iommu=on iommu=pt i915.enable_gvt=1&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这将启用 Intel IOMMU（Input/Output Memory Management Unit）和 GVT-g 。保存文件后，运行以下命令来更新 GRUB 配置：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-shell" data-lang="shell"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sudo update-grub
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="步骤-2-添加内核模块"&gt;步骤 2 ：添加内核模块&lt;/h3&gt;
+&lt;p&gt;接下来，我们需要确保 PVE 在启动时加载必要的内核模块。编辑&lt;code&gt;/etc/modules&lt;/code&gt;文件，添加以下模块：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-shell" data-lang="shell"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;vfio
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;vfio_iommu_type1
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;vfio_pci
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;vfio_virqfd
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;kvmgt
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;如果你之前因为配置直通核显而在&lt;code&gt;/etc/modprobe.d/pve-blacklist.conf&lt;/code&gt;中屏蔽了显卡驱动，现在需要解除屏蔽。这可以通过注释掉或删除相关行来实现。&lt;/p&gt;</description></item><item><title>Homelab 升级记：从 Unraid 到 Proxmox VE 的平滑过渡</title><link>http://0x3f.org/posts/a-smooth-transition-from-unraid-to-pve/</link><pubDate>Mon, 05 Feb 2024 22:22:57 +0800</pubDate><guid>http://0x3f.org/posts/a-smooth-transition-from-unraid-to-pve/</guid><description>&lt;p&gt;最近，我对我的 Homelab 进行了一次重大调整，从 Unraid 迁移到了 Proxmox VE（PVE），并用它实现了对 Unraid 的虚拟化，这一转变不仅提高了系统的稳定性、灵活性，还带来了一系列令人惊喜的改进。在这篇文章中，我将分享这次调整的动机、硬件升级以及软件配置的详细过程。&lt;/p&gt;
+&lt;h1 id="动机解耦虚拟机与-unraid"&gt;动机：解耦虚拟机与 Unraid&lt;/h1&gt;
+&lt;p&gt;我决定将虚拟机从 Unraid 中分离出来，这样做的目的是为了减轻 Unraid 重启时对整个网络环境的影响，降低磁盘阵列卡住的风险，并加速 Unraid 的重启过程。&lt;/p&gt;
+&lt;p&gt;此外，这样的调整也使得使用 Proxmox Backup Server (PBS) 进行备份变得更加方便，减少了对 Unraid 缓存盘的占用，并优化了硬盘的休眠策略，减少了不必要的唤醒次数。&lt;/p&gt;
+&lt;p&gt;最后，减少虚拟化嵌套层数，简化了架构，提高了整体效率。&lt;/p&gt;
+&lt;h1 id="硬件升级"&gt;硬件升级&lt;/h1&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;机箱改造：&lt;/strong&gt; 为了适应新的硬件配置，我用角磨机切掉了蜗牛星际机箱 B 款的横梁，因为它挡住了 PCIe 插槽。这一小小的改动为后续的硬件安装提供了空间。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-05-22-40-47-IMG_1058.jpeg" alt="2024-02-05-22-40-47-IMG_1058"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-05-22-42-35-DSC00141.jpg" alt="2024-02-05-22-42-35-DSC00141"&gt;&lt;/p&gt;
+&lt;ol start="2"&gt;
+&lt;li&gt;&lt;strong&gt;主板与扩展卡：&lt;/strong&gt; 主板只有一个 M.2 插槽，我选择在这里安装了 PVE。为了加装第二款 NVME 固态硬盘，我购买了 PCIe 转 M.2 扩展卡，将 Unraid 的缓存盘插到了这个扩展卡上。小火炉铠侠 RC10 在加装了扩展卡附带的散热片后降温效果显著，目测温度下降了大约 15℃，Unraid 系统再也没有出现过报警。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-20-21-15-19-IMG_1203.jpeg" alt="2024-02-20-21-15-19-IMG_1203"&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-20-21-17-07-1E419BB6-4057-41B4-B7A5-6F3033154257_4_5005_c.jpeg" alt="2024-02-20-21-17-07-1E419BB6-4057-41B4-B7A5-6F3033154257_4_5005_c"&gt;&lt;/p&gt;
+&lt;ol start="3"&gt;
+&lt;li&gt;&lt;strong&gt;视频采集卡：&lt;/strong&gt; 为了在没有额外显示器的情况下管理 Homelab ，我购买了视频采集卡，并配合 iPad 使用，作为临时显示器。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-05-23-20-26-IMG_1079.jpeg" alt="2024-02-05-23-20-26-IMG_1079"&gt;&lt;/p&gt;
+&lt;h1 id="软件配置"&gt;软件配置&lt;/h1&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;直通设备：&lt;/strong&gt; 在 PVE 中，我将 Unraid 系统 U 盘、Sata 控制器、外置硬盘以及 NVME 缓存盘直通（passthrough）给了 Unraid 虚拟机。这样做的好处是，仍然使用 Unraid 作为 NAS 系统管理所有存储资源，并继续使用 Unraid 优秀的应用社区。同时把主板的第二块网卡做了直通，防止 NAS 吞吐量较大时影响访问宿主机及其它客户机的稳定性。&lt;/p&gt;</description></item></channel></rss>

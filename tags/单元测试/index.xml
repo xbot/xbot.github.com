@@ -1,270 +1,270 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>单元测试 on 晴耕雨讀</title><link>http://0x3f.org/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/</link><description>Recent content in 单元测试 on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Thu, 23 Jun 2022 14:42:34 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/index.xml" rel="self" type="application/rss+xml"/><item><title>解决 PHPUnit 生成代码覆盖报告时抛出重复定义类的错误的办法</title><link>http://0x3f.org/posts/the-solution-of-class-redeclaration-error-raised-while-generating-php-code-coverage-report/</link><pubDate>Thu, 23 Jun 2022 14:42:34 +0800</pubDate><guid>http://0x3f.org/posts/the-solution-of-class-redeclaration-error-raised-while-generating-php-code-coverage-report/</guid><description>&lt;p>在生成 Cobertura 格式的代码覆盖报告时程序报了如下错误：&lt;/p>
-&lt;blockquote>
-&lt;p>Generating code coverage report in Cobertura XML format &amp;hellip; PHP Fatal error: Cannot declare class App\FakeNamespace\GenericProvider, because the name is already in use in /builds/fake_project/app/FakeNamespace/GenericProvider.php on line 17&lt;/p>&lt;/blockquote>
-&lt;p>对应的代码和单元测试执行均无问题。&lt;/p>
-&lt;p>经排查，直接原因是使用了 Mockery 的 &lt;a href="http://docs.mockery.io/en/latest/reference/instance_mocking.html">Instance Mocking&lt;/a> &lt;sup id="fnref:1">&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref">1&lt;/a>&lt;/sup>特性 mock 代码中的硬依赖关系（&lt;a href="https://robertbasic.com/blog/mocking-hard-dependencies-with-mockery/">Hard Dependency&lt;/a>）。&lt;/p>
-&lt;p>该特性的实现利用了类的自动加载机制和依赖注入技术。对依赖关系 mock 的实例保存在 Mockery 的容器中，同时生成一个 stub 文件：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
-&lt;/span>&lt;span class="lnt"> 2
-&lt;/span>&lt;span class="lnt"> 3
-&lt;/span>&lt;span class="lnt"> 4
-&lt;/span>&lt;span class="lnt"> 5
-&lt;/span>&lt;span class="lnt"> 6
-&lt;/span>&lt;span class="lnt"> 7
-&lt;/span>&lt;span class="lnt"> 8
-&lt;/span>&lt;span class="lnt"> 9
-&lt;/span>&lt;span class="lnt">10
-&lt;/span>&lt;span class="lnt">11
-&lt;/span>&lt;span class="lnt">12
-&lt;/span>&lt;span class="lnt">13
-&lt;/span>&lt;span class="lnt">14
-&lt;/span>&lt;span class="lnt">15
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-php" data-lang="php">&lt;span class="line">&lt;span class="cl">&lt;span class="o">&amp;lt;?&lt;/span>&lt;span class="nx">php&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">namespace&lt;/span> &lt;span class="nx">Mockery&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">class&lt;/span> &lt;span class="nc">Mockery_App_FakeNamespace_GenericProvider&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">private&lt;/span> &lt;span class="nx">Container&lt;/span> &lt;span class="nv">$container&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">function&lt;/span> &lt;span class="nf">doSomething&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$param&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// internal code check expectations
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="nv">$this&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="na">container&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="na">get&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;App\FakeNamespace\GenericProvider::doSomething&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="na">expectations&lt;/span>&lt;span class="p">();&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span> 
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>当代码中实例化这个类的时候，Mockery 自动加载该文件，从而代替了对原类文件的加载。&lt;/p></description></item><item><title>在 VS Code 中快速创建 PHPUnit 测试类的方法</title><link>http://0x3f.org/posts/quickly-create-phpunit-test-cases-with-vscode/</link><pubDate>Tue, 18 Feb 2020 22:49:45 +0000</pubDate><guid>http://0x3f.org/posts/quickly-create-phpunit-test-cases-with-vscode/</guid><description>&lt;p>通过单元测试解决问题或者调试代码，可以避开错综复杂的依赖关系、直击问题的核心，从而极大地节约时间、提高效率。&lt;/p>
-&lt;p>但是，当创建测试类成为一个经常发生的操作时，每次都手动创建类、引入基类、添加测试方法就显得很烦琐。我需要这样一个解决方案，让我可以立即开始着手写测试代码。&lt;/p></description></item><item><title>解决Laravel中makeWith()无法取到被mock的实例的问题</title><link>http://0x3f.org/posts/mocking-objects-made-by-laravel-container-with-parameters/</link><pubDate>Fri, 16 Aug 2019 10:55:40 +0000</pubDate><guid>http://0x3f.org/posts/mocking-objects-made-by-laravel-container-with-parameters/</guid><description>&lt;p>被测单元有一行实例化一个类的代码，而且该类的构造方法需要参数。基于面向单元测试编程的原则，通过容器的makeWith()方法实现：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-php" data-lang="php">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">$api&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">app&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="na">makeWith&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">Api&lt;/span>&lt;span class="o">::&lt;/span>&lt;span class="na">class&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="s1">&amp;#39;config&amp;#39;&lt;/span> &lt;span class="o">=&amp;gt;&lt;/span> &lt;span class="nv">$config&lt;/span>&lt;span class="p">]);&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>但是在执行单元测试时发现，虽然测试代码中已经mock了这个类且注入到容器，但在被测单元中取到的还是原类的实例。&lt;/p></description></item><item><title>利用单元测试为开发提效</title><link>http://0x3f.org/posts/use-unit-test-as-an-efficiency-tool/</link><pubDate>Tue, 13 Aug 2019 16:38:02 +0000</pubDate><guid>http://0x3f.org/posts/use-unit-test-as-an-efficiency-tool/</guid><description>&lt;p>单元测试可以方便地伪造和回滚测试数据，这个特性决定了它其实是一个效率工具。&lt;/p>
-&lt;p>例如在开发退款单、发票的时候，由于这种后置的功能依赖订单、支付、库存等前置的数据，因此需要频繁地创建这些测试数据，这就导致开发的效率极低，有时甚至需要切换多个系统做诸如增加库存、下单、支付等操作。虽然在开发环境可以通过直接修改数据使之恢复可被测试的状态，但仍然存在效率很低、遗留垃圾数据和存在隐患等问题。&lt;/p>
-&lt;p>单元测试可以完美地解决这些问题。&lt;/p></description></item><item><title>面向单元测试编程</title><link>http://0x3f.org/posts/unit-test-oriented-programming/</link><pubDate>Tue, 13 Aug 2019 16:35:15 +0000</pubDate><guid>http://0x3f.org/posts/unit-test-oriented-programming/</guid><description>&lt;p>同一逻辑可以有多种实现方式，选择对单元测试友好的方式可以提高写测试代码的效率。&lt;/p></description></item><item><title>PHP单元测试的技巧</title><link>http://0x3f.org/posts/phpunit-tips/</link><pubDate>Tue, 13 Aug 2019 14:21:48 +0000</pubDate><guid>http://0x3f.org/posts/phpunit-tips/</guid><description>&lt;p>以下是我平时写单元测试时总结的一些最佳实践，有些是和具体的框架强相关的。&lt;/p></description></item><item><title>Lumen单元测试提示自定义校验规则不存在的问题</title><link>http://0x3f.org/posts/unit-test-in-laravel-complains-validation-rule-not-exist/</link><pubDate>Fri, 02 Aug 2019 15:12:17 +0000</pubDate><guid>http://0x3f.org/posts/unit-test-in-laravel-complains-validation-rule-not-exist/</guid><description>&lt;p>执行单元测试时遇到报错：&lt;/p>
-&lt;pre tabindex="0">&lt;code>BadMethodCallException: Method [validateIdList] does not exist.
-&lt;/code>&lt;/pre></description></item><item><title>基于Laravel的项目的单元测试规范</title><link>http://0x3f.org/posts/unit-testing-standard-for-laravel-based-projects/</link><pubDate>Sun, 24 Mar 2019 22:42:08 +0000</pubDate><guid>http://0x3f.org/posts/unit-testing-standard-for-laravel-based-projects/</guid><description>&lt;p>单元测试是个好东西，解决了我很多问题，不论开发效率还是代码质量，都给我助益良多。最近想在团队内部推广，就拟了个规范草稿：&lt;/p></description></item><item><title>解决Laravel的Facade在被Mock时不自动注入依赖的一种方法</title><link>http://0x3f.org/posts/manual-dependency-injection-with-laravel/</link><pubDate>Tue, 30 Jan 2018 15:41:16 +0000</pubDate><guid>http://0x3f.org/posts/manual-dependency-injection-with-laravel/</guid><description>&lt;p>由于集成了Mockery，Laravel的Facade对单元测试非常友好，只需要一行代码就能实现mocking。&lt;/p>
-&lt;p>例如，测试目标方法中调用了订单工具类的一个方法，在使用依赖注入的方式时，需要用三行代码实现对这个方法的mocking：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;span class="lnt">3
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-php" data-lang="php">&lt;span class="line">&lt;span class="cl">&lt;span class="nv">$fakeOrderTool&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">m&lt;/span>&lt;span class="o">::&lt;/span>&lt;span class="na">mock&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">\App\Tool\Order&lt;/span>&lt;span class="o">::&lt;/span>&lt;span class="na">class&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">$fakeOrderTool&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="na">shouldReceive&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;getById&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="na">once&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="na">with&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$id&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="na">andReturn&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$fakeOrder&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">$this&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="na">app&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="na">instance&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">\App\Tool\Order&lt;/span>&lt;span class="o">::&lt;/span>&lt;span class="na">class&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">$fakeOrderTool&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>而用Facade是这样的：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-php" data-lang="php">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">OrderFacade&lt;/span>&lt;span class="o">::&lt;/span>&lt;span class="na">shouldReceive&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;getById&amp;#39;&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="na">once&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="na">with&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$id&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="na">andReturn&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$fakeOrder&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>当测试目标方法也属于订单工具类时，需要部分mock这个类，所以还要加上一行：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-php" data-lang="php">&lt;span class="line">&lt;span class="cl">&lt;span class="nx">OrderFacade&lt;/span>&lt;span class="o">::&lt;/span>&lt;span class="na">makePartial&lt;/span>&lt;span class="p">();&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>但如果订单工具类的构造方法里有需要注入的依赖关系，这里并不会被执行。所以我在工具类基类里封装了一个方法，用反射机制实现手工注入依赖关系：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
-&lt;/span>&lt;span class="lnt"> 2
-&lt;/span>&lt;span class="lnt"> 3
-&lt;/span>&lt;span class="lnt"> 4
-&lt;/span>&lt;span class="lnt"> 5
-&lt;/span>&lt;span class="lnt"> 6
-&lt;/span>&lt;span class="lnt"> 7
-&lt;/span>&lt;span class="lnt"> 8
-&lt;/span>&lt;span class="lnt"> 9
-&lt;/span>&lt;span class="lnt">10
-&lt;/span>&lt;span class="lnt">11
-&lt;/span>&lt;span class="lnt">12
-&lt;/span>&lt;span class="lnt">13
-&lt;/span>&lt;span class="lnt">14
-&lt;/span>&lt;span class="lnt">15
-&lt;/span>&lt;span class="lnt">16
-&lt;/span>&lt;span class="lnt">17
-&lt;/span>&lt;span class="lnt">18
-&lt;/span>&lt;span class="lnt">19
-&lt;/span>&lt;span class="lnt">20
-&lt;/span>&lt;span class="lnt">21
-&lt;/span>&lt;span class="lnt">22
-&lt;/span>&lt;span class="lnt">23
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-php" data-lang="php">&lt;span class="line">&lt;span class="cl"> &lt;span class="sd">/**
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> * 注入依赖，用于单元测试
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> *
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> * @return void
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> * @author donieli
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> * @since 5
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> * @version 5
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> */&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">public&lt;/span> &lt;span class="k">function&lt;/span> &lt;span class="nf">injectDependencies&lt;/span>&lt;span class="p">()&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nv">$reflector&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="k">new&lt;/span> &lt;span class="nx">\ReflectionClass&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">get_class&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$this&lt;/span>&lt;span class="p">));&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nv">$params&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nv">$reflector&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="na">getConstructor&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="na">getParameters&lt;/span>&lt;span class="p">();&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nv">$args&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="p">[];&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">foreach&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nv">$params&lt;/span> &lt;span class="k">as&lt;/span> &lt;span class="nv">$param&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nv">$paramClass&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nv">$param&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="na">getClass&lt;/span>&lt;span class="p">();&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="k">empty&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$paramClass&lt;/span>&lt;span class="p">))&lt;/span> &lt;span class="p">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">throw&lt;/span> &lt;span class="k">new&lt;/span> &lt;span class="nx">\Exception&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;Dependency named &amp;#39;&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="nv">$param&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="na">getName&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="s1">&amp;#39; cannot be injected.&amp;#39;&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nv">$instance&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">app&lt;/span>&lt;span class="p">()&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="na">make&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$paramClass&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="na">getName&lt;/span>&lt;span class="p">());&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nv">$args&lt;/span>&lt;span class="p">[]&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nv">$instance&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">call_user_func_array&lt;/span>&lt;span class="p">([&lt;/span>&lt;span class="nv">$this&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;__construct&amp;#39;&lt;/span>&lt;span class="p">],&lt;/span> &lt;span class="nv">$args&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>然后就可以这样处理：&lt;/p></description></item><item><title>Laravel单元测试错误：1205 Lock wait timeout exceeded</title><link>http://0x3f.org/posts/1205-lock-wait-timeout-exceeded/</link><pubDate>Fri, 22 Dec 2017 15:47:32 +0000</pubDate><guid>http://0x3f.org/posts/1205-lock-wait-timeout-exceeded/</guid><description>&lt;p>错误信息：&lt;/p>
-&lt;blockquote>
-&lt;p>1205 Lock wait timeout exceeded; try restarting transaction&lt;/p>&lt;/blockquote>
-&lt;p>原因之一是测试用例里重写的tearDown()方法中没有调用父类的该方法。因为DatabaseTransaction这个trait自动开启了事务，对应的回滚方法在测试用例基类的tearDown()中执行。&lt;/p></description></item><item><title>测试驱动开发的实际收益</title><link>http://0x3f.org/posts/the-real-income-of-tdd/</link><pubDate>Sun, 17 Dec 2017 14:20:02 +0000</pubDate><guid>http://0x3f.org/posts/the-real-income-of-tdd/</guid><description>&lt;p>我并不试图系统地谈TDD，因为我在这方面的经验还不足以做到这一点。但是TDD的一些方法论和工具确实解决了我在实际开发过程中遇到的一些问题。&lt;/p>
-&lt;p>第一个问题是健壮性。尤其是对于我这样思维发散、容易迷失又喜欢重构的人，TDD给了我一个明确的目标，在一切刚开始的时候，我要做的只是满足测试用例，让它们由红变绿。到了重构阶段，我就可以把精力放到优化代码上面，且不必对健壮性有过多的担心。在此之前，由于手动测试比较麻烦，很多时候惰性会说服潜意识告诉自己这部分逻辑很简单、不会有什么bug，结果提交测试后却一再地发生问题。&lt;/p>
-&lt;p>第二个问题是效率。曾经只有不忙的时候才会写测试用例，但是现在一般都会写，因为确实可以提高开发效率，而不只是保证重构的健壮性。可能对于所有对单元测试不熟悉的人来说，这都是匪夷所思的，我也曾认为单元测试只是用来保证健壮性的，必然和开发效率是一对矛盾，因为要花很多时间写测试代码。这种想法首先是因为对单元测试不熟悉，所以才需要花很多时间在上面。其次是没有看到它所带来的好处。&lt;/p>
-&lt;p>例如你要实现一整套退款单的功能，退款单是依赖订单的，这意味著你需要不只一条符合条件的订单数据。但是订单是有状态的，随著时间的推移、人为的操作或者开发过程中程序的影响，状态会变得不再符合你的要求，这时候你就必须停下来去做更多符合要求的订单。而创建订单也存在很多麻烦，你需要找到有库存的商品，有时候还要去库管系统中补充库存，然后下单并支付。最后花了很多时间做出来的订单，因为正在开发的退款单的程序出现的一个小问题变得不能使用！时间被大量浪费在创建所依赖的上游数据上。&lt;/p>
-&lt;p>这时候如果用单元测试并mock出依赖关系，就可以随时随地、无限制地执行相关的业务逻辑。对效率的提高不言而喻。&lt;/p>
-&lt;p>特别的，mock并不是随时可以抓起的救命稻草，它的原罪在于：不负责任地滥用mock会导致很多问题被掩盖。因此，对mock的使用应该是节制的、目标明确的。&lt;/p>
-&lt;p>当然，这并不包括单纯地为了提高代码覆盖率而使用mock，只所以这是个在很多强制TDD的团队里的普遍现象，归根结底是因为KPI是万恶之源，任何好的方法论，一旦沦为KPI，就离死不远了。&lt;/p></description></item><item><title>用vim-test简化单元测试的编写</title><link>http://0x3f.org/posts/make-writing-unit-tests-easier-with-vim-test/</link><pubDate>Mon, 14 Aug 2017 16:43:59 +0000</pubDate><guid>http://0x3f.org/posts/make-writing-unit-tests-easier-with-vim-test/</guid><description>&lt;p>vim-test允许在Vim中直接执行一个或多个单元测试，并使用预设的或自定义的执行策略。&lt;/p>
-&lt;p>例如，命令&lt;code>:TestNearest&lt;/code>可以执行当前测试文件中离光标最近的一个测试方法。而&lt;code>:TestFile&lt;/code>、&lt;code>:TestSuite&lt;/code>和&lt;code>:TestLast&lt;/code>分别执行整个测试文件、测试项目和最近一次执行过的测试。这在编写测试代码时能很大地提高效率。&lt;/p>
-&lt;p>执行策略是执行测试的方式和环境。例如缺省状态下，将使用&lt;code>:!&lt;/code>执行测试命令，这会从Vim切换回终端。而在MacVim下，可以选择在iTerm或者系统自带的Terminal中执行。&lt;/p></description></item><item><title>Mock Laravel的DB Facade的方法</title><link>http://0x3f.org/posts/how-to-mock-the-db-facade-of-laravel/</link><pubDate>Mon, 14 Aug 2017 15:51:41 +0000</pubDate><guid>http://0x3f.org/posts/how-to-mock-the-db-facade-of-laravel/</guid><description>&lt;p>关于数据库操作是否应该mock的问题，我认为查询一般不应该mock，可以避免一些问题，但如果查询的结果可能影响到断言，就应该mock了。&lt;/p>
-&lt;p>Laravel的DB facade完整的mock实例是这样的：&lt;/p>
-&lt;script src="https://gist.github.com/xbot/d0ace9c1ebdb161adf229c9a9c62f2bf.js">&lt;/script></description></item><item><title>PHPUnit代码覆盖率的统计方法</title><link>http://0x3f.org/posts/how-to-count-code-coverage-of-phpunit/</link><pubDate>Sun, 30 Apr 2017 14:20:41 +0000</pubDate><guid>http://0x3f.org/posts/how-to-count-code-coverage-of-phpunit/</guid><description>&lt;p>关于PHPUnit代码覆盖率的很多概念，官方文档中讲的十分清楚，本文仅就部分语焉不详的细节做些补充。&lt;/p>
-&lt;p>虽然phpunit.xml不是必需，但每次都输入完整的命令很不方便，所以一般都要生成这个配置文件。用&lt;code>phpunit --generate-configuration&lt;/code>生成的phpunit.xml默认包含&lt;code>forceCoversAnnotation=&amp;quot;true&amp;quot;&lt;/code>，它表示必须在测试方法头部的注释里显式使用&lt;code>@covers&lt;/code>标签声明统计范围，例如：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
-&lt;/span>&lt;span class="lnt"> 2
-&lt;/span>&lt;span class="lnt"> 3
-&lt;/span>&lt;span class="lnt"> 4
-&lt;/span>&lt;span class="lnt"> 5
-&lt;/span>&lt;span class="lnt"> 6
-&lt;/span>&lt;span class="lnt"> 7
-&lt;/span>&lt;span class="lnt"> 8
-&lt;/span>&lt;span class="lnt"> 9
-&lt;/span>&lt;span class="lnt">10
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-php" data-lang="php">&lt;span class="line">&lt;span class="cl">&lt;span class="sd">/**
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> * @covers Ox3f\LaravelUtils\Log\Log::&amp;lt;public&amp;gt;
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> * @covers Ox3f\LaravelUtils\Log\Log::parseCallStack
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> * @covers Ox3f\LaravelUtils\Log\Log::__construct
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> * @covers Ox3f\LaravelUtils\Log\Log::__callStatic
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> */&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">public&lt;/span> &lt;span class="k">function&lt;/span> &lt;span class="nf">testAll&lt;/span>&lt;span class="p">()&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// ...
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="p">}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>否则在执行统计代码覆盖率的命令时，会报risk：&lt;/p>
-&lt;blockquote>
-&lt;p>There was 1 risky test:&lt;/p>
-&lt;ol>
-&lt;li>Ox3f\LaravelUtils\Log\LogTest::testAll
-This test does not have a @covers annotation but is expected to have one&lt;/li>
-&lt;/ol>&lt;/blockquote>
-&lt;p>如果希望单元测试覆盖全部代码、且不用一一显式声明，可以将此选项的值改成
-&lt;code>false&lt;/code>。&lt;/p></description></item><item><title>Phalcon项目中PHPUnit的初始化</title><link>http://0x3f.org/posts/testing-with-phpunit-in-phalcon/</link><pubDate>Sat, 29 Nov 2014 09:58:00 +0000</pubDate><guid>http://0x3f.org/posts/testing-with-phpunit-in-phalcon/</guid><description>&lt;p>参考&lt;a href="http://docs.phalconphp.com/zh/latest/reference/unit-testing.html">官方文档&lt;/a>，稍作修改。&lt;/p>
-&lt;p>在项目下创建目录 unittests ，进入目录执行：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">composer require phpunit/phpunit
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>创建 tests 目录并在其中创建文件 Bootstrap.php ：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
-&lt;/span>&lt;span class="lnt"> 2
-&lt;/span>&lt;span class="lnt"> 3
-&lt;/span>&lt;span class="lnt"> 4
-&lt;/span>&lt;span class="lnt"> 5
-&lt;/span>&lt;span class="lnt"> 6
-&lt;/span>&lt;span class="lnt"> 7
-&lt;/span>&lt;span class="lnt"> 8
-&lt;/span>&lt;span class="lnt"> 9
-&lt;/span>&lt;span class="lnt">10
-&lt;/span>&lt;span class="lnt">11
-&lt;/span>&lt;span class="lnt">12
-&lt;/span>&lt;span class="lnt">13
-&lt;/span>&lt;span class="lnt">14
-&lt;/span>&lt;span class="lnt">15
-&lt;/span>&lt;span class="lnt">16
-&lt;/span>&lt;span class="lnt">17
-&lt;/span>&lt;span class="lnt">18
-&lt;/span>&lt;span class="lnt">19
-&lt;/span>&lt;span class="lnt">20
-&lt;/span>&lt;span class="lnt">21
-&lt;/span>&lt;span class="lnt">22
-&lt;/span>&lt;span class="lnt">23
-&lt;/span>&lt;span class="lnt">24
-&lt;/span>&lt;span class="lnt">25
-&lt;/span>&lt;span class="lnt">26
-&lt;/span>&lt;span class="lnt">27
-&lt;/span>&lt;span class="lnt">28
-&lt;/span>&lt;span class="lnt">29
-&lt;/span>&lt;span class="lnt">30
-&lt;/span>&lt;span class="lnt">31
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-php" data-lang="php">&lt;span class="line">&lt;span class="cl">&lt;span class="o">&amp;lt;?&lt;/span>&lt;span class="nx">php&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">use&lt;/span> &lt;span class="nx">Phalcon\DI&lt;/span>&lt;span class="p">,&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">Phalcon\DI\FactoryDefault&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">ini_set&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;display_errors&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">error_reporting&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="k">E_ALL&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">define&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;ROOT_PATH&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="no">__DIR__&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">define&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;PROJECT_DIR&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;/home/taoqi/workspace&amp;#39;&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">set_include_path&lt;/span>&lt;span class="p">(&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">ROOT_PATH&lt;/span> &lt;span class="o">.&lt;/span> &lt;span class="nx">PATH_SEPARATOR&lt;/span> &lt;span class="o">.&lt;/span> &lt;span class="nx">get_include_path&lt;/span>&lt;span class="p">()&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">);&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// required for phalcon/incubator
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="k">include&lt;/span> &lt;span class="no">__DIR__&lt;/span> &lt;span class="o">.&lt;/span> &lt;span class="s2">&amp;#34;/../vendor/autoload.php&amp;#34;&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// 加载项目文件
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="nv">$config&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="k">require_once&lt;/span> &lt;span class="nx">PROJECT_DIR&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="s1">&amp;#39;/web/config/config.php&amp;#39;&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">require_once&lt;/span> &lt;span class="nx">PROJECT_DIR&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="s1">&amp;#39;/web/config/loader.php&amp;#39;&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">$loader&lt;/span>&lt;span class="o">-&amp;gt;&lt;/span>&lt;span class="na">registerDirs&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="k">array&lt;/span>&lt;span class="p">(&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nx">ROOT_PATH&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">),&lt;/span> &lt;span class="k">true&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// $di = new FactoryDefault();
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="nx">DI&lt;/span>&lt;span class="o">::&lt;/span>&lt;span class="na">reset&lt;/span>&lt;span class="p">();&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// add any needed services to the DI here
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="k">require_once&lt;/span> &lt;span class="nx">PROJECT_DIR&lt;/span>&lt;span class="o">.&lt;/span>&lt;span class="s1">&amp;#39;/web/config/services.php&amp;#39;&lt;/span>&lt;span class="p">;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nx">DI&lt;/span>&lt;span class="o">::&lt;/span>&lt;span class="na">setDefault&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$di&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>安装 phalcon 的 phpunit 辅助库：&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>单元测试 on 晴耕雨讀</title><link>http://0x3f.org/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/</link><description>Recent content in 单元测试 on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Thu, 23 Jun 2022 14:42:34 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/index.xml" rel="self" type="application/rss+xml"/><item><title>解决 PHPUnit 生成代码覆盖报告时抛出重复定义类的错误的办法</title><link>http://0x3f.org/posts/the-solution-of-class-redeclaration-error-raised-while-generating-php-code-coverage-report/</link><pubDate>Thu, 23 Jun 2022 14:42:34 +0800</pubDate><guid>http://0x3f.org/posts/the-solution-of-class-redeclaration-error-raised-while-generating-php-code-coverage-report/</guid><description>&lt;p&gt;在生成 Cobertura 格式的代码覆盖报告时程序报了如下错误：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Generating code coverage report in Cobertura XML format &amp;hellip; PHP Fatal error: Cannot declare class App\FakeNamespace\GenericProvider, because the name is already in use in /builds/fake_project/app/FakeNamespace/GenericProvider.php on line 17&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;对应的代码和单元测试执行均无问题。&lt;/p&gt;
+&lt;p&gt;经排查，直接原因是使用了 Mockery 的 &lt;a href="http://docs.mockery.io/en/latest/reference/instance_mocking.html"&gt;Instance Mocking&lt;/a&gt; &lt;sup id="fnref:1"&gt;&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref"&gt;1&lt;/a&gt;&lt;/sup&gt;特性 mock 代码中的硬依赖关系（&lt;a href="https://robertbasic.com/blog/mocking-hard-dependencies-with-mockery/"&gt;Hard Dependency&lt;/a&gt;）。&lt;/p&gt;
+&lt;p&gt;该特性的实现利用了类的自动加载机制和依赖注入技术。对依赖关系 mock 的实例保存在 Mockery 的容器中，同时生成一个 stub 文件：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-php" data-lang="php"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;&amp;lt;?&lt;/span&gt;&lt;span class="nx"&gt;php&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;namespace&lt;/span&gt; &lt;span class="nx"&gt;Mockery&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;Mockery_App_FakeNamespace_GenericProvider&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;private&lt;/span&gt; &lt;span class="nx"&gt;Container&lt;/span&gt; &lt;span class="nv"&gt;$container&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;function&lt;/span&gt; &lt;span class="nf"&gt;doSomething&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;$param&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// internal code check expectations
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nv"&gt;$this&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="na"&gt;container&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="na"&gt;get&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;App\FakeNamespace\GenericProvider::doSomething&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="na"&gt;expectations&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;当代码中实例化这个类的时候，Mockery 自动加载该文件，从而代替了对原类文件的加载。&lt;/p&gt;</description></item><item><title>在 VS Code 中快速创建 PHPUnit 测试类的方法</title><link>http://0x3f.org/posts/quickly-create-phpunit-test-cases-with-vscode/</link><pubDate>Tue, 18 Feb 2020 22:49:45 +0000</pubDate><guid>http://0x3f.org/posts/quickly-create-phpunit-test-cases-with-vscode/</guid><description>&lt;p&gt;通过单元测试解决问题或者调试代码，可以避开错综复杂的依赖关系、直击问题的核心，从而极大地节约时间、提高效率。&lt;/p&gt;
+&lt;p&gt;但是，当创建测试类成为一个经常发生的操作时，每次都手动创建类、引入基类、添加测试方法就显得很烦琐。我需要这样一个解决方案，让我可以立即开始着手写测试代码。&lt;/p&gt;</description></item><item><title>解决Laravel中makeWith()无法取到被mock的实例的问题</title><link>http://0x3f.org/posts/mocking-objects-made-by-laravel-container-with-parameters/</link><pubDate>Fri, 16 Aug 2019 10:55:40 +0000</pubDate><guid>http://0x3f.org/posts/mocking-objects-made-by-laravel-container-with-parameters/</guid><description>&lt;p&gt;被测单元有一行实例化一个类的代码，而且该类的构造方法需要参数。基于面向单元测试编程的原则，通过容器的makeWith()方法实现：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-php" data-lang="php"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;$api&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;app&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="na"&gt;makeWith&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;Api&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="na"&gt;class&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;config&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="nv"&gt;$config&lt;/span&gt;&lt;span class="p"&gt;]);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;但是在执行单元测试时发现，虽然测试代码中已经mock了这个类且注入到容器，但在被测单元中取到的还是原类的实例。&lt;/p&gt;</description></item><item><title>利用单元测试为开发提效</title><link>http://0x3f.org/posts/use-unit-test-as-an-efficiency-tool/</link><pubDate>Tue, 13 Aug 2019 16:38:02 +0000</pubDate><guid>http://0x3f.org/posts/use-unit-test-as-an-efficiency-tool/</guid><description>&lt;p&gt;单元测试可以方便地伪造和回滚测试数据，这个特性决定了它其实是一个效率工具。&lt;/p&gt;
+&lt;p&gt;例如在开发退款单、发票的时候，由于这种后置的功能依赖订单、支付、库存等前置的数据，因此需要频繁地创建这些测试数据，这就导致开发的效率极低，有时甚至需要切换多个系统做诸如增加库存、下单、支付等操作。虽然在开发环境可以通过直接修改数据使之恢复可被测试的状态，但仍然存在效率很低、遗留垃圾数据和存在隐患等问题。&lt;/p&gt;
+&lt;p&gt;单元测试可以完美地解决这些问题。&lt;/p&gt;</description></item><item><title>面向单元测试编程</title><link>http://0x3f.org/posts/unit-test-oriented-programming/</link><pubDate>Tue, 13 Aug 2019 16:35:15 +0000</pubDate><guid>http://0x3f.org/posts/unit-test-oriented-programming/</guid><description>&lt;p&gt;同一逻辑可以有多种实现方式，选择对单元测试友好的方式可以提高写测试代码的效率。&lt;/p&gt;</description></item><item><title>PHP单元测试的技巧</title><link>http://0x3f.org/posts/phpunit-tips/</link><pubDate>Tue, 13 Aug 2019 14:21:48 +0000</pubDate><guid>http://0x3f.org/posts/phpunit-tips/</guid><description>&lt;p&gt;以下是我平时写单元测试时总结的一些最佳实践，有些是和具体的框架强相关的。&lt;/p&gt;</description></item><item><title>Lumen单元测试提示自定义校验规则不存在的问题</title><link>http://0x3f.org/posts/unit-test-in-laravel-complains-validation-rule-not-exist/</link><pubDate>Fri, 02 Aug 2019 15:12:17 +0000</pubDate><guid>http://0x3f.org/posts/unit-test-in-laravel-complains-validation-rule-not-exist/</guid><description>&lt;p&gt;执行单元测试时遇到报错：&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;BadMethodCallException: Method [validateIdList] does not exist.
+&lt;/code&gt;&lt;/pre&gt;</description></item><item><title>基于Laravel的项目的单元测试规范</title><link>http://0x3f.org/posts/unit-testing-standard-for-laravel-based-projects/</link><pubDate>Sun, 24 Mar 2019 22:42:08 +0000</pubDate><guid>http://0x3f.org/posts/unit-testing-standard-for-laravel-based-projects/</guid><description>&lt;p&gt;单元测试是个好东西，解决了我很多问题，不论开发效率还是代码质量，都给我助益良多。最近想在团队内部推广，就拟了个规范草稿：&lt;/p&gt;</description></item><item><title>解决Laravel的Facade在被Mock时不自动注入依赖的一种方法</title><link>http://0x3f.org/posts/manual-dependency-injection-with-laravel/</link><pubDate>Tue, 30 Jan 2018 15:41:16 +0000</pubDate><guid>http://0x3f.org/posts/manual-dependency-injection-with-laravel/</guid><description>&lt;p&gt;由于集成了Mockery，Laravel的Facade对单元测试非常友好，只需要一行代码就能实现mocking。&lt;/p&gt;
+&lt;p&gt;例如，测试目标方法中调用了订单工具类的一个方法，在使用依赖注入的方式时，需要用三行代码实现对这个方法的mocking：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-php" data-lang="php"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;$fakeOrderTool&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;m&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="na"&gt;mock&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;\App\Tool\Order&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="na"&gt;class&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;$fakeOrderTool&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="na"&gt;shouldReceive&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;getById&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="na"&gt;once&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="na"&gt;with&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;$id&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="na"&gt;andReturn&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;$fakeOrder&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;$this&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="na"&gt;app&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="na"&gt;instance&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;\App\Tool\Order&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="na"&gt;class&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;$fakeOrderTool&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;而用Facade是这样的：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-php" data-lang="php"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;OrderFacade&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="na"&gt;shouldReceive&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;getById&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="na"&gt;once&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="na"&gt;with&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;$id&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="na"&gt;andReturn&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;$fakeOrder&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;当测试目标方法也属于订单工具类时，需要部分mock这个类，所以还要加上一行：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-php" data-lang="php"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;OrderFacade&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="na"&gt;makePartial&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;但如果订单工具类的构造方法里有需要注入的依赖关系，这里并不会被执行。所以我在工具类基类里封装了一个方法，用反射机制实现手工注入依赖关系：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;span class="lnt"&gt;22
+&lt;/span&gt;&lt;span class="lnt"&gt;23
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-php" data-lang="php"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="sd"&gt;/**
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; * 注入依赖，用于单元测试
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; *
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; * @return void
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; * @author donieli
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; * @since 5
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; * @version 5
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; */&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;public&lt;/span&gt; &lt;span class="k"&gt;function&lt;/span&gt; &lt;span class="nf"&gt;injectDependencies&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nv"&gt;$reflector&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;\ReflectionClass&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;get_class&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;$this&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nv"&gt;$params&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nv"&gt;$reflector&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="na"&gt;getConstructor&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="na"&gt;getParameters&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nv"&gt;$args&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[];&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;foreach&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;$params&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="nv"&gt;$param&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nv"&gt;$paramClass&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nv"&gt;$param&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="na"&gt;getClass&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;empty&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;$paramClass&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;throw&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;\Exception&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Dependency named &amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="nv"&gt;$param&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="na"&gt;getName&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39; cannot be injected.&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nv"&gt;$instance&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;app&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="na"&gt;make&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;$paramClass&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="na"&gt;getName&lt;/span&gt;&lt;span class="p"&gt;());&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nv"&gt;$args&lt;/span&gt;&lt;span class="p"&gt;[]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nv"&gt;$instance&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;call_user_func_array&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="nv"&gt;$this&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;__construct&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="nv"&gt;$args&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;然后就可以这样处理：&lt;/p&gt;</description></item><item><title>Laravel单元测试错误：1205 Lock wait timeout exceeded</title><link>http://0x3f.org/posts/1205-lock-wait-timeout-exceeded/</link><pubDate>Fri, 22 Dec 2017 15:47:32 +0000</pubDate><guid>http://0x3f.org/posts/1205-lock-wait-timeout-exceeded/</guid><description>&lt;p&gt;错误信息：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;1205 Lock wait timeout exceeded; try restarting transaction&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;原因之一是测试用例里重写的tearDown()方法中没有调用父类的该方法。因为DatabaseTransaction这个trait自动开启了事务，对应的回滚方法在测试用例基类的tearDown()中执行。&lt;/p&gt;</description></item><item><title>测试驱动开发的实际收益</title><link>http://0x3f.org/posts/the-real-income-of-tdd/</link><pubDate>Sun, 17 Dec 2017 14:20:02 +0000</pubDate><guid>http://0x3f.org/posts/the-real-income-of-tdd/</guid><description>&lt;p&gt;我并不试图系统地谈TDD，因为我在这方面的经验还不足以做到这一点。但是TDD的一些方法论和工具确实解决了我在实际开发过程中遇到的一些问题。&lt;/p&gt;
+&lt;p&gt;第一个问题是健壮性。尤其是对于我这样思维发散、容易迷失又喜欢重构的人，TDD给了我一个明确的目标，在一切刚开始的时候，我要做的只是满足测试用例，让它们由红变绿。到了重构阶段，我就可以把精力放到优化代码上面，且不必对健壮性有过多的担心。在此之前，由于手动测试比较麻烦，很多时候惰性会说服潜意识告诉自己这部分逻辑很简单、不会有什么bug，结果提交测试后却一再地发生问题。&lt;/p&gt;
+&lt;p&gt;第二个问题是效率。曾经只有不忙的时候才会写测试用例，但是现在一般都会写，因为确实可以提高开发效率，而不只是保证重构的健壮性。可能对于所有对单元测试不熟悉的人来说，这都是匪夷所思的，我也曾认为单元测试只是用来保证健壮性的，必然和开发效率是一对矛盾，因为要花很多时间写测试代码。这种想法首先是因为对单元测试不熟悉，所以才需要花很多时间在上面。其次是没有看到它所带来的好处。&lt;/p&gt;
+&lt;p&gt;例如你要实现一整套退款单的功能，退款单是依赖订单的，这意味著你需要不只一条符合条件的订单数据。但是订单是有状态的，随著时间的推移、人为的操作或者开发过程中程序的影响，状态会变得不再符合你的要求，这时候你就必须停下来去做更多符合要求的订单。而创建订单也存在很多麻烦，你需要找到有库存的商品，有时候还要去库管系统中补充库存，然后下单并支付。最后花了很多时间做出来的订单，因为正在开发的退款单的程序出现的一个小问题变得不能使用！时间被大量浪费在创建所依赖的上游数据上。&lt;/p&gt;
+&lt;p&gt;这时候如果用单元测试并mock出依赖关系，就可以随时随地、无限制地执行相关的业务逻辑。对效率的提高不言而喻。&lt;/p&gt;
+&lt;p&gt;特别的，mock并不是随时可以抓起的救命稻草，它的原罪在于：不负责任地滥用mock会导致很多问题被掩盖。因此，对mock的使用应该是节制的、目标明确的。&lt;/p&gt;
+&lt;p&gt;当然，这并不包括单纯地为了提高代码覆盖率而使用mock，只所以这是个在很多强制TDD的团队里的普遍现象，归根结底是因为KPI是万恶之源，任何好的方法论，一旦沦为KPI，就离死不远了。&lt;/p&gt;</description></item><item><title>用vim-test简化单元测试的编写</title><link>http://0x3f.org/posts/make-writing-unit-tests-easier-with-vim-test/</link><pubDate>Mon, 14 Aug 2017 16:43:59 +0000</pubDate><guid>http://0x3f.org/posts/make-writing-unit-tests-easier-with-vim-test/</guid><description>&lt;p&gt;vim-test允许在Vim中直接执行一个或多个单元测试，并使用预设的或自定义的执行策略。&lt;/p&gt;
+&lt;p&gt;例如，命令&lt;code&gt;:TestNearest&lt;/code&gt;可以执行当前测试文件中离光标最近的一个测试方法。而&lt;code&gt;:TestFile&lt;/code&gt;、&lt;code&gt;:TestSuite&lt;/code&gt;和&lt;code&gt;:TestLast&lt;/code&gt;分别执行整个测试文件、测试项目和最近一次执行过的测试。这在编写测试代码时能很大地提高效率。&lt;/p&gt;
+&lt;p&gt;执行策略是执行测试的方式和环境。例如缺省状态下，将使用&lt;code&gt;:!&lt;/code&gt;执行测试命令，这会从Vim切换回终端。而在MacVim下，可以选择在iTerm或者系统自带的Terminal中执行。&lt;/p&gt;</description></item><item><title>Mock Laravel的DB Facade的方法</title><link>http://0x3f.org/posts/how-to-mock-the-db-facade-of-laravel/</link><pubDate>Mon, 14 Aug 2017 15:51:41 +0000</pubDate><guid>http://0x3f.org/posts/how-to-mock-the-db-facade-of-laravel/</guid><description>&lt;p&gt;关于数据库操作是否应该mock的问题，我认为查询一般不应该mock，可以避免一些问题，但如果查询的结果可能影响到断言，就应该mock了。&lt;/p&gt;
+&lt;p&gt;Laravel的DB facade完整的mock实例是这样的：&lt;/p&gt;
+&lt;script src="https://gist.github.com/xbot/d0ace9c1ebdb161adf229c9a9c62f2bf.js"&gt;&lt;/script&gt;</description></item><item><title>PHPUnit代码覆盖率的统计方法</title><link>http://0x3f.org/posts/how-to-count-code-coverage-of-phpunit/</link><pubDate>Sun, 30 Apr 2017 14:20:41 +0000</pubDate><guid>http://0x3f.org/posts/how-to-count-code-coverage-of-phpunit/</guid><description>&lt;p&gt;关于PHPUnit代码覆盖率的很多概念，官方文档中讲的十分清楚，本文仅就部分语焉不详的细节做些补充。&lt;/p&gt;
+&lt;p&gt;虽然phpunit.xml不是必需，但每次都输入完整的命令很不方便，所以一般都要生成这个配置文件。用&lt;code&gt;phpunit --generate-configuration&lt;/code&gt;生成的phpunit.xml默认包含&lt;code&gt;forceCoversAnnotation=&amp;quot;true&amp;quot;&lt;/code&gt;，它表示必须在测试方法头部的注释里显式使用&lt;code&gt;@covers&lt;/code&gt;标签声明统计范围，例如：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-php" data-lang="php"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt;/**
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; * @covers Ox3f\LaravelUtils\Log\Log::&amp;lt;public&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; * @covers Ox3f\LaravelUtils\Log\Log::parseCallStack
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; * @covers Ox3f\LaravelUtils\Log\Log::__construct
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; * @covers Ox3f\LaravelUtils\Log\Log::__callStatic
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; */&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;public&lt;/span&gt; &lt;span class="k"&gt;function&lt;/span&gt; &lt;span class="nf"&gt;testAll&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// ...
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;否则在执行统计代码覆盖率的命令时，会报risk：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;There was 1 risky test:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Ox3f\LaravelUtils\Log\LogTest::testAll
+This test does not have a @covers annotation but is expected to have one&lt;/li&gt;
+&lt;/ol&gt;&lt;/blockquote&gt;
+&lt;p&gt;如果希望单元测试覆盖全部代码、且不用一一显式声明，可以将此选项的值改成
+&lt;code&gt;false&lt;/code&gt;。&lt;/p&gt;</description></item><item><title>Phalcon项目中PHPUnit的初始化</title><link>http://0x3f.org/posts/testing-with-phpunit-in-phalcon/</link><pubDate>Sat, 29 Nov 2014 09:58:00 +0000</pubDate><guid>http://0x3f.org/posts/testing-with-phpunit-in-phalcon/</guid><description>&lt;p&gt;参考&lt;a href="http://docs.phalconphp.com/zh/latest/reference/unit-testing.html"&gt;官方文档&lt;/a&gt;，稍作修改。&lt;/p&gt;
+&lt;p&gt;在项目下创建目录 unittests ，进入目录执行：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;composer require phpunit/phpunit
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;创建 tests 目录并在其中创建文件 Bootstrap.php ：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;span class="lnt"&gt;22
+&lt;/span&gt;&lt;span class="lnt"&gt;23
+&lt;/span&gt;&lt;span class="lnt"&gt;24
+&lt;/span&gt;&lt;span class="lnt"&gt;25
+&lt;/span&gt;&lt;span class="lnt"&gt;26
+&lt;/span&gt;&lt;span class="lnt"&gt;27
+&lt;/span&gt;&lt;span class="lnt"&gt;28
+&lt;/span&gt;&lt;span class="lnt"&gt;29
+&lt;/span&gt;&lt;span class="lnt"&gt;30
+&lt;/span&gt;&lt;span class="lnt"&gt;31
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-php" data-lang="php"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;&amp;lt;?&lt;/span&gt;&lt;span class="nx"&gt;php&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;use&lt;/span&gt; &lt;span class="nx"&gt;Phalcon\DI&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;Phalcon\DI\FactoryDefault&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;ini_set&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;display_errors&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;error_reporting&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;E_ALL&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;define&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;ROOT_PATH&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;__DIR__&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;define&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;PROJECT_DIR&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;/home/taoqi/workspace&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;set_include_path&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;ROOT_PATH&lt;/span&gt; &lt;span class="o"&gt;.&lt;/span&gt; &lt;span class="nx"&gt;PATH_SEPARATOR&lt;/span&gt; &lt;span class="o"&gt;.&lt;/span&gt; &lt;span class="nx"&gt;get_include_path&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// required for phalcon/incubator
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt;&lt;span class="k"&gt;include&lt;/span&gt; &lt;span class="no"&gt;__DIR__&lt;/span&gt; &lt;span class="o"&gt;.&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;/../vendor/autoload.php&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// 加载项目文件
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt;&lt;span class="nv"&gt;$config&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;require_once&lt;/span&gt; &lt;span class="nx"&gt;PROJECT_DIR&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/web/config/config.php&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;require_once&lt;/span&gt; &lt;span class="nx"&gt;PROJECT_DIR&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/web/config/loader.php&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nv"&gt;$loader&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="na"&gt;registerDirs&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;array&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nx"&gt;ROOT_PATH&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="k"&gt;true&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// $di = new FactoryDefault();
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt;&lt;span class="nx"&gt;DI&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="na"&gt;reset&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// add any needed services to the DI here
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;&lt;/span&gt;&lt;span class="k"&gt;require_once&lt;/span&gt; &lt;span class="nx"&gt;PROJECT_DIR&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;/web/config/services.php&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;DI&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="na"&gt;setDefault&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;$di&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;安装 phalcon 的 phpunit 辅助库：&lt;/p&gt;</description></item></channel></rss>

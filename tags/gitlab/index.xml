@@ -1,23 +1,23 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Gitlab on 晴耕雨讀</title><link>http://0x3f.org/tags/gitlab/</link><description>Recent content in Gitlab on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Sat, 28 Mar 2020 23:17:45 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/gitlab/index.xml" rel="self" type="application/rss+xml"/><item><title>用 SSH 命令调试 Git 的连接问题</title><link>http://0x3f.org/posts/debug-git-connection-with-ssh/</link><pubDate>Sat, 28 Mar 2020 23:17:45 +0000</pubDate><guid>http://0x3f.org/posts/debug-git-connection-with-ssh/</guid><description>&lt;p>昨天执行&lt;code>git pull&lt;/code>的时候发现会一直卡在那儿，排除了各种可能，而且 Github 上的项目也是可以正常拉取的，说明跟网络、代理等关系应该不大，git 命令本身也工作正常。&lt;/p>
-&lt;p>问题集中在公司的项目上，所有项目都无法拉取代码。起先怀疑是公司自建的 Gitlab 出了问题，但是其他人那里又是正常的，甚至跟我同一局域网的电脑上也是正常的。&lt;/p>
-&lt;p>也就是说问题应该出在我自己的电脑上。考虑到前两天还能正常使用，之后唯一一件相关的事就是升级 macOS 到 10.15.4 了。&lt;/p>
-&lt;p>然而用 Homebrew 重新安装 git 等相关的几个包也没能解决问题，于是用&lt;code>ssh -T -v git@gitlab.xxx.com -p 8848&lt;/code>调试，输出如下：&lt;/p>
-&lt;pre tabindex="0">&lt;code>donie@Donies  ~  ssh -T -v git@gitlab.xxx.com -p 8848
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Gitlab on 晴耕雨讀</title><link>http://0x3f.org/tags/gitlab/</link><description>Recent content in Gitlab on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Sat, 28 Mar 2020 23:17:45 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/gitlab/index.xml" rel="self" type="application/rss+xml"/><item><title>用 SSH 命令调试 Git 的连接问题</title><link>http://0x3f.org/posts/debug-git-connection-with-ssh/</link><pubDate>Sat, 28 Mar 2020 23:17:45 +0000</pubDate><guid>http://0x3f.org/posts/debug-git-connection-with-ssh/</guid><description>&lt;p&gt;昨天执行&lt;code&gt;git pull&lt;/code&gt;的时候发现会一直卡在那儿，排除了各种可能，而且 Github 上的项目也是可以正常拉取的，说明跟网络、代理等关系应该不大，git 命令本身也工作正常。&lt;/p&gt;
+&lt;p&gt;问题集中在公司的项目上，所有项目都无法拉取代码。起先怀疑是公司自建的 Gitlab 出了问题，但是其他人那里又是正常的，甚至跟我同一局域网的电脑上也是正常的。&lt;/p&gt;
+&lt;p&gt;也就是说问题应该出在我自己的电脑上。考虑到前两天还能正常使用，之后唯一一件相关的事就是升级 macOS 到 10.15.4 了。&lt;/p&gt;
+&lt;p&gt;然而用 Homebrew 重新安装 git 等相关的几个包也没能解决问题，于是用&lt;code&gt;ssh -T -v git@gitlab.xxx.com -p 8848&lt;/code&gt;调试，输出如下：&lt;/p&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;donie@Donies  ~  ssh -T -v git@gitlab.xxx.com -p 8848
 OpenSSH_8.1p1, LibreSSL 2.7.3
 debug1: Reading configuration data /Users/donie/.ssh/config
 debug1: /Users/donie/.ssh/config line 9: Applying options for gitlab.xxx.com
 debug1: Reading configuration data /etc/ssh/ssh_config
 debug1: /etc/ssh/ssh_config line 47: Applying options for *
 debug1: Connecting to gitlab.xxx.com port 8848.
-&lt;/code>&lt;/pre>&lt;p>卡在了“Connecting to gitlab.xxx.com port 8848”这一步，但是&lt;code>telnet gitlab.xxx.com 8848&lt;/code>却是通的。&lt;/p></description></item><item><title>Vultr基配可以部署Gitlab</title><link>http://0x3f.org/posts/setup-gitlab-on-vultr-basic-vps/</link><pubDate>Sat, 24 Dec 2016 17:18:00 +0000</pubDate><guid>http://0x3f.org/posts/setup-gitlab-on-vultr-basic-vps/</guid><description>&lt;p>想在Vultr上部署Gitlab，但是官方文档上说最低要求1GB RAM + 3GB swap，而我的VPS是基础配置：768MB RAM。&lt;/p>
-&lt;p>忐忑地试了一下，居然可以用，只是重启防火墙的时候CPU一直100%，最后reboot了事。&lt;/p>
-&lt;h2 id="环境">环境&lt;/h2>
-&lt;ul>
-&lt;li>CentOS 7 x64&lt;/li>
-&lt;li>Gitlab CE 8.15&lt;/li>
-&lt;/ul>
-&lt;h2 id="参考">参考&lt;/h2>
-&lt;ul>
-&lt;li>&lt;a href="https://www.vultr.com/docs/setup-swap-file-on-linux">Setup Swap File on Linux - Vultr.com&lt;/a>&lt;/li>
-&lt;li>&lt;a href="https://about.gitlab.com/downloads/#centos7">Installation Guide of GitLab Community Edition | GitLab&lt;/a>&lt;/li>
-&lt;/ul></description></item></channel></rss>
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;卡在了“Connecting to gitlab.xxx.com port 8848”这一步，但是&lt;code&gt;telnet gitlab.xxx.com 8848&lt;/code&gt;却是通的。&lt;/p&gt;</description></item><item><title>Vultr基配可以部署Gitlab</title><link>http://0x3f.org/posts/setup-gitlab-on-vultr-basic-vps/</link><pubDate>Sat, 24 Dec 2016 17:18:00 +0000</pubDate><guid>http://0x3f.org/posts/setup-gitlab-on-vultr-basic-vps/</guid><description>&lt;p&gt;想在Vultr上部署Gitlab，但是官方文档上说最低要求1GB RAM + 3GB swap，而我的VPS是基础配置：768MB RAM。&lt;/p&gt;
+&lt;p&gt;忐忑地试了一下，居然可以用，只是重启防火墙的时候CPU一直100%，最后reboot了事。&lt;/p&gt;
+&lt;h2 id="环境"&gt;环境&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;CentOS 7 x64&lt;/li&gt;
+&lt;li&gt;Gitlab CE 8.15&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="参考"&gt;参考&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://www.vultr.com/docs/setup-swap-file-on-linux"&gt;Setup Swap File on Linux - Vultr.com&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://about.gitlab.com/downloads/#centos7"&gt;Installation Guide of GitLab Community Edition | GitLab&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</description></item></channel></rss>

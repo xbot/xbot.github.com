@@ -1,120 +1,120 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>软件 on 晴耕雨讀</title><link>http://0x3f.org/tags/%E8%BD%AF%E4%BB%B6/</link><description>Recent content in 软件 on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Fri, 20 Aug 2021 00:03:28 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/%E8%BD%AF%E4%BB%B6/index.xml" rel="self" type="application/rss+xml"/><item><title>使用 Remote Torrent Adder 做 qBittorrent 的客户端</title><link>http://0x3f.org/posts/take-remote-torrent-adder-as-client-of-qbittorrent/</link><pubDate>Fri, 20 Aug 2021 00:03:28 +0800</pubDate><guid>http://0x3f.org/posts/take-remote-torrent-adder-as-client-of-qbittorrent/</guid><description>&lt;p>我使用部署在 NAS 中的 qBittorrent 下载资源，每次手动复制磁力链链接到 qBittorrent 的 WebUI 很麻烦。&lt;/p>
-&lt;p>&lt;a href="https://chrome.google.com/webstore/detail/remote-torrent-adder/oabphaconndgibllomdcjbfdghcmenci?hl=zh-CN">Remote Torrent Adder&lt;/a> 是 Chrome 的扩展，可以通过右键菜单把 magnet 等协议的链接发送到多种下载工具，其中就包括 qBittorrent 。&lt;/p>
-&lt;p>安装过程不是那么顺利，这个开源小工具并没有对用户体验做更多的优化。&lt;/p>
-&lt;p>首先初次安装后，配置界面会有一个初始的、针对 Vuze SwingUI 的配置，需要把它删掉，再添加针对 qBittorrent v4.1+ WebUI 的配置，填好各项配置后选中 &lt;strong>Label/Directory
-interactivity&lt;/strong> 复选框。因为我把电影和剧集分目录存放，开始下载前需要指定存储目录。&lt;/p>
-&lt;p>第一次点菜单的时候没有反应，后来刷新页面后就好了。但是弹出来的指定下载目录的对话框没有选项，经测试发现第一次需要手工填写，之后有了缓存就可以选了。&lt;/p></description></item><item><title>用 zsh-autoenv 实现目录级别的 zshrc</title><link>http://0x3f.org/posts/implement-directory-specific-zshrc-with-zsh-autoenv/</link><pubDate>Thu, 19 Aug 2021 23:34:25 +0800</pubDate><guid>http://0x3f.org/posts/implement-directory-specific-zshrc-with-zsh-autoenv/</guid><description>&lt;p>&lt;a href="https://github.com/Tarrasch/zsh-autoenv">zsh-autoenv&lt;/a> 可以实现当进入特定的目录时加载特定的 zshrc 文件，并当切换到其它目录时取消其中的变更。后者在当前的版本下，对环境变量、命令别名和函数有效。&lt;/p>
-&lt;p>使用方法为：&lt;/p>
-&lt;p>在目录（如 &lt;code>~/project&lt;/code> ）下创建文件 &lt;code>.autoenv.zsh&lt;/code> :&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;span class="lnt">3
-&lt;/span>&lt;span class="lnt">4
-&lt;/span>&lt;span class="lnt">5
-&lt;/span>&lt;span class="lnt">6
-&lt;/span>&lt;span class="lnt">7
-&lt;/span>&lt;span class="lnt">8
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-zsh" data-lang="zsh">&lt;span class="line">&lt;span class="cl">autostash &lt;span class="nv">TEST_VAR&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s1">&amp;#39;This is a test variable.&amp;#39;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">autostash &lt;span class="nb">alias&lt;/span> &lt;span class="nv">test_cmd&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s1">&amp;#39;echo &amp;#34;This is a test alias.&amp;#34;&amp;#39;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">autostash test_func
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">test_func&lt;span class="o">()&lt;/span> &lt;span class="o">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">echo&lt;/span> &lt;span class="s2">&amp;#34;This is a test function.&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>出于安全考虑， zsh-autoenv 会对 &lt;code>.autoenv.zsh&lt;/code> 做哈希校验，所以第一次或者做变动后进入该目录时，都会要求确认是否接受此文件最新的内容。&lt;/p>
-&lt;p>此外，如果进入的目录不存在 &lt;code>.autoenv.zsh&lt;/code>， zsh-autoenv 会自动向上查找最近的同名文件并加载，上溯的层级可以通过配置项定义。&lt;/p>
-&lt;p>最后，它提供了一个命令 &lt;code>autoenv-edit&lt;/code> 用来快速打开和编辑 &lt;code>.autoenv.zsh&lt;/code> 文件。&lt;/p></description></item><item><title>鼠须管的美化</title><link>http://0x3f.org/posts/beautify-squrrel-input-method/</link><pubDate>Sat, 21 Apr 2018 20:52:42 +0000</pubDate><guid>http://0x3f.org/posts/beautify-squrrel-input-method/</guid><description>&lt;p>效果如下：
-&lt;img src="https://wx2.sinaimg.cn/large/006tNbRwly1fwvx9h8tgtj30n20bqaah.jpg" alt="Ulysses_2018-04-21 20-43-42@2x">&lt;/p>
-&lt;p>尽管鼠须管的Github仓库一直在更新，但释出版已经很久没有更新了，所以下面的美化基于网络上个人编译的版本。&lt;a href="https://scomper.me/gtd/-shu-xu-guan-de-diao-jiao-bi-ji">这篇文章&lt;/a>里有该版本和「花园明朝」字体的下载链接，按照文中的说明替换鼠须管的程序。（&lt;em>注意：官方当前释出版本鼠须管不支持下文通过patch自定义配置的方式，会造成原配置信息丢失。也不支持图示的样式。&lt;/em>）&lt;/p>
-&lt;p>然后参考&lt;a href="https://scomper.me/gtd/shu-xu-guan-shu-ru-fa-de-xin-pei-se">这篇文章&lt;/a>，把新的颜色方案移植到用户配置中。&lt;/p>
-&lt;p>图示样式使用「dust」方案。原色彩方案的字体设置的有点小，需要把font_point和label_font_point分别从14和10修改成18和14。原方案的第一顺序字体是「HYQiHei-55S Book」，要使用图示的花园明朝字体，可以不安装或者从配置信息中去掉该字体。由于原方案中已存在的配置项不能通过patch的方式覆盖，所以只能直接修改squirrel.yaml文件。&lt;/p></description></item><item><title>我在用的Safari扩展</title><link>http://0x3f.org/posts/the-safari-extensions-i-am-using/</link><pubDate>Sun, 15 Apr 2018 22:29:10 +0000</pubDate><guid>http://0x3f.org/posts/the-safari-extensions-i-am-using/</guid><description>&lt;p>和Chrome相比，Safari更省电、需要更少的系统资源，而且Chrome还有一些莫名其妙的问题，比如在没有运行的时候，从Alfred执行搜索会启动两个窗口，一个是之前的会话，另一个是当前的搜索页面。并且，启用了一些扩展之后Safari的体验可以改进很多。所以平时用Safari更多一些。&lt;/p>
-&lt;h2 id="svim">sVim&lt;/h2>
-&lt;p>作为注重效率的Vim党和键盘党，这种扩展是使用任何浏览器必备的东西。最常用的就是用标记打开链接的功能。&lt;/p>
-&lt;h2 id="tampermonkey">Tampermonkey&lt;/h2>
-&lt;p>油猴脚本管理器，应该是任何浏览器必备的东西。&lt;/p>
-&lt;h2 id="autopagerize">AutoPagerize&lt;/h2>
-&lt;p>用Google搜索时自动滚动到下一页。&lt;/p>
-&lt;h2 id="rss-menu">RSS Menu&lt;/h2>
-&lt;p>当发现当前页面有可订阅的RSS链接时，在工具栏图标上显示提示。&lt;/p>
-&lt;h2 id="instapaper">Instapaper&lt;/h2>
-&lt;p>稍后读工具。&lt;/p>
-&lt;h2 id="turn-off-the-lights">Turn Off the Lights&lt;/h2>
-&lt;p>看视频时降低网页其余部分亮度。&lt;/p>
-&lt;h2 id="scroll-to-top-button">Scroll To Top Button&lt;/h2>
-&lt;p>在页面右下角显示一个浮动的跳转到页首按钮。&lt;/p>
-&lt;h2 id="push-for-kindle">Push for Kindle&lt;/h2>
-&lt;p>FiveFilters.org的发送到Kindle按钮。&lt;/p>
-&lt;h2 id="octotree">octotree&lt;/h2>
-&lt;p>GitHub侧边栏。&lt;/p>
-&lt;h2 id="translate">Translate&lt;/h2>
-&lt;p>翻译当前页。&lt;/p>
-&lt;h2 id="wikiwand">WikiWand&lt;/h2>
-&lt;p>优化维基百科阅读体验。&lt;/p>
-&lt;h2 id="xdebug-helper">Xdebug Helper&lt;/h2>
-&lt;p>PHP单步调试辅助工具。&lt;/p>
-&lt;h2 id="adblock">AdBlock&lt;/h2>
-&lt;p>广告过滤器。&lt;/p>
-&lt;h2 id="sessions">Sessions&lt;/h2>
-&lt;p>网页会话管理器。如果打开的页面太多，又可能在将来再用到，可以保存会话后清理掉，用到的时候再打开保存过的会话。虽然没有Chrome下的Session Buddy和Tab Snooze好用，但是解决关键问题也够了。&lt;/p></description></item><item><title>广告过滤工具AdBlock、Adblock Plus和uBlock的简单对比</title><link>http://0x3f.org/posts/a-simple-comparison-among-adblock-ublock-and-adblock-plus/</link><pubDate>Sun, 01 Apr 2018 22:47:47 +0000</pubDate><guid>http://0x3f.org/posts/a-simple-comparison-among-adblock-ublock-and-adblock-plus/</guid><description>&lt;p>Adblock Plus作者的那篇博客可能会影响很多人。我并不关心那些情怀的东西，只看疗效。&lt;/p>
-&lt;p>简单地对比了下AdBlock、Adblock Plus、uBlock在Safari for Mac上的效果，所有样本和环境均为当前最新版本。AdBlock开启Safari内容过滤后是最好的，成功地过滤掉了我常访问的一个BT下载网站上的所有广告，而不开启Safari内容过滤时，会出现部分广告先显示后隐藏的情况。uBlock漏掉了个别不容易屏蔽的。而Adblock Plus最差，缺省设置下一条都没过滤掉，在选择更多的过滤规则后才过滤掉一部分。由于样本很单一，本结论不具有普适性。&lt;/p>
-&lt;p>说句题外话，我觉得Adblock Plus这名字起得动机就挺不纯的，没有详细考证过，印象中这个东西是比AdBlock后出现的，而且这名字很容易让人理解成AdBlock的加强版。&lt;/p></description></item><item><title>Double Commander: 免费、跨平台的Total Commander</title><link>http://0x3f.org/posts/double-commander/</link><pubDate>Wed, 31 Aug 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/double-commander/</guid><description>&lt;p>由于Total Commander很贵，在Windows下又是必不可少的，我一直希望能找到一个TC的免费替代品。试用过很多免费的文件管理器，但都不理想。偶然看到&lt;a href="http://doublecmd.sourceforge.net/">Double Commander&lt;/a>，才发现这几乎完全就是我想要的。&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>软件 on 晴耕雨讀</title><link>http://0x3f.org/tags/%E8%BD%AF%E4%BB%B6/</link><description>Recent content in 软件 on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Fri, 20 Aug 2021 00:03:28 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/%E8%BD%AF%E4%BB%B6/index.xml" rel="self" type="application/rss+xml"/><item><title>使用 Remote Torrent Adder 做 qBittorrent 的客户端</title><link>http://0x3f.org/posts/take-remote-torrent-adder-as-client-of-qbittorrent/</link><pubDate>Fri, 20 Aug 2021 00:03:28 +0800</pubDate><guid>http://0x3f.org/posts/take-remote-torrent-adder-as-client-of-qbittorrent/</guid><description>&lt;p&gt;我使用部署在 NAS 中的 qBittorrent 下载资源，每次手动复制磁力链链接到 qBittorrent 的 WebUI 很麻烦。&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://chrome.google.com/webstore/detail/remote-torrent-adder/oabphaconndgibllomdcjbfdghcmenci?hl=zh-CN"&gt;Remote Torrent Adder&lt;/a&gt; 是 Chrome 的扩展，可以通过右键菜单把 magnet 等协议的链接发送到多种下载工具，其中就包括 qBittorrent 。&lt;/p&gt;
+&lt;p&gt;安装过程不是那么顺利，这个开源小工具并没有对用户体验做更多的优化。&lt;/p&gt;
+&lt;p&gt;首先初次安装后，配置界面会有一个初始的、针对 Vuze SwingUI 的配置，需要把它删掉，再添加针对 qBittorrent v4.1+ WebUI 的配置，填好各项配置后选中 &lt;strong&gt;Label/Directory
+interactivity&lt;/strong&gt; 复选框。因为我把电影和剧集分目录存放，开始下载前需要指定存储目录。&lt;/p&gt;
+&lt;p&gt;第一次点菜单的时候没有反应，后来刷新页面后就好了。但是弹出来的指定下载目录的对话框没有选项，经测试发现第一次需要手工填写，之后有了缓存就可以选了。&lt;/p&gt;</description></item><item><title>用 zsh-autoenv 实现目录级别的 zshrc</title><link>http://0x3f.org/posts/implement-directory-specific-zshrc-with-zsh-autoenv/</link><pubDate>Thu, 19 Aug 2021 23:34:25 +0800</pubDate><guid>http://0x3f.org/posts/implement-directory-specific-zshrc-with-zsh-autoenv/</guid><description>&lt;p&gt;&lt;a href="https://github.com/Tarrasch/zsh-autoenv"&gt;zsh-autoenv&lt;/a&gt; 可以实现当进入特定的目录时加载特定的 zshrc 文件，并当切换到其它目录时取消其中的变更。后者在当前的版本下，对环境变量、命令别名和函数有效。&lt;/p&gt;
+&lt;p&gt;使用方法为：&lt;/p&gt;
+&lt;p&gt;在目录（如 &lt;code&gt;~/project&lt;/code&gt; ）下创建文件 &lt;code&gt;.autoenv.zsh&lt;/code&gt; :&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-zsh" data-lang="zsh"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;autostash &lt;span class="nv"&gt;TEST_VAR&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;This is a test variable.&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;autostash &lt;span class="nb"&gt;alias&lt;/span&gt; &lt;span class="nv"&gt;test_cmd&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;echo &amp;#34;This is a test alias.&amp;#34;&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;autostash test_func
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;test_func&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;This is a test function.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;出于安全考虑， zsh-autoenv 会对 &lt;code&gt;.autoenv.zsh&lt;/code&gt; 做哈希校验，所以第一次或者做变动后进入该目录时，都会要求确认是否接受此文件最新的内容。&lt;/p&gt;
+&lt;p&gt;此外，如果进入的目录不存在 &lt;code&gt;.autoenv.zsh&lt;/code&gt;， zsh-autoenv 会自动向上查找最近的同名文件并加载，上溯的层级可以通过配置项定义。&lt;/p&gt;
+&lt;p&gt;最后，它提供了一个命令 &lt;code&gt;autoenv-edit&lt;/code&gt; 用来快速打开和编辑 &lt;code&gt;.autoenv.zsh&lt;/code&gt; 文件。&lt;/p&gt;</description></item><item><title>鼠须管的美化</title><link>http://0x3f.org/posts/beautify-squrrel-input-method/</link><pubDate>Sat, 21 Apr 2018 20:52:42 +0000</pubDate><guid>http://0x3f.org/posts/beautify-squrrel-input-method/</guid><description>&lt;p&gt;效果如下：
+&lt;img src="https://wx2.sinaimg.cn/large/006tNbRwly1fwvx9h8tgtj30n20bqaah.jpg" alt="Ulysses_2018-04-21 20-43-42@2x"&gt;&lt;/p&gt;
+&lt;p&gt;尽管鼠须管的Github仓库一直在更新，但释出版已经很久没有更新了，所以下面的美化基于网络上个人编译的版本。&lt;a href="https://scomper.me/gtd/-shu-xu-guan-de-diao-jiao-bi-ji"&gt;这篇文章&lt;/a&gt;里有该版本和「花园明朝」字体的下载链接，按照文中的说明替换鼠须管的程序。（&lt;em&gt;注意：官方当前释出版本鼠须管不支持下文通过patch自定义配置的方式，会造成原配置信息丢失。也不支持图示的样式。&lt;/em&gt;）&lt;/p&gt;
+&lt;p&gt;然后参考&lt;a href="https://scomper.me/gtd/shu-xu-guan-shu-ru-fa-de-xin-pei-se"&gt;这篇文章&lt;/a&gt;，把新的颜色方案移植到用户配置中。&lt;/p&gt;
+&lt;p&gt;图示样式使用「dust」方案。原色彩方案的字体设置的有点小，需要把font_point和label_font_point分别从14和10修改成18和14。原方案的第一顺序字体是「HYQiHei-55S Book」，要使用图示的花园明朝字体，可以不安装或者从配置信息中去掉该字体。由于原方案中已存在的配置项不能通过patch的方式覆盖，所以只能直接修改squirrel.yaml文件。&lt;/p&gt;</description></item><item><title>我在用的Safari扩展</title><link>http://0x3f.org/posts/the-safari-extensions-i-am-using/</link><pubDate>Sun, 15 Apr 2018 22:29:10 +0000</pubDate><guid>http://0x3f.org/posts/the-safari-extensions-i-am-using/</guid><description>&lt;p&gt;和Chrome相比，Safari更省电、需要更少的系统资源，而且Chrome还有一些莫名其妙的问题，比如在没有运行的时候，从Alfred执行搜索会启动两个窗口，一个是之前的会话，另一个是当前的搜索页面。并且，启用了一些扩展之后Safari的体验可以改进很多。所以平时用Safari更多一些。&lt;/p&gt;
+&lt;h2 id="svim"&gt;sVim&lt;/h2&gt;
+&lt;p&gt;作为注重效率的Vim党和键盘党，这种扩展是使用任何浏览器必备的东西。最常用的就是用标记打开链接的功能。&lt;/p&gt;
+&lt;h2 id="tampermonkey"&gt;Tampermonkey&lt;/h2&gt;
+&lt;p&gt;油猴脚本管理器，应该是任何浏览器必备的东西。&lt;/p&gt;
+&lt;h2 id="autopagerize"&gt;AutoPagerize&lt;/h2&gt;
+&lt;p&gt;用Google搜索时自动滚动到下一页。&lt;/p&gt;
+&lt;h2 id="rss-menu"&gt;RSS Menu&lt;/h2&gt;
+&lt;p&gt;当发现当前页面有可订阅的RSS链接时，在工具栏图标上显示提示。&lt;/p&gt;
+&lt;h2 id="instapaper"&gt;Instapaper&lt;/h2&gt;
+&lt;p&gt;稍后读工具。&lt;/p&gt;
+&lt;h2 id="turn-off-the-lights"&gt;Turn Off the Lights&lt;/h2&gt;
+&lt;p&gt;看视频时降低网页其余部分亮度。&lt;/p&gt;
+&lt;h2 id="scroll-to-top-button"&gt;Scroll To Top Button&lt;/h2&gt;
+&lt;p&gt;在页面右下角显示一个浮动的跳转到页首按钮。&lt;/p&gt;
+&lt;h2 id="push-for-kindle"&gt;Push for Kindle&lt;/h2&gt;
+&lt;p&gt;FiveFilters.org的发送到Kindle按钮。&lt;/p&gt;
+&lt;h2 id="octotree"&gt;octotree&lt;/h2&gt;
+&lt;p&gt;GitHub侧边栏。&lt;/p&gt;
+&lt;h2 id="translate"&gt;Translate&lt;/h2&gt;
+&lt;p&gt;翻译当前页。&lt;/p&gt;
+&lt;h2 id="wikiwand"&gt;WikiWand&lt;/h2&gt;
+&lt;p&gt;优化维基百科阅读体验。&lt;/p&gt;
+&lt;h2 id="xdebug-helper"&gt;Xdebug Helper&lt;/h2&gt;
+&lt;p&gt;PHP单步调试辅助工具。&lt;/p&gt;
+&lt;h2 id="adblock"&gt;AdBlock&lt;/h2&gt;
+&lt;p&gt;广告过滤器。&lt;/p&gt;
+&lt;h2 id="sessions"&gt;Sessions&lt;/h2&gt;
+&lt;p&gt;网页会话管理器。如果打开的页面太多，又可能在将来再用到，可以保存会话后清理掉，用到的时候再打开保存过的会话。虽然没有Chrome下的Session Buddy和Tab Snooze好用，但是解决关键问题也够了。&lt;/p&gt;</description></item><item><title>广告过滤工具AdBlock、Adblock Plus和uBlock的简单对比</title><link>http://0x3f.org/posts/a-simple-comparison-among-adblock-ublock-and-adblock-plus/</link><pubDate>Sun, 01 Apr 2018 22:47:47 +0000</pubDate><guid>http://0x3f.org/posts/a-simple-comparison-among-adblock-ublock-and-adblock-plus/</guid><description>&lt;p&gt;Adblock Plus作者的那篇博客可能会影响很多人。我并不关心那些情怀的东西，只看疗效。&lt;/p&gt;
+&lt;p&gt;简单地对比了下AdBlock、Adblock Plus、uBlock在Safari for Mac上的效果，所有样本和环境均为当前最新版本。AdBlock开启Safari内容过滤后是最好的，成功地过滤掉了我常访问的一个BT下载网站上的所有广告，而不开启Safari内容过滤时，会出现部分广告先显示后隐藏的情况。uBlock漏掉了个别不容易屏蔽的。而Adblock Plus最差，缺省设置下一条都没过滤掉，在选择更多的过滤规则后才过滤掉一部分。由于样本很单一，本结论不具有普适性。&lt;/p&gt;
+&lt;p&gt;说句题外话，我觉得Adblock Plus这名字起得动机就挺不纯的，没有详细考证过，印象中这个东西是比AdBlock后出现的，而且这名字很容易让人理解成AdBlock的加强版。&lt;/p&gt;</description></item><item><title>Double Commander: 免费、跨平台的Total Commander</title><link>http://0x3f.org/posts/double-commander/</link><pubDate>Wed, 31 Aug 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/double-commander/</guid><description>&lt;p&gt;由于Total Commander很贵，在Windows下又是必不可少的，我一直希望能找到一个TC的免费替代品。试用过很多免费的文件管理器，但都不理想。偶然看到&lt;a href="http://doublecmd.sourceforge.net/"&gt;Double Commander&lt;/a&gt;，才发现这几乎完全就是我想要的。&lt;/p&gt;
 
-&lt;p>&lt;a href="https://picasaweb.google.com/lh/photo/ioR_w9MmX81q_5a8xjUPsA?feat=embedwebsite">&lt;img src="https://lh4.googleusercontent.com/-gkI4K4m5SSM/Tl31NceNNhI/AAAAAAAABzs/3AigwSN7whI/s640/doublecmd_screenshot.png" height="360" width="640" />&lt;/a>&lt;/p>
+&lt;p&gt;&lt;a href="https://picasaweb.google.com/lh/photo/ioR_w9MmX81q_5a8xjUPsA?feat=embedwebsite"&gt;&lt;img src="https://lh4.googleusercontent.com/-gkI4K4m5SSM/Tl31NceNNhI/AAAAAAAABzs/3AigwSN7whI/s640/doublecmd_screenshot.png" height="360" width="640" /&gt;&lt;/a&gt;&lt;/p&gt;
 
-&lt;h2>特性&lt;/h2>
+&lt;h2&gt;特性&lt;/h2&gt;
 
-&lt;ul>
-&lt;li>几乎完全模仿TC，甚至连插件的API都一致&lt;/li>
-&lt;li>界面布局、样式高度可定制&lt;/li>
-&lt;li>热键高度可定制&lt;/li>
-&lt;li>开源、免费、跨平台&lt;/li>
-&lt;/ul>
+&lt;ul&gt;
+&lt;li&gt;几乎完全模仿TC，甚至连插件的API都一致&lt;/li&gt;
+&lt;li&gt;界面布局、样式高度可定制&lt;/li&gt;
+&lt;li&gt;热键高度可定制&lt;/li&gt;
+&lt;li&gt;开源、免费、跨平台&lt;/li&gt;
+&lt;/ul&gt;
 
-&lt;h2>局限&lt;/h2>
+&lt;h2&gt;局限&lt;/h2&gt;
 
-&lt;ul>
-&lt;li>功能相对TC少很多&lt;/li>
-&lt;li>稳定性不是非常高&lt;/li>
-&lt;li>运行速度稍嫌慢&lt;/li>
-&lt;li>开发进度慢&lt;/li>
-&lt;/ul>
+&lt;ul&gt;
+&lt;li&gt;功能相对TC少很多&lt;/li&gt;
+&lt;li&gt;稳定性不是非常高&lt;/li&gt;
+&lt;li&gt;运行速度稍嫌慢&lt;/li&gt;
+&lt;li&gt;开发进度慢&lt;/li&gt;
+&lt;/ul&gt;
 
-&lt;h2>小技巧&lt;/h2>
+&lt;h2&gt;小技巧&lt;/h2&gt;
 
-&lt;h3>热键设置&lt;/h3>
+&lt;h3&gt;热键设置&lt;/h3&gt;
 
-&lt;p>每个内置命令可以设置多个热键，每个热键可以指定参数，参数中可以使用环境变量，如下图所示：&lt;/p>
+&lt;p&gt;每个内置命令可以设置多个热键，每个热键可以指定参数，参数中可以使用环境变量，如下图所示：&lt;/p&gt;
 
-&lt;p>&lt;a href="https://picasaweb.google.com/lh/photo/Z3jLMCGkoAbs1XC6yOhElg?feat=embedwebsite">&lt;img src="https://lh5.googleusercontent.com/-lFMDaSny_gw/Tl31OKrfhMI/AAAAAAAABzs/2XX44Go-3zc/s640/doublecmd_hotkey.png" height="417" width="640" />&lt;/a>&lt;/p>
+&lt;p&gt;&lt;a href="https://picasaweb.google.com/lh/photo/Z3jLMCGkoAbs1XC6yOhElg?feat=embedwebsite"&gt;&lt;img src="https://lh5.googleusercontent.com/-lFMDaSny_gw/Tl31OKrfhMI/AAAAAAAABzs/2XX44Go-3zc/s640/doublecmd_hotkey.png" height="417" width="640" /&gt;&lt;/a&gt;&lt;/p&gt;
 
-&lt;p>针对命令&lt;code>cm_ChangeDir&lt;/code>设置了两个热键，其中，给&lt;strong>Ctrl+Home&lt;/strong>指定的参数是&lt;strong>$HOME&lt;/strong>，给&lt;strong>Ctrl+Shift+Home&lt;/strong>指定的参数是&lt;strong>$HOME/Desktop&lt;/strong>，即分别切换到当前用户的主目录和桌面目录。&lt;/p>
+&lt;p&gt;针对命令&lt;code&gt;cm_ChangeDir&lt;/code&gt;设置了两个热键，其中，给&lt;strong&gt;Ctrl+Home&lt;/strong&gt;指定的参数是&lt;strong&gt;$HOME&lt;/strong&gt;，给&lt;strong&gt;Ctrl+Shift+Home&lt;/strong&gt;指定的参数是&lt;strong&gt;$HOME/Desktop&lt;/strong&gt;，即分别切换到当前用户的主目录和桌面目录。&lt;/p&gt;
 
-&lt;h3>自定义文件类型命令&lt;/h3>
+&lt;h3&gt;自定义文件类型命令&lt;/h3&gt;
 
-&lt;p>可以为每种文件类型定义多个命令，这些自定义命令将显示为上下文菜单的“动作”菜单的子菜单项。如下图所示：&lt;/p>
+&lt;p&gt;可以为每种文件类型定义多个命令，这些自定义命令将显示为上下文菜单的“动作”菜单的子菜单项。如下图所示：&lt;/p&gt;
 
-&lt;p>&lt;a href="https://picasaweb.google.com/lh/photo/m7mjk4g77XsMZw58ayJnEw?feat=embedwebsite">&lt;img src="https://lh5.googleusercontent.com/-4Z6LcQg9YIc/Tl31OqcRqKI/AAAAAAAABzs/wJjK8noUWM8/s400/doublecmd_filetype_command_01.png" height="400" width="376" />&lt;/a>&lt;/p>
+&lt;p&gt;&lt;a href="https://picasaweb.google.com/lh/photo/m7mjk4g77XsMZw58ayJnEw?feat=embedwebsite"&gt;&lt;img src="https://lh5.googleusercontent.com/-4Z6LcQg9YIc/Tl31OqcRqKI/AAAAAAAABzs/wJjK8noUWM8/s400/doublecmd_filetype_command_01.png" height="400" width="376" /&gt;&lt;/a&gt;&lt;/p&gt;
 
-&lt;p>定义了名称为“Archive”的文件类型，关联了一系列的文件后缀名。然后添加了一个名为“解压缩到当前目录”的动作，并指定所执行的命令为&lt;code>urxvt -e aunpack %f&lt;/code>。其中，&lt;strong>%f&lt;/strong>是一个占位符，代表当前文件的全名。DC预置了几个占位符，可以点击命令输入框右侧图标是加号的按钮选择。&lt;/p>
+&lt;p&gt;定义了名称为“Archive”的文件类型，关联了一系列的文件后缀名。然后添加了一个名为“解压缩到当前目录”的动作，并指定所执行的命令为&lt;code&gt;urxvt -e aunpack %f&lt;/code&gt;。其中，&lt;strong&gt;%f&lt;/strong&gt;是一个占位符，代表当前文件的全名。DC预置了几个占位符，可以点击命令输入框右侧图标是加号的按钮选择。&lt;/p&gt;
 
-&lt;p>最终的效果如下：&lt;/p>
+&lt;p&gt;最终的效果如下：&lt;/p&gt;
 
-&lt;p>&lt;a href="https://picasaweb.google.com/lh/photo/mXYVL8uX1TNw0ENFur1PUQ?feat=embedwebsite">&lt;img src="https://lh6.googleusercontent.com/-smFkdYyLMHE/Tl31QAWMNXI/AAAAAAAABzs/hIBW-yVpBuQ/s400/doublecmd_filetype_command_02.png" height="236" width="400" />&lt;/a>&lt;/p>
+&lt;p&gt;&lt;a href="https://picasaweb.google.com/lh/photo/mXYVL8uX1TNw0ENFur1PUQ?feat=embedwebsite"&gt;&lt;img src="https://lh6.googleusercontent.com/-smFkdYyLMHE/Tl31QAWMNXI/AAAAAAAABzs/hIBW-yVpBuQ/s400/doublecmd_filetype_command_02.png" height="236" width="400" /&gt;&lt;/a&gt;&lt;/p&gt;
 
-&lt;h3>解决日期时间乱码的问题&lt;/h3>
+&lt;h3&gt;解决日期时间乱码的问题&lt;/h3&gt;
 
-&lt;p>截至版本0.5.0 beta，如果设置了使用日期时间字符串的格式为“yyyy-mm-dd hh:mm:ss”，在&lt;strong>zh_CN.UTF-8&lt;/strong>的区域设置下，字符串中将出现乱码：&lt;/p>
+&lt;p&gt;截至版本0.5.0 beta，如果设置了使用日期时间字符串的格式为“yyyy-mm-dd hh:mm:ss”，在&lt;strong&gt;zh_CN.UTF-8&lt;/strong&gt;的区域设置下，字符串中将出现乱码：&lt;/p&gt;
 
-&lt;p>&lt;a href="https://picasaweb.google.com/lh/photo/gMOlqF5DOQQ5otUEBon7lA?feat=embedwebsite">&lt;img src="https://lh6.googleusercontent.com/-LfvO5yBH_F0/Tl3_d13FCNI/AAAAAAAAB0A/MHApuvTvkSg/s400/doublecmd_datetime_illegle_char.png" height="400" width="168" />&lt;/a>&lt;/p>
+&lt;p&gt;&lt;a href="https://picasaweb.google.com/lh/photo/gMOlqF5DOQQ5otUEBon7lA?feat=embedwebsite"&gt;&lt;img src="https://lh6.googleusercontent.com/-LfvO5yBH_F0/Tl3_d13FCNI/AAAAAAAAB0A/MHApuvTvkSg/s400/doublecmd_datetime_illegle_char.png" height="400" width="168" /&gt;&lt;/a&gt;&lt;/p&gt;
 
-&lt;p>临时解决办法是以英文区域设置启动doublecmd：&lt;/p>
+&lt;p&gt;临时解决办法是以英文区域设置启动doublecmd：&lt;/p&gt;
 
 ```bash
 #!/bin/bash
@@ -123,70 +123,70 @@ export LC_ALL=en_US.UTF-8
 doublecmd &amp;
 ```
 
-&lt;p>Posted via &lt;a href="http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/">UltraBlog.vim&lt;/a>.&lt;/p></description></item><item><title>Console2：取代cmd.exe的Windows虚拟终端</title><link>http://0x3f.org/posts/console2-as-an-alternative-of-cmd-exe/</link><pubDate>Sat, 22 Jan 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/console2-as-an-alternative-of-cmd-exe/</guid><description>&lt;p>相对于鸡肋cmd.exe，&lt;a href="http://sourceforge.net/projects/console/">Console2&lt;/a>有以下优点：&lt;/p>
+&lt;p&gt;Posted via &lt;a href="http://0x3f.org/posts/ultrablog-as-an-ultimate-vim-blogging-plugin/"&gt;UltraBlog.vim&lt;/a&gt;.&lt;/p&gt;</description></item><item><title>Console2：取代cmd.exe的Windows虚拟终端</title><link>http://0x3f.org/posts/console2-as-an-alternative-of-cmd-exe/</link><pubDate>Sat, 22 Jan 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/console2-as-an-alternative-of-cmd-exe/</guid><description>&lt;p&gt;相对于鸡肋cmd.exe，&lt;a href="http://sourceforge.net/projects/console/"&gt;Console2&lt;/a&gt;有以下优点：&lt;/p&gt;
 
-&lt;ol>
-&lt;li>窗口大小可调整&lt;/li>
-&lt;li>字体样式可选择&lt;/li>
-&lt;li>支持多标签&lt;/li>
-&lt;li>有很方便的选择、复制、粘贴等基本编辑功能&lt;/li>
-&lt;li>支持自定义快捷键&lt;/li>
-&lt;/ol>
+&lt;ol&gt;
+&lt;li&gt;窗口大小可调整&lt;/li&gt;
+&lt;li&gt;字体样式可选择&lt;/li&gt;
+&lt;li&gt;支持多标签&lt;/li&gt;
+&lt;li&gt;有很方便的选择、复制、粘贴等基本编辑功能&lt;/li&gt;
+&lt;li&gt;支持自定义快捷键&lt;/li&gt;
+&lt;/ol&gt;
 
-&lt;p>对经常不得不使用Windows虚拟终端的人来说，以上几个特性足以使人忘掉cmd.exe。其实，Console2本身只是Shell的图形前端，只是在默认情况下它会调用cmd.exe处理用户输入，因此，也可以通过设置使Console2成为Cygwin的前端，只是从这一点上讲，Console2和&lt;a href="http://code.google.com/p/mintty/">Mintty&lt;/a>相比完全没有优势。&lt;/p>
+&lt;p&gt;对经常不得不使用Windows虚拟终端的人来说，以上几个特性足以使人忘掉cmd.exe。其实，Console2本身只是Shell的图形前端，只是在默认情况下它会调用cmd.exe处理用户输入，因此，也可以通过设置使Console2成为Cygwin的前端，只是从这一点上讲，Console2和&lt;a href="http://code.google.com/p/mintty/"&gt;Mintty&lt;/a&gt;相比完全没有优势。&lt;/p&gt;
 
-&lt;p>&lt;a href="http://picasaweb.google.com/lh/photo/hfesI_yiNpTZ68BKIqdImA?feat=embedwebsite">&lt;img src="http://lh6.ggpht.com/_ceUJ_lBTHzc/TTotT9zYK6I/AAAAAAAABi0/Qzv4d2Abe-g/s400/console2.png" height="332" width="400" />&lt;/a>&lt;/p></description></item><item><title>Dokan SSHFS：Windows下通过SSH挂载Linux主机为本地分区</title><link>http://0x3f.org/posts/mount-linux-dirs-as-windows-local-partitions/</link><pubDate>Thu, 20 Jan 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/mount-linux-dirs-as-windows-local-partitions/</guid><description>&lt;p>Linux一般使用Samba向Windows共享资源。另一个办法就是使用SSH。&lt;/p>
+&lt;p&gt;&lt;a href="http://picasaweb.google.com/lh/photo/hfesI_yiNpTZ68BKIqdImA?feat=embedwebsite"&gt;&lt;img src="http://lh6.ggpht.com/_ceUJ_lBTHzc/TTotT9zYK6I/AAAAAAAABi0/Qzv4d2Abe-g/s400/console2.png" height="332" width="400" /&gt;&lt;/a&gt;&lt;/p&gt;</description></item><item><title>Dokan SSHFS：Windows下通过SSH挂载Linux主机为本地分区</title><link>http://0x3f.org/posts/mount-linux-dirs-as-windows-local-partitions/</link><pubDate>Thu, 20 Jan 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/mount-linux-dirs-as-windows-local-partitions/</guid><description>&lt;p&gt;Linux一般使用Samba向Windows共享资源。另一个办法就是使用SSH。&lt;/p&gt;
 
-&lt;p>&lt;a href="http://dokan-dev.net/en/">Dokan&lt;/a>是一个为Windows提供实现新文件系统的开发库，而&lt;a href="http://dokan-dev.net/en/download/#sshfs">Dokan SSHFS&lt;/a>是在此基础上实现的挂载SSH通道为本地分区的文件系统。必须先安装Dokan，然后再安装Dokan SSHFS。&lt;/p>
+&lt;p&gt;&lt;a href="http://dokan-dev.net/en/"&gt;Dokan&lt;/a&gt;是一个为Windows提供实现新文件系统的开发库，而&lt;a href="http://dokan-dev.net/en/download/#sshfs"&gt;Dokan SSHFS&lt;/a&gt;是在此基础上实现的挂载SSH通道为本地分区的文件系统。必须先安装Dokan，然后再安装Dokan SSHFS。&lt;/p&gt;
 
-&lt;p>&lt;a href="http://picasaweb.google.com/lh/photo/d6J9vTU8cvK2KEplEo0ZaQ?feat=embedwebsite">&lt;img src="http://lh4.ggpht.com/_ceUJ_lBTHzc/TThWJn7FrzI/AAAAAAAABic/Et7kroeInF8/s400/sshfs.png" height="338" width="400" />&lt;/a>&lt;/p>
+&lt;p&gt;&lt;a href="http://picasaweb.google.com/lh/photo/d6J9vTU8cvK2KEplEo0ZaQ?feat=embedwebsite"&gt;&lt;img src="http://lh4.ggpht.com/_ceUJ_lBTHzc/TThWJn7FrzI/AAAAAAAABic/Et7kroeInF8/s400/sshfs.png" height="338" width="400" /&gt;&lt;/a&gt;&lt;/p&gt;
 
-&lt;p>如果从安装SSH服务做起，步骤是：&lt;/p>
+&lt;p&gt;如果从安装SSH服务做起，步骤是：&lt;/p&gt;
 
-&lt;ol>
-&lt;li>在Linux主机上安装openssh&lt;/li>
-&lt;li>修改Linux主机的&lt;strong>/etc/hosts.allow&lt;/strong>，加入&lt;code>sshd: ALL&lt;/code>，以允许外部访问&lt;/li>
-&lt;li>启动sshd守护进程&lt;/li>
-&lt;li>在Windows主机上安装Dokan和Dokan SSHFS&lt;/li>
-&lt;li>通过SSHFS的图形配置工具挂载SSH通道&lt;/li>
-&lt;/ol>
+&lt;ol&gt;
+&lt;li&gt;在Linux主机上安装openssh&lt;/li&gt;
+&lt;li&gt;修改Linux主机的&lt;strong&gt;/etc/hosts.allow&lt;/strong&gt;，加入&lt;code&gt;sshd: ALL&lt;/code&gt;，以允许外部访问&lt;/li&gt;
+&lt;li&gt;启动sshd守护进程&lt;/li&gt;
+&lt;li&gt;在Windows主机上安装Dokan和Dokan SSHFS&lt;/li&gt;
+&lt;li&gt;通过SSHFS的图形配置工具挂载SSH通道&lt;/li&gt;
+&lt;/ol&gt;
 
-&lt;p>这种方式的好处是简单，但是存在安全隐患，不管怎样，公布SSH连接绝非好事，这意味著接入用户可以远程控制Linux主机，尤其是当SSH账户的权限较高时。因此，这种方式只适用于虚拟机或家庭网络，例如对Host-Guests共享支持不佳的KVM虚拟机来说就是个好的选择。即便如此，也要注意相应的Windows主机的安全防范，否则，入侵者可以通过Windows主机做跳板来进入Linux主机。&lt;/p></description></item><item><title>WinMerge：开源的差异比较工具</title><link>http://0x3f.org/posts/winmerge-as-a-free-diff-tool/</link><pubDate>Mon, 29 Nov 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/winmerge-as-a-free-diff-tool/</guid><description>&lt;p>&lt;a href="http://winmerge.org/">WinMerge&lt;/a>是开源的差异比较工具，只运行于Windows平台。&lt;/p>
-&lt;p>具有以下实用特性：&lt;/p>
-&lt;ol>
-	&lt;li>支持文件内容和文件、文件夹差异比较&lt;/li>
-	&lt;li>文件内容比较采用左右双栏显示，支持语法高亮&lt;/li>
-	&lt;li>提供Windows资源管理器右键菜单，以选择文件或文件夹进行比较&lt;/li>
-&lt;/ol>
-&lt;p>具有以下不足：&lt;/p>
-&lt;ol>
-	&lt;li>文件夹比较结果以单栏显示，不直观&lt;/li>
-	&lt;li>仅支持两方比较，不支持多方比较&lt;/li>
-&lt;/ol>
-&lt;p>使用时的注意事项：&lt;/p>
-&lt;ol>
-	&lt;li>使用树状的列表显示文件夹比较结果可以稍微缓解单栏显示导致的不直观的问题&lt;/li>
-	&lt;li>Windows资源管理器的右键菜单需要在设置界面手工设置才能加入选取不同目标进行比较的菜单项&lt;/li>
-&lt;/ol>
-&lt;p>相较于商业的Beyong Compare等工具，WinMerge在操作的直观度和功能细节上存在不足，但是在差异比较的主要功能上，WinMerge完全可以胜任日常工作。同时，由于免费，WinMerge可以作为这些商业软件很好的替代工具。&lt;/p>
-&lt;p>&lt;strong>后记：这些天越来越对使用未授权的商业软件感到不安，于是开始寻找这些工具的开源、免费替代品。&lt;/strong>&lt;/p></description></item><item><title>目录与文件的存储空间占用分析工具</title><link>http://0x3f.org/posts/storage-space-analysing-tools/</link><pubDate>Fri, 01 Oct 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/storage-space-analysing-tools/</guid><description>&lt;h3>du&lt;/h3>
-&lt;p>du是命令行中用于查看目录和文件的空间占用情况的指令。&lt;/p>
-&lt;p>常用示例：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">du -h /tmp/logs
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;h3>ncdu&lt;/h3>
-&lt;p>&lt;a href="http://dev.yorhel.nl/ncdu">ncdu&lt;/a>为du提供了一个基于NCurses的命令行用户界面，并能够按照多种条件对分析结果进行排序，它大大简化了du指令的使用。&lt;/p>
-&lt;p>&lt;a href="http://picasaweb.google.com/lh/photo/xQINh1zrBdZcY27Evm9Cog?feat=embedwebsite">&lt;img src="http://lh5.ggpht.com/_ceUJ_lBTHzc/TKWkJk8hkjI/AAAAAAAABfU/vTIJqHTxAX0/s400/disk_usage_analyzers-ncdu_01.png" height="250" width="400" />&lt;/a>&lt;/p>
-&lt;h3>baobab&lt;/h3>
-&lt;p>&lt;a href="http://www.marzocca.net/linux/baobab/index.html">baobab&lt;/a>使用基于GTK的图形用户界面，突出特点是可以分析远程目录。&lt;/p>
-&lt;p>&lt;a href="http://picasaweb.google.com/lh/photo/rGbtFe2Je23r1TB1MmX-tA?feat=embedwebsite">&lt;img src="http://lh3.ggpht.com/_ceUJ_lBTHzc/TKWkJ1_yLJI/AAAAAAAABfY/pt_peEEU2f8/s400/disk_usage_analyzers-baobab_01.png" height="400" width="386" />&lt;/a>&lt;/p>
-&lt;h3>参考&lt;/h3>
-&lt;ol>
- &lt;li>&lt;a href="http://www.vpser.net/manage/ncdu.html">磁盘目录占用空间计算排序工具 - ncdu&lt;/a>&lt;/li>
-&lt;/ol></description></item></channel></rss>
+&lt;p&gt;这种方式的好处是简单，但是存在安全隐患，不管怎样，公布SSH连接绝非好事，这意味著接入用户可以远程控制Linux主机，尤其是当SSH账户的权限较高时。因此，这种方式只适用于虚拟机或家庭网络，例如对Host-Guests共享支持不佳的KVM虚拟机来说就是个好的选择。即便如此，也要注意相应的Windows主机的安全防范，否则，入侵者可以通过Windows主机做跳板来进入Linux主机。&lt;/p&gt;</description></item><item><title>WinMerge：开源的差异比较工具</title><link>http://0x3f.org/posts/winmerge-as-a-free-diff-tool/</link><pubDate>Mon, 29 Nov 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/winmerge-as-a-free-diff-tool/</guid><description>&lt;p&gt;&lt;a href="http://winmerge.org/"&gt;WinMerge&lt;/a&gt;是开源的差异比较工具，只运行于Windows平台。&lt;/p&gt;
+&lt;p&gt;具有以下实用特性：&lt;/p&gt;
+&lt;ol&gt;
+	&lt;li&gt;支持文件内容和文件、文件夹差异比较&lt;/li&gt;
+	&lt;li&gt;文件内容比较采用左右双栏显示，支持语法高亮&lt;/li&gt;
+	&lt;li&gt;提供Windows资源管理器右键菜单，以选择文件或文件夹进行比较&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;具有以下不足：&lt;/p&gt;
+&lt;ol&gt;
+	&lt;li&gt;文件夹比较结果以单栏显示，不直观&lt;/li&gt;
+	&lt;li&gt;仅支持两方比较，不支持多方比较&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;使用时的注意事项：&lt;/p&gt;
+&lt;ol&gt;
+	&lt;li&gt;使用树状的列表显示文件夹比较结果可以稍微缓解单栏显示导致的不直观的问题&lt;/li&gt;
+	&lt;li&gt;Windows资源管理器的右键菜单需要在设置界面手工设置才能加入选取不同目标进行比较的菜单项&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;相较于商业的Beyong Compare等工具，WinMerge在操作的直观度和功能细节上存在不足，但是在差异比较的主要功能上，WinMerge完全可以胜任日常工作。同时，由于免费，WinMerge可以作为这些商业软件很好的替代工具。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;后记：这些天越来越对使用未授权的商业软件感到不安，于是开始寻找这些工具的开源、免费替代品。&lt;/strong&gt;&lt;/p&gt;</description></item><item><title>目录与文件的存储空间占用分析工具</title><link>http://0x3f.org/posts/storage-space-analysing-tools/</link><pubDate>Fri, 01 Oct 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/storage-space-analysing-tools/</guid><description>&lt;h3&gt;du&lt;/h3&gt;
+&lt;p&gt;du是命令行中用于查看目录和文件的空间占用情况的指令。&lt;/p&gt;
+&lt;p&gt;常用示例：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;du -h /tmp/logs
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3&gt;ncdu&lt;/h3&gt;
+&lt;p&gt;&lt;a href="http://dev.yorhel.nl/ncdu"&gt;ncdu&lt;/a&gt;为du提供了一个基于NCurses的命令行用户界面，并能够按照多种条件对分析结果进行排序，它大大简化了du指令的使用。&lt;/p&gt;
+&lt;p&gt;&lt;a href="http://picasaweb.google.com/lh/photo/xQINh1zrBdZcY27Evm9Cog?feat=embedwebsite"&gt;&lt;img src="http://lh5.ggpht.com/_ceUJ_lBTHzc/TKWkJk8hkjI/AAAAAAAABfU/vTIJqHTxAX0/s400/disk_usage_analyzers-ncdu_01.png" height="250" width="400" /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h3&gt;baobab&lt;/h3&gt;
+&lt;p&gt;&lt;a href="http://www.marzocca.net/linux/baobab/index.html"&gt;baobab&lt;/a&gt;使用基于GTK的图形用户界面，突出特点是可以分析远程目录。&lt;/p&gt;
+&lt;p&gt;&lt;a href="http://picasaweb.google.com/lh/photo/rGbtFe2Je23r1TB1MmX-tA?feat=embedwebsite"&gt;&lt;img src="http://lh3.ggpht.com/_ceUJ_lBTHzc/TKWkJ1_yLJI/AAAAAAAABfY/pt_peEEU2f8/s400/disk_usage_analyzers-baobab_01.png" height="400" width="386" /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h3&gt;参考&lt;/h3&gt;
+&lt;ol&gt;
+ &lt;li&gt;&lt;a href="http://www.vpser.net/manage/ncdu.html"&gt;磁盘目录占用空间计算排序工具 - ncdu&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;</description></item></channel></rss>

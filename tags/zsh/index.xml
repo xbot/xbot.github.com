@@ -1,41 +1,41 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Zsh on 晴耕雨讀</title><link>http://0x3f.org/tags/zsh/</link><description>Recent content in Zsh on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Thu, 19 Aug 2021 23:34:25 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/zsh/index.xml" rel="self" type="application/rss+xml"/><item><title>用 zsh-autoenv 实现目录级别的 zshrc</title><link>http://0x3f.org/posts/implement-directory-specific-zshrc-with-zsh-autoenv/</link><pubDate>Thu, 19 Aug 2021 23:34:25 +0800</pubDate><guid>http://0x3f.org/posts/implement-directory-specific-zshrc-with-zsh-autoenv/</guid><description>&lt;p>&lt;a href="https://github.com/Tarrasch/zsh-autoenv">zsh-autoenv&lt;/a> 可以实现当进入特定的目录时加载特定的 zshrc 文件，并当切换到其它目录时取消其中的变更。后者在当前的版本下，对环境变量、命令别名和函数有效。&lt;/p>
-&lt;p>使用方法为：&lt;/p>
-&lt;p>在目录（如 &lt;code>~/project&lt;/code> ）下创建文件 &lt;code>.autoenv.zsh&lt;/code> :&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;span class="lnt">3
-&lt;/span>&lt;span class="lnt">4
-&lt;/span>&lt;span class="lnt">5
-&lt;/span>&lt;span class="lnt">6
-&lt;/span>&lt;span class="lnt">7
-&lt;/span>&lt;span class="lnt">8
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-zsh" data-lang="zsh">&lt;span class="line">&lt;span class="cl">autostash &lt;span class="nv">TEST_VAR&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s1">&amp;#39;This is a test variable.&amp;#39;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">autostash &lt;span class="nb">alias&lt;/span> &lt;span class="nv">test_cmd&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s1">&amp;#39;echo &amp;#34;This is a test alias.&amp;#34;&amp;#39;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">autostash test_func
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">test_func&lt;span class="o">()&lt;/span> &lt;span class="o">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">echo&lt;/span> &lt;span class="s2">&amp;#34;This is a test function.&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>出于安全考虑， zsh-autoenv 会对 &lt;code>.autoenv.zsh&lt;/code> 做哈希校验，所以第一次或者做变动后进入该目录时，都会要求确认是否接受此文件最新的内容。&lt;/p>
-&lt;p>此外，如果进入的目录不存在 &lt;code>.autoenv.zsh&lt;/code>， zsh-autoenv 会自动向上查找最近的同名文件并加载，上溯的层级可以通过配置项定义。&lt;/p>
-&lt;p>最后，它提供了一个命令 &lt;code>autoenv-edit&lt;/code> 用来快速打开和编辑 &lt;code>.autoenv.zsh&lt;/code> 文件。&lt;/p></description></item><item><title>ZSH下新安装的程序无法自动补全的解决方法</title><link>http://0x3f.org/posts/how-to-auto-complete-newly-installed-command-in-zsh/</link><pubDate>Wed, 12 Nov 2014 22:15:00 +0000</pubDate><guid>http://0x3f.org/posts/how-to-auto-complete-newly-installed-command-in-zsh/</guid><description>&lt;p>Zsh默认开启了对PATH变量的缓存，这是导致新安装的程序无法立即使用自动补全的原因。&lt;/p>
-&lt;p>其实只要PATH变量不太复杂，安装的程序不太多，完全没必要开启缓存，实际上我把缓存关掉后完全没有感觉到补全的速度有什么变化。&lt;/p>
-&lt;p>方法如下，在.zshrc中增加一行：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">zstyle &lt;span class="s1">&amp;#39;:completion:*&amp;#39;&lt;/span> rehash &lt;span class="nb">true&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>也可以在必要的时间手工执行命令&lt;strong>rehash&lt;/strong>，也是个临时解决方法。&lt;/p></description></item><item><title>Take Sakura as My Primary Terminal</title><link>http://0x3f.org/posts/take-sakura-as-my-primary-terminal/</link><pubDate>Sun, 07 Jul 2013 12:07:00 +0000</pubDate><guid>http://0x3f.org/posts/take-sakura-as-my-primary-terminal/</guid><description>&lt;p>It&amp;rsquo;s a long time since I came across rxvt-unicode.&lt;/p>
-&lt;p>About seven years ago, when I switched from Windows XP to Ubuntu mainly for performance issues, I never be bored with searching for everything with a higher speed. To me, gnome-terminal is too much slow as a terminal being frequently opened and closed. Then, rxvt-unicode came through.&lt;/p>
-&lt;p>At first glance, rxvt-unicode was so ugly that I put it behind without the slightest bit of hesitation. Not until I once saw a screenshot did I realize this ugly thing can actually be pretty like that. So I started to take it as my primary terminal since then, for it was the fastest terminal I can find at that time.&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Zsh on 晴耕雨讀</title><link>http://0x3f.org/tags/zsh/</link><description>Recent content in Zsh on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Thu, 19 Aug 2021 23:34:25 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/zsh/index.xml" rel="self" type="application/rss+xml"/><item><title>用 zsh-autoenv 实现目录级别的 zshrc</title><link>http://0x3f.org/posts/implement-directory-specific-zshrc-with-zsh-autoenv/</link><pubDate>Thu, 19 Aug 2021 23:34:25 +0800</pubDate><guid>http://0x3f.org/posts/implement-directory-specific-zshrc-with-zsh-autoenv/</guid><description>&lt;p&gt;&lt;a href="https://github.com/Tarrasch/zsh-autoenv"&gt;zsh-autoenv&lt;/a&gt; 可以实现当进入特定的目录时加载特定的 zshrc 文件，并当切换到其它目录时取消其中的变更。后者在当前的版本下，对环境变量、命令别名和函数有效。&lt;/p&gt;
+&lt;p&gt;使用方法为：&lt;/p&gt;
+&lt;p&gt;在目录（如 &lt;code&gt;~/project&lt;/code&gt; ）下创建文件 &lt;code&gt;.autoenv.zsh&lt;/code&gt; :&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-zsh" data-lang="zsh"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;autostash &lt;span class="nv"&gt;TEST_VAR&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;This is a test variable.&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;autostash &lt;span class="nb"&gt;alias&lt;/span&gt; &lt;span class="nv"&gt;test_cmd&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;echo &amp;#34;This is a test alias.&amp;#34;&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;autostash test_func
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;test_func&lt;span class="o"&gt;()&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;This is a test function.&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;出于安全考虑， zsh-autoenv 会对 &lt;code&gt;.autoenv.zsh&lt;/code&gt; 做哈希校验，所以第一次或者做变动后进入该目录时，都会要求确认是否接受此文件最新的内容。&lt;/p&gt;
+&lt;p&gt;此外，如果进入的目录不存在 &lt;code&gt;.autoenv.zsh&lt;/code&gt;， zsh-autoenv 会自动向上查找最近的同名文件并加载，上溯的层级可以通过配置项定义。&lt;/p&gt;
+&lt;p&gt;最后，它提供了一个命令 &lt;code&gt;autoenv-edit&lt;/code&gt; 用来快速打开和编辑 &lt;code&gt;.autoenv.zsh&lt;/code&gt; 文件。&lt;/p&gt;</description></item><item><title>ZSH下新安装的程序无法自动补全的解决方法</title><link>http://0x3f.org/posts/how-to-auto-complete-newly-installed-command-in-zsh/</link><pubDate>Wed, 12 Nov 2014 22:15:00 +0000</pubDate><guid>http://0x3f.org/posts/how-to-auto-complete-newly-installed-command-in-zsh/</guid><description>&lt;p&gt;Zsh默认开启了对PATH变量的缓存，这是导致新安装的程序无法立即使用自动补全的原因。&lt;/p&gt;
+&lt;p&gt;其实只要PATH变量不太复杂，安装的程序不太多，完全没必要开启缓存，实际上我把缓存关掉后完全没有感觉到补全的速度有什么变化。&lt;/p&gt;
+&lt;p&gt;方法如下，在.zshrc中增加一行：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;zstyle &lt;span class="s1"&gt;&amp;#39;:completion:*&amp;#39;&lt;/span&gt; rehash &lt;span class="nb"&gt;true&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;也可以在必要的时间手工执行命令&lt;strong&gt;rehash&lt;/strong&gt;，也是个临时解决方法。&lt;/p&gt;</description></item><item><title>Take Sakura as My Primary Terminal</title><link>http://0x3f.org/posts/take-sakura-as-my-primary-terminal/</link><pubDate>Sun, 07 Jul 2013 12:07:00 +0000</pubDate><guid>http://0x3f.org/posts/take-sakura-as-my-primary-terminal/</guid><description>&lt;p&gt;It&amp;rsquo;s a long time since I came across rxvt-unicode.&lt;/p&gt;
+&lt;p&gt;About seven years ago, when I switched from Windows XP to Ubuntu mainly for performance issues, I never be bored with searching for everything with a higher speed. To me, gnome-terminal is too much slow as a terminal being frequently opened and closed. Then, rxvt-unicode came through.&lt;/p&gt;
+&lt;p&gt;At first glance, rxvt-unicode was so ugly that I put it behind without the slightest bit of hesitation. Not until I once saw a screenshot did I realize this ugly thing can actually be pretty like that. So I started to take it as my primary terminal since then, for it was the fastest terminal I can find at that time.&lt;/p&gt;</description></item></channel></rss>

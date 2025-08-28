@@ -1,224 +1,224 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Mysql on 晴耕雨讀</title><link>http://0x3f.org/tags/mysql/</link><description>Recent content in Mysql on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Mon, 15 Jan 2024 16:48:09 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/mysql/index.xml" rel="self" type="application/rss+xml"/><item><title>轻松管理 Docker 下的 MariaDB 错误日志：重定向到日志控制台和日志轮转</title><link>http://0x3f.org/posts/steps-to-implement-redirection-and-rotation-for-error-logs-of-docker-deployed-mariadb/</link><pubDate>Mon, 15 Jan 2024 16:48:09 +0800</pubDate><guid>http://0x3f.org/posts/steps-to-implement-redirection-and-rotation-for-error-logs-of-docker-deployed-mariadb/</guid><description>&lt;p>本文旨在通过把 MariaDB 的错误日志重定向到 Docker 的错误控制台以实现通过 Loki 收集日志，并使用日志轮转控制日志文件大小。&lt;/p>
-&lt;h1 id="指定固定的日志文件名">指定固定的日志文件名&lt;/h1>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-ini" data-lang="ini">&lt;span class="line">&lt;span class="cl">&lt;span class="k">[mariadb]&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">log_error&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">/config/databases/mariadb.err&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;h1 id="把容器中的错误日志重定向到-docker-日志控制台">把容器中的错误日志重定向到 Docker 日志控制台&lt;/h1>
-&lt;p>在容器的环境变量中添加以下内容：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;span class="lnt">2
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-ini" data-lang="ini">&lt;span class="line">&lt;span class="cl">&lt;span class="na">DOCKER_MODS&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">lscr.io/linuxserver/mods:universal-stdout-logs&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="na">LOGS_TO_STDOUT&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s">/config/databases/mariadb.err&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;h1 id="设置-mariadb-的-rootlocalhost-用户的鉴权方式">设置 MariaDB 的 root@localhost 用户的鉴权方式&lt;/h1>
-&lt;p>创建 root@localhost 用户：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-sql" data-lang="sql">&lt;span class="line">&lt;span class="cl">&lt;span class="k">CREATE&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">USER&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s1">&amp;#39;root&amp;#39;&lt;/span>&lt;span class="o">@&lt;/span>&lt;span class="s1">&amp;#39;localhost&amp;#39;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">IDENTIFIED&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">VIA&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s1">&amp;#39;unix_socket&amp;#39;&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>或更改已存在的 root@localhost 用户的鉴权方式：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-sql" data-lang="sql">&lt;span class="line">&lt;span class="cl">&lt;span class="k">ALTER&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">USER&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s1">&amp;#39;root&amp;#39;&lt;/span>&lt;span class="o">@&lt;/span>&lt;span class="s1">&amp;#39;localhost&amp;#39;&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">IDENTIFIED&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">VIA&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s1">&amp;#39;unix_socket&amp;#39;&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;h1 id="受权-reload-给-rootlocalhost-用户">受权 RELOAD 给 root@localhost 用户&lt;/h1>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-sql" data-lang="sql">&lt;span class="line">&lt;span class="cl">&lt;span class="k">GRANT&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">RELOAD&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">ON&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">TO&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s1">&amp;#39;root&amp;#39;&lt;/span>&lt;span class="o">@&lt;/span>&lt;span class="s1">&amp;#39;localhost&amp;#39;&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="o">`&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;h1 id="配置-logrotate">配置 logrotate&lt;/h1>
-&lt;p>在宿主机创建 &lt;code>/etc/logrotate.d/mariadb&lt;/code>：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
-&lt;/span>&lt;span class="lnt"> 2
-&lt;/span>&lt;span class="lnt"> 3
-&lt;/span>&lt;span class="lnt"> 4
-&lt;/span>&lt;span class="lnt"> 5
-&lt;/span>&lt;span class="lnt"> 6
-&lt;/span>&lt;span class="lnt"> 7
-&lt;/span>&lt;span class="lnt"> 8
-&lt;/span>&lt;span class="lnt"> 9
-&lt;/span>&lt;span class="lnt">10
-&lt;/span>&lt;span class="lnt">11
-&lt;/span>&lt;span class="lnt">12
-&lt;/span>&lt;span class="lnt">13
-&lt;/span>&lt;span class="lnt">14
-&lt;/span>&lt;span class="lnt">15
-&lt;/span>&lt;span class="lnt">16
-&lt;/span>&lt;span class="lnt">17
-&lt;/span>&lt;span class="lnt">18
-&lt;/span>&lt;span class="lnt">19
-&lt;/span>&lt;span class="lnt">20
-&lt;/span>&lt;span class="lnt">21
-&lt;/span>&lt;span class="lnt">22
-&lt;/span>&lt;span class="lnt">23
-&lt;/span>&lt;span class="lnt">24
-&lt;/span>&lt;span class="lnt">25
-&lt;/span>&lt;span class="lnt">26
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">/mnt/user/appdata/mariadb/databases/mariadb.err &lt;span class="o">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> su nobody users
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> missingok
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> create &lt;span class="m">660&lt;/span> nobody users
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> notifempty
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> daily
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> minsize 1M
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> maxsize 100M
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> rotate &lt;span class="m">30&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> dateext
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> dateformat .%Y-%m-%d-%H-%M-%S
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> compress
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> delaycompress
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> sharedscripts 
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> olddir ../archive/
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> createolddir &lt;span class="m">770&lt;/span> nobody users
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> postrotate
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1"># just if mysqld is really running&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> docker &lt;span class="nb">exec&lt;/span> mariadb &lt;span class="nb">test&lt;/span> -x /usr/bin/mysqladmin &lt;span class="o">&amp;amp;&amp;amp;&lt;/span> &lt;span class="se">\
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span> docker &lt;span class="nb">exec&lt;/span> mariadb /usr/bin/mysqladmin ping &lt;span class="p">&amp;amp;&lt;/span>&amp;gt;/dev/null
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">then&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> docker &lt;span class="nb">exec&lt;/span> mariadb /usr/bin/mysqladmin --local flush-error-log &lt;span class="se">\
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span> flush-engine-log flush-general-log flush-slow-log
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">fi&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> endscript
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>可通过以下命令测试效果：&lt;/p></description></item><item><title>MySQL 事务的一致性、隔离级别与幻读问题</title><link>http://0x3f.org/posts/isolation-levels-and-phantom-reads-in-mysql/</link><pubDate>Tue, 21 Jul 2020 16:25:09 +0800</pubDate><guid>http://0x3f.org/posts/isolation-levels-and-phantom-reads-in-mysql/</guid><description>&lt;h2 id="数据库事务的一致性">数据库事务的一致性&lt;/h2>
-&lt;p>数据库事务有四个特性：原子性（Atomicity）、一致性（Consistency）、隔离性（Isolation）、持久性（Durability），简称“ACID”。&lt;/p>
-&lt;p>其中，“一致性”指的是数据库层面的一致性，与应用层面的一致性不同。&lt;/p>
-&lt;p>数据库层面的一致性是说，事务具备把数据库从一个正确的状态迁移到另一个正确的状态的特性。所谓正确的状态，是指任何写入数据库的数据都满足数据库既定的规则，这些规则包括各种约束、级联回滚、触发器以及任何它们的组合。&lt;/p>
-&lt;p>与数据库层面的一致性不同，应用层面的一致性要求保证结果的正确性。例如，当执行如下 SQL 语句时：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-sql" data-lang="sql">&lt;span class="line">&lt;span class="cl">&lt;span class="k">update&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">accounts&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">set&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">balance&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">balance&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">where&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">id&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="mi">3&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>我希望最终的结果是在事务开始时 id = 3 的这行数据 balance 列的值的基础上加一，否则，结果就是不正确的。&lt;/p>
-&lt;p>因此，只要写入的数据满足数据库的规则，就保证了数据库层面的一致性。&lt;strong>数据库层面的一致性并不保证数据正确&lt;/strong>&lt;sup id="fnref:1">&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref">1&lt;/a>&lt;/sup>。&lt;/p>
-&lt;h2 id="mysql-事务的隔离级别与幻读问题">MySQL 事务的隔离级别与幻读问题&lt;/h2>
-&lt;h3 id="隔离级别">隔离级别&lt;/h3>
-&lt;p>隔离性是指：多个事务并发执行时，每个事务对数据库所做的更改必须与其它事务隔离。&lt;/p>
-&lt;p>隔离性是并发控制的主要目标&lt;sup id="fnref:2">&lt;a href="#fn:2" class="footnote-ref" role="doc-noteref">2&lt;/a>&lt;/sup>，并发控制用来实现在保证应用层面一致性的前提下，尽可能快地对并发请求做出响应。由此可见，隔离性和并发能力是一对此消彼长的关系。极端情况下，如果并发的请求按顺序执行，隔离性是最好的，但是响应最慢，反之亦然。&lt;/p>
-&lt;p>在此基础上，产生了四个隔离级别的划分。由低到高依次为：读未提交、读已提交、可重复读、序列化。据前所述，它们的并发能力是依次下降的。&lt;/p>
-&lt;p>因此，&lt;strong>隔离级别的本质是通过适度地破坏隔离性来提高并发能力。&lt;/strong>&lt;/p>
-&lt;h3 id="隔离级别的问题">隔离级别的问题&lt;/h3>
-&lt;p>隔离级别不同，存在的问题也不一样。&lt;/p>
-&lt;p>“读未提交”的级别最低、并发能力最高，存在的问题也最多，包括：脏读、不可重复读、幻读。其中，脏读是这个级别独有的，即事务 A 读取了并发事务 B 未提交的数据。&lt;/p>
-&lt;p>“读已提交”顾名思义，事务 A 不会读取并发事务 B 未提交的数据，但可以读取其已提交的。因此，这个级别存在不可重复读和幻读的问题。&lt;/p>
-&lt;p>在“可重复读”级别下，同一事务中两次同样的查询结果一致，不会受并发事务的影响，它因此也解决了不可重复读的问题。但还会存在幻读问题。&lt;/p>
-&lt;p>“序列化”级别要求对查询的对象加范围锁并保持到事务结束，因此，它避免了幻读的问题。&lt;/p>
-&lt;h3 id="幻读问题phantom-reads">幻读问题（Phantom Reads）&lt;/h3>
-&lt;p>幻读问题是个很 tricky 的问题，以至于网上找到的很多文章对它的理解都是不全面甚至是错误的。&lt;/p>
-&lt;p>幻读即同一事务中两次相同查询的结果集不一致。乍一看，好像和不可重复读是一样的。那它们的区别是什么呢？&lt;/p>
-&lt;p>事实上，幻读是不可重复读的一种特殊情况。换句话说，&lt;strong>只要存在幻行（Phantom Rows），就是幻读问题&lt;/strong>。&lt;/p>
-&lt;p>所谓幻行，即同一事务中两次相同的查询结果集的非空差集里的元素，或者说第二次查询后发现不存在于前一次结果集中的行。&lt;/p>
-&lt;p>幻行产生的原因主要是除“序列化”之外的隔离级别不要求对查询结果加范围锁，导致并发事务在查询范围内插入新的行后被当前事务查到。&lt;/p>
-&lt;h4 id="mvcc">MVCC&lt;/h4>
-&lt;p>在此基础上，MySQL 的 InnoDB 引擎实现了“多版本并发控制”（MVCC: Multiversion Concurrency Control）。&lt;/p>
-&lt;p>简单地说，InnoDB 的表存在两个隐藏列，用于记录每行数据的版本信息。当插入一行数据时，InnoDB 将当前事务的版本信息一并写入。当修改一行数据时，InnoDB 先将该行做一次复制，并把当前版本信息写入进去。查询时，只返回版本小于等于当前事务版本的数据。通过这样保证一个事务中查询到的是事务开始前已经存在的数据或当前事务写入的数据。其它事务写入的数据则不会被读取。&lt;/p></description></item><item><title>用MySQL的全文检索实现相关性排序</title><link>http://0x3f.org/posts/fulltext-searching-in-mysql/</link><pubDate>Mon, 19 Jun 2017 23:10:41 +0000</pubDate><guid>http://0x3f.org/posts/fulltext-searching-in-mysql/</guid><description>&lt;p>实现根据文章的关键词搜索出相关的文章，并按相关性排序。&lt;/p>
-&lt;p>数据库版本是5.6.x，还不能像5.7那样支持中文的全文检索，所以另外创建一列保存关键词的编码。方法为base64转码并去掉「%」符号：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
-&lt;/span>&lt;span class="lnt"> 2
-&lt;/span>&lt;span class="lnt"> 3
-&lt;/span>&lt;span class="lnt"> 4
-&lt;/span>&lt;span class="lnt"> 5
-&lt;/span>&lt;span class="lnt"> 6
-&lt;/span>&lt;span class="lnt"> 7
-&lt;/span>&lt;span class="lnt"> 8
-&lt;/span>&lt;span class="lnt"> 9
-&lt;/span>&lt;span class="lnt">10
-&lt;/span>&lt;span class="lnt">11
-&lt;/span>&lt;span class="lnt">12
-&lt;/span>&lt;span class="lnt">13
-&lt;/span>&lt;span class="lnt">14
-&lt;/span>&lt;span class="lnt">15
-&lt;/span>&lt;span class="lnt">16
-&lt;/span>&lt;span class="lnt">17
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-php" data-lang="php">&lt;span class="line">&lt;span class="cl">&lt;span class="o">&amp;lt;?&lt;/span>&lt;span class="nx">php&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd">/**
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> * 转换关键词到全文检索的格式
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> *
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> * @param mixed $keywords 关键词数组或英文逗号分隔的字符串
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> * @return string
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> */&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="k">function&lt;/span> &lt;span class="nf">encode_keywords&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$keywords&lt;/span>&lt;span class="p">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nv">$encoder&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="k">function&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="nv">$keyword&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="nx">str_replace&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;%&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="s1">&amp;#39;&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">urlencode&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nx">trim&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$keyword&lt;/span>&lt;span class="p">)));&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">};&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="o">!&lt;/span>&lt;span class="nx">is_array&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$keywords&lt;/span>&lt;span class="p">))&lt;/span> &lt;span class="p">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nv">$keywords&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="nx">explode&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;,&amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">$keywords&lt;/span>&lt;span class="p">);&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">return&lt;/span> &lt;span class="nx">implode&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39; &amp;#39;&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nx">array_map&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="nv">$encoder&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nv">$keywords&lt;/span>&lt;span class="p">));&lt;/span>
-&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>对该列创建全文检索的索引：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-sql" data-lang="sql">&lt;span class="line">&lt;span class="cl">&lt;span class="k">CREATE&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">FULLTEXT&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">INDEX&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">idx_post_keywords&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">ON&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">posts&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">keywords_ft&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>查询语句：&lt;/p></description></item><item><title>MySQL升级后执行mysql_upgrade</title><link>http://0x3f.org/posts/execute-mysql-upgrade-after-upgrading/</link><pubDate>Fri, 11 Feb 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/execute-mysql-upgrade-after-upgrading/</guid><description>&lt;p>最近把MySQL从5.1升级到5.5，之后创建存储过程时报如下错误：&lt;/p>&lt;blockquote>&lt;p>ERROR 1548 (HY000) at line 5: Cannot load from mysql.proc. The table is probably corrupted&lt;/p>&lt;/blockquote>&lt;p>解决办法是执行如下命令：
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Mysql on 晴耕雨讀</title><link>http://0x3f.org/tags/mysql/</link><description>Recent content in Mysql on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Mon, 15 Jan 2024 16:48:09 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/mysql/index.xml" rel="self" type="application/rss+xml"/><item><title>轻松管理 Docker 下的 MariaDB 错误日志：重定向到日志控制台和日志轮转</title><link>http://0x3f.org/posts/steps-to-implement-redirection-and-rotation-for-error-logs-of-docker-deployed-mariadb/</link><pubDate>Mon, 15 Jan 2024 16:48:09 +0800</pubDate><guid>http://0x3f.org/posts/steps-to-implement-redirection-and-rotation-for-error-logs-of-docker-deployed-mariadb/</guid><description>&lt;p&gt;本文旨在通过把 MariaDB 的错误日志重定向到 Docker 的错误控制台以实现通过 Loki 收集日志，并使用日志轮转控制日志文件大小。&lt;/p&gt;
+&lt;h1 id="指定固定的日志文件名"&gt;指定固定的日志文件名&lt;/h1&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ini" data-lang="ini"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;[mariadb]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="na"&gt;log_error&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;/config/databases/mariadb.err&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h1 id="把容器中的错误日志重定向到-docker-日志控制台"&gt;把容器中的错误日志重定向到 Docker 日志控制台&lt;/h1&gt;
+&lt;p&gt;在容器的环境变量中添加以下内容：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-ini" data-lang="ini"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="na"&gt;DOCKER_MODS&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;lscr.io/linuxserver/mods:universal-stdout-logs&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="na"&gt;LOGS_TO_STDOUT&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;/config/databases/mariadb.err&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h1 id="设置-mariadb-的-rootlocalhost-用户的鉴权方式"&gt;设置 MariaDB 的 root@localhost 用户的鉴权方式&lt;/h1&gt;
+&lt;p&gt;创建 root@localhost 用户：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-sql" data-lang="sql"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;CREATE&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;USER&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;root&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;@&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;localhost&amp;#39;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;IDENTIFIED&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;VIA&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;unix_socket&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;或更改已存在的 root@localhost 用户的鉴权方式：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-sql" data-lang="sql"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;ALTER&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;USER&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;root&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;@&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;localhost&amp;#39;&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;IDENTIFIED&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;VIA&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;unix_socket&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h1 id="受权-reload-给-rootlocalhost-用户"&gt;受权 RELOAD 给 root@localhost 用户&lt;/h1&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-sql" data-lang="sql"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;GRANT&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;RELOAD&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;ON&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;TO&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;root&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;@&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;localhost&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="o"&gt;`&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h1 id="配置-logrotate"&gt;配置 logrotate&lt;/h1&gt;
+&lt;p&gt;在宿主机创建 &lt;code&gt;/etc/logrotate.d/mariadb&lt;/code&gt;：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;span class="lnt"&gt;22
+&lt;/span&gt;&lt;span class="lnt"&gt;23
+&lt;/span&gt;&lt;span class="lnt"&gt;24
+&lt;/span&gt;&lt;span class="lnt"&gt;25
+&lt;/span&gt;&lt;span class="lnt"&gt;26
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;/mnt/user/appdata/mariadb/databases/mariadb.err &lt;span class="o"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; su nobody users
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; missingok
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; create &lt;span class="m"&gt;660&lt;/span&gt; nobody users
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; notifempty
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; daily
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; minsize 1M
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; maxsize 100M
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; rotate &lt;span class="m"&gt;30&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; dateext
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; dateformat .%Y-%m-%d-%H-%M-%S
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; compress
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; delaycompress
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; sharedscripts 
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; olddir ../archive/
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; createolddir &lt;span class="m"&gt;770&lt;/span&gt; nobody users
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; postrotate
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;# just if mysqld is really running&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; docker &lt;span class="nb"&gt;exec&lt;/span&gt; mariadb &lt;span class="nb"&gt;test&lt;/span&gt; -x /usr/bin/mysqladmin &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="se"&gt;&lt;/span&gt; docker &lt;span class="nb"&gt;exec&lt;/span&gt; mariadb /usr/bin/mysqladmin ping &lt;span class="p"&gt;&amp;amp;&lt;/span&gt;&amp;gt;/dev/null
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; docker &lt;span class="nb"&gt;exec&lt;/span&gt; mariadb /usr/bin/mysqladmin --local flush-error-log &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="se"&gt;&lt;/span&gt; flush-engine-log flush-general-log flush-slow-log
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;fi&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; endscript
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;可通过以下命令测试效果：&lt;/p&gt;</description></item><item><title>MySQL 事务的一致性、隔离级别与幻读问题</title><link>http://0x3f.org/posts/isolation-levels-and-phantom-reads-in-mysql/</link><pubDate>Tue, 21 Jul 2020 16:25:09 +0800</pubDate><guid>http://0x3f.org/posts/isolation-levels-and-phantom-reads-in-mysql/</guid><description>&lt;h2 id="数据库事务的一致性"&gt;数据库事务的一致性&lt;/h2&gt;
+&lt;p&gt;数据库事务有四个特性：原子性（Atomicity）、一致性（Consistency）、隔离性（Isolation）、持久性（Durability），简称“ACID”。&lt;/p&gt;
+&lt;p&gt;其中，“一致性”指的是数据库层面的一致性，与应用层面的一致性不同。&lt;/p&gt;
+&lt;p&gt;数据库层面的一致性是说，事务具备把数据库从一个正确的状态迁移到另一个正确的状态的特性。所谓正确的状态，是指任何写入数据库的数据都满足数据库既定的规则，这些规则包括各种约束、级联回滚、触发器以及任何它们的组合。&lt;/p&gt;
+&lt;p&gt;与数据库层面的一致性不同，应用层面的一致性要求保证结果的正确性。例如，当执行如下 SQL 语句时：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-sql" data-lang="sql"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;update&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;accounts&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;set&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;balance&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;balance&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;where&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;我希望最终的结果是在事务开始时 id = 3 的这行数据 balance 列的值的基础上加一，否则，结果就是不正确的。&lt;/p&gt;
+&lt;p&gt;因此，只要写入的数据满足数据库的规则，就保证了数据库层面的一致性。&lt;strong&gt;数据库层面的一致性并不保证数据正确&lt;/strong&gt;&lt;sup id="fnref:1"&gt;&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref"&gt;1&lt;/a&gt;&lt;/sup&gt;。&lt;/p&gt;
+&lt;h2 id="mysql-事务的隔离级别与幻读问题"&gt;MySQL 事务的隔离级别与幻读问题&lt;/h2&gt;
+&lt;h3 id="隔离级别"&gt;隔离级别&lt;/h3&gt;
+&lt;p&gt;隔离性是指：多个事务并发执行时，每个事务对数据库所做的更改必须与其它事务隔离。&lt;/p&gt;
+&lt;p&gt;隔离性是并发控制的主要目标&lt;sup id="fnref:2"&gt;&lt;a href="#fn:2" class="footnote-ref" role="doc-noteref"&gt;2&lt;/a&gt;&lt;/sup&gt;，并发控制用来实现在保证应用层面一致性的前提下，尽可能快地对并发请求做出响应。由此可见，隔离性和并发能力是一对此消彼长的关系。极端情况下，如果并发的请求按顺序执行，隔离性是最好的，但是响应最慢，反之亦然。&lt;/p&gt;
+&lt;p&gt;在此基础上，产生了四个隔离级别的划分。由低到高依次为：读未提交、读已提交、可重复读、序列化。据前所述，它们的并发能力是依次下降的。&lt;/p&gt;
+&lt;p&gt;因此，&lt;strong&gt;隔离级别的本质是通过适度地破坏隔离性来提高并发能力。&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id="隔离级别的问题"&gt;隔离级别的问题&lt;/h3&gt;
+&lt;p&gt;隔离级别不同，存在的问题也不一样。&lt;/p&gt;
+&lt;p&gt;“读未提交”的级别最低、并发能力最高，存在的问题也最多，包括：脏读、不可重复读、幻读。其中，脏读是这个级别独有的，即事务 A 读取了并发事务 B 未提交的数据。&lt;/p&gt;
+&lt;p&gt;“读已提交”顾名思义，事务 A 不会读取并发事务 B 未提交的数据，但可以读取其已提交的。因此，这个级别存在不可重复读和幻读的问题。&lt;/p&gt;
+&lt;p&gt;在“可重复读”级别下，同一事务中两次同样的查询结果一致，不会受并发事务的影响，它因此也解决了不可重复读的问题。但还会存在幻读问题。&lt;/p&gt;
+&lt;p&gt;“序列化”级别要求对查询的对象加范围锁并保持到事务结束，因此，它避免了幻读的问题。&lt;/p&gt;
+&lt;h3 id="幻读问题phantom-reads"&gt;幻读问题（Phantom Reads）&lt;/h3&gt;
+&lt;p&gt;幻读问题是个很 tricky 的问题，以至于网上找到的很多文章对它的理解都是不全面甚至是错误的。&lt;/p&gt;
+&lt;p&gt;幻读即同一事务中两次相同查询的结果集不一致。乍一看，好像和不可重复读是一样的。那它们的区别是什么呢？&lt;/p&gt;
+&lt;p&gt;事实上，幻读是不可重复读的一种特殊情况。换句话说，&lt;strong&gt;只要存在幻行（Phantom Rows），就是幻读问题&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;所谓幻行，即同一事务中两次相同的查询结果集的非空差集里的元素，或者说第二次查询后发现不存在于前一次结果集中的行。&lt;/p&gt;
+&lt;p&gt;幻行产生的原因主要是除“序列化”之外的隔离级别不要求对查询结果加范围锁，导致并发事务在查询范围内插入新的行后被当前事务查到。&lt;/p&gt;
+&lt;h4 id="mvcc"&gt;MVCC&lt;/h4&gt;
+&lt;p&gt;在此基础上，MySQL 的 InnoDB 引擎实现了“多版本并发控制”（MVCC: Multiversion Concurrency Control）。&lt;/p&gt;
+&lt;p&gt;简单地说，InnoDB 的表存在两个隐藏列，用于记录每行数据的版本信息。当插入一行数据时，InnoDB 将当前事务的版本信息一并写入。当修改一行数据时，InnoDB 先将该行做一次复制，并把当前版本信息写入进去。查询时，只返回版本小于等于当前事务版本的数据。通过这样保证一个事务中查询到的是事务开始前已经存在的数据或当前事务写入的数据。其它事务写入的数据则不会被读取。&lt;/p&gt;</description></item><item><title>用MySQL的全文检索实现相关性排序</title><link>http://0x3f.org/posts/fulltext-searching-in-mysql/</link><pubDate>Mon, 19 Jun 2017 23:10:41 +0000</pubDate><guid>http://0x3f.org/posts/fulltext-searching-in-mysql/</guid><description>&lt;p&gt;实现根据文章的关键词搜索出相关的文章，并按相关性排序。&lt;/p&gt;
+&lt;p&gt;数据库版本是5.6.x，还不能像5.7那样支持中文的全文检索，所以另外创建一列保存关键词的编码。方法为base64转码并去掉「%」符号：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-php" data-lang="php"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="o"&gt;&amp;lt;?&lt;/span&gt;&lt;span class="nx"&gt;php&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt;/**
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; * 转换关键词到全文检索的格式
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; *
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; * @param mixed $keywords 关键词数组或英文逗号分隔的字符串
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; * @return string
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="sd"&gt; */&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;function&lt;/span&gt; &lt;span class="nf"&gt;encode_keywords&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;$keywords&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nv"&gt;$encoder&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;function&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;$keyword&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;str_replace&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;%&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;urlencode&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;trim&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;$keyword&lt;/span&gt;&lt;span class="p"&gt;)));&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;};&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;!&lt;/span&gt;&lt;span class="nx"&gt;is_array&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;$keywords&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nv"&gt;$keywords&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;explode&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;,&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;$keywords&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;implode&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39; &amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;array_map&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;$encoder&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;$keywords&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;对该列创建全文检索的索引：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-sql" data-lang="sql"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;CREATE&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;FULLTEXT&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;INDEX&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;idx_post_keywords&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;ON&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;posts&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;keywords_ft&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;查询语句：&lt;/p&gt;</description></item><item><title>MySQL升级后执行mysql_upgrade</title><link>http://0x3f.org/posts/execute-mysql-upgrade-after-upgrading/</link><pubDate>Fri, 11 Feb 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/execute-mysql-upgrade-after-upgrading/</guid><description>&lt;p&gt;最近把MySQL从5.1升级到5.5，之后创建存储过程时报如下错误：&lt;/p&gt;&lt;blockquote&gt;&lt;p&gt;ERROR 1548 (HY000) at line 5: Cannot load from mysql.proc. The table is probably corrupted&lt;/p&gt;&lt;/blockquote&gt;&lt;p&gt;解决办法是执行如下命令：
 
 ```bash
 mysql_upgrade -p
 ```
 
-&lt;a href="http://dev.mysql.com/doc/refman/5.0/en/mysql-upgrade.html" target="_blank">mysql_upgrade&lt;/a>是MySQL提供的一个指令，作用是检查MySQL中的各个表与当前版本的数据库是否匹配并尝试修复所有发现的问题。MySQL官方文档中推荐在每次升级后执行一下这个指令。&lt;/p></description></item><item><title>中秋后记</title><link>http://0x3f.org/posts/note-after-the-mid-autumn-day/</link><pubDate>Sun, 26 Sep 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/note-after-the-mid-autumn-day/</guid><description>&lt;p>可以让回忆放肆一些。&lt;/p>
-&lt;p>中秋的晚上公司餐厅放电影，《邻家特工》和《越光宝盒》，本来打算看完《越光》就走，结果先放的是《特工》。也好，复习一下，好在这片子不错，再看也挺有意思。《越光》纯属烂片，但是如今看看这种不费脑子的东西也变得无可无不可。免费的零食很烘托气氛，唯一的惊喜是居然还有罐装啤酒。&lt;/p>
-&lt;p>回到住处的当夜就发布了Dumperor。其实这个东西很早就开始做了，起初的目的是为了判断数据库脚本从SQL Server迁移到Oracle和MySQL是否成功。单纯的迁移只能保证修改后的脚本在这两个数据库中执行不会报错，但究竟是不是该执行的东西都成功执行了，一般很难判断，尤其是那帮家伙总是在发版前一两天才告诉我要迁移脚本，那么多不规范的语句，能保证不报错就已经不错了，遑论没有遗漏。所以就著手做一个数据库表结构和数据的导出工具，这样只需用diff工具比较标准数据库和测试数据库导出的脚本就可以了。&lt;/p>
-&lt;p>从一开始我就决定不使用公司产品的一行代码。其实做这个东西最大的麻烦不是来自来自于如何查询不同的数据库的表结构，而是数据库抽象层。如果要白手起家搞个抽象层的话，我想可能代码量比Dumperor本身都大，于是选择了Yii框架。后来在Dumperor基本成型时又觉得为了仅仅使用最基本的数据库查询功能就捆绑这么大一个框架，有点搞笑，谢天谢地，我终于花时间学了PDO。&lt;/p>
-&lt;p>中秋节放假的第二天，开始读Google Code上关于Chrome扩展开发的官方文档。这事源于本尊被另一个Chrome扩展作者无视了。&lt;/p>
-&lt;p>一直强迫自己喜欢上Firefox，但都败了。本来对Opera充满希望，但是从10.0起它带给我的除了失望就是更多的失望，这个东西的发展就像它的国家的位置一样怪异，你永远不能以常人的思维去臆测Opera的开发者，他们就像一群母系氏族社会的娘们儿一样整天跟著感觉走。&lt;/p>
-&lt;p>于是不知道什么时候我就开始经常用Chrome了，前段时间开始用一个扩展辅助MLDonkey下载。这个东西会在工具栏里添加一个图标，唯一的作用就是打开选项设置页面设置那个也许这辈子都只需要设置一次的MLDonkey的URL地址。于是我给那个扩展的作者写了封邮件，那家伙居然到现在都没有回复。&lt;/p>
-&lt;p>所以本尊决定无视他了。太祖武皇帝的那句丰衣足食的圣谕真是至理名言，读完文档我就发现这个扩展完全应该用Chrome的Page Action取代Browser Action，简单地说就是当且仅当本页面中包含有可下载的资源时才在地址栏中显示一个图标，而不应该总是在工具栏占用一个图标的位置。&lt;/p>
-&lt;p>随后要做的就是用AJAX请求取代弹出新窗口的方式添加下载任务，我嫌每次添加一个下载任务后都要关闭一个弹出窗口太麻烦。我的目标是用AJAX请求将要下载的任务在后台传递给MLDonkey，并用Chrome的Desktop Notification功能弹出桌面提示对话框显示结果状态。这样很优雅。&lt;/p>
-&lt;p>但是实际去做的时候问题来了，虽然Chrome本身允许扩展使用跨域的AJAX，但是至少在和MLDonkey进行通讯时，无论成功与否，得到的返回信息都是空的，状态码也都是0。这个问题浪费了我几乎一整天的时间，最终我决定用AJAX的请求响应时间来判断失败或成功，因为一次AJAX请求响应过程在MLDonkey没启动的时候耗费的时间一般会比正在运行时要长。这就要求每个用户都要根据自己的情况设定合适的超时时间。为了避免麻烦，最后还是实现了通过弹窗添加下载任务的模式，毕竟这个东西总是可靠的。&lt;/p>
-&lt;p>要发布的时候发现如今在Chrome Extension Gallery中发布扩展居然要收费了，虽然只是一次性的。最后花了八两银子注册了Google Checkout账户，又付了五刀美帝币，才把DonkeyBuddy传上去。发布个免费扩展还得倒贴，本尊也太背了吧。&lt;/p>
-&lt;p>节后收到了Dell sk8115键盘、HP百灵无线鼠标和Nokia BH-105蓝牙耳机，sk8115是用来让我的纤纤玉手撒野的，百灵鼠是用来接替即将退役的雷柏7100的，而BH-105和我的小七搭配得天衣无缝。&lt;/p>
-&lt;p>很久没有安静地整理一下头绪了，感谢我那价值四十两银子的Dell sk8115，它让我显得如此的语无伦次。&lt;/p></description></item><item><title>InstallShield在MySQL和Oracle中执行SQL脚本的方法</title><link>http://0x3f.org/posts/howto-run-sql-scripts-in-mysql-oracle-within-installshield/</link><pubDate>Tue, 24 Aug 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-run-sql-scripts-in-mysql-oracle-within-installshield/</guid><description>&lt;h2>简述&lt;/h2>
-&lt;p>InstallShield已经内建了对MySQL和Oracle的支持。但是这个功能是通过ODBC实现的，它对SQL脚本的格式要求非常严格，因此已经通过官方客户端测试的脚本在IS中执行时往往就会报错。&lt;/p>
-&lt;p>一般来说，数据库脚本只保证通过官方客户端测试即可，同时维护一份供IS执行的脚本费时费力。因此，考虑安装程序对两数据库的支持通过官方客户端实现。&lt;/p>
-&lt;h2>MySQL&lt;/h2>&lt;br>
-&lt;pre tabindex="0">&lt;code>function InstallMySQLComponent(szComponent)
+&lt;a href="http://dev.mysql.com/doc/refman/5.0/en/mysql-upgrade.html" target="_blank"&gt;mysql_upgrade&lt;/a&gt;是MySQL提供的一个指令，作用是检查MySQL中的各个表与当前版本的数据库是否匹配并尝试修复所有发现的问题。MySQL官方文档中推荐在每次升级后执行一下这个指令。&lt;/p&gt;</description></item><item><title>中秋后记</title><link>http://0x3f.org/posts/note-after-the-mid-autumn-day/</link><pubDate>Sun, 26 Sep 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/note-after-the-mid-autumn-day/</guid><description>&lt;p&gt;可以让回忆放肆一些。&lt;/p&gt;
+&lt;p&gt;中秋的晚上公司餐厅放电影，《邻家特工》和《越光宝盒》，本来打算看完《越光》就走，结果先放的是《特工》。也好，复习一下，好在这片子不错，再看也挺有意思。《越光》纯属烂片，但是如今看看这种不费脑子的东西也变得无可无不可。免费的零食很烘托气氛，唯一的惊喜是居然还有罐装啤酒。&lt;/p&gt;
+&lt;p&gt;回到住处的当夜就发布了Dumperor。其实这个东西很早就开始做了，起初的目的是为了判断数据库脚本从SQL Server迁移到Oracle和MySQL是否成功。单纯的迁移只能保证修改后的脚本在这两个数据库中执行不会报错，但究竟是不是该执行的东西都成功执行了，一般很难判断，尤其是那帮家伙总是在发版前一两天才告诉我要迁移脚本，那么多不规范的语句，能保证不报错就已经不错了，遑论没有遗漏。所以就著手做一个数据库表结构和数据的导出工具，这样只需用diff工具比较标准数据库和测试数据库导出的脚本就可以了。&lt;/p&gt;
+&lt;p&gt;从一开始我就决定不使用公司产品的一行代码。其实做这个东西最大的麻烦不是来自来自于如何查询不同的数据库的表结构，而是数据库抽象层。如果要白手起家搞个抽象层的话，我想可能代码量比Dumperor本身都大，于是选择了Yii框架。后来在Dumperor基本成型时又觉得为了仅仅使用最基本的数据库查询功能就捆绑这么大一个框架，有点搞笑，谢天谢地，我终于花时间学了PDO。&lt;/p&gt;
+&lt;p&gt;中秋节放假的第二天，开始读Google Code上关于Chrome扩展开发的官方文档。这事源于本尊被另一个Chrome扩展作者无视了。&lt;/p&gt;
+&lt;p&gt;一直强迫自己喜欢上Firefox，但都败了。本来对Opera充满希望，但是从10.0起它带给我的除了失望就是更多的失望，这个东西的发展就像它的国家的位置一样怪异，你永远不能以常人的思维去臆测Opera的开发者，他们就像一群母系氏族社会的娘们儿一样整天跟著感觉走。&lt;/p&gt;
+&lt;p&gt;于是不知道什么时候我就开始经常用Chrome了，前段时间开始用一个扩展辅助MLDonkey下载。这个东西会在工具栏里添加一个图标，唯一的作用就是打开选项设置页面设置那个也许这辈子都只需要设置一次的MLDonkey的URL地址。于是我给那个扩展的作者写了封邮件，那家伙居然到现在都没有回复。&lt;/p&gt;
+&lt;p&gt;所以本尊决定无视他了。太祖武皇帝的那句丰衣足食的圣谕真是至理名言，读完文档我就发现这个扩展完全应该用Chrome的Page Action取代Browser Action，简单地说就是当且仅当本页面中包含有可下载的资源时才在地址栏中显示一个图标，而不应该总是在工具栏占用一个图标的位置。&lt;/p&gt;
+&lt;p&gt;随后要做的就是用AJAX请求取代弹出新窗口的方式添加下载任务，我嫌每次添加一个下载任务后都要关闭一个弹出窗口太麻烦。我的目标是用AJAX请求将要下载的任务在后台传递给MLDonkey，并用Chrome的Desktop Notification功能弹出桌面提示对话框显示结果状态。这样很优雅。&lt;/p&gt;
+&lt;p&gt;但是实际去做的时候问题来了，虽然Chrome本身允许扩展使用跨域的AJAX，但是至少在和MLDonkey进行通讯时，无论成功与否，得到的返回信息都是空的，状态码也都是0。这个问题浪费了我几乎一整天的时间，最终我决定用AJAX的请求响应时间来判断失败或成功，因为一次AJAX请求响应过程在MLDonkey没启动的时候耗费的时间一般会比正在运行时要长。这就要求每个用户都要根据自己的情况设定合适的超时时间。为了避免麻烦，最后还是实现了通过弹窗添加下载任务的模式，毕竟这个东西总是可靠的。&lt;/p&gt;
+&lt;p&gt;要发布的时候发现如今在Chrome Extension Gallery中发布扩展居然要收费了，虽然只是一次性的。最后花了八两银子注册了Google Checkout账户，又付了五刀美帝币，才把DonkeyBuddy传上去。发布个免费扩展还得倒贴，本尊也太背了吧。&lt;/p&gt;
+&lt;p&gt;节后收到了Dell sk8115键盘、HP百灵无线鼠标和Nokia BH-105蓝牙耳机，sk8115是用来让我的纤纤玉手撒野的，百灵鼠是用来接替即将退役的雷柏7100的，而BH-105和我的小七搭配得天衣无缝。&lt;/p&gt;
+&lt;p&gt;很久没有安静地整理一下头绪了，感谢我那价值四十两银子的Dell sk8115，它让我显得如此的语无伦次。&lt;/p&gt;</description></item><item><title>InstallShield在MySQL和Oracle中执行SQL脚本的方法</title><link>http://0x3f.org/posts/howto-run-sql-scripts-in-mysql-oracle-within-installshield/</link><pubDate>Tue, 24 Aug 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-run-sql-scripts-in-mysql-oracle-within-installshield/</guid><description>&lt;h2&gt;简述&lt;/h2&gt;
+&lt;p&gt;InstallShield已经内建了对MySQL和Oracle的支持。但是这个功能是通过ODBC实现的，它对SQL脚本的格式要求非常严格，因此已经通过官方客户端测试的脚本在IS中执行时往往就会报错。&lt;/p&gt;
+&lt;p&gt;一般来说，数据库脚本只保证通过官方客户端测试即可，同时维护一份供IS执行的脚本费时费力。因此，考虑安装程序对两数据库的支持通过官方客户端实现。&lt;/p&gt;
+&lt;h2&gt;MySQL&lt;/h2&gt;&lt;br&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;function InstallMySQLComponent(szComponent)
  NUMBER nResult;
  STRING szServer,szDB,szUser,szPassword,sCMD,sOPT,sResult1,sResult2,svLine,sMsg,sPath;
  NUMBER nvFileHandle,nvCount;
@@ -266,8 +266,8 @@ begin
  abort;
  endif;
 end;
-&lt;/code>&lt;/pre>&lt;h2>Oracle&lt;/h2>&lt;br>
-&lt;pre tabindex="0">&lt;code>function InstallOracleComponent(szComponent) 
+&lt;/code&gt;&lt;/pre&gt;&lt;h2&gt;Oracle&lt;/h2&gt;&lt;br&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;function InstallOracleComponent(szComponent) 
  NUMBER nResult,nvFileHandle,nIndex,nvCount;
  STRING sMsg,szServer,szDB,szUser,szPassword,sCMD,sOPT,sInstance,sTmp,svLine;
  LIST listStatus;
@@ -314,18 +314,18 @@ begin
  abort;
  endif;
 end;
-&lt;/code>&lt;/pre>&lt;h2>总结&lt;/h2>
-&lt;ol>
-	&lt;li>为便于获取脚本在数据库中的执行结果，故通过官方客户端执行脚本时通过符号“&lt;strong>>&lt;/strong>”将客户端的输出信息重定向到&lt;strong>dbstatus.txt&lt;/strong>中；同时，使用“&lt;strong>2>&amp;1&lt;/strong>”将标准错误输出重定向到标准输出设备上，当然，会进一步重定向到dbstatus.txt文件中，否则，无法获取出错信息。&lt;/li>
-	&lt;li>sqlplus执行SQL脚本后不会自动退出，故应在Oracle的脚本后加上语句“&lt;strong>exit;&lt;/strong>”。&lt;/li>
-	&lt;li>重载&lt;strong>OnSQLComponentInstalled()&lt;/strong>函数，并在其中禁止MySQL和Oracle的SQL脚本对应的Component被执行安装，然后通过以上两个函数更新数据库。&lt;/li>
-&lt;/ol></description></item><item><title>Inno Setup执行SQL脚本的方法</title><link>http://0x3f.org/posts/howto-execute-sql-scripts-in-inno-setup/</link><pubDate>Mon, 17 May 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-execute-sql-scripts-in-inno-setup/</guid><description>&lt;p>作为和&lt;a href="http://zh.wikipedia.org/zh-cn/Nullsoft%E8%85%B3%E6%9C%AC%E5%AE%89%E8%A3%9D%E7%B3%BB%E7%B5%B1">NSIS&lt;/a>并立的、两个最流行的免费Windows应用程序安装包制作工具之一，&lt;a href="http://en.wikipedia.org/wiki/Inno_Setup">Inno&lt;/a>在学习难度上相对要低一些，非常适合对一些简单的桌面程序打包。但对于较复杂的安装过程，或者Web应用程序来说，我个人觉得不是Inno的强项。当然，既然Inno内嵌了&lt;a href="http://zh.wikipedia.org/zh-cn/Pascal">Pascal&lt;/a>语言用以扩展功能，理论上不是不可以应付复杂的安装过程，但实现起来要复杂一些。&lt;/p>
+&lt;/code&gt;&lt;/pre&gt;&lt;h2&gt;总结&lt;/h2&gt;
+&lt;ol&gt;
+	&lt;li&gt;为便于获取脚本在数据库中的执行结果，故通过官方客户端执行脚本时通过符号“&lt;strong&gt;&gt;&lt;/strong&gt;”将客户端的输出信息重定向到&lt;strong&gt;dbstatus.txt&lt;/strong&gt;中；同时，使用“&lt;strong&gt;2&gt;&amp;1&lt;/strong&gt;”将标准错误输出重定向到标准输出设备上，当然，会进一步重定向到dbstatus.txt文件中，否则，无法获取出错信息。&lt;/li&gt;
+	&lt;li&gt;sqlplus执行SQL脚本后不会自动退出，故应在Oracle的脚本后加上语句“&lt;strong&gt;exit;&lt;/strong&gt;”。&lt;/li&gt;
+	&lt;li&gt;重载&lt;strong&gt;OnSQLComponentInstalled()&lt;/strong&gt;函数，并在其中禁止MySQL和Oracle的SQL脚本对应的Component被执行安装，然后通过以上两个函数更新数据库。&lt;/li&gt;
+&lt;/ol&gt;</description></item><item><title>Inno Setup执行SQL脚本的方法</title><link>http://0x3f.org/posts/howto-execute-sql-scripts-in-inno-setup/</link><pubDate>Mon, 17 May 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-execute-sql-scripts-in-inno-setup/</guid><description>&lt;p&gt;作为和&lt;a href="http://zh.wikipedia.org/zh-cn/Nullsoft%E8%85%B3%E6%9C%AC%E5%AE%89%E8%A3%9D%E7%B3%BB%E7%B5%B1"&gt;NSIS&lt;/a&gt;并立的、两个最流行的免费Windows应用程序安装包制作工具之一，&lt;a href="http://en.wikipedia.org/wiki/Inno_Setup"&gt;Inno&lt;/a&gt;在学习难度上相对要低一些，非常适合对一些简单的桌面程序打包。但对于较复杂的安装过程，或者Web应用程序来说，我个人觉得不是Inno的强项。当然，既然Inno内嵌了&lt;a href="http://zh.wikipedia.org/zh-cn/Pascal"&gt;Pascal&lt;/a&gt;语言用以扩展功能，理论上不是不可以应付复杂的安装过程，但实现起来要复杂一些。&lt;/p&gt;
 
-&lt;p>比如对于在安装过程中连接数据库并执行SQL脚本这样的需求，使用&lt;a href="http://en.wikipedia.org/wiki/InstallShield">InstallShield&lt;/a>应该会简单地多，而Inno却不支持直接操作数据库，并且相关的资料说明少之又少，还不如NSIS丰富，以至于我踏破铁鞋无觅处，最终却在NSIS的资料中找到了思路。&lt;/p>
+&lt;p&gt;比如对于在安装过程中连接数据库并执行SQL脚本这样的需求，使用&lt;a href="http://en.wikipedia.org/wiki/InstallShield"&gt;InstallShield&lt;/a&gt;应该会简单地多，而Inno却不支持直接操作数据库，并且相关的资料说明少之又少，还不如NSIS丰富，以至于我踏破铁鞋无觅处，最终却在NSIS的资料中找到了思路。&lt;/p&gt;
 
-&lt;p>主要的思路是，在安装过程中，调用数据库客户端连接数据库并执行SQL脚本，然后将执行结果或错误信息输出到文件中，最后通过分析这个文件来判断命令执行的结果。但是，既然是调用特定的客户端，那么对不同数据库的操作自然就有所区别，具体情况如下所述。&lt;/p>
+&lt;p&gt;主要的思路是，在安装过程中，调用数据库客户端连接数据库并执行SQL脚本，然后将执行结果或错误信息输出到文件中，最后通过分析这个文件来判断命令执行的结果。但是，既然是调用特定的客户端，那么对不同数据库的操作自然就有所区别，具体情况如下所述。&lt;/p&gt;
 
-&lt;p>首先在打包脚本的&lt;strong>[Files]&lt;/strong>段将必需的文件包含进来：&lt;/p>
+&lt;p&gt;首先在打包脚本的&lt;strong&gt;[Files]&lt;/strong&gt;段将必需的文件包含进来：&lt;/p&gt;
 
 ```ini
 [Files]
@@ -338,7 +338,7 @@ Source: "D:\Development\MyDemoApp\script_mysql.sql"; Flags: dontcopy
 Source: "D:\Development\MyDemoApp\script_oracle.sql"; Flags: dontcopy
 ```
 
-&lt;p>在SQL Server中执行脚本的代码片断：&lt;/p>
+&lt;p&gt;在SQL Server中执行脚本的代码片断：&lt;/p&gt;
 
 ```pascal
 function ExecScriptInMSSQL(DBHost, DBLogin, DBPass, DBName: String): Boolean;
@@ -362,7 +362,7 @@ begin
  if Exec(ConnectExe, ConnectParam, '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then begin
  Result := ResultCode = 0;
  LoadStringFromFile(ExpandConstant('{tmp}') + '\dbstatus.txt', StatusString);
- if StatusString &lt;> '' then begin
+ if StatusString &lt;&gt; '' then begin
  MsgBox(StatusString, mbError, MB_OK);
  Result := False;
  end else begin
@@ -375,4 +375,4 @@ begin
 end;
 ```
 
-&lt;p>在MySQL中执行脚本的代码片断：&lt;/p></description></item></channel></rss>
+&lt;p&gt;在MySQL中执行脚本的代码片断：&lt;/p&gt;</description></item></channel></rss>

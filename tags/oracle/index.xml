@@ -1,107 +1,107 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Oracle on 晴耕雨讀</title><link>http://0x3f.org/tags/oracle/</link><description>Recent content in Oracle on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Fri, 07 Jan 2011 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/oracle/index.xml" rel="self" type="application/rss+xml"/><item><title>Oracle中对LOB字段的操作方法</title><link>http://0x3f.org/posts/oracle-lob-operations/</link><pubDate>Fri, 07 Jan 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/oracle-lob-operations/</guid><description>&lt;p>在Oracle中插入或更新LOB字段时，可以将字符串以如下方式写入SQL语句：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-sql" data-lang="sql">&lt;span class="line">&lt;span class="cl">&lt;span class="k">insert&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">tbl_lob&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">fld_lob&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">values&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">utl_raw&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">cast_to_raw&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s1">&amp;#39;hello world&amp;#39;&lt;/span>&lt;span class="p">));&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>这样做的限制是：&lt;/p>
-&lt;ol>
-	&lt;li>Oracle中单条SQL语句有长度限制&lt;/li>
-	&lt;li>cast_to_raw()对字符串有长度限制&lt;/li>
-&lt;/ol>
-&lt;p>因此如果要插入或更新的字符串过长，会导致执行失败。此时应该使用dbms_lob处理LOB相关字段。下面是利用dbms_lob更新一个BLOB字段的存储过程，对CLOB的操作同理：&lt;/p>
-&lt;div class="highlight">&lt;div class="chroma">
-&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt"> 1
-&lt;/span>&lt;span class="lnt"> 2
-&lt;/span>&lt;span class="lnt"> 3
-&lt;/span>&lt;span class="lnt"> 4
-&lt;/span>&lt;span class="lnt"> 5
-&lt;/span>&lt;span class="lnt"> 6
-&lt;/span>&lt;span class="lnt"> 7
-&lt;/span>&lt;span class="lnt"> 8
-&lt;/span>&lt;span class="lnt"> 9
-&lt;/span>&lt;span class="lnt">10
-&lt;/span>&lt;span class="lnt">11
-&lt;/span>&lt;span class="lnt">12
-&lt;/span>&lt;span class="lnt">13
-&lt;/span>&lt;span class="lnt">14
-&lt;/span>&lt;span class="lnt">15
-&lt;/span>&lt;span class="lnt">16
-&lt;/span>&lt;span class="lnt">17
-&lt;/span>&lt;span class="lnt">18
-&lt;/span>&lt;span class="lnt">19
-&lt;/span>&lt;span class="lnt">20
-&lt;/span>&lt;span class="lnt">21
-&lt;/span>&lt;span class="lnt">22
-&lt;/span>&lt;span class="lnt">23
-&lt;/span>&lt;span class="lnt">24
-&lt;/span>&lt;span class="lnt">25
-&lt;/span>&lt;span class="lnt">26
-&lt;/span>&lt;span class="lnt">27
-&lt;/span>&lt;span class="lnt">28
-&lt;/span>&lt;span class="lnt">29
-&lt;/span>&lt;span class="lnt">30
-&lt;/span>&lt;span class="lnt">31
-&lt;/span>&lt;span class="lnt">32
-&lt;/span>&lt;span class="lnt">33
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td class="lntd">
-&lt;pre tabindex="0" class="chroma">&lt;code class="language-sql" data-lang="sql">&lt;span class="line">&lt;span class="cl">&lt;span class="k">create&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">or&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">replace&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">procedure&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">updateblob&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">ctbl&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">in&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">varchar2&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">cfld&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">in&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">varchar2&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">cstr&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">in&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">varchar2&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">ccond&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">in&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">varchar2&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="p">)&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">is&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">vqry&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">varchar2&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">1000&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">vblob&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nb">blob&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">vbatch&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">varchar2&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">2000&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">vstrlen&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nb">number&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">voffset&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nb">number&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="mi">1&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">vamt&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="nb">number&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="mi">2000&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">begin&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">vstrlen&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">length&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">cstr&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">vqry&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s1">&amp;#39;update &amp;#39;&lt;/span>&lt;span class="o">||&lt;/span>&lt;span class="n">ctbl&lt;/span>&lt;span class="o">||&lt;/span>&lt;span class="s1">&amp;#39; set &amp;#39;&lt;/span>&lt;span class="o">||&lt;/span>&lt;span class="n">cfld&lt;/span>&lt;span class="o">||&lt;/span>&lt;span class="s1">&amp;#39;=empty_blob() where &amp;#39;&lt;/span>&lt;span class="o">||&lt;/span>&lt;span class="n">ccond&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">execute&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">immediate&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">vqry&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">vqry&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s1">&amp;#39;select &amp;#39;&lt;/span>&lt;span class="o">||&lt;/span>&lt;span class="n">cfld&lt;/span>&lt;span class="o">||&lt;/span>&lt;span class="s1">&amp;#39; from &amp;#39;&lt;/span>&lt;span class="o">||&lt;/span>&lt;span class="n">ctbl&lt;/span>&lt;span class="o">||&lt;/span>&lt;span class="s1">&amp;#39; where &amp;#39;&lt;/span>&lt;span class="o">||&lt;/span>&lt;span class="n">ccond&lt;/span>&lt;span class="o">||&lt;/span>&lt;span class="s1">&amp;#39; for update&amp;#39;&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">execute&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">immediate&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">vqry&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">into&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">vblob&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">vstrlen&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="n">vamt&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">then&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">while&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">vstrlen&lt;/span>&lt;span class="o">&amp;gt;&lt;/span>&lt;span class="n">voffset&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">loop&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">vbatch&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">substr&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">cstr&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">voffset&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">vamt&lt;/span>&lt;span class="p">);&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">voffset&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">voffset&lt;/span>&lt;span class="o">+&lt;/span>&lt;span class="n">vamt&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">dbms_lob&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">writeappend&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">vblob&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">length&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">vbatch&lt;/span>&lt;span class="p">),&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">utl_raw&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">cast_to_raw&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">vbatch&lt;/span>&lt;span class="p">));&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">end&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">loop&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">else&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="n">dbms_lob&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">writeappend&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">vblob&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">length&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">cstr&lt;/span>&lt;span class="p">),&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="n">utl_raw&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">cast_to_raw&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">cstr&lt;/span>&lt;span class="p">));&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">end&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="k">if&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="k">commit&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="k">end&lt;/span>&lt;span class="p">;&lt;/span>&lt;span class="w">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>示例：&lt;/p></description></item><item><title>中秋后记</title><link>http://0x3f.org/posts/note-after-the-mid-autumn-day/</link><pubDate>Sun, 26 Sep 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/note-after-the-mid-autumn-day/</guid><description>&lt;p>可以让回忆放肆一些。&lt;/p>
-&lt;p>中秋的晚上公司餐厅放电影，《邻家特工》和《越光宝盒》，本来打算看完《越光》就走，结果先放的是《特工》。也好，复习一下，好在这片子不错，再看也挺有意思。《越光》纯属烂片，但是如今看看这种不费脑子的东西也变得无可无不可。免费的零食很烘托气氛，唯一的惊喜是居然还有罐装啤酒。&lt;/p>
-&lt;p>回到住处的当夜就发布了Dumperor。其实这个东西很早就开始做了，起初的目的是为了判断数据库脚本从SQL Server迁移到Oracle和MySQL是否成功。单纯的迁移只能保证修改后的脚本在这两个数据库中执行不会报错，但究竟是不是该执行的东西都成功执行了，一般很难判断，尤其是那帮家伙总是在发版前一两天才告诉我要迁移脚本，那么多不规范的语句，能保证不报错就已经不错了，遑论没有遗漏。所以就著手做一个数据库表结构和数据的导出工具，这样只需用diff工具比较标准数据库和测试数据库导出的脚本就可以了。&lt;/p>
-&lt;p>从一开始我就决定不使用公司产品的一行代码。其实做这个东西最大的麻烦不是来自来自于如何查询不同的数据库的表结构，而是数据库抽象层。如果要白手起家搞个抽象层的话，我想可能代码量比Dumperor本身都大，于是选择了Yii框架。后来在Dumperor基本成型时又觉得为了仅仅使用最基本的数据库查询功能就捆绑这么大一个框架，有点搞笑，谢天谢地，我终于花时间学了PDO。&lt;/p>
-&lt;p>中秋节放假的第二天，开始读Google Code上关于Chrome扩展开发的官方文档。这事源于本尊被另一个Chrome扩展作者无视了。&lt;/p>
-&lt;p>一直强迫自己喜欢上Firefox，但都败了。本来对Opera充满希望，但是从10.0起它带给我的除了失望就是更多的失望，这个东西的发展就像它的国家的位置一样怪异，你永远不能以常人的思维去臆测Opera的开发者，他们就像一群母系氏族社会的娘们儿一样整天跟著感觉走。&lt;/p>
-&lt;p>于是不知道什么时候我就开始经常用Chrome了，前段时间开始用一个扩展辅助MLDonkey下载。这个东西会在工具栏里添加一个图标，唯一的作用就是打开选项设置页面设置那个也许这辈子都只需要设置一次的MLDonkey的URL地址。于是我给那个扩展的作者写了封邮件，那家伙居然到现在都没有回复。&lt;/p>
-&lt;p>所以本尊决定无视他了。太祖武皇帝的那句丰衣足食的圣谕真是至理名言，读完文档我就发现这个扩展完全应该用Chrome的Page Action取代Browser Action，简单地说就是当且仅当本页面中包含有可下载的资源时才在地址栏中显示一个图标，而不应该总是在工具栏占用一个图标的位置。&lt;/p>
-&lt;p>随后要做的就是用AJAX请求取代弹出新窗口的方式添加下载任务，我嫌每次添加一个下载任务后都要关闭一个弹出窗口太麻烦。我的目标是用AJAX请求将要下载的任务在后台传递给MLDonkey，并用Chrome的Desktop Notification功能弹出桌面提示对话框显示结果状态。这样很优雅。&lt;/p>
-&lt;p>但是实际去做的时候问题来了，虽然Chrome本身允许扩展使用跨域的AJAX，但是至少在和MLDonkey进行通讯时，无论成功与否，得到的返回信息都是空的，状态码也都是0。这个问题浪费了我几乎一整天的时间，最终我决定用AJAX的请求响应时间来判断失败或成功，因为一次AJAX请求响应过程在MLDonkey没启动的时候耗费的时间一般会比正在运行时要长。这就要求每个用户都要根据自己的情况设定合适的超时时间。为了避免麻烦，最后还是实现了通过弹窗添加下载任务的模式，毕竟这个东西总是可靠的。&lt;/p>
-&lt;p>要发布的时候发现如今在Chrome Extension Gallery中发布扩展居然要收费了，虽然只是一次性的。最后花了八两银子注册了Google Checkout账户，又付了五刀美帝币，才把DonkeyBuddy传上去。发布个免费扩展还得倒贴，本尊也太背了吧。&lt;/p>
-&lt;p>节后收到了Dell sk8115键盘、HP百灵无线鼠标和Nokia BH-105蓝牙耳机，sk8115是用来让我的纤纤玉手撒野的，百灵鼠是用来接替即将退役的雷柏7100的，而BH-105和我的小七搭配得天衣无缝。&lt;/p>
-&lt;p>很久没有安静地整理一下头绪了，感谢我那价值四十两银子的Dell sk8115，它让我显得如此的语无伦次。&lt;/p></description></item><item><title>InstallShield在MySQL和Oracle中执行SQL脚本的方法</title><link>http://0x3f.org/posts/howto-run-sql-scripts-in-mysql-oracle-within-installshield/</link><pubDate>Tue, 24 Aug 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-run-sql-scripts-in-mysql-oracle-within-installshield/</guid><description>&lt;h2>简述&lt;/h2>
-&lt;p>InstallShield已经内建了对MySQL和Oracle的支持。但是这个功能是通过ODBC实现的，它对SQL脚本的格式要求非常严格，因此已经通过官方客户端测试的脚本在IS中执行时往往就会报错。&lt;/p>
-&lt;p>一般来说，数据库脚本只保证通过官方客户端测试即可，同时维护一份供IS执行的脚本费时费力。因此，考虑安装程序对两数据库的支持通过官方客户端实现。&lt;/p>
-&lt;h2>MySQL&lt;/h2>&lt;br>
-&lt;pre tabindex="0">&lt;code>function InstallMySQLComponent(szComponent)
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Oracle on 晴耕雨讀</title><link>http://0x3f.org/tags/oracle/</link><description>Recent content in Oracle on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Fri, 07 Jan 2011 00:00:00 +0000</lastBuildDate><atom:link href="http://0x3f.org/tags/oracle/index.xml" rel="self" type="application/rss+xml"/><item><title>Oracle中对LOB字段的操作方法</title><link>http://0x3f.org/posts/oracle-lob-operations/</link><pubDate>Fri, 07 Jan 2011 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/oracle-lob-operations/</guid><description>&lt;p&gt;在Oracle中插入或更新LOB字段时，可以将字符串以如下方式写入SQL语句：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-sql" data-lang="sql"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;insert&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;tbl_lob&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fld_lob&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;values&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;utl_raw&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cast_to_raw&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;hello world&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这样做的限制是：&lt;/p&gt;
+&lt;ol&gt;
+	&lt;li&gt;Oracle中单条SQL语句有长度限制&lt;/li&gt;
+	&lt;li&gt;cast_to_raw()对字符串有长度限制&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;因此如果要插入或更新的字符串过长，会导致执行失败。此时应该使用dbms_lob处理LOB相关字段。下面是利用dbms_lob更新一个BLOB字段的存储过程，对CLOB的操作同理：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;span class="lnt"&gt;22
+&lt;/span&gt;&lt;span class="lnt"&gt;23
+&lt;/span&gt;&lt;span class="lnt"&gt;24
+&lt;/span&gt;&lt;span class="lnt"&gt;25
+&lt;/span&gt;&lt;span class="lnt"&gt;26
+&lt;/span&gt;&lt;span class="lnt"&gt;27
+&lt;/span&gt;&lt;span class="lnt"&gt;28
+&lt;/span&gt;&lt;span class="lnt"&gt;29
+&lt;/span&gt;&lt;span class="lnt"&gt;30
+&lt;/span&gt;&lt;span class="lnt"&gt;31
+&lt;/span&gt;&lt;span class="lnt"&gt;32
+&lt;/span&gt;&lt;span class="lnt"&gt;33
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-sql" data-lang="sql"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;create&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;or&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;replace&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;procedure&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;updateblob&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ctbl&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;in&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;varchar2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;cfld&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;in&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;varchar2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;cstr&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;in&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;varchar2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ccond&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;in&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;varchar2&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="k"&gt;is&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;vqry&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;varchar2&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1000&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;vblob&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;blob&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;vbatch&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;varchar2&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2000&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;vstrlen&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;number&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;voffset&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;number&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;vamt&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;number&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;2000&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="k"&gt;begin&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;vstrlen&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;length&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cstr&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;vqry&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;update &amp;#39;&lt;/span&gt;&lt;span class="o"&gt;||&lt;/span&gt;&lt;span class="n"&gt;ctbl&lt;/span&gt;&lt;span class="o"&gt;||&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39; set &amp;#39;&lt;/span&gt;&lt;span class="o"&gt;||&lt;/span&gt;&lt;span class="n"&gt;cfld&lt;/span&gt;&lt;span class="o"&gt;||&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;=empty_blob() where &amp;#39;&lt;/span&gt;&lt;span class="o"&gt;||&lt;/span&gt;&lt;span class="n"&gt;ccond&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;execute&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;immediate&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;vqry&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;vqry&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;select &amp;#39;&lt;/span&gt;&lt;span class="o"&gt;||&lt;/span&gt;&lt;span class="n"&gt;cfld&lt;/span&gt;&lt;span class="o"&gt;||&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39; from &amp;#39;&lt;/span&gt;&lt;span class="o"&gt;||&lt;/span&gt;&lt;span class="n"&gt;ctbl&lt;/span&gt;&lt;span class="o"&gt;||&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39; where &amp;#39;&lt;/span&gt;&lt;span class="o"&gt;||&lt;/span&gt;&lt;span class="n"&gt;ccond&lt;/span&gt;&lt;span class="o"&gt;||&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39; for update&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;execute&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;immediate&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;vqry&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;into&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;vblob&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;vstrlen&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;vamt&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;then&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;while&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;vstrlen&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;voffset&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;loop&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;vbatch&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;substr&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cstr&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;voffset&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;vamt&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;voffset&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;voffset&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;vamt&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;dbms_lob&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;writeappend&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;vblob&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;length&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;vbatch&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;utl_raw&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cast_to_raw&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;vbatch&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;end&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;loop&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;dbms_lob&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;writeappend&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;vblob&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;length&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cstr&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;utl_raw&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cast_to_raw&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cstr&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;end&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;commit&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt;&lt;/span&gt;&lt;span class="k"&gt;end&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;示例：&lt;/p&gt;</description></item><item><title>中秋后记</title><link>http://0x3f.org/posts/note-after-the-mid-autumn-day/</link><pubDate>Sun, 26 Sep 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/note-after-the-mid-autumn-day/</guid><description>&lt;p&gt;可以让回忆放肆一些。&lt;/p&gt;
+&lt;p&gt;中秋的晚上公司餐厅放电影，《邻家特工》和《越光宝盒》，本来打算看完《越光》就走，结果先放的是《特工》。也好，复习一下，好在这片子不错，再看也挺有意思。《越光》纯属烂片，但是如今看看这种不费脑子的东西也变得无可无不可。免费的零食很烘托气氛，唯一的惊喜是居然还有罐装啤酒。&lt;/p&gt;
+&lt;p&gt;回到住处的当夜就发布了Dumperor。其实这个东西很早就开始做了，起初的目的是为了判断数据库脚本从SQL Server迁移到Oracle和MySQL是否成功。单纯的迁移只能保证修改后的脚本在这两个数据库中执行不会报错，但究竟是不是该执行的东西都成功执行了，一般很难判断，尤其是那帮家伙总是在发版前一两天才告诉我要迁移脚本，那么多不规范的语句，能保证不报错就已经不错了，遑论没有遗漏。所以就著手做一个数据库表结构和数据的导出工具，这样只需用diff工具比较标准数据库和测试数据库导出的脚本就可以了。&lt;/p&gt;
+&lt;p&gt;从一开始我就决定不使用公司产品的一行代码。其实做这个东西最大的麻烦不是来自来自于如何查询不同的数据库的表结构，而是数据库抽象层。如果要白手起家搞个抽象层的话，我想可能代码量比Dumperor本身都大，于是选择了Yii框架。后来在Dumperor基本成型时又觉得为了仅仅使用最基本的数据库查询功能就捆绑这么大一个框架，有点搞笑，谢天谢地，我终于花时间学了PDO。&lt;/p&gt;
+&lt;p&gt;中秋节放假的第二天，开始读Google Code上关于Chrome扩展开发的官方文档。这事源于本尊被另一个Chrome扩展作者无视了。&lt;/p&gt;
+&lt;p&gt;一直强迫自己喜欢上Firefox，但都败了。本来对Opera充满希望，但是从10.0起它带给我的除了失望就是更多的失望，这个东西的发展就像它的国家的位置一样怪异，你永远不能以常人的思维去臆测Opera的开发者，他们就像一群母系氏族社会的娘们儿一样整天跟著感觉走。&lt;/p&gt;
+&lt;p&gt;于是不知道什么时候我就开始经常用Chrome了，前段时间开始用一个扩展辅助MLDonkey下载。这个东西会在工具栏里添加一个图标，唯一的作用就是打开选项设置页面设置那个也许这辈子都只需要设置一次的MLDonkey的URL地址。于是我给那个扩展的作者写了封邮件，那家伙居然到现在都没有回复。&lt;/p&gt;
+&lt;p&gt;所以本尊决定无视他了。太祖武皇帝的那句丰衣足食的圣谕真是至理名言，读完文档我就发现这个扩展完全应该用Chrome的Page Action取代Browser Action，简单地说就是当且仅当本页面中包含有可下载的资源时才在地址栏中显示一个图标，而不应该总是在工具栏占用一个图标的位置。&lt;/p&gt;
+&lt;p&gt;随后要做的就是用AJAX请求取代弹出新窗口的方式添加下载任务，我嫌每次添加一个下载任务后都要关闭一个弹出窗口太麻烦。我的目标是用AJAX请求将要下载的任务在后台传递给MLDonkey，并用Chrome的Desktop Notification功能弹出桌面提示对话框显示结果状态。这样很优雅。&lt;/p&gt;
+&lt;p&gt;但是实际去做的时候问题来了，虽然Chrome本身允许扩展使用跨域的AJAX，但是至少在和MLDonkey进行通讯时，无论成功与否，得到的返回信息都是空的，状态码也都是0。这个问题浪费了我几乎一整天的时间，最终我决定用AJAX的请求响应时间来判断失败或成功，因为一次AJAX请求响应过程在MLDonkey没启动的时候耗费的时间一般会比正在运行时要长。这就要求每个用户都要根据自己的情况设定合适的超时时间。为了避免麻烦，最后还是实现了通过弹窗添加下载任务的模式，毕竟这个东西总是可靠的。&lt;/p&gt;
+&lt;p&gt;要发布的时候发现如今在Chrome Extension Gallery中发布扩展居然要收费了，虽然只是一次性的。最后花了八两银子注册了Google Checkout账户，又付了五刀美帝币，才把DonkeyBuddy传上去。发布个免费扩展还得倒贴，本尊也太背了吧。&lt;/p&gt;
+&lt;p&gt;节后收到了Dell sk8115键盘、HP百灵无线鼠标和Nokia BH-105蓝牙耳机，sk8115是用来让我的纤纤玉手撒野的，百灵鼠是用来接替即将退役的雷柏7100的，而BH-105和我的小七搭配得天衣无缝。&lt;/p&gt;
+&lt;p&gt;很久没有安静地整理一下头绪了，感谢我那价值四十两银子的Dell sk8115，它让我显得如此的语无伦次。&lt;/p&gt;</description></item><item><title>InstallShield在MySQL和Oracle中执行SQL脚本的方法</title><link>http://0x3f.org/posts/howto-run-sql-scripts-in-mysql-oracle-within-installshield/</link><pubDate>Tue, 24 Aug 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-run-sql-scripts-in-mysql-oracle-within-installshield/</guid><description>&lt;h2&gt;简述&lt;/h2&gt;
+&lt;p&gt;InstallShield已经内建了对MySQL和Oracle的支持。但是这个功能是通过ODBC实现的，它对SQL脚本的格式要求非常严格，因此已经通过官方客户端测试的脚本在IS中执行时往往就会报错。&lt;/p&gt;
+&lt;p&gt;一般来说，数据库脚本只保证通过官方客户端测试即可，同时维护一份供IS执行的脚本费时费力。因此，考虑安装程序对两数据库的支持通过官方客户端实现。&lt;/p&gt;
+&lt;h2&gt;MySQL&lt;/h2&gt;&lt;br&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;function InstallMySQLComponent(szComponent)
  NUMBER nResult;
  STRING szServer,szDB,szUser,szPassword,sCMD,sOPT,sResult1,sResult2,svLine,sMsg,sPath;
  NUMBER nvFileHandle,nvCount;
@@ -149,8 +149,8 @@ begin
  abort;
  endif;
 end;
-&lt;/code>&lt;/pre>&lt;h2>Oracle&lt;/h2>&lt;br>
-&lt;pre tabindex="0">&lt;code>function InstallOracleComponent(szComponent) 
+&lt;/code&gt;&lt;/pre&gt;&lt;h2&gt;Oracle&lt;/h2&gt;&lt;br&gt;
+&lt;pre tabindex="0"&gt;&lt;code&gt;function InstallOracleComponent(szComponent) 
  NUMBER nResult,nvFileHandle,nIndex,nvCount;
  STRING sMsg,szServer,szDB,szUser,szPassword,sCMD,sOPT,sInstance,sTmp,svLine;
  LIST listStatus;
@@ -197,18 +197,18 @@ begin
  abort;
  endif;
 end;
-&lt;/code>&lt;/pre>&lt;h2>总结&lt;/h2>
-&lt;ol>
-	&lt;li>为便于获取脚本在数据库中的执行结果，故通过官方客户端执行脚本时通过符号“&lt;strong>>&lt;/strong>”将客户端的输出信息重定向到&lt;strong>dbstatus.txt&lt;/strong>中；同时，使用“&lt;strong>2>&amp;1&lt;/strong>”将标准错误输出重定向到标准输出设备上，当然，会进一步重定向到dbstatus.txt文件中，否则，无法获取出错信息。&lt;/li>
-	&lt;li>sqlplus执行SQL脚本后不会自动退出，故应在Oracle的脚本后加上语句“&lt;strong>exit;&lt;/strong>”。&lt;/li>
-	&lt;li>重载&lt;strong>OnSQLComponentInstalled()&lt;/strong>函数，并在其中禁止MySQL和Oracle的SQL脚本对应的Component被执行安装，然后通过以上两个函数更新数据库。&lt;/li>
-&lt;/ol></description></item><item><title>Inno Setup执行SQL脚本的方法</title><link>http://0x3f.org/posts/howto-execute-sql-scripts-in-inno-setup/</link><pubDate>Mon, 17 May 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-execute-sql-scripts-in-inno-setup/</guid><description>&lt;p>作为和&lt;a href="http://zh.wikipedia.org/zh-cn/Nullsoft%E8%85%B3%E6%9C%AC%E5%AE%89%E8%A3%9D%E7%B3%BB%E7%B5%B1">NSIS&lt;/a>并立的、两个最流行的免费Windows应用程序安装包制作工具之一，&lt;a href="http://en.wikipedia.org/wiki/Inno_Setup">Inno&lt;/a>在学习难度上相对要低一些，非常适合对一些简单的桌面程序打包。但对于较复杂的安装过程，或者Web应用程序来说，我个人觉得不是Inno的强项。当然，既然Inno内嵌了&lt;a href="http://zh.wikipedia.org/zh-cn/Pascal">Pascal&lt;/a>语言用以扩展功能，理论上不是不可以应付复杂的安装过程，但实现起来要复杂一些。&lt;/p>
+&lt;/code&gt;&lt;/pre&gt;&lt;h2&gt;总结&lt;/h2&gt;
+&lt;ol&gt;
+	&lt;li&gt;为便于获取脚本在数据库中的执行结果，故通过官方客户端执行脚本时通过符号“&lt;strong&gt;&gt;&lt;/strong&gt;”将客户端的输出信息重定向到&lt;strong&gt;dbstatus.txt&lt;/strong&gt;中；同时，使用“&lt;strong&gt;2&gt;&amp;1&lt;/strong&gt;”将标准错误输出重定向到标准输出设备上，当然，会进一步重定向到dbstatus.txt文件中，否则，无法获取出错信息。&lt;/li&gt;
+	&lt;li&gt;sqlplus执行SQL脚本后不会自动退出，故应在Oracle的脚本后加上语句“&lt;strong&gt;exit;&lt;/strong&gt;”。&lt;/li&gt;
+	&lt;li&gt;重载&lt;strong&gt;OnSQLComponentInstalled()&lt;/strong&gt;函数，并在其中禁止MySQL和Oracle的SQL脚本对应的Component被执行安装，然后通过以上两个函数更新数据库。&lt;/li&gt;
+&lt;/ol&gt;</description></item><item><title>Inno Setup执行SQL脚本的方法</title><link>http://0x3f.org/posts/howto-execute-sql-scripts-in-inno-setup/</link><pubDate>Mon, 17 May 2010 00:00:00 +0000</pubDate><guid>http://0x3f.org/posts/howto-execute-sql-scripts-in-inno-setup/</guid><description>&lt;p&gt;作为和&lt;a href="http://zh.wikipedia.org/zh-cn/Nullsoft%E8%85%B3%E6%9C%AC%E5%AE%89%E8%A3%9D%E7%B3%BB%E7%B5%B1"&gt;NSIS&lt;/a&gt;并立的、两个最流行的免费Windows应用程序安装包制作工具之一，&lt;a href="http://en.wikipedia.org/wiki/Inno_Setup"&gt;Inno&lt;/a&gt;在学习难度上相对要低一些，非常适合对一些简单的桌面程序打包。但对于较复杂的安装过程，或者Web应用程序来说，我个人觉得不是Inno的强项。当然，既然Inno内嵌了&lt;a href="http://zh.wikipedia.org/zh-cn/Pascal"&gt;Pascal&lt;/a&gt;语言用以扩展功能，理论上不是不可以应付复杂的安装过程，但实现起来要复杂一些。&lt;/p&gt;
 
-&lt;p>比如对于在安装过程中连接数据库并执行SQL脚本这样的需求，使用&lt;a href="http://en.wikipedia.org/wiki/InstallShield">InstallShield&lt;/a>应该会简单地多，而Inno却不支持直接操作数据库，并且相关的资料说明少之又少，还不如NSIS丰富，以至于我踏破铁鞋无觅处，最终却在NSIS的资料中找到了思路。&lt;/p>
+&lt;p&gt;比如对于在安装过程中连接数据库并执行SQL脚本这样的需求，使用&lt;a href="http://en.wikipedia.org/wiki/InstallShield"&gt;InstallShield&lt;/a&gt;应该会简单地多，而Inno却不支持直接操作数据库，并且相关的资料说明少之又少，还不如NSIS丰富，以至于我踏破铁鞋无觅处，最终却在NSIS的资料中找到了思路。&lt;/p&gt;
 
-&lt;p>主要的思路是，在安装过程中，调用数据库客户端连接数据库并执行SQL脚本，然后将执行结果或错误信息输出到文件中，最后通过分析这个文件来判断命令执行的结果。但是，既然是调用特定的客户端，那么对不同数据库的操作自然就有所区别，具体情况如下所述。&lt;/p>
+&lt;p&gt;主要的思路是，在安装过程中，调用数据库客户端连接数据库并执行SQL脚本，然后将执行结果或错误信息输出到文件中，最后通过分析这个文件来判断命令执行的结果。但是，既然是调用特定的客户端，那么对不同数据库的操作自然就有所区别，具体情况如下所述。&lt;/p&gt;
 
-&lt;p>首先在打包脚本的&lt;strong>[Files]&lt;/strong>段将必需的文件包含进来：&lt;/p>
+&lt;p&gt;首先在打包脚本的&lt;strong&gt;[Files]&lt;/strong&gt;段将必需的文件包含进来：&lt;/p&gt;
 
 ```ini
 [Files]
@@ -221,7 +221,7 @@ Source: "D:\Development\MyDemoApp\script_mysql.sql"; Flags: dontcopy
 Source: "D:\Development\MyDemoApp\script_oracle.sql"; Flags: dontcopy
 ```
 
-&lt;p>在SQL Server中执行脚本的代码片断：&lt;/p>
+&lt;p&gt;在SQL Server中执行脚本的代码片断：&lt;/p&gt;
 
 ```pascal
 function ExecScriptInMSSQL(DBHost, DBLogin, DBPass, DBName: String): Boolean;
@@ -245,7 +245,7 @@ begin
  if Exec(ConnectExe, ConnectParam, '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then begin
  Result := ResultCode = 0;
  LoadStringFromFile(ExpandConstant('{tmp}') + '\dbstatus.txt', StatusString);
- if StatusString &lt;> '' then begin
+ if StatusString &lt;&gt; '' then begin
  MsgBox(StatusString, mbError, MB_OK);
  Result := False;
  end else begin
@@ -258,4 +258,4 @@ begin
 end;
 ```
 
-&lt;p>在MySQL中执行脚本的代码片断：&lt;/p></description></item></channel></rss>
+&lt;p&gt;在MySQL中执行脚本的代码片断：&lt;/p&gt;</description></item></channel></rss>
