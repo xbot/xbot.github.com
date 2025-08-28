@@ -76,7 +76,7 @@ posts ||..|{ post_logs
 
 效果：
 
-![2021-11-17-21-56-14-nLLRJnD157xlhnZtHJ3q1k454aC3JMoGfYchaOXffjsXtR2TsSpCWXimmI0NBuX48YfUq8WXqK0q1kJIy6VORNdYBpYpIw6srSI4n7dPcJFd-ywSSxwPxM4SKcuLZK3WaevpXgKXKE3SP5tXC8NZeRpE2rRMOeZc2EO8yr2E5CDtiuI7JGDYYGmYgeMBa754mupcmjVrB8NK3kaUwsK0nuYk0PEIh86A38mBHW1nta0Qo54o](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2021-11-17-21-56-14-nLLRJnD157xlhnZtHJ3q1k454aC3JMoGfYchaOXffjsXtR2TsSpCWXimmI0NBuX48YfUq8WXqK0q1kJIy6VORNdYBpYpIw6srSI4n7dPcJFd-ywSSxwPxM4SKcuLZK3WaevpXgKXKE3SP5tXC8NZeRpE2rRMOeZc2EO8yr2E5CDtiuI7JGDYYGmYgeMBa754mupcmjVrB8NK3kaUwsK0nuYk0PEIh86A38mBHW1nta0Qo54o.svg)
+![ER graph sample](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2021-11-17-21-56-14-ER-graph-sample.svg)
 
 具体的源码和例子可以参考 [Git 仓库](https://github.com/xbot/plantuml-erd)。
 

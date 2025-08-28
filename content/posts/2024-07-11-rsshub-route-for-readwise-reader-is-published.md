@@ -18,7 +18,7 @@ draft: false
 
 ## 原来的阅读工作流
 
-![2024-07-11-17-49-10-SoWkIImgAStDuL8ioKZDJLKepaujISwerCqlBSd9p4lb0ijpSLczR9ZrOd-xWcTUVb5gOafgaSABTOjUpcXL20eEjkQoUZfd1PBKo_QUf-jtlfpJy69Pu_CLlKydzBrOl_lvh9PdqzgVhrxmh7Foindpdorenz07L0AHWIXysZ7znS8L4CFWMe6opzVkiuOxo3an9pEfA5NXMTVaf_tJa0o3A0GQ2N7eirqJ8FR1TJZdvvMa](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-07-11-17-49-10-SoWkIImgAStDuL8ioKZDJLKepaujISwerCqlBSd9p4lb0ijpSLczR9ZrOd-xWcTUVb5gOafgaSABTOjUpcXL20eEjkQoUZfd1PBKo_QUf-jtlfpJy69Pu_CLlKydzBrOl_lvh9PdqzgVhrxmh7Foindpdorenz07L0AHWIXysZ7znS8L4CFWMe6opzVkiuOxo3an9pEfA5NXMTVaf_tJa0o3A0GQ2N7eirqJ8FR1TJZdvvMa.png)
+![The previous reading workflow](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-07-11-17-49-10-the-previous-reading-workflow.png)
 
 在用过的 RSS 阅读器里，Inoreader 最符合我的阅读习惯。它有以下优点：
 
@@ -55,7 +55,7 @@ draft: false
 
 新的流程是：
 
-![2024-07-11-18-07-04-SoWkIImgAStDuL8ioKZDJLKepaujISwerCqlBSd9p4lb0ijpMRricFLYVxk2RsPUPbfEQON2YtMBNiveLGWA3hRcidewPmL2vcLxpzFrEr_EQNYnhF7vYjwd4_fUhD_zV5RBisdjprSlUDOv-TcC-SyMj0ErGHWGyHVjgvvshNWweUVPsgLFEpOe1AKcffHd5gU26Qb544lGHK5sFTyz4suoqBJdQ_TPmrmBSfr7QPB2YtsJ](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-07-11-18-07-04-SoWkIImgAStDuL8ioKZDJLKepaujISwerCqlBSd9p4lb0ijpMRricFLYVxk2RsPUPbfEQON2YtMBNiveLGWA3hRcidewPmL2vcLxpzFrEr_EQNYnhF7vYjwd4_fUhD_zV5RBisdjprSlUDOv-TcC-SyMj0ErGHWGyHVjgvvshNWweUVPsgLFEpOe1AKcffHd5gU26Qb544lGHK5sFTyz4suoqBJdQ_TPmrmBSfr7QPB2YtsJ.png)
+![The new reading workflow](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-07-11-18-07-04-the-new-reading-workflow.png)
 
 该路由的详细用法可以参考以下文档：
 
