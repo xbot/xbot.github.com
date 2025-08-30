@@ -17,7 +17,7 @@ draft: false
 
 根据它俩最近的情况，判断应该是换季+换粮导致的肠胃炎，买了阿莫西林克拉维酸钾颗粒和奥美拉唑肠溶胶囊，按前者 12.5-25mg/kg 、后者 1mg/kg 的剂量结合每只猫的体重喂服，一天两次。
 
-![2024-10-30-22-47-22-IMG_3253](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-10-30-22-47-22-IMG_3253.jpeg)
+![2024-10-30-22-47-22-IMG_3253](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20241030224722000-59dd06ca92bdf508ba7472500bea7d8a.avif)
 
 喂药是个艰苦卓绝的活儿，阿莫西林还算简单，混到罐头里就行，胶囊因为是肠溶的，需要直接吞服，可费老劲了，不过虽然直接喂死活不吃，但是有次喂完老大，身心俱疲地去洗了个手，回来发现它把老二的胶囊偷吃了！贱不贱，你就说贱不贱！
 

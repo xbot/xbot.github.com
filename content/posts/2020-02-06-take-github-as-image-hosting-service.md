@@ -19,6 +19,6 @@ Github自从去年扩大免费账户享受的权利后，单个仓库的大小�
 
 uPic是个很好用的图床辅助工具，支持Github。
 
-![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2020-02-06-22-15-47-ZgK2fi.png)
+![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20200206221547000-f956afb0a9aaf80006dd5a4486fc7618.avif)
 
 同类工具还有PicGo。

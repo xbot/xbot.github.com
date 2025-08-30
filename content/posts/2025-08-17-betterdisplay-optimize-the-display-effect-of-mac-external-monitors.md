@@ -14,4 +14,4 @@ draft: false
 
 除此之外，这个 App 提供了更多的功能。我用它给外接的 LG 4K 显示器打开了 60Hz 分辨率，瞬间感觉流畅了很多。
 
-![BetterDisplay screenshot.](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-08-17-13-58-45-475878418-c9c9be58-d86b-402e-bf33-a7ddfb5915bf.png)
+![BetterDisplay screenshot.](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250817135845000-5513ebff29df59ddf1a6eb942570aafa.avif)

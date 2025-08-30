@@ -10,7 +10,7 @@ tags:
 toc: false
 draft: false
 ---
-![2024-10-18-00-19-21-3ed0731e2f0f20835a0580d09d305986](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-10-18-00-19-21-3ed0731e2f0f20835a0580d09d305986.jpeg)
+![2024-10-18-00-19-21-3ed0731e2f0f20835a0580d09d305986](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20241018001921000-35b0bd08e130235fc9639cd36bdf1bac.avif)
 
 # 车把
 
@@ -21,7 +21,7 @@ M 把的问题：
 
 改成直把可以解决以上问题。
 
-![2024-10-18-00-20-01-IMG_3189](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-10-18-00-20-01-IMG_3189.jpeg)
+![2024-10-18-00-20-01-IMG_3189](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20241018002001000-2aa0eac1112902f3c6a247b03c2e011c.avif)
 
 # 座垫
 
@@ -43,15 +43,15 @@ M 把的问题：
 
 最后我换装了这个一百块出头的货架，重量更轻，外观比同为焊接、喷砂银的青春版货架更好看，四轮着地，推行和静置时比之前两个稳了很多。
 
-![2024-10-18-00-20-35-IMG_3190](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-10-18-00-20-35-IMG_3190.jpeg)
+![2024-10-18-00-20-35-IMG_3190](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20241018002035000-91f541ffb108b137bbc9d816877bac46.avif)
 
 # 挡泥板
 
 一副挡泥板最大的耻辱就是挡不了泥，而它做到了。佰客的挡泥板一是没有挡泥皮，二是后挡太短，会有少量的泥水甩到身上。据说可以安装如图所示的挡泥皮，但是因为佰客的挡泥板只能搭配同厂货架使用，而我想换掉货架，所以选择直接换装英布的后挡泥板。此外，我用一块人造革给前挡剪了一片挡泥皮。
 
-![2024-10-18-00-22-27-IMG_3193](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-10-18-00-22-27-IMG_3193.jpeg)
+![2024-10-18-00-22-27-IMG_3193](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20241018002227000-bbdfa4eb74e89c7d6f869d8a23ec1f89.avif)
 
-![2024-10-18-00-20-54-IMG_3191](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-10-18-00-20-54-IMG_3191.jpeg)
+![2024-10-18-00-20-54-IMG_3191](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20241018002054000-f356b9d6f206dcc7b8a9b83360de918e.avif)
 
 佰客新版后挡泥板加装了挡泥皮。
 

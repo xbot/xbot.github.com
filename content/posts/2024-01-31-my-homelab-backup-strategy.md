@@ -13,7 +13,7 @@ draft: false
 
 在这个数字化时代，数据安全比以往任何时候都更加重要。无论是个人生活还是工作，我们都需要一个可靠的备份方案来确保数据的安全。今天，我想分享我的家庭数据备份方案，它不仅涵盖了我所有的虚拟机、容器和配置数据，还包括了 NAS 上的重要文件，如照片、密码、笔记和待办事项。这个方案遵循了著名的 3-2-1 备份策略，并且通过精心选择的备份工具，确保了数据的安全性和高效性。
 
-![2024-01-31-20-40-32-_d0c7d6aa-d312-4749-89ce-d3996aaaddf6](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-01-31-20-40-32-_d0c7d6aa-d312-4749-89ce-d3996aaaddf6.jpeg)
+![2024-01-31-20-40-32-_d0c7d6aa-d312-4749-89ce-d3996aaaddf6](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240131204032000-81dba599d77a03eb89e682de235b0bde.avif)
 
 ### 数据种类
 

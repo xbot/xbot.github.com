@@ -57,15 +57,15 @@ module.exports = async (params) => {
 
 然后在 QuickAdd 里创建一个新的 Macro ，先添加脚本 `create_new_post` （位置 1），再创建一个 Template Choice （位置 2）：
 
-![2022-10-23-17-57-51-RZsGhP](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2022-10-23-17-57-51-RZsGhP.png)
+![2022-10-23-17-57-51-RZsGhP](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20221023175751000-b690df799fdd30f90ce179a827d6ad33.avif)
 
 然后配置这个 Template Choice ：
 
-![2022-10-23-18-01-23-Y0XuTx](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2022-10-23-18-01-23-Y0XuTx.png)
+![2022-10-23-18-01-23-Y0XuTx](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20221023180123000-d8b05e4e70c5cd525af6c0d6969c5a7b.avif)
 
 接着创建一个类型为 `Macro` 的 Choice ：
 
-![2022-10-23-18-05-07-gG6BW9](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2022-10-23-18-05-07-gG6BW9.png)
+![2022-10-23-18-05-07-gG6BW9](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20221023180507000-17d80c34ae1ec8abc76bb70e1bf93c35.avif)
 
 最后配置 Obsidian Git ：
 

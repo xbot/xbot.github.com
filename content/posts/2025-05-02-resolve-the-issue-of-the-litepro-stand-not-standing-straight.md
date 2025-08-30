@@ -12,4 +12,4 @@ draft: false
 
 Litepro 中置双脚撑使用一段时间后出现停车时站不直的问题，原因是底部这个螺丝松动了，加点螺丝胶上紧就可以了。
 
-![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-05-02-20-26-05-IMG_4415.jpeg)
+![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250502202605000-ab570a45bbfba14b063c6375a8f4db3a.avif)

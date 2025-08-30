@@ -11,11 +11,11 @@ draft: false
 
 经过半个月的漫长等待，海淘的 MKS UX-D 非快拆脚踏终于到了，和之前买的快拆版一起，组了一副单边快拆脚踏。一副维格 V984T 在两辆车上来回倒腾的日子结束了。  
 
-![2024-07-23-15-31-40-E222BA44-2408-4E83-B554-930D24760B70](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-07-23-15-31-40-E222BA44-2408-4E83-B554-930D24760B70.jpeg)
+![2024-07-23-15-31-40-E222BA44-2408-4E83-B554-930D24760B70](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240723153140000-219e8ada50ff533310c3153cb9f986a9.avif)
 
-![2024-07-23-15-33-05-E40C8889-B3BF-43A3-828B-A67F70295E9B](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-07-23-15-33-05-E40C8889-B3BF-43A3-828B-A67F70295E9B.jpeg)
+![2024-07-23-15-33-05-E40C8889-B3BF-43A3-828B-A67F70295E9B](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240723153305000-21352b4a65bb7a79c8ec39d4b9e301bb.avif)
 
-![2024-07-23-15-34-39-5AA9B9C9-5239-4327-B6C6-C518A58D4620](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-07-23-15-34-39-5AA9B9C9-5239-4327-B6C6-C518A58D4620.jpeg)
+![2024-07-23-15-34-39-5AA9B9C9-5239-4327-B6C6-C518A58D4620](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240723153439000-ca74f5d4fc089a575ec5659d92c670d4.avif)
 
 我的佰客城市版的原装折叠脚踏，在骑了不到两个月、里程不到一千公里的时候，异响到了让我难以忍受的程度。虽然我仍然认为折叠脚踏是最适合折叠车的，但市面上为数不多的那几款挑来挑去都不太满意，只能退而求其次，从快拆脚踏里找。  
   
@@ -28,4 +28,4 @@ draft: false
   
 我想要塑料的快拆脚踏，但这似乎是个不可能完成的任务，直到找到 MKS UX-D ，大概市面上只有这么一款塑料的快拆脚踏。试骑了 30 公里，整体满意，符合预期，甚至颜值也不输金属，只是踏面稍小，踩上没有 V984T 那种人车合一的包覆感。
 
-![2024-07-23-15-35-04-72320DB0-90D6-4C4C-B280-52E03A223569](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-07-23-15-35-04-72320DB0-90D6-4C4C-B280-52E03A223569.jpeg)
+![2024-07-23-15-35-04-72320DB0-90D6-4C4C-B280-52E03A223569](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240723153504000-ca6be17d62c7de518d17046b017f908e.avif)

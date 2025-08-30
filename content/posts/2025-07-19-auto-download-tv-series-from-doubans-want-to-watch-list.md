@@ -14,4 +14,4 @@ draft: false
 ---
 Sonarr 不支持像 Radarr 那样直接订阅 RSSHub 的豆瓣影视想看列表，所以写了个 n8n 的工作流，在豆瓣上标记想看的剧集就能自动下载到 NAS 了。
 
-![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-07-19-14-58-42-mac_20250719144116.png)
+![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250719145842000-30d016e9523876f9b05eb5d4df60c42f.avif)

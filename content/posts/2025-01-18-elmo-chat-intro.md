@@ -12,13 +12,13 @@ draft: false
 
 ## 一、邂逅 elmo.chat
 
-![2025-01-18-21-01-06-ElmoChat-YourAIcompaniontocreatesummariesandinsights](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-01-18-21-01-06-Elmo%20Chat%20-%20Your%20AI%20companion%20to%20create%20summaries%20and%20insights.jpeg)
+![2025-01-18-21-01-06-ElmoChat-YourAIcompaniontocreatesummariesandinsights](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250118210106000-3a3998e062e6906cbbbc1ef8169e18a4.avif)
 
 在信息爆炸的时代，每天面对海量的网页、PDF 文档、YouTube 视频，是不是感觉时间完全不够用，根本看不过来？作为一个每天在互联网信息海洋里 “冲浪” 的博主，我也经常被这个问题困扰。直到有一天，我偶然发现了一款堪称 “神器” 的 Chrome 扩展 —— [elmo.chat](https://www.elmo.chat/) ，它就像我的私人智能助手，能快速帮我提炼关键信息，大大提高了我的阅读和学习效率。今天就来给大家分享一下这款工具。
 
 ## 二、主要功能
 
-![2025-01-18-21-03-02-mac_20250118202041](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-01-18-21-03-02-mac_20250118202041.jpeg)
+![2025-01-18-21-03-02-mac_20250118202041](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250118210302000-28b2877f4ef71a7173e3794990633606.avif)
 
 ### （一）网页内容速览
 

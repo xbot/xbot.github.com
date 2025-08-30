@@ -16,7 +16,7 @@ tags:
 
 替换前后：
 
-![IMG_7891](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2020-10-04-18-59-53-IMG_7891.jpg)
+![IMG_7891](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20201004185953000-3625288134e04b6ae2c366ae1d4eb60b.avif)
 
 用了两天，不管是外观还是材质，和原装没有区别。
 

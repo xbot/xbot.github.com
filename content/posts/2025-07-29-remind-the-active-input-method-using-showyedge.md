@@ -14,4 +14,4 @@ draft: false
 
 ShowyEdge 是个用来提示当前输入法的 macOS App ，有意思的是它通过在屏幕或者窗口边缘显示一个色条实现这个目的，不同的颜色对应不同的输入法。如果能识别中文输入法的中英文状态就更好了。
 
-![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-07-29-15-15-00-IMG_5122.png)
+![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250729151500000-575742d16a4a34b398bc9128649f3bcb.avif)

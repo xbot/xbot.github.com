@@ -12,6 +12,6 @@ draft: false
 ---
 换了 BC-9000 刹车线管和佳威高精研磨线芯，刹车手感有了重大提升！
 
-![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-05-01-19-02-38-IMG_4395.jpeg)
+![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250501190238000-4d80a824a4a398fe40831a2f99f64e87.avif)
 
 这次真的毕业了。

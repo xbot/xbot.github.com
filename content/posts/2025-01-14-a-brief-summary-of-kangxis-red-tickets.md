@@ -10,7 +10,7 @@ toc: false
 draft: false
 ---
 
-![2025-01-14-19-54-20-IMG_0224](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-01-14-19-54-20-IMG_0224.jpeg)
+![2025-01-14-19-54-20-IMG_0224](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250114195420000-70057705f36660fc564e7d52cf66030c.avif)
 
 # 红票的由来与意义
 

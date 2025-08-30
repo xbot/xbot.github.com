@@ -12,6 +12,6 @@ tags:
 
 换了个 38 块钱的仿捷安特 Approach 的座垫。几个月前给一辆不常骑的车配的，就随便买了个便宜的，没想到做工很不错。之前一直觉得捷安特的座垫外观不够复古，就没装到国布上，不过现在看装车效果还不错。
 
-![Giant Approach Knockoff](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-08-24-23-35-27-IMG_5225.jpeg)
+![Giant Approach Knockoff](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250824233527000-6edfc9b89d9d9cb3b444847afcce0096.avif)
 
 骑了几十公里，效果意外的好。虽然是尼龙底板，但是够硬，支撑力不错，相比之下，辉哥 X6 的尼龙底板软多了。缓冲层厚度适中，回弹力足够，不像辉哥 X6S 的软塌塌的，等于直接坐到了碳板上。总体来说，既不会卸力，也不觉得硬，竟然是我用过最舒服的座垫。买的短鼻宽版，不竞速的话，女士座垫真是人生密码。

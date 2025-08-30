@@ -7,7 +7,7 @@ tags:
 toc: false
 draft: false
 ---
-![2025-01-02-11-33-41-qianwen_stt_01](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-01-02-11-33-41-qianwen_stt_01.png)
+![2025-01-02-11-33-41-qianwen_stt_01](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250102113341000-1cee351ae61b01c15f64081f93ba7a33.avif)
 
 平时总有一些食之无肉弃之有味的音视频，我只想了解它的核心观点，而略过大部分的铺垫，这时候用语音转文字的工具把他转换成文本，再由 AI 总结就可以了。
 

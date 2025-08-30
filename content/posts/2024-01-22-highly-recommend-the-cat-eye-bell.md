@@ -14,13 +14,13 @@ draft: false
 
 猫眼这款横拨铃铛（PB-1000P），拨一下响两声，声音清脆，音量不小，有二八大杠六厘米大铃的灵魂和大行原装车铃的风格身量，非常符合我对 Jifo 优化体验、尽量保留原车风格的改装思路。
 
-![2024-01-22-22-36-38-IMG_1043](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-01-22-22-36-38-IMG_1043.jpeg)
+![2024-01-22-22-36-38-IMG_1043](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240122223638000-b1477b1d52aece22ace7dbac7195beff.avif)
 
 到手后发现，作为一个左手铃，铃体中轴是靠后的，大拇指拨动铃柄，其它四指要脱离刹把，效率不高，也不安全。试了几种安装方位，最后感觉左手吊装是最优方案，只需要食指自然下移就能搭在铃柄上，其它手指握住车把、刹把不用动，既安全、效率又高，而且 Jifo 把横较窄，车铃正装的话左侧一半把横几乎就搭载不了任何东西了，吊装之后铃铛被刹把遮挡，反而既能节省空间又让视觉效果更简洁。
 
-![2024-01-22-22-37-39-IMG_1034](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-01-22-22-37-39-IMG_1034.jpeg)
+![2024-01-22-22-37-39-IMG_1034](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240122223739000-8147a5210364d4dc36c83fbab658f402.avif)
 
-![2024-01-22-22-38-10-IMG_1044](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-01-22-22-38-10-IMG_1044.jpeg)
+![2024-01-22-22-38-10-IMG_1044](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240122223810000-2128b35ac7a15bed044f87825db619a4.avif)
 
 如果一定要正装的话，可以考虑 PB-1100P ，中轴居中，姆指更好够到。怪不得铃体相同的 PB-1000P 便宜不少，应该是为了兼容左手指拨所做的妥协，所幸 Jifo 这车也很特别，负负得正了属于是。
 

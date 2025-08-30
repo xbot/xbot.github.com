@@ -10,7 +10,7 @@ tags:
 toc: false
 ---
 
-![2023-08-05-22-44-49-IMG_0191](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-08-05-22-44-49-IMG_0191.jpeg)
+![2023-08-05-22-44-49-IMG_0191](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20230805224449000-0c1e097634a5155eb47dfab7b380874e.avif)
 
 用迁移助理迁移数据到一台新的 Mac ，点对点传输提示要几个小时。改用 SuperDuper! 复制到固态移动硬盘，再用迁移助理迁移，几分钟就好了。
 

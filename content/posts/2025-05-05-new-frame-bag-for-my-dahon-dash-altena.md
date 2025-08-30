@@ -20,4 +20,4 @@ draft: false
 
 最后选择了三角包。1.5L 的容量，足以把某牌板砖一样的充气宝带上了。侧面网袋装手机也很方便。
 
-![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-05-05-19-56-50-IMG_4444.jpeg)
+![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250505195650000-6634a84cb454b93b947f456181e743cf.avif)

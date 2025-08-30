@@ -35,7 +35,7 @@ PVE 和 PBS 除了支持邮件通知，还支持 Gotify 这个消息收集服务
 
 为了解决上述问题，我找到了 [gotify-webhook](https://github.com/wuxs/gotify-webhook) 插件。我的想法是通过这个插件将消息转发给 n8n 处理，然后再发送到 Telegram。
 
-![2024-09-06-16-33-19-mac_20240905114752](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-09-06-16-33-19-mac_20240905114752.png)
+![2024-09-06-16-33-19-mac_20240905114752](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240906163319000-aa034016c15fc28cd1ee86c78541649e.avif)
 
 在提交了一个 PR 并被合并后，我终于实现了这个流程。现在，我的 Homelab 通知体验有了质的飞跃：
 

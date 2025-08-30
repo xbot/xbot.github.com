@@ -26,7 +26,7 @@ draft: false
 
 Inoreader 在过去几年里几乎完全符合我的需求，即使在前两年涨价后，它仍然允许老用户以原价续费，这让我感到非常满意。然而，最近我收到了一封邮件，通知我年费直接涨了近一倍。这让我不得不开始考虑转移到私有云部署的 RSS 订阅工具。
 
-![2024-02-13-21-31-08-Screenshot_20240207-012352_Original](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-13-21-31-08-Screenshot_20240207-012352_Original.jpeg)
+![2024-02-13-21-31-08-Screenshot_20240207-012352_Original](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240213213108000-50f6b33da050d4e53b0567cc8df75954.avif)
 
 # 试用 FreshRSS 和 Miniflux
 

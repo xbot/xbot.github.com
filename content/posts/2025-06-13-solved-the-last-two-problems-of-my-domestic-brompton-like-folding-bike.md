@@ -16,11 +16,11 @@ draft: false
 
 这个问题去年买车不久就发现了，车把左高右低，当时不确定是不是原装的 M 把的抛光面反光不对称导致的错觉，后来改了直把才确定就是车架是歪的。因为骑起来不是特别受影响，加上有其它优先级更高、更容易处理的问题要解决，以及拖延症，一直没管。最近这个车改得各方面能让我很满意了，所以这个问题就越骑越觉得别扭了。
 
-![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-06-13-20-38-33-DSC00291.jpeg)
+![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250613203833000-78ab4e2885a07caf3bbc56e671c92809.avif)
 
 反馈给佰客客服后很快给我寄了根头管过来，因为湖水蓝的颜色已经停产了，我选了今年新出的迈阿密蓝。佰客今年新出的颜色还都挺好看，一改之前的冷淡风，可以放心冲。改完观感还不错，冷拼色比较不容易审美疲劳。现在两边车把平了，骑起来感觉好了很多。
 
-![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-06-13-20-51-10-IMG_4797.jpeg)
+![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250613205110000-cf5870697e7c780cebd1e9fc01a20619.avif)
 
 # 展开过程不丝滑
 

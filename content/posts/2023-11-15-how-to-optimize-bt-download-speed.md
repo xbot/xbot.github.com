@@ -24,17 +24,17 @@ draft: false
 
 把 BT 客户端所在的 IP 和端口映射到外网：
 
-![2023-11-15-23-15-55-IMG_0699](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-11-15-23-15-55-IMG_0699.jpeg)
+![2023-11-15-23-15-55-IMG_0699](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20231115231555000-af657d4988ae78227f9890d81a790b65.avif)
 
 ### 打开 uPnP
 
-![2023-11-15-23-16-47-mac_20231106165924](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-11-15-23-16-47-mac_20231106165924.png)
+![2023-11-15-23-16-47-mac_20231106165924](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20231115231647000-d903211f0e21507357c7c3f6662953ed.avif)
 
 ## 配置 BT 客户端
 
 指定固定的端口号，和前面路由器里的端口映射对应：
 
-![2023-11-15-23-23-27-mac_20231106165358](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-11-15-23-23-27-mac_20231106165358.png)
+![2023-11-15-23-23-27-mac_20231106165358](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20231115232327000-fe2f9d0f28e4622c09bb143605f77835.avif)
 
 # 更新 Trackers
 
@@ -42,7 +42,7 @@ draft: false
 
 https://trackerslist.com/best.txt
 
-![2023-11-15-23-24-11-mac_20231106165512](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-11-15-23-24-11-mac_20231106165512.png)
+![2023-11-15-23-24-11-mac_20231106165512](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20231115232411000-0d78a98d0d7b9286695dbce7741e8a53.avif)
 
 # 其它问题
 
@@ -50,5 +50,5 @@ https://trackerslist.com/best.txt
 
 qBittorrent 有个可选限速的配置，默认是 10KiBps ，如果误点了状态栏的按钮可能会启用这个配置，导致速度上不去。
 
-![2023-11-15-23-24-50-IMG_0632](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-11-15-23-24-50-IMG_0632.jpeg)
-![2023-11-15-23-24-51-mac_20231106165553](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-11-15-23-24-51-mac_20231106165553.png)
+![2023-11-15-23-24-50-IMG_0632](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20231115232450000-85bcd58c1245d921947def223e5acf63.avif)
+![2023-11-15-23-24-51-mac_20231106165553](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20231115232451000-54a4ebc44af2f7fb34eeeda6fbe0137a.avif)

@@ -11,7 +11,7 @@ tags:
 - 青梅煮酒
 ---
 
-![2020-06-19-16-07-23-20160606001](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2020-06-19-16-07-23-20160606001.jpg)
+![2020-06-19-16-07-23-20160606001](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20200619160723000-adf7dfe3181f10bb721e7aa00caacf18.avif)
 
 「食其」音「异基」，人名。
 

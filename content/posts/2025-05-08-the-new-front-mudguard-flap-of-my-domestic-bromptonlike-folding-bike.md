@@ -13,5 +13,5 @@ draft: false
 
 佰客终于给前挡泥板加上挡泥皮了，我找客服买了一个，替换了之前自己拿人造革剪的，更好看一点。
 
-![Comparison of the front mudguard flaps](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-05-08-16-10-33-F8523DD7-1711-4BCA-9447-FAF3E17574D6.jpeg)
+![Comparison of the front mudguard flaps](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250508161033000-f53deadedc000bce65e60d3b503cc98a.avif)
 

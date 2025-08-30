@@ -7,7 +7,7 @@ tags:
 - 青梅煮酒
 ---
 
-![2021-11-09-00-57-46-my-first-nas](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2021-11-09-00-57-46-my-first-nas.jpg)
+![2021-11-09-00-57-46-my-first-nas](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20211109005746000-aeed27aa3f1331dc2b49f4e4e1aef6ff.avif)
 
 年初终于攒了一台 NAS 。
 
@@ -72,7 +72,7 @@ CPU 用当时比较热门的 i5-8600T ，散片刚从 1k+ 降到 800+ 。6 核�
 
 最后买了 Unraid 的 Basic Plan 。
 
-![2021-11-09-01-16-20-1iSmYb](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2021-11-09-01-16-20-1iSmYb.png)
+![2021-11-09-01-16-20-1iSmYb](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20211109011620000-fdd6292400f84ff3a32f9da001af46e5.avif)
 
 ## 使用感受
 

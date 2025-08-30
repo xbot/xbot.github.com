@@ -13,7 +13,7 @@ toc: false
 draft: false
 ---
 
-![2024-07-25-00-48-02-IMG_2526](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-07-25-00-48-02-IMG_2526.jpeg)
+![2024-07-25-00-48-02-IMG_2526](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240725004802000-eb86c1bf07929b11123a4105230f96dc.avif)
 
 用华为手环 9 的心率广播功能在码表上显示心率，测试了一周，体验不错。  
   

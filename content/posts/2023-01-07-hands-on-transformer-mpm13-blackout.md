@@ -23,12 +23,12 @@ toc: false
 
 八角尖尖，不成想盒封最完美的一次来自拼多多。
 
-![八角尖尖，不成想盒封最完美的一次来自拼多多](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-01-07-23-08-32-IMG_9707.jpeg)
+![八角尖尖，不成想盒封最完美的一次来自拼多多](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20230107230832000-99d11859dd32c93780cc0db968c2cb28.avif)
 
 隐藏形态是 MH-53 重型运输直升机，解决了 SS-08 底盘暴露的问题，360 度无死角，即便在 MP 线里也是无出其右。就是缺个支架，飞机没有支架就没有灵魂。
 
-![隐藏形态，MH-53 重型运输直升机](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-01-07-23-08-36-IMG_9708.jpeg)
+![隐藏形态，MH-53 重型运输直升机](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20230107230836000-118f0c7b48444ba233f9e199fee79bbc.avif)
 
 人形，迄今最还原的眩晕。电影线最失败的地方在于反派的造型和人设塑造得太差劲，眩晕在霸天虎里算是相对较好的，人设没那么不堪，反派形态的猥琐特征被大量的板件遮盖，反而显得很有机械感。
 
-![人形，迄今最还原的眩晕](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-01-07-23-08-40-IMG_9709.jpeg)
+![人形，迄今最还原的眩晕](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20230107230840000-6d6fda21c70ab791ad2931f95fc87b33.avif)

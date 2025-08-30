@@ -14,9 +14,9 @@ draft: false
 
 然而，随着 Apple Watch S4 的续航能力逐渐下降，加之 iPhone 在极端气温下续航表现不佳，我开始考虑寻找一款能够替代这些设备的智能码表。在尝试了 iGPSPORT BSC200 后，我发现其路线导航功能很鸡肋，在路况复杂的地方非常难用，这促使我转向了 iGPSPORT iGS630S 。
 
-![2024-02-22-21-13-03-IMG_1092](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-22-21-13-03-IMG_1092.jpeg)
+![2024-02-22-21-13-03-IMG_1092](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240222211303000-3395efe0724d3a5d447f22898dd7643d.avif)
 
-![2024-02-22-21-20-02-IMG_1208](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-22-21-20-02-IMG_1208.jpeg)
+![2024-02-22-21-20-02-IMG_1208](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240222212002000-c3a4f3c6de9c467881801e5b87b53a52.avif)
 
 iGS630S 给我的第一印象是其搜星速度非常快，这对于户外骑行来说是一个巨大的优势。在实际使用中，尽管它的续航时间并没有达到宣传的 45 小时，但至少 25 小时的续航能力已经足够我完成大部分骑行活动。定位和测速的准确性也让我印象深刻，尤其是在通过立交桥而失去卫星信号时，它没有出现像手机和手表那样夸张的失准问题。
 
@@ -24,7 +24,7 @@ iGS630S 给我的第一印象是其搜星速度非常快，这对于户外骑行
 
 iGS630S 的手机 App 设计同样令人满意。界面美观、简洁，操作流畅，完全符合我对智能设备的审美要求。这使得数据同步和路线规划变得异常便捷，极大地提升了我的骑行体验。
 
-![2024-02-22-21-24-27-3D01C7B9-6110-4EBF-9F06-906D18D46E4E_1_102_o](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-22-21-24-27-3D01C7B9-6110-4EBF-9F06-906D18D46E4E_1_102_o.jpeg)
+![2024-02-22-21-24-27-3D01C7B9-6110-4EBF-9F06-906D18D46E4E_1_102_o](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240222212427000-e9f9dfdc8fd0f8dd80346d635869f646.avif)
 
 当然，任何产品都有其不足之处。在使用 iGS630S 进行位置点导航时，我发现其路线规划能力相较于手机地图有所不足。此外，当偏离预定路线时，它的自动规划速度也不如手机地图响应迅速。在外观设计上，iGS630S 也不如 BSC 系列那样吸引人。
 

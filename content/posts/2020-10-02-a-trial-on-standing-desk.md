@@ -17,7 +17,7 @@ tags:
 
 我是个颜党，在所有有白色款的型号里，先选中了造型简约的乐歌 M3S。
 
-![BE042D7B-24E5-4BFD-A68C-08117A858CE0_1_105_c](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2020-10-02-20-44-40-BE042D7B-24E5-4BFD-A68C-08117A858CE0_1_105_c.jpeg)
+![BE042D7B-24E5-4BFD-A68C-08117A858CE0_1_105_c](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20201002204440000-0cd1539def414b5413509e777ba7077a.avif)
 
 实物很重，虽然有些地方稍显粗糙（比如平板插槽底部很粗犷地用热熔胶粘合），但是整体上做工扎实。
 
@@ -27,7 +27,7 @@ tags:
 
 一开始没有把 X 形结构当做首选是因为感觉不太好看。重新审视后感觉 M9S 观感尚可。
 
-![EB634356-7F03-439D-BC6D-F3CE22C34FCF_1_105_c](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2020-10-02-20-54-50-EB634356-7F03-439D-BC6D-F3CE22C34FCF_1_105_c.jpeg)
+![EB634356-7F03-439D-BC6D-F3CE22C34FCF_1_105_c](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20201002205450000-ddb02cb060b532bedc0f73578e24207f.avif)
 
 实物证明，虽然 X 形结构的美感不如 Z 形，但是稳定性远胜后者。
 

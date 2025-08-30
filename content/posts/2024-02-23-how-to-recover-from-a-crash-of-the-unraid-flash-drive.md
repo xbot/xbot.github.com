@@ -13,7 +13,7 @@ draft: false
 
 在 Unraid 操作系统的日常使用中，启动 U 盘的损坏可能会导致一系列问题，从而影响到整个系统的稳定性和数据的安全性。本文将探讨启动 U 盘损坏时的表现、解决办法，以及如何通过备份恢复系统。
 
-![2024-02-23-16-33-19-Aid1Uo](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-23-16-33-19-Aid1Uo.png)
+![2024-02-23-16-33-19-Aid1Uo](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240223163319000-994f57360279dd899ddf0c399d4987af.avif)
 
 ## 启动 U 盘损坏的表现
 

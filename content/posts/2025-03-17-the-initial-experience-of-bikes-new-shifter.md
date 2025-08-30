@@ -12,11 +12,11 @@ draft: false
 ---
 去年我曾经吐槽过蓝图 A7 这个指拨不适合小布这种车把，没想到今年佰客就换了新指拨，所以就买了一个换上体验一下。
 
-![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-03-17-12-21-05-IMG_4073.jpeg)
+![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250317122105000-ea545f6289f37b95e07f8a941f08b352.avif)
 
 蓝图 A7 的问题是拨柄会顶着拇指，导致握把和变速非常难受，为了解决这个问题，需要把指拨向立管移动一两厘米，但这样既不好看，又导致变速线管受力很大，尤其对于 M 把，指拨出线口已经快要顶着车把，所以各种国布在变速线的走线方式上也是五花八门，有强行从立管前绕的，有直接从 M 把中间穿过去的，佰客的车是从立管后走线的，也算是蓝图 A7 最不难看的走线方式了。直到我准备在立管上装 Fidlock ……
 
-![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-03-17-12-26-41-IMG_4072.jpeg)
+![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250317122641000-789ef339e531b4ecbc2aae1fda3a0496.avif)
 
 改了 S 把后，蓝图 A7 走线尴尬的问题有了很大缓解，但是仍然存在难看和线管受力过大的问题。
 

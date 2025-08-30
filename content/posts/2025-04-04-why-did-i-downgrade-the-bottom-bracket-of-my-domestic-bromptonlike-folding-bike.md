@@ -12,7 +12,7 @@ draft: false
 ---
 北京今天大风，恰好工具、零件都到了，就呆在家里完成国布毕业前的最后一哆嗦吧。
 
-![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-04-04-23-10-12-IMG_4186.jpeg)
+![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250404231012000-44a3da3eb3f68cdf1ab33a65cd719182.avif)
 
 我决定把佰客城市版的中轴改成方孔中轴，主要基于两点原因。
 
@@ -22,10 +22,10 @@ draft: false
 
 第二是外观。审美是个主观的东西，原装曲柄牙盘的做工和设计也很好，只是我更喜欢英布那种复古的风格和配色。
 
-![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-04-04-23-11-06-IMG_4187.jpeg)
+![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250404231106000-aeeba14b8b4aeec4974f97385c6c4c6b.avif)
 
 改装的想法有段时间了，一直在天人交战，原装的外挂培林中轴和曲柄牙盘确实很好用，改成方孔中轴算是降级。不过上周在猁·MCC见到一辆同款湖水蓝的佰客也是改了英布的脚踏、曲柄和牙盘，不禁心有戚戚。
 
-![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-04-04-23-11-37-IMG_4190.jpeg)
+![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250404231137000-05f7ca99c5a24b2a3d922e1fab74fbf8.avif)
 
 至此，这辆佰客城市版国布算是毕业了，之后不会再有改装了……吧？

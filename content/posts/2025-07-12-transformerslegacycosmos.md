@@ -14,6 +14,6 @@ draft: false
 
 加强级是个对小角色很友好的级别，容易在大小、设计复杂度、可玩性和还原之间找到均衡点。极速星的宇宙飞碟就是个典型的例子。
 
-![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-07-12-19-41-54-IMG_5062.jpeg)
+![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250712194154000-63ee50c699245329de44e4e95c4c4967.avif)
 
 所以价格被炒到了小三张，加强级的价格到了这个程度我就不跟了。果然今年再版价格就合理多了。

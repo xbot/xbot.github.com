@@ -16,7 +16,7 @@ description: 怎样把小米官方 Home Assistant 集成的传感器映射到 Ap
 
 ## 一、为什么要进行映射？
 
-![2024-12-25-15-49-31-mac_20241225154742](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-12-25-15-49-31-mac_20241225154742.jpeg)
+![2024-12-25-15-49-31-mac_20241225154742](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20241225154931000-0a6a504d6406815842ce9e0cc194cca9.avif)
 
 小米官方 Home Assistant 集成的事件订阅机制，极大的解放了小米智能组件在 Apple 的 HomeKit 生态中的应用！以往三方集成用的是轮询机制，这就导致小米多数组件响应特别慢，体验感超差。例如起夜时，我希望进入洗手间的同时夜灯就点亮，结果等了几秒它才有反应，是不是很让人抓狂？但现在不一样了，有了事件订阅机制，在家庭 App 里调用小米组件实现自动化变得轻松多了，大大提升了使用的流畅度。
 
@@ -34,13 +34,13 @@ description: 怎样把小米官方 Home Assistant 集成的传感器映射到 Ap
 
 首先，要创建一个 input_datetime 类型的实体，用来存放最近一次人体移动事件触发时间。在 Home Assistant 里，路径如下：Settings → Devices & services → Helpers → Create helper → Date and/or time。
 
-![2024-12-27-22-54-11-sensor_02](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-12-27-22-54-11-sensor_02.png)
+![2024-12-27-22-54-11-sensor_02](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20241227225411000-7aaf9bf6e03a3da7bf8be1dd5d3cb4a3.avif)
 
 ### （二）创建更新实体的自动化
 
 紧接着，创建一个 Automation，用于在传感器的 event 触发时保存当前时间到前面那个实体。同样在 Home Assistant 里，找到 Settings → Automations & scenes → Create automation 这个路径。
 
-![2024-12-27-22-54-49-sensor_04](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-12-27-22-54-49-sensor_04.png)
+![2024-12-27-22-54-49-sensor_04](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20241227225449000-edc4aed6d97e05be8ab50d07e1165b1d.avif)
 
 图中 Action 的模板内容如下：
 
@@ -58,7 +58,7 @@ action: input_datetime.set_datetime
 
 最后一步，创建一个 binary_sensor 类型的实体，根据当前时间和最近一次事件触发时间间隔来判断传感器的状态，它是决定传感器在家庭 App 里显示啥状态的主体。注意把“Device class”设置成正确的传感器类型，例如这里人体传感器对应的是“Motion”。
 
-![2024-12-27-22-55-21-sensor_03](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-12-27-22-55-21-sensor_03.png)
+![2024-12-27-22-55-21-sensor_03](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20241227225521000-d181782d8c8419401e35967cc33bd071.avif)
 
 图中计算状态的模板内容如下：
 

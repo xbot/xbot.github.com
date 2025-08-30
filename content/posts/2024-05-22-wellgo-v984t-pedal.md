@@ -18,7 +18,7 @@ draft: false
 
 - **锁踏**：由于市区路况复杂，休闲骑行不追求速度，因此锁踏并不适合。
 - **钉踏**：市面上产品众多，价格和外观选择丰富。但钉踏容易伤鞋，也容易把腿划破。之前买了用圆头防滑钉、号称不伤鞋的辉哥 J6 脚踏，骑了一个月也磨坏了运动鞋底的防滑纹。
-  ![2024-05-23-10-55-03-IMG_1909](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-05-23-10-55-03-IMG_1909.jpeg)
+  ![2024-05-23-10-55-03-IMG_1909](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240523105503000-ce00dc4fb9ab8a487cde423996856c89.avif)
 - **平踏**：最适合市区骑游的场景，我的期望是：
 	- **大踏面**：提供舒适的踩踏体验。
 	- **抓脚但不伤鞋**：在保证稳定性的同时，不伤鞋。
@@ -27,23 +27,23 @@ draft: false
 我了解或使用过的脚踏包括：
 
 - **MKS**：重量较重，价格较高。
-  ![2024-05-23-11-14-07-IMG_1920](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-05-23-11-14-07-IMG_1920.jpeg)
+  ![2024-05-23-11-14-07-IMG_1920](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240523111407000-59dc71c7c14ff5e078464b44d4c642b7.avif)
 - **维格 M111 类似脚踏**：外观相似，采用 DU 轴或 DU + 单培林，在平踏中较为常见，视觉效果简洁，价格不贵，但踏面较小。包括：
 	- **M111**：外观、做工、重量表现最佳，价格最贵。
-	 ![2024-05-23-11-01-54-IMG_1916](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-05-23-11-01-54-IMG_1916.jpeg)
+	 ![2024-05-23-11-01-54-IMG_1916](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240523110154000-9d35806a669f0dffb8b896463a3bc154.avif)
 	- **M248**：做工一般，踏面和轴用螺丝结合。
-	 ![2024-05-23-11-04-52-IMG_1917](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-05-23-11-04-52-IMG_1917.jpeg)
+	 ![2024-05-23-11-04-52-IMG_1917](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240523110452000-59c95f9c6786c4f9788dfe13206797e9.avif)
 	- **M921**：做工好，一体成形，漆面光滑。（下图右侧）
-	 ![右侧 M921 左侧 Jifo 原装脚踏](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-05-23-11-06-29-IMG_0827.jpeg)
+	 ![右侧 M921 左侧 Jifo 原装脚踏](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240523110629000-a746750be91e494d2301cd94818b7d65.avif)
 	- **大行 Jifo 原装快拆脚踏**：快拆设计方便，但安装复杂，且难以购买。（上图左侧）
 	- **LP 的快拆脚踏**：一体成形，但漆面差。
-	 ![2024-05-23-11-12-04-IMG_1919](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-05-23-11-12-04-IMG_1919.jpeg)
+	 ![2024-05-23-11-12-04-IMG_1919](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240523111204000-a8cd7b434e6408f4e7d100cbb3c18c82.avif)
 
 最终，我选择了维格的尼龙脚踏 V984T 。
 
 维格提供了多种尼龙脚踏，我选择的是体积较小、重量较轻、与车外观搭配较为协调的 V984T 。它满足了我对配件和脚踏的所有选择标准，而且价格仅为 15￥ 包邮。这款脚踏的踩踏体验极为舒适，脚掌与踏面的贴合度非常好，有人体工学的感觉，超过了以往用过的所有脚踏。
 
-![2024-05-23-11-15-13-IMG_1911](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-05-23-11-15-13-IMG_1911.jpeg)
+![2024-05-23-11-15-13-IMG_1911](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240523111513000-ae842b6fc709f0ce210c0c29ad06bcf4.avif)
 
 ## 关于脚踏润度的题外话
 

@@ -10,7 +10,7 @@ draft: false
 ---
 佰客城市版国布的变速线是在头管内侧走线的，这会严重影响像 Fidlock 这样的水壶架的安装。  
 
-![2024-06-12-16-52-48-DSC00243](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-06-12-16-52-48-DSC00243.jpeg)
+![2024-06-12-16-52-48-DSC00243](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240612165248000-cdc1f4c5a970873be112cb55a04bace6.avif)
   
 这个问题应该跟指拨有关。佰客用的蓝图 A7 ，这是一款山地车指拨，长度较长，尤其在 M 把上微调旋钮离车把很近，走线空间非常有限。  
   
@@ -20,7 +20,7 @@ draft: false
   
 而且小布的走线角度相比大行、风行的车的更大，这就导致微调旋钮处的线管受力很大。我的新车到手两个月，受力处的线管外的包胶就已经开裂了。  
 
-![2024-07-28-19-45-01-F28F4E05-12CA-464A-BF2E-689E9F6B3FF4](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-07-28-19-45-01-F28F4E05-12CA-464A-BF2E-689E9F6B3FF4.jpeg)
+![2024-07-28-19-45-01-F28F4E05-12CA-464A-BF2E-689E9F6B3FF4](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240728194501000-32c89ae04d7f6ed16bf5bc1d6de25ce9.avif)
   
 所以国布要想做好，这个指拨是一定要重新设计的。  
   

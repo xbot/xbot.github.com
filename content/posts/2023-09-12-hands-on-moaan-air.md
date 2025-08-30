@@ -15,7 +15,7 @@ draft: false
 
 和文石 Poke5S 的对比：
 
-![2023-09-12-23-19-04-DSC00095](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-09-12-23-19-04-DSC00095.jpg)
+![2023-09-12-23-19-04-DSC00095](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20230912231904000-d1c3b1e1de84b75917f910acef65a603.avif)
 
 抛开 212 的 PPI 不说，后者的背光在环境光强度较高的时候看着还行，但是弱光条件下明显泛蓝，调节暖色光也没有用，感觉冷光是冷光、暖光是暖光，而墨案 Air 的两色背光融合度好得多。
 
@@ -29,7 +29,7 @@ draft: false
 
 256 灰阶默认是关闭的，这很难理解，除非打开会有更大的问题，但我暂时没发现。打开后图片过渡更平滑，但依然看不到文石 Poke5S 能看到的阴影：
 
-![2023-09-12-23-44-27-DSC00096](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-09-12-23-44-27-DSC00096.jpg)
+![2023-09-12-23-44-27-DSC00096](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20230912234427000-4d892682b2c04b15cf10ca292899a9ca.avif)
 
 此外还有：
 

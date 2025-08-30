@@ -12,7 +12,7 @@ draft: false
 ---
 最近给佰客城市版换了英布的刹把、夹器、黑色线管，并把刹车分配调整为右前左后。
 
-![改装前后](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-03-30-23-52-03-IMG_4159.jpeg)
+![改装前后](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250330235203000-85e6ec57bf7bc2108f4bb39bb215ba55.avif)
 
 # 改装原因
 
@@ -24,7 +24,7 @@ draft: false
 
 原车刹把和夹器像是铸造的，表面坑坑洼洼，质感不好。整车银色太多，不如英布的配色有层次感。
 
-![刹把和夹器](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-03-30-23-53-14-IMG_4160.jpeg)
+![刹把和夹器](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250330235314000-bc889bacca751fba7adef465441e389e.avif)
 
 # 改装过程中的发现和思考
 
@@ -36,7 +36,7 @@ draft: false
 
 后叉上拉住刹车线的是个塑料扎带，不仅阻力大，而且在握刹把的时候还会产生摩擦声。要是不用这个扎带拉住刹车线管，变速到最大飞轮时链条又会摩擦线管。这大概就是英布规格的开档改外 7 速比外 5 速问题多的原因之一。不过我猜测，如果用光滑的金属环来代替扎带，效果应该会好很多。
 
-![塑料扎带](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-03-30-23-54-07-IMG_4136.jpeg)
+![塑料扎带](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250330235407000-ec8c002f0a9629f320493b085c3401d2.avif)
 
 ## 原车夹器和刹把有提升空间
 

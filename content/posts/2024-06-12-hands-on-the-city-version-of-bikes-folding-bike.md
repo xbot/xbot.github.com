@@ -10,7 +10,7 @@ draft: false
 ---
 分享一下佰客国布城市版 2024 新版的开箱和骑行感受。
 
-![2024-06-12-16-52-48-DSC00243](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-06-12-16-52-48-DSC00243.jpeg)
+![2024-06-12-16-52-48-DSC00243](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240612165248000-cdc1f4c5a970873be112cb55a04bace6.avif)
 
 # TL;DR
 
@@ -69,5 +69,5 @@ draft: false
 
 - **换掉了原装脚踏**：踩踏过程中出现了异响，而且鞋底沾水之后非常滑，不光影响骑感，也不安全。
 - **换了改良版货架**：原装货架有设计缺陷，导致发生了断裂的问题，卖家寄了改良版，断裂位置不再使用螺丝固定，理论上降低了问题重现的概率。不过这种用 CNC 零件和钢螺丝组装的货架在重量和强度上天生不足，属于是为了颜值牺牲这两点了，使用时还得多加小心。市面上有些用铝合金管材焊接的一体货架，重量轻很多，精度未知，理论上强度应该会更好一些，就是不如 CNC 的好看。Ruhm 那种一体铸造的货架也挺精致，如果能在强度过关的前提下再轻一些（ 400 多克，比佰客城市版货架重 100 多克），就更好了。不管怎样，对于小布的货架，实用性是第一位的，其次是颜值，最后是重量，佰客城市版的货架多少有点本末倒置了。
-  ![2024-06-29-22-25-57-IMG_2284](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-06-29-22-25-57-IMG_2284.jpeg)
-  ![2024-06-29-22-26-29-IMG_2305](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-06-29-22-26-29-IMG_2305.jpeg)
+  ![2024-06-29-22-25-57-IMG_2284](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240629222557000-54d146e5afb52b986c7467c24c778afa.avif)
+  ![2024-06-29-22-26-29-IMG_2305](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240629222629000-d5f656f3ce6195046c73f8d9480bbbe0.avif)

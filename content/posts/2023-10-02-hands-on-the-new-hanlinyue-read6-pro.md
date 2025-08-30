@@ -9,7 +9,7 @@ toc: false
 draft: false
 ---
 
-![2023-10-02-17-08-57-DSC00101](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-10-02-17-08-57-DSC00101.jpg)
+![2023-10-02-17-08-57-DSC00101](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20231002170857000-744078fdb8060f143f5d3e39113787ca.avif)
 
 之前[试用过第一次发售的版本](/posts/hands-on-hanlinyue-read6-pro/)，体验非常糟糕。前不久发现翰林阅又发了预售通知，原来经过上次哀鸿遍野的退货潮，他们迭代了产品重新上市了。
 
@@ -27,13 +27,13 @@ draft: false
 
 - 屏幕的显示效果好了很多，墨迹不均匀的问题没有了，但还是没解决残影问题
 
-![2023-10-02-17-11-20-DSC00100](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-10-02-17-11-20-DSC00100.jpg)
+![2023-10-02-17-11-20-DSC00100](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20231002171120000-97fa7d68f3d33f9bbed814e99845dc30.avif)
 
 # 背光的灯箱效果没解决
 
 - 背光不像之前那样没法看了，但还是泛蓝、有灯箱效果，和文石 Poke5S 一样，弱光下看起来很不舒服
 
-![2023-10-02-17-10-41-DSC00103](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-10-02-17-10-41-DSC00103.jpg)
+![2023-10-02-17-10-41-DSC00103](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20231002171041000-afe786f24a32a85360fff5b37095b9bf.avif)
 
 # 系统简陋，优化很差
 

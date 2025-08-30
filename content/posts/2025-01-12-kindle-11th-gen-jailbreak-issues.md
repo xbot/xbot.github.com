@@ -11,7 +11,7 @@ draft: false
 
 前几天给 KO2 越狱十分顺滑，没想到昨天给抹茶做的时候竟然每一步都不顺利。
 
-![2025-01-12-21-37-19-IMG_3809](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-01-12-21-37-19-IMG_3809.jpeg)
+![2025-01-12-21-37-19-IMG_3809](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250112213719000-1e5a6249f9af0125255eaaa7f3dbf277.avif)
 
 首先越狱一次没成功，安装 Update Hotfix 并重启后没有出现 Run Hotfix 项。然后重新执行越狱步骤后才成功。
 

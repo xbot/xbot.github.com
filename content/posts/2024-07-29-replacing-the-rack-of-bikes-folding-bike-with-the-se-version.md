@@ -10,7 +10,7 @@ draft: false
 ---
 佰客城市版的货架是由多个 CNC 铝合金零件组装起来的，而且包含了易行轮的伸缩杆结构。系统越复杂，稳定性越差。此外，可能是为了颜值和重量，零件较为细小，进一步降低了强度。
 
-![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-07-28-23-21-11-95516D5E-A6A8-428E-B1F0-E94F8A359E30.jpeg)
+![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240728232111000-2f052724e5ef335028502c5b2bba52cf.avif)
 
 这个货架作为停车支架用是没有问题的，但如果经常推行或者搭乘公共交通工具，就不好用了：
 
@@ -19,7 +19,7 @@ draft: false
 
 佰客新出了银色的青春版货架，我买了一个，换掉了才用了不到一个月的城市版货架。青春版货架是焊接的一个整体，喷砂银，重量比城市版轻 50g 左右，外观不如城市版的好看，但是强度好得多，现在推行体验好多了。
 
-![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-07-28-23-22-33-E2BBC24B-0DDA-49BB-BFD9-206D90C74D3A.jpeg)
+![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240728232233000-7748d610406e784da9bc78e5bb4abff5.avif)
 
 不过仍然存在 4 个易行轮三轮着地一轮悬空的问题，可能是货架的公差较大，也可能是车架的精度问题。
 

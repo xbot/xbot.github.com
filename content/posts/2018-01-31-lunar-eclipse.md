@@ -8,4 +8,4 @@ tags:
 ---
 大概这是我第一次看月全食，暗红色，挺大个儿，但是拍出来就显得很小。论效果， iPhone X 还不如几年前的 LX5 。
 
-![2023-08-25-11-32-18-E9217241-82D8-4B12-8327-48DC8D947709_1_105_c](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-08-25-11-32-18-E9217241-82D8-4B12-8327-48DC8D947709_1_105_c.jpeg)
+![2023-08-25-11-32-18-E9217241-82D8-4B12-8327-48DC8D947709_1_105_c](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20230825113218000-5f7b2660efa35f1e658f5264fb3a9f14.avif)

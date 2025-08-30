@@ -10,4 +10,4 @@ tags:
 
 有一小片樱花集中的地方还是不错的，风来，落英缤纷。
 
-![2023-08-25-11-27-14-2FC4E1F6-5DDF-4F5A-B952-B12F45516E5B_1_105_c](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-08-25-11-27-14-2FC4E1F6-5DDF-4F5A-B952-B12F45516E5B_1_105_c.jpeg)
+![2023-08-25-11-27-14-2FC4E1F6-5DDF-4F5A-B952-B12F45516E5B_1_105_c](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20230825112714000-c4e70bbe36c8a50c4f0765567ea065b2.avif)

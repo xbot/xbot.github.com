@@ -44,7 +44,7 @@ Raycast 插件是一个非常强大的工具，结合相关插件，可以让我
 
 # 三、linkding 的特点
 
-![2024-12-13-23-45-05-linkding](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-12-13-23-45-05-linkding.jpeg)
+![2024-12-13-23-45-05-linkding](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20241213234505000-94c9d576eb4d482f828beff8eace8740.avif)
 
 ## 简洁高效
 
@@ -99,7 +99,7 @@ linkding 提供了 REST API，开发人员可以利用该 API 开发脚本或第
 
 ## 1. Hoarder
 
-![2024-12-13-23-45-43-Hoarder](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-12-13-23-45-43-Hoarder.jpeg)
+![2024-12-13-23-45-43-Hoarder](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20241213234543000-95e4b29f26a63fa21afb728187cb46c2.avif)
 
 ### 特点：
 
@@ -118,7 +118,7 @@ linkding 提供了 REST API，开发人员可以利用该 API 开发脚本或第
 
 ## 2. Readeck
 
-![2024-12-13-23-46-20-Claude_MCP_____________-___-__-Readeck](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-12-13-23-46-20-Readeck.jpeg)
+![2024-12-13-23-46-20-Claude_MCP_____________-___-__-Readeck](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20241213234620000-40d91a010b00bb5ccad69f78a875bf57.avif)
 
 ### 特点：
 

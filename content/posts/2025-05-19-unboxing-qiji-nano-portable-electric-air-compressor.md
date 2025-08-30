@@ -20,4 +20,4 @@ draft: false
 
 主体重 123g 。
 
-![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-05-19-22-58-20-08EAFD2C-CE33-4354-8E02-3EF556F5EFF3_1_102_o.jpeg)
+![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250519225820000-34bc043d27dabb28735ab7a0f1d4c12f.avif)

@@ -17,7 +17,7 @@ Horizon 针对 Laravel 的 Redis 队列，增加了可视化、进程池等特�
 
 ### 可视化仪表板
 
-![2022-08-06-20-27-48-xu94E4](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2022-08-06-20-27-48-xu94E4.jpg)
+![2022-08-06-20-27-48-xu94E4](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20220806202748000-1d93be35f42b67a410c72a2724557806.avif)
 
 ### Worker 进程池的维护和调度
 
@@ -48,11 +48,11 @@ Horizon 针对 Laravel 的 Redis 队列，增加了可视化、进程池等特�
 
 Horizon 每分钟查询一次执行任务的时间超过配置值的队列：
 
-![2022-08-06-20-30-29-t2RJyM](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2022-08-06-20-30-29-t2RJyM.jpg)
+![2022-08-06-20-30-29-t2RJyM](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20220806203029000-71a9ffdeafce1d7d7ecd3ca08c9e4e47.avif)
 
 每 5 分钟发送一次通知：
 
-![2022-08-06-20-31-03-USbLPG](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2022-08-06-20-31-03-USbLPG.jpg)
+![2022-08-06-20-31-03-USbLPG](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20220806203103000-20932a638ca0fb36721dd2f2ffb6e947.avif)
 
 ### 吞吐量和平均耗时统计
 
@@ -64,7 +64,7 @@ $schedule->command('horizon:snapshot')->everyFiveMinutes()
 
 按 Job 查看统计图表：
 
-![2022-08-06-20-31-30-lW3rbM](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2022-08-06-20-31-30-lW3rbM.jpg)
+![2022-08-06-20-31-30-lW3rbM](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20220806203130000-a3bc4a13954e721db50e005e25b1cddc.avif)
 
 ### 标签
 
@@ -79,7 +79,7 @@ public function tags(): array
 
 通过标签监控和查看任务的执行情况：
 
-![2022-08-06-20-31-59-9fuSot](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2022-08-06-20-31-59-9fuSot.jpg)
+![2022-08-06-20-31-59-9fuSot](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20220806203159000-1051220259165709c65141cc993c5065.avif)
 
 ## 问题
 
@@ -89,19 +89,19 @@ public function tags(): array
 
 - `artisan horizon` 启动后不消费队列
 - dashboard 中看不到 supervisor-1
-    ![2022-08-06-20-32-36-suv4Se](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2022-08-06-20-32-36-suv4Se.jpg)
+    ![2022-08-06-20-32-36-suv4Se](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20220806203236000-52f0e2a2505b08661a6aaa3fe7bd4a63.avif)
 - `artisan horizon:list` 可以看到 supervisor-1
-    ![2022-08-06-20-34-22-Rkz4kE](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2022-08-06-20-34-22-Rkz4kE.jpg)
+    ![2022-08-06-20-34-22-Rkz4kE](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20220806203422000-078b8725810a6cc001b517eb58a6484a.avif)
 - `artisan horizon:supervisors` 查不到 supervisor-1
-    ![2022-08-06-20-35-05-2s5FVk](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2022-08-06-20-35-05-2s5FVk.jpg)
+    ![2022-08-06-20-35-05-2s5FVk](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20220806203505000-22d05bd5f7228479bcc998e982692b00.avif)
 - Redis 中 Horizon 的元数据存储在两个目录中
-    ![2022-08-06-20-35-32-lfcXqI](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2022-08-06-20-35-32-lfcXqI.jpg)
+    ![2022-08-06-20-35-32-lfcXqI](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20220806203532000-4fe7176267feccd06f0a0453340a7f22.avif)
 
 ### 原因
 
 Laravel 在 `.env` 之外会根据 `APP_ENV` 加载对应环境的 dotenv 文件：
 
-![2022-08-06-20-35-56-fWubbM](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2022-08-06-20-35-56-fWubbM.jpg)
+![2022-08-06-20-35-56-fWubbM](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20220806203556000-5047981d43a63db298ed0acb321292e9.avif)
 
 Horizon 先启动 master 进程，之后 master 启动 supervisor 进程。
 

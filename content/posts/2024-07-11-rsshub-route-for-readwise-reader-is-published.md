@@ -18,7 +18,7 @@ draft: false
 
 ## 原来的阅读工作流
 
-![The previous reading workflow](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-07-11-17-49-10-the-previous-reading-workflow.png)
+![The previous reading workflow](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240711174910000-269332b48a7ac704a29ed2284ce95357.avif)
 
 在用过的 RSS 阅读器里，Inoreader 最符合我的阅读习惯。它有以下优点：
 
@@ -37,7 +37,7 @@ draft: false
 - **卡片式翻页**：与传统的滚动式翻页相比，卡片式翻页在提高阅读效率的同时，也更加护眼。
 - **自定义排版样式**：可以根据自己的喜好调整阅读界面，打造个性化的阅读环境。
 
-![2024-07-11-18-06-02-IMG_2332](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-07-11-18-06-02-IMG_2332.jpeg)
+![2024-07-11-18-06-02-IMG_2332](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240711180602000-e5452f135375f5c8395551fefe8f9b2b.avif)
 
 ## 从 Inoreader 到 Miniflux 的转变
 
@@ -51,11 +51,11 @@ draft: false
 
 为了实现这一目标，我为 RSSHub 添加了一个路由，它可以将 Readwise Reader 的文档转换成订阅源。这样一来，我就可以在 Calibre Content Server 中愉快地阅读那些稍后阅读的文章了。
 
-![2024-07-11-18-08-00-mac_20240710163856](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-07-11-18-08-00-mac_20240710163856.png)
+![2024-07-11-18-08-00-mac_20240710163856](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240711180800000-6e610fc52bdce49284fece7d56b2c72f.avif)
 
 新的流程是：
 
-![The new reading workflow](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-07-11-18-07-04-the-new-reading-workflow.png)
+![The new reading workflow](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240711180704000-ba5675793f780b2841d51c72310f6249.avif)
 
 该路由的详细用法可以参考以下文档：
 

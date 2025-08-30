@@ -31,19 +31,19 @@ description: 小米官方的 Home Assistant 集成的优势和有待改进的地
 
 ### 安防控制面板显示
 
-![2024-12-25-15-52-54-ImageDec252024](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-12-25-15-52-54-Image%20Dec%2025%202024.jpeg)
+![2024-12-25-15-52-54-ImageDec252024](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20241225155254000-df8cb517762f17ae1523614c57beeb91.avif)
 
 对于我在用的小米智能多模网关，小米官方 Home Assistant 集成并没有提供 HA 的安防控制面板实体，而是提供了一个基本的 select 实体。如果要在 HA 的仪表板和家庭 App 中显示安防控制面板，就需要把安防系统的 select 实体转换成 alarm_control_panel 实体。
 
 ### 传感器实体转换
 
-![2024-12-25-15-49-31-mac_20241225154742](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-12-25-15-49-31-mac_20241225154742.jpeg)
+![2024-12-25-15-49-31-mac_20241225154742](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20241225154931000-0a6a504d6406815842ce9e0cc194cca9.avif)
 
 对于移动检测传感器和烟雾传感器这样的配件，小米官方 Home Assistant 集成没有提供对应的 binary_sensor 实体，而是 event 实体，这当然很符合小米配件的行为模式，但如果需要把它们输出到 Apple 的家庭 App ，就需要将其转换成 binary_sensor 实体。这是因为家庭 App 无法处理 HA 中的 event 实体，而转换成binary_sensor 实体才能被识别为对应的传感器，也更便于与其他智能设备进行联动。
 
 ### 扫地机打扫指定的房间
 
-![2024-12-25-16-05-55-mac_20241225160403](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-12-25-16-05-55-mac_20241225160403.jpeg)
+![2024-12-25-16-05-55-mac_20241225160403](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20241225160555000-a71e2855c32717a2a9b0c09b7b19f107.avif)
 
 在设置扫地机打扫指定房间的自动化时，需要自己获取房间 ID，这也是小米官方 Home Assistant 集成中一个不太便捷的地方。与第三方集成相比，这里的房间 ID 获取方式不同，且操作相对复杂一些。
 

@@ -15,4 +15,4 @@ draft: false
 
 前些天写了个自动下载豆瓣想看列表中电视剧的 n8n 工作流，这两天完善了一下，电影也支持了。只要在豆瓣上标记想看的影视剧，就会自动通过 Jellyseerr 分发给 Radarr 或 Sonarr ，一旦有资源就会自动下载并通知到手机，打开电视就可以看了。
 
-![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-08-04-20-14-05-mac_20250803114650.jpeg)
+![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250804201405000-ca0aeb6658b80dba2bdb7376d9bf8a6b.avif)

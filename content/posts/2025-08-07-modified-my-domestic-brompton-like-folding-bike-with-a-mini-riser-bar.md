@@ -16,4 +16,4 @@ draft: false
 
 这个燕把抬高 3cm ，后略增加 3°，折叠后体积会大一点儿，不过速度可以慢下来了。
 
-![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-08-07-16-45-58-IMG_5155.jpeg)
+![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250807164558000-15ae3e8baaada588c02551cdbdc802d7.avif)

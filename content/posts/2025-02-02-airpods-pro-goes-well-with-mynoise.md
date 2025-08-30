@@ -11,7 +11,7 @@ tags:
 toc: false
 draft: false
 ---
-![2025-02-02-12-18-19-IMG_3868](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-02-02-12-18-19-IMG_3868.jpeg)
+![2025-02-02-12-18-19-IMG_3868](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250202121819000-f97fddd6b5d63c8a81d8f85e29bfb120.avif)
 
 为了春节轻装出行，没有带 Bose QC35 。AirPods Pro 的降噪能力略弱，还是需要白噪声加持。
 

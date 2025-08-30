@@ -15,13 +15,13 @@ description: 速联 GX 10 速指拨在国布折叠车上的初体验
 
 于是我又买了个速联 GX 10 速指拨，初步体验之后感觉这是目前我用过的最适合国布的指拨了。
 
-![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-03-22-23-23-38-IMG_4101.jpeg)
+![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250322232338000-5a23546f668791603346dadc5d918abe.avif)
 
-![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-03-22-23-25-52-IMG_4102.jpeg)
+![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250322232552000-584802880be9d86495c3891cb38ed39f.avif)
 
 首先说走线。之前蓝图 A7 就是因为向内平移且出线角度过小导致占用把横空间和线管受力过大，佰客指拨很好地解决了这个问题。速联 GX 指拨由于夹环和本体是分离的且有两个安装孔，所以可以做到在拨杆不干涉拇指的情况下使夹环靠近刹把固定，这就避免了占用把横空间的问题。此外，速联 GX 指拨的出线角度介于前两个指拨之间，走线效果虽然不如佰客指拨，但比蓝图 A7 还是要好一些，尤其对于 M 把，从容很多。如果有条件，甚至可以 3D 打印一个转接件，让指拨本体的出线角度变得更大，这就很理想了。
 
-![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-03-22-23-24-58-IMG_4103.jpeg)
+![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250322232458000-5095d13aca837d6bb7d324c3ee4da9b5.avif)
 
 再就是变速手感，速联指拨明显好于前面两个。在用蓝图和佰客指拨的时候，都出现过降档时本来只想降一档，实际连降两三档的情况，此时拨拨杆往往需要小心翼翼的，很难拿捏力度，速联指拨没这问题，拨一下降一档，没有心理负担，想连降多档就拨的幅度大一些。
 

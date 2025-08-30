@@ -10,7 +10,7 @@ tags:
 - 青梅煮酒
 ---
 
-![img](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2020-06-26-23-36-49-三里屯太古里南区.jpg)
+![img](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20200626233649000-20a04d7122017dad4685781e5c694fba.avif)
 
 生平第一次修电脑。
 

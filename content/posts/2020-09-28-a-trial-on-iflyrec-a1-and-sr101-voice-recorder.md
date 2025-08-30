@@ -15,7 +15,7 @@ tags:
 
 ## 无处安放的 A1
 
-![image-20200930191237542](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2020-09-30-19-12-38-image-20200930191237542.png)
+![image-20200930191237542](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20200930191238000-f080fa74c7d333cdf2c851d8ecbc58bf.avif)
 
 ### 优点
 
@@ -41,7 +41,7 @@ tags:
 
 ## 五脏俱全但囿于软件的 SR101
 
-![讯飞智能录音笔SR101](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2020-09-30-19-01-35-b450e9378bc7479bbc038ed3861c6d1a.jpg)
+![讯飞智能录音笔SR101](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20200930190135000-c61d417bed66373efe179cde70fb9794.avif)
 
 ### 优点
 

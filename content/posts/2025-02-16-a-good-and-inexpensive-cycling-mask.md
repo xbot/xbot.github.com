@@ -26,7 +26,7 @@ draft: false
 
 ### 魔术头巾
 
-![2025-02-16-22-20-09-IMG_3931](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-02-16-22-20-09-IMG_3931.jpeg)
+![2025-02-16-22-20-09-IMG_3931](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250216222009000-a21330c51abbb98dd2b35944f350867e.avif)
 用过一次就不想用了，原因如下：
 
 - 不易穿戴。
@@ -36,7 +36,7 @@ draft: false
 
 ### 冰丝挂耳骑行面罩
 
-![2025-02-16-22-20-43-IMG_3932](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-02-16-22-20-43-IMG_3932.jpeg)
+![2025-02-16-22-20-43-IMG_3932](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250216222043000-028f952131bb54f88204688fe15db36e.avif)
 
 比魔术头巾好些：
 
@@ -47,7 +47,7 @@ draft: false
 
 ## 13 块的骑行口罩，凭什么让我 “真香” 了？
 
-![2025-02-16-22-21-09-IMG_3930](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-02-16-22-21-09-IMG_3930.jpeg)
+![2025-02-16-22-21-09-IMG_3930](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250216222109000-ead3616b4af3622d6ea18bb45e66fffb.avif)
 
 之前听说这种骑行口罩挺好用，但是原版卖两百多，我一般不会买溢价太高的东西。最近买了个同款的口罩，用了优惠券之后才 13 块多。
 

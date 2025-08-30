@@ -12,7 +12,7 @@ toc: false
 draft: false
 ---
 
-![2025-01-16-23-34-56-WhisperKeyboard](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-01-16-23-34-56-Whisper%20Keyboard.jpeg)
+![2025-01-16-23-34-56-WhisperKeyboard](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250116233456000-5e4612d49d7845ec4655138667e2a1ae.avif)
 
 一直以来都在拿 ChatGPT 当语音输入法用，识别效果非常好，但毕竟还是不够方便。
 

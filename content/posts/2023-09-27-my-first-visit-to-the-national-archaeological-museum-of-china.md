@@ -14,18 +14,18 @@ draft: false
 
 安保等级很高，到处都是工作人员。内部装修很好，基础设施完备，毕竟是新馆，因为每天限 500 个名额，人也不多，总体观展体验很好。展品很硬，有一些只在书和电视上看过的东西，像是赴了个多年的约会。赶上了下午三点的讲解，耗时一个半小时，听完正好清场，讲解员很辛苦也很专业，但我觉得讲得太浅，只是简介性质。一共四层，第一层主要是两具陪葬车马，二、三层是主要内容，四层偏近代。文创店在一层，东西一般，不少人在那买了本子到各展区盖章，觉得没什么意义，就没有做。
 
-![2023-09-27-23-40-35-IMG_0353](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-09-27-23-40-35-IMG_0353.jpg)
+![2023-09-27-23-40-35-IMG_0353](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20230927234035000-48eee4740ac9201cc341c2b4951fe7be.avif)
 
-![2023-09-27-23-40-54-IMG_0356](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-09-27-23-40-54-IMG_0356.jpg)
+![2023-09-27-23-40-54-IMG_0356](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20230927234054000-2f0149cf08931fb789ae01d59457c57d.avif)
 
-![2023-09-27-23-40-51-IMG_0359](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-09-27-23-40-51-IMG_0359.jpg)
+![2023-09-27-23-40-51-IMG_0359](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20230927234051000-8055377cd3a36c88c5bb63d6390f26b1.avif)
 
-![2023-09-27-23-40-47-IMG_0362](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-09-27-23-40-47-IMG_0362.jpg)
+![2023-09-27-23-40-47-IMG_0362](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20230927234047000-96f8a42eb2fd009704528cb3ff2d6d76.avif)
 
-![2023-09-27-23-40-49-IMG_0360](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-09-27-23-40-49-IMG_0360.jpg)
+![2023-09-27-23-40-49-IMG_0360](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20230927234049000-be4dbfa0133d57211174542c420fa799.avif)
 
-![2023-09-27-23-40-44-IMG_0364](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-09-27-23-40-44-IMG_0364.jpg)
+![2023-09-27-23-40-44-IMG_0364](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20230927234044000-796db818e3eee4b7fb01b28c3e377532.avif)
 
-![2023-09-27-23-40-42-IMG_0365](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-09-27-23-40-42-IMG_0365.jpg)
+![2023-09-27-23-40-42-IMG_0365](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20230927234042000-804eac8668c012daf388c63ff2ec1f3b.avif)
 
-![2023-09-27-23-40-40-IMG_0366](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-09-27-23-40-40-IMG_0366.jpg)
+![2023-09-27-23-40-40-IMG_0366](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20230927234040000-4b534cce0a1063e43d1b60fd7025c648.avif)

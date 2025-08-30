@@ -11,7 +11,7 @@ tags:
 - 青梅煮酒
 ---
 
-![2020-06-19-16-16-10-20161021001](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2020-06-19-16-16-10-20161021001.png)
+![2020-06-19-16-16-10-20161021001](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20200619161610000-dda16288015d2abe5c39702b4fa1d2ef.avif)
 
 汉书卷五十四：
 

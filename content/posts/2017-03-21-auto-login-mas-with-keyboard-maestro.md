@@ -15,4 +15,4 @@ tags:
 3. 将 `YOUR@EMAIL.COM` 改成自己的 Apple ID 。
 4. 将 `YOUR KEYCHAIN PASSWORD NAME` 改成 Keychain 里密码项的名称。
 
-![2023-07-09-21-29-57-login_mas_with_keyboard_maestro](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-07-09-21-29-57-login_mas_with_keyboard_maestro.png)
+![2023-07-09-21-29-57-login_mas_with_keyboard_maestro](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20230709212957000-7a199d439d52f53900768adffdddf76c.avif)

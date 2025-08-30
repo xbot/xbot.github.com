@@ -17,6 +17,6 @@ Miniflux 是个可以自己部署的 RSS 阅读器，我用它省了每年几百
 
 但是每次都修改订阅源的配置太麻烦了，所以我写了个 Chrome 浏览器的扩展，在每条阅读条目下面添加一个“更新规则”的按钮，这下方便多了。
 
-![2024-12-31-23-04-53-introduction-01-update-rules](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-12-31-23-04-53-introduction-01-update-rules.png)
+![2024-12-31-23-04-53-introduction-01-update-rules](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20241231230453000-0aa31aa458f2001375067d203fb2fec1.avif)
 
 https://github.com/xbot/chrome-extension-miniflux-enhancer

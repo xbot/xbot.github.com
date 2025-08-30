@@ -10,7 +10,7 @@ tags:
 - 青梅煮酒
 ---
 
-![2020-06-19-16-18-58-20160630001](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2020-06-19-16-18-58-20160630001.jpg)
+![2020-06-19-16-18-58-20160630001](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20200619161858000-80bea4acae9ab252adb19c8c9fbcfe29.avif)
 
 用了四天时间，读完了这本书。之所以叫「这本书」，是因为这是本在豆瓣里都找不到记录的书，去年上市不久即被下架，通常意义上，叫禁书。
 

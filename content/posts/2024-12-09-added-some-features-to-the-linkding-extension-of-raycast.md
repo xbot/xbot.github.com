@@ -11,7 +11,7 @@ tags:
 toc: false
 draft: false
 ---
-![2024-12-09-22-28-45-Image1080x1439](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-12-09-22-28-45-Image%201080x1439.jpeg)
+![2024-12-09-22-28-45-Image1080x1439](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20241209222845000-512187e891a5c5f85a38f40b73b1e58d.avif)
 
 上周六风很大，被迫放弃去大运河骑车，窝在家里改 Raycast 的 linkding 扩展。
 
@@ -27,13 +27,13 @@ Raycast 是一个 macOS 上的应用启动器和效率工具，类似 Spotlight 
 - 删除书签和 linkding 账户时弹出确认对话框，防止误删。
 - 增加在浏览器中打开 linkding 书签查看和编辑页面的功能。
 
-![2024-12-09-22-36-05-Image1500x948(1)](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-12-09-22-36-05-Image%201500x948%20(1).jpeg)
+![2024-12-09-22-36-05-Image1500x948(1)](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20241209223605000-e578367ecc02299350c5848e71cc46c5.avif)
 
-![2024-12-09-22-36-54-Image1500x948](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-12-09-22-36-54-Image%201500x948.jpeg)
+![2024-12-09-22-36-54-Image1500x948](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20241209223654000-7e977cf5742fcd5adde84afaf1209536.avif)
 
-![2024-12-09-22-37-24-Image1662x1080](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-12-09-22-37-24-Image%201662x1080.jpeg)
+![2024-12-09-22-37-24-Image1662x1080](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20241209223724000-28af3ef3e932537e7b8beee1b3b92dcf.avif)
 
-![2024-12-09-22-37-55-Image1500x948(2)](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-12-09-22-37-55-Image%201500x948%20(2).jpeg)
+![2024-12-09-22-37-55-Image1500x948(2)](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20241209223755000-90d3b2869838a5f80b860da4ba411e22.avif)
 
 在原作者合并 PR 之前，可以下载这个 [repo](https://github.com/xbot/raycast-linkding) 的源码，并执行：
 

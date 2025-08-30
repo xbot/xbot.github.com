@@ -9,7 +9,7 @@ tags:
 toc: false
 draft: false
 ---
-![2025-01-02-17-17-46-IMG_3644](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-01-02-17-17-46-IMG_3644.jpeg)
+![2025-01-02-17-17-46-IMG_3644](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250102171746000-7160eec9a1a0e99b70993ab41a12d7a2.avif)
 
 我的气泵的美嘴比法嘴好用，所以想把轮胎的法嘴转换成美嘴。
 

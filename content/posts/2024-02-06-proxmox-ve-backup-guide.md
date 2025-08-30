@@ -50,7 +50,7 @@ Proxmox Backup Server (PBS) 是一个功能强大的备份工具，它提供了�
 
    例如，保留最近 7 天的每日备份、8 周的每周备份和 6 个月的每月备份。
 
-![2024-02-06-18-26-38-JCL4GH](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-02-06-18-26-38-JCL4GH.png)
+![2024-02-06-18-26-38-JCL4GH](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20240206182638000-d99cdc4c98f541d2666d7504184ee78f.avif)
 
 5. **配置 Datastore**
 

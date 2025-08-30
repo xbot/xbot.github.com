@@ -12,7 +12,7 @@ draft: false
 ---
 从车展上的照片和视频看，大行这个仿布的完成度挺高的，甚至连脚踏都和英布的一样，不知道最终开卖的时候是不是也是这样（有可能悬，以大行的尿性，大概率能给配个祖传的塑料折叠脚踏就不错了）。
 
-![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-05-05-20-44-55-IMG_4447.jpeg)
+![](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250505204455000-5ce212a50d64fb586982bce22f289cd6.avif)
 
 大行下场的意义不在这个车本身，而是终于有可能给体验和价格不匹配的仿布市场一点压力了。
 

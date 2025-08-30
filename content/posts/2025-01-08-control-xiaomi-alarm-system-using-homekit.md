@@ -15,7 +15,7 @@ description: 把小米官方 Home Assistant 集成的安防映射到苹果的家
 
 ## 为什么这么做？
 
-![2024-12-25-15-52-54-ImageDec252024](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2024-12-25-15-52-54-Image%20Dec%2025%202024.jpeg)
+![2024-12-25-15-52-54-ImageDec252024](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20241225155254000-df8cb517762f17ae1523614c57beeb91.avif)
 
 小米官方 Home Assistant 集成的事件订阅机制可是一大亮点，它极大地解放了小米智能组件在 Apple 的 HomeKit 生态中的应用。以往三方集成采用轮询机制，这就导致小米多数的组件响应延迟很大，体验感极差。比如之前安防系统模式变化后几秒钟仪表盘上的组件才改变状态，实在是逼死强迫症。但现在不同了，有了事件订阅机制，组件响应十分及时，我们终于可以在家庭 App 中流畅地调用这些组件实现自动化操作了。
 
@@ -25,7 +25,7 @@ description: 把小米官方 Home Assistant 集成的安防映射到苹果的家
 
 首先，我们要创建一个 alarm_control_panel 实体，位置在：Settings → Devices & services → Helpers → Create helper → Template helper → Template an alarm control panel。
 
-![2025-01-08-18-04-03-alarm_01](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2025-01-08-18-04-03-alarm_01.png)
+![2025-01-08-18-04-03-alarm_01](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20250108180403000-25935642a4bf6b303521653107296ab5.avif)
 
 在这里，我们需要用模板来进行配置，以下是关键的代码部分：
 

@@ -11,7 +11,7 @@ toc: false
 
 之前[提到](/posts/hands-on-hanlinyue-read6-pro/)想挑一个便携美观的微信读书载体，第一眼就被文石 Poke5S 的白色机身吸引了。
 
-![2023-08-19-18-33-23-PXL_20230720_100716361_Original](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/2023-08-19-18-33-23-PXL_20230720_100716361_Original.jpeg)
+![2023-08-19-18-33-23-PXL_20230720_100716361_Original](https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20230819183323000-a4c6543a66492f2188c1991fb10d56ad.avif)
 
 试用了一段时间，总结了一些比较戳我的优点：
 
