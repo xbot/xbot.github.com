@@ -5,7 +5,7 @@ slug: simplify vim addon installation issues
 date: 2016-01-20 18:05:00
 comments: true
 tags:
-- vim
+- Vim
 - 编程
 - 计算机
 ---

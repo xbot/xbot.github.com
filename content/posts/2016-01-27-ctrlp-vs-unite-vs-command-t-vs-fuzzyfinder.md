@@ -5,7 +5,7 @@ slug: ctrlp vs unite vs command t vs fuzzyfinder
 date: 2016-01-27 16:16:00
 comments: true
 tags:
-- vim
+- Vim
 - 最佳实践
 - 计算机
 ---

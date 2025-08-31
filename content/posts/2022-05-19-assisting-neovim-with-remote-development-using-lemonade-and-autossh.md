@@ -3,7 +3,7 @@ title: 使用 lemonade 和 autossh 辅助 Neovim 远程开发
 slug: Assisting Neovim With Remote Development Using Lemonade and Autossh
 date: 2022-05-19 16:02:34+08:00
 tags:
-- vim
+- Vim
 - 编程
 - 计算机
 ---

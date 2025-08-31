@@ -5,8 +5,7 @@ slug: fzf yet another fuzzy finder
 date: 2016-02-01 11:42:00
 comments: true
 tags:
-- vim
-- 插件
+- Vim
 - 计算机
 ---
 

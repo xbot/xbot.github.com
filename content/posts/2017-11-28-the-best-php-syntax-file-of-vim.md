@@ -3,7 +3,7 @@ title: Vim最好的PHP语法高亮插件
 slug: the best php syntax file of vim
 date: 2017-11-28 15:55:59
 tags:
-- vim
+- Vim
 - 最佳实践
 - 计算机
 ---

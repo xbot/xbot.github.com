@@ -6,7 +6,6 @@ date: 2013-05-23 11:26:00
 comments: true
 tags:
 - Vim
-- 插件
 - 计算机
 ---
 I replaced [NeoComplCache][] with [YouCompleteMe][] today. The main reason is for the auto-complete feature and the fast speed. Besides, it seems that YCM provides more features than NCC.

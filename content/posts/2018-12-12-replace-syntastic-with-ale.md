@@ -3,7 +3,7 @@ title: 用ALE替换了Syntastic
 slug: replace syntastic with ale
 date: 2018-12-12 20:42:10
 tags:
-- vim
+- Vim
 - 最佳实践
 - 计算机
 ---

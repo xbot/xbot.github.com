@@ -3,7 +3,7 @@ title: LeaderF，也许是Vim最好的模糊查询插件
 slug: leaderf currently the best fuzzy finder of vim
 date: 2017-07-13 16:45:15
 tags:
-- vim
+- Vim
 - 最佳实践
 - 计算机
 ---

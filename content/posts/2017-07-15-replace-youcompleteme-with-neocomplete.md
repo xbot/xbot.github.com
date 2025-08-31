@@ -3,7 +3,7 @@ title: 用neocomplete换掉了YouCompleteMe
 slug: replace youcompleteme with neocomplete
 date: 2017-07-15 10:29:48
 tags:
-- vim
+- Vim
 - 最佳实践
 - 计算机
 ---

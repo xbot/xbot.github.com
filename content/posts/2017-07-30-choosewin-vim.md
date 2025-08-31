@@ -3,7 +3,7 @@ title: 用choosewin.vim切换窗口
 slug: choosewin vim
 date: 2017-07-30 20:48:46
 tags:
-- vim
+- Vim
 - 最佳实践
 - 计算机
 ---

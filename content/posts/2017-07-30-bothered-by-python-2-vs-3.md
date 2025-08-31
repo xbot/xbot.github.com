@@ -3,7 +3,7 @@ title: Python 2还是3是个纠结的问题
 slug: bothered by python 2 vs 3
 date: 2017-07-30 08:40:11
 tags:
-- vim
+- Vim
 - python
 - 随笔
 - 计算机

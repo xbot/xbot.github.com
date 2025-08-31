@@ -3,7 +3,7 @@ title: 怎样在Vim中删除引号文本对象
 slug: how to delete quoted text object in vim
 date: 2017-02-25 19:33:18
 tags:
-- vim
+- Vim
 - 笔记
 - 计算机
 ---

@@ -4,7 +4,7 @@ slug: auto switch input method while changing vim mode
 date: 2020-02-19 21:48:15
 tags:
 - 最佳实践
-- vim
+- Vim
 - vscode
 - 计算机
 ---

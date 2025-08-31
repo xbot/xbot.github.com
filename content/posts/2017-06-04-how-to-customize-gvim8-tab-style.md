@@ -3,7 +3,7 @@ title: 自定义GVIM 8标签栏样式的方法
 slug: how to customize gvim8 tab style
 date: 2017-06-04 12:42:12
 tags:
-- vim
+- Vim
 - linux
 - 计算机
 ---

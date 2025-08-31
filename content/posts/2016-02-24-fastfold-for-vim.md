@@ -5,8 +5,7 @@ slug: fastfold for vim
 date: 2016-02-24 11:06:00
 comments: true
 tags:
-- vim
-- 插件
+- Vim
 - 计算机
 ---
 

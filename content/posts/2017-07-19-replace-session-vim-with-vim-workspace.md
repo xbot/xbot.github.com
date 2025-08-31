@@ -3,7 +3,7 @@ title: 用vim-workspace换掉了session.vim
 slug: replace session vim with vim workspace
 date: 2017-07-19 17:47:30
 tags:
-- vim
+- Vim
 - 最佳实践
 - 计算机
 ---

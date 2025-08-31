@@ -5,7 +5,7 @@ slug: force commenting html in php files in vim
 date: 2014-11-13 21:45:00
 comments: true
 tags:
-- vim
+- Vim
 - php
 - html
 - 计算机

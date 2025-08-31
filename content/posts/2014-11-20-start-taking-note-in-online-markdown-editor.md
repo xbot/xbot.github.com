@@ -7,7 +7,7 @@ comments: true
 tags:
 - markdown
 - 编辑器
-- vim
+- Vim
 - 随笔
 - 计算机
 ---

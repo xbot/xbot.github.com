@@ -3,7 +3,7 @@ title: Vim 查找与替换的最佳实践
 slug: the best practice of searching in vim
 date: 2017-02-19 20:37:18
 tags:
-- vim
+- Vim
 - 最佳实践
 - 计算机
 ---
