@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Phpunit on 晴耕雨讀</title><link>http://0x3f.org/tags/phpunit/</link><description>Recent content in Phpunit on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Thu, 23 Jun 2022 14:42:34 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/phpunit/index.xml" rel="self" type="application/rss+xml"/><item><title>解决 PHPUnit 生成代码覆盖报告时抛出重复定义类的错误的办法</title><link>http://0x3f.org/posts/the-solution-of-class-redeclaration-error-raised-while-generating-php-code-coverage-report/</link><pubDate>Thu, 23 Jun 2022 14:42:34 +0800</pubDate><guid>http://0x3f.org/posts/the-solution-of-class-redeclaration-error-raised-while-generating-php-code-coverage-report/</guid><description>&lt;p&gt;在生成 Cobertura 格式的代码覆盖报告时程序报了如下错误：&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;Generating code coverage report in Cobertura XML format &amp;hellip; PHP Fatal error: Cannot declare class App\FakeNamespace\GenericProvider, because the name is already in use in /builds/fake_project/app/FakeNamespace/GenericProvider.php on line 17&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;Generating code coverage report in Cobertura XML format &amp;hellip; PHP Fatal error: Cannot declare class App\FakeNamespace\GenericProvider, because the name is already in use in /builds/fake_project/app/FakeNamespace/GenericProvider.php on line 17&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;p&gt;对应的代码和单元测试执行均无问题。&lt;/p&gt;
 &lt;p&gt;经排查，直接原因是使用了 Mockery 的 &lt;a href="http://docs.mockery.io/en/latest/reference/instance_mocking.html"&gt;Instance Mocking&lt;/a&gt; &lt;sup id="fnref:1"&gt;&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref"&gt;1&lt;/a&gt;&lt;/sup&gt;特性 mock 代码中的硬依赖关系（&lt;a href="https://robertbasic.com/blog/mocking-hard-dependencies-with-mockery/"&gt;Hard Dependency&lt;/a&gt;）。&lt;/p&gt;
 &lt;p&gt;该特性的实现利用了类的自动加载机制和依赖注入技术。对依赖关系 mock 的实例保存在 Mockery 的容器中，同时生成一个 stub 文件：&lt;/p&gt;
@@ -144,7 +145,8 @@
 &lt;ol&gt;
 &lt;li&gt;Ox3f\LaravelUtils\Log\LogTest::testAll
 This test does not have a @covers annotation but is expected to have one&lt;/li&gt;
-&lt;/ol&gt;&lt;/blockquote&gt;
+&lt;/ol&gt;
+&lt;/blockquote&gt;
 &lt;p&gt;如果希望单元测试覆盖全部代码、且不用一一显式声明，可以将此选项的值改成
 &lt;code&gt;false&lt;/code&gt;。&lt;/p&gt;</description></item><item><title>Phalcon项目中PHPUnit的初始化</title><link>http://0x3f.org/posts/testing-with-phpunit-in-phalcon/</link><pubDate>Sat, 29 Nov 2014 09:58:00 +0000</pubDate><guid>http://0x3f.org/posts/testing-with-phpunit-in-phalcon/</guid><description>&lt;p&gt;参考&lt;a href="http://docs.phalconphp.com/zh/latest/reference/unit-testing.html"&gt;官方文档&lt;/a&gt;，稍作修改。&lt;/p&gt;
 &lt;p&gt;在项目下创建目录 unittests ，进入目录执行：&lt;/p&gt;
