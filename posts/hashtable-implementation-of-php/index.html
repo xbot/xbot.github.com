@@ -33,26 +33,26 @@ whitespace-nowrap overflow-x-auto overflow-y-hidden"><li class="ml-2 mr-2"><a hr
 </span><span class=lnt>30
 </span><span class=lnt>31
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=c1>// 哈希表结构
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>typedef</span> <span class=k>struct</span> <span class=n>_hashtable</span> <span class=p>{</span>
+</span></span></span><span class=line><span class=cl><span class=k>typedef</span> <span class=k>struct</span> <span class=n>_hashtable</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=n>uint</span> <span class=n>nTableSize</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>    <span class=n>uint</span> <span class=n>nTableMask</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>    <span class=n>uint</span> <span class=n>nNumOfElements</span><span class=p>;</span>           <span class=c1>// 全部元素数
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=n>ulong</span> <span class=n>nNextFreeElement</span><span class=p>;</span>        <span class=c1>// 下一个可用的整数键
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=n>Bucket</span> <span class=o>*</span><span class=n>pInternalPointer</span><span class=p>;</span>      <span class=c1>// 枚举操作时使用，指向当前Bucket
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=n>Bucket</span> <span class=o>*</span><span class=n>pListHead</span><span class=p>;</span>
+</span></span></span><span class=line><span class=cl>    <span class=n>ulong</span> <span class=n>nNextFreeElement</span><span class=p>;</span>        <span class=c1>// 下一个可用的整数键
+</span></span></span><span class=line><span class=cl>    <span class=n>Bucket</span> <span class=o>*</span><span class=n>pInternalPointer</span><span class=p>;</span>      <span class=c1>// 枚举操作时使用，指向当前Bucket
+</span></span></span><span class=line><span class=cl>    <span class=n>Bucket</span> <span class=o>*</span><span class=n>pListHead</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>    <span class=n>Bucket</span> <span class=o>*</span><span class=n>pListTail</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>    <span class=n>Bucket</span> <span class=o>**</span><span class=n>arBuckets</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>    <span class=kt>dtor_func_t</span> <span class=n>pDestructor</span><span class=p>;</span>       <span class=c1>// 元素的析构函数
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=n>zend_bool</span> <span class=n>persistent</span><span class=p>;</span>          <span class=c1>// 是否在本次请求结束后保留哈希表
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>unsigned</span> <span class=kt>char</span> <span class=n>nApplyCount</span><span class=p>;</span>     <span class=c1>// 循环级别，防止循环引用导致遍历哈希表时死循环
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=n>zend_bool</span> <span class=n>bApplyProtection</span><span class=p>;</span>    <span class=c1>// 是否防止死循环
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=cp>#if ZEND_DEBUG
-</span></span></span><span class=line><span class=cl><span class=cp></span>    <span class=kt>int</span> <span class=n>inconsistent</span><span class=p>;</span>
+</span></span></span><span class=line><span class=cl>    <span class=n>zend_bool</span> <span class=n>persistent</span><span class=p>;</span>          <span class=c1>// 是否在本次请求结束后保留哈希表
+</span></span></span><span class=line><span class=cl>    <span class=kt>unsigned</span> <span class=kt>char</span> <span class=n>nApplyCount</span><span class=p>;</span>     <span class=c1>// 循环级别，防止循环引用导致遍历哈希表时死循环
+</span></span></span><span class=line><span class=cl>    <span class=n>zend_bool</span> <span class=n>bApplyProtection</span><span class=p>;</span>    <span class=c1>// 是否防止死循环
+</span></span></span><span class=line><span class=cl><span class=cp>#if ZEND_DEBUG
+</span></span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>inconsistent</span><span class=p>;</span>
 </span></span><span class=line><span class=cl><span class=cp>#endif
-</span></span></span><span class=line><span class=cl><span class=cp></span><span class=p>}</span> <span class=n>HashTable</span><span class=p>;</span>
+</span></span></span><span class=line><span class=cl><span class=p>}</span> <span class=n>HashTable</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=c1>// Bucket结构
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>typedef</span> <span class=k>struct</span> <span class=n>bucket</span> <span class=p>{</span>
+</span></span></span><span class=line><span class=cl><span class=k>typedef</span> <span class=k>struct</span> <span class=n>bucket</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=n>ulong</span> <span class=n>h</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>    <span class=n>uint</span> <span class=n>nKeyLength</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>    <span class=kt>void</span> <span class=o>*</span><span class=n>pData</span><span class=p>;</span>
@@ -77,7 +77,7 @@ whitespace-nowrap overflow-x-auto overflow-y-hidden"><li class="ml-2 mr-2"><a hr
 </span><span class=lnt>12
 </span><span class=lnt>13
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=c1>// init hashtable
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>HashTable</span> <span class=o>*</span><span class=n>myht</span><span class=p>;</span>
+</span></span></span><span class=line><span class=cl><span class=n>HashTable</span> <span class=o>*</span><span class=n>myht</span><span class=p>;</span>
 </span></span><span class=line><span class=cl><span class=nf>ALLOC_HASHTABLE</span><span class=p>(</span><span class=n>myht</span><span class=p>);</span>
 </span></span><span class=line><span class=cl><span class=k>if</span> <span class=p>(</span><span class=nf>zend_hash_init</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=mi>100</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=mi>0</span><span class=p>)</span> <span class=o>==</span> <span class=n>FAILURE</span><span class=p>)</span>
 </span></span><span class=line><span class=cl><span class=p>{</span>
@@ -86,7 +86,7 @@ whitespace-nowrap overflow-x-auto overflow-y-hidden"><li class="ml-2 mr-2"><a hr
 </span></span><span class=line><span class=cl><span class=p>}</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=c1>// destroy hashtable
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nf>zend_hash_destroy</span><span class=p>(</span><span class=n>myht</span><span class=p>);</span>
+</span></span></span><span class=line><span class=cl><span class=nf>zend_hash_destroy</span><span class=p>(</span><span class=n>myht</span><span class=p>);</span>
 </span></span><span class=line><span class=cl><span class=nf>FREE_HASHTABLE</span><span class=p>(</span><span class=n>myht</span><span class=p>);</span>
 </span></span><span class=line><span class=cl><span class=k>return</span> <span class=n>SUCCESS</span><span class=p>;</span>
 </span></span></code></pre></td></tr></table></div></div><h3 id=初始化哈希表>初始化哈希表</h3><p>ALLOC_HASHTABLE就是用emalloc()分配内存。</p><h4 id=zend_hash_init>zend_hash_init()</h4><blockquote><p>zend_hash_init(HashTable *ht, uint nSize, dtor_func_t pDestructor, zend_bool persistent ZEND_FILE_LINE_DC)</p></blockquote><p>nSize是哈希表的初始长度，实际分配为最接近指定值的2的n次方，最小为8。</p><p>pDestructor是被存储数据的析构函数，默认为ZVAL_PTR_DTOR，对于一般情况（Bucket中存储的是zval）适用。</p><p>persistent，1表示本次请求结束后保留哈希表，0反之。</p><h3 id=销毁哈希表>销毁哈希表</h3><p>zend_hash_clean()对HT所有Bucket调用析构函数，并重置HT的所有指针。</p><p>zend_hash_destroy()除了销毁所有Bucket存储的数据，连arBuckets的空间也释放掉。</p><p>FREE_HASHTABLE宏其实就是efree()。</p><h2 id=操作数字键>操作数字键</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
@@ -146,16 +146,16 @@ whitespace-nowrap overflow-x-auto overflow-y-hidden"><li class="ml-2 mr-2"><a hr
 </span><span class=lnt>55
 </span><span class=lnt>56
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=c1>// add a string with an integer key 2 to myht
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>zval</span> <span class=o>*</span><span class=n>zv1</span><span class=p>;</span>
+</span></span></span><span class=line><span class=cl><span class=n>zval</span> <span class=o>*</span><span class=n>zv1</span><span class=p>;</span>
 </span></span><span class=line><span class=cl><span class=nf>MAKE_STD_ZVAL</span><span class=p>(</span><span class=n>zv1</span><span class=p>);</span>
 </span></span><span class=line><span class=cl><span class=nf>ZVAL_STRING</span><span class=p>(</span><span class=n>zv1</span><span class=p>,</span> <span class=s>&#34;Hello HT !&#34;</span><span class=p>,</span> <span class=mi>1</span><span class=p>);</span>
 </span></span><span class=line><span class=cl><span class=nf>zend_hash_index_update</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=mi>2</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>zv1</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=n>zval</span> <span class=o>*</span><span class=p>),</span> <span class=nb>NULL</span><span class=p>);</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=c1>// get the next free key
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;The next free key will be %ld.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=nf>zend_hash_next_free_element</span><span class=p>(</span><span class=n>myht</span><span class=p>));</span>
+</span></span></span><span class=line><span class=cl><span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;The next free key will be %ld.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=nf>zend_hash_next_free_element</span><span class=p>(</span><span class=n>myht</span><span class=p>));</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=c1>// append an integer to myht
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>zval</span> <span class=o>*</span><span class=n>zv2</span><span class=p>;</span>
+</span></span></span><span class=line><span class=cl><span class=n>zval</span> <span class=o>*</span><span class=n>zv2</span><span class=p>;</span>
 </span></span><span class=line><span class=cl><span class=nf>MAKE_STD_ZVAL</span><span class=p>(</span><span class=n>zv2</span><span class=p>);</span>
 </span></span><span class=line><span class=cl><span class=nf>ZVAL_LONG</span><span class=p>(</span><span class=n>zv2</span><span class=p>,</span> <span class=mi>2015</span><span class=p>);</span>
 </span></span><span class=line><span class=cl><span class=k>if</span> <span class=p>(</span><span class=nf>zend_hash_next_index_insert</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>zv2</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=n>zval</span> <span class=o>*</span><span class=p>),</span> <span class=nb>NULL</span><span class=p>)</span> <span class=o>==</span> <span class=n>FAILURE</span><span class=p>)</span>
@@ -168,10 +168,10 @@ whitespace-nowrap overflow-x-auto overflow-y-hidden"><li class="ml-2 mr-2"><a hr
 </span></span><span class=line><span class=cl><span class=p>}</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=c1>// get the size
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;HashTable has a size of %d.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=nf>zend_hash_num_elements</span><span class=p>(</span><span class=n>myht</span><span class=p>));</span>
+</span></span></span><span class=line><span class=cl><span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;HashTable has a size of %d.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=nf>zend_hash_num_elements</span><span class=p>(</span><span class=n>myht</span><span class=p>));</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=c1>// check if an integer key exists
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kt>int</span> <span class=n>idx</span> <span class=o>=</span> <span class=mi>3</span><span class=p>;</span>
+</span></span></span><span class=line><span class=cl><span class=kt>int</span> <span class=n>idx</span> <span class=o>=</span> <span class=mi>3</span><span class=p>;</span>
 </span></span><span class=line><span class=cl><span class=k>if</span> <span class=p>(</span><span class=nf>zend_hash_index_exists</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=n>idx</span><span class=p>))</span>
 </span></span><span class=line><span class=cl><span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;HashTable has an index of the value %ld.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>idx</span><span class=p>);</span>
@@ -182,7 +182,7 @@ whitespace-nowrap overflow-x-auto overflow-y-hidden"><li class="ml-2 mr-2"><a hr
 </span></span><span class=line><span class=cl><span class=p>}</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=c1>// get a value by its key
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>zval</span> <span class=o>**</span><span class=n>zval_dest</span><span class=p>;</span>
+</span></span></span><span class=line><span class=cl><span class=n>zval</span> <span class=o>**</span><span class=n>zval_dest</span><span class=p>;</span>
 </span></span><span class=line><span class=cl><span class=k>if</span> <span class=p>(</span><span class=nf>zend_hash_index_find</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=n>idx</span><span class=p>,</span> <span class=p>(</span><span class=kt>void</span> <span class=o>**</span><span class=p>)</span> <span class=o>&amp;</span><span class=n>zval_dest</span><span class=p>)</span> <span class=o>==</span> <span class=n>SUCCESS</span><span class=p>)</span>
 </span></span><span class=line><span class=cl><span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;The value indexed by %ld is %Z.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>idx</span><span class=p>,</span> <span class=o>*</span><span class=n>zval_dest</span><span class=p>);</span>
@@ -193,7 +193,7 @@ whitespace-nowrap overflow-x-auto overflow-y-hidden"><li class="ml-2 mr-2"><a hr
 </span></span><span class=line><span class=cl><span class=p>}</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=c1>// delete the specified value from myht
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>if</span> <span class=p>(</span><span class=nf>zend_hash_index_del</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=n>idx</span><span class=p>)</span> <span class=o>==</span> <span class=n>FAILURE</span><span class=p>)</span>
+</span></span></span><span class=line><span class=cl><span class=k>if</span> <span class=p>(</span><span class=nf>zend_hash_index_del</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=n>idx</span><span class=p>)</span> <span class=o>==</span> <span class=n>FAILURE</span><span class=p>)</span>
 </span></span><span class=line><span class=cl><span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;The value indexed by %ld failed to be deleted.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>idx</span><span class=p>);</span>
 </span></span><span class=line><span class=cl><span class=p>}</span>
@@ -256,14 +256,14 @@ whitespace-nowrap overflow-x-auto overflow-y-hidden"><li class="ml-2 mr-2"><a hr
 </span><span class=lnt>53
 </span><span class=lnt>54
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=c1>// add an integer indexed by a string key, using zend_hash_update()
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>zval</span> <span class=o>*</span><span class=n>zv3</span><span class=p>;</span>
+</span></span></span><span class=line><span class=cl><span class=n>zval</span> <span class=o>*</span><span class=n>zv3</span><span class=p>;</span>
 </span></span><span class=line><span class=cl><span class=nf>MAKE_STD_ZVAL</span><span class=p>(</span><span class=n>zv3</span><span class=p>);</span>
 </span></span><span class=line><span class=cl><span class=nf>ZVAL_LONG</span><span class=p>(</span><span class=n>zv3</span><span class=p>,</span> <span class=mi>1985</span><span class=p>);</span>
 </span></span><span class=line><span class=cl><span class=nf>zend_hash_update</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=s>&#34;year&#34;</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=s>&#34;year&#34;</span><span class=p>),</span> <span class=o>&amp;</span><span class=n>zv3</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=n>zval</span> <span class=o>*</span><span class=p>),</span> <span class=nb>NULL</span><span class=p>);</span>
 </span></span><span class=line><span class=cl><span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;An integer is updated to the hash-table indexed by a string key.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>);</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=c1>// add a string indexed by a string key, using zend_hash_add()
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>zval</span> <span class=o>*</span><span class=n>zv4</span><span class=p>;</span>
+</span></span></span><span class=line><span class=cl><span class=n>zval</span> <span class=o>*</span><span class=n>zv4</span><span class=p>;</span>
 </span></span><span class=line><span class=cl><span class=nf>MAKE_STD_ZVAL</span><span class=p>(</span><span class=n>zv4</span><span class=p>);</span>
 </span></span><span class=line><span class=cl><span class=nf>ZVAL_STRING</span><span class=p>(</span><span class=n>zv4</span><span class=p>,</span> <span class=s>&#34;Great Donie !&#34;</span><span class=p>,</span> <span class=mi>1</span><span class=p>);</span>
 </span></span><span class=line><span class=cl><span class=k>if</span> <span class=p>(</span><span class=nf>zend_hash_add</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=s>&#34;motto&#34;</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=s>&#34;motto&#34;</span><span class=p>),</span> <span class=o>&amp;</span><span class=n>zv4</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=n>zval</span> <span class=o>*</span><span class=p>),</span> <span class=nb>NULL</span><span class=p>)</span> <span class=o>==</span> <span class=n>FAILURE</span><span class=p>)</span>
@@ -276,10 +276,10 @@ whitespace-nowrap overflow-x-auto overflow-y-hidden"><li class="ml-2 mr-2"><a hr
 </span></span><span class=line><span class=cl><span class=p>}</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=c1>// get the next free key
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;The next free key will be %ld.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=nf>zend_hash_next_free_element</span><span class=p>(</span><span class=n>myht</span><span class=p>));</span>
+</span></span></span><span class=line><span class=cl><span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;The next free key will be %ld.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=nf>zend_hash_next_free_element</span><span class=p>(</span><span class=n>myht</span><span class=p>));</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=c1>// check if a string key exists
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kt>char</span> <span class=o>*</span><span class=n>key1</span> <span class=o>=</span> <span class=s>&#34;year&#34;</span><span class=p>;</span>
+</span></span></span><span class=line><span class=cl><span class=kt>char</span> <span class=o>*</span><span class=n>key1</span> <span class=o>=</span> <span class=s>&#34;year&#34;</span><span class=p>;</span>
 </span></span><span class=line><span class=cl><span class=k>if</span> <span class=p>(</span><span class=nf>zend_hash_exists</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=n>key1</span><span class=p>,</span> <span class=nf>strlen</span><span class=p>(</span><span class=n>key1</span><span class=p>)</span><span class=o>+</span><span class=mi>1</span><span class=p>))</span>
 </span></span><span class=line><span class=cl><span class=p>{</span>
 </span></span><span class=line><span class=cl>	<span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;The key %s exists.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>key1</span><span class=p>);</span>
@@ -290,7 +290,7 @@ whitespace-nowrap overflow-x-auto overflow-y-hidden"><li class="ml-2 mr-2"><a hr
 </span></span><span class=line><span class=cl><span class=p>}</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=c1>// get the value indexed by a string key
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>zval</span> <span class=o>**</span><span class=n>zv_dest2</span><span class=p>;</span>
+</span></span></span><span class=line><span class=cl><span class=n>zval</span> <span class=o>**</span><span class=n>zv_dest2</span><span class=p>;</span>
 </span></span><span class=line><span class=cl><span class=k>if</span> <span class=p>(</span><span class=nf>zend_hash_find</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=n>key1</span><span class=p>,</span> <span class=nf>strlen</span><span class=p>(</span><span class=n>key1</span><span class=p>)</span><span class=o>+</span><span class=mi>1</span><span class=p>,</span> <span class=p>(</span><span class=kt>void</span> <span class=o>**</span><span class=p>)</span> <span class=o>&amp;</span><span class=n>zv_dest2</span><span class=p>)</span> <span class=o>==</span> <span class=n>SUCCESS</span><span class=p>)</span>
 </span></span><span class=line><span class=cl><span class=p>{</span>
 </span></span><span class=line><span class=cl>	<span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;The value indexed by %s is %Z.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>key1</span><span class=p>,</span> <span class=o>*</span><span class=n>zv_dest2</span><span class=p>);</span>
@@ -301,7 +301,7 @@ whitespace-nowrap overflow-x-auto overflow-y-hidden"><li class="ml-2 mr-2"><a hr
 </span></span><span class=line><span class=cl><span class=p>}</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=c1>// delete the value indexed by a string key
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>if</span> <span class=p>(</span><span class=nf>zend_hash_del</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=n>key1</span><span class=p>,</span> <span class=nf>strlen</span><span class=p>(</span><span class=n>key1</span><span class=p>)</span><span class=o>+</span><span class=mi>1</span><span class=p>)</span> <span class=o>==</span> <span class=n>SUCCESS</span><span class=p>)</span>
+</span></span></span><span class=line><span class=cl><span class=k>if</span> <span class=p>(</span><span class=nf>zend_hash_del</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=n>key1</span><span class=p>,</span> <span class=nf>strlen</span><span class=p>(</span><span class=n>key1</span><span class=p>)</span><span class=o>+</span><span class=mi>1</span><span class=p>)</span> <span class=o>==</span> <span class=n>SUCCESS</span><span class=p>)</span>
 </span></span><span class=line><span class=cl><span class=p>{</span>
 </span></span><span class=line><span class=cl>	<span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;The value indexed by %s is deleted.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>key1</span><span class=p>);</span>
 </span></span><span class=line><span class=cl><span class=p>}</span>
@@ -319,7 +319,7 @@ whitespace-nowrap overflow-x-auto overflow-y-hidden"><li class="ml-2 mr-2"><a hr
 </span><span class=lnt>8
 </span><span class=lnt>9
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=c1>// quick operations leveraging a one-time hashed value
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=n>zval</span> <span class=o>*</span><span class=n>zv5</span><span class=p>;</span>
+</span></span></span><span class=line><span class=cl><span class=n>zval</span> <span class=o>*</span><span class=n>zv5</span><span class=p>;</span>
 </span></span><span class=line><span class=cl><span class=nf>MAKE_STD_ZVAL</span><span class=p>(</span><span class=n>zv5</span><span class=p>);</span>
 </span></span><span class=line><span class=cl><span class=nf>ZVAL_STRING</span><span class=p>(</span><span class=n>zv5</span><span class=p>,</span> <span class=s>&#34;Great Donie Leigh !&#34;</span><span class=p>,</span> <span class=mi>1</span><span class=p>);</span>
 </span></span><span class=line><span class=cl>
@@ -368,7 +368,7 @@ whitespace-nowrap overflow-x-auto overflow-y-hidden"><li class="ml-2 mr-2"><a hr
 </span></span><span class=line><span class=cl><span class=p>}</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=c1>// traverse the hash table.
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nf>zend_hash_apply_with_arguments</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=n>hashtable_traverse_callback</span><span class=p>,</span> <span class=mi>1</span><span class=p>,</span> <span class=s>&#34;nonsense&#34;</span><span class=p>);</span>
+</span></span></span><span class=line><span class=cl><span class=nf>zend_hash_apply_with_arguments</span><span class=p>(</span><span class=n>myht</span><span class=p>,</span> <span class=n>hashtable_traverse_callback</span><span class=p>,</span> <span class=mi>1</span><span class=p>,</span> <span class=s>&#34;nonsense&#34;</span><span class=p>);</span>
 </span></span></code></pre></td></tr></table></div></div><h3 id=三个函数>三个函数</h3><p>遍历哈希表的三个函数：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
@@ -424,7 +424,7 @@ whitespace-nowrap overflow-x-auto overflow-y-hidden"><li class="ml-2 mr-2"><a hr
 </span><span class=lnt>19
 </span><span class=lnt>20
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=c1>// iterating the hash table
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;Begin iterating the hash table:</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>);</span>
+</span></span></span><span class=line><span class=cl><span class=nf>php_printf</span><span class=p>(</span><span class=s>&#34;Begin iterating the hash table:</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>);</span>
 </span></span><span class=line><span class=cl><span class=n>HashPosition</span> <span class=n>pos</span><span class=p>;</span>
 </span></span><span class=line><span class=cl><span class=n>zval</span> <span class=o>**</span><span class=n>data</span><span class=p>;</span>
 </span></span><span class=line><span class=cl><span class=kt>char</span> <span class=o>*</span><span class=n>str_idx</span><span class=p>;</span>
@@ -476,7 +476,7 @@ whitespace-nowrap overflow-x-auto overflow-y-hidden"><li class="ml-2 mr-2"><a hr
 </span></span><span class=line><span class=cl><span class=p>);</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=c1>// 回调函数：
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>typedef</span> <span class=nf>int</span> <span class=p>(</span><span class=o>*</span><span class=kt>compare_func_t</span><span class=p>)(</span><span class=k>const</span> <span class=kt>void</span> <span class=o>*</span><span class=n>left</span><span class=p>,</span> <span class=k>const</span> <span class=kt>void</span> <span class=o>*</span><span class=n>right</span> <span class=n>TSRMLS_DC</span><span class=p>);</span>
+</span></span></span><span class=line><span class=cl><span class=k>typedef</span> <span class=nf>int</span> <span class=p>(</span><span class=o>*</span><span class=kt>compare_func_t</span><span class=p>)(</span><span class=k>const</span> <span class=kt>void</span> <span class=o>*</span><span class=n>left</span><span class=p>,</span> <span class=k>const</span> <span class=kt>void</span> <span class=o>*</span><span class=n>right</span> <span class=n>TSRMLS_DC</span><span class=p>);</span>
 </span></span></code></pre></td></tr></table></div></div><p>排序函数：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
@@ -487,7 +487,7 @@ whitespace-nowrap overflow-x-auto overflow-y-hidden"><li class="ml-2 mr-2"><a hr
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=kt>int</span> <span class=nf>zend_hash_sort</span><span class=p>(</span><span class=n>HashTable</span> <span class=o>*</span><span class=n>ht</span><span class=p>,</span> <span class=kt>sort_func_t</span> <span class=n>sort_func</span><span class=p>,</span> <span class=kt>compare_func_t</span> <span class=n>compar</span><span class=p>,</span> <span class=kt>int</span> <span class=n>renumber</span> <span class=n>TSRMLS_DC</span><span class=p>);</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=c1>// 回调函数
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>typedef</span> <span class=nf>void</span> <span class=p>(</span><span class=o>*</span><span class=kt>sort_func_t</span><span class=p>)(</span>
+</span></span></span><span class=line><span class=cl><span class=k>typedef</span> <span class=nf>void</span> <span class=p>(</span><span class=o>*</span><span class=kt>sort_func_t</span><span class=p>)(</span>
 </span></span><span class=line><span class=cl>    <span class=kt>void</span> <span class=o>*</span><span class=n>buckets</span><span class=p>,</span> <span class=kt>size_t</span> <span class=n>num_of_buckets</span><span class=p>,</span> <span class=k>register</span> <span class=kt>size_t</span> <span class=n>size_of_bucket</span><span class=p>,</span>
 </span></span><span class=line><span class=cl>    <span class=kt>compare_func_t</span> <span class=n>compare_func</span> <span class=n>TSRMLS_DC</span>
 </span></span><span class=line><span class=cl><span class=p>);</span>
@@ -497,7 +497,7 @@ whitespace-nowrap overflow-x-auto overflow-y-hidden"><li class="ml-2 mr-2"><a hr
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=kt>int</span> <span class=nf>zend_hash_minmax</span><span class=p>(</span>
 </span></span><span class=line><span class=cl>    <span class=k>const</span> <span class=n>HashTable</span> <span class=o>*</span><span class=n>ht</span><span class=p>,</span> <span class=kt>compare_func_t</span> <span class=n>compar</span><span class=p>,</span> <span class=kt>int</span> <span class=n>flag</span><span class=p>,</span> <span class=kt>void</span> <span class=o>**</span><span class=n>pData</span> <span class=n>TSRMLS_DC</span>
 </span></span><span class=line><span class=cl><span class=p>);</span>
-</span></span></code></pre></td></tr></table></div></div><p>flag=0，极小值写入pData；flag=1，极大值写入pData。</p></article></main><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css integrity=sha384-Um5gpz1odJg5Z4HAmzPtgZKdTBHZdw8S29IecapCSB31ligYPhHQZMIlWLYQGVoc crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js integrity=sha384-YNHdsYkH6gMx9y3mRkmcJ2mFUjTd0qNQQvY9VYZgQd7DcN7env35GzlmFaZ23JGp crossorigin=anonymous></script><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/contrib/auto-render.min.js integrity=sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl crossorigin=anonymous></script><script>document.addEventListener("DOMContentLoaded",function(){renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}],throwOnError:!1})})</script><script src=https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js crossorigin=anonymous></script><script>mermaid.init(0[0],"code.language-mermaid")</script><div id=comment></div><script>const s=document.createElement("script");s.src="https://utteranc.es/client.js",s.crossOrigin="anonymous",s.async=!0,s.setAttribute("repo","xbot/blog-comments"),s.setAttribute("issue-term","pathname"),s.setAttribute("label","comment"),s.setAttribute("theme","github-"+window.minima_theme),document.getElementById("comment").appendChild(s)</script></div><footer class="mt-8 mb-8"><div class="container mx-auto"><div class="mt-8 flex flex-col-reverse sm:flex-row sm:justify-between items-center"><div class="text-center sm:text-left"><p class="mt-0 text-sm">© 2007-2024 鬼马妖刀</p><p class="mt-0 text-xs">Built with <a href=https://gohugo.io target=_blank rel="noopener noreferrer">Hugo</a> v0.152.2
+</span></span></code></pre></td></tr></table></div></div><p>flag=0，极小值写入pData；flag=1，极大值写入pData。</p></article></main><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css integrity=sha384-Um5gpz1odJg5Z4HAmzPtgZKdTBHZdw8S29IecapCSB31ligYPhHQZMIlWLYQGVoc crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js integrity=sha384-YNHdsYkH6gMx9y3mRkmcJ2mFUjTd0qNQQvY9VYZgQd7DcN7env35GzlmFaZ23JGp crossorigin=anonymous></script><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/contrib/auto-render.min.js integrity=sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl crossorigin=anonymous></script><script>document.addEventListener("DOMContentLoaded",function(){renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}],throwOnError:!1})})</script><script src=https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js crossorigin=anonymous></script><script>mermaid.init(0[0],"code.language-mermaid")</script><div id=comment></div><script>const s=document.createElement("script");s.src="https://utteranc.es/client.js",s.crossOrigin="anonymous",s.async=!0,s.setAttribute("repo","xbot/blog-comments"),s.setAttribute("issue-term","pathname"),s.setAttribute("label","comment"),s.setAttribute("theme","github-"+window.minima_theme),document.getElementById("comment").appendChild(s)</script></div><footer class="mt-8 mb-8"><div class="container mx-auto"><div class="mt-8 flex flex-col-reverse sm:flex-row sm:justify-between items-center"><div class="text-center sm:text-left"><p class="mt-0 text-sm">© 2007-2024 鬼马妖刀</p><p class="mt-0 text-xs">Built with <a href=https://gohugo.io target=_blank rel="noopener noreferrer">Hugo</a> v0.154.2
 and <a href=https://github.com/mivinci/hugo-theme-minima target=_blank rel="noopener noreferrer">Minima</a></p></div><p class="flex items-center mt-0"><a class="icon ml-1 mr-1" href=mailto:donie.leigh@gmail.com title=email><svg width="18" height="18" viewBox="0 0 24 21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1.0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1.0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>
 </a><a class="icon ml-1 mr-1" href=https://github.com/xbot title=github><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg>
 </a><a class="icon ml-1 mr-1" href=/index.xml title=rss><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 019 9M4 4a16 16 0 0116 16"/><circle cx="5" cy="19" r="1"/></svg></a></p></div></div></footer></body></html>
