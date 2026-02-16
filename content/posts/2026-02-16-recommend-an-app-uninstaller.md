@@ -7,7 +7,7 @@ tags:
   - 青梅煮酒
   - app
 ---
-平时卸载 App 都是用 RayCast 的 Uninstall Application 扩展，今天想卸载讯飞输入法的时候，发现 RayCast 里怎么也找不到它。
+平时卸载 App 都是用 RayCast 内置的 Uninstall Application 功能，今天想卸载讯飞输入法的时候，发现 RayCast 里怎么也找不到它。
 
 原因是讯飞输入法不在 `/Applications/` 目录下，而是安装在 `/Library/Input Methods/`，RayCast 只扫描了前者，自然找不到。
 
