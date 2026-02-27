@@ -1,4 +1,45 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>晴耕雨讀</title><link>http://0x3f.org/</link><description>Recent content on 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Mon, 16 Feb 2026 10:00:00 +0800</lastBuildDate><atom:link href="http://0x3f.org/index.xml" rel="self" type="application/rss+xml"/><item><title>推荐一个卸载 App 的工具</title><link>http://0x3f.org/posts/recommend-an-app-uninstaller/</link><pubDate>Mon, 16 Feb 2026 10:00:00 +0800</pubDate><guid>http://0x3f.org/posts/recommend-an-app-uninstaller/</guid><description>&lt;p&gt;平时卸载 App 都是用 RayCast 内置的 Uninstall Application 功能，今天想卸载讯飞输入法的时候，发现 RayCast 里怎么也找不到它。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>晴耕雨讀</title><link>http://0x3f.org/</link><description>Recent content on 晴耕雨讀</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Fri, 27 Feb 2026 10:00:00 +0800</lastBuildDate><atom:link href="http://0x3f.org/index.xml" rel="self" type="application/rss+xml"/><item><title>用 WireGuard + Tailscale 搭建异构双活隧道</title><link>http://0x3f.org/posts/heterogeneous-dual-active-tunnel-with-wireguard-and-tailscale/</link><pubDate>Fri, 27 Feb 2026 10:00:00 +0800</pubDate><guid>http://0x3f.org/posts/heterogeneous-dual-active-tunnel-with-wireguard-and-tailscale/</guid><description>&lt;p&gt;家里有两台物理主机，每台上部署一个虚拟机，同时运行 WireGuard 和 Tailscale，组成异构双活隧道架构。两套隧道互为备份，任何一个挂了都不影响远程访问内网。&lt;/p&gt;
+&lt;p&gt;为什么选这两个组合：WireGuard 开源免费，性能好，但需要公网 IP 地址；Tailscale 是商业软件，不需要公网 IP，穿透能力强，免费额度足够个人使用。两者互补，公网 IP 在的时候走 WireGuard，没有的时候 Tailscale 兜底。再加上两台主机各跑一套，单点故障基本不存在了。&lt;/p&gt;
+&lt;h2 id="wireguard"&gt;WireGuard&lt;/h2&gt;
+&lt;p&gt;WireGuard 用的是 &lt;a href="https://github.com/wg-easy/wg-easy"&gt;wg-easy&lt;/a&gt;，带 Web UI，比手动改配置文件方便太多。&lt;/p&gt;
+&lt;p&gt;用 Docker Compose 部署：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;services&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;wg-easy&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;image&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;ghcr.io/wg-easy/wg-easy:15&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;container_name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;wg-easy&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;volumes&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;/root/appdata/wg-easy:/etc/wireguard&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;/lib/modules:/lib/modules:ro&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;network_mode&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;host&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;restart&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;unless-stopped&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;environment&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;HOST_HOSTNAME=${HOSTNAME}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;TZ=Asia/Shanghai&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;cap_add&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;NET_ADMIN&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;SYS_MODULE&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;几个注意点：&lt;/p&gt;</description></item><item><title>推荐一个卸载 App 的工具</title><link>http://0x3f.org/posts/recommend-an-app-uninstaller/</link><pubDate>Mon, 16 Feb 2026 10:00:00 +0800</pubDate><guid>http://0x3f.org/posts/recommend-an-app-uninstaller/</guid><description>&lt;p&gt;平时卸载 App 都是用 RayCast 内置的 Uninstall Application 功能，今天想卸载讯飞输入法的时候，发现 RayCast 里怎么也找不到它。&lt;/p&gt;
 &lt;p&gt;原因是讯飞输入法不在 &lt;code&gt;/Applications/&lt;/code&gt; 目录下，而是安装在 &lt;code&gt;/Library/Input Methods/&lt;/code&gt;，RayCast 只扫描了前者，自然找不到。&lt;/p&gt;
 &lt;p&gt;想起来 Mole 也有卸载 App 的功能，试了一下，顺利找到了讯飞输入法，而且清理得很彻底，残留文件和缓存都一并删除了。&lt;/p&gt;
 &lt;p&gt;&lt;a href="https://github.com/tw93/Mole"&gt;Mole&lt;/a&gt; 是一个 macOS 下的命令行工具，主要用途是清理磁盘空间，同时也提供了卸载 App 的功能。相比 GUI 工具，它的优势就在于不局限于 &lt;code&gt;/Applications/&lt;/code&gt; 目录，能覆盖到更多安装位置。&lt;/p&gt;

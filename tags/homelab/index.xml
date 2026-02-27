@@ -1,4 +1,45 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Homelab on 晴耕雨讀</title><link>http://0x3f.org/tags/homelab/</link><description>Recent content in Homelab on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Thu, 12 Feb 2026 20:30:00 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/homelab/index.xml" rel="self" type="application/rss+xml"/><item><title>解决 Clash 导致小红书网页版图片无法显示的问题</title><link>http://0x3f.org/posts/fix-xiaohongshu-image-loading-issue-with-clash/</link><pubDate>Thu, 12 Feb 2026 20:30:00 +0800</pubDate><guid>http://0x3f.org/posts/fix-xiaohongshu-image-loading-issue-with-clash/</guid><description>&lt;p&gt;家里通过运行了 OpenClash 的旁路网关上网，手机和电脑上则用 Stash ，两者都是 Clash 的客户端。最近发现一个恼人的问题：每隔一段时间，小红书网页版的图片就集体罢工，只剩一片空白。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>HomeLab on 晴耕雨讀</title><link>http://0x3f.org/tags/homelab/</link><description>Recent content in HomeLab on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Fri, 27 Feb 2026 10:00:00 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/homelab/index.xml" rel="self" type="application/rss+xml"/><item><title>用 WireGuard + Tailscale 搭建异构双活隧道</title><link>http://0x3f.org/posts/heterogeneous-dual-active-tunnel-with-wireguard-and-tailscale/</link><pubDate>Fri, 27 Feb 2026 10:00:00 +0800</pubDate><guid>http://0x3f.org/posts/heterogeneous-dual-active-tunnel-with-wireguard-and-tailscale/</guid><description>&lt;p&gt;家里有两台物理主机，每台上部署一个虚拟机，同时运行 WireGuard 和 Tailscale，组成异构双活隧道架构。两套隧道互为备份，任何一个挂了都不影响远程访问内网。&lt;/p&gt;
+&lt;p&gt;为什么选这两个组合：WireGuard 开源免费，性能好，但需要公网 IP 地址；Tailscale 是商业软件，不需要公网 IP，穿透能力强，免费额度足够个人使用。两者互补，公网 IP 在的时候走 WireGuard，没有的时候 Tailscale 兜底。再加上两台主机各跑一套，单点故障基本不存在了。&lt;/p&gt;
+&lt;h2 id="wireguard"&gt;WireGuard&lt;/h2&gt;
+&lt;p&gt;WireGuard 用的是 &lt;a href="https://github.com/wg-easy/wg-easy"&gt;wg-easy&lt;/a&gt;，带 Web UI，比手动改配置文件方便太多。&lt;/p&gt;
+&lt;p&gt;用 Docker Compose 部署：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;services&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;wg-easy&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;image&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;ghcr.io/wg-easy/wg-easy:15&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;container_name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;wg-easy&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;volumes&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;/root/appdata/wg-easy:/etc/wireguard&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;/lib/modules:/lib/modules:ro&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;network_mode&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;host&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;restart&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;unless-stopped&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;environment&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;HOST_HOSTNAME=${HOSTNAME}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;TZ=Asia/Shanghai&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;cap_add&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;NET_ADMIN&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;SYS_MODULE&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;几个注意点：&lt;/p&gt;</description></item><item><title>解决 Clash 导致小红书网页版图片无法显示的问题</title><link>http://0x3f.org/posts/fix-xiaohongshu-image-loading-issue-with-clash/</link><pubDate>Thu, 12 Feb 2026 20:30:00 +0800</pubDate><guid>http://0x3f.org/posts/fix-xiaohongshu-image-loading-issue-with-clash/</guid><description>&lt;p&gt;家里通过运行了 OpenClash 的旁路网关上网，手机和电脑上则用 Stash ，两者都是 Clash 的客户端。最近发现一个恼人的问题：每隔一段时间，小红书网页版的图片就集体罢工，只剩一片空白。&lt;/p&gt;
 &lt;p&gt;&lt;img src="https://raw.githubusercontent.com/xbot/image-hosting/master/blog/20260212200814939-ee7996ac33de8c8202341d2a6e265153.avif" alt="小红书图片加载失败"&gt;&lt;/p&gt;
 &lt;p&gt;打开浏览器开发者工具一看，图片请求全报了同一个错误：&lt;/p&gt;
 &lt;pre tabindex="0"&gt;&lt;code&gt;net::ERR_SSL_VERSION_OR_CIPHER_MISMATCH

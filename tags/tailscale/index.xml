@@ -1,4 +1,45 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Tailscale on 晴耕雨讀</title><link>http://0x3f.org/tags/tailscale/</link><description>Recent content in Tailscale on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Sat, 01 Feb 2025 16:03:23 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/tailscale/index.xml" rel="self" type="application/rss+xml"/><item><title>网络设置的“春节限定版”</title><link>http://0x3f.org/posts/network-setup-for-returning-home-during-the-chinese-new-year/</link><pubDate>Sat, 01 Feb 2025 16:03:23 +0800</pubDate><guid>http://0x3f.org/posts/network-setup-for-returning-home-during-the-chinese-new-year/</guid><description>&lt;p&gt;春节回家，为了获得更好的网络体验，我带上了 Apple TV ，装上 Stash 当作旁路网关，访问外网的体验确实不错。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Tailscale on 晴耕雨讀</title><link>http://0x3f.org/tags/tailscale/</link><description>Recent content in Tailscale on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Fri, 27 Feb 2026 10:00:00 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/tailscale/index.xml" rel="self" type="application/rss+xml"/><item><title>用 WireGuard + Tailscale 搭建异构双活隧道</title><link>http://0x3f.org/posts/heterogeneous-dual-active-tunnel-with-wireguard-and-tailscale/</link><pubDate>Fri, 27 Feb 2026 10:00:00 +0800</pubDate><guid>http://0x3f.org/posts/heterogeneous-dual-active-tunnel-with-wireguard-and-tailscale/</guid><description>&lt;p&gt;家里有两台物理主机，每台上部署一个虚拟机，同时运行 WireGuard 和 Tailscale，组成异构双活隧道架构。两套隧道互为备份，任何一个挂了都不影响远程访问内网。&lt;/p&gt;
+&lt;p&gt;为什么选这两个组合：WireGuard 开源免费，性能好，但需要公网 IP 地址；Tailscale 是商业软件，不需要公网 IP，穿透能力强，免费额度足够个人使用。两者互补，公网 IP 在的时候走 WireGuard，没有的时候 Tailscale 兜底。再加上两台主机各跑一套，单点故障基本不存在了。&lt;/p&gt;
+&lt;h2 id="wireguard"&gt;WireGuard&lt;/h2&gt;
+&lt;p&gt;WireGuard 用的是 &lt;a href="https://github.com/wg-easy/wg-easy"&gt;wg-easy&lt;/a&gt;，带 Web UI，比手动改配置文件方便太多。&lt;/p&gt;
+&lt;p&gt;用 Docker Compose 部署：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;services&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;wg-easy&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;image&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;ghcr.io/wg-easy/wg-easy:15&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;container_name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;wg-easy&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;volumes&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;/root/appdata/wg-easy:/etc/wireguard&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;/lib/modules:/lib/modules:ro&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;network_mode&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;host&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;restart&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;unless-stopped&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;environment&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;HOST_HOSTNAME=${HOSTNAME}&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;TZ=Asia/Shanghai&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;cap_add&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;NET_ADMIN&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;SYS_MODULE&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;几个注意点：&lt;/p&gt;</description></item><item><title>网络设置的“春节限定版”</title><link>http://0x3f.org/posts/network-setup-for-returning-home-during-the-chinese-new-year/</link><pubDate>Sat, 01 Feb 2025 16:03:23 +0800</pubDate><guid>http://0x3f.org/posts/network-setup-for-returning-home-during-the-chinese-new-year/</guid><description>&lt;p&gt;春节回家，为了获得更好的网络体验，我带上了 Apple TV ，装上 Stash 当作旁路网关，访问外网的体验确实不错。&lt;/p&gt;
 &lt;p&gt;与此同时，我还得使用住处服务器上部署的各类服务。除了一直使用的 WireGuard ，我另外部署了 Tailscale 作为备份线路，以此确保网络连接稳定。然而，问题也接踵而至，DNS 的设置变得更为复杂。由于旁路网关采用 Fake IP 方式，访问外网时 DNS 必须使用旁路网关自身的；而访问住处内网主机则需用部署在内网的 DNS ，这就需要进行 DNS 分流。&lt;/p&gt;
 &lt;p&gt;最简便的方法，是在每台设备上维护一份内网主机名与IP地址的映射关系，但维护成本过高，不太可行。&lt;/p&gt;
 &lt;p&gt;也能用 Dnsmasq 。它安装容易、配置简单，不过缺点也很明显，回到住处还得手动修改默认的上游 DNS ，还是有些麻烦。&lt;/p&gt;
