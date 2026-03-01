@@ -1,0 +1,92 @@
+<!doctype html><html lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta property="og:url" content="http://0x3f.org/posts/how-i-receive-notifications-from-home-servers/"><meta property="og:site_name" content="晴耕雨讀"><meta property="og:title" content="我是怎样接收家庭主机的消息提醒的"><meta property="og:description" content="家里两台物理主机都跑的 PVE，PVE 从 8.1 开始原生支持把通知发送到 Gotify。Gotify 是一个开源的自托管消息推送服务，部署简单，API 友好，很适合作为 homelab 的统一消息中心。
+不过我日常看消息主要还是在 Telegram，所以需要一个中间层把 Gotify 收到的消息转发过去。
+之前的方案：gotify-webhook 插件 之前用的是 gotify-webhook 插件，在 Gotify 内部以插件的形式运行，把收到的消息通过 webhook 转发到 Telegram Bot API。功能上没什么问题，但有一个烦人的地方：每次 Gotify 更新都要重新编译插件。
+这是 Go 插件系统的限制。Gotify 插件本质上是 Go 的 .so 共享库，Go 要求插件和宿主程序必须使用相同的 Go 版本和依赖版本编译，否则无法加载。也就是说，Gotify 每发一个新版本，插件就得用对应的 Go 版本和依赖重新编译一次，版本稍有不对就会报错。长期维护起来很麻烦。
+现在的方案：Gotigram 最近换成了 Gotigram。它是一个独立运行的服务，通过 WebSocket 连接 Gotify，收到消息后转发到 Telegram。因为不依赖 Gotify 的插件系统，Gotify 随便更新都不影响它。
+不过 Gotigram 是一个比较新的项目，使用过程中遇到了一些问题，我提交了几个 PR 来解决：
+消息模板不可自定义。 原来的消息格式是固定的，没法按自己的需求调整。我给它加上了 TELEGRAM_TEMPLATE 环境变量，支持用 Go 的 text/template 语法自定义消息格式，同时开启了 Telegram 的 Markdown 渲染。
+Gotify 重启后不会自动重连。 Gotify 一旦重启，Gotigram 的 WebSocket 连接就断了，之后的消息全部丢失，必须手动重启 Gotigram。我加了带指数退避的自动重连机制，断线后会自动尝试恢复连接。"><meta property="og:locale" content="zh_cn"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2026-03-01T10:00:00+08:00"><meta property="article:modified_time" content="2026-03-01T10:00:00+08:00"><meta property="article:tag" content="计算机"><meta property="article:tag" content="Gotify"><meta property="article:tag" content="Telegram"><meta property="article:tag" content="HomeLab"><meta name=twitter:card content="summary"><meta name=twitter:title content="我是怎样接收家庭主机的消息提醒的"><meta name=twitter:description content="家里两台物理主机都跑的 PVE，PVE 从 8.1 开始原生支持把通知发送到 Gotify。Gotify 是一个开源的自托管消息推送服务，部署简单，API 友好，很适合作为 homelab 的统一消息中心。
+不过我日常看消息主要还是在 Telegram，所以需要一个中间层把 Gotify 收到的消息转发过去。
+之前的方案：gotify-webhook 插件 之前用的是 gotify-webhook 插件，在 Gotify 内部以插件的形式运行，把收到的消息通过 webhook 转发到 Telegram Bot API。功能上没什么问题，但有一个烦人的地方：每次 Gotify 更新都要重新编译插件。
+这是 Go 插件系统的限制。Gotify 插件本质上是 Go 的 .so 共享库，Go 要求插件和宿主程序必须使用相同的 Go 版本和依赖版本编译，否则无法加载。也就是说，Gotify 每发一个新版本，插件就得用对应的 Go 版本和依赖重新编译一次，版本稍有不对就会报错。长期维护起来很麻烦。
+现在的方案：Gotigram 最近换成了 Gotigram。它是一个独立运行的服务，通过 WebSocket 连接 Gotify，收到消息后转发到 Telegram。因为不依赖 Gotify 的插件系统，Gotify 随便更新都不影响它。
+不过 Gotigram 是一个比较新的项目，使用过程中遇到了一些问题，我提交了几个 PR 来解决：
+消息模板不可自定义。 原来的消息格式是固定的，没法按自己的需求调整。我给它加上了 TELEGRAM_TEMPLATE 环境变量，支持用 Go 的 text/template 语法自定义消息格式，同时开启了 Telegram 的 Markdown 渲染。
+Gotify 重启后不会自动重连。 Gotify 一旦重启，Gotigram 的 WebSocket 连接就断了，之后的消息全部丢失，必须手动重启 Gotigram。我加了带指数退避的自动重连机制，断线后会自动尝试恢复连接。"><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#181818"><title>晴耕雨讀 - 我是怎样接收家庭主机的消息提醒的</title><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=stylesheet href=/minima.91848781a7679600f0ad1ad577e7da4fbb28b9f3fdc9a82126197659405bb483.css integrity="sha256-kYSHgadnlgDwrRrVd+faT7soufP9yaghJhl2WUBbtIM="><script defer type=text/javascript src=/minima.5f772103e807a34ef8ab63c3c53905fbf70689fa70d121085c7d0e84087effea.js integrity="sha256-X3chA+gHo074q2PDxTkF+/cGifpw0SEIXH0OhAh+/+o="></script></head><script>const theme_config="system",theme_light=theme_config==="system"?"light":theme_config;let theme=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":theme_light;console.debug(theme);try{localStorage.setItem("theme",theme),window.minima_theme=theme,document.querySelector("html").classList.add(theme)}catch(e){console.error(e)}</script><body><header class="mt-3 mb-8"><div class="container mx-auto"><nav class="flex justify-between items-center"><div class="flex items-center"><div id=theme-switch class="text-2xl cursor-pointer">🌝</div></div><ul class="flex items-center text-base font-semibold
+whitespace-nowrap overflow-x-auto overflow-y-hidden"><li class="ml-2 mr-2"><a href=/>首页</a></li><li class="ml-2 mr-2"><a href=/posts>文章</a></li><li class="ml-2 mr-2"><a href=/tags>标签</a></li><li class="ml-2 mr-2"><a href=/about>关于</a></li><li class="ml-2 mr-2"><a href=/search>🔍</a></li></ul></nav></div></header><div class="container mx-auto"><h1 class="text-4xl font-extrabold mt-6 mb-6">我是怎样接收家庭主机的消息提醒的</h1><div class="mb-3 text-sm flex justify-between"><div>发布于 &mdash; 2026 年 03 月 01 日</div><div><a class=ml-1 href=/tags/%e8%ae%a1%e7%ae%97%e6%9c%ba>#计算机</a>
+<a class=ml-1 href=/tags/Gotify>#Gotify</a>
+<a class=ml-1 href=/tags/Telegram>#Telegram</a>
+<a class=ml-1 href=/tags/homelab>#homelab</a></div></div><main class=mb-8><p></p><article class=md><p>家里两台物理主机都跑的 PVE，PVE 从 8.1 开始原生支持把通知发送到 Gotify。Gotify 是一个开源的自托管消息推送服务，部署简单，API 友好，很适合作为 homelab 的统一消息中心。</p><p>不过我日常看消息主要还是在 Telegram，所以需要一个中间层把 Gotify 收到的消息转发过去。</p><h2 id=之前的方案gotify-webhook-插件>之前的方案：gotify-webhook 插件</h2><p>之前用的是 <a href=https://github.com/wuxs/gotify-webhook>gotify-webhook</a> 插件，在 Gotify 内部以插件的形式运行，把收到的消息通过 webhook 转发到 Telegram Bot API。功能上没什么问题，但有一个烦人的地方：每次 Gotify 更新都要重新编译插件。</p><p>这是 Go 插件系统的限制。Gotify 插件本质上是 Go 的 <code>.so</code> 共享库，Go 要求插件和宿主程序必须使用相同的 Go 版本和依赖版本编译，否则无法加载。也就是说，Gotify 每发一个新版本，插件就得用对应的 Go 版本和依赖重新编译一次，版本稍有不对就会报错。长期维护起来很麻烦。</p><h2 id=现在的方案gotigram>现在的方案：Gotigram</h2><p>最近换成了 <a href=https://github.com/Tiagura/gotigram>Gotigram</a>。它是一个独立运行的服务，通过 WebSocket 连接 Gotify，收到消息后转发到 Telegram。因为不依赖 Gotify 的插件系统，Gotify 随便更新都不影响它。</p><p>不过 Gotigram 是一个比较新的项目，使用过程中遇到了一些问题，我提交了几个 PR 来解决：</p><p><strong>消息模板不可自定义。</strong> 原来的消息格式是固定的，没法按自己的需求调整。我给它加上了 <code>TELEGRAM_TEMPLATE</code> 环境变量，支持用 Go 的 <code>text/template</code> 语法自定义消息格式，同时开启了 Telegram 的 Markdown 渲染。</p><p><strong>Gotify 重启后不会自动重连。</strong> Gotify 一旦重启，Gotigram 的 WebSocket 连接就断了，之后的消息全部丢失，必须手动重启 Gotigram。我加了带指数退避的自动重连机制，断线后会自动尝试恢复连接。</p><p><strong>Telegram 发送失败没有重试。</strong> 网络波动或 Telegram API 临时不可用时，消息直接丢了。我加了带指数退避的重试机制，同时用一个带缓冲的 channel 把 WebSocket 读取和 Telegram 发送解耦，避免发送阻塞影响消息接收。</p><h2 id=部署-gotify>部署 Gotify</h2><p>Gotify 用 Docker Compose 部署：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>services</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>gotify</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=l>gotify/server</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>container_name</span><span class=p>:</span><span class=w> </span><span class=l>gotify</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>ports</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=m>9090</span><span class=p>:</span><span class=m>80</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>environment</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>TZ</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;Asia/Shanghai&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>volumes</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=l>${HOME}/appdata/gotify:/app/data</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>networks</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=l>gotify-network</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>restart</span><span class=p>:</span><span class=w> </span><span class=l>unless-stopped</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>
+</span></span></span><span class=line><span class=cl><span class=nt>networks</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>gotify-network</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>gotify-network</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>启动后访问 <code>http://&lt;ip>:9090</code>，默认账号密码都是 <code>admin</code>，登录后记得改密码。</p><p>进入 Gotify 后台，在 <strong>Clients</strong> 页面创建一个 Client，拿到 Client Token，后面 Gotigram 要用。</p><p>这里创建了一个名为 <code>gotify-network</code> 的 Docker 网络，后面 Gotigram 会加入同一个网络，这样两个容器之间可以直接用服务名通信，不需要通过宿主机端口。</p><h2 id=部署-gotigram>部署 Gotigram</h2><p>同样用 Docker Compose，和 Gotify 放在同一个 compose 文件里：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=w>  </span><span class=nt>gotigram</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=l>tiagura/gotigram:latest</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>container_name</span><span class=p>:</span><span class=w> </span><span class=l>gotigram</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>environment</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>GOTIFY_WS_URL</span><span class=p>:</span><span class=w> </span><span class=l>ws://gotify</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>GOTIFY_REST_URL</span><span class=p>:</span><span class=w> </span><span class=l>http://gotify</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>GOTIFY_CLIENT_TOKEN</span><span class=p>:</span><span class=w> </span><span class=l>&lt;上一步拿到的 Client Token&gt;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>TELEGRAM_TOKEN</span><span class=p>:</span><span class=w> </span><span class=l>&lt;Telegram Bot Token&gt;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>TELEGRAM_CHAT_ID</span><span class=p>:</span><span class=w> </span><span class=l>&lt;你的 Chat ID&gt;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>SUBSCRIPTIONS_FILE</span><span class=p>:</span><span class=w> </span><span class=l>/subscriptions/subscriptions.json</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>HTTP_PROXY</span><span class=p>:</span><span class=w> </span><span class=l>&lt;代理地址&gt;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>HTTPS_PROXY</span><span class=p>:</span><span class=w> </span><span class=l>&lt;代理地址&gt;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>NO_PROXY</span><span class=p>:</span><span class=w> </span><span class=l>gotify,localhost,127.0.0.1</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>volumes</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=l>${HOME}/appdata/gotigram:/subscriptions</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>networks</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span>- <span class=l>gotify-network</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>restart</span><span class=p>:</span><span class=w> </span><span class=l>unless-stopped</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>因为 Gotigram 和 Gotify 在同一个 Docker 网络里，<code>GOTIFY_WS_URL</code> 和 <code>GOTIFY_REST_URL</code> 直接用容器名 <code>gotify</code> 就行，不需要写宿主机 IP 和端口。</p><p>Gotigram 需要访问 Telegram API，如果网络环境需要代理，可以通过 <code>HTTP_PROXY</code> 和 <code>HTTPS_PROXY</code> 设置。注意把 <code>gotify</code> 加到 <code>NO_PROXY</code> 里，避免内部通信也走代理。</p><p>Telegram Bot Token 通过 <a href=https://t.me/BotFather>@BotFather</a> 创建机器人获取。Chat ID 可以先给机器人发一条消息，然后访问 <code>https://api.telegram.org/bot&lt;TOKEN>/getUpdates</code> 查看。</p><p>启动后在 Telegram 里给机器人发 <code>/apps</code>，列出 Gotify 上的所有应用，然后用 <code>/subscribe &lt;app_id></code> 订阅想要转发的应用。订阅完成后用 <code>/save</code> 保存，这样重启后不用重新订阅。</p><h2 id=配置-pve-通知>配置 PVE 通知</h2><p>PVE 8.1+ 原生支持 Gotify 作为通知目标。在 PVE 管理界面，进入 <strong>Datacenter → Notifications</strong>，点击 <strong>Add → Gotify</strong>：</p><ul><li><strong>Server URL</strong>：填 Gotify 的地址，比如 <code>http://&lt;GOTIFY_SERVER>:9090</code></li><li><strong>Token</strong>：在 Gotify 后台的 <strong>Apps</strong> 页面创建一个 Application，把拿到的 Token 填在这里</li></ul><p>注意这里的 Token 是 Application Token，不是前面 Gotigram 用的 Client Token。Gotify 里 Application 用来发消息，Client 用来收消息，两者是分开的。</p><p>保存后可以点 <strong>Test</strong> 按钮发一条测试消息，如果 Gotigram 那边已经订阅了这个应用，Telegram 上应该很快就能收到。</p></article></main><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css integrity=sha384-Um5gpz1odJg5Z4HAmzPtgZKdTBHZdw8S29IecapCSB31ligYPhHQZMIlWLYQGVoc crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js integrity=sha384-YNHdsYkH6gMx9y3mRkmcJ2mFUjTd0qNQQvY9VYZgQd7DcN7env35GzlmFaZ23JGp crossorigin=anonymous></script><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/contrib/auto-render.min.js integrity=sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl crossorigin=anonymous></script><script>document.addEventListener("DOMContentLoaded",function(){renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}],throwOnError:!1})})</script><script src=https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js crossorigin=anonymous></script><script>mermaid.init(0[0],"code.language-mermaid")</script><div id=comment></div><script>const s=document.createElement("script");s.src="https://utteranc.es/client.js",s.crossOrigin="anonymous",s.async=!0,s.setAttribute("repo","xbot/blog-comments"),s.setAttribute("issue-term","pathname"),s.setAttribute("label","comment"),s.setAttribute("theme","github-"+window.minima_theme),document.getElementById("comment").appendChild(s)</script></div><footer class="mt-8 mb-8"><div class="container mx-auto"><div class="mt-8 flex flex-col-reverse sm:flex-row sm:justify-between items-center"><div class="text-center sm:text-left"><p class="mt-0 text-sm">© 2007-2024 鬼马妖刀</p><p class="mt-0 text-xs">Built with <a href=https://gohugo.io target=_blank rel="noopener noreferrer">Hugo</a> v0.157.0
+and <a href=https://github.com/mivinci/hugo-theme-minima target=_blank rel="noopener noreferrer">Minima</a></p></div><p class="flex items-center mt-0"><a class="icon ml-1 mr-1" href=mailto:donie.leigh@gmail.com title=email><svg width="18" height="18" viewBox="0 0 24 21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1.0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1.0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>
+</a><a class="icon ml-1 mr-1" href=https://github.com/xbot title=github><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg>
+</a><a class="icon ml-1 mr-1" href=/index.xml title=rss><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 019 9M4 4a16 16 0 0116 16"/><circle cx="5" cy="19" r="1"/></svg></a></p></div></div></footer></body></html>
