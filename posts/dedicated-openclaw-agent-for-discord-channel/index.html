@@ -1,0 +1,101 @@
+<!doctype html><html lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta property="og:url" content="http://0x3f.org/posts/dedicated-openclaw-agent-for-discord-channel/"><meta property="og:site_name" content="晴耕雨讀"><meta property="og:title" content="为 Discord 频道指定专属 agent 实现专注高效处理事务"><meta property="og:description" content='OpenClaw 默认只有一个主 agent，所有频道的消息都由它处理。但有些场景需要一个更专注的 agent：只做特定的事，不闲聊，不擅自扩展。
+OpenClaw 的 agent 系统支持创建独立的 agent，每个 agent 有自己的工作目录、人格设定和 skill 配置，然后通过路由绑定把特定频道的消息分发给对应的 agent。举个例子，在 Discord 上建一个 RSS 频道，专门用来总结 Miniflux 里的订阅内容。下面记录一下这个配置过程。
+创建专用工作目录 每个 agent 需要一个独立的工作目录，里面放它的人格设定和可用的 skill。
+1 mkdir -p ~/.openclaw/workspace-rss/skills SOUL.md：定义行为边界 SOUL.md 是 agent 的核心，决定了它"是谁"、“能做什么”、“不能做什么”。专用 agent 的关键是把边界画清楚：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 # SOUL.md - RSS 总结专用 Agent ## 核心原则 你是一个 RSS 内容总结专用助手。你的唯一职责是按照用户的要求， 使用 miniflux-reader skill 获取和总结 Miniflux 中的订阅内容。 ## 行为规则 **严格执行，不多不少：** - 用户让总结几条就总结几条，让总结哪个 feed/category 就总结哪个 - 不主动扩展、不添加用户没要求的内容 - 不闲聊、不寒暄、不发表与 RSS 总结无关的评论 **标记已读规则：** - 只有在用户明确要求总结新的分类/订阅源时，才把上一轮总结过的条目标记为已读 - 用户只是查询信息、没有要求总结新内容时，不执行标记 ## 边界 - 不处理与 RSS/Feed 无关的请求 - 遇到无关请求时，礼貌地说明自己只负责 RSS 内容总结 和主 agent 的 SOUL.md 对比，专用 agent 多了很多"不"——不闲聊、不扩展、不越界。这是故意的。通用 agent 需要灵活，专用 agent 需要克制。'><meta property="og:locale" content="zh_cn"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2026-03-04T20:00:00+08:00"><meta property="article:modified_time" content="2026-03-04T20:00:00+08:00"><meta property="article:tag" content="计算机"><meta property="article:tag" content="OpenClaw"><meta property="article:tag" content="Discord"><meta property="article:tag" content="AI"><meta name=twitter:card content="summary"><meta name=twitter:title content="为 Discord 频道指定专属 agent 实现专注高效处理事务"><meta name=twitter:description content='OpenClaw 默认只有一个主 agent，所有频道的消息都由它处理。但有些场景需要一个更专注的 agent：只做特定的事，不闲聊，不擅自扩展。
+OpenClaw 的 agent 系统支持创建独立的 agent，每个 agent 有自己的工作目录、人格设定和 skill 配置，然后通过路由绑定把特定频道的消息分发给对应的 agent。举个例子，在 Discord 上建一个 RSS 频道，专门用来总结 Miniflux 里的订阅内容。下面记录一下这个配置过程。
+创建专用工作目录 每个 agent 需要一个独立的工作目录，里面放它的人格设定和可用的 skill。
+1 mkdir -p ~/.openclaw/workspace-rss/skills SOUL.md：定义行为边界 SOUL.md 是 agent 的核心，决定了它"是谁"、“能做什么”、“不能做什么”。专用 agent 的关键是把边界画清楚：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 # SOUL.md - RSS 总结专用 Agent ## 核心原则 你是一个 RSS 内容总结专用助手。你的唯一职责是按照用户的要求， 使用 miniflux-reader skill 获取和总结 Miniflux 中的订阅内容。 ## 行为规则 **严格执行，不多不少：** - 用户让总结几条就总结几条，让总结哪个 feed/category 就总结哪个 - 不主动扩展、不添加用户没要求的内容 - 不闲聊、不寒暄、不发表与 RSS 总结无关的评论 **标记已读规则：** - 只有在用户明确要求总结新的分类/订阅源时，才把上一轮总结过的条目标记为已读 - 用户只是查询信息、没有要求总结新内容时，不执行标记 ## 边界 - 不处理与 RSS/Feed 无关的请求 - 遇到无关请求时，礼貌地说明自己只负责 RSS 内容总结 和主 agent 的 SOUL.md 对比，专用 agent 多了很多"不"——不闲聊、不扩展、不越界。这是故意的。通用 agent 需要灵活，专用 agent 需要克制。'><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#181818"><title>晴耕雨讀 - 为 Discord 频道指定专属 agent 实现专注高效处理事务</title><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=stylesheet href=/minima.91848781a7679600f0ad1ad577e7da4fbb28b9f3fdc9a82126197659405bb483.css integrity="sha256-kYSHgadnlgDwrRrVd+faT7soufP9yaghJhl2WUBbtIM="><script defer type=text/javascript src=/minima.5f772103e807a34ef8ab63c3c53905fbf70689fa70d121085c7d0e84087effea.js integrity="sha256-X3chA+gHo074q2PDxTkF+/cGifpw0SEIXH0OhAh+/+o="></script></head><script>const theme_config="system",theme_light=theme_config==="system"?"light":theme_config;let theme=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":theme_light;console.debug(theme);try{localStorage.setItem("theme",theme),window.minima_theme=theme,document.querySelector("html").classList.add(theme)}catch(e){console.error(e)}</script><body><header class="mt-3 mb-8"><div class="container mx-auto"><nav class="flex justify-between items-center"><div class="flex items-center"><div id=theme-switch class="text-2xl cursor-pointer">🌝</div></div><ul class="flex items-center text-base font-semibold
+whitespace-nowrap overflow-x-auto overflow-y-hidden"><li class="ml-2 mr-2"><a href=/>首页</a></li><li class="ml-2 mr-2"><a href=/posts>文章</a></li><li class="ml-2 mr-2"><a href=/tags>标签</a></li><li class="ml-2 mr-2"><a href=/about>关于</a></li><li class="ml-2 mr-2"><a href=/search>🔍</a></li></ul></nav></div></header><div class="container mx-auto"><h1 class="text-4xl font-extrabold mt-6 mb-6">为 Discord 频道指定专属 agent 实现专注高效处理事务</h1><div class="mb-3 text-sm flex justify-between"><div>发布于 &mdash; 2026 年 03 月 04 日</div><div><a class=ml-1 href=/tags/%e8%ae%a1%e7%ae%97%e6%9c%ba>#计算机</a>
+<a class=ml-1 href=/tags/OpenClaw>#OpenClaw</a>
+<a class=ml-1 href=/tags/Discord>#Discord</a>
+<a class=ml-1 href=/tags/AI>#AI</a></div></div><main class=mb-8><p></p><article class=md><p>OpenClaw 默认只有一个主 agent，所有频道的消息都由它处理。但有些场景需要一个更专注的 agent：只做特定的事，不闲聊，不擅自扩展。</p><p>OpenClaw 的 agent 系统支持创建独立的 agent，每个 agent 有自己的工作目录、人格设定和 skill 配置，然后通过路由绑定把特定频道的消息分发给对应的 agent。举个例子，在 Discord 上建一个 RSS 频道，专门用来总结 Miniflux 里的订阅内容。下面记录一下这个配置过程。</p><h2 id=创建专用工作目录>创建专用工作目录</h2><p>每个 agent 需要一个独立的工作目录，里面放它的人格设定和可用的 skill。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>mkdir -p ~/.openclaw/workspace-rss/skills
+</span></span></code></pre></td></tr></table></div></div><h3 id=soulmd定义行为边界>SOUL.md：定义行为边界</h3><p>SOUL.md 是 agent 的核心，决定了它"是谁"、&ldquo;能做什么&rdquo;、&ldquo;不能做什么&rdquo;。专用 agent 的关键是把边界画清楚：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-markdown data-lang=markdown><span class=line><span class=cl><span class=gh># SOUL.md - RSS 总结专用 Agent
+</span></span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=gu>## 核心原则
+</span></span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>你是一个 RSS 内容总结专用助手。你的唯一职责是按照用户的要求，
+</span></span><span class=line><span class=cl>使用 miniflux-reader skill 获取和总结 Miniflux 中的订阅内容。
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=gu>## 行为规则
+</span></span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=gs>**严格执行，不多不少：**</span>
+</span></span><span class=line><span class=cl><span class=k>-</span> 用户让总结几条就总结几条，让总结哪个 feed/category 就总结哪个
+</span></span><span class=line><span class=cl><span class=k>-</span> 不主动扩展、不添加用户没要求的内容
+</span></span><span class=line><span class=cl><span class=k>-</span> 不闲聊、不寒暄、不发表与 RSS 总结无关的评论
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=gs>**标记已读规则：**</span>
+</span></span><span class=line><span class=cl><span class=k>-</span> 只有在用户明确要求总结新的分类/订阅源时，才把上一轮总结过的条目标记为已读
+</span></span><span class=line><span class=cl><span class=k>-</span> 用户只是查询信息、没有要求总结新内容时，不执行标记
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=gu>## 边界
+</span></span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>-</span> 不处理与 RSS/Feed 无关的请求
+</span></span><span class=line><span class=cl><span class=k>-</span> 遇到无关请求时，礼貌地说明自己只负责 RSS 内容总结
+</span></span></code></pre></td></tr></table></div></div><p>和主 agent 的 SOUL.md 对比，专用 agent 多了很多"不"——不闲聊、不扩展、不越界。这是故意的。通用 agent 需要灵活，专用 agent 需要克制。</p><h3 id=链接-skill>链接 Skill</h3><p>把需要的 skill 软链接到工作目录的 skills 目录：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ln -s ~/.claude/skills/miniflux-reader ~/.openclaw/workspace-rss/skills/miniflux-reader
+</span></span></code></pre></td></tr></table></div></div><p>这样 agent 就能使用 miniflux-reader skill 来获取和处理 Miniflux 的未读条目。用软链接而不是复制，好处是 skill 更新时不用同步。</p><h3 id=其他文件>其他文件</h3><p><code>IDENTITY.md</code> 定义名称和 emoji，用来区分是哪个 agent 在回复：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-markdown data-lang=markdown><span class=line><span class=cl><span class=k>-</span> **Name:** RSS 助手
+</span></span><span class=line><span class=cl><span class=k>-</span> **Emoji:** 📰
+</span></span></code></pre></td></tr></table></div></div><p><code>USER.md</code> 从主工作目录复制过来就行，同一个用户。</p><h2 id=创建-agent>创建 Agent</h2><p>用 <code>openclaw agents add</code> 创建 agent：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>openclaw agents add rss <span class=se>\
+</span></span></span><span class=line><span class=cl>  --workspace ~/.openclaw/workspace-rss <span class=se>\
+</span></span></span><span class=line><span class=cl>  --model bailian/glm-5 <span class=se>\
+</span></span></span><span class=line><span class=cl>  --non-interactive
+</span></span></code></pre></td></tr></table></div></div><p><code>--model</code> 参数改成你自己要用的模型。</p><p>设置 identity：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>openclaw agents set-identity --agent rss --name <span class=s2>&#34;RSS 助手&#34;</span> --emoji <span class=s2>&#34;📰&#34;</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=绑定-discord-频道>绑定 Discord 频道</h2><p>这一步是把 Discord 频道的消息路由到专用 agent。需要直接编辑 <code>~/.openclaw/openclaw.json</code>，在现有的 <code>bindings</code> 数组中追加一条绑定规则（不要覆盖整个文件）：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;agentId&#34;</span><span class=p>:</span> <span class=s2>&#34;rss&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;match&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;channel&#34;</span><span class=p>:</span> <span class=s2>&#34;discord&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;peer&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;kind&#34;</span><span class=p>:</span> <span class=s2>&#34;channel&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;id&#34;</span><span class=p>:</span> <span class=s2>&#34;&lt;你的频道ID&gt;&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>频道 ID 的获取方式：在 Discord 中开启开发者模式（设置 → 高级 → 开发者模式），然后右键频道名 → 复制频道 ID。</p><p>改完后重启 gateway：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>openclaw gateway restart
+</span></span></code></pre></td></tr></table></div></div><p>用 <code>openclaw agents bindings</code> 验证，应该能看到：</p><pre tabindex=0><code>- rss &lt;- discord peer=channel:&lt;你的频道ID&gt;
+</code></pre><p>OpenClaw 的路由匹配支持几种维度：</p><table><thead><tr><th>字段</th><th>用途</th></tr></thead><tbody><tr><td><code>peer.kind</code> + <code>peer.id</code></td><td>匹配特定频道、群组或 DM</td></tr><tr><td><code>guildId</code></td><td>匹配整个 Discord 服务器</td></tr><tr><td><code>accountId</code></td><td>匹配特定账号（多账号场景）</td></tr><tr><td><code>roles</code></td><td>按 Discord 角色路由</td></tr></tbody></table><p>按频道路由用 <code>peer</code>，按服务器路由用 <code>guildId</code>，按用户路由用 <code>accountId</code>。</p><h2 id=验证>验证</h2><p>最直观的方式是在 Discord 频道里问"你是谁"。如果回答的是专用 agent 的名字而不是主 agent 的名字，说明路由生效了。</p></article></main><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css integrity=sha384-Um5gpz1odJg5Z4HAmzPtgZKdTBHZdw8S29IecapCSB31ligYPhHQZMIlWLYQGVoc crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js integrity=sha384-YNHdsYkH6gMx9y3mRkmcJ2mFUjTd0qNQQvY9VYZgQd7DcN7env35GzlmFaZ23JGp crossorigin=anonymous></script><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/contrib/auto-render.min.js integrity=sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl crossorigin=anonymous></script><script>document.addEventListener("DOMContentLoaded",function(){renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}],throwOnError:!1})})</script><script src=https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js crossorigin=anonymous></script><script>mermaid.init(0[0],"code.language-mermaid")</script><div id=comment></div><script>const s=document.createElement("script");s.src="https://utteranc.es/client.js",s.crossOrigin="anonymous",s.async=!0,s.setAttribute("repo","xbot/blog-comments"),s.setAttribute("issue-term","pathname"),s.setAttribute("label","comment"),s.setAttribute("theme","github-"+window.minima_theme),document.getElementById("comment").appendChild(s)</script></div><footer class="mt-8 mb-8"><div class="container mx-auto"><div class="mt-8 flex flex-col-reverse sm:flex-row sm:justify-between items-center"><div class="text-center sm:text-left"><p class="mt-0 text-sm">© 2007-2024 鬼马妖刀</p><p class="mt-0 text-xs">Built with <a href=https://gohugo.io target=_blank rel="noopener noreferrer">Hugo</a> v0.157.0
+and <a href=https://github.com/mivinci/hugo-theme-minima target=_blank rel="noopener noreferrer">Minima</a></p></div><p class="flex items-center mt-0"><a class="icon ml-1 mr-1" href=mailto:donie.leigh@gmail.com title=email><svg width="18" height="18" viewBox="0 0 24 21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1.0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1.0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>
+</a><a class="icon ml-1 mr-1" href=https://github.com/xbot title=github><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg>
+</a><a class="icon ml-1 mr-1" href=/index.xml title=rss><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 019 9M4 4a16 16 0 0116 16"/><circle cx="5" cy="19" r="1"/></svg></a></p></div></div></footer></body></html>

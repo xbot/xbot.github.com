@@ -1,4 +1,68 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>所有文章 on 晴耕雨讀</title><link>http://0x3f.org/posts/</link><description>Recent content in 所有文章 on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Wed, 04 Mar 2026 15:30:00 +0800</lastBuildDate><atom:link href="http://0x3f.org/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>OpenClaw 配置 Discord 客户端的方法</title><link>http://0x3f.org/posts/configure-openclaw-with-discord-client/</link><pubDate>Wed, 04 Mar 2026 15:30:00 +0800</pubDate><guid>http://0x3f.org/posts/configure-openclaw-with-discord-client/</guid><description>&lt;p&gt;OpenClaw 是一个开源的多平台 AI agent 框架，支持 Discord、Telegram 等多种聊天平台作为客户端，可以配置多个 agent 和不同的模型。Discord 相比 Telegram 消息格式更丰富，支持代码高亮、嵌入卡片和按钮交互，更适合技术讨论和代码相关的场景。本文记录了配置 OpenClaw 使用 Discord 作为客户端的完整过程。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>所有文章 on 晴耕雨讀</title><link>http://0x3f.org/posts/</link><description>Recent content in 所有文章 on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Wed, 04 Mar 2026 20:00:00 +0800</lastBuildDate><atom:link href="http://0x3f.org/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>为 Discord 频道指定专属 agent 实现专注高效处理事务</title><link>http://0x3f.org/posts/dedicated-openclaw-agent-for-discord-channel/</link><pubDate>Wed, 04 Mar 2026 20:00:00 +0800</pubDate><guid>http://0x3f.org/posts/dedicated-openclaw-agent-for-discord-channel/</guid><description>&lt;p&gt;OpenClaw 默认只有一个主 agent，所有频道的消息都由它处理。但有些场景需要一个更专注的 agent：只做特定的事，不闲聊，不擅自扩展。&lt;/p&gt;
+&lt;p&gt;OpenClaw 的 agent 系统支持创建独立的 agent，每个 agent 有自己的工作目录、人格设定和 skill 配置，然后通过路由绑定把特定频道的消息分发给对应的 agent。举个例子，在 Discord 上建一个 RSS 频道，专门用来总结 Miniflux 里的订阅内容。下面记录一下这个配置过程。&lt;/p&gt;
+&lt;h2 id="创建专用工作目录"&gt;创建专用工作目录&lt;/h2&gt;
+&lt;p&gt;每个 agent 需要一个独立的工作目录，里面放它的人格设定和可用的 skill。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;mkdir -p ~/.openclaw/workspace-rss/skills
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id="soulmd定义行为边界"&gt;SOUL.md：定义行为边界&lt;/h3&gt;
+&lt;p&gt;SOUL.md 是 agent 的核心，决定了它&amp;quot;是谁&amp;quot;、&amp;ldquo;能做什么&amp;rdquo;、&amp;ldquo;不能做什么&amp;rdquo;。专用 agent 的关键是把边界画清楚：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;span class="lnt"&gt;22
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-markdown" data-lang="markdown"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="gh"&gt;# SOUL.md - RSS 总结专用 Agent
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="gu"&gt;## 核心原则
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;你是一个 RSS 内容总结专用助手。你的唯一职责是按照用户的要求，
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;使用 miniflux-reader skill 获取和总结 Miniflux 中的订阅内容。
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="gu"&gt;## 行为规则
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="gs"&gt;**严格执行，不多不少：**&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;-&lt;/span&gt; 用户让总结几条就总结几条，让总结哪个 feed/category 就总结哪个
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;-&lt;/span&gt; 不主动扩展、不添加用户没要求的内容
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;-&lt;/span&gt; 不闲聊、不寒暄、不发表与 RSS 总结无关的评论
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="gs"&gt;**标记已读规则：**&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;-&lt;/span&gt; 只有在用户明确要求总结新的分类/订阅源时，才把上一轮总结过的条目标记为已读
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;-&lt;/span&gt; 用户只是查询信息、没有要求总结新内容时，不执行标记
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="gu"&gt;## 边界
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;-&lt;/span&gt; 不处理与 RSS/Feed 无关的请求
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;-&lt;/span&gt; 遇到无关请求时，礼貌地说明自己只负责 RSS 内容总结
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;和主 agent 的 SOUL.md 对比，专用 agent 多了很多&amp;quot;不&amp;quot;——不闲聊、不扩展、不越界。这是故意的。通用 agent 需要灵活，专用 agent 需要克制。&lt;/p&gt;</description></item><item><title>OpenClaw 配置 Discord 客户端的方法</title><link>http://0x3f.org/posts/configure-openclaw-with-discord-client/</link><pubDate>Wed, 04 Mar 2026 15:30:00 +0800</pubDate><guid>http://0x3f.org/posts/configure-openclaw-with-discord-client/</guid><description>&lt;p&gt;OpenClaw 是一个开源的多平台 AI agent 框架，支持 Discord、Telegram 等多种聊天平台作为客户端，可以配置多个 agent 和不同的模型。Discord 相比 Telegram 消息格式更丰富，支持代码高亮、嵌入卡片和按钮交互，更适合技术讨论和代码相关的场景。本文记录了配置 OpenClaw 使用 Discord 作为客户端的完整过程。&lt;/p&gt;
 &lt;h2 id="一创建-discord-bot"&gt;一、创建 Discord Bot&lt;/h2&gt;
 &lt;p&gt;首先需要在 Discord Developer Portal 创建一个应用（Bot 会自动创建）。&lt;/p&gt;
 &lt;ol&gt;
