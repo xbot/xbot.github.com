@@ -1,4 +1,68 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>AI on 晴耕雨讀</title><link>http://0x3f.org/tags/ai/</link><description>Recent content in AI on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Thu, 05 Mar 2026 10:00:00 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/ai/index.xml" rel="self" type="application/rss+xml"/><item><title>AI 助手不该是一个网页，它应该是你的联系人</title><link>http://0x3f.org/posts/ai-assistant-should-be-your-contact/</link><pubDate>Thu, 05 Mar 2026 10:00:00 +0800</pubDate><guid>http://0x3f.org/posts/ai-assistant-should-be-your-contact/</guid><description>&lt;p&gt;你有没有想过，和 AI 对话这件事，不一定要打开一个网页？如果它就在你的聊天软件里，像联系人一样随时发消息，会更方便。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>AI on 晴耕雨讀</title><link>http://0x3f.org/tags/ai/</link><description>Recent content in AI on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Thu, 05 Mar 2026 21:00:00 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/ai/index.xml" rel="self" type="application/rss+xml"/><item><title>OpenClaw 这个功能，让我在一个对话窗口同时用上 Claude、Codex 和 Gemini</title><link>http://0x3f.org/posts/openclaw-acp-dispatch-claude-codex-gemini/</link><pubDate>Thu, 05 Mar 2026 21:00:00 +0800</pubDate><guid>http://0x3f.org/posts/openclaw-acp-dispatch-claude-codex-gemini/</guid><description>&lt;p&gt;OpenClaw 通过 API 调用各种大模型（如 GLM、MiniMax、Qwen 等）处理对话，但有时需要调用专门的 AI 编程工具来完成复杂任务。OpenClaw 的 ACP（Agent Client Protocol）支持通过 acpx 插件调用 Claude Code、Codex、Gemini CLI 等外部 AI 工具，让不同场景下使用最合适的模型。&lt;/p&gt;
+&lt;p&gt;比如写代码时调用 Claude Code，做代码审查时用 Codex，快速原型验证时用 Gemini。配置完成后，在对话中说明要使用的工具，OpenClaw 会尝试路由到对应的 ACP agent。&lt;/p&gt;
+&lt;h2 id="前置条件"&gt;前置条件&lt;/h2&gt;
+&lt;p&gt;开始配置前需要确保：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;OpenClaw 已安装并运行&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;要使用的 AI 工具 CLI 已安装&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="安装-acpx-插件"&gt;安装 acpx 插件&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;openclaw plugins install @openclaw/acpx
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="配置-openclawjson"&gt;配置 openclaw.json&lt;/h2&gt;
+&lt;p&gt;编辑 &lt;code&gt;~/.openclaw/openclaw.json&lt;/code&gt;，追加以下配置：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;⚠️ 注意：请勿覆盖已有配置，只需添加或合并相应字段。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-json" data-lang="json"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;acp&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;enabled&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;dispatch&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nt"&gt;&amp;#34;enabled&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;backend&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;acpx&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;defaultAgent&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;claude&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;plugins&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;entries&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;acpx&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;enabled&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;config&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nt"&gt;&amp;#34;permissionMode&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;approve-all&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;defaultAgent&lt;/code&gt; 设为默认使用的 AI 工具，&lt;code&gt;permissionMode&lt;/code&gt; 必须设为 &lt;code&gt;approve-all&lt;/code&gt;（因为非交互场景需要自动批准写入操作）。&lt;/p&gt;</description></item><item><title>AI 助手不该是一个网页，它应该是你的联系人</title><link>http://0x3f.org/posts/ai-assistant-should-be-your-contact/</link><pubDate>Thu, 05 Mar 2026 10:00:00 +0800</pubDate><guid>http://0x3f.org/posts/ai-assistant-should-be-your-contact/</guid><description>&lt;p&gt;你有没有想过，和 AI 对话这件事，不一定要打开一个网页？如果它就在你的聊天软件里，像联系人一样随时发消息，会更方便。&lt;/p&gt;
 &lt;p&gt;&lt;a href="https://openclaw.ai"&gt;OpenClaw&lt;/a&gt; 是一个开源的多平台 AI agent 框架，支持接入 Discord、Telegram 等聊天平台。OpenClaw 跑在家里的服务器上，通过聊天软件的手机客户端，走在路上也能让它帮忙处理事情——总结一下今天的 RSS、查个资料、处理邮件，发条消息就行，随时随地，不用坐在电脑前。&lt;/p&gt;
 &lt;h2 id="为什么是-discord"&gt;为什么是 Discord&lt;/h2&gt;
 &lt;p&gt;Discord 的频道结构天然适合分工——一个服务器下建多个频道，不同频道干不同的事，侧边栏一目了然。消息展示也丰富，AI 回复的内容排版好看，读起来舒服。&lt;/p&gt;
