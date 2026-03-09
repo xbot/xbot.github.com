@@ -1,4 +1,40 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Homelab on 晴耕雨讀</title><link>http://0x3f.org/tags/homelab/</link><description>Recent content in Homelab on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Sun, 01 Mar 2026 10:00:00 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/homelab/index.xml" rel="self" type="application/rss+xml"/><item><title>我是怎样接收家庭主机的消息提醒的</title><link>http://0x3f.org/posts/how-i-receive-notifications-from-home-servers/</link><pubDate>Sun, 01 Mar 2026 10:00:00 +0800</pubDate><guid>http://0x3f.org/posts/how-i-receive-notifications-from-home-servers/</guid><description>&lt;p&gt;家里两台物理主机都跑的 PVE，PVE 从 8.1 开始原生支持把通知发送到 Gotify。Gotify 是一个开源的自托管消息推送服务，部署简单，API 友好，很适合作为 homelab 的统一消息中心。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>HomeLab on 晴耕雨讀</title><link>http://0x3f.org/tags/homelab/</link><description>Recent content in HomeLab on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Mon, 09 Mar 2026 10:00:00 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/homelab/index.xml" rel="self" type="application/rss+xml"/><item><title>PVE + ImmortalWrt 旁路网关部署实战</title><link>http://0x3f.org/posts/pve-immortalwrt-bypass-gateway-deployment/</link><pubDate>Mon, 09 Mar 2026 10:00:00 +0800</pubDate><guid>http://0x3f.org/posts/pve-immortalwrt-bypass-gateway-deployment/</guid><description>&lt;p&gt;之前一直在用 eSir 的佛跳墙固件，每次升级都要重新刷机、重新配置，挺麻烦的。最近换成了 ImmortalWrt，官方源支持 &lt;code&gt;sysupgrade&lt;/code&gt; 平滑升级，配置都能保留，省事不少。&lt;/p&gt;
+&lt;p&gt;ImmortalWrt 是 OpenWrt 的一个分支，主要是针对中国大陆用户做了一些本地化优化，比如内置了更多的驱动、默认开启了一些实用功能。部署在 PVE 上作为旁路网关使用，配合 OpenClash 做透明代理。&lt;/p&gt;
+&lt;h2 id="创建虚拟机"&gt;创建虚拟机&lt;/h2&gt;
+&lt;p&gt;到 &lt;a href="https://firmware-selector.immortalwrt.org/"&gt;firmware-selector.immortalwrt.org&lt;/a&gt; 搜索 &lt;code&gt;x86/64&lt;/code&gt;，下载 &lt;strong&gt;ext4-combined-efi&lt;/strong&gt; 的 &lt;code&gt;.img.gz&lt;/code&gt; 文件。官方源下载慢的话可以用国内镜像。&lt;/p&gt;
+&lt;p&gt;在 PVE 上创建虚拟机时有个坑：必须指定 &lt;code&gt;--scsihw virtio-scsi-pci&lt;/code&gt;，否则默认的 LSI 控制器会导致 ImmortalWrt 无法识别磁盘，系统无法正常引导。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-bash" data-lang="bash"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 创建虚拟机&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;qm create &lt;span class="m"&gt;211&lt;/span&gt; --name openwrt-new --memory &lt;span class="m"&gt;1024&lt;/span&gt; --cores &lt;span class="m"&gt;2&lt;/span&gt; --bios ovmf &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; --scsihw virtio-scsi-pci &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; --efidisk0 local-lvm:1 --net0 virtio,bridge&lt;span class="o"&gt;=&lt;/span&gt;vmbr0 --ostype l26 &lt;span class="se"&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; --serial0 socket --agent &lt;span class="nv"&gt;enabled&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 解压镜像并导入磁盘&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;gunzip /tmp/immortalwrt-*-combined-efi.img.gz
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;qm importdisk &lt;span class="m"&gt;211&lt;/span&gt; /tmp/immortalwrt-*-combined-efi.img local-lvm
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;qm &lt;span class="nb"&gt;set&lt;/span&gt; &lt;span class="m"&gt;211&lt;/span&gt; --scsi0 local-lvm:vm-211-disk-1
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;qm &lt;span class="nb"&gt;set&lt;/span&gt; &lt;span class="m"&gt;211&lt;/span&gt; --boot &lt;span class="nv"&gt;order&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;scsi0
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;qm start &lt;span class="m"&gt;211&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="网络配置"&gt;网络配置&lt;/h2&gt;
+&lt;p&gt;ImmortalWrt 默认 IP 是 &lt;code&gt;192.168.1.1&lt;/code&gt;，和我内网的 &lt;code&gt;10.0.0.0/24&lt;/code&gt; 网段不一样，无法直接 SSH。需要通过 PVE 的串口终端先改一下 IP：&lt;/p&gt;</description></item><item><title>我是怎样接收家庭主机的消息提醒的</title><link>http://0x3f.org/posts/how-i-receive-notifications-from-home-servers/</link><pubDate>Sun, 01 Mar 2026 10:00:00 +0800</pubDate><guid>http://0x3f.org/posts/how-i-receive-notifications-from-home-servers/</guid><description>&lt;p&gt;家里两台物理主机都跑的 PVE，PVE 从 8.1 开始原生支持把通知发送到 Gotify。Gotify 是一个开源的自托管消息推送服务，部署简单，API 友好，很适合作为 homelab 的统一消息中心。&lt;/p&gt;
 &lt;p&gt;不过我日常看消息主要还是在 Telegram，所以需要一个中间层把 Gotify 收到的消息转发过去。&lt;/p&gt;
 &lt;h2 id="之前的方案gotify-webhook-插件"&gt;之前的方案：gotify-webhook 插件&lt;/h2&gt;
 &lt;p&gt;之前用的是 &lt;a href="https://github.com/wuxs/gotify-webhook"&gt;gotify-webhook&lt;/a&gt; 插件，在 Gotify 内部以插件的形式运行，把收到的消息通过 webhook 转发到 Telegram Bot API。功能上没什么问题，但有一个烦人的地方：每次 Gotify 更新都要重新编译插件。&lt;/p&gt;

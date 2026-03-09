@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>OpenWrt on 晴耕雨讀</title><link>http://0x3f.org/tags/openwrt/</link><description>Recent content in OpenWrt on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Mon, 09 Mar 2026 10:00:00 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/openwrt/index.xml" rel="self" type="application/rss+xml"/><item><title>PVE + ImmortalWrt 旁路网关部署实战</title><link>http://0x3f.org/posts/pve-immortalwrt-bypass-gateway-deployment/</link><pubDate>Mon, 09 Mar 2026 10:00:00 +0800</pubDate><guid>http://0x3f.org/posts/pve-immortalwrt-bypass-gateway-deployment/</guid><description>&lt;p&gt;之前一直在用 eSir 的佛跳墙固件，每次升级都要重新刷机、重新配置，挺麻烦的。最近换成了 ImmortalWrt，官方源支持 &lt;code&gt;sysupgrade&lt;/code&gt; 平滑升级，配置都能保留，省事不少。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>ImmortalWrt on 晴耕雨讀</title><link>http://0x3f.org/tags/immortalwrt/</link><description>Recent content in ImmortalWrt on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Mon, 09 Mar 2026 10:00:00 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/immortalwrt/index.xml" rel="self" type="application/rss+xml"/><item><title>PVE + ImmortalWrt 旁路网关部署实战</title><link>http://0x3f.org/posts/pve-immortalwrt-bypass-gateway-deployment/</link><pubDate>Mon, 09 Mar 2026 10:00:00 +0800</pubDate><guid>http://0x3f.org/posts/pve-immortalwrt-bypass-gateway-deployment/</guid><description>&lt;p&gt;之前一直在用 eSir 的佛跳墙固件，每次升级都要重新刷机、重新配置，挺麻烦的。最近换成了 ImmortalWrt，官方源支持 &lt;code&gt;sysupgrade&lt;/code&gt; 平滑升级，配置都能保留，省事不少。&lt;/p&gt;
 &lt;p&gt;ImmortalWrt 是 OpenWrt 的一个分支，主要是针对中国大陆用户做了一些本地化优化，比如内置了更多的驱动、默认开启了一些实用功能。部署在 PVE 上作为旁路网关使用，配合 OpenClash 做透明代理。&lt;/p&gt;
 &lt;h2 id="创建虚拟机"&gt;创建虚拟机&lt;/h2&gt;
 &lt;p&gt;到 &lt;a href="https://firmware-selector.immortalwrt.org/"&gt;firmware-selector.immortalwrt.org&lt;/a&gt; 搜索 &lt;code&gt;x86/64&lt;/code&gt;，下载 &lt;strong&gt;ext4-combined-efi&lt;/strong&gt; 的 &lt;code&gt;.img.gz&lt;/code&gt; 文件。官方源下载慢的话可以用国内镜像。&lt;/p&gt;
@@ -34,18 +34,4 @@
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;h2 id="网络配置"&gt;网络配置&lt;/h2&gt;
-&lt;p&gt;ImmortalWrt 默认 IP 是 &lt;code&gt;192.168.1.1&lt;/code&gt;，和我内网的 &lt;code&gt;10.0.0.0/24&lt;/code&gt; 网段不一样，无法直接 SSH。需要通过 PVE 的串口终端先改一下 IP：&lt;/p&gt;</description></item><item><title>让 AdGuard Home 和 OpenClash 协同工作</title><link>http://0x3f.org/posts/make-adguard-home-and-openclash-work-together/</link><pubDate>Sun, 06 Mar 2022 12:12:10 +0800</pubDate><guid>http://0x3f.org/posts/make-adguard-home-and-openclash-work-together/</guid><description>&lt;h1 id="家庭网络环境"&gt;家庭网络环境&lt;/h1&gt;
-&lt;ul&gt;
-&lt;li&gt;使用 OpenWrt （&lt;em&gt;以下简称 OP&lt;/em&gt; ）做旁路网关&lt;/li&gt;
-&lt;li&gt;OP 内建 OpenClash （&lt;em&gt;以下简称 OC&lt;/em&gt; ）访问不存在的网站&lt;/li&gt;
-&lt;li&gt;OP 内建 WireGuard （&lt;em&gt;以下简称 WG&lt;/em&gt; ）做内网穿透&lt;/li&gt;
-&lt;li&gt;使用 AdGuard Home （&lt;em&gt;以下简称 AH&lt;/em&gt; ）做内网 DNS 和广告过滤&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h1 id="之前遇到的问题"&gt;之前遇到的问题&lt;/h1&gt;
-&lt;p&gt;不管怎样配置，内网和 WG 下的内网主机名解析和科学上网这 4 种场景总有至少一个不工作。&lt;/p&gt;
-&lt;p&gt;期间创建过一个虚拟机做独立的 WG Server ，内建 SmartDNS （&lt;em&gt;以下简称 SD&lt;/em&gt; ）做 AH 的上游，其它场景工作得很好，只是无法通过旁路网关访问不存在的网站。&lt;/p&gt;
-&lt;h1 id="解决方法"&gt;解决方法&lt;/h1&gt;
-&lt;p&gt;首先如果要正常使用 OC ，就必须使用它的 DNS 解析。&lt;/p&gt;
-&lt;p&gt;同时，又要达到使用 AH 做内网主机名解析和广告过滤的目的，所以要把 OC 设成 AH 的唯一上游。&lt;/p&gt;
-&lt;p&gt;然后最棘手的问题来了。如果把 AH 设成 dnsmasq 的上游， WG 下不能解析内网主机名。如果把 AH 设成监听 53 端口，则内网无法解析主机名。&lt;/p&gt;
-&lt;p&gt;想到之前在独立的 WG Server 上用 SD 在两种场景下都可以正常解析，就试着用它代替 dnsmasq ，结果柳暗花明，所以场景都跑通了。&lt;/p&gt;</description></item></channel></rss>
+&lt;p&gt;ImmortalWrt 默认 IP 是 &lt;code&gt;192.168.1.1&lt;/code&gt;，和我内网的 &lt;code&gt;10.0.0.0/24&lt;/code&gt; 网段不一样，无法直接 SSH。需要通过 PVE 的串口终端先改一下 IP：&lt;/p&gt;</description></item></channel></rss>

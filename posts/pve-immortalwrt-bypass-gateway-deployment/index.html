@@ -1,0 +1,106 @@
+<!doctype html><html lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta property="og:url" content="http://0x3f.org/posts/pve-immortalwrt-bypass-gateway-deployment/"><meta property="og:site_name" content="晴耕雨讀"><meta property="og:title" content="PVE + ImmortalWrt 旁路网关部署实战"><meta property="og:description" content="之前一直在用 eSir 的佛跳墙固件，每次升级都要重新刷机、重新配置，挺麻烦的。最近换成了 ImmortalWrt，官方源支持 sysupgrade 平滑升级，配置都能保留，省事不少。
+ImmortalWrt 是 OpenWrt 的一个分支，主要是针对中国大陆用户做了一些本地化优化，比如内置了更多的驱动、默认开启了一些实用功能。部署在 PVE 上作为旁路网关使用，配合 OpenClash 做透明代理。
+创建虚拟机 到 firmware-selector.immortalwrt.org 搜索 x86/64，下载 ext4-combined-efi 的 .img.gz 文件。官方源下载慢的话可以用国内镜像。
+在 PVE 上创建虚拟机时有个坑：必须指定 --scsihw virtio-scsi-pci，否则默认的 LSI 控制器会导致 ImmortalWrt 无法识别磁盘，系统无法正常引导。
+1 2 3 4 5 6 7 8 9 10 11 12 # 创建虚拟机 qm create 211 --name openwrt-new --memory 1024 --cores 2 --bios ovmf \ --scsihw virtio-scsi-pci \ --efidisk0 local-lvm:1 --net0 virtio,bridge=vmbr0 --ostype l26 \ --serial0 socket --agent enabled=1 # 解压镜像并导入磁盘 gunzip /tmp/immortalwrt-*-combined-efi.img.gz qm importdisk 211 /tmp/immortalwrt-*-combined-efi.img local-lvm qm set 211 --scsi0 local-lvm:vm-211-disk-1 qm set 211 --boot order=scsi0 qm start 211 网络配置 ImmortalWrt 默认 IP 是 192.168.1.1，和我内网的 10.0.0.0/24 网段不一样，无法直接 SSH。需要通过 PVE 的串口终端先改一下 IP："><meta property="og:locale" content="zh_cn"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2026-03-09T10:00:00+08:00"><meta property="article:modified_time" content="2026-03-09T10:00:00+08:00"><meta property="article:tag" content="计算机"><meta property="article:tag" content="ImmortalWrt"><meta property="article:tag" content="OpenWrt"><meta property="article:tag" content="PVE"><meta property="article:tag" content="OpenClash"><meta property="article:tag" content="HomeLab"><meta name=twitter:card content="summary"><meta name=twitter:title content="PVE + ImmortalWrt 旁路网关部署实战"><meta name=twitter:description content="之前一直在用 eSir 的佛跳墙固件，每次升级都要重新刷机、重新配置，挺麻烦的。最近换成了 ImmortalWrt，官方源支持 sysupgrade 平滑升级，配置都能保留，省事不少。
+ImmortalWrt 是 OpenWrt 的一个分支，主要是针对中国大陆用户做了一些本地化优化，比如内置了更多的驱动、默认开启了一些实用功能。部署在 PVE 上作为旁路网关使用，配合 OpenClash 做透明代理。
+创建虚拟机 到 firmware-selector.immortalwrt.org 搜索 x86/64，下载 ext4-combined-efi 的 .img.gz 文件。官方源下载慢的话可以用国内镜像。
+在 PVE 上创建虚拟机时有个坑：必须指定 --scsihw virtio-scsi-pci，否则默认的 LSI 控制器会导致 ImmortalWrt 无法识别磁盘，系统无法正常引导。
+1 2 3 4 5 6 7 8 9 10 11 12 # 创建虚拟机 qm create 211 --name openwrt-new --memory 1024 --cores 2 --bios ovmf \ --scsihw virtio-scsi-pci \ --efidisk0 local-lvm:1 --net0 virtio,bridge=vmbr0 --ostype l26 \ --serial0 socket --agent enabled=1 # 解压镜像并导入磁盘 gunzip /tmp/immortalwrt-*-combined-efi.img.gz qm importdisk 211 /tmp/immortalwrt-*-combined-efi.img local-lvm qm set 211 --scsi0 local-lvm:vm-211-disk-1 qm set 211 --boot order=scsi0 qm start 211 网络配置 ImmortalWrt 默认 IP 是 192.168.1.1，和我内网的 10.0.0.0/24 网段不一样，无法直接 SSH。需要通过 PVE 的串口终端先改一下 IP："><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#181818"><title>晴耕雨讀 - PVE + ImmortalWrt 旁路网关部署实战</title><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=stylesheet href=/minima.91848781a7679600f0ad1ad577e7da4fbb28b9f3fdc9a82126197659405bb483.css integrity="sha256-kYSHgadnlgDwrRrVd+faT7soufP9yaghJhl2WUBbtIM="><script defer type=text/javascript src=/minima.5f772103e807a34ef8ab63c3c53905fbf70689fa70d121085c7d0e84087effea.js integrity="sha256-X3chA+gHo074q2PDxTkF+/cGifpw0SEIXH0OhAh+/+o="></script></head><script>const theme_config="system",theme_light=theme_config==="system"?"light":theme_config;let theme=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":theme_light;console.debug(theme);try{localStorage.setItem("theme",theme),window.minima_theme=theme,document.querySelector("html").classList.add(theme)}catch(e){console.error(e)}</script><body><header class="mt-3 mb-8"><div class="container mx-auto"><nav class="flex justify-between items-center"><div class="flex items-center"><div id=theme-switch class="text-2xl cursor-pointer">🌝</div></div><ul class="flex items-center text-base font-semibold
+whitespace-nowrap overflow-x-auto overflow-y-hidden"><li class="ml-2 mr-2"><a href=/>首页</a></li><li class="ml-2 mr-2"><a href=/posts>文章</a></li><li class="ml-2 mr-2"><a href=/tags>标签</a></li><li class="ml-2 mr-2"><a href=/about>关于</a></li><li class="ml-2 mr-2"><a href=/search>🔍</a></li></ul></nav></div></header><div class="container mx-auto"><h1 class="text-4xl font-extrabold mt-6 mb-6">PVE + ImmortalWrt 旁路网关部署实战</h1><div class="mb-3 text-sm flex justify-between"><div>发布于 &mdash; 2026 年 03 月 09 日</div><div><a class=ml-1 href=/tags/%e8%ae%a1%e7%ae%97%e6%9c%ba>#计算机</a>
+<a class=ml-1 href=/tags/ImmortalWrt>#ImmortalWrt</a>
+<a class=ml-1 href=/tags/OpenWrt>#OpenWrt</a>
+<a class=ml-1 href=/tags/PVE>#PVE</a>
+<a class=ml-1 href=/tags/OpenClash>#OpenClash</a>
+<a class=ml-1 href=/tags/homelab>#homelab</a></div></div><main class=mb-8><p></p><article class=md><p>之前一直在用 eSir 的佛跳墙固件，每次升级都要重新刷机、重新配置，挺麻烦的。最近换成了 ImmortalWrt，官方源支持 <code>sysupgrade</code> 平滑升级，配置都能保留，省事不少。</p><p>ImmortalWrt 是 OpenWrt 的一个分支，主要是针对中国大陆用户做了一些本地化优化，比如内置了更多的驱动、默认开启了一些实用功能。部署在 PVE 上作为旁路网关使用，配合 OpenClash 做透明代理。</p><h2 id=创建虚拟机>创建虚拟机</h2><p>到 <a href=https://firmware-selector.immortalwrt.org/>firmware-selector.immortalwrt.org</a> 搜索 <code>x86/64</code>，下载 <strong>ext4-combined-efi</strong> 的 <code>.img.gz</code> 文件。官方源下载慢的话可以用国内镜像。</p><p>在 PVE 上创建虚拟机时有个坑：必须指定 <code>--scsihw virtio-scsi-pci</code>，否则默认的 LSI 控制器会导致 ImmortalWrt 无法识别磁盘，系统无法正常引导。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1># 创建虚拟机</span>
+</span></span><span class=line><span class=cl>qm create <span class=m>211</span> --name openwrt-new --memory <span class=m>1024</span> --cores <span class=m>2</span> --bios ovmf <span class=se>\
+</span></span></span><span class=line><span class=cl>  --scsihw virtio-scsi-pci <span class=se>\
+</span></span></span><span class=line><span class=cl>  --efidisk0 local-lvm:1 --net0 virtio,bridge<span class=o>=</span>vmbr0 --ostype l26 <span class=se>\
+</span></span></span><span class=line><span class=cl>  --serial0 socket --agent <span class=nv>enabled</span><span class=o>=</span><span class=m>1</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 解压镜像并导入磁盘</span>
+</span></span><span class=line><span class=cl>gunzip /tmp/immortalwrt-*-combined-efi.img.gz
+</span></span><span class=line><span class=cl>qm importdisk <span class=m>211</span> /tmp/immortalwrt-*-combined-efi.img local-lvm
+</span></span><span class=line><span class=cl>qm <span class=nb>set</span> <span class=m>211</span> --scsi0 local-lvm:vm-211-disk-1
+</span></span><span class=line><span class=cl>qm <span class=nb>set</span> <span class=m>211</span> --boot <span class=nv>order</span><span class=o>=</span>scsi0
+</span></span><span class=line><span class=cl>qm start <span class=m>211</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=网络配置>网络配置</h2><p>ImmortalWrt 默认 IP 是 <code>192.168.1.1</code>，和我内网的 <code>10.0.0.0/24</code> 网段不一样，无法直接 SSH。需要通过 PVE 的串口终端先改一下 IP：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1># 在 PVE 主机上连接串口（Ctrl+O 退出）</span>
+</span></span><span class=line><span class=cl>qm terminal <span class=m>211</span>
+</span></span></code></pre></td></tr></table></div></div><p>进入串口后设置 IP、网关和 DNS：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>uci <span class=nb>set</span> network.lan.ipaddr<span class=o>=</span><span class=s1>&#39;10.0.0.211&#39;</span>
+</span></span><span class=line><span class=cl>uci <span class=nb>set</span> network.lan.gateway<span class=o>=</span><span class=s1>&#39;10.0.0.1&#39;</span>
+</span></span><span class=line><span class=cl>uci <span class=nb>set</span> network.lan.dns<span class=o>=</span><span class=s1>&#39;10.0.0.1&#39;</span>
+</span></span><span class=line><span class=cl>uci commit network
+</span></span><span class=line><span class=cl>/etc/init.d/network restart
+</span></span></code></pre></td></tr></table></div></div><p>旁路网关不需要 DHCP 服务，直接关掉。如果启用了 IPv6，还需要禁用 odhcpd 的 RA 广播：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>uci <span class=nb>set</span> dhcp.lan.ignore<span class=o>=</span><span class=m>1</span>
+</span></span><span class=line><span class=cl>uci commit dhcp
+</span></span><span class=line><span class=cl>/etc/init.d/dnsmasq restart
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 如果启用了 IPv6，禁用 RA/DHCPv6</span>
+</span></span><span class=line><span class=cl>uci <span class=nb>set</span> dhcp.lan.ra<span class=o>=</span><span class=s1>&#39;disabled&#39;</span>
+</span></span><span class=line><span class=cl>uci <span class=nb>set</span> dhcp.lan.dhcpv6<span class=o>=</span><span class=s1>&#39;disabled&#39;</span>
+</span></span><span class=line><span class=cl>uci commit dhcp
+</span></span><span class=line><span class=cl>/etc/init.d/odhcpd restart
+</span></span></code></pre></td></tr></table></div></div><h2 id=安装-openclash>安装 OpenClash</h2><p>ImmortalWrt 官方源不含 OpenClash，需要从 <a href=https://github.com/vernesong/OpenClash/releases>GitHub Releases</a> 手动下载 ipk 安装。</p><p>如果虚拟机无法直连 GitHub，可以在能访问的主机上下载后 SCP 过去：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>wget https://github.com/vernesong/OpenClash/releases/download/v0.47.055/luci-app-openclash_0.47.055_all.ipk
+</span></span><span class=line><span class=cl>scp -O luci-app-openclash*.ipk root@10.0.0.211:/tmp/
+</span></span></code></pre></td></tr></table></div></div><p>在 ImmortalWrt 上安装：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>opkg update
+</span></span><span class=line><span class=cl>opkg install /tmp/luci-app-openclash*.ipk
+</span></span></code></pre></td></tr></table></div></div><p>ImmortalWrt 默认自带 <code>dnsmasq-full</code> 和 <code>luci-compat</code>，不需要像官方 OpenWrt 那样手动替换 dnsmasq。OpenClash 安装后内置三个面板，无需额外安装。</p><h2 id=配置迁移>配置迁移</h2><p>如果是从旧的 OpenWrt 迁移，且两边 OpenClash 版本相近，可以直接打包配置文件迁移：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1># 在旧机器上打包</span>
+</span></span><span class=line><span class=cl>ssh root@&lt;旧机器&gt; <span class=s2>&#34;tar czf /tmp/openclash-backup.tar.gz /etc/openclash/ /etc/config/openclash&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 传到新机器并解包</span>
+</span></span><span class=line><span class=cl>scp -O root@&lt;旧机器&gt;:/tmp/openclash-backup.tar.gz /tmp/
+</span></span><span class=line><span class=cl>scp -O /tmp/openclash-backup.tar.gz root@10.0.0.211:/tmp/
+</span></span><span class=line><span class=cl>ssh root@10.0.0.211 <span class=s2>&#34;tar xzf /tmp/openclash-backup.tar.gz -C / &amp;&amp; /etc/init.d/openclash restart&#34;</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=qemu-guest-agent>QEMU Guest Agent</h2><p>装一下 QEMU Guest Agent，这样 PVE 能正确获取虚拟机的 IP 地址：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ssh root@10.0.0.211 <span class=s2>&#34;opkg update &amp;&amp; opkg install qemu-ga &amp;&amp; \
+</span></span></span><span class=line><span class=cl><span class=s2>  /etc/init.d/qemu-ga start &amp;&amp; /etc/init.d/qemu-ga enable&#34;</span>
+</span></span></code></pre></td></tr></table></div></div><p>安装后需要在 PVE 上<strong>关机再开机</strong>（不是 reboot）让 Guest Agent 生效：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>qm shutdown <span class=m>211</span> --timeout <span class=m>30</span>
+</span></span><span class=line><span class=cl>qm start <span class=m>211</span>
+</span></span><span class=line><span class=cl>qm agent <span class=m>211</span> ping  <span class=c1># 验证</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=客户端使用>客户端使用</h2><p>设备端两种方式：</p><ul><li><strong>HTTP 代理</strong>：设备代理指向 <code>10.0.0.211:7890</code></li><li><strong>网关模式</strong>：设备的网关和 DNS 都改为 <code>10.0.0.211</code></li></ul><p>网关模式下所有流量都走代理，适合需要全局代理的场景。HTTP 代理模式更灵活，可以按需开启。</p></article></main><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css integrity=sha384-Um5gpz1odJg5Z4HAmzPtgZKdTBHZdw8S29IecapCSB31ligYPhHQZMIlWLYQGVoc crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js integrity=sha384-YNHdsYkH6gMx9y3mRkmcJ2mFUjTd0qNQQvY9VYZgQd7DcN7env35GzlmFaZ23JGp crossorigin=anonymous></script><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/contrib/auto-render.min.js integrity=sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl crossorigin=anonymous></script><script>document.addEventListener("DOMContentLoaded",function(){renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}],throwOnError:!1})})</script><script src=https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js crossorigin=anonymous></script><script>mermaid.init(0[0],"code.language-mermaid")</script><div id=comment></div><script>const s=document.createElement("script");s.src="https://utteranc.es/client.js",s.crossOrigin="anonymous",s.async=!0,s.setAttribute("repo","xbot/blog-comments"),s.setAttribute("issue-term","pathname"),s.setAttribute("label","comment"),s.setAttribute("theme","github-"+window.minima_theme),document.getElementById("comment").appendChild(s)</script></div><footer class="mt-8 mb-8"><div class="container mx-auto"><div class="mt-8 flex flex-col-reverse sm:flex-row sm:justify-between items-center"><div class="text-center sm:text-left"><p class="mt-0 text-sm">© 2007-2024 鬼马妖刀</p><p class="mt-0 text-xs">Built with <a href=https://gohugo.io target=_blank rel="noopener noreferrer">Hugo</a> v0.157.0
+and <a href=https://github.com/mivinci/hugo-theme-minima target=_blank rel="noopener noreferrer">Minima</a></p></div><p class="flex items-center mt-0"><a class="icon ml-1 mr-1" href=mailto:donie.leigh@gmail.com title=email><svg width="18" height="18" viewBox="0 0 24 21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1.0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1.0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>
+</a><a class="icon ml-1 mr-1" href=https://github.com/xbot title=github><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg>
+</a><a class="icon ml-1 mr-1" href=/index.xml title=rss><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 019 9M4 4a16 16 0 0116 16"/><circle cx="5" cy="19" r="1"/></svg></a></p></div></div></footer></body></html>
