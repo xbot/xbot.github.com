@@ -1,0 +1,98 @@
+<!doctype html><html lang=en><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta property="og:url" content="http://0x3f.org/posts/openclash-custom-proxy-groups-with-subconverter/"><meta property="og:site_name" content="晴耕雨讀"><meta property="og:title" content="OpenClash 升级后我这样找回了自定义策略组"><meta property="og:description" content='OpenClash v0.47.071 移除了"一键生成"功能。
+这个功能之前可以在订阅配置的基础上插入自定义策略组。比如我会按地区筛选节点，组成几个专用的策略组，方便日常切换。升级之后这些自定义策略组全部失效了。
+官方推荐用订阅转换来替代一键生成。订阅转换是一个中间服务，把机场提供的订阅链接转换成各种客户端能用的配置文件，转换过程中可以注入自定义的策略组和规则。
+部署 Subconverter Subconverter 是一个常用的开源订阅转换工具。用 Docker 部署很简单：
+1 2 3 4 5 6 7 8 9 subconverter: image: ghcr.io/metacubex/subconverter:latest container_name: subconverter restart: unless-stopped ports: - "25500:25500" volumes: - /root/appdata/subconverter/pref.toml:/base/pref.toml - /root/appdata/subconverter/snippets/custom_groups.toml:/base/snippets/custom_groups.toml Subconverter 的容器镜像自带了一套完整的默认配置，包括标准策略组、规则集和模板文件，都放在容器的 /base 目录下。只需要把要自定义的文件挂载进去，pref.toml 是主配置文件，custom_groups.toml 是自定义策略组，其余全部保留容器默认的。
+配置自定义策略组 Subconverter 的默认配置里已经有一套标准策略组（节点选择、自动选择、Netflix、Telegram 等）和对应的规则集。我只需要额外添加自己的策略组就行。
+在 pref.toml 里，通过 import 把默认策略组和自定义策略组分开管理：
+1 2 3 4 5 [[custom_groups]] import = "snippets/groups.toml" [[custom_groups]] import = "snippets/custom_groups.toml" groups.toml 是容器自带的，不用动。custom_groups.toml 是自己的，内容类似这样：'><meta property="og:locale" content="zh_cn"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2026-03-19T18:00:00+08:00"><meta property="article:modified_time" content="2026-03-19T18:00:00+08:00"><meta property="article:tag" content="计算机"><meta property="article:tag" content="OpenClash"><meta property="article:tag" content="HomeLab"><meta property="article:tag" content="OpenWrt"><meta name=twitter:card content="summary"><meta name=twitter:title content="OpenClash 升级后我这样找回了自定义策略组"><meta name=twitter:description content='OpenClash v0.47.071 移除了"一键生成"功能。
+这个功能之前可以在订阅配置的基础上插入自定义策略组。比如我会按地区筛选节点，组成几个专用的策略组，方便日常切换。升级之后这些自定义策略组全部失效了。
+官方推荐用订阅转换来替代一键生成。订阅转换是一个中间服务，把机场提供的订阅链接转换成各种客户端能用的配置文件，转换过程中可以注入自定义的策略组和规则。
+部署 Subconverter Subconverter 是一个常用的开源订阅转换工具。用 Docker 部署很简单：
+1 2 3 4 5 6 7 8 9 subconverter: image: ghcr.io/metacubex/subconverter:latest container_name: subconverter restart: unless-stopped ports: - "25500:25500" volumes: - /root/appdata/subconverter/pref.toml:/base/pref.toml - /root/appdata/subconverter/snippets/custom_groups.toml:/base/snippets/custom_groups.toml Subconverter 的容器镜像自带了一套完整的默认配置，包括标准策略组、规则集和模板文件，都放在容器的 /base 目录下。只需要把要自定义的文件挂载进去，pref.toml 是主配置文件，custom_groups.toml 是自定义策略组，其余全部保留容器默认的。
+配置自定义策略组 Subconverter 的默认配置里已经有一套标准策略组（节点选择、自动选择、Netflix、Telegram 等）和对应的规则集。我只需要额外添加自己的策略组就行。
+在 pref.toml 里，通过 import 把默认策略组和自定义策略组分开管理：
+1 2 3 4 5 [[custom_groups]] import = "snippets/groups.toml" [[custom_groups]] import = "snippets/custom_groups.toml" groups.toml 是容器自带的，不用动。custom_groups.toml 是自己的，内容类似这样：'><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#181818"><title>晴耕雨讀 - OpenClash 升级后我这样找回了自定义策略组</title><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=stylesheet href=/minima.91848781a7679600f0ad1ad577e7da4fbb28b9f3fdc9a82126197659405bb483.css integrity="sha256-kYSHgadnlgDwrRrVd+faT7soufP9yaghJhl2WUBbtIM="><script defer type=text/javascript src=/minima.5f772103e807a34ef8ab63c3c53905fbf70689fa70d121085c7d0e84087effea.js integrity="sha256-X3chA+gHo074q2PDxTkF+/cGifpw0SEIXH0OhAh+/+o="></script></head><script>const theme_config="system",theme_light=theme_config==="system"?"light":theme_config;let theme=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":theme_light;console.debug(theme);try{localStorage.setItem("theme",theme),window.minima_theme=theme,document.querySelector("html").classList.add(theme)}catch(e){console.error(e)}</script><body><header class="mt-3 mb-8"><div class="container mx-auto"><nav class="flex justify-between items-center"><div class="flex items-center"><div id=theme-switch class="text-2xl cursor-pointer">🌝</div></div><ul class="flex items-center text-base font-semibold
+whitespace-nowrap overflow-x-auto overflow-y-hidden"><li class="ml-2 mr-2"><a href=/>首页</a></li><li class="ml-2 mr-2"><a href=/posts>文章</a></li><li class="ml-2 mr-2"><a href=/tags>标签</a></li><li class="ml-2 mr-2"><a href=/about>关于</a></li><li class="ml-2 mr-2"><a href=/search>🔍</a></li></ul></nav></div></header><div class="container mx-auto"><h1 class="text-4xl font-extrabold mt-6 mb-6">OpenClash 升级后我这样找回了自定义策略组</h1><div class="mb-3 text-sm flex justify-between"><div>发布于 &mdash; 2026 年 03 月 19 日</div><div><a class=ml-1 href=/tags/%e8%ae%a1%e7%ae%97%e6%9c%ba>#计算机</a>
+<a class=ml-1 href=/tags/OpenClash>#OpenClash</a>
+<a class=ml-1 href=/tags/homelab>#homelab</a>
+<a class=ml-1 href=/tags/OpenWrt>#OpenWrt</a></div></div><main class=mb-8><p></p><article class=md><p>OpenClash v0.47.071 移除了"一键生成"功能。</p><p>这个功能之前可以在订阅配置的基础上插入自定义策略组。比如我会按地区筛选节点，组成几个专用的策略组，方便日常切换。升级之后这些自定义策略组全部失效了。</p><p>官方推荐用订阅转换来替代一键生成。订阅转换是一个中间服务，把机场提供的订阅链接转换成各种客户端能用的配置文件，转换过程中可以注入自定义的策略组和规则。</p><h2 id=部署-subconverter>部署 Subconverter</h2><p><a href=https://github.com/MetaCubeX/subconverter>Subconverter</a> 是一个常用的开源订阅转换工具。用 Docker 部署很简单：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>subconverter</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>image</span><span class=p>:</span><span class=w> </span><span class=l>ghcr.io/metacubex/subconverter:latest</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>container_name</span><span class=p>:</span><span class=w> </span><span class=l>subconverter</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>restart</span><span class=p>:</span><span class=w> </span><span class=l>unless-stopped</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>ports</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=s2>&#34;25500:25500&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>volumes</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=l>/root/appdata/subconverter/pref.toml:/base/pref.toml</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=l>/root/appdata/subconverter/snippets/custom_groups.toml:/base/snippets/custom_groups.toml</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>Subconverter 的容器镜像自带了一套完整的默认配置，包括标准策略组、规则集和模板文件，都放在容器的 <code>/base</code> 目录下。只需要把要自定义的文件挂载进去，<code>pref.toml</code> 是主配置文件，<code>custom_groups.toml</code> 是自定义策略组，其余全部保留容器默认的。</p><h2 id=配置自定义策略组>配置自定义策略组</h2><p>Subconverter 的默认配置里已经有一套标准策略组（节点选择、自动选择、Netflix、Telegram 等）和对应的规则集。我只需要额外添加自己的策略组就行。</p><p>在 <code>pref.toml</code> 里，通过 import 把默认策略组和自定义策略组分开管理：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-toml data-lang=toml><span class=line><span class=cl><span class=p>[[</span><span class=nx>custom_groups</span><span class=p>]]</span>
+</span></span><span class=line><span class=cl><span class=nx>import</span> <span class=p>=</span> <span class=s2>&#34;snippets/groups.toml&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=p>[[</span><span class=nx>custom_groups</span><span class=p>]]</span>
+</span></span><span class=line><span class=cl><span class=nx>import</span> <span class=p>=</span> <span class=s2>&#34;snippets/custom_groups.toml&#34;</span>
+</span></span></code></pre></td></tr></table></div></div><p><code>groups.toml</code> 是容器自带的，不用动。<code>custom_groups.toml</code> 是自己的，内容类似这样：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-toml data-lang=toml><span class=line><span class=cl><span class=p>[[</span><span class=nx>custom_groups</span><span class=p>]]</span>
+</span></span><span class=line><span class=cl><span class=nx>name</span> <span class=p>=</span> <span class=s2>&#34;US or JP (Auto)&#34;</span>
+</span></span><span class=line><span class=cl><span class=nx>type</span> <span class=p>=</span> <span class=s2>&#34;url-test&#34;</span>
+</span></span><span class=line><span class=cl><span class=nx>rule</span> <span class=p>=</span> <span class=p>[</span><span class=s2>&#34;Relay-(JP|US)[12]&#34;</span><span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=nx>url</span> <span class=p>=</span> <span class=s2>&#34;http://www.gstatic.com/generate_204&#34;</span>
+</span></span><span class=line><span class=cl><span class=nx>interval</span> <span class=p>=</span> <span class=mi>300</span>
+</span></span><span class=line><span class=cl><span class=nx>tolerance</span> <span class=p>=</span> <span class=mi>150</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=p>[[</span><span class=nx>custom_groups</span><span class=p>]]</span>
+</span></span><span class=line><span class=cl><span class=nx>name</span> <span class=p>=</span> <span class=s2>&#34;US or JP&#34;</span>
+</span></span><span class=line><span class=cl><span class=nx>type</span> <span class=p>=</span> <span class=s2>&#34;select&#34;</span>
+</span></span><span class=line><span class=cl><span class=nx>rule</span> <span class=p>=</span> <span class=p>[</span><span class=s2>&#34;[]US or JP (Auto)&#34;</span><span class=p>,</span> <span class=s2>&#34;Relay-(JP|US)[12]&#34;</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=p>[[</span><span class=nx>custom_groups</span><span class=p>]]</span>
+</span></span><span class=line><span class=cl><span class=nx>name</span> <span class=p>=</span> <span class=s2>&#34;US (Auto)&#34;</span>
+</span></span><span class=line><span class=cl><span class=nx>type</span> <span class=p>=</span> <span class=s2>&#34;url-test&#34;</span>
+</span></span><span class=line><span class=cl><span class=nx>rule</span> <span class=p>=</span> <span class=p>[</span><span class=s2>&#34;Relay-US[12]&#34;</span><span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=nx>url</span> <span class=p>=</span> <span class=s2>&#34;http://www.gstatic.com/generate_204&#34;</span>
+</span></span><span class=line><span class=cl><span class=nx>interval</span> <span class=p>=</span> <span class=mi>300</span>
+</span></span><span class=line><span class=cl><span class=nx>tolerance</span> <span class=p>=</span> <span class=mi>150</span>
+</span></span></code></pre></td></tr></table></div></div><p><code>rule</code> 里填的是正则表达式，用来从订阅的节点列表里筛选匹配的节点。比如 <code>Relay-(JP|US)[12]</code> 会匹配名称中包含 Relay-JP1、Relay-JP2、Relay-US1、Relay-US2 的节点。</p><h2 id=代理设置>代理设置</h2><p>Subconverter 需要从 GitHub 拉取规则集文件，如果网络环境不能直连，需要在 <code>pref.toml</code> 里配置代理：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-toml data-lang=toml><span class=line><span class=cl><span class=nx>proxy_config</span> <span class=p>=</span> <span class=s2>&#34;&lt;代理地址&gt;&#34;</span>
+</span></span><span class=line><span class=cl><span class=nx>proxy_ruleset</span> <span class=p>=</span> <span class=s2>&#34;&lt;代理地址&gt;&#34;</span>
+</span></span><span class=line><span class=cl><span class=nx>proxy_subscription</span> <span class=p>=</span> <span class=s2>&#34;&lt;代理地址&gt;&#34;</span>
+</span></span></code></pre></td></tr></table></div></div><p>这三项分别对应配置文件下载、规则集下载和订阅链接下载的代理。默认值是 <code>SYSTEM</code>，会读取容器的环境变量，如果没设的话实际上就是不走代理。</p><h2 id=在-openclash-中使用>在 OpenClash 中使用</h2><p>部署好 Subconverter 后，可以先用 curl 测试一下转换结果：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>curl <span class=s2>&#34;http://&lt;Subconverter地址&gt;:25500/sub?target=clash&amp;ua=clash&amp;url=&lt;订阅链接&gt;&#34;</span>
+</span></span></code></pre></td></tr></table></div></div><p>输出的配置里应该能看到默认的标准策略组和自定义策略组都在，规则集也是完整的。确认没问题后，在 OpenClash 的订阅设置里把转换地址填上就行。</p></article></main><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css integrity=sha384-Um5gpz1odJg5Z4HAmzPtgZKdTBHZdw8S29IecapCSB31ligYPhHQZMIlWLYQGVoc crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js integrity=sha384-YNHdsYkH6gMx9y3mRkmcJ2mFUjTd0qNQQvY9VYZgQd7DcN7env35GzlmFaZ23JGp crossorigin=anonymous></script><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/contrib/auto-render.min.js integrity=sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl crossorigin=anonymous></script><script>document.addEventListener("DOMContentLoaded",function(){renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}],throwOnError:!1})})</script><script src=https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js crossorigin=anonymous></script><script>mermaid.init(0[0],"code.language-mermaid")</script><div id=comment></div><script>const s=document.createElement("script");s.src="https://utteranc.es/client.js",s.crossOrigin="anonymous",s.async=!0,s.setAttribute("repo","xbot/blog-comments"),s.setAttribute("issue-term","pathname"),s.setAttribute("label","comment"),s.setAttribute("theme","github-"+window.minima_theme),document.getElementById("comment").appendChild(s)</script></div><footer class="mt-8 mb-8"><div class="container mx-auto"><div class="mt-8 flex flex-col-reverse sm:flex-row sm:justify-between items-center"><div class="text-center sm:text-left"><p class="mt-0 text-sm">© 2007-2024 鬼马妖刀</p><p class="mt-0 text-xs">Built with <a href=https://gohugo.io target=_blank rel="noopener noreferrer">Hugo</a> v0.158.0
+and <a href=https://github.com/mivinci/hugo-theme-minima target=_blank rel="noopener noreferrer">Minima</a></p></div><p class="flex items-center mt-0"><a class="icon ml-1 mr-1" href=mailto:donie.leigh@gmail.com title=email><svg width="18" height="18" viewBox="0 0 24 21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1.0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1.0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg>
+</a><a class="icon ml-1 mr-1" href=https://github.com/xbot title=github><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37.0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44.0 0020 4.77 5.07 5.07.0 0019.91 1S18.73.65 16 2.48a13.38 13.38.0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07.0 005 4.77 5.44 5.44.0 003.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37.0 009 18.13V22"/></svg>
+</a><a class="icon ml-1 mr-1" href=/index.xml title=rss><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 019 9M4 4a16 16 0 0116 16"/><circle cx="5" cy="19" r="1"/></svg></a></p></div></div></footer></body></html>

@@ -1,4 +1,53 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>所有文章 on 晴耕雨讀</title><link>http://0x3f.org/posts/</link><description>Recent content in 所有文章 on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Mon, 16 Mar 2026 18:00:00 +0800</lastBuildDate><atom:link href="http://0x3f.org/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>家里网络卡了两天，原来是这个“优化”在作祟</title><link>http://0x3f.org/posts/home-network-lag/</link><pubDate>Mon, 16 Mar 2026 18:00:00 +0800</pubDate><guid>http://0x3f.org/posts/home-network-lag/</guid><description>&lt;p&gt;前两天发现家里的网络不太对劲。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>所有文章 on 晴耕雨讀</title><link>http://0x3f.org/posts/</link><description>Recent content in 所有文章 on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Thu, 19 Mar 2026 18:00:00 +0800</lastBuildDate><atom:link href="http://0x3f.org/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>OpenClash 升级后我这样找回了自定义策略组</title><link>http://0x3f.org/posts/openclash-custom-proxy-groups-with-subconverter/</link><pubDate>Thu, 19 Mar 2026 18:00:00 +0800</pubDate><guid>http://0x3f.org/posts/openclash-custom-proxy-groups-with-subconverter/</guid><description>&lt;p&gt;OpenClash v0.47.071 移除了&amp;quot;一键生成&amp;quot;功能。&lt;/p&gt;
+&lt;p&gt;这个功能之前可以在订阅配置的基础上插入自定义策略组。比如我会按地区筛选节点，组成几个专用的策略组，方便日常切换。升级之后这些自定义策略组全部失效了。&lt;/p&gt;
+&lt;p&gt;官方推荐用订阅转换来替代一键生成。订阅转换是一个中间服务，把机场提供的订阅链接转换成各种客户端能用的配置文件，转换过程中可以注入自定义的策略组和规则。&lt;/p&gt;
+&lt;h2 id="部署-subconverter"&gt;部署 Subconverter&lt;/h2&gt;
+&lt;p&gt;&lt;a href="https://github.com/MetaCubeX/subconverter"&gt;Subconverter&lt;/a&gt; 是一个常用的开源订阅转换工具。用 Docker 部署很简单：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;span class="lnt"&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;subconverter&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;image&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;ghcr.io/metacubex/subconverter:latest&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;container_name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;subconverter&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;restart&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;unless-stopped&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;ports&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="s2"&gt;&amp;#34;25500:25500&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;volumes&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;/root/appdata/subconverter/pref.toml:/base/pref.toml&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;/root/appdata/subconverter/snippets/custom_groups.toml:/base/snippets/custom_groups.toml&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Subconverter 的容器镜像自带了一套完整的默认配置，包括标准策略组、规则集和模板文件，都放在容器的 &lt;code&gt;/base&lt;/code&gt; 目录下。只需要把要自定义的文件挂载进去，&lt;code&gt;pref.toml&lt;/code&gt; 是主配置文件，&lt;code&gt;custom_groups.toml&lt;/code&gt; 是自定义策略组，其余全部保留容器默认的。&lt;/p&gt;
+&lt;h2 id="配置自定义策略组"&gt;配置自定义策略组&lt;/h2&gt;
+&lt;p&gt;Subconverter 的默认配置里已经有一套标准策略组（节点选择、自动选择、Netflix、Telegram 等）和对应的规则集。我只需要额外添加自己的策略组就行。&lt;/p&gt;
+&lt;p&gt;在 &lt;code&gt;pref.toml&lt;/code&gt; 里，通过 import 把默认策略组和自定义策略组分开管理：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-toml" data-lang="toml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;[[&lt;/span&gt;&lt;span class="nx"&gt;custom_groups&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;import&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;snippets/groups.toml&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;[[&lt;/span&gt;&lt;span class="nx"&gt;custom_groups&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;import&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;snippets/custom_groups.toml&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;groups.toml&lt;/code&gt; 是容器自带的，不用动。&lt;code&gt;custom_groups.toml&lt;/code&gt; 是自己的，内容类似这样：&lt;/p&gt;</description></item><item><title>家里网络卡了两天，原来是这个“优化”在作祟</title><link>http://0x3f.org/posts/home-network-lag/</link><pubDate>Mon, 16 Mar 2026 18:00:00 +0800</pubDate><guid>http://0x3f.org/posts/home-network-lag/</guid><description>&lt;p&gt;前两天发现家里的网络不太对劲。&lt;/p&gt;
 &lt;p&gt;一个是用 SSH 连接到家里那台跑旁路网关的虚拟机后，操作起来卡顿得很严重，输入命令后要等好几秒才有反应。另一个是手机上刷新小红书、哔哩哔哩、淘宝这些 App 时，页面加载明显变慢。&lt;/p&gt;
 &lt;p&gt;这台虚拟机负责把家里的网络流量分流，把访问国外网站的流量引导到代理通道，让访问更快更稳定。&lt;/p&gt;
 &lt;p&gt;只有流量经过这台虚拟机的设备才会卡顿。这说明问题在这台虚拟机上，不是家庭网络的问题。&lt;/p&gt;

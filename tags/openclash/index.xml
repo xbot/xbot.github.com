@@ -1,4 +1,53 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>OpenClash on 晴耕雨讀</title><link>http://0x3f.org/tags/openclash/</link><description>Recent content in OpenClash on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Mon, 09 Mar 2026 10:00:00 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/openclash/index.xml" rel="self" type="application/rss+xml"/><item><title>PVE + ImmortalWrt 旁路网关部署实战</title><link>http://0x3f.org/posts/pve-immortalwrt-bypass-gateway-deployment/</link><pubDate>Mon, 09 Mar 2026 10:00:00 +0800</pubDate><guid>http://0x3f.org/posts/pve-immortalwrt-bypass-gateway-deployment/</guid><description>&lt;p&gt;之前一直在用 eSir 的佛跳墙固件，每次升级都要重新刷机、重新配置，挺麻烦的。最近换成了 ImmortalWrt，官方源支持 &lt;code&gt;sysupgrade&lt;/code&gt; 平滑升级，配置都能保留，省事不少。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>OpenClash on 晴耕雨讀</title><link>http://0x3f.org/tags/openclash/</link><description>Recent content in OpenClash on 晴耕雨讀</description><generator>Hugo</generator><language>zh-cn</language><copyright>© 2007-2024 鬼马妖刀</copyright><lastBuildDate>Thu, 19 Mar 2026 18:00:00 +0800</lastBuildDate><atom:link href="http://0x3f.org/tags/openclash/index.xml" rel="self" type="application/rss+xml"/><item><title>OpenClash 升级后我这样找回了自定义策略组</title><link>http://0x3f.org/posts/openclash-custom-proxy-groups-with-subconverter/</link><pubDate>Thu, 19 Mar 2026 18:00:00 +0800</pubDate><guid>http://0x3f.org/posts/openclash-custom-proxy-groups-with-subconverter/</guid><description>&lt;p&gt;OpenClash v0.47.071 移除了&amp;quot;一键生成&amp;quot;功能。&lt;/p&gt;
+&lt;p&gt;这个功能之前可以在订阅配置的基础上插入自定义策略组。比如我会按地区筛选节点，组成几个专用的策略组，方便日常切换。升级之后这些自定义策略组全部失效了。&lt;/p&gt;
+&lt;p&gt;官方推荐用订阅转换来替代一键生成。订阅转换是一个中间服务，把机场提供的订阅链接转换成各种客户端能用的配置文件，转换过程中可以注入自定义的策略组和规则。&lt;/p&gt;
+&lt;h2 id="部署-subconverter"&gt;部署 Subconverter&lt;/h2&gt;
+&lt;p&gt;&lt;a href="https://github.com/MetaCubeX/subconverter"&gt;Subconverter&lt;/a&gt; 是一个常用的开源订阅转换工具。用 Docker 部署很简单：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;span class="lnt"&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-yaml" data-lang="yaml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nt"&gt;subconverter&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;image&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;ghcr.io/metacubex/subconverter:latest&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;container_name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;subconverter&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;restart&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="l"&gt;unless-stopped&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;ports&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="s2"&gt;&amp;#34;25500:25500&amp;#34;&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nt"&gt;volumes&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;/root/appdata/subconverter/pref.toml:/base/pref.toml&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="w"&gt; &lt;/span&gt;- &lt;span class="l"&gt;/root/appdata/subconverter/snippets/custom_groups.toml:/base/snippets/custom_groups.toml&lt;/span&gt;&lt;span class="w"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Subconverter 的容器镜像自带了一套完整的默认配置，包括标准策略组、规则集和模板文件，都放在容器的 &lt;code&gt;/base&lt;/code&gt; 目录下。只需要把要自定义的文件挂载进去，&lt;code&gt;pref.toml&lt;/code&gt; 是主配置文件，&lt;code&gt;custom_groups.toml&lt;/code&gt; 是自定义策略组，其余全部保留容器默认的。&lt;/p&gt;
+&lt;h2 id="配置自定义策略组"&gt;配置自定义策略组&lt;/h2&gt;
+&lt;p&gt;Subconverter 的默认配置里已经有一套标准策略组（节点选择、自动选择、Netflix、Telegram 等）和对应的规则集。我只需要额外添加自己的策略组就行。&lt;/p&gt;
+&lt;p&gt;在 &lt;code&gt;pref.toml&lt;/code&gt; 里，通过 import 把默认策略组和自定义策略组分开管理：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-toml" data-lang="toml"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;[[&lt;/span&gt;&lt;span class="nx"&gt;custom_groups&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;import&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;snippets/groups.toml&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;[[&lt;/span&gt;&lt;span class="nx"&gt;custom_groups&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nx"&gt;import&lt;/span&gt; &lt;span class="p"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;snippets/custom_groups.toml&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;groups.toml&lt;/code&gt; 是容器自带的，不用动。&lt;code&gt;custom_groups.toml&lt;/code&gt; 是自己的，内容类似这样：&lt;/p&gt;</description></item><item><title>PVE + ImmortalWrt 旁路网关部署实战</title><link>http://0x3f.org/posts/pve-immortalwrt-bypass-gateway-deployment/</link><pubDate>Mon, 09 Mar 2026 10:00:00 +0800</pubDate><guid>http://0x3f.org/posts/pve-immortalwrt-bypass-gateway-deployment/</guid><description>&lt;p&gt;之前一直在用 eSir 的佛跳墙固件，每次升级都要重新刷机、重新配置，挺麻烦的。最近换成了 ImmortalWrt，官方源支持 &lt;code&gt;sysupgrade&lt;/code&gt; 平滑升级，配置都能保留，省事不少。&lt;/p&gt;
 &lt;p&gt;ImmortalWrt 是 OpenWrt 的一个分支，主要是针对中国大陆用户做了一些本地化优化，比如内置了更多的驱动、默认开启了一些实用功能。部署在 PVE 上作为旁路网关使用，配合 OpenClash 做透明代理。&lt;/p&gt;
 &lt;h2 id="创建虚拟机"&gt;创建虚拟机&lt;/h2&gt;
 &lt;p&gt;到 &lt;a href="https://firmware-selector.immortalwrt.org/"&gt;firmware-selector.immortalwrt.org&lt;/a&gt; 搜索 &lt;code&gt;x86/64&lt;/code&gt;，下载 &lt;strong&gt;ext4-combined-efi&lt;/strong&gt; 的 &lt;code&gt;.img.gz&lt;/code&gt; 文件。官方源下载慢的话可以用国内镜像。&lt;/p&gt;
